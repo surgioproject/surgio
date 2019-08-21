@@ -1,0 +1,17 @@
+sudo: false
+os:
+  - linux
+  - osx
+  - windows
+language: node_js
+install:
+  - yarn
+node_js:
+  - '8'
+  - '10'
+  - '12'
+script:
+  - yarn test:lint
+  - yarn coverage
+after_script:
+  - npx codecov --disable=gcov -f .nyc_output/*.json
