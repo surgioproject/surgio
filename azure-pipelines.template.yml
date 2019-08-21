@@ -1,0 +1,48 @@
+# Node.js
+# Build a general Node.js application with npm.
+# Add steps that analyze code, save build artifacts, deploy, and more:
+# https://docs.microsoft.com/vsts/pipelines/languages/javascript
+# demo: https://github.com/parcel-bundler/parcel/blob/master/azure-pipelines-template.yml
+
+jobs:
+- job: ${{ parameters.name }}
+  pool:
+    vmImage: ${{ parameters.vmImage }}
+  strategy:
+    matrix:
+      node_10:
+        node_version: 10
+      node_12:
+        node_version: 12
+    maxParallel: 5
+  steps:
+  - task: NodeTool@0
+    inputs:
+      versionSpec: $(node_version)
+    displayName: 'Install Node.js'
+
+  # Set ENV
+  - ${{ if ne(parameters.name, 'windows') }}:
+    - script: |
+        echo $PWD
+        export PATH="$PATH:$PWD/node_modules/.bin"
+        echo "##vso[task.setvariable variable=PATH]$PATH"
+      displayName: Set ENV
+  - ${{ if eq(parameters.name, 'windows') }}:
+    - script: |
+        echo %cd%
+        set PATH=%PATH%;%cd%\node_modules\.bin
+        echo "##vso[task.setvariable variable=PATH]%PATH%"
+      displayName: Set ENV
+
+  - script: |
+      yarn install
+    displayName: 'Install Packages'
+  - script: |
+      yarn test:lint
+      yarn coverage
+    displayName: 'Build & Unit Test'
+  - ${{ if ne(parameters.name, 'windows') }}:
+    - script: |
+        npx codecov
+      displayName: 'Report Coverage'
