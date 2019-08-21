@@ -36,10 +36,6 @@
     "coverage": "TS_NODE_FILES=true nyc ava",
     "clean": "rimraf build",
     "build": "run-s clean && tsc -p tsconfig.json",
-    "generate": "bin/surgio.js generate",
-    "upload": "bin/surgio.js upload",
-    "update": "run-s build generate upload",
-    "fast-update": "run-s generate upload",
     "snyk-protect": "snyk protect",
     "prepublish": "npm run snyk-protect"
   },
