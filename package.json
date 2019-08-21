@@ -1,0 +1,114 @@
+{
+  "name": "surgio",
+  "version": "0.1.0",
+  "main": "build/index.js",
+  "bin": {
+    "surgio": "bin/surgio.js"
+  },
+  "repository": "https://github.com/geekdada/surgio",
+  "author": "Yihang Li <me@royli.dev>",
+  "license": "MIT",
+  "devDependencies": {
+    "@types/inquirer": "^6.0.3",
+    "@types/lodash": "^4.14.137",
+    "@types/lru-cache": "^5.1.0",
+    "@types/mz": "^0.0.32",
+    "@types/nunjucks": "^3.1.1",
+    "@types/yaml": "^1.0.2",
+    "ava": "^2.3.0",
+    "codecov": "^3.5.0",
+    "eslint": "^5.15.1",
+    "eslint-config-egg": "^7.4.1",
+    "npm-run-all": "^4.1.5",
+    "nyc": "^14.1.1",
+    "source-map-support": "^0.5.13",
+    "ts-node": "^8.3.0",
+    "tslint": "^5.19.0",
+    "tslint-config-prettier": "^1.17.0",
+    "tslint-immutable": "^5.0.0",
+    "type-fest": "^0.7.1",
+    "typescript": "^3.1.6"
+  },
+  "scripts": {
+    "test": "run-s test:*",
+    "test:lint": "eslint . && tslint --project .",
+    "test:unit": "ava",
+    "coverage": "TS_NODE_FILES=true nyc ava",
+    "clean": "rimraf build",
+    "build": "run-s clean && tsc -p tsconfig.json",
+    "generate": "bin/surgio.js generate",
+    "upload": "bin/surgio.js upload",
+    "update": "run-s build generate upload",
+    "fast-update": "run-s generate upload",
+    "snyk-protect": "snyk protect",
+    "prepublish": "npm run snyk-protect"
+  },
+  "dependencies": {
+    "ali-oss": "^6.1.0",
+    "axios": "^0.19.0",
+    "chalk": "^2.4.2",
+    "common-bin": "^2.8.1",
+    "country-code-emoji": "^1.0.0",
+    "debug": "^4.1.1",
+    "env2": "^2.2.2",
+    "execa": "^2.0.1",
+    "get-port": "^5.0.0",
+    "inquirer": "^6.5.0",
+    "lodash": "^4.17.12",
+    "lru-cache": "^5.1.1",
+    "merge-stream": "^2.0.0",
+    "mz": "^2.7.0",
+    "node-dir": "^0.1.17",
+    "nunjucks": "^3.1.6",
+    "ora": "^3.0.0",
+    "query-string": "^6.2.0",
+    "rimraf": "^3.0.0",
+    "shelljs": "^0.8.3",
+    "snyk": "^1.217.3",
+    "speedtest-net": "^1.5.1",
+    "urlsafe-base64": "^1.0.0",
+    "winston": "^3.2.1",
+    "yaml": "^1.5.1"
+  },
+  "ava": {
+    "failFast": true,
+    "compileEnhancements": false,
+    "extensions": [
+      "ts"
+    ],
+    "files": [
+      "lib/**/*.spec.ts"
+    ],
+    "sources": [
+      "lib/**/*.ts"
+    ],
+    "require": [
+      "ts-node/register"
+    ]
+  },
+  "nyc": {
+    "extension": [
+      ".ts"
+    ],
+    "reporter": [
+      "html",
+      "text-summary"
+    ],
+    "sourceMap": true,
+    "instrument": true,
+    "include": [
+      "lib/**/*.ts"
+    ],
+    "exclude": [
+      "**/*.d.ts",
+      "**/*.spec.ts"
+    ],
+    "require": [
+      "ts-node/register"
+    ]
+  },
+  "snyk": true,
+  "engines": {
+    "node": "^10"
+  }
+}
