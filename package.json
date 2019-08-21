@@ -17,8 +17,13 @@
     "@types/yaml": "^1.0.2",
     "ava": "^2.3.0",
     "codecov": "^3.5.0",
+    "conventional-changelog-cli": "^2.0.23",
     "eslint": "^5.15.1",
     "eslint-config-egg": "^7.4.1",
+    "husky": "^3.0.4",
+    "lint-staged": "^9.2.3",
+    "np": "^5.0.3",
+    "npm-debug-log-cleaner": "^1.0.3",
     "npm-run-all": "^4.1.5",
     "nyc": "^14.1.1",
     "source-map-support": "^0.5.13",
@@ -37,7 +42,10 @@
     "clean": "rimraf build",
     "build": "run-s clean && tsc -p tsconfig.json",
     "snyk-protect": "snyk protect",
-    "prepublish": "npm run snyk-protect"
+    "prepublish": "npm run snyk-protect",
+    "changelog": "conventional-changelog -p angular -i CHANGELOG.md -s -r 0",
+    "pub": "np",
+    "version": "npm run changelog && git add ."
   },
   "dependencies": {
     "ali-oss": "^6.1.0",
@@ -106,5 +114,14 @@
   "snyk": true,
   "engines": {
     "node": "^10"
+  },
+  "lint-staged": {
+    "*.js": "eslint",
+    "*.ts": "tslint"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "npm-debug-log-cleaner && lint-staged"
+    }
   }
 }
