@@ -36,7 +36,7 @@ jobs:
       displayName: Set ENV
 
   - script: |
-      yarn
+      yarn install
     displayName: 'Install Packages'
   - script: |
       yarn test:lint
