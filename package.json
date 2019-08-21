@@ -8,6 +8,11 @@
   "repository": "https://github.com/geekdada/surgio",
   "author": "Yihang Li <me@royli.dev>",
   "license": "MIT",
+  "files": [
+    "bin",
+    "build",
+    "README.md"
+  ],
   "devDependencies": {
     "@types/inquirer": "^6.0.3",
     "@types/lodash": "^4.14.137",
