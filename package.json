@@ -37,7 +37,8 @@
     "tslint-config-prettier": "^1.17.0",
     "tslint-immutable": "^5.0.0",
     "type-fest": "^0.7.1",
-    "typescript": "^3.1.6"
+    "typescript": "^3.1.6",
+    "vuepress": "^1.0.3"
   },
   "scripts": {
     "test": "run-s test:*",
