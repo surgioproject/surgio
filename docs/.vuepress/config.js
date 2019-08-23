@@ -10,7 +10,16 @@ module.exports = {
           children: [
             '',
             'getting-started',
-            'custom'
+            {
+              title: '自定义',
+              collapsable: false,
+              children: [
+                'custom-config',
+                'custom-provider',
+                'custom-template',
+                'custom-artifact',
+              ]
+            },
           ]
         },
       ],

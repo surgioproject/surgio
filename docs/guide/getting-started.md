@@ -66,7 +66,7 @@ Surgio 生成出的规则就是「产品」。
 
 仓库中已经包含了一些用于演示的代码。我们会在后面一节说明如何自定义它们。
 
-## 生成配置
+## 生成规则
 
 ```bash
 npx surgio generate
@@ -75,3 +75,17 @@ npx surgio generate
 规则已经生成到 `dist` 目录了。
 
 <img src="/generate-result.png" width="318">
+
+## 上传规则
+
+```bash
+npx surgio upload
+```
+
+:::warning 注意
+请确保已配置阿里云 OSS。
+:::
+
+## 配置文件
+
+Surgio 的配置文件位于目录内的 `surgio.conf.js`。
