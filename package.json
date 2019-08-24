@@ -51,7 +51,9 @@
     "prepublish": "npm run snyk-protect",
     "changelog": "conventional-changelog -p angular -i CHANGELOG.md -s -r 0",
     "pub": "np",
-    "version": "npm run changelog && git add ."
+    "version": "npm run changelog && git add .",
+    "docs:dev": "vuepress dev docs",
+    "docs:build": "vuepress build docs"
   },
   "dependencies": {
     "ali-oss": "^6.1.0",
