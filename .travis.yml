@@ -13,3 +13,17 @@ script:
   - yarn coverage
 after_script:
   - npx codecov --disable=gcov -f .nyc_output/*.json
+
+jobs:
+  include:
+    - name: deploy docs
+      if: branch = master
+      node_js: "10"
+      script: yarn docs:build
+      deploy:
+        provider: pages
+        skip_cleanup: true
+        github_token: $GITHUB_TOKEN
+        keep_history: false
+        local_dir: docs/.vuepress/dist
+        fqdn: surgio.royli.dev
