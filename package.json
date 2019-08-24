@@ -37,7 +37,8 @@
     "tslint-config-prettier": "^1.17.0",
     "tslint-immutable": "^5.0.0",
     "type-fest": "^0.7.1",
-    "typescript": "^3.1.6"
+    "typescript": "^3.1.6",
+    "vuepress": "^1.0.3"
   },
   "scripts": {
     "test": "run-s test:*",
@@ -50,7 +51,9 @@
     "prepublish": "npm run snyk-protect",
     "changelog": "conventional-changelog -p angular -i CHANGELOG.md -s -r 0",
     "pub": "np",
-    "version": "npm run changelog && git add ."
+    "version": "npm run changelog && git add .",
+    "docs:dev": "vuepress dev docs",
+    "docs:build": "vuepress build docs"
   },
   "dependencies": {
     "ali-oss": "^6.1.0",
