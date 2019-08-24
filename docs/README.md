@@ -1,6 +1,6 @@
 ---
 home: true
-title: ''
+title: '一站式各类代理规则生成器'
 heroImage: /surgio-icon.png
 actionText: 快速上手 →
 actionLink: /guide/

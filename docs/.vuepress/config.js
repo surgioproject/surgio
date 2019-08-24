@@ -1,7 +1,22 @@
 module.exports = {
-  title: 'Surgio',
-  description: '一站式生成各类代理规则',
+  locales: {
+    '/': {
+      lang: 'zh-CN',
+      title: 'Surgio',
+      description: '一站式各类代理规则生成器',
+    }
+  },
   themeConfig: {
+    nav: [
+      {
+        text: 'Changelog',
+        link: 'https://github.com/geekdada/surgio/blob/master/CHANGELOG.md'
+      },
+      {
+        text: 'GitHub',
+        link: 'https://github.com/geekdada/surgio'
+      },
+    ],
     sidebar: {
       '/guide/': [
         {
