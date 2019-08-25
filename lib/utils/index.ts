@@ -316,7 +316,7 @@ export const getShadowsocksNodesJSON = (list: ReadonlyArray<ShadowsocksNodeConfi
             remarks_base64: toUrlSafeBase64(nodeConfig.nodeName),
             password: nodeConfig.password,
             tcp_over_udp: false,
-            udp_over_tcp: nodeConfig['udp-relay'] === 'true',
+            udp_over_tcp: false,
             enable: true,
             ...(useObfs ? {
               plugin: 'obfs-local',
