@@ -36,6 +36,29 @@ module.exports = {
 以 `/` 结尾，如：`https://example.com/` 。
 :::
 
+
+### remoteSnippets
+
+- 类型: `RemoteSnippet[]`
+- 默认值: `undefined`
+
+:::tip
+这个功能和 Surge 本身的 `RULE-SET` 功能无关，所以生成出来的规则可以在老版本的 Surge 和其它客户端中使用。
+:::
+
+远程片段。你可以在这里配置符合 [Surge Rule Set 标准](https://nssurge.zendesk.com/hc/zh-cn/articles/360010038714-Surge-Mac-3-Release-Note) 的文件，然后在模板中使用它们。
+
+```js
+module.exports = {
+  remoteSnippets: [
+    {
+      url: 'https://github.com/Blankwonder/surge-list/raw/master/cn.list',
+      name: 'cn', // 模板中对应 remoteSnippets.cn
+    },
+  ],
+};
+```
+
 ### upload
 
 - 类型: ` UploadConfig`

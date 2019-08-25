@@ -14,12 +14,17 @@ import {
   HttpsNodeConfig,
   NodeFilterType,
   NodeNameFilterType,
-  NodeTypeEnum, PossibleNodeConfigType,
+  NodeTypeEnum,
+  PossibleNodeConfigType,
   ShadowsocksNodeConfig,
   ShadowsocksrNodeConfig,
   SimpleNodeConfig,
   SnellNodeConfig,
-  CommandConfig, ProxyGroupModifier, PlainObjectOf,
+  CommandConfig,
+  ProxyGroupModifier,
+  PlainObjectOf,
+  RemoteSnippetConfig,
+  RemoteSnippet,
 } from '../types';
 
 const ConfigCache = new LRU<string, any>({
@@ -435,7 +440,7 @@ export const pickAndFormatStringList = (obj: object, keyList: readonly string[])
 };
 
 export const normalizeConfig = (cwd: string, obj: Partial<CommandConfig>): CommandConfig => {
-  const config = _.defaults<Partial<CommandConfig>, CommandConfig>(obj, {
+  const config: CommandConfig = _.defaultsDeep(obj, {
     artifacts: [],
     urlBase: '/',
     output: path.resolve(cwd, './dist'),
@@ -490,4 +495,56 @@ export const normalizeClashProxyGroupConfig = (
       return getClashNodeNames(item.name, item.type, nodeList, [NodeTypeEnum.Shadowsocks]);
     }
   });
+};
+
+export const addProxyToSurgeRuleSet = (str: string, rule: string): string => {
+  const result: string[] = [];
+
+  str
+    .split('\n')
+    .filter(item => item && item.trim() !== '')
+    .forEach(item => {
+      if (!item.startsWith('#') && !item.startsWith('//')) {
+        const comment = item.split('//');
+        const line = comment[0].trim().split(',');
+
+        if (line.length === 2) {
+          line.push(rule);
+        } else {
+          line.splice(2, 0, rule);
+        }
+
+        result.push(line.join(',') + (comment[1] ? ` //${comment[1]}` : ''));
+      } else {
+        result.push(item);
+      }
+    });
+
+  return result.join('\n');
+};
+
+export const loadRemoteSnippetList = (remoteSnippetList: ReadonlyArray<RemoteSnippetConfig>): Promise<ReadonlyArray<RemoteSnippet>> => {
+  function load(url: string): Promise<string> {
+    console.log(`下载远程片段：${url}`);
+
+    return axios.get<string>(url, {
+      timeout: 20000,
+      proxy: false,
+      responseType: 'text',
+    })
+      .then(data => data.data)
+      .catch(err => {
+        console.error(`远程片段 ${url} 下载失败。`);
+        throw err;
+      });
+  }
+
+  return Promise.all(remoteSnippetList.map<Promise<RemoteSnippet>>(item => {
+    return load(item.url)
+      .then(res => ({
+        main: (rule: string) => addProxyToSurgeRuleSet(res, rule),
+        name: item.name,
+        url: item.url,
+      }));
+  }));
 };

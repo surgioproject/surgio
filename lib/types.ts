@@ -14,6 +14,7 @@ export enum SupportProviderEnum {
 export interface CommandConfig {
   readonly output: string;
   readonly artifacts: ReadonlyArray<ArtifactConfig>;
+  readonly remoteSnippets?: ReadonlyArray<RemoteSnippetConfig>;
   readonly urlBase: string;
   readonly providerDir: string;
   readonly templateDir: string;
@@ -24,6 +25,15 @@ export interface CommandConfig {
     readonly accessKeyId?: string;
     readonly accessKeySecret?: string;
   };
+}
+
+export interface RemoteSnippetConfig {
+  readonly url: string;
+  readonly name: string;
+}
+
+export interface RemoteSnippet extends RemoteSnippetConfig {
+  readonly main: (rule: string) => string;
 }
 
 export interface ArtifactConfig {

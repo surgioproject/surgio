@@ -19,37 +19,63 @@ Surgio 为了能够灵活地定义模板而引入了 [Nunjucks](https://nunjucks
 
 ## 模板变量
 
-### `provider`
+### provider
 
 当前 Provider 的名称。
 
-### `downloadUrl`
+### downloadUrl
 
 当前文件对应的订阅地址。
 
-### `nodeList`
+### nodeList
 
 过滤之后的节点列表。
 
-### `hkFilter`
+### remoteSnippets
+
+远程模板片段。以 [这个配置](/guide/custom-config#remotesnippets) 为例：
+
+```
+{{ remoteSnippets.cn.main('DIRECT') }}
+```
+
+生成的内容如下：
+
+```
+# China Apps
+USER-AGENT,MicroMessenger Client,DIRECT
+USER-AGENT,WeChat*,DIRECT
+USER-AGENT,MApi*,DIRECT // Dianping
+# Ali
+DOMAIN-KEYWORD,alipay,DIRECT
+DOMAIN-KEYWORD,taobao,DIRECT
+DOMAIN-KEYWORD,alicdn,DIRECT
+DOMAIN-KEYWORD,aliyun,DIRECT
+DOMAIN-KEYWORD,.tmall.,DIRECT
+# China
+DOMAIN-SUFFIX,CN,DIRECT
+DOMAIN-KEYWORD,baidu,DIRECT
+```
+
+### hkFilter
 
 香港节点过滤器。
 
-### `usFilter`
+### usFilter
 
 美国节点过滤器。
 
-### `netflixFilter`
+### netflixFilter
 
 Netflix 节点过滤器。Surgio 默认会将名称中包含 *netflix*, *hkbn*, *hkt*, *hgc*（不分大小写）的节点过滤出来。如果在 Provider 中进行了覆盖则会运行新的方法。
 
-### `youtubePremiumFilter`
+### youtubePremiumFilter
 
 Youtube Premium 节点过滤器。Surgio 默认会将名称中包含 *日*, *美*, *韩*, 🇯🇵, 🇺🇸, 🇰🇷 的节点过滤出来。如果在 Provider 中进行了覆盖则会运行新的方法。
 
 [查看所有支持 Youtube Premium 的国家和地区](https://support.google.com/youtube/answer/6307365?hl=zh-Hans)
 
-### `clashProxyConfig`
+### clashProxyConfig
 
 Clash 的 `Proxy` 和 `Proxy Group` 配置对象。`clashProxyConfig` 的内容依赖 Artifact 的 [`proxyGroupModifier` 函数](/guide/custom-artifact#proxygroupmodifier-nodelist-filters)。
 
