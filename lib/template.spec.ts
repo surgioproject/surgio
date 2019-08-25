@@ -43,3 +43,14 @@ test('renderString #4', t => {
 
   t.is(result, '# Comment');
 });
+
+test('base64', t => {
+  const body = `{{ str | base64 }}`;
+  const str = `testtesttesttest`;
+
+  const result = templateEngine.renderString(body, {
+    str,
+  });
+
+  t.is(result, 'dGVzdHRlc3R0ZXN0dGVzdA==');
+});
