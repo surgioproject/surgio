@@ -82,6 +82,7 @@
     "shelljs": "^0.8.3",
     "snyk": "^1.217.3",
     "speedtest-net": "^1.5.1",
+    "update-notifier": "^3.0.1",
     "urlsafe-base64": "^1.0.0",
     "winston": "^3.2.1",
     "yaml": "^1.5.1"
