@@ -435,7 +435,7 @@ export const pickAndFormatStringList = (obj: object, keyList: readonly string[])
 };
 
 export const normalizeConfig = (cwd: string, obj: Partial<CommandConfig>): CommandConfig => {
-  const config = _.defaults<Partial<CommandConfig>, CommandConfig>(obj, {
+  const config: CommandConfig = _.defaultsDeep(obj, {
     artifacts: [],
     urlBase: '/',
     output: path.resolve(cwd, './dist'),
