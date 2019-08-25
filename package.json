@@ -1,6 +1,6 @@
 {
   "name": "surgio",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "main": "build/index.js",
   "bin": {
     "surgio": "bin/surgio.js"

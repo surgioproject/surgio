@@ -1,3 +1,19 @@
+## [0.3.1](https://github.com/geekdada/surgio/compare/v0.3.0...v0.3.1) (2019-08-25)
+
+
+### Bug Fixes
+
+* build before publish ([b784fa5](https://github.com/geekdada/surgio/commit/b784fa5))
+* require pkg ([3081cc7](https://github.com/geekdada/surgio/commit/3081cc7))
+
+
+### Features
+
+* 模板 base64 filter ([3d45a23](https://github.com/geekdada/surgio/commit/3d45a23))
+* add cli update support ([2f2d340](https://github.com/geekdada/surgio/commit/2f2d340))
+
+
+
 # [0.3.0](https://github.com/geekdada/surgio/compare/v0.2.0...v0.3.0) (2019-08-25)
 
 
