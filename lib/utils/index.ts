@@ -81,18 +81,31 @@ export const getShadowsocksJSONConfig = async (config: {
       timeout: 20000,
     });
 
-    /**
-     * TODO: obfs 协议
-     */
-    const result = (response.data.configs as readonly any[]).map<ShadowsocksNodeConfig>(item => ({
-      nodeName: item.remarks as string,
-      type: NodeTypeEnum.Shadowsocks,
-      hostname: item.server as string,
-      port: item.server_port as string,
-      method: item.method as string,
-      password: item.password as string,
-      ...(typeof config.udpRelay === 'boolean' ? { 'udp-relay': config.udpRelay ? 'true' : 'false' } : {}),
-    }));
+    const result = (response.data.configs as readonly any[]).map<ShadowsocksNodeConfig>(item => {
+      const nodeConfig: any = {
+        nodeName: item.remarks as string,
+        type: NodeTypeEnum.Shadowsocks,
+        hostname: item.server as string,
+        port: item.server_port as string,
+        method: item.method as string,
+        password: item.password as string,
+      };
+
+      if (typeof config.udpRelay === 'boolean') {
+        nodeConfig['udp-relay'] = config.udpRelay ? 'true' : 'false';
+      }
+      if (item.plugin === 'obfs-local') {
+        const obfs = item.plugin_opts.match(/obfs=(\w+)/);
+        const obfsHost = item.plugin_opts.match(/obfs-host=(.+)$/);
+
+        if (obfs) {
+          nodeConfig.obfs = obfs[1];
+          nodeConfig['obfs-host'] = obfsHost ? obfsHost[1] : 'www.bing.com';
+        }
+      }
+
+      return nodeConfig;
+    });
 
     ConfigCache.set(url, result);
 
@@ -316,7 +329,7 @@ export const getShadowsocksNodesJSON = (list: ReadonlyArray<ShadowsocksNodeConfi
             remarks_base64: toUrlSafeBase64(nodeConfig.nodeName),
             password: nodeConfig.password,
             tcp_over_udp: false,
-            udp_over_tcp: nodeConfig['udp-relay'] === 'true',
+            udp_over_tcp: false,
             enable: true,
             ...(useObfs ? {
               plugin: 'obfs-local',

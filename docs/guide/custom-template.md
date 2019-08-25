@@ -11,6 +11,12 @@ Surgio 为了能够灵活地定义模板而引入了 [Nunjucks](https://nunjucks
 
 目录中默认已经包含针对 Surge，Quantumult 和 Clash 的模板和一些网友维护的规则片段 Snippet。
 
+:::tip
+欢迎大家参与到默认规则的修订中！
+
+[项目地址](https://github.com/geekdada/create-surgio-store/tree/master/template/template)
+:::
+
 ## 模板变量
 
 ### `provider`

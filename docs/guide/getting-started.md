@@ -15,7 +15,7 @@ title: 快速上手
 如果已安装可跳过
 :::
 
-[前往下载 Node.js →](https://nodejs.org/zh-cn/download/)
+[前往下载 Node.js](https://nodejs.org/zh-cn/download/)
 
 ## 新建一个配置仓库
 
@@ -32,7 +32,7 @@ cd my-rule-store
 
 ## 术语解释
 
-在进入正题，我们先解释一下核心的几个术语：
+在进入正题之前，我们先解释一下核心的几个术语：
 
 ### Provider (提供方)
 

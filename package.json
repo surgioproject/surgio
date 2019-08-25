@@ -13,6 +13,10 @@
     "build",
     "README.md"
   ],
+  "bugs": {
+    "url": "https://github.com/geekdada/surgio/issues"
+  },
+  "homepage": "https://surgio.royli.dev",
   "devDependencies": {
     "@types/inquirer": "^6.0.3",
     "@types/lodash": "^4.14.137",

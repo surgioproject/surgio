@@ -6,6 +6,7 @@ module.exports = {
       description: '一站式各类代理规则生成器',
     }
   },
+  ga: 'UA-146417304-1',
   themeConfig: {
     nav: [
       {
@@ -40,4 +41,4 @@ module.exports = {
       ],
     },
   }
-}
+};
