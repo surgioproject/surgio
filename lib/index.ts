@@ -8,7 +8,6 @@ import CheckCommand from './command/check';
 import GenerateCommand from './command/generate';
 import SpeedCommand from './command/speed';
 import UploadCommand from './command/upload';
-import pkg from '../package.json';
 
 const envPath = path.resolve(process.cwd(), './.env');
 
@@ -20,7 +19,7 @@ export class SurgioCommand extends Command {
       env2(envPath);
     }
 
-    updateNotifier({pkg}).notify();
+    updateNotifier({ pkg: require('../package.json') }).notify();
     this.usage = 'Usage: surgio <command> [options]';
     this.load(path.join(__dirname, './command'));
     this.yargs.alias('v', 'version');
