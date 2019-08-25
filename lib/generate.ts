@@ -72,6 +72,11 @@ export async function generate(config: CommandConfig, artifact: ArtifactConfig):
     provider,
     customParams,
   } = artifact;
+
+  assert(artifactName, 'You must specify the artifact\'s name.');
+  assert(template, 'You must specify the artifact\'s template.');
+  assert(provider, 'You must specify the artifact\'s provider.');
+
   const tplBuffer = await fs.readFile(path.resolve(config.templateDir, `${template}.tpl`));
   const recipeList = artifact.recipe ? artifact.recipe : [artifact.provider];
   const nodeList: PossibleNodeConfigType[] = [];
