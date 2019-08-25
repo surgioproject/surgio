@@ -246,3 +246,47 @@ test('getShadowsocksJSONConfig', async t => {
     'obfs-host': 'www.bing.com',
   });
 });
+
+test('loadRemoteSnippetList', async t => {
+  const remoteSnippetList = await utils.loadRemoteSnippetList([
+    {
+      url: 'https://github.com/Blankwonder/surge-list/raw/master/telegram.list',
+      name: 'telegram',
+    },
+    {
+      url: 'https://github.com/Blankwonder/surge-list/raw/master/netflix.list',
+      name: 'netflix',
+    },
+    {
+      url: 'https://gist.githubusercontent.com/geekdada/77995d58363c0a271ab56bbcc2dc9054/raw/d1ba422e96a29d8a846303454aeba8fa0ee72e1c/test-ruleset.list',
+      name: 'test',
+    }
+  ]);
+  const result1 = 'IP-CIDR,91.108.56.0/22,Proxy,no-resolve\n' +
+    'IP-CIDR,91.108.4.0/22,Proxy,no-resolve\n' +
+    'IP-CIDR,91.108.8.0/22,Proxy,no-resolve\n' +
+    'IP-CIDR,109.239.140.0/24,Proxy,no-resolve\n' +
+    'IP-CIDR,149.154.160.0/20,Proxy,no-resolve\n' +
+    'IP-CIDR,149.154.164.0/22,Proxy,no-resolve\n' +
+    'IP-CIDR,149.154.172.0/22,Proxy,no-resolve\n' +
+    'IP-CIDR,91.108.12.0/22,Proxy,no-resolve';
+  const result2 = '# Netflix\n' +
+    'USER-AGENT,Argo*,Proxy\n' +
+    'DOMAIN-SUFFIX,fast.com,Proxy\n' +
+    'DOMAIN-SUFFIX,netflix.com,Proxy\n' +
+    'DOMAIN-SUFFIX,netflix.net,Proxy\n' +
+    'DOMAIN-SUFFIX,nflxext.com,Proxy\n' +
+    'DOMAIN-SUFFIX,nflximg.com,Proxy\n' +
+    'DOMAIN-SUFFIX,nflximg.net,Proxy\n' +
+    'DOMAIN-SUFFIX,nflxso.net,Proxy\n' +
+    'DOMAIN-SUFFIX,nflxvideo.net,Proxy';
+  const result3 = '# China Apps\n' +
+    'USER-AGENT,MicroMessenger Client,Proxy\n' +
+    'USER-AGENT,WeChat*,Proxy\n' +
+    'USER-AGENT,MApi*,Proxy // Dianping\n' +
+    'IP-CIDR,149.154.164.0/22,Proxy,no-resolve // Telegram';
+
+  t.is(remoteSnippetList[0].main('Proxy'), result1);
+  t.is(remoteSnippetList[1].main('Proxy'), result2);
+  t.is(remoteSnippetList[2].main('Proxy'), result3);
+});

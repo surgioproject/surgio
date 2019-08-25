@@ -7,6 +7,7 @@ import ora from 'ora';
 import path from 'path';
 import _rimraf from 'rimraf';
 import util from 'util';
+import _ from 'lodash';
 
 import {
   ArtifactConfig,
@@ -19,7 +20,7 @@ import {
   SimpleNodeConfig,
   SupportProviderEnum,
   NodeFilterType,
-  CommandConfig,
+  CommandConfig, RemoteSnippet,
 } from './types';
 import {
   getBlackSSLConfig,
@@ -39,7 +40,7 @@ import {
   toUrlSafeBase64,
   usFilter,
   youtubePremiumFilter as defaultYoutubePremiumFilter,
-  normalizeClashProxyGroupConfig,
+  normalizeClashProxyGroupConfig, loadRemoteSnippetList,
 } from './utils';
 import getEngine from './template';
 
@@ -49,6 +50,8 @@ const spinner = ora();
 async function run(config: CommandConfig): Promise<void> {
   const artifactList: ReadonlyArray<ArtifactConfig> = config.artifacts;
   const distPath = resolveRoot(config.output);
+  const remoteSnippetsConfig = config.remoteSnippets || [];
+  const remoteSnippetList = await loadRemoteSnippetList(remoteSnippetsConfig);
 
   await rimraf(distPath);
   await fs.mkdir(distPath);
@@ -56,7 +59,7 @@ async function run(config: CommandConfig): Promise<void> {
   for (const artifact of artifactList) {
     spinner.start(`Generating ${artifact.name}`);
 
-    const result = await generate(config, artifact);
+    const result = await generate(config, artifact, remoteSnippetList);
     const destFilePath = resolveRoot(config.output, artifact.name);
 
     await fs.writeFile(destFilePath, result);
@@ -64,7 +67,11 @@ async function run(config: CommandConfig): Promise<void> {
   }
 }
 
-export async function generate(config: CommandConfig, artifact: ArtifactConfig): Promise<string> {
+export async function generate(
+  config: CommandConfig,
+  artifact: ArtifactConfig,
+  remoteSnippetList: ReadonlyArray<RemoteSnippet>
+): Promise<string> {
   const templateEngine = getEngine(config.templateDir);
   const {
     name: artifactName,
@@ -146,6 +153,9 @@ export async function generate(config: CommandConfig, artifact: ArtifactConfig):
     downloadUrl: getDownloadUrl(config.urlBase, artifactName),
     nodes: nodeList,
     names: nodeNameList,
+    remoteSnippets: _.keyBy(remoteSnippetList, item => {
+      return item.name;
+    }),
     nodeList,
     provider,
     artifactName,
