@@ -141,6 +141,7 @@ export async function generate(config: CommandConfig, artifact: ArtifactConfig):
     downloadUrl: getDownloadUrl(config.urlBase, artifactName),
     nodes: nodeList,
     names: nodeNameList,
+    nodeList,
     provider,
     artifactName,
     getDownloadUrl: (name: string) => getDownloadUrl(config.urlBase, name),
