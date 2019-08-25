@@ -1,5 +1,3 @@
-# surgio
-
 [![NPM version][npm-image]][npm-url]
 [![build status][travis-image]][travis-url]
 [![Build Status][azure-image]][azure-url]
@@ -23,4 +21,10 @@
 [download-image]: https://img.shields.io/npm/dm/surgio.svg?style=flat-square
 [download-url]: https://npmjs.org/package/surgio
 
-Generating rules for Surge/Clash/Quantumult like a PRO.
+## 文档
+
+查看完整使用文档，前往 [surgio.royli.dev](https://surgio.royli.dev)。
+
+## License
+
+[MIT](https://github.com/geekdada/surgio/blob/master/LICENSE)
