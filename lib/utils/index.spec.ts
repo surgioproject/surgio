@@ -198,3 +198,51 @@ test('normalizeClashProxyGroupConfig', t => {
     usFilter: utils.usFilter,
   }, proxyGroupModifier as any), result);
 });
+
+test('getShadowsocksJSONConfig', async t => {
+  const url = 'https://gist.githubusercontent.com/geekdada/c583aa32ee4f93511dff66802b142d10/raw/b76452da7fd587fe3d734520ce373f0c9bb54e87/gui-config.json';
+  const config = await utils.getShadowsocksJSONConfig({ url, udpRelay: true });
+
+  t.deepEqual(config[0], {
+    nodeName: '🇺🇸US 1',
+    type: NodeTypeEnum.Shadowsocks,
+    hostname: 'us.example.com',
+    port: 443,
+    method: 'chacha20-ietf-poly1305',
+    password: 'password',
+    'udp-relay': 'true',
+    obfs: 'tls',
+    'obfs-host': 'gateway-carry.icloud.com',
+  });
+  t.deepEqual(config[1], {
+    nodeName: '🇺🇸US 2',
+    type: NodeTypeEnum.Shadowsocks,
+    hostname: 'us.example.com',
+    port: 444,
+    method: 'chacha20-ietf-poly1305',
+    password: 'password',
+    'udp-relay': 'true',
+  });
+  t.deepEqual(config[2], {
+    nodeName: '🇺🇸US 3',
+    type: NodeTypeEnum.Shadowsocks,
+    hostname: 'us.example.com',
+    port: 445,
+    method: 'chacha20-ietf-poly1305',
+    password: 'password',
+    'udp-relay': 'true',
+    obfs: 'tls',
+    'obfs-host': 'www.bing.com',
+  });
+  t.deepEqual(config[3], {
+    nodeName: '🇺🇸US 4',
+    type: NodeTypeEnum.Shadowsocks,
+    hostname: 'us.example.com',
+    port: 80,
+    method: 'chacha20-ietf-poly1305',
+    password: 'password',
+    'udp-relay': 'true',
+    obfs: 'http',
+    'obfs-host': 'www.bing.com',
+  });
+});
