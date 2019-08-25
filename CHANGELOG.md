@@ -1,3 +1,13 @@
+# [0.4.0](https://github.com/geekdada/surgio/compare/v0.3.1...v0.4.0) (2019-08-25)
+
+
+### Features
+
+* 初始化配置时使用 defaultsDeep ([ab8f695](https://github.com/geekdada/surgio/commit/ab8f695))
+* remote rule set ([a820cdb](https://github.com/geekdada/surgio/commit/a820cdb)), closes [#5](https://github.com/geekdada/surgio/issues/5)
+
+
+
 ## [0.3.1](https://github.com/geekdada/surgio/compare/v0.3.0...v0.3.1) (2019-08-25)
 
 
