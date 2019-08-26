@@ -1,6 +1,6 @@
 // tslint:disable:no-expression-statement
 import test from 'ava';
-import { NodeTypeEnum, ShadowsocksNodeConfig, SimpleNodeConfig } from '../types';
+import { NodeTypeEnum, ShadowsocksNodeConfig, SimpleNodeConfig, VmessNodeConfig } from '../types';
 import * as utils from './';
 
 test('getSurgeNodes', async t => {
@@ -63,7 +63,7 @@ test('getNodeNames', async t => {
 });
 
 test('getClashNodes', async t => {
-  const nodeList: ReadonlyArray<ShadowsocksNodeConfig> = [{
+  const nodeList: ReadonlyArray<ShadowsocksNodeConfig|VmessNodeConfig> = [{
     nodeName: 'Test Node 1',
     type: NodeTypeEnum.Shadowsocks,
     hostname: 'example.com',
@@ -80,10 +80,34 @@ test('getClashNodes', async t => {
     port: '443',
     method: 'chacha20-ietf-poly1305',
     password: 'password',
+  }, {
+    alterId: '64',
+    host: 'example.com',
+    hostname: '1.1.1.1',
+    method: 'auto',
+    network: 'ws',
+    nodeName: 'Test Node 3',
+    path: '/',
+    port: 8080,
+    tls: false,
+    type: NodeTypeEnum.Vmess,
+    uuid: '1386f85e-657b-4d6e-9d56-78badb75e1fd',
+  }, {
+    alterId: '64',
+    host: '',
+    hostname: '1.1.1.1',
+    method: 'auto',
+    network: 'tcp',
+    nodeName: 'Test Node 4',
+    path: '/',
+    port: 8080,
+    tls: false,
+    type: NodeTypeEnum.Vmess,
+    uuid: '1386f85e-657b-4d6e-9d56-78badb75e1fd',
   }];
-  const array1 = utils.getClashNodes(nodeList);
+  const array = utils.getClashNodes(nodeList);
 
-  t.deepEqual(array1[0], {
+  t.deepEqual(array[0], {
     name: 'Test Node 1',
     type: 'ss',
     server: 'example.com',
@@ -97,7 +121,7 @@ test('getClashNodes', async t => {
       host: 'example.com',
     },
   });
-  t.deepEqual(array1[1], {
+  t.deepEqual(array[1], {
     name: 'Test Node 2',
     type: 'ss',
     server: 'example2.com',
@@ -106,7 +130,32 @@ test('getClashNodes', async t => {
     password: 'password',
     udp: false,
   });
-  t.is(array1.length, 2);
+  t.deepEqual(array[2], {
+    cipher: 'auto',
+    name: 'Test Node 3',
+    alterId: '64',
+    server: '1.1.1.1',
+    network: 'ws',
+    port: 8080,
+    tls: false,
+    type: 'vmess',
+    uuid: '1386f85e-657b-4d6e-9d56-78badb75e1fd',
+    'ws-path': '/',
+    'ws-headers': {
+      Host: 'example.com',
+    },
+  });
+  t.deepEqual(array[3], {
+    cipher: 'auto',
+    name: 'Test Node 4',
+    alterId: '64',
+    server: '1.1.1.1',
+    network: 'tcp',
+    port: 8080,
+    tls: false,
+    type: 'vmess',
+    uuid: '1386f85e-657b-4d6e-9d56-78badb75e1fd',
+  });
 });
 
 test('getShadowsocksNodes', async t => {
@@ -289,4 +338,36 @@ test('loadRemoteSnippetList', async t => {
   t.is(remoteSnippetList[0].main('Proxy'), result1);
   t.is(remoteSnippetList[1].main('Proxy'), result2);
   t.is(remoteSnippetList[2].main('Proxy'), result3);
+});
+
+test('getV2rayNSubscription', async t => {
+  const url = 'https://gist.githubusercontent.com/geekdada/6a427f0a39165ceb00f5e80e6a31b71b/raw/2b09d5d4e75784e1bfe4a4d07ffc8def2febd076/test-v2rayn-sub.txt';
+  const configList = await utils.getV2rayNSubscription({ url });
+
+  t.deepEqual(configList[0], {
+    alterId: '64',
+    host: 'example.com',
+    hostname: '1.1.1.1',
+    method: 'auto',
+    network: 'ws',
+    nodeName: '测试 1',
+    path: '/',
+    port: 8080,
+    tls: false,
+    type: NodeTypeEnum.Vmess,
+    uuid: '1386f85e-657b-4d6e-9d56-78badb75e1fd',
+  });
+  t.deepEqual(configList[1], {
+    alterId: '64',
+    host: 'example.com',
+    hostname: '1.1.1.1',
+    method: 'auto',
+    network: 'tcp',
+    nodeName: '测试 2',
+    path: '/',
+    port: 8080,
+    tls: false,
+    type: NodeTypeEnum.Vmess,
+    uuid: '1386f85e-657b-4d6e-9d56-78badb75e1fd',
+  });
 });
