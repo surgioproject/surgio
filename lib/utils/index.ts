@@ -137,7 +137,7 @@ export const getV2rayNSubscription = async (config: {
 
     const configList = fromBase64(response.data).split('\n').filter(item => !!item);
     const result = configList.map<VmessNodeConfig>(item => {
-      const json = JSON.parse(item);
+      const json = JSON.parse(fromBase64(item.replace('vmess://', '')));
 
       if (json.v !== '2') {
         throw new Error(`暂不支持该订阅类型：${url}`);
