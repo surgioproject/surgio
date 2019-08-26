@@ -371,3 +371,52 @@ test('getV2rayNSubscription', async t => {
     uuid: '1386f85e-657b-4d6e-9d56-78badb75e1fd',
   });
 });
+
+test('getV2rayNNodes', t => {
+  const schemeList = utils.getV2rayNNodes([
+    {
+      type: NodeTypeEnum.Vmess,
+      alterId: '64',
+      hostname: '1.1.1.1',
+      method: 'auto',
+      network: 'ws',
+      nodeName: '测试 1',
+      path: '/',
+      port: 8080,
+      tls: false,
+      host: 'example.com',
+      uuid: '1386f85e-657b-4d6e-9d56-78badb75e1fd',
+    },
+    {
+      type: NodeTypeEnum.Vmess,
+      alterId: '64',
+      hostname: '1.1.1.1',
+      method: 'auto',
+      network: 'tcp',
+      nodeName: '测试 2',
+      path: '/',
+      port: 8080,
+      tls: false,
+      host: '',
+      uuid: '1386f85e-657b-4d6e-9d56-78badb75e1fd',
+    },
+    {
+      type: NodeTypeEnum.Vmess,
+      alterId: '64',
+      hostname: '1.1.1.1',
+      method: 'auto',
+      network: 'ws',
+      nodeName: '测试 3',
+      path: '/',
+      port: 8080,
+      tls: false,
+      host: '',
+      uuid: '1386f85e-657b-4d6e-9d56-78badb75e1fd',
+    },
+  ])
+    .split('\n');
+
+  t.is(schemeList[0], 'vmess://eyJ2IjoiMiIsInBzIjoi5rWL6K+VIDEiLCJhZGQiOiIxLjEuMS4xIiwicG9ydCI6IjgwODAiLCJpZCI6IjEzODZmODVlLTY1N2ItNGQ2ZS05ZDU2LTc4YmFkYjc1ZTFmZCIsImFpZCI6IjY0IiwibmV0Ijoid3MiLCJ0eXBlIjoibm9uZSIsImhvc3QiOiJleGFtcGxlLmNvbSIsInBhdGgiOiIvIiwidGxzIjoiIn0=');
+  t.is(schemeList[1], 'vmess://eyJ2IjoiMiIsInBzIjoi5rWL6K+VIDIiLCJhZGQiOiIxLjEuMS4xIiwicG9ydCI6IjgwODAiLCJpZCI6IjEzODZmODVlLTY1N2ItNGQ2ZS05ZDU2LTc4YmFkYjc1ZTFmZCIsImFpZCI6IjY0IiwibmV0IjoidGNwIiwidHlwZSI6Im5vbmUiLCJob3N0IjoiIiwicGF0aCI6Ii8iLCJ0bHMiOiIifQ==');
+  t.is(schemeList[2], 'vmess://eyJ2IjoiMiIsInBzIjoi5rWL6K+VIDMiLCJhZGQiOiIxLjEuMS4xIiwicG9ydCI6IjgwODAiLCJpZCI6IjEzODZmODVlLTY1N2ItNGQ2ZS05ZDU2LTc4YmFkYjc1ZTFmZCIsImFpZCI6IjY0IiwibmV0Ijoid3MiLCJ0eXBlIjoibm9uZSIsImhvc3QiOiIiLCJwYXRoIjoiLyIsInRscyI6IiJ9');
+});

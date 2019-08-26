@@ -384,6 +384,39 @@ export const getShadowsocksrNodes = (list: ReadonlyArray<ShadowsocksrNodeConfig>
   return result.join('\n');
 };
 
+export const getV2rayNNodes = (list: ReadonlyArray<VmessNodeConfig>): string => {
+  const result: ReadonlyArray<string> = list
+    .map(nodeConfig => {
+      if (nodeConfig.enable === false) { return null; }
+
+      switch (nodeConfig.type) {
+        case NodeTypeEnum.Vmess: {
+          const json = {
+            v: '2',
+            ps: nodeConfig.nodeName,
+            add: nodeConfig.hostname,
+            port: `${nodeConfig.port}`,
+            id: nodeConfig.uuid,
+            aid: nodeConfig.alterId,
+            net: nodeConfig.network,
+            type: 'none',
+            host: nodeConfig.host,
+            path: nodeConfig.path,
+            tls: nodeConfig.tls ? 'tls' : '',
+          };
+
+          return 'vmess://' + toBase64(JSON.stringify(json));
+        }
+
+        default:
+          return null;
+      }
+    })
+    .filter(item => !!item);
+
+  return result.join('\n');
+};
+
 export const getShadowsocksNodesJSON = (list: ReadonlyArray<ShadowsocksNodeConfig>): string => {
   const nodes: ReadonlyArray<object> = list
     .map(nodeConfig => {
