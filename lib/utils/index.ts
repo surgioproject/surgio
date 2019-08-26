@@ -299,7 +299,7 @@ export const fromBase64 = (str: string): string => Buffer.from(str, 'base64').to
  */
 export const getShadowsocksNodes = (
   list: ReadonlyArray<ShadowsocksNodeConfig>,
-  groupName: string
+  groupName: string = 'Surgio'
 ): string => {
   const result: ReadonlyArray<any> = list
     .map(nodeConfig => {
@@ -386,7 +386,7 @@ export const getShadowsocksrNodes = (list: ReadonlyArray<ShadowsocksrNodeConfig>
 
 export const getV2rayNNodes = (list: ReadonlyArray<VmessNodeConfig>): string => {
   const result: ReadonlyArray<string> = list
-    .map(nodeConfig => {
+    .map<string>(nodeConfig => {
       if (nodeConfig.enable === false) { return null; }
 
       switch (nodeConfig.type) {
@@ -406,6 +406,57 @@ export const getV2rayNNodes = (list: ReadonlyArray<VmessNodeConfig>): string => 
           };
 
           return 'vmess://' + toBase64(JSON.stringify(json));
+        }
+
+        default:
+          return null;
+      }
+    })
+    .filter(item => !!item);
+
+  return result.join('\n');
+};
+
+export const getQuantumultNodes = (
+  list: ReadonlyArray<ShadowsocksNodeConfig | VmessNodeConfig>,
+  groupName: string = 'Surgio'
+): string => {
+  function getHeader(
+    host,
+    ua = 'Mozilla/5.0 (iPhone; CPU iPhone OS 12_3_1 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148'
+  ): string {
+    return [
+      `Host:${host}`,
+      `User-Agent:${ua}`,
+    ].join('[Rr][Nn]');
+  }
+
+  const result: ReadonlyArray<string> = list
+    .map<string>(nodeConfig => {
+      if (nodeConfig.enable === false) { return null; }
+
+      switch (nodeConfig.type) {
+        case NodeTypeEnum.Vmess: {
+          const config = [
+            'vmess', nodeConfig.hostname, nodeConfig.port,
+            (nodeConfig.method === 'auto' ? 'chacha20-ietf-poly1305' : nodeConfig.method),
+            JSON.stringify(nodeConfig.uuid), nodeConfig.alterId,
+            `group=${groupName}`,
+            `over-tls=${nodeConfig.tls === true ? 'true' : 'false'}`,
+            `certificate=1`,
+            `obfs=${nodeConfig.network}`,
+            `obfs-path=${JSON.stringify(nodeConfig.path || '/')}`,
+            `obfs-header=${JSON.stringify(getHeader(nodeConfig.host || nodeConfig.hostname ))}`,
+          ].filter(value => !!value).join(',');
+
+          return 'vmess://' + toBase64([
+            nodeConfig.nodeName,
+            config,
+          ].join(' = '));
+        }
+
+        case NodeTypeEnum.Shadowsocks: {
+          return getShadowsocksNodes([nodeConfig], groupName);
         }
 
         default:
