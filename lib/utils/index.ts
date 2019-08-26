@@ -1,30 +1,31 @@
 import assert from 'assert';
 import axios from 'axios';
 import flag from 'country-code-emoji';
-import fs from "fs";
+import fs from 'fs';
 import _ from 'lodash';
 import LRU from 'lru-cache';
 import path from 'path';
 import queryString from 'query-string';
+import { JsonObject } from 'type-fest';
 import URLSafeBase64 from 'urlsafe-base64';
 import YAML from 'yaml';
-import { JsonObject } from 'type-fest';
 import {
   BlackSSLProviderConfig,
+  CommandConfig,
   HttpsNodeConfig,
   NodeFilterType,
   NodeNameFilterType,
   NodeTypeEnum,
+  PlainObjectOf,
   PossibleNodeConfigType,
+  ProxyGroupModifier,
+  RemoteSnippet,
+  RemoteSnippetConfig,
   ShadowsocksNodeConfig,
   ShadowsocksrNodeConfig,
   SimpleNodeConfig,
   SnellNodeConfig,
-  CommandConfig,
-  ProxyGroupModifier,
-  PlainObjectOf,
-  RemoteSnippetConfig,
-  RemoteSnippet,
+  VmessNodeConfig,
 } from '../types';
 
 const ConfigCache = new LRU<string, any>({
@@ -122,7 +123,51 @@ export const getShadowsocksJSONConfig = async (config: {
     await requestConfigFromRemote(config.url);
 };
 
-// eslint-disable-next-line no-unused-vars
+export const getV2rayNSubscription = async (config: {
+  readonly url: string,
+}): Promise<ReadonlyArray<VmessNodeConfig>> => {
+  assert(config.url, 'Lack of subscription url.');
+
+  async function requestConfigFromRemote(url: string): Promise<ReadonlyArray<VmessNodeConfig>> {
+    const response = await axios.get(url, {
+      proxy: false,
+      timeout: 20000,
+      responseType: 'text',
+    });
+
+    const configList = fromBase64(response.data).split('\n').filter(item => !!item);
+    const result = configList.map<VmessNodeConfig>(item => {
+      const json = JSON.parse(item);
+
+      if (json.v !== '2') {
+        throw new Error(`暂不支持该订阅类型：${url}`);
+      }
+
+      return {
+        nodeName: json.ps,
+        type: NodeTypeEnum.Vmess,
+        hostname: json.add,
+        port: json.port,
+        method: 'auto',
+        uuid: json.id,
+        alterId: json.aid || '0',
+        network: json.net,
+        tls: json.tls === 'tls',
+        host: json.host || '',
+        path: json.path || '/',
+      };
+    });
+
+    ConfigCache.set(url, result);
+
+    return result;
+  }
+
+  return ConfigCache.has(config.url) ?
+    ConfigCache.get(config.url) :
+    await requestConfigFromRemote(config.url);
+};
+
 export const getSurgeNodes = (
   list: ReadonlyArray<HttpsNodeConfig | ShadowsocksNodeConfig | SnellNodeConfig>,
   filter?: NodeFilterType,
@@ -200,12 +245,12 @@ export const getClashNodes = (
       switch (nodeConfig.type) {
         case NodeTypeEnum.Shadowsocks:
           return {
+            type: 'ss',
             cipher: nodeConfig.method,
             name: nodeConfig.nodeName,
             password: nodeConfig.password,
             port: nodeConfig.port,
             server: nodeConfig.hostname,
-            type: 'ss',
             udp: nodeConfig['udp-relay'] === 'true',
             ...(nodeConfig.obfs ? {
               plugin: 'obfs',
@@ -213,7 +258,26 @@ export const getClashNodes = (
                 mode: nodeConfig.obfs,
                 host: nodeConfig['obfs-host'],
               },
-            } : {}),
+            } : null),
+          };
+
+        case NodeTypeEnum.Vmess:
+          return {
+            type: 'vmess',
+            cipher: nodeConfig.method,
+            name: nodeConfig.nodeName,
+            server: nodeConfig.hostname,
+            port: nodeConfig.port,
+            uuid: nodeConfig.uuid,
+            alterId: nodeConfig.alterId,
+            network: nodeConfig.network,
+            tls: nodeConfig.tls,
+            ...(nodeConfig.network === 'ws' ? {
+              'ws-path': nodeConfig.path,
+              'ws-headers': {
+                ...(nodeConfig.host ? { Host: nodeConfig.host } : null),
+              },
+            } : null),
           };
 
         default:
@@ -227,6 +291,8 @@ export const getClashNodes = (
 export const toUrlSafeBase64 = (str: string): string => URLSafeBase64.encode(Buffer.from(str, 'utf8'));
 
 export const toBase64 = (str: string): string => Buffer.from(str, 'utf8').toString('base64');
+
+export const fromBase64 = (str: string): string => Buffer.from(str, 'base64').toString('utf8');
 
 /**
  * @see https://github.com/shadowsocks/shadowsocks-org/wiki/SIP002-URI-Scheme
