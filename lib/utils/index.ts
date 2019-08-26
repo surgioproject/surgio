@@ -554,11 +554,17 @@ export const normalizeClashProxyGroupConfig = (
 
   return proxyGroup.map<any>(item => {
     if (item.filter) {
-      return getClashNodeNames(item.name, item.type, nodeList, [NodeTypeEnum.Shadowsocks], item.filter);
+      return getClashNodeNames(item.name, item.type, nodeList, [
+        NodeTypeEnum.Shadowsocks,
+        NodeTypeEnum.Vmess,
+      ], item.filter);
     } else if (item.proxies) {
       return item;
     } else {
-      return getClashNodeNames(item.name, item.type, nodeList, [NodeTypeEnum.Shadowsocks]);
+      return getClashNodeNames(item.name, item.type, nodeList, [
+        NodeTypeEnum.Shadowsocks,
+        NodeTypeEnum.Vmess,
+      ]);
     }
   });
 };
