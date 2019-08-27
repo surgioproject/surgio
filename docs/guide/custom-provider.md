@@ -114,7 +114,6 @@ module.exports = {
   obfsparam: 'music.163.com',
   protocol: 'auth_aes128_md5',
   protoparam: '',
-  group: 'Group',
 }
 ```
 

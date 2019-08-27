@@ -95,10 +95,10 @@ Clash 的 `Proxy` 和 `Proxy Group` 配置对象。`clashProxyConfig` 的内容�
 
 :::tip
 - `filter` 为可选参数
-- Surge 只支持 Shadowsocks, HTTPS, Snell 代理
+- 支持输出 Shadowsocks, HTTPS, Snell 节点
 :::
 
-生成 Surge 规范的代理列表，例如：
+生成 Surge 规范的节点列表，例如：
 
 ```
 🇺🇸US = custom, us.example.com, 10000, chacha20-ietf-poly1305, password, https://raw.githubusercontent.com/ConnersHua/SSEncrypt/master/SSEncrypt.module, udp-relay=true, obfs=tls, obfs-host=gateway-carry.icloud.com
@@ -128,6 +128,7 @@ ss://cmM0LW1kNTpwYXNzd29yZA@hk.com:1234/?group=subscribe_demo#%F0%9F%87%AD%F0%9F
 
 :::tip
 - 第二个入参为 Group 名称
+- 支持输出 Shadowsocks, Shadowsocksr, Vmess, HTTPS 节点
 :::
 
 生成 Quantumult 订阅 Scheme 列表，例如：
