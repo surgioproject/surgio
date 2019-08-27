@@ -314,8 +314,8 @@ export const getShadowsocksNodes = (
           } = {
             ...(config.obfs ? {
               plugin: `${encodeURIComponent(`obfs-local;obfs=${config.obfs};obfs-host=${config['obfs-host']}`)}`,
-            } : {}),
-            ...(groupName ? { group: encodeURIComponent(groupName) } : {}),
+            } : null),
+            ...(groupName ? { group: encodeURIComponent(groupName) } : null),
           };
 
           return [
@@ -344,7 +344,7 @@ export const getShadowsocksNodes = (
   return result.join('\n');
 };
 
-export const getShadowsocksrNodes = (list: ReadonlyArray<ShadowsocksrNodeConfig>): string => {
+export const getShadowsocksrNodes = (list: ReadonlyArray<ShadowsocksrNodeConfig>, groupName: string): string => {
   const result: ReadonlyArray<string> = list
     .map(nodeConfig => {
       if (nodeConfig.enable === false) { return null; }
@@ -363,7 +363,7 @@ export const getShadowsocksrNodes = (list: ReadonlyArray<ShadowsocksrNodeConfig>
             obfsparam: toUrlSafeBase64(nodeConfig.obfsparam),
             protoparam: toUrlSafeBase64(nodeConfig.protoparam),
             remarks: toUrlSafeBase64(nodeConfig.nodeName),
-            group: toUrlSafeBase64(nodeConfig.group),
+            group: toUrlSafeBase64(groupName),
             udpport: 0,
             uot: 0,
           };
@@ -418,7 +418,7 @@ export const getV2rayNNodes = (list: ReadonlyArray<VmessNodeConfig>): string => 
 };
 
 export const getQuantumultNodes = (
-  list: ReadonlyArray<ShadowsocksNodeConfig | VmessNodeConfig>,
+  list: ReadonlyArray<ShadowsocksNodeConfig|VmessNodeConfig|ShadowsocksrNodeConfig|HttpsNodeConfig>,
   groupName: string = 'Surgio'
 ): string => {
   function getHeader(
@@ -459,6 +459,27 @@ export const getQuantumultNodes = (
           return getShadowsocksNodes([nodeConfig], groupName);
         }
 
+        case NodeTypeEnum.Shadowsocksr:
+          return getShadowsocksrNodes([nodeConfig], groupName);
+
+        case NodeTypeEnum.HTTPS: {
+          const config = [
+            nodeConfig.nodeName,
+            [
+              'http',
+              `upstream-proxy-address=${nodeConfig.hostname}`,
+              `upstream-proxy-port=${nodeConfig.port}`,
+              'upstream-proxy-auth=true',
+              `upstream-proxy-username=${nodeConfig.username}`,
+              `upstream-proxy-password=${nodeConfig.password}`,
+              'over-tls=true',
+              'certificate=1'
+            ].join(', ')
+          ].join(' = ');
+
+          return 'http://' + toBase64(config);
+        }
+
         default:
           return null;
       }
@@ -489,7 +510,7 @@ export const getShadowsocksNodesJSON = (list: ReadonlyArray<ShadowsocksNodeConfi
             ...(useObfs ? {
               plugin: 'obfs-local',
               'plugin-opts': `obfs=${nodeConfig.obfs};obfs-host=${nodeConfig['obfs-host']}`
-            } : {})
+            } : null)
           };
         }
 
@@ -550,7 +571,7 @@ export const getClashNodeNames = (
     ...(ruleType === 'url-test' ? {
       url: 'http://www.gstatic.com/generate_204',
       interval: 1200,
-    } : {}),
+    } : null),
   };
 };
 

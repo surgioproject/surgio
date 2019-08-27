@@ -112,7 +112,6 @@ export interface ShadowsocksrNodeConfig extends SimpleNodeConfig {
   readonly password: string;
   readonly obfsparam: string;
   readonly protoparam: string;
-  readonly group: string;
 }
 
 export interface VmessNodeConfig extends SimpleNodeConfig {
