@@ -34,15 +34,15 @@ cd my-rule-store
 
 在进入正题之前，我们先解释一下核心的几个术语：
 
-### Provider (提供方)
+### Provider -- <small>提供方</small>
 
 节点的提供方，可以是一个订阅地址也可以是一组节点的配置。
 
-### Template (模板)
+### Template -- <small>模板</small>
 
 Surgio 根据模板来渲染指定的文件。
 
-### Artifact (产品)
+### Artifact -- <small>产品</small>
 
 Surgio 生成出的规则就是「产品」。
 

@@ -1,9 +1,9 @@
 ---
-title: Template (模板)
+title: Template 模板
 sidebarDepth: 2
 ---
 
-# Template (模板)
+# Template 模板
 
 Surgio 为了能够灵活地定义模板而引入了 [Nunjucks](https://nunjucks.bootcss.com/)。
 
@@ -77,7 +77,7 @@ Youtube Premium 节点过滤器。Surgio 默认会将名称中包含 *日*, *美
 
 ### clashProxyConfig
 
-Clash 的 `Proxy` 和 `Proxy Group` 配置对象。`clashProxyConfig` 的内容依赖 Artifact 的 [`proxyGroupModifier` 函数](/guide/custom-artifact#proxygroupmodifier-nodelist-filters)。
+Clash 的 `Proxy` 和 `Proxy Group` 配置对象。`clashProxyConfig` 的内容依赖 Artifact 的 [`proxyGroupModifier` 函数](/guide/custom-artifact.md#proxygroupmodifier-nodelist-filters)。
 
 由于很难在模板中直接书写 Yaml 格式的文本，所以引入了一个特殊的变量用来存储 Clash 的节点配置，然后利用 Nunjucks 的 [filter](https://nunjucks.bootcss.com/templating.html#part-cda1d805a3577fa5) 来输出 Yaml 格式文本。
 

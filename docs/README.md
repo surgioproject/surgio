@@ -7,6 +7,11 @@ actionLink: /guide/
 footer: MIT Licensed | Copyright © 2019-present Roy Li
 ---
 
+<p style="text-align: center">
+  <script async defer src="https://buttons.github.io/buttons.js"></script>
+  <a class="github-button" href="https://github.com/geekdada/surgio" data-icon="octicon-star" data-size="large" data-show-count="true" aria-label="Star geekdada/surgio on GitHub">Star</a>
+</p>
+
 ### 马上开始
 
 ```bash

@@ -1,9 +1,9 @@
 ---
-title: Artifact (产品)
+title: Artifact 产品
 sidebarDepth: 2
 ---
 
-# Artifact (产品)
+# Artifact 产品
 
 Surgio 会根据 Artifact 的值来生成配置文件。你可以一次性配置多个 Artifact，一次性生成所有需要的配置文件。
 

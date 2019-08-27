@@ -59,6 +59,13 @@ module.exports = {
 };
 ```
 
+**推荐的 RuleSet 列表：**
+
+- [ConnersHua/Profiles](https://github.com/ConnersHua/Profiles/tree/master/Surge/Ruleset)
+- [Blankwonder/surge-list](https://github.com/Blankwonder/surge-list/)
+- [Hackl0us/SS-Rule-Snippet](https://github.com/Hackl0us/SS-Rule-Snippet/tree/master/Rulesets)
+- [lhie1/Rules](https://github.com/lhie1/Rules/tree/master/Surge3)
+
 ### upload
 
 - 类型: ` UploadConfig`

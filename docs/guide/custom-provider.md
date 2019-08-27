@@ -1,9 +1,9 @@
 ---
-title: Provider (服务提供者)
+title: Provider 服务提供者
 sidebarDepth: 2
 ---
 
-# Provider (服务提供者)
+# Provider 服务提供者
 
 你可以在 `provider` 目录内看到两个已经写好的 Provider，它们分别是订阅地址和自己维护的节点列表。
 
