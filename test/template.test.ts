@@ -1,6 +1,6 @@
 // tslint:disable:no-expression-statement
 import test from 'ava';
-import getEngine from './template';
+import getEngine from '../lib/template';
 
 const templateEngine = getEngine(process.cwd());
 

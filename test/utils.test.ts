@@ -1,7 +1,18 @@
 // tslint:disable:no-expression-statement
 import test from 'ava';
-import { NodeTypeEnum, ShadowsocksNodeConfig, SimpleNodeConfig, VmessNodeConfig } from '../types';
-import * as utils from './';
+import moxios from 'moxios';
+import fs from 'fs';
+import path from 'path';
+import { NodeTypeEnum, ShadowsocksNodeConfig, SimpleNodeConfig, VmessNodeConfig } from '../lib/types';
+import * as utils from '../lib/utils';
+
+test.beforeEach(() => {
+  moxios.install();
+});
+
+test.afterEach(() => {
+  moxios.uninstall();
+});
 
 test('getSurgeNodes', async t => {
   const nodeList: ReadonlyArray<ShadowsocksNodeConfig> = [{
@@ -249,8 +260,14 @@ test('normalizeClashProxyGroupConfig', t => {
 });
 
 test('getShadowsocksJSONConfig', async t => {
-  const url = 'https://gist.githubusercontent.com/geekdada/c583aa32ee4f93511dff66802b142d10/raw/b76452da7fd587fe3d734520ce373f0c9bb54e87/gui-config.json';
-  const config = await utils.getShadowsocksJSONConfig({ url, udpRelay: true });
+  moxios.stubRequest('/gui-config.json', {
+    status: 200,
+    responseText: fs.readFileSync(path.join(__dirname, 'asset/gui-config-1.json'), {
+      encoding: 'utf8',
+    }),
+  })
+
+  const config = await utils.getShadowsocksJSONConfig({ url: '/gui-config.json', udpRelay: true });
 
   t.deepEqual(config[0], {
     nodeName: '🇺🇸US 1',
@@ -297,22 +314,40 @@ test('getShadowsocksJSONConfig', async t => {
 });
 
 test('loadRemoteSnippetList', async t => {
-  t.plan(4);
+  moxios.stubRequest('/test-ruleset.list', {
+    status: 200,
+    responseText: fs.readFileSync(path.join(__dirname, 'asset/test-ruleset-1.list'), {
+      encoding: 'utf8',
+    }),
+  });
+  moxios.stubRequest('/netflix.list', {
+    status: 200,
+    responseText: fs.readFileSync(path.join(__dirname, 'asset/netflix.list'), {
+      encoding: 'utf8',
+    }),
+  });
+  moxios.stubRequest('/telegram.list', {
+    status: 200,
+    responseText: fs.readFileSync(path.join(__dirname, 'asset/telegram.list'), {
+      encoding: 'utf8',
+    }),
+  });
 
   const remoteSnippetList = await utils.loadRemoteSnippetList([
     {
-      url: 'https://github.com/Blankwonder/surge-list/raw/master/telegram.list',
+      url: '/telegram.list',
       name: 'telegram',
     },
     {
-      url: 'https://github.com/Blankwonder/surge-list/raw/master/netflix.list',
+      url: '/netflix.list',
       name: 'netflix',
     },
     {
-      url: 'https://gist.githubusercontent.com/geekdada/77995d58363c0a271ab56bbcc2dc9054/raw/d1ba422e96a29d8a846303454aeba8fa0ee72e1c/test-ruleset.list',
+      url: '/test-ruleset.list',
       name: 'test',
     },
   ]);
+
   const result1 = 'IP-CIDR,91.108.56.0/22,Proxy,no-resolve\n' +
     'IP-CIDR,91.108.4.0/22,Proxy,no-resolve\n' +
     'IP-CIDR,91.108.8.0/22,Proxy,no-resolve\n' +
@@ -340,21 +375,37 @@ test('loadRemoteSnippetList', async t => {
   t.is(remoteSnippetList[0].main('Proxy'), result1);
   t.is(remoteSnippetList[1].main('Proxy'), result2);
   t.is(remoteSnippetList[2].main('Proxy'), result3);
+});
+
+test('loadRemoteSnippetList with error', async t => {
+  t.plan(1);
+
+  moxios.stubRequest('/error', {
+    status: 500,
+    responseText: '',
+  });
 
   try {
-    await utils.loadRemoteSnippetList([
+    const res = await utils.loadRemoteSnippetList([
       {
-        url: 'https://example.com/404',
+        url: '/error',
         name: 'error',
       },
     ]);
-  } catch (e) {
-    t.pass();
+  } catch (err) {
+    t.truthy(err instanceof Error);
   }
-});
+})
 
 test('getV2rayNSubscription', async t => {
-  const url = 'https://gist.githubusercontent.com/geekdada/6a427f0a39165ceb00f5e80e6a31b71b/raw/2b09d5d4e75784e1bfe4a4d07ffc8def2febd076/test-v2rayn-sub.txt';
+  moxios.stubRequest('/test-v2rayn-sub.txt', {
+    status: 200,
+    responseText: fs.readFileSync(path.join(__dirname, 'asset/test-v2rayn-sub.txt'), {
+      encoding: 'utf8',
+    }),
+  });
+
+  const url = '/test-v2rayn-sub.txt';
   const configList = await utils.getV2rayNSubscription({ url });
 
   t.deepEqual(configList[0], {
