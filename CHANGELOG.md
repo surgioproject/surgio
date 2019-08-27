@@ -1,3 +1,22 @@
+# [0.5.0](https://github.com/geekdada/surgio/compare/v0.4.0...v0.5.0) (2019-08-27)
+
+
+### Bug Fixes
+
+* double base64 ([853172d](https://github.com/geekdada/surgio/commit/853172d))
+
+
+### Features
+
+* 生成 quan 订阅 scheme ([afe0a21](https://github.com/geekdada/surgio/commit/afe0a21))
+* 生成 v2rayn scheme ([981e6d7](https://github.com/geekdada/surgio/commit/981e6d7))
+* 支持导出 Quantumult 的 HTTPS, Shadowsocksr 节点 ([dd728e0](https://github.com/geekdada/surgio/commit/dd728e0))
+* add shadowsocks subscribe support ([e993d1b](https://github.com/geekdada/surgio/commit/e993d1b))
+* add v2rayn subscribe support ([067ad43](https://github.com/geekdada/surgio/commit/067ad43))
+* clash 输出 vmess ([05cc557](https://github.com/geekdada/surgio/commit/05cc557))
+
+
+
 # [0.4.0](https://github.com/geekdada/surgio/compare/v0.3.1...v0.4.0) (2019-08-25)
 
 
