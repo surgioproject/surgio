@@ -297,6 +297,8 @@ test('getShadowsocksJSONConfig', async t => {
 });
 
 test('loadRemoteSnippetList', async t => {
+  t.plan(4);
+
   const remoteSnippetList = await utils.loadRemoteSnippetList([
     {
       url: 'https://github.com/Blankwonder/surge-list/raw/master/telegram.list',
@@ -309,7 +311,7 @@ test('loadRemoteSnippetList', async t => {
     {
       url: 'https://gist.githubusercontent.com/geekdada/77995d58363c0a271ab56bbcc2dc9054/raw/d1ba422e96a29d8a846303454aeba8fa0ee72e1c/test-ruleset.list',
       name: 'test',
-    }
+    },
   ]);
   const result1 = 'IP-CIDR,91.108.56.0/22,Proxy,no-resolve\n' +
     'IP-CIDR,91.108.4.0/22,Proxy,no-resolve\n' +
@@ -338,6 +340,17 @@ test('loadRemoteSnippetList', async t => {
   t.is(remoteSnippetList[0].main('Proxy'), result1);
   t.is(remoteSnippetList[1].main('Proxy'), result2);
   t.is(remoteSnippetList[2].main('Proxy'), result3);
+
+  try {
+    await utils.loadRemoteSnippetList([
+      {
+        url: 'https://example.com/404',
+        name: 'error',
+      },
+    ]);
+  } catch (e) {
+    t.pass();
+  }
 });
 
 test('getV2rayNSubscription', async t => {
@@ -396,7 +409,7 @@ test('getV2rayNNodes', t => {
       nodeName: '测试 2',
       path: '/',
       port: 8080,
-      tls: false,
+      tls: true,
       host: '',
       uuid: '1386f85e-657b-4d6e-9d56-78badb75e1fd',
     },
@@ -417,7 +430,7 @@ test('getV2rayNNodes', t => {
     .split('\n');
 
   t.is(schemeList[0], 'vmess://eyJ2IjoiMiIsInBzIjoi5rWL6K+VIDEiLCJhZGQiOiIxLjEuMS4xIiwicG9ydCI6IjgwODAiLCJpZCI6IjEzODZmODVlLTY1N2ItNGQ2ZS05ZDU2LTc4YmFkYjc1ZTFmZCIsImFpZCI6IjY0IiwibmV0Ijoid3MiLCJ0eXBlIjoibm9uZSIsImhvc3QiOiJleGFtcGxlLmNvbSIsInBhdGgiOiIvIiwidGxzIjoiIn0=');
-  t.is(schemeList[1], 'vmess://eyJ2IjoiMiIsInBzIjoi5rWL6K+VIDIiLCJhZGQiOiIxLjEuMS4xIiwicG9ydCI6IjgwODAiLCJpZCI6IjEzODZmODVlLTY1N2ItNGQ2ZS05ZDU2LTc4YmFkYjc1ZTFmZCIsImFpZCI6IjY0IiwibmV0IjoidGNwIiwidHlwZSI6Im5vbmUiLCJob3N0IjoiIiwicGF0aCI6Ii8iLCJ0bHMiOiIifQ==');
+  t.is(schemeList[1], 'vmess://eyJ2IjoiMiIsInBzIjoi5rWL6K+VIDIiLCJhZGQiOiIxLjEuMS4xIiwicG9ydCI6IjgwODAiLCJpZCI6IjEzODZmODVlLTY1N2ItNGQ2ZS05ZDU2LTc4YmFkYjc1ZTFmZCIsImFpZCI6IjY0IiwibmV0IjoidGNwIiwidHlwZSI6Im5vbmUiLCJob3N0IjoiIiwicGF0aCI6Ii8iLCJ0bHMiOiJ0bHMifQ==');
   t.is(schemeList[2], 'vmess://eyJ2IjoiMiIsInBzIjoi5rWL6K+VIDMiLCJhZGQiOiIxLjEuMS4xIiwicG9ydCI6IjgwODAiLCJpZCI6IjEzODZmODVlLTY1N2ItNGQ2ZS05ZDU2LTc4YmFkYjc1ZTFmZCIsImFpZCI6IjY0IiwibmV0Ijoid3MiLCJ0eXBlIjoibm9uZSIsImhvc3QiOiIiLCJwYXRoIjoiLyIsInRscyI6IiJ9');
 });
 
@@ -481,7 +494,18 @@ test('getQuantumultNodes', t => {
       port: 443,
       username: 'snsms',
       password: 'nndndnd',
-    }
+    },
+    {
+      nodeName: '🇺🇸US 1',
+      type: NodeTypeEnum.Shadowsocks,
+      hostname: 'us.example.com',
+      port: 443,
+      method: 'chacha20-ietf-poly1305',
+      password: 'password',
+      'udp-relay': 'true',
+      obfs: 'tls',
+      'obfs-host': 'gateway-carry.icloud.com',
+    },
   ])
     .split('\n');
 
@@ -490,4 +514,5 @@ test('getQuantumultNodes', t => {
   t.is(schemeList[2], 'vmess://5rWL6K+VIDMgPSB2bWVzcywxLjEuMS4xLDgwODAsY2hhY2hhMjAtaWV0Zi1wb2x5MTMwNSwiMTM4NmY4NWUtNjU3Yi00ZDZlLTlkNTYtNzhiYWRiNzVlMWZkIiw2NCxncm91cD1TdXJnaW8sb3Zlci10bHM9ZmFsc2UsY2VydGlmaWNhdGU9MSxvYmZzPXdzLG9iZnMtcGF0aD0iLyIsb2Jmcy1oZWFkZXI9Ikhvc3Q6MS4xLjEuMVtScl1bTm5dVXNlci1BZ2VudDpNb3ppbGxhLzUuMCAoaVBob25lOyBDUFUgaVBob25lIE9TIDEyXzNfMSBsaWtlIE1hYyBPUyBYKSBBcHBsZVdlYktpdC82MDUuMS4xNSAoS0hUTUwsIGxpa2UgR2Vja28pIE1vYmlsZS8xNUUxNDgi');
   t.is(schemeList[3], 'ssr://aGsuZXhhbXBsZS5jb206MTAwMDA6YXV0aF9hZXMxMjhfbWQ1OmNoYWNoYTIwLWlldGY6dGxzMS4yX3RpY2tldF9hdXRoOmNHRnpjM2R2Y21RLz9ncm91cD1VM1Z5WjJsdiZvYmZzcGFyYW09YlhWemFXTXVNVFl6TG1OdmJRJnByb3RvcGFyYW09JnJlbWFya3M9OEotSHJmQ2ZoN0JJU3cmdWRwcG9ydD0wJnVvdD0w');
   t.is(schemeList[4], 'http://dGVzdCA9IGh0dHAsIHVwc3RyZWFtLXByb3h5LWFkZHJlc3M9YS5jb20sIHVwc3RyZWFtLXByb3h5LXBvcnQ9NDQzLCB1cHN0cmVhbS1wcm94eS1hdXRoPXRydWUsIHVwc3RyZWFtLXByb3h5LXVzZXJuYW1lPXNuc21zLCB1cHN0cmVhbS1wcm94eS1wYXNzd29yZD1ubmRuZG5kLCBvdmVyLXRscz10cnVlLCBjZXJ0aWZpY2F0ZT0x');
+  t.is(schemeList[5], 'ss://Y2hhY2hhMjAtaWV0Zi1wb2x5MTMwNTpwYXNzd29yZA@us.example.com:443/?plugin=obfs-local%3Bobfs%3Dtls%3Bobfs-host%3Dgateway-carry.icloud.com&group=Surgio#%F0%9F%87%BA%F0%9F%87%B8US%201');
 });

@@ -224,7 +224,9 @@ export const getSurgeNodes = (
           ].join(' = '));
         }
 
+        // istanbul ignore next
         default:
+          console.info(`${nodeConfig!.type} is not supported, ${nodeConfig!.nodeName} will be ignored.`);
           return null;
       }
     })
@@ -280,6 +282,7 @@ export const getClashNodes = (
             } : null),
           };
 
+        // istanbul ignore next
         default:
           console.info(`${nodeConfig.type} is not supported yet, ${nodeConfig.nodeName} will be ignored.`);
           return null;
@@ -288,10 +291,13 @@ export const getClashNodes = (
     .filter(item => item !== null);
 };
 
+// istanbul ignore next
 export const toUrlSafeBase64 = (str: string): string => URLSafeBase64.encode(Buffer.from(str, 'utf8'));
 
+// istanbul ignore next
 export const toBase64 = (str: string): string => Buffer.from(str, 'utf8').toString('base64');
 
+// istanbul ignore next
 export const fromBase64 = (str: string): string => Buffer.from(str, 'base64').toString('utf8');
 
 /**
@@ -335,7 +341,9 @@ export const getShadowsocksNodes = (
           ].join('');
         }
 
+        // istanbul ignore next
         default:
+          console.info(`${nodeConfig.type} is not supported, ${nodeConfig.nodeName} will be ignored.`);
           return null;
       }
     })
@@ -375,7 +383,9 @@ export const getShadowsocksrNodes = (list: ReadonlyArray<ShadowsocksrNodeConfig>
           ].join(''));
         }
 
+        // istanbul ignore next
         default:
+          console.info(`${nodeConfig.type} is not supported, ${nodeConfig.nodeName} will be ignored.`);
           return null;
       }
     })
@@ -408,7 +418,9 @@ export const getV2rayNNodes = (list: ReadonlyArray<VmessNodeConfig>): string => 
           return 'vmess://' + toBase64(JSON.stringify(json));
         }
 
+        // istanbul ignore next
         default:
+          console.info(`${nodeConfig.type} is not supported, ${nodeConfig.nodeName} will be ignored.`);
           return null;
       }
     })
@@ -480,7 +492,9 @@ export const getQuantumultNodes = (
           return 'http://' + toBase64(config);
         }
 
+        // istanbul ignore next
         default:
+          console.info(`${nodeConfig!.type} is not supported yet, ${nodeConfig!.nodeName} will be ignored.`);
           return null;
       }
     })
@@ -514,7 +528,9 @@ export const getShadowsocksNodesJSON = (list: ReadonlyArray<ShadowsocksNodeConfi
           };
         }
 
+        // istanbul ignore next
         default:
+          console.info(`${nodeConfig!.type} is not supported, ${nodeConfig!.nodeName} will be ignored.`);
           return null;
       }
     })
