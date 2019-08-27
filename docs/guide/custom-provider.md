@@ -14,6 +14,7 @@ sidebarDepth: 2
 |  类型  |  描述  |  备注  |
 |:---:| --- | --- |
 |  `shadowsocks_json_subscribe`  |  Windows 客户端的订阅地址  |    |
+|  `shadowsocks_subscribe`  |  通用的 Shadowwsocks 订阅地址  |    |
 |  `v2rayn_subscribe`  |  V2rayN 订阅地址  |  [协议](https://github.com/2dust/v2rayN/wiki/%E8%AE%A2%E9%98%85%E5%8A%9F%E8%83%BD%E8%AF%B4%E6%98%8E)  |
 |  `custom`  |  自己维护的节点  |  支持 Shadowsocks, Shadowsocksr, Snell, HTTPS  |
 
@@ -37,6 +38,33 @@ module.exports = {
 
 :::warning 注意
 - 如果你正在使用 [DlerCloud](https://dlercloud.com/auth/register?affid=45071)，可以使用 Surge 的托管订阅地址，然后使用 `surge2sswin` 转换
+:::
+
+### udpRelay
+
+- 类型: `boolean`
+- 默认值: `false`
+
+由于这种订阅协议不支持定义 UDP 转发的支持情况，所以单独出来进行配置。UDP 转发可以应用在 Surge 中。
+
+## shadowsocks_subscribe
+
+```js
+module.exports = {
+  type: 'shadowsocks_subscribe',
+  url: '',
+  udpRelay: true,
+};
+```
+
+### url
+
+- 类型: `string`
+- 默认值: `undefined`
+- <Badge text="必须" vertical="middle" />
+
+:::warning 注意
+- 如果你正在使用 [DlerCloud](https://dlercloud.com/auth/register?affid=45071)，可以使用 SS 订阅地址
 :::
 
 ### udpRelay
