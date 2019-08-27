@@ -13,6 +13,7 @@ export enum SupportProviderEnum {
   BlackSSL = 'blackssl',
   ShadowsocksJsonSubscribe = 'shadowsocks_json_subscribe',
   V2rayNSubscribe = 'v2rayn_subscribe',
+  ShadowsocksSubscribe = 'shadowsocks_subscribe',
   Custom = 'custom',
 }
 
@@ -63,6 +64,11 @@ export interface BlackSSLProviderConfig extends ProviderConfig {
 }
 
 export interface ShadowsocksJsonSubscribeProviderConfig extends ProviderConfig {
+  readonly url: string;
+  readonly udpRelay?: boolean;
+}
+
+export interface ShadowsocksSubscribeProviderConfig extends ProviderConfig {
   readonly url: string;
   readonly udpRelay?: boolean;
 }

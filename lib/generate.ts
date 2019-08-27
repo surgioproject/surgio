@@ -22,7 +22,9 @@ import {
   RemoteSnippet,
   ShadowsocksJsonSubscribeProviderConfig,
   SimpleNodeConfig,
-  SupportProviderEnum, V2rayNSubscribeProviderConfig,
+  SupportProviderEnum, 
+  V2rayNSubscribeProviderConfig, 
+  ShadowsocksSubscribeProviderConfig,
 } from './types';
 import {
   getBlackSSLConfig,
@@ -45,6 +47,7 @@ import {
   toUrlSafeBase64,
   usFilter,
   youtubePremiumFilter as defaultYoutubePremiumFilter,
+  getShadowsocksSubscription,
 } from './utils';
 
 const rimraf = util.promisify(_rimraf);
@@ -119,6 +122,9 @@ export async function generate(
 
         case SupportProviderEnum.ShadowsocksJsonSubscribe:
           return getShadowsocksJSONConfig(file as ShadowsocksJsonSubscribeProviderConfig);
+
+        case SupportProviderEnum.ShadowsocksSubscribe:
+          return getShadowsocksSubscription(file as ShadowsocksSubscribeProviderConfig);
 
         case SupportProviderEnum.Custom: {
           assert((file as CustomProviderConfig).nodeList, 'Lack of nodeList.');

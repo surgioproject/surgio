@@ -265,7 +265,7 @@ test('getShadowsocksJSONConfig', async t => {
     responseText: fs.readFileSync(path.join(__dirname, 'asset/gui-config-1.json'), {
       encoding: 'utf8',
     }),
-  })
+  });
 
   const config = await utils.getShadowsocksJSONConfig({ url: '/gui-config.json', udpRelay: true });
 
@@ -566,4 +566,71 @@ test('getQuantumultNodes', t => {
   t.is(schemeList[3], 'ssr://aGsuZXhhbXBsZS5jb206MTAwMDA6YXV0aF9hZXMxMjhfbWQ1OmNoYWNoYTIwLWlldGY6dGxzMS4yX3RpY2tldF9hdXRoOmNHRnpjM2R2Y21RLz9ncm91cD1VM1Z5WjJsdiZvYmZzcGFyYW09YlhWemFXTXVNVFl6TG1OdmJRJnByb3RvcGFyYW09JnJlbWFya3M9OEotSHJmQ2ZoN0JJU3cmdWRwcG9ydD0wJnVvdD0w');
   t.is(schemeList[4], 'http://dGVzdCA9IGh0dHAsIHVwc3RyZWFtLXByb3h5LWFkZHJlc3M9YS5jb20sIHVwc3RyZWFtLXByb3h5LXBvcnQ9NDQzLCB1cHN0cmVhbS1wcm94eS1hdXRoPXRydWUsIHVwc3RyZWFtLXByb3h5LXVzZXJuYW1lPXNuc21zLCB1cHN0cmVhbS1wcm94eS1wYXNzd29yZD1ubmRuZG5kLCBvdmVyLXRscz10cnVlLCBjZXJ0aWZpY2F0ZT0x');
   t.is(schemeList[5], 'ss://Y2hhY2hhMjAtaWV0Zi1wb2x5MTMwNTpwYXNzd29yZA@us.example.com:443/?plugin=obfs-local%3Bobfs%3Dtls%3Bobfs-host%3Dgateway-carry.icloud.com&group=Surgio#%F0%9F%87%BA%F0%9F%87%B8US%201');
+});
+
+test('getShadowsocksSubscription with udp', async t => {
+  moxios.stubRequest(/\/ss-sub\.txt.*/, {
+    status: 200,
+    responseText: fs.readFileSync(path.join(__dirname, 'asset/test-ss-sub.txt'), {
+      encoding: 'utf8',
+    }),
+  });
+
+  const nodeList = await utils.getShadowsocksSubscription({
+    url: '/ss-sub.txt',
+    udpRelay: true,
+  });
+
+  t.deepEqual(nodeList[0], {
+    type: NodeTypeEnum.Shadowsocks,
+    nodeName: '🇺🇸US 1',
+    hostname: 'us.example.com',
+    port: '443',
+    method: 'chacha20-ietf-poly1305',
+    password: 'password',
+    'udp-relay': 'true',
+    obfs: 'tls',
+    'obfs-host': 'gateway-carry.icloud.com',
+  });
+  t.deepEqual(nodeList[1], {
+    nodeName: '🇺🇸US 2',
+    type: NodeTypeEnum.Shadowsocks,
+    hostname: 'us.example.com',
+    port: '443',
+    method: 'chacha20-ietf-poly1305',
+    password: 'password',
+    'udp-relay': 'true',
+  });
+});
+
+test('getShadowsocksSubscription without udp', async t => {
+  moxios.stubRequest(/\/ss-sub\.txt.*/, {
+    status: 200,
+    responseText: fs.readFileSync(path.join(__dirname, 'asset/test-ss-sub.txt'), {
+      encoding: 'utf8',
+    }),
+  });
+
+  const nodeList = await utils.getShadowsocksSubscription({
+    url: '/ss-sub.txt',
+  });
+
+  t.deepEqual(nodeList[0], {
+    type: NodeTypeEnum.Shadowsocks,
+    nodeName: '🇺🇸US 1',
+    hostname: 'us.example.com',
+    port: '443',
+    method: 'chacha20-ietf-poly1305',
+    password: 'password',
+    obfs: 'tls',
+    'obfs-host': 'gateway-carry.icloud.com',
+  });
+  t.deepEqual(nodeList[1], {
+    nodeName: '🇺🇸US 2',
+    type: NodeTypeEnum.Shadowsocks,
+    hostname: 'us.example.com',
+    port: '443',
+    method: 'chacha20-ietf-poly1305',
+    password: 'password',
+  });
 });

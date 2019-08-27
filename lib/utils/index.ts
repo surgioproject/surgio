@@ -5,6 +5,7 @@ import fs from 'fs';
 import _ from 'lodash';
 import LRU from 'lru-cache';
 import path from 'path';
+import URL from 'url';
 import queryString from 'query-string';
 import { JsonObject } from 'type-fest';
 import URLSafeBase64 from 'urlsafe-base64';
@@ -111,6 +112,52 @@ export const getShadowsocksJSONConfig = async (config: {
       }
 
       return nodeConfig;
+    });
+
+    ConfigCache.set(url, result);
+
+    return result;
+  }
+
+  return ConfigCache.has(config.url) ?
+    ConfigCache.get(config.url) :
+    await requestConfigFromRemote(config.url);
+};
+
+export const getShadowsocksSubscription = async (config: {
+  readonly url: string;
+  readonly udpRelay?: boolean;
+}): Promise<ReadonlyArray<ShadowsocksNodeConfig>> => {
+  assert(config.url, 'Lack of subscription url.');
+
+  async function requestConfigFromRemote(url: string): Promise<ReadonlyArray<ShadowsocksNodeConfig>> {
+    const response = await axios.get(url, {
+      proxy: false,
+      timeout: 20000,
+      responseType: 'text',
+    });
+
+    const configList = fromBase64(response.data).split('\n').filter(item => !!item);
+    const result = configList.map<any>(item => {
+      const scheme = URL.parse(item, true);
+      const userInfo = fromUrlSafeBase64(scheme.auth).split(':');
+      const pluginInfo = typeof scheme.query.plugin === 'string' ? decodeStringList<any>(scheme.query.plugin.split(';')) : {};
+
+      return {
+        type: NodeTypeEnum.Shadowsocks,
+        nodeName: decodeURIComponent(scheme.hash.replace('#', '')),
+        hostname: scheme.hostname,
+        port: scheme.port,
+        method: userInfo[0],
+        password: userInfo[1],
+        ...(typeof config.udpRelay === 'boolean' ? {
+          'udp-relay': config.udpRelay ? 'true' : 'false',
+        } : null),
+        ...(pluginInfo['obfs-local'] ? {
+          obfs: pluginInfo.obfs,
+          'obfs-host': pluginInfo['obfs-host'],
+        } : null),
+      };
     });
 
     ConfigCache.set(url, result);
@@ -293,6 +340,9 @@ export const getClashNodes = (
 
 // istanbul ignore next
 export const toUrlSafeBase64 = (str: string): string => URLSafeBase64.encode(Buffer.from(str, 'utf8'));
+
+// istanbul ignore next
+export const fromUrlSafeBase64 = (str: string): string => URLSafeBase64.decode(str).toString('utf8');
 
 // istanbul ignore next
 export const toBase64 = (str: string): string => Buffer.from(str, 'utf8').toString('base64');
@@ -624,6 +674,15 @@ export const pickAndFormatStringList = (obj: object, keyList: readonly string[])
     }
   });
   return result;
+};
+
+export const decodeStringList = <T = object>(stringList: ReadonlyArray<string>): T => {
+  const result = {};
+  stringList.forEach(item => {
+    const pair = item.split('=');
+    result[pair[0]] = pair[1] || true;
+  });
+  return result as T;
 };
 
 export const normalizeConfig = (cwd: string, obj: Partial<CommandConfig>): CommandConfig => {
