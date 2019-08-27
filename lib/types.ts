@@ -1,13 +1,19 @@
+import { cst } from 'yaml';
+import Node = cst.Node;
+
 export enum NodeTypeEnum {
   HTTPS = 'https',
   Shadowsocks = 'shadowsocks',
   Shadowsocksr = 'shadowsocksr',
   Snell = 'snell',
+  Vmess = 'vmess',
 }
 
 export enum SupportProviderEnum {
   BlackSSL = 'blackssl',
   ShadowsocksJsonSubscribe = 'shadowsocks_json_subscribe',
+  V2rayNSubscribe = 'v2rayn_subscribe',
+  ShadowsocksSubscribe = 'shadowsocks_subscribe',
   Custom = 'custom',
 }
 
@@ -62,6 +68,15 @@ export interface ShadowsocksJsonSubscribeProviderConfig extends ProviderConfig {
   readonly udpRelay?: boolean;
 }
 
+export interface ShadowsocksSubscribeProviderConfig extends ProviderConfig {
+  readonly url: string;
+  readonly udpRelay?: boolean;
+}
+
+export interface V2rayNSubscribeProviderConfig extends ProviderConfig {
+  readonly url: string;
+}
+
 export interface CustomProviderConfig extends ProviderConfig {
   readonly nodeList: ReadonlyArray<PossibleNodeConfigType>;
 }
@@ -103,7 +118,19 @@ export interface ShadowsocksrNodeConfig extends SimpleNodeConfig {
   readonly password: string;
   readonly obfsparam: string;
   readonly protoparam: string;
-  readonly group: string;
+}
+
+export interface VmessNodeConfig extends SimpleNodeConfig {
+  readonly type: NodeTypeEnum.Vmess;
+  readonly hostname: string;
+  readonly port: number|string;
+  readonly method: string;
+  readonly uuid: string;
+  readonly alterId: string;
+  readonly network: string;
+  readonly tls: boolean;
+  readonly host: string;
+  readonly path: string;
 }
 
 export interface SimpleNodeConfig {
@@ -119,7 +146,7 @@ export type NodeFilterType = (nodeConfig: PossibleNodeConfigType) => boolean;
 
 export type NodeNameFilterType = (simpleNodeConfig: SimpleNodeConfig) => boolean;
 
-export type PossibleNodeConfigType = HttpsNodeConfig|ShadowsocksNodeConfig|ShadowsocksrNodeConfig|SnellNodeConfig;
+export type PossibleNodeConfigType = HttpsNodeConfig|ShadowsocksNodeConfig|ShadowsocksrNodeConfig|SnellNodeConfig|VmessNodeConfig;
 
 export type ProxyGroupModifier = (nodeList: ReadonlyArray<PossibleNodeConfigType>, filters: PlainObjectOf<NodeNameFilterType>) => ReadonlyArray<{
   readonly name: string;

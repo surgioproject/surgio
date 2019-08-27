@@ -1,30 +1,32 @@
 import assert from 'assert';
 import axios from 'axios';
 import flag from 'country-code-emoji';
-import fs from "fs";
+import fs from 'fs';
 import _ from 'lodash';
 import LRU from 'lru-cache';
 import path from 'path';
+import URL from 'url';
 import queryString from 'query-string';
+import { JsonObject } from 'type-fest';
 import URLSafeBase64 from 'urlsafe-base64';
 import YAML from 'yaml';
-import { JsonObject } from 'type-fest';
 import {
   BlackSSLProviderConfig,
+  CommandConfig,
   HttpsNodeConfig,
   NodeFilterType,
   NodeNameFilterType,
   NodeTypeEnum,
+  PlainObjectOf,
   PossibleNodeConfigType,
+  ProxyGroupModifier,
+  RemoteSnippet,
+  RemoteSnippetConfig,
   ShadowsocksNodeConfig,
   ShadowsocksrNodeConfig,
   SimpleNodeConfig,
   SnellNodeConfig,
-  CommandConfig,
-  ProxyGroupModifier,
-  PlainObjectOf,
-  RemoteSnippetConfig,
-  RemoteSnippet,
+  VmessNodeConfig,
 } from '../types';
 
 const ConfigCache = new LRU<string, any>({
@@ -122,7 +124,97 @@ export const getShadowsocksJSONConfig = async (config: {
     await requestConfigFromRemote(config.url);
 };
 
-// eslint-disable-next-line no-unused-vars
+export const getShadowsocksSubscription = async (config: {
+  readonly url: string;
+  readonly udpRelay?: boolean;
+}): Promise<ReadonlyArray<ShadowsocksNodeConfig>> => {
+  assert(config.url, 'Lack of subscription url.');
+
+  async function requestConfigFromRemote(url: string): Promise<ReadonlyArray<ShadowsocksNodeConfig>> {
+    const response = await axios.get(url, {
+      proxy: false,
+      timeout: 20000,
+      responseType: 'text',
+    });
+
+    const configList = fromBase64(response.data).split('\n').filter(item => !!item);
+    const result = configList.map<any>(item => {
+      const scheme = URL.parse(item, true);
+      const userInfo = fromUrlSafeBase64(scheme.auth).split(':');
+      const pluginInfo = typeof scheme.query.plugin === 'string' ? decodeStringList<any>(scheme.query.plugin.split(';')) : {};
+
+      return {
+        type: NodeTypeEnum.Shadowsocks,
+        nodeName: decodeURIComponent(scheme.hash.replace('#', '')),
+        hostname: scheme.hostname,
+        port: scheme.port,
+        method: userInfo[0],
+        password: userInfo[1],
+        ...(typeof config.udpRelay === 'boolean' ? {
+          'udp-relay': config.udpRelay ? 'true' : 'false',
+        } : null),
+        ...(pluginInfo['obfs-local'] ? {
+          obfs: pluginInfo.obfs,
+          'obfs-host': pluginInfo['obfs-host'],
+        } : null),
+      };
+    });
+
+    ConfigCache.set(url, result);
+
+    return result;
+  }
+
+  return ConfigCache.has(config.url) ?
+    ConfigCache.get(config.url) :
+    await requestConfigFromRemote(config.url);
+};
+
+export const getV2rayNSubscription = async (config: {
+  readonly url: string,
+}): Promise<ReadonlyArray<VmessNodeConfig>> => {
+  assert(config.url, 'Lack of subscription url.');
+
+  async function requestConfigFromRemote(url: string): Promise<ReadonlyArray<VmessNodeConfig>> {
+    const response = await axios.get(url, {
+      proxy: false,
+      timeout: 20000,
+      responseType: 'text',
+    });
+
+    const configList = fromBase64(response.data).split('\n').filter(item => !!item);
+    const result = configList.map<VmessNodeConfig>(item => {
+      const json = JSON.parse(fromBase64(item.replace('vmess://', '')));
+
+      if (json.v !== '2') {
+        throw new Error(`暂不支持该订阅类型：${url}`);
+      }
+
+      return {
+        nodeName: json.ps,
+        type: NodeTypeEnum.Vmess,
+        hostname: json.add,
+        port: json.port,
+        method: 'auto',
+        uuid: json.id,
+        alterId: json.aid || '0',
+        network: json.net,
+        tls: json.tls === 'tls',
+        host: json.host || '',
+        path: json.path || '/',
+      };
+    });
+
+    ConfigCache.set(url, result);
+
+    return result;
+  }
+
+  return ConfigCache.has(config.url) ?
+    ConfigCache.get(config.url) :
+    await requestConfigFromRemote(config.url);
+};
+
 export const getSurgeNodes = (
   list: ReadonlyArray<HttpsNodeConfig | ShadowsocksNodeConfig | SnellNodeConfig>,
   filter?: NodeFilterType,
@@ -179,7 +271,9 @@ export const getSurgeNodes = (
           ].join(' = '));
         }
 
+        // istanbul ignore next
         default:
+          console.info(`${nodeConfig!.type} is not supported, ${nodeConfig!.nodeName} will be ignored.`);
           return null;
       }
     })
@@ -200,12 +294,12 @@ export const getClashNodes = (
       switch (nodeConfig.type) {
         case NodeTypeEnum.Shadowsocks:
           return {
+            type: 'ss',
             cipher: nodeConfig.method,
             name: nodeConfig.nodeName,
             password: nodeConfig.password,
             port: nodeConfig.port,
             server: nodeConfig.hostname,
-            type: 'ss',
             udp: nodeConfig['udp-relay'] === 'true',
             ...(nodeConfig.obfs ? {
               plugin: 'obfs',
@@ -213,9 +307,29 @@ export const getClashNodes = (
                 mode: nodeConfig.obfs,
                 host: nodeConfig['obfs-host'],
               },
-            } : {}),
+            } : null),
           };
 
+        case NodeTypeEnum.Vmess:
+          return {
+            type: 'vmess',
+            cipher: nodeConfig.method,
+            name: nodeConfig.nodeName,
+            server: nodeConfig.hostname,
+            port: nodeConfig.port,
+            uuid: nodeConfig.uuid,
+            alterId: nodeConfig.alterId,
+            network: nodeConfig.network,
+            tls: nodeConfig.tls,
+            ...(nodeConfig.network === 'ws' ? {
+              'ws-path': nodeConfig.path,
+              'ws-headers': {
+                ...(nodeConfig.host ? { Host: nodeConfig.host } : null),
+              },
+            } : null),
+          };
+
+        // istanbul ignore next
         default:
           console.info(`${nodeConfig.type} is not supported yet, ${nodeConfig.nodeName} will be ignored.`);
           return null;
@@ -224,16 +338,24 @@ export const getClashNodes = (
     .filter(item => item !== null);
 };
 
+// istanbul ignore next
 export const toUrlSafeBase64 = (str: string): string => URLSafeBase64.encode(Buffer.from(str, 'utf8'));
 
+// istanbul ignore next
+export const fromUrlSafeBase64 = (str: string): string => URLSafeBase64.decode(str).toString('utf8');
+
+// istanbul ignore next
 export const toBase64 = (str: string): string => Buffer.from(str, 'utf8').toString('base64');
+
+// istanbul ignore next
+export const fromBase64 = (str: string): string => Buffer.from(str, 'base64').toString('utf8');
 
 /**
  * @see https://github.com/shadowsocks/shadowsocks-org/wiki/SIP002-URI-Scheme
  */
 export const getShadowsocksNodes = (
   list: ReadonlyArray<ShadowsocksNodeConfig>,
-  groupName: string
+  groupName: string = 'Surgio'
 ): string => {
   const result: ReadonlyArray<any> = list
     .map(nodeConfig => {
@@ -248,8 +370,8 @@ export const getShadowsocksNodes = (
           } = {
             ...(config.obfs ? {
               plugin: `${encodeURIComponent(`obfs-local;obfs=${config.obfs};obfs-host=${config['obfs-host']}`)}`,
-            } : {}),
-            ...(groupName ? { group: encodeURIComponent(groupName) } : {}),
+            } : null),
+            ...(groupName ? { group: encodeURIComponent(groupName) } : null),
           };
 
           return [
@@ -269,7 +391,9 @@ export const getShadowsocksNodes = (
           ].join('');
         }
 
+        // istanbul ignore next
         default:
+          console.info(`${nodeConfig.type} is not supported, ${nodeConfig.nodeName} will be ignored.`);
           return null;
       }
     })
@@ -278,7 +402,7 @@ export const getShadowsocksNodes = (
   return result.join('\n');
 };
 
-export const getShadowsocksrNodes = (list: ReadonlyArray<ShadowsocksrNodeConfig>): string => {
+export const getShadowsocksrNodes = (list: ReadonlyArray<ShadowsocksrNodeConfig>, groupName: string): string => {
   const result: ReadonlyArray<string> = list
     .map(nodeConfig => {
       if (nodeConfig.enable === false) { return null; }
@@ -297,7 +421,7 @@ export const getShadowsocksrNodes = (list: ReadonlyArray<ShadowsocksrNodeConfig>
             obfsparam: toUrlSafeBase64(nodeConfig.obfsparam),
             protoparam: toUrlSafeBase64(nodeConfig.protoparam),
             remarks: toUrlSafeBase64(nodeConfig.nodeName),
-            group: toUrlSafeBase64(nodeConfig.group),
+            group: toUrlSafeBase64(groupName),
             udpport: 0,
             uot: 0,
           };
@@ -309,11 +433,122 @@ export const getShadowsocksrNodes = (list: ReadonlyArray<ShadowsocksrNodeConfig>
           ].join(''));
         }
 
+        // istanbul ignore next
         default:
+          console.info(`${nodeConfig.type} is not supported, ${nodeConfig.nodeName} will be ignored.`);
           return null;
       }
     })
     .filter(item => item !== null);
+
+  return result.join('\n');
+};
+
+export const getV2rayNNodes = (list: ReadonlyArray<VmessNodeConfig>): string => {
+  const result: ReadonlyArray<string> = list
+    .map<string>(nodeConfig => {
+      if (nodeConfig.enable === false) { return null; }
+
+      switch (nodeConfig.type) {
+        case NodeTypeEnum.Vmess: {
+          const json = {
+            v: '2',
+            ps: nodeConfig.nodeName,
+            add: nodeConfig.hostname,
+            port: `${nodeConfig.port}`,
+            id: nodeConfig.uuid,
+            aid: nodeConfig.alterId,
+            net: nodeConfig.network,
+            type: 'none',
+            host: nodeConfig.host,
+            path: nodeConfig.path,
+            tls: nodeConfig.tls ? 'tls' : '',
+          };
+
+          return 'vmess://' + toBase64(JSON.stringify(json));
+        }
+
+        // istanbul ignore next
+        default:
+          console.info(`${nodeConfig.type} is not supported, ${nodeConfig.nodeName} will be ignored.`);
+          return null;
+      }
+    })
+    .filter(item => !!item);
+
+  return result.join('\n');
+};
+
+export const getQuantumultNodes = (
+  list: ReadonlyArray<ShadowsocksNodeConfig|VmessNodeConfig|ShadowsocksrNodeConfig|HttpsNodeConfig>,
+  groupName: string = 'Surgio'
+): string => {
+  function getHeader(
+    host,
+    ua = 'Mozilla/5.0 (iPhone; CPU iPhone OS 12_3_1 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148'
+  ): string {
+    return [
+      `Host:${host}`,
+      `User-Agent:${ua}`,
+    ].join('[Rr][Nn]');
+  }
+
+  const result: ReadonlyArray<string> = list
+    .map<string>(nodeConfig => {
+      if (nodeConfig.enable === false) { return null; }
+
+      switch (nodeConfig.type) {
+        case NodeTypeEnum.Vmess: {
+          const config = [
+            'vmess', nodeConfig.hostname, nodeConfig.port,
+            (nodeConfig.method === 'auto' ? 'chacha20-ietf-poly1305' : nodeConfig.method),
+            JSON.stringify(nodeConfig.uuid), nodeConfig.alterId,
+            `group=${groupName}`,
+            `over-tls=${nodeConfig.tls === true ? 'true' : 'false'}`,
+            `certificate=1`,
+            `obfs=${nodeConfig.network}`,
+            `obfs-path=${JSON.stringify(nodeConfig.path || '/')}`,
+            `obfs-header=${JSON.stringify(getHeader(nodeConfig.host || nodeConfig.hostname ))}`,
+          ].filter(value => !!value).join(',');
+
+          return 'vmess://' + toBase64([
+            nodeConfig.nodeName,
+            config,
+          ].join(' = '));
+        }
+
+        case NodeTypeEnum.Shadowsocks: {
+          return getShadowsocksNodes([nodeConfig], groupName);
+        }
+
+        case NodeTypeEnum.Shadowsocksr:
+          return getShadowsocksrNodes([nodeConfig], groupName);
+
+        case NodeTypeEnum.HTTPS: {
+          const config = [
+            nodeConfig.nodeName,
+            [
+              'http',
+              `upstream-proxy-address=${nodeConfig.hostname}`,
+              `upstream-proxy-port=${nodeConfig.port}`,
+              'upstream-proxy-auth=true',
+              `upstream-proxy-username=${nodeConfig.username}`,
+              `upstream-proxy-password=${nodeConfig.password}`,
+              'over-tls=true',
+              'certificate=1'
+            ].join(', ')
+          ].join(' = ');
+
+          return 'http://' + toBase64(config);
+        }
+
+        // istanbul ignore next
+        default:
+          console.info(`${nodeConfig!.type} is not supported yet, ${nodeConfig!.nodeName} will be ignored.`);
+          return null;
+      }
+    })
+    .filter(item => !!item);
 
   return result.join('\n');
 };
@@ -339,11 +574,13 @@ export const getShadowsocksNodesJSON = (list: ReadonlyArray<ShadowsocksNodeConfi
             ...(useObfs ? {
               plugin: 'obfs-local',
               'plugin-opts': `obfs=${nodeConfig.obfs};obfs-host=${nodeConfig['obfs-host']}`
-            } : {})
+            } : null)
           };
         }
 
+        // istanbul ignore next
         default:
+          console.info(`${nodeConfig!.type} is not supported, ${nodeConfig!.nodeName} will be ignored.`);
           return null;
       }
     })
@@ -400,7 +637,7 @@ export const getClashNodeNames = (
     ...(ruleType === 'url-test' ? {
       url: 'http://www.gstatic.com/generate_204',
       interval: 1200,
-    } : {}),
+    } : null),
   };
 };
 
@@ -437,6 +674,15 @@ export const pickAndFormatStringList = (obj: object, keyList: readonly string[])
     }
   });
   return result;
+};
+
+export const decodeStringList = <T = object>(stringList: ReadonlyArray<string>): T => {
+  const result = {};
+  stringList.forEach(item => {
+    const pair = item.split('=');
+    result[pair[0]] = pair[1] || true;
+  });
+  return result as T;
 };
 
 export const normalizeConfig = (cwd: string, obj: Partial<CommandConfig>): CommandConfig => {
@@ -488,11 +734,17 @@ export const normalizeClashProxyGroupConfig = (
 
   return proxyGroup.map<any>(item => {
     if (item.filter) {
-      return getClashNodeNames(item.name, item.type, nodeList, [NodeTypeEnum.Shadowsocks], item.filter);
+      return getClashNodeNames(item.name, item.type, nodeList, [
+        NodeTypeEnum.Shadowsocks,
+        NodeTypeEnum.Vmess,
+      ], item.filter);
     } else if (item.proxies) {
       return item;
     } else {
-      return getClashNodeNames(item.name, item.type, nodeList, [NodeTypeEnum.Shadowsocks]);
+      return getClashNodeNames(item.name, item.type, nodeList, [
+        NodeTypeEnum.Shadowsocks,
+        NodeTypeEnum.Vmess,
+      ]);
     }
   });
 };

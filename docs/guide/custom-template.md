@@ -19,7 +19,7 @@ Surgio 为了能够灵活地定义模板而引入了 [Nunjucks](https://nunjucks
 
 ## 模板变量
 
-### provider
+### providerName
 
 当前 Provider 的名称。
 
@@ -33,7 +33,7 @@ Surgio 为了能够灵活地定义模板而引入了 [Nunjucks](https://nunjucks
 
 ### remoteSnippets
 
-远程模板片段。以 [这个配置](/guide/custom-config#remotesnippets) 为例：
+远程模板片段。以 [这个配置](/guide/custom-config.md#remotesnippets) 为例：
 
 ```
 {{ remoteSnippets.cn.main('DIRECT') }}
@@ -95,14 +95,53 @@ Clash 的 `Proxy` 和 `Proxy Group` 配置对象。`clashProxyConfig` 的内容�
 
 :::tip
 - `filter` 为可选参数
-- Surge 只支持 Shadowsocks, HTTPS, Snell 代理
+- 支持输出 Shadowsocks, HTTPS, Snell 节点
 :::
 
-生成 Surge 规范的代理列表，例如：
+生成 Surge 规范的节点列表，例如：
 
 ```
 🇺🇸US = custom, us.example.com, 10000, chacha20-ietf-poly1305, password, https://raw.githubusercontent.com/ConnersHua/SSEncrypt/master/SSEncrypt.module, udp-relay=true, obfs=tls, obfs-host=gateway-carry.icloud.com
 🇭🇰HK(Netflix) = custom, hk.example.com, 10000, chacha20-ietf-poly1305, password, https://raw.githubusercontent.com/ConnersHua/SSEncrypt/master/SSEncrypt.module, udp-relay=true
+```
+
+### `getShadowsocksNodes(nodeList, providerName)`
+
+:::tip
+- 第二个入参为 Group 名称
+:::
+
+生成 Shadowsocks Scheme 列表，例如：
+
+```
+ss://cmM0LW1kNTpwYXNzd29yZA@us.com:1234/?group=subscribe_demo#%F0%9F%87%BA%F0%9F%87%B8%20US
+ss://cmM0LW1kNTpwYXNzd29yZA@hk.com:1234/?group=subscribe_demo#%F0%9F%87%AD%F0%9F%87%B0%20HK
+```
+
+你可以使用 `base64` filter 来将上面的文本转换成 Quantumult 能够识别的订阅内容。
+
+```
+{{ getShadowsocksNodes(nodeList, providerName) | base64 }}
+```
+
+### `getQuantumultNodes(nodeList, providerName)`
+
+:::tip
+- 第二个入参为 Group 名称
+- 支持输出 Shadowsocks, Shadowsocksr, Vmess, HTTPS 节点
+:::
+
+生成 Quantumult 订阅 Scheme 列表，例如：
+
+```
+vmess://5rWL6K+VIDEgPSB2bWVzcywxLjEuMS4xLDgwODAsY2hhY2hhMjAtaWV0Zi1wb2x5MTMwNSwiMTM4NmY4NWUtNjU3Yi00ZDZlLTlkNTYtNzhiYWRiNzVlMWZkIiw2NCxncm91cD1TdXJnaW8sb3Zlci10bHM9ZmFsc2UsY2VydGlmaWNhdGU9MSxvYmZzPXdzLG9iZnMtcGF0aD0iLyIsb2Jmcy1oZWFkZXI9Ikhvc3Q6ZXhhbXBsZS5jb21bUnJdW05uXVVzZXItQWdlbnQ6TW96aWxsYS81LjAgKGlQaG9uZTsgQ1BVIGlQaG9uZSBPUyAxMl8zXzEgbGlrZSBNYWMgT1MgWCkgQXBwbGVXZWJLaXQvNjA1LjEuMTUgKEtIVE1MLCBsaWtlIEdlY2tvKSBNb2JpbGUvMTVFMTQ4Ig==
+vmess://5rWL6K+VIDIgPSB2bWVzcywxLjEuMS4xLDgwODAsY2hhY2hhMjAtaWV0Zi1wb2x5MTMwNSwiMTM4NmY4NWUtNjU3Yi00ZDZlLTlkNTYtNzhiYWRiNzVlMWZkIiw2NCxncm91cD1TdXJnaW8sb3Zlci10bHM9ZmFsc2UsY2VydGlmaWNhdGU9MSxvYmZzPXRjcCxvYmZzLXBhdGg9Ii8iLG9iZnMtaGVhZGVyPSJIb3N0OjEuMS4xLjFbUnJdW05uXVVzZXItQWdlbnQ6TW96aWxsYS81LjAgKGlQaG9uZTsgQ1BVIGlQaG9uZSBPUyAxMl8zXzEgbGlrZSBNYWMgT1MgWCkgQXBwbGVXZWJLaXQvNjA1LjEuMTUgKEtIVE1MLCBsaWtlIEdlY2tvKSBNb2JpbGUvMTVFMTQ4Ig==
+```
+
+你可以使用 `base64` filter 来将上面的文本转换成 Quantumult 能够识别的订阅内容。
+
+```
+{{ getQuantumultNodes(nodeList, providerName) | base64 }}
 ```
 
 ### `getNodeNames(nodeList, nodeTypeList?, filter?)`
@@ -135,26 +174,6 @@ getNodeNames(nodeList, ['shadowsocks'], netflixFilter);
 
 ```js
 getDownloadUrl('example.conf'); // https://example.com/example.conf
-```
-
-### `getShadowsocksNodes(nodeList, provider)`
-
-:::tip
-- 第二个入参为 Group 名称
-:::
-
-生成 Shadowsocks Scheme 列表，例如：
-
-```
-ss://cmM0LW1kNTpwYXNzd29yZA@us.com:1234/?group=subscribe_demo#%F0%9F%87%BA%F0%9F%87%B8%20US
-ss://cmM0LW1kNTpwYXNzd29yZA@hk.com:1234/?group=subscribe_demo#%F0%9F%87%AD%F0%9F%87%B0%20HK
-ss://cmM0LW1kNTpwYXNzd29yZA@jp.com:1234/
-```
-
-你可以使用 `base64` filter 来将上面的文本转换成 Quantumult 能够识别的订阅内容。
-
-```
-{{ getShadowsocksNodes(nodeList, provider) | base64 }}
 ```
 
 ## 片段 (Snippet)
@@ -223,4 +242,4 @@ DOMAIN-SUFFIX,ytimg.com,🚀 Proxy
 
 - USER-AGENT
 - PROCESS-NAME
-- no-resolve
+- no-resolve（仅除去该字段，其它部分保留）

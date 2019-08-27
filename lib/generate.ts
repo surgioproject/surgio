@@ -2,25 +2,29 @@
 
 import assert from 'assert';
 import chalk from 'chalk';
+import _ from 'lodash';
 import { fs } from 'mz';
 import ora from 'ora';
 import path from 'path';
 import _rimraf from 'rimraf';
 import util from 'util';
-import _ from 'lodash';
+import getEngine from './template';
 
 import {
   ArtifactConfig,
   BlackSSLProviderConfig,
+  CommandConfig,
   CustomProviderConfig,
+  NodeFilterType,
   NodeNameFilterType,
   PossibleNodeConfigType,
   ProviderConfig,
+  RemoteSnippet,
   ShadowsocksJsonSubscribeProviderConfig,
   SimpleNodeConfig,
-  SupportProviderEnum,
-  NodeFilterType,
-  CommandConfig, RemoteSnippet,
+  SupportProviderEnum, 
+  V2rayNSubscribeProviderConfig, 
+  ShadowsocksSubscribeProviderConfig,
 } from './types';
 import {
   getBlackSSLConfig,
@@ -28,21 +32,23 @@ import {
   getClashNodes,
   getDownloadUrl,
   getNodeNames,
+  getQuantumultNodes,
   getShadowsocksJSONConfig,
   getShadowsocksNodes,
   getShadowsocksNodesJSON,
   getShadowsocksrNodes,
-  getSurgeNodes,
+  getSurgeNodes, getV2rayNSubscription,
   hkFilter,
+  loadRemoteSnippetList,
   netflixFilter as defaultNetflixFilter,
+  normalizeClashProxyGroupConfig,
   resolveRoot,
   toBase64,
   toUrlSafeBase64,
   usFilter,
   youtubePremiumFilter as defaultYoutubePremiumFilter,
-  normalizeClashProxyGroupConfig, loadRemoteSnippetList,
+  getShadowsocksSubscription,
 } from './utils';
-import getEngine from './template';
 
 const rimraf = util.promisify(_rimraf);
 const spinner = ora();
@@ -117,10 +123,16 @@ export async function generate(
         case SupportProviderEnum.ShadowsocksJsonSubscribe:
           return getShadowsocksJSONConfig(file as ShadowsocksJsonSubscribeProviderConfig);
 
+        case SupportProviderEnum.ShadowsocksSubscribe:
+          return getShadowsocksSubscription(file as ShadowsocksSubscribeProviderConfig);
+
         case SupportProviderEnum.Custom: {
           assert((file as CustomProviderConfig).nodeList, 'Lack of nodeList.');
           return Promise.resolve((file as CustomProviderConfig).nodeList);
         }
+
+        case SupportProviderEnum.V2rayNSubscribe:
+          return getV2rayNSubscription(file as V2rayNSubscribeProviderConfig);
 
         default:
           throw new Error(`Unsupported provider type: ${file.type}`);
@@ -158,6 +170,7 @@ export async function generate(
     }),
     nodeList,
     provider,
+    providerName: provider,
     artifactName,
     getDownloadUrl: (name: string) => getDownloadUrl(config.urlBase, name),
     getNodeNames,
@@ -167,6 +180,7 @@ export async function generate(
     getShadowsocksNodes,
     getShadowsocksNodesJSON,
     getShadowsocksrNodes,
+    getQuantumultNodes,
     usFilter,
     hkFilter,
     toUrlSafeBase64,

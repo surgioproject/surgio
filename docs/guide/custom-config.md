@@ -23,7 +23,7 @@ module.exports = {
 - 默认值: `undefined`
 - <Badge text="必须" vertical="middle" />
 
-数组内容见 [自定义 Artifact](/guide/custom-artifact)。
+数组内容见 [自定义 Artifact](/guide/custom-artifact.md)。
 
 ### urlBase
 
