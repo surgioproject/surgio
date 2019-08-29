@@ -1,3 +1,7 @@
+## [0.5.1](https://github.com/geekdada/surgio/compare/v0.5.0...v0.5.1) (2019-08-29)
+
+
+
 # [0.5.0](https://github.com/geekdada/surgio/compare/v0.4.0...v0.5.0) (2019-08-27)
 
 
