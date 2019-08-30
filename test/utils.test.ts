@@ -3,7 +3,13 @@ import test from 'ava';
 import moxios from 'moxios';
 import fs from 'fs';
 import path from 'path';
-import { NodeTypeEnum, ShadowsocksNodeConfig, SimpleNodeConfig, VmessNodeConfig } from '../lib/types';
+import {
+  NodeTypeEnum,
+  ShadowsocksNodeConfig,
+  ShadowsocksrNodeConfig,
+  SimpleNodeConfig,
+  VmessNodeConfig,
+} from '../lib/types';
 import * as utils from '../lib/utils';
 
 test.beforeEach(() => {
@@ -15,7 +21,7 @@ test.afterEach(() => {
 });
 
 test('getSurgeNodes', async t => {
-  const nodeList: ReadonlyArray<ShadowsocksNodeConfig> = [{
+  const nodeList: ReadonlyArray<ShadowsocksNodeConfig|ShadowsocksrNodeConfig> = [{
     nodeName: 'Test Node 1',
     type: NodeTypeEnum.Shadowsocks,
     hostname: 'example.com',
@@ -40,12 +46,26 @@ test('getSurgeNodes', async t => {
     port: '443',
     method: 'chacha20-ietf-poly1305',
     password: 'password',
+  }, {
+    nodeName: '测试中文',
+    type: NodeTypeEnum.Shadowsocksr,
+    hostname: '127.0.0.1',
+    port: '1234',
+    method: 'aes-128-cfb',
+    password: 'aaabbb',
+    obfs: 'tls1.2_ticket_auth',
+    obfsparam: 'breakwa11.moe',
+    protocol: 'auth_aes128_md5',
+    protoparam: '',
+    binPath: '/usr/local/bin/ssr-local',
   }];
-  const txt1 = utils.getSurgeNodes(nodeList);
-  const txt2 = utils.getSurgeNodes(nodeList, nodeConfig => nodeConfig.nodeName !== 'Test Node 2');
+  const txt1 = utils.getSurgeNodes(nodeList).split('\n');
+  const txt2 = utils.getSurgeNodes(nodeList, nodeConfig => nodeConfig.nodeName === 'Test Node 1');
 
-  t.is(txt1, 'Test Node 1 = custom, example.com, 443, chacha20-ietf-poly1305, password, https://raw.githubusercontent.com/ConnersHua/SSEncrypt/master/SSEncrypt.module, udp-relay=true, obfs=tls, obfs-host=example.com\nTest Node 2 = custom, example2.com, 443, chacha20-ietf-poly1305, password, https://raw.githubusercontent.com/ConnersHua/SSEncrypt/master/SSEncrypt.module');
-  t.is(txt2, 'Test Node 1 = custom, example.com, 443, chacha20-ietf-poly1305, password, https://raw.githubusercontent.com/ConnersHua/SSEncrypt/master/SSEncrypt.module, udp-relay=true, obfs=tls, obfs-host=example.com')
+  t.is(txt1[0], 'Test Node 1 = custom, example.com, 443, chacha20-ietf-poly1305, password, https://raw.githubusercontent.com/ConnersHua/SSEncrypt/master/SSEncrypt.module, udp-relay=true, obfs=tls, obfs-host=example.com');
+  t.is(txt1[1], 'Test Node 2 = custom, example2.com, 443, chacha20-ietf-poly1305, password, https://raw.githubusercontent.com/ConnersHua/SSEncrypt/master/SSEncrypt.module');
+  t.is(txt1[2], '测试中文 = external, exec = "/usr/local/bin/ssr-local", args = "-s", args = "127.0.0.1", args = "-p", args = "1234", args = "-m", args = "aes-128-cfb", args = "-o", args = "tls1.2_ticket_auth", args = "-O", args = "auth_aes128_md5", args = "-k", args = "aaabbb", args = "-l", args = "61100", args = "-b", args = "127.0.0.1", args = "-g", args = "breakwa11.moe", local-port = 61100, addresses = 127.0.0.1');
+  t.is(txt2, 'Test Node 1 = custom, example.com, 443, chacha20-ietf-poly1305, password, https://raw.githubusercontent.com/ConnersHua/SSEncrypt/master/SSEncrypt.module, udp-relay=true, obfs=tls, obfs-host=example.com');
 });
 
 test('getNodeNames', async t => {
@@ -632,5 +652,31 @@ test('getShadowsocksSubscription without udp', async t => {
     port: '443',
     method: 'chacha20-ietf-poly1305',
     password: 'password',
+  });
+});
+
+test('getShadowsocksrSubscription', async t => {
+  moxios.stubRequest(/\/ssr-sub\.txt.*/, {
+    status: 200,
+    responseText: fs.readFileSync(path.join(__dirname, 'asset/test-ssr-sub.txt'), {
+      encoding: 'utf8',
+    }),
+  });
+
+  const nodeList = await utils.getShadowsocksrSubscription({
+    url: '/ssr-sub.txt',
+  });
+
+  t.deepEqual(nodeList[0], {
+    nodeName: '测试中文',
+    type: NodeTypeEnum.Shadowsocksr,
+    hostname: '127.0.0.1',
+    port: '1234',
+    method: 'aes-128-cfb',
+    password: 'aaabbb',
+    obfs: 'tls1.2_ticket_auth',
+    obfsparam: 'breakwa11.moe',
+    protocol: 'auth_aes128_md5',
+    protoparam: '',
   });
 });

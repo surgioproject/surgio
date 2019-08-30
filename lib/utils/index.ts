@@ -5,9 +5,9 @@ import fs from 'fs';
 import _ from 'lodash';
 import LRU from 'lru-cache';
 import path from 'path';
-import URL from 'url';
 import queryString from 'query-string';
 import { JsonObject } from 'type-fest';
+import URL from 'url';
 import URLSafeBase64 from 'urlsafe-base64';
 import YAML from 'yaml';
 import {
@@ -170,6 +170,53 @@ export const getShadowsocksSubscription = async (config: {
     await requestConfigFromRemote(config.url);
 };
 
+export const getShadowsocksrSubscription = async (config: {
+  readonly url: string;
+}): Promise<ReadonlyArray<ShadowsocksrNodeConfig>> => {
+  assert(config.url, 'Lack of subscription url.');
+
+  async function requestConfigFromRemote(url: string): Promise<ReadonlyArray<ShadowsocksrNodeConfig>> {
+    const response = await axios.get(url, {
+      proxy: false,
+      timeout: 20000,
+      responseType: 'text',
+    });
+
+    const configList = fromBase64(response.data).split('\n').filter(item => !!item);
+    const result = configList.map<ShadowsocksrNodeConfig>(item => {
+      const pair = fromUrlSafeBase64(item.replace('ssr://', '')).split('/');
+      const basicInfo = pair[0].split(':');
+      const extras = pair[1] ? URL.parse(pair[1], true) : null;
+      const nodeName = extras ? fromUrlSafeBase64(extras.query.remarks as string) : null;
+
+      if (!nodeName) {
+        throw new Error(`${item} doesn\`t contain a remark.`);
+      }
+
+      return {
+        type: NodeTypeEnum.Shadowsocksr,
+        nodeName,
+        hostname: basicInfo[0],
+        port: basicInfo[1],
+        protocol: basicInfo[2],
+        method: basicInfo[3],
+        obfs: basicInfo[4],
+        password: fromUrlSafeBase64(basicInfo[5]),
+        protoparam: extras ? fromUrlSafeBase64(extras.query.protoparam as string || '') : '',
+        obfsparam: extras ? fromUrlSafeBase64(extras.query.obfsparam as string || '') : '',
+      };
+    });
+
+    ConfigCache.set(url, result);
+
+    return result;
+  }
+
+  return ConfigCache.has(config.url) ?
+    ConfigCache.get(config.url) :
+    await requestConfigFromRemote(config.url);
+};
+
 export const getV2rayNSubscription = async (config: {
   readonly url: string,
 }): Promise<ReadonlyArray<VmessNodeConfig>> => {
@@ -216,9 +263,11 @@ export const getV2rayNSubscription = async (config: {
 };
 
 export const getSurgeNodes = (
-  list: ReadonlyArray<HttpsNodeConfig | ShadowsocksNodeConfig | SnellNodeConfig>,
+  list: ReadonlyArray<HttpsNodeConfig|ShadowsocksNodeConfig|SnellNodeConfig|ShadowsocksrNodeConfig>,
   filter?: NodeFilterType,
 ): string => {
+  let portNumber = 61100;
+
   const result: string[] = list
     .filter(item => filter ? filter(item) : true)
     .map<string>(nodeConfig => {
@@ -267,7 +316,49 @@ export const getSurgeNodes = (
               config.hostname,
               config.port,
               ...pickAndFormatStringList(config, ['psk', 'obfs']),
-            ].join(', ')
+            ].join(', '),
+          ].join(' = '));
+        }
+
+        case NodeTypeEnum.Shadowsocksr: {
+          const config = nodeConfig as ShadowsocksrNodeConfig;
+
+          // istanbul ignore next
+          if (!config.binPath) {
+            throw new Error('You must specify a binary file path for Shadowsocksr.');
+          }
+
+          const args = [
+            '-s', config.hostname,
+            '-p', `${config.port}`,
+            '-m', config.method,
+            '-o', config.obfs,
+            '-O', config.protocol,
+            '-k', config.password,
+            '-l', `${portNumber}`,
+            '-b', '127.0.0.1',
+          ];
+
+          if (config.protoparam) {
+            args.push('-G', config.protoparam);
+          }
+          if (config.obfsparam) {
+            args.push('-g', config.obfsparam);
+          }
+
+          const configString = [
+            'external',
+            `exec = ${JSON.stringify(config.binPath)}`,
+            ...(args).map(arg => `args = ${JSON.stringify(arg)}`),
+            `local-port = ${portNumber}`,
+            `addresses = ${config.hostname}`,
+          ].join(', ');
+
+          portNumber++;
+
+          return ([
+            config.nodeName,
+            configString,
           ].join(' = '));
         }
 
@@ -342,7 +433,7 @@ export const getClashNodes = (
 export const toUrlSafeBase64 = (str: string): string => URLSafeBase64.encode(Buffer.from(str, 'utf8'));
 
 // istanbul ignore next
-export const fromUrlSafeBase64 = (str: string): string => URLSafeBase64.decode(str).toString('utf8');
+export const fromUrlSafeBase64 = (str: string): string => URLSafeBase64.decode(str).toString();
 
 // istanbul ignore next
 export const toBase64 = (str: string): string => Buffer.from(str, 'utf8').toString('base64');
@@ -698,9 +789,11 @@ export const normalizeConfig = (cwd: string, obj: Partial<CommandConfig>): Comma
     },
   });
 
+  // istanbul ignore next
   if (!fs.existsSync(config.templateDir)) {
     throw new Error(`You must create ${config.templateDir} first.`);
   }
+  // istanbul ignore next
   if (!fs.existsSync(config.providerDir)) {
     throw new Error(`You must create ${config.providerDir} first.`);
   }
