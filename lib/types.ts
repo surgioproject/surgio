@@ -14,6 +14,7 @@ export enum SupportProviderEnum {
   ShadowsocksJsonSubscribe = 'shadowsocks_json_subscribe',
   V2rayNSubscribe = 'v2rayn_subscribe',
   ShadowsocksSubscribe = 'shadowsocks_subscribe',
+  ShadowsocksrSubscribe = 'shadowsocksr_subscribe',
   Custom = 'custom',
 }
 
@@ -30,6 +31,9 @@ export interface CommandConfig {
     readonly bucket?: string;
     readonly accessKeyId?: string;
     readonly accessKeySecret?: string;
+  };
+  readonly binPath?: {
+    readonly shadowsocksr?: string;
   };
 }
 
@@ -71,6 +75,10 @@ export interface ShadowsocksJsonSubscribeProviderConfig extends ProviderConfig {
 export interface ShadowsocksSubscribeProviderConfig extends ProviderConfig {
   readonly url: string;
   readonly udpRelay?: boolean;
+}
+
+export interface ShadowsocksrSubscribeProviderConfig extends ProviderConfig {
+  readonly url: string;
 }
 
 export interface V2rayNSubscribeProviderConfig extends ProviderConfig {
@@ -137,6 +145,7 @@ export interface SimpleNodeConfig {
   readonly type: NodeTypeEnum;
   readonly enable?: boolean;
   readonly nodeName: string;
+  binPath?: string; // tslint:disable-line
 }
 
 export interface PlainObject { readonly [name: string]: any }
