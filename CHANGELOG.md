@@ -1,3 +1,12 @@
+# [0.6.0](https://github.com/geekdada/surgio/compare/v0.5.1...v0.6.0) (2019-08-30)
+
+
+### Features
+
+* surge 支持 ssr ([68b2966](https://github.com/geekdada/surgio/commit/68b2966))
+
+
+
 ## [0.5.1](https://github.com/geekdada/surgio/compare/v0.5.0...v0.5.1) (2019-08-29)
 
 
