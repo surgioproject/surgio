@@ -1,3 +1,19 @@
+# [0.7.0](https://github.com/geekdada/surgio/compare/v0.6.0...v0.7.0) (2019-09-02)
+
+
+### Bug Fixes
+
+* bin for v2ray ([fb2e4b9](https://github.com/geekdada/surgio/commit/fb2e4b9))
+* filter got overwrote ([c4ad444](https://github.com/geekdada/surgio/commit/c4ad444))
+* v2ray config ([fd315b4](https://github.com/geekdada/surgio/commit/fd315b4))
+
+
+### Features
+
+* output v2ray for surge ([172f97e](https://github.com/geekdada/surgio/commit/172f97e))
+
+
+
 # [0.6.0](https://github.com/geekdada/surgio/compare/v0.5.1...v0.6.0) (2019-08-30)
 
 
