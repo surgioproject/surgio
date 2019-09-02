@@ -14,6 +14,7 @@ module.exports = {
   artifacts: [],
   urlBase: 'https://example.com/',
   upload: {},
+  binPath: {},
 };
 ```
 
@@ -79,25 +80,25 @@ module.exports = {
 - 请不要通过 CDN 访问 OSS 内的文件，这样会导致更新不即时且很难删除
 :::
 
-#### UploadConfig.prefix
+#### upload.prefix
 
 - 类型: `string`
 - 默认值: `/`
 
 默认保存至根目录，可以修改子目录名，以 / 结尾
 
-#### UploadConfig.bucket
+#### upload.bucket
 
 - 类型: `string`
 - 默认值: `undefined`
 - <Badge text="必须" vertical="middle" />
 
-#### UploadConfig.region
+#### upload.region
 
 - 类型: `string`
 - 默认值: `oss-cn-hangzhou`
 
-#### UploadConfig.accessKeyId
+#### upload.accessKeyId
 
 - 类型: `string`
 - 默认值: `undefined`
@@ -107,7 +108,7 @@ module.exports = {
 请不要将该字段上传至公共仓库。
 :::
 
-#### UploadConfig.accessKeySecret
+#### upload.accessKeySecret
 
 - 类型: `string`
 - 默认值: `undefined`
@@ -116,3 +117,21 @@ module.exports = {
 :::warning 注意
 请不要将该字段上传至公共仓库。
 :::
+
+### binPath
+
+如果需要生成针对 Surge 的 V2Ray 或 SSR 订阅，需要额外配置此项。
+
+#### binPath.v2ray
+
+- 类型: `string`
+- 默认值: `undefined`
+
+V2Ray 的可执行文件地址，通常是 `/usr/local/bin/v2ray`。
+
+#### binPath.shadowsocksr
+
+- 类型: `string`
+- 默认值: `undefined`
+
+SSR 的可执行文件地址。请使用 libev 版本的二进制文件，可以在 [这篇文章](/guide/surge-advance.md) 找到下载地址和使用方法。

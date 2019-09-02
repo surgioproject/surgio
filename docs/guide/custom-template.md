@@ -95,7 +95,11 @@ Clash 的 `Proxy` 和 `Proxy Group` 配置对象。`clashProxyConfig` 的内容�
 
 :::tip
 - `filter` 为可选参数
-- 支持输出 Shadowsocks, HTTPS, Snell 节点
+- 支持输出 Shadowsocks, Shadowsocksr, HTTPS, Snell, Vmess 节点
+:::
+
+:::warning
+请参考 [「Surge 进阶使用」](/guide/surge-advance.md) 生成针对 Surge 的 V2Ray 或 SSR 订阅
 :::
 
 生成 Surge 规范的节点列表，例如：
