@@ -106,8 +106,12 @@ export async function generate(
 
     const file: ProviderConfig = require(filePath);
 
-    customFilters.netflixFilter = file.netflixFilter || defaultNetflixFilter;
-    customFilters.youtubePremiumFilter = file.youtubePremiumFilter || defaultYoutubePremiumFilter;
+    if (!customFilters.netflixFilter) {
+      customFilters.netflixFilter = file.netflixFilter || defaultNetflixFilter;
+    }
+    if (!customFilters.youtubePremiumFilter) {
+      customFilters.youtubePremiumFilter = file.youtubePremiumFilter || defaultYoutubePremiumFilter;
+    }
 
     assert(file.type, 'You must specify a type.');
 
