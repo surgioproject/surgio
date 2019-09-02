@@ -9,7 +9,6 @@ import queryString from 'query-string';
 import { JsonObject } from 'type-fest';
 import URL from 'url';
 import URLSafeBase64 from 'urlsafe-base64';
-import { format } from 'winston';
 import YAML from 'yaml';
 import os from 'os';
 
@@ -36,6 +35,7 @@ const ConfigCache = new LRU<string, any>({
   maxAge: 10 * 60 * 1000, // 10min
 });
 
+// istanbul ignore next;
 export const resolveRoot = (...args: readonly string[]): string => path.join(__dirname, '../../', ...args);
 
 export const getDownloadUrl = (baseUrl: string = '/', artifactName: string): string => `${baseUrl}${artifactName}`;
@@ -377,7 +377,7 @@ export const getSurgeNodes = (
           const jsonFilePath = path.join(ensureConfigFolder(), jsonFileName);
           const jsonFile = formatV2rayConfig(portNumber, nodeConfig);
           const args = [
-            '--config', jsonFilePath,
+            '--config', jsonFilePath.replace(os.homedir(), '$HOME'),
           ];
           const configString = [
             'external',
@@ -387,7 +387,11 @@ export const getSurgeNodes = (
             `addresses = ${config.hostname}`,
           ].join(', ');
 
-          fs.writeJSONSync(jsonFilePath, jsonFile);
+          if (process.env.NODE_ENV !== 'test') {
+            fs.writeJSONSync(jsonFilePath, jsonFile);
+          }
+
+          portNumber++;
 
           return ([
             config.nodeName,
@@ -937,7 +941,7 @@ export const ensureConfigFolder = (dir: string = os.homedir()): string => {
 export const formatV2rayConfig = (localPort: string|number, nodeConfig: VmessNodeConfig): JsonObject => {
   const config: any = {
     log: {
-      loglevel: "warning"
+      loglevel: 'warning'
     },
     inbound: {
       port: localPort,
