@@ -2,8 +2,8 @@
 
 import assert from 'assert';
 import chalk from 'chalk';
-import _ from 'lodash';
 import fs from 'fs-extra';
+import _ from 'lodash';
 import ora from 'ora';
 import path from 'path';
 
@@ -13,16 +13,17 @@ import {
   BlackSSLProviderConfig,
   CommandConfig,
   CustomProviderConfig,
-  NodeFilterType,
   NodeNameFilterType,
+  NodeTypeEnum,
   PossibleNodeConfigType,
   ProviderConfig,
   RemoteSnippet,
   ShadowsocksJsonSubscribeProviderConfig,
+  ShadowsocksrSubscribeProviderConfig,
+  ShadowsocksSubscribeProviderConfig,
   SimpleNodeConfig,
   SupportProviderEnum,
   V2rayNSubscribeProviderConfig,
-  ShadowsocksSubscribeProviderConfig, ShadowsocksrSubscribeProviderConfig,
 } from './types';
 import {
   getBlackSSLConfig,
@@ -35,7 +36,10 @@ import {
   getShadowsocksNodes,
   getShadowsocksNodesJSON,
   getShadowsocksrNodes,
-  getSurgeNodes, getV2rayNSubscription,
+  getShadowsocksrSubscription,
+  getShadowsocksSubscription,
+  getSurgeNodes,
+  getV2rayNSubscription,
   hkFilter,
   loadRemoteSnippetList,
   netflixFilter as defaultNetflixFilter,
@@ -44,8 +48,6 @@ import {
   toUrlSafeBase64,
   usFilter,
   youtubePremiumFilter as defaultYoutubePremiumFilter,
-  getShadowsocksSubscription,
-  getShadowsocksrSubscription,
 } from './utils';
 
 const spinner = ora();
@@ -156,8 +158,13 @@ export async function generate(
           isValid = true;
         }
 
-        if (config.binPath && config.binPath[nodeConfig.type]) {
-          nodeConfig.binPath = config.binPath[nodeConfig.type];
+        if (config.binPath) {
+          if (config.binPath.v2ray) {
+            config.binPath.vmess = config.binPath.v2ray;
+          }
+          if (config.binPath[nodeConfig.type]) {
+            nodeConfig.binPath = config.binPath[nodeConfig.type];
+          }
         }
 
         if (isValid) {

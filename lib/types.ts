@@ -36,6 +36,7 @@ export interface CommandConfig {
   readonly binPath?: {
     readonly shadowsocksr?: string;
     readonly v2ray?: string;
+    vmess?: string; // tslint:disable-line
   };
 }
 
