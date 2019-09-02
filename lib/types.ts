@@ -25,6 +25,7 @@ export interface CommandConfig {
   readonly urlBase: string;
   readonly providerDir: string;
   readonly templateDir: string;
+  readonly configDir: string;
   readonly upload: {
     readonly prefix: string;
     readonly region: string;
@@ -34,6 +35,7 @@ export interface CommandConfig {
   };
   readonly binPath?: {
     readonly shadowsocksr?: string;
+    readonly v2ray?: string;
   };
 }
 

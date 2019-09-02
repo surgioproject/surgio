@@ -1,7 +1,7 @@
 import assert from 'assert';
 import axios from 'axios';
 import flag from 'country-code-emoji';
-import fs from 'fs';
+import fs from 'fs-extra';
 import _ from 'lodash';
 import LRU from 'lru-cache';
 import path from 'path';
@@ -9,7 +9,10 @@ import queryString from 'query-string';
 import { JsonObject } from 'type-fest';
 import URL from 'url';
 import URLSafeBase64 from 'urlsafe-base64';
+import { format } from 'winston';
 import YAML from 'yaml';
+import os from 'os';
+
 import {
   BlackSSLProviderConfig,
   CommandConfig,
@@ -33,7 +36,7 @@ const ConfigCache = new LRU<string, any>({
   maxAge: 10 * 60 * 1000, // 10min
 });
 
-export const resolveRoot = (...args: readonly string[]): string => path.resolve(__dirname, '../../', ...args);
+export const resolveRoot = (...args: readonly string[]): string => path.join(__dirname, '../../', ...args);
 
 export const getDownloadUrl = (baseUrl: string = '/', artifactName: string): string => `${baseUrl}${artifactName}`;
 
@@ -263,7 +266,7 @@ export const getV2rayNSubscription = async (config: {
 };
 
 export const getSurgeNodes = (
-  list: ReadonlyArray<HttpsNodeConfig|ShadowsocksNodeConfig|SnellNodeConfig|ShadowsocksrNodeConfig>,
+  list: ReadonlyArray<HttpsNodeConfig|ShadowsocksNodeConfig|SnellNodeConfig|ShadowsocksrNodeConfig|VmessNodeConfig>,
   filter?: NodeFilterType,
 ): string => {
   let portNumber = 61100;
@@ -355,6 +358,36 @@ export const getSurgeNodes = (
           ].join(', ');
 
           portNumber++;
+
+          return ([
+            config.nodeName,
+            configString,
+          ].join(' = '));
+        }
+
+        case NodeTypeEnum.Vmess: {
+          const config = nodeConfig as VmessNodeConfig;
+
+          // istanbul ignore next
+          if (!config.binPath) {
+            throw new Error('You must specify a binary file path for V2Ray.');
+          }
+
+          const jsonFileName = `v2ray_${config.hostname}_${config.port}.json`;
+          const jsonFilePath = path.join(ensureConfigFolder(), jsonFileName);
+          const jsonFile = formatV2rayConfig(portNumber, nodeConfig);
+          const args = [
+            '--config', jsonFilePath,
+          ];
+          const configString = [
+            'external',
+            `exec = ${JSON.stringify(config.binPath)}`,
+            ...(args).map(arg => `args = ${JSON.stringify(arg)}`),
+            `local-port = ${portNumber}`,
+            `addresses = ${config.hostname}`,
+          ].join(', ');
+
+          fs.writeJSONSync(jsonFilePath, jsonFile);
 
           return ([
             config.nodeName,
@@ -780,9 +813,10 @@ export const normalizeConfig = (cwd: string, obj: Partial<CommandConfig>): Comma
   const config: CommandConfig = _.defaultsDeep(obj, {
     artifacts: [],
     urlBase: '/',
-    output: path.resolve(cwd, './dist'),
-    templateDir: path.resolve(cwd, './template'),
-    providerDir: path.resolve(cwd, './provider'),
+    output: path.join(cwd, './dist'),
+    templateDir: path.join(cwd, './template'),
+    providerDir: path.join(cwd, './provider'),
+    configDir: ensureConfigFolder(),
     upload: {
       region: 'oss-cn-hangzhou',
       prefix: '/',
@@ -892,4 +926,73 @@ export const loadRemoteSnippetList = (remoteSnippetList: ReadonlyArray<RemoteSni
         url: item.url,
       }));
   }));
+};
+
+export const ensureConfigFolder = (dir: string = os.homedir()): string => {
+  const configDir = path.join(dir, '.config/surgio');
+  fs.mkdirpSync(configDir);
+  return configDir;
+};
+
+export const formatV2rayConfig = (localPort: string|number, nodeConfig: VmessNodeConfig): JsonObject => {
+  const config: any = {
+    log: {
+      loglevel: "warning"
+    },
+    inbounds: {
+      port: localPort,
+      listen: '127.0.0.1',
+      protocol: 'socks',
+      settings: {
+        auth: 'noauth',
+      }
+    },
+    outbounds: {
+      protocol: 'vmess',
+      settings: {
+        vnext: [
+          {
+            address: nodeConfig.hostname,
+            port: nodeConfig.port,
+            users: [
+              {
+                id: nodeConfig.uuid,
+                alterId: nodeConfig.alterId,
+                security: nodeConfig.method,
+              }
+            ]
+          }
+        ]
+      },
+      streamSettings: {
+        security: 'none',
+      },
+    }
+  };
+
+  if (nodeConfig.tls) {
+    config.outbounds.streamSettings = {
+      ...config.outbounds.streamSettings,
+      security: 'tls',
+      tlsSettings: {
+        serverName: nodeConfig.host || nodeConfig.hostname,
+      },
+    };
+  }
+
+  if (nodeConfig.network === 'ws') {
+    config.outbounds.streamSettings = {
+      ...config.outbounds.streamSettings,
+      network: nodeConfig.network,
+      wsSettings: {
+        path: nodeConfig.path,
+        headers: {
+          Host: nodeConfig.host,
+          'User-Agent': 'Mozilla/5.0 (iPhone; CPU iPhone OS 12_3_1 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148',
+        },
+      },
+    };
+  }
+
+  return config;
 };

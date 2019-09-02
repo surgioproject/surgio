@@ -3,11 +3,9 @@
 import assert from 'assert';
 import chalk from 'chalk';
 import _ from 'lodash';
-import { fs } from 'mz';
+import fs from 'fs-extra';
 import ora from 'ora';
 import path from 'path';
-import _rimraf from 'rimraf';
-import util from 'util';
 
 import getEngine from './template';
 import {
@@ -42,31 +40,30 @@ import {
   loadRemoteSnippetList,
   netflixFilter as defaultNetflixFilter,
   normalizeClashProxyGroupConfig,
-  resolveRoot,
   toBase64,
   toUrlSafeBase64,
   usFilter,
   youtubePremiumFilter as defaultYoutubePremiumFilter,
-  getShadowsocksSubscription, getShadowsocksrSubscription,
+  getShadowsocksSubscription,
+  getShadowsocksrSubscription,
 } from './utils';
 
-const rimraf = util.promisify(_rimraf);
 const spinner = ora();
 
 async function run(config: CommandConfig): Promise<void> {
   const artifactList: ReadonlyArray<ArtifactConfig> = config.artifacts;
-  const distPath = resolveRoot(config.output);
+  const distPath = config.output;
   const remoteSnippetsConfig = config.remoteSnippets || [];
   const remoteSnippetList = await loadRemoteSnippetList(remoteSnippetsConfig);
 
-  await rimraf(distPath);
+  await fs.remove(distPath);
   await fs.mkdir(distPath);
 
   for (const artifact of artifactList) {
     spinner.start(`Generating ${artifact.name}`);
 
     const result = await generate(config, artifact, remoteSnippetList);
-    const destFilePath = resolveRoot(config.output, artifact.name);
+    const destFilePath = path.join(config.output, artifact.name);
 
     await fs.writeFile(destFilePath, result);
     spinner.succeed();
