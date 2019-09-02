@@ -939,7 +939,7 @@ export const formatV2rayConfig = (localPort: string|number, nodeConfig: VmessNod
     log: {
       loglevel: "warning"
     },
-    inbounds: {
+    inbound: {
       port: localPort,
       listen: '127.0.0.1',
       protocol: 'socks',
@@ -947,7 +947,7 @@ export const formatV2rayConfig = (localPort: string|number, nodeConfig: VmessNod
         auth: 'noauth',
       }
     },
-    outbounds: {
+    outbound: {
       protocol: 'vmess',
       settings: {
         vnext: [
@@ -957,8 +957,9 @@ export const formatV2rayConfig = (localPort: string|number, nodeConfig: VmessNod
             users: [
               {
                 id: nodeConfig.uuid,
-                alterId: nodeConfig.alterId,
+                alterId: Number(nodeConfig.alterId),
                 security: nodeConfig.method,
+                level: 0,
               }
             ]
           }
@@ -971,8 +972,8 @@ export const formatV2rayConfig = (localPort: string|number, nodeConfig: VmessNod
   };
 
   if (nodeConfig.tls) {
-    config.outbounds.streamSettings = {
-      ...config.outbounds.streamSettings,
+    config.outbound.streamSettings = {
+      ...config.outbound.streamSettings,
       security: 'tls',
       tlsSettings: {
         serverName: nodeConfig.host || nodeConfig.hostname,
@@ -981,8 +982,8 @@ export const formatV2rayConfig = (localPort: string|number, nodeConfig: VmessNod
   }
 
   if (nodeConfig.network === 'ws') {
-    config.outbounds.streamSettings = {
-      ...config.outbounds.streamSettings,
+    config.outbound.streamSettings = {
+      ...config.outbound.streamSettings,
       network: nodeConfig.network,
       wsSettings: {
         path: nodeConfig.path,
