@@ -2,12 +2,10 @@
 
 import assert from 'assert';
 import chalk from 'chalk';
+import fs from 'fs-extra';
 import _ from 'lodash';
-import { fs } from 'mz';
 import ora from 'ora';
 import path from 'path';
-import _rimraf from 'rimraf';
-import util from 'util';
 
 import getEngine from './template';
 import {
@@ -15,16 +13,17 @@ import {
   BlackSSLProviderConfig,
   CommandConfig,
   CustomProviderConfig,
-  NodeFilterType,
   NodeNameFilterType,
+  NodeTypeEnum,
   PossibleNodeConfigType,
   ProviderConfig,
   RemoteSnippet,
   ShadowsocksJsonSubscribeProviderConfig,
+  ShadowsocksrSubscribeProviderConfig,
+  ShadowsocksSubscribeProviderConfig,
   SimpleNodeConfig,
   SupportProviderEnum,
   V2rayNSubscribeProviderConfig,
-  ShadowsocksSubscribeProviderConfig, ShadowsocksrSubscribeProviderConfig,
 } from './types';
 import {
   getBlackSSLConfig,
@@ -37,36 +36,36 @@ import {
   getShadowsocksNodes,
   getShadowsocksNodesJSON,
   getShadowsocksrNodes,
-  getSurgeNodes, getV2rayNSubscription,
+  getShadowsocksrSubscription,
+  getShadowsocksSubscription,
+  getSurgeNodes,
+  getV2rayNSubscription,
   hkFilter,
   loadRemoteSnippetList,
   netflixFilter as defaultNetflixFilter,
   normalizeClashProxyGroupConfig,
-  resolveRoot,
   toBase64,
   toUrlSafeBase64,
   usFilter,
   youtubePremiumFilter as defaultYoutubePremiumFilter,
-  getShadowsocksSubscription, getShadowsocksrSubscription,
 } from './utils';
 
-const rimraf = util.promisify(_rimraf);
 const spinner = ora();
 
 async function run(config: CommandConfig): Promise<void> {
   const artifactList: ReadonlyArray<ArtifactConfig> = config.artifacts;
-  const distPath = resolveRoot(config.output);
+  const distPath = config.output;
   const remoteSnippetsConfig = config.remoteSnippets || [];
   const remoteSnippetList = await loadRemoteSnippetList(remoteSnippetsConfig);
 
-  await rimraf(distPath);
+  await fs.remove(distPath);
   await fs.mkdir(distPath);
 
   for (const artifact of artifactList) {
     spinner.start(`Generating ${artifact.name}`);
 
     const result = await generate(config, artifact, remoteSnippetList);
-    const destFilePath = resolveRoot(config.output, artifact.name);
+    const destFilePath = path.join(config.output, artifact.name);
 
     await fs.writeFile(destFilePath, result);
     spinner.succeed();
@@ -109,8 +108,12 @@ export async function generate(
 
     const file: ProviderConfig = require(filePath);
 
-    customFilters.netflixFilter = file.netflixFilter || defaultNetflixFilter;
-    customFilters.youtubePremiumFilter = file.youtubePremiumFilter || defaultYoutubePremiumFilter;
+    if (!customFilters.netflixFilter) {
+      customFilters.netflixFilter = file.netflixFilter || defaultNetflixFilter;
+    }
+    if (!customFilters.youtubePremiumFilter) {
+      customFilters.youtubePremiumFilter = file.youtubePremiumFilter || defaultYoutubePremiumFilter;
+    }
 
     assert(file.type, 'You must specify a type.');
 
@@ -155,8 +158,13 @@ export async function generate(
           isValid = true;
         }
 
-        if (config.binPath && config.binPath[nodeConfig.type]) {
-          nodeConfig.binPath = config.binPath[nodeConfig.type];
+        if (config.binPath) {
+          if (config.binPath.v2ray) {
+            config.binPath.vmess = config.binPath.v2ray;
+          }
+          if (config.binPath[nodeConfig.type]) {
+            nodeConfig.binPath = config.binPath[nodeConfig.type];
+          }
         }
 
         if (isValid) {
