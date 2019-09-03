@@ -8,7 +8,6 @@ import CheckCommand from './command/check';
 import GenerateCommand from './command/generate';
 import SpeedCommand from './command/speed';
 import UploadCommand from './command/upload';
-import { ensureConfigFolder } from './utils';
 
 const envPath = path.resolve(process.cwd(), './.env');
 

@@ -179,48 +179,61 @@ export async function generate(
     });
   }
 
-  return templateEngine.renderString(tplBuffer.toString(), {
-    downloadUrl: getDownloadUrl(config.urlBase, artifactName),
-    nodes: nodeList,
-    names: nodeNameList,
-    remoteSnippets: _.keyBy(remoteSnippetList, item => {
-      return item.name;
-    }),
-    nodeList,
-    provider,
-    providerName: provider,
-    artifactName,
-    getDownloadUrl: (name: string) => getDownloadUrl(config.urlBase, name),
-    getNodeNames,
-    getClashNodes,
-    getClashNodeNames,
-    getSurgeNodes,
-    getShadowsocksNodes,
-    getShadowsocksNodesJSON,
-    getShadowsocksrNodes,
-    getQuantumultNodes,
-    usFilter,
-    hkFilter,
-    toUrlSafeBase64,
-    toBase64,
-    encodeURIComponent,
-    ...customFilters,
-    ...(customParams ? customParams : {}),
-    ...(artifact.proxyGroupModifier ? {
-      clashProxyConfig: {
-        Proxy: getClashNodes(nodeList),
-        'Proxy Group': normalizeClashProxyGroupConfig(
-          nodeList,
-          {
-            hkFilter,
-            usFilter,
-            ...customFilters,
-          },
-          artifact.proxyGroupModifier
-        ),
-      },
-    } : {}),
-  });
+  try {
+    return templateEngine.render(`${template}.tpl`, {
+      downloadUrl: getDownloadUrl(config.urlBase, artifactName),
+      nodes: nodeList,
+      names: nodeNameList,
+      remoteSnippets: _.keyBy(remoteSnippetList, item => {
+        return item.name;
+      }),
+      nodeList,
+      provider,
+      providerName: provider,
+      artifactName,
+      getDownloadUrl: (name: string) => getDownloadUrl(config.urlBase, name),
+      getNodeNames,
+      getClashNodes,
+      getClashNodeNames,
+      getSurgeNodes,
+      getShadowsocksNodes,
+      getShadowsocksNodesJSON,
+      getShadowsocksrNodes,
+      getQuantumultNodes,
+      usFilter,
+      hkFilter,
+      toUrlSafeBase64,
+      toBase64,
+      encodeURIComponent,
+      ...customFilters,
+      ...(customParams ? customParams : {}),
+      ...(artifact.proxyGroupModifier ? {
+        clashProxyConfig: {
+          Proxy: getClashNodes(nodeList),
+          'Proxy Group': normalizeClashProxyGroupConfig(
+            nodeList,
+            {
+              hkFilter,
+              usFilter,
+              ...customFilters,
+            },
+            artifact.proxyGroupModifier
+          ),
+        },
+      } : {}),
+    });
+  } catch (err) {
+    switch (err.name) {
+      case 'Template render error':
+        err.name = '模板渲染错误';
+        break;
+      default:
+        // no default
+    }
+
+    throw err;
+  }
+
 }
 
 export default async function(config: CommandConfig): Promise<void> {
