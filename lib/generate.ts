@@ -227,6 +227,8 @@ export async function generate(
       case 'Template render error':
         err.name = '模板渲染错误';
         break;
+
+      // istanbul ignore next
       default:
         // no default
     }

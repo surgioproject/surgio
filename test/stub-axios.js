@@ -30,3 +30,9 @@ moxios.stubRequest('/test-v2rayn-sub.txt', {
     encoding: 'utf8',
   }),
 });
+moxios.stubRequest('/netflix.list', {
+  status: 200,
+  responseText: fs.readFileSync(path.join(__dirname, 'asset/netflix.list'), {
+    encoding: 'utf8',
+  }),
+});

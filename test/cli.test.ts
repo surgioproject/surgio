@@ -27,6 +27,7 @@ test('cli works', async t => {
   t.truthy(fs.existsSync(resolve('plain/dist/ss.conf')));
   t.truthy(fs.existsSync(resolve('plain/dist/ssr.conf')));
   t.truthy(fs.existsSync(resolve('plain/dist/v2rayn.conf')));
+  t.truthy(fs.existsSync(resolve('plain/dist/custom.conf')));
   t.is(confString.split('\n')[0], '#!MANAGED-CONFIG https://example.com/ss_json.conf interval=43200 strict=false');
   t.is(Object.keys(conf.Proxy).length, 4);
 });
@@ -50,4 +51,29 @@ test('not specify binPath', async t => {
 
   t.is(code, 1);
   t.truthy(stderr.includes('You must specify a binary file path for Shadowsocksr'));
+});
+
+test('template variables and functions', async t => {
+  const { code } = await coffee.fork(cli, ['generate'], {
+    cwd: resolve('template-variables-functions'),
+    execArgv: ['--require', require.resolve('./stub-axios.js')],
+  })
+    .end();
+  const confString = fs.readFileSync(resolve('template-variables-functions/dist/ss.conf'), {
+    encoding: 'utf8',
+  });
+  const result = '# Netflix\n' +
+    'USER-AGENT,Argo*,Proxy\n' +
+    'DOMAIN-SUFFIX,fast.com,Proxy\n' +
+    'DOMAIN-SUFFIX,netflix.com,Proxy\n' +
+    'DOMAIN-SUFFIX,netflix.net,Proxy\n' +
+    'DOMAIN-SUFFIX,nflxext.com,Proxy\n' +
+    'DOMAIN-SUFFIX,nflximg.com,Proxy\n' +
+    'DOMAIN-SUFFIX,nflximg.net,Proxy\n' +
+    'DOMAIN-SUFFIX,nflxso.net,Proxy\n' +
+    'DOMAIN-SUFFIX,nflxvideo.net,Proxy\n' +
+    'https://example.com/ss.conf\n';
+
+  t.is(code, 0);
+  t.is(confString, result);
 });

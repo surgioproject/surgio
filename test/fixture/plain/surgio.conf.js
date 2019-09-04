@@ -22,6 +22,11 @@ module.exports = {
       template: 'test',
       provider: 'v2rayn',
     },
+    {
+      name: 'custom.conf',
+      template: 'test',
+      provider: 'custom',
+    },
   ],
   urlBase: 'https://example.com/',
   binPath: {
