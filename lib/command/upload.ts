@@ -1,3 +1,4 @@
+// istanbul ignore file
 import OSS from 'ali-oss';
 import assert from 'assert';
 import Command from 'common-bin';

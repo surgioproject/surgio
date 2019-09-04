@@ -96,9 +96,11 @@
   },
   "ava": {
     "failFast": true,
+    "babel": false,
     "compileEnhancements": false,
     "extensions": [
-      "ts"
+      "ts",
+      "js"
     ],
     "files": [
       "test/**/*.test.ts"

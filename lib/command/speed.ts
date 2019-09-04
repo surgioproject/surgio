@@ -1,3 +1,4 @@
+// istanbul ignore file
 import assert from 'assert';
 import chalk from 'chalk';
 import { ChildProcess } from 'child_process';

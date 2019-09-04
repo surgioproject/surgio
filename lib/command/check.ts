@@ -1,3 +1,4 @@
+// istanbul ignore file
 import assert from 'assert';
 import Command from 'common-bin';
 import fs from 'fs';
