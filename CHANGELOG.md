@@ -1,3 +1,12 @@
+## [0.7.1](https://github.com/geekdada/surgio/compare/v0.7.0...v0.7.1) (2019-09-04)
+
+
+### Features
+
+* 优化模板错误提示 ([a6cf815](https://github.com/geekdada/surgio/commit/a6cf815))
+
+
+
 # [0.7.0](https://github.com/geekdada/surgio/compare/v0.6.0...v0.7.0) (2019-09-02)
 
 
