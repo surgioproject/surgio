@@ -10,3 +10,4 @@ node_modules/
 .nyc_output
 coverage
 docs/.vuepress/dist
+/test/fixture/**/dist

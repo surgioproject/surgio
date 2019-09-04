@@ -3,6 +3,7 @@ import test from 'ava';
 import moxios from 'moxios';
 import fs from 'fs';
 import path from 'path';
+
 import {
   NodeTypeEnum,
   ShadowsocksNodeConfig,

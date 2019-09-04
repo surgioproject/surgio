@@ -35,7 +35,7 @@ const ConfigCache = new LRU<string, any>({
   maxAge: 10 * 60 * 1000, // 10min
 });
 
-// istanbul ignore next;
+// istanbul ignore next
 export const resolveRoot = (...args: readonly string[]): string => path.join(__dirname, '../../', ...args);
 
 export const getDownloadUrl = (baseUrl: string = '/', artifactName: string): string => `${baseUrl}${artifactName}`;
