@@ -11,7 +11,7 @@ node_js:
 script:
   - yarn test:lint
   - yarn coverage
-  - npx codecov --disable=gcov -f .nyc_output/*.json
+  - npx codecov
 
 jobs:
   include:
