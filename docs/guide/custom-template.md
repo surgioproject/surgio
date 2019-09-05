@@ -69,9 +69,32 @@ DOMAIN-KEYWORD,baidu,DIRECT
 
 Netflix 节点过滤器。Surgio 默认会将名称中包含 *netflix*, *hkbn*, *hkt*, *hgc*（不分大小写）的节点过滤出来。如果在 Provider 中进行了覆盖则会运行新的方法。
 
+*内置方法定义*
+
+```js
+const netflixFilter: NodeNameFilterType = item => {
+  const name = item.nodeName.toLowerCase();
+  return [
+    'netflix',
+    'hkbn',
+    'hkt',
+    'hgc',
+  ].some(key => name.includes(key.toLowerCase()));
+};
+```
+
 ### youtubePremiumFilter
 
 Youtube Premium 节点过滤器。Surgio 默认会将名称中包含 *日*, *美*, *韩*, 🇯🇵, 🇺🇸, 🇰🇷 的节点过滤出来。如果在 Provider 中进行了覆盖则会运行新的方法。
+
+*内置方法定义*
+
+```js
+const youtubePremiumFilter = nodeConfig => {
+  const name = nodeConfig.nodeName.toLowerCase();
+  return ['日', '美', '韩', '🇯🇵', '🇺🇸', '🇰🇷'].some(key => name.includes(key.toLowerCase()));
+};
+```
 
 [查看所有支持 Youtube Premium 的国家和地区](https://support.google.com/youtube/answer/6307365?hl=zh-Hans)
 
