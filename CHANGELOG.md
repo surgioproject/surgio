@@ -1,3 +1,12 @@
+## [0.7.2](https://github.com/geekdada/surgio/compare/v0.7.1...v0.7.2) (2019-09-05)
+
+
+### Features
+
+* enhance filter ([2cb1d0a](https://github.com/geekdada/surgio/commit/2cb1d0a))
+
+
+
 ## [0.7.1](https://github.com/geekdada/surgio/compare/v0.7.0...v0.7.1) (2019-09-04)
 
 
