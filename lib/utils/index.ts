@@ -763,7 +763,7 @@ export const getClashNodeNames = (
     name: ruleName,
     proxies: nodes.map(item => item.nodeName),
     ...(ruleType === 'url-test' ? {
-      url: 'http://www.gstatic.com/generate_204',
+      url: 'http://www.qualcomm.cn/generate_204',
       interval: 1200,
     } : null),
   };

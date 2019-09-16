@@ -262,14 +262,14 @@ test('normalizeClashProxyGroupConfig', t => {
       name: 'US',
       type: 'url-test',
       proxies: [],
-      url: 'http://www.gstatic.com/generate_204',
+      url: 'http://www.qualcomm.cn/generate_204',
       interval: 1200,
     },
     {
       name: 'HK',
       type: 'url-test',
       proxies: ['🇭🇰HK(Example)'],
-      url: 'http://www.gstatic.com/generate_204',
+      url: 'http://www.qualcomm.cn/generate_204',
       interval: 1200,
     },
     {
