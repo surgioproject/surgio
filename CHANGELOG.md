@@ -1,3 +1,12 @@
+# [0.8.0](https://github.com/geekdada/surgio/compare/v0.7.3...v0.8.0) (2019-09-26)
+
+
+### Features
+
+* add quantumultx filter ([0d01d55](https://github.com/geekdada/surgio/commit/0d01d55))
+
+
+
 ## [0.7.3](https://github.com/geekdada/surgio/compare/v0.7.2...v0.7.3) (2019-09-16)
 
 
