@@ -14,8 +14,8 @@ export default function getEngine(templateDir: string): nunjucks.Environment {
     return array
       .filter(item => {
         return item && item.trim() !== '' &&
-          item.indexOf('USER-AGENT') === -1 &&
-          item.indexOf('PROCESS-NAME') === -1;
+          item.toUpperCase().indexOf('USER-AGENT') === -1 &&
+          item.toUpperCase().indexOf('PROCESS-NAME') === -1;
       })
       .map((item: string) => {
         if (item.startsWith('#')) {
@@ -25,6 +25,18 @@ export default function getEngine(templateDir: string): nunjucks.Environment {
           .replace(/,no-resolve/, '')
           .replace(/\/\/.*$/, '')
           .trim();
+      })
+      .join('\n');
+  });
+
+  engine.addFilter('quantumultx', (str: string) => {
+    const array = str.split('\n');
+
+    return array
+      .filter(item => {
+        return item && item.trim() !== '' &&
+          item.toUpperCase().indexOf('URL-REGEX') === -1 &&
+          item.toUpperCase().indexOf('PROCESS-NAME') === -1;
       })
       .join('\n');
   });
