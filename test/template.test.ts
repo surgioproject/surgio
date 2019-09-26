@@ -54,3 +54,13 @@ test('base64', t => {
 
   t.is(result, 'dGVzdHRlc3R0ZXN0dGVzdA==');
 });
+
+test('quantumultx filter', t => {
+  const body = `{{ str | quantumultx }}`;
+  const str = `PROCESS-NAME,Telegram,Proxy,no-resolve // test rule`;
+  const result = templateEngine.renderString(body, {
+    str,
+  });
+
+  t.is(result, '');
+});
