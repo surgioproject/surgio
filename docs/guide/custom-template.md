@@ -270,3 +270,13 @@ DOMAIN-SUFFIX,ytimg.com,🚀 Proxy
 - USER-AGENT
 - PROCESS-NAME
 - no-resolve（仅除去该字段，其它部分保留）
+
+### QuantumultX 规则处理
+
+由于 QuantumultX 目前暂时还不支持 `URL-REGEX` 和 `PROCESS-NAME`，所以需要把这些规则从配置中除去。
+
+```
+{% import './snippet/blocked_rules.tpl' as blocked_rules %}
+
+{{ blocked_rules.main('🚀 Proxy') | quantumultx }}
+```
