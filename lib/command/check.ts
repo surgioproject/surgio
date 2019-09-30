@@ -5,18 +5,9 @@ import fs from 'fs';
 import path from 'path';
 
 import {
-  BlackSSLProviderConfig,
-  CustomProviderConfig,
-  PossibleNodeConfigType,
-  ProviderConfig,
-  ShadowsocksJsonSubscribeProviderConfig,
-  SupportProviderEnum,
-} from '../types';
-import {
-  getBlackSSLConfig,
-  getShadowsocksJSONConfig,
   loadConfig
 } from '../utils';
+import getProvider from '../utils/getProvider';
 
 class CheckCommand extends Command {
   private options: object;
@@ -38,35 +29,20 @@ class CheckCommand extends Command {
     const providerName = ctx.argv._[0];
     const config = loadConfig(ctx.cwd, ctx.argv.config);
     const filePath = path.resolve(config.providerDir, `./${providerName}.js`);
-    const file: ProviderConfig|Error = fs.existsSync(filePath) ? require(filePath) : new Error('Provider file cannot be found.');
+    const file: any|Error = fs.existsSync(filePath) ? require(filePath) : new Error('Provider file cannot be found.');
 
     if (file instanceof Error) {
       throw file;
     }
 
-    const configList = await this.requestRemoteFile(file);
+    const provider = getProvider(file);
+    const nodeList = await provider.getNodeList();
 
-    console.log(JSON.stringify(configList, null ,2));
+    console.log(JSON.stringify(nodeList, null ,2));
   }
 
   public get description(): string {
     return 'Check configurations from provider';
-  }
-
-  private async requestRemoteFile(file: ProviderConfig): Promise<ReadonlyArray<PossibleNodeConfigType>> {
-    switch (file.type) {
-      case SupportProviderEnum.BlackSSL:
-        return getBlackSSLConfig(file as BlackSSLProviderConfig);
-
-      case SupportProviderEnum.ShadowsocksJsonSubscribe:
-        return getShadowsocksJSONConfig(file as ShadowsocksJsonSubscribeProviderConfig);
-
-      case SupportProviderEnum.Custom:
-        return (file as CustomProviderConfig).nodeList;
-
-      default:
-        throw new Error(`Unsupported provider type: ${file.type}`);
-    }
   }
 }
 

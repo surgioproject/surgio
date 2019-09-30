@@ -10,36 +10,23 @@ import path from 'path';
 import getEngine from './template';
 import {
   ArtifactConfig,
-  BlackSSLProviderConfig,
   CommandConfig,
-  CustomProviderConfig,
   NodeNameFilterType,
-  NodeTypeEnum,
   PossibleNodeConfigType,
-  ProviderConfig,
   RemoteSnippet,
-  ShadowsocksJsonSubscribeProviderConfig,
-  ShadowsocksrSubscribeProviderConfig,
-  ShadowsocksSubscribeProviderConfig,
   SimpleNodeConfig,
   SupportProviderEnum,
-  V2rayNSubscribeProviderConfig,
 } from './types';
 import {
-  getBlackSSLConfig,
   getClashNodeNames,
   getClashNodes,
   getDownloadUrl,
   getNodeNames,
   getQuantumultNodes,
-  getShadowsocksJSONConfig,
   getShadowsocksNodes,
   getShadowsocksNodesJSON,
   getShadowsocksrNodes,
-  getShadowsocksrSubscription,
-  getShadowsocksSubscription,
   getSurgeNodes,
-  getV2rayNSubscription,
   hkFilter,
   loadRemoteSnippetList,
   netflixFilter as defaultNetflixFilter,
@@ -49,6 +36,7 @@ import {
   usFilter,
   youtubePremiumFilter as defaultYoutubePremiumFilter,
 } from './utils';
+import getProvider from './utils/getProvider';
 
 const spinner = ora();
 
@@ -81,15 +69,13 @@ export async function generate(
   const {
     name: artifactName,
     template,
-    provider,
     customParams,
   } = artifact;
 
   assert(artifactName, 'You must specify the artifact\'s name.');
   assert(template, 'You must specify the artifact\'s template.');
-  assert(provider, 'You must specify the artifact\'s provider.');
+  assert(artifact.provider, 'You must specify the artifact\'s provider.');
 
-  const tplBuffer = await fs.readFile(path.resolve(config.templateDir, `${template}.tpl`));
   const recipeList = artifact.recipe ? artifact.recipe : [artifact.provider];
   const nodeList: PossibleNodeConfigType[] = [];
   const nodeNameList: SimpleNodeConfig[] = [];
@@ -98,84 +84,49 @@ export async function generate(
     youtubePremiumFilter?: NodeNameFilterType;
   } = {};
 
+  if (config.binPath && config.binPath.v2ray) {
+    config.binPath.vmess = config.binPath.v2ray;
+  }
+
   for (const providerName of recipeList) {
     const filePath = path.resolve(config.providerDir, `${providerName}.js`);
-    const recipeConfigList: Array<ReadonlyArray<PossibleNodeConfigType>> = [];
 
     if (!fs.existsSync(filePath)) {
       throw new Error(`${filePath} cannot be found.`);
     }
 
-    const file: ProviderConfig = require(filePath);
+    const provider = getProvider(require(filePath));
+    const nodeConfigList = await provider.getNodeList();
 
     if (!customFilters.netflixFilter) {
-      customFilters.netflixFilter = file.netflixFilter || defaultNetflixFilter;
+      customFilters.netflixFilter = provider.netflixFilter || defaultNetflixFilter;
     }
     if (!customFilters.youtubePremiumFilter) {
-      customFilters.youtubePremiumFilter = file.youtubePremiumFilter || defaultYoutubePremiumFilter;
+      customFilters.youtubePremiumFilter = provider.youtubePremiumFilter || defaultYoutubePremiumFilter;
     }
 
-    assert(file.type, 'You must specify a type.');
+    nodeConfigList.forEach(nodeConfig => {
+      let isValid = false;
 
-    switch (file.type) {
-      case SupportProviderEnum.BlackSSL:
-        recipeConfigList.push(await getBlackSSLConfig(file as BlackSSLProviderConfig));
-        break;
-
-      case SupportProviderEnum.ShadowsocksJsonSubscribe:
-        recipeConfigList.push(await getShadowsocksJSONConfig(file as ShadowsocksJsonSubscribeProviderConfig));
-        break;
-
-      case SupportProviderEnum.ShadowsocksSubscribe:
-        recipeConfigList.push(await getShadowsocksSubscription(file as ShadowsocksSubscribeProviderConfig));
-        break;
-
-      case SupportProviderEnum.ShadowsocksrSubscribe:
-        recipeConfigList.push(await getShadowsocksrSubscription(file as ShadowsocksrSubscribeProviderConfig));
-        break;
-
-      case SupportProviderEnum.Custom: {
-        assert((file as CustomProviderConfig).nodeList, 'Lack of nodeList.');
-        recipeConfigList.push((file as CustomProviderConfig).nodeList);
-        break;
+      if (!provider.nodeFilter) {
+        isValid = true;
+      } else if (provider.nodeFilter(nodeConfig)) {
+        isValid = true;
       }
 
-      case SupportProviderEnum.V2rayNSubscribe:
-        recipeConfigList.push(await getV2rayNSubscription(file as V2rayNSubscribeProviderConfig));
-        break;
+      if (config.binPath && config.binPath[nodeConfig.type]) {
+        nodeConfig.binPath = config.binPath[nodeConfig.type];
+        nodeConfig.localPort = provider.nextPort;
+      }
 
-      default:
-        throw new Error(`Unsupported provider type: ${file.type}`);
-    }
-
-    recipeConfigList.forEach(recipeConfig => {
-      recipeConfig.forEach(nodeConfig => {
-        let isValid = false;
-
-        if (!file.nodeFilter) {
-          isValid = true;
-        } else if (file.nodeFilter(nodeConfig)) {
-          isValid = true;
-        }
-
-        if (config.binPath) {
-          if (config.binPath.v2ray) {
-            config.binPath.vmess = config.binPath.v2ray;
-          }
-          if (config.binPath[nodeConfig.type]) {
-            nodeConfig.binPath = config.binPath[nodeConfig.type];
-          }
-        }
-
-        if (isValid) {
-          nodeNameList.push({
-            type: nodeConfig.type,
-            enable: nodeConfig.enable,
-            nodeName: nodeConfig.nodeName,
-          });
-          nodeList.push(nodeConfig);
-        }
-      });
+      if (isValid) {
+        nodeNameList.push({
+          type: nodeConfig.type,
+          enable: nodeConfig.enable,
+          nodeName: nodeConfig.nodeName,
+        });
+        nodeList.push(nodeConfig);
+      }
     });
   }
 
@@ -188,8 +139,8 @@ export async function generate(
         return item.name;
       }),
       nodeList,
-      provider,
-      providerName: provider,
+      provider: artifact.provider,
+      providerName: artifact.provider,
       artifactName,
       getDownloadUrl: (name: string) => getDownloadUrl(config.urlBase, name),
       getNodeNames,
