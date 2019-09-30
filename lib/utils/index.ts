@@ -13,7 +13,6 @@ import YAML from 'yaml';
 import os from 'os';
 
 import {
-  BlackSSLProviderConfig,
   CommandConfig,
   HttpsNodeConfig,
   NodeFilterType,
@@ -40,7 +39,10 @@ export const resolveRoot = (...args: readonly string[]): string => path.join(__d
 
 export const getDownloadUrl = (baseUrl: string = '/', artifactName: string): string => `${baseUrl}${artifactName}`;
 
-export const getBlackSSLConfig = async (config: BlackSSLProviderConfig): Promise<ReadonlyArray<HttpsNodeConfig>> => {
+export const getBlackSSLConfig = async (config: {
+  readonly username: string;
+  readonly password: string;
+}): Promise<ReadonlyArray<HttpsNodeConfig>> => {
   assert(config.username, 'Lack of BlackSSL username.');
   assert(config.password, 'Lack of BlackSSL password.');
 
@@ -80,8 +82,8 @@ export const getBlackSSLConfig = async (config: BlackSSLProviderConfig): Promise
 };
 
 export const getShadowsocksJSONConfig = async (config: {
-  readonly url: string,
-  readonly udpRelay?: boolean,
+  readonly url: string;
+  readonly udpRelay: boolean;
 }): Promise<ReadonlyArray<ShadowsocksNodeConfig>> => {
   assert(config.url, 'Lack of subscription url.');
 
@@ -221,7 +223,7 @@ export const getShadowsocksrSubscription = async (config: {
 };
 
 export const getV2rayNSubscription = async (config: {
-  readonly url: string,
+  readonly url: string;
 }): Promise<ReadonlyArray<VmessNodeConfig>> => {
   assert(config.url, 'Lack of subscription url.');
 
@@ -269,8 +271,6 @@ export const getSurgeNodes = (
   list: ReadonlyArray<HttpsNodeConfig|ShadowsocksNodeConfig|SnellNodeConfig|ShadowsocksrNodeConfig|VmessNodeConfig>,
   filter?: NodeFilterType,
 ): string => {
-  let portNumber = 61100;
-
   const result: string[] = list
     .filter(item => filter ? filter(item) : true)
     .map<string>(nodeConfig => {
@@ -338,7 +338,7 @@ export const getSurgeNodes = (
             '-o', config.obfs,
             '-O', config.protocol,
             '-k', config.password,
-            '-l', `${portNumber}`,
+            '-l', `${config.localPort}`,
             '-b', '127.0.0.1',
           ];
 
@@ -353,11 +353,9 @@ export const getSurgeNodes = (
             'external',
             `exec = ${JSON.stringify(config.binPath)}`,
             ...(args).map(arg => `args = ${JSON.stringify(arg)}`),
-            `local-port = ${portNumber}`,
+            `local-port = ${config.localPort}`,
             `addresses = ${config.hostname}`,
           ].join(', ');
-
-          portNumber++;
 
           return ([
             config.nodeName,
@@ -373,9 +371,9 @@ export const getSurgeNodes = (
             throw new Error('You must specify a binary file path for V2Ray.');
           }
 
-          const jsonFileName = `v2ray_${config.hostname}_${config.port}.json`;
+          const jsonFileName = `v2ray_${config.localPort}_${config.hostname}_${config.port}.json`;
           const jsonFilePath = path.join(ensureConfigFolder(), jsonFileName);
-          const jsonFile = formatV2rayConfig(portNumber, nodeConfig);
+          const jsonFile = formatV2rayConfig(config.localPort, nodeConfig);
           const args = [
             '--config', jsonFilePath.replace(os.homedir(), '$HOME'),
           ];
@@ -383,15 +381,13 @@ export const getSurgeNodes = (
             'external',
             `exec = ${JSON.stringify(config.binPath)}`,
             ...(args).map(arg => `args = ${JSON.stringify(arg)}`),
-            `local-port = ${portNumber}`,
+            `local-port = ${config.localPort}`,
             `addresses = ${config.hostname}`,
           ].join(', ');
 
           if (process.env.NODE_ENV !== 'test') {
             fs.writeJSONSync(jsonFilePath, jsonFile);
           }
-
-          portNumber++;
 
           return ([
             config.nodeName,

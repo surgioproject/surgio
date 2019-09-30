@@ -14,9 +14,11 @@ import path from 'path';
 import shelljs from 'shelljs';
 import speedTest from 'speedtest-net';
 import winston, { format, Logger } from 'winston';
+import Provider from '../class/Provider';
 
-import { ShadowsocksNodeConfig, ProviderConfig, SupportProviderEnum, ShadowsocksJsonSubscribeProviderConfig, CustomProviderConfig } from '../types';
-import { getClashNodes, toYaml, getShadowsocksJSONConfig, loadConfig } from '../utils';
+import { NodeTypeEnum, PossibleNodeConfigType, ShadowsocksNodeConfig } from '../types';
+import { getClashNodes, loadConfig, toYaml } from '../utils';
+import getProvider from '../utils/getProvider';
 
 const { combine, timestamp, printf } = format;
 const speedDebug = debug('speed');
@@ -51,14 +53,16 @@ class SpeedCommand extends Command {
     const providerName = ctx.argv._[0];
     const config = loadConfig(ctx.cwd, ctx.argv.config);
     const filePath = path.resolve(config.providerDir, `./${providerName}.js`);
-    const file: ProviderConfig|Error = fs.existsSync(filePath) ? require(filePath) : new Error('Provider file cannot be found.');
+    const file: any|Error = fs.existsSync(filePath) ? require(filePath) : new Error('Provider file cannot be found.');
 
     if (file instanceof Error) {
       throw file;
     }
 
-    const configList = await this.requestRemoteFile(file);
-    const nodeConfig = await this.promptSelections(configList);
+    const provider = getProvider(file);
+
+    const nodeList = await provider.getNodeList();
+    const nodeConfig = await this.promptSelections(nodeList);
 
     await this.runTest(nodeConfig);
   }
@@ -201,35 +205,27 @@ class SpeedCommand extends Command {
     });
   }
 
-  private async promptSelections(arr: ReadonlyArray<ShadowsocksNodeConfig>): Promise<ShadowsocksNodeConfig> {
+  private async promptSelections(arr: ReadonlyArray<PossibleNodeConfigType>): Promise<ShadowsocksNodeConfig> {
+    const choices = arr
+      .filter(item => {
+        return item.type === NodeTypeEnum.Shadowsocks;
+      })
+      .map(item => {
+        return {
+          name: `${item.nodeName} - ${chalk.gray(item.hostname + ':' + item.port)}`,
+          value: item,
+        };
+      });
     const answer = await inquirer.prompt([
       {
         name: 'server',
         message: 'Which server?',
         type: 'list',
-        choices: arr.map(item => {
-          return {
-            name: `${item.nodeName} - ${chalk.gray(item.hostname + ':' + item.port)}`,
-            value: item,
-          };
-        }),
+        choices,
       }
     ]);
 
     return (answer as any).server as ShadowsocksNodeConfig;
-  }
-
-  private async requestRemoteFile(file: ProviderConfig): Promise<ReadonlyArray<ShadowsocksNodeConfig>> {
-    switch (file.type) {
-      case SupportProviderEnum.ShadowsocksJsonSubscribe:
-        return getShadowsocksJSONConfig(file as ShadowsocksJsonSubscribeProviderConfig);
-
-      case SupportProviderEnum.Custom:
-        return (file as CustomProviderConfig).nodeList as ReadonlyArray<ShadowsocksNodeConfig>;
-
-      default:
-        throw new Error(`Unsupported provider type: ${file.type}`);
-    }
   }
 }
 
