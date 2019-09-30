@@ -273,6 +273,17 @@ module.exports = {
 
 ### provider.youtubePremiumFilter
 
+- 类型: `Function`
+- 入参: `NodeConfig`
+- 返回值: `boolean`
+
 该方法会覆盖 Surgio 内置的 `youtubePremiumFilter`。用于过滤出支持 Youtube Premium 的节点。
 
 [内置 `youtubePremiumFilter` 的解释](/guide/custom-template.md#youtubepremiumfilter)。
+
+### provider.startPort
+
+- 类型: `Number`
+- 默认值: `61100`
+
+在生成 Surge 的 Shadowsocksr 和 Vmess 配置文件时，本地监听端口会根据此配置递增。这样做的好处是切换配置文件时不会遇到端口冲突。同一个 Provider 被用在不同的 Artifact 中也会进行递增。
