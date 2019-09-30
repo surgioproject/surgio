@@ -1,3 +1,17 @@
+# [0.9.0](https://github.com/geekdada/surgio/compare/v0.8.0...v0.9.0) (2019-09-30)
+
+
+### Bug Fixes
+
+* v2ray json 应该区分本地端口 ([3a7cfe8](https://github.com/geekdada/surgio/commit/3a7cfe8))
+
+
+### Features
+
+* assign start port ([47bcf0e](https://github.com/geekdada/surgio/commit/47bcf0e))
+
+
+
 # [0.8.0](https://github.com/geekdada/surgio/compare/v0.7.3...v0.8.0) (2019-09-26)
 
 
