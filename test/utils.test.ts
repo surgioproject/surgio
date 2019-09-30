@@ -59,6 +59,7 @@ test('getSurgeNodes', async t => {
     protocol: 'auth_aes128_md5',
     protoparam: '',
     binPath: '/usr/local/bin/ssr-local',
+    localPort: 61100,
   }, {
     type: NodeTypeEnum.Vmess,
     alterId: '64',
@@ -72,6 +73,7 @@ test('getSurgeNodes', async t => {
     host: '',
     uuid: '1386f85e-657b-4d6e-9d56-78badb75e1fd',
     binPath: '/usr/local/bin/v2ray',
+    localPort: 61101,
   },];
   const txt1 = utils.getSurgeNodes(nodeList).split('\n');
   const txt2 = utils.getSurgeNodes(nodeList, nodeConfig => nodeConfig.nodeName === 'Test Node 1');
