@@ -371,7 +371,7 @@ export const getSurgeNodes = (
             throw new Error('You must specify a binary file path for V2Ray.');
           }
 
-          const jsonFileName = `v2ray_${config.hostname}_${config.port}.json`;
+          const jsonFileName = `v2ray_${config.localPort}_${config.hostname}_${config.port}.json`;
           const jsonFilePath = path.join(ensureConfigFolder(), jsonFileName);
           const jsonFile = formatV2rayConfig(config.localPort, nodeConfig);
           const args = [
