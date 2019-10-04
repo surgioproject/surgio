@@ -387,7 +387,7 @@ export const getSurgeNodes = (
             ): string {
               return [
                 `Host:${host}`,
-                `User-Agent:${ua}`,
+                `User-Agent:${JSON.stringify(ua)}`,
               ].join('|');
             }
 
