@@ -87,7 +87,7 @@
     "query-string": "^6.2.0",
     "rimraf": "^3.0.0",
     "shelljs": "^0.8.3",
-    "snyk": "^1.230.5",
+    "snyk": "^1.217.3",
     "speedtest-net": "^1.5.1",
     "update-notifier": "^3.0.1",
     "urlsafe-base64": "^1.0.0",
