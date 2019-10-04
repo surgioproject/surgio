@@ -1,3 +1,18 @@
+# [0.10.0](https://github.com/geekdada/surgio/compare/v0.9.0...v0.10.0) (2019-10-04)
+
+
+### Bug Fixes
+
+* .snyk & package.json to reduce vulnerabilities ([33547e4](https://github.com/geekdada/surgio/commit/33547e4))
+* add quote to user-agent ([e60ee8a](https://github.com/geekdada/surgio/commit/e60ee8a))
+
+
+### Features
+
+* native support for surge vmess ([02c063c](https://github.com/geekdada/surgio/commit/02c063c))
+
+
+
 # [0.9.0](https://github.com/geekdada/surgio/compare/v0.8.0...v0.9.0) (2019-09-30)
 
 
