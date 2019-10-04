@@ -37,6 +37,9 @@ export interface CommandConfig {
     readonly v2ray?: string;
     vmess?: string; // tslint:disable-line
   };
+  readonly surgeConfig: {
+    readonly v2ray: 'native'|'external';
+  };
 }
 
 export interface RemoteSnippetConfig {
@@ -150,6 +153,7 @@ export interface SimpleNodeConfig {
   readonly nodeName: string;
   binPath?: string; // tslint:disable-line
   localPort?: number; // tslint:disable-line
+  surgeConfig?: CommandConfig['surgeConfig']; // tslint:disable-line
 }
 
 export interface PlainObject { readonly [name: string]: any }

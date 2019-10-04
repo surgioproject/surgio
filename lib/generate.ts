@@ -119,6 +119,8 @@ export async function generate(
         nodeConfig.localPort = provider.nextPort;
       }
 
+      nodeConfig.surgeConfig = config.surgeConfig;
+
       if (isValid) {
         nodeNameList.push({
           type: nodeConfig.type,
