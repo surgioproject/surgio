@@ -69,7 +69,7 @@ module.exports = {
 
 ### upload
 
-- 类型: ` UploadConfig`
+- 类型: `Object`
 - 默认值: `undefined`
 
 上传阿里云 OSS 的配置。
@@ -135,3 +135,20 @@ V2Ray 的可执行文件地址，通常是 `/usr/local/bin/v2ray`。
 - 默认值: `undefined`
 
 SSR 的可执行文件地址。请使用 libev 版本的二进制文件，可以在 [这篇文章](/guide/surge-advance.md) 找到下载地址和使用方法。
+
+### surgeConfig
+
+- 类型: `Object`
+- 默认值: `undefined`
+
+#### surgeConfig.v2ray
+
+- 类型: `string`
+- 默认值: `external`
+- 可选值: `external|native`
+
+:::warning 注意
+仅 Surge 4 for iOS 和 Surge 3.3.1 (894) for macOS 之后的版本支持 `native` 方式。
+:::
+
+定义生成 Vmess 节点配置的类型，默认使用 External Provider 的形式，兼容性更好。也可以选择使用 `native` 的方式。
