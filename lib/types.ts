@@ -141,7 +141,7 @@ export interface VmessNodeConfig extends SimpleNodeConfig {
   readonly method: string;
   readonly uuid: string;
   readonly alterId: string;
-  readonly network: string;
+  readonly network: 'tcp' | 'kcp' | 'ws' | 'http' ;
   readonly tls: boolean;
   readonly host: string;
   readonly path: string;
