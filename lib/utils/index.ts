@@ -29,7 +29,9 @@ import {
   SnellNodeConfig,
   VmessNodeConfig,
 } from '../types';
+import { normalizeConfig } from './config';
 
+export const OBFS_UA = 'Mozilla/5.0 (iPhone; CPU iPhone OS 12_3_1 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148';
 const ConfigCache = new LRU<string, any>({
   maxAge: 10 * 60 * 1000, // 10min
 });
@@ -366,33 +368,77 @@ export const getSurgeNodes = (
         case NodeTypeEnum.Vmess: {
           const config = nodeConfig as VmessNodeConfig;
 
-          // istanbul ignore next
-          if (!config.binPath) {
-            throw new Error('You must specify a binary file path for V2Ray.');
+          if (
+            nodeConfig.surgeConfig &&
+            nodeConfig.surgeConfig.v2ray === 'native'
+          ) {
+            // Native support for vmess
+
+            const configList = [
+              'vmess',
+              config.hostname,
+              config.port,
+              `username=${config.uuid}`,
+            ];
+
+            function getHeader(
+              host,
+              ua = OBFS_UA
+            ): string {
+              return [
+                `Host:${host}`,
+                `User-Agent:${ua}`,
+              ].join('|');
+            }
+
+            if (config.network === 'ws') {
+              configList.push('ws=true');
+              configList.push(`ws-path=${config.path}`);
+              configList.push(
+                'ws-headers=' +
+                getHeader(config.host || config.hostname)
+              );
+            }
+
+            if (config.tls) {
+              configList.push('tls=true');
+            }
+
+            return ([
+              config.nodeName,
+              configList.join(', '),
+            ].join(' = '));
+          } else {
+            // Using external provider
+
+            // istanbul ignore next
+            if (!config.binPath) {
+              throw new Error('You must specify a binary file path for V2Ray.');
+            }
+
+            const jsonFileName = `v2ray_${config.localPort}_${config.hostname}_${config.port}.json`;
+            const jsonFilePath = path.join(ensureConfigFolder(), jsonFileName);
+            const jsonFile = formatV2rayConfig(config.localPort, nodeConfig);
+            const args = [
+              '--config', jsonFilePath.replace(os.homedir(), '$HOME'),
+            ];
+            const configString = [
+              'external',
+              `exec = ${JSON.stringify(config.binPath)}`,
+              ...(args).map(arg => `args = ${JSON.stringify(arg)}`),
+              `local-port = ${config.localPort}`,
+              `addresses = ${config.hostname}`,
+            ].join(', ');
+
+            if (process.env.NODE_ENV !== 'test') {
+              fs.writeJSONSync(jsonFilePath, jsonFile);
+            }
+
+            return ([
+              config.nodeName,
+              configString,
+            ].join(' = '));
           }
-
-          const jsonFileName = `v2ray_${config.localPort}_${config.hostname}_${config.port}.json`;
-          const jsonFilePath = path.join(ensureConfigFolder(), jsonFileName);
-          const jsonFile = formatV2rayConfig(config.localPort, nodeConfig);
-          const args = [
-            '--config', jsonFilePath.replace(os.homedir(), '$HOME'),
-          ];
-          const configString = [
-            'external',
-            `exec = ${JSON.stringify(config.binPath)}`,
-            ...(args).map(arg => `args = ${JSON.stringify(arg)}`),
-            `local-port = ${config.localPort}`,
-            `addresses = ${config.hostname}`,
-          ].join(', ');
-
-          if (process.env.NODE_ENV !== 'test') {
-            fs.writeJSONSync(jsonFilePath, jsonFile);
-          }
-
-          return ([
-            config.nodeName,
-            configString,
-          ].join(' = '));
         }
 
         // istanbul ignore next
@@ -609,7 +655,7 @@ export const getQuantumultNodes = (
 ): string => {
   function getHeader(
     host,
-    ua = 'Mozilla/5.0 (iPhone; CPU iPhone OS 12_3_1 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148'
+    ua = OBFS_UA
   ): string {
     return [
       `Host:${host}`,
@@ -809,32 +855,6 @@ export const decodeStringList = <T = object>(stringList: ReadonlyArray<string>):
   return result as T;
 };
 
-export const normalizeConfig = (cwd: string, obj: Partial<CommandConfig>): CommandConfig => {
-  const config: CommandConfig = _.defaultsDeep(obj, {
-    artifacts: [],
-    urlBase: '/',
-    output: path.join(cwd, './dist'),
-    templateDir: path.join(cwd, './template'),
-    providerDir: path.join(cwd, './provider'),
-    configDir: ensureConfigFolder(),
-    upload: {
-      region: 'oss-cn-hangzhou',
-      prefix: '/',
-    },
-  });
-
-  // istanbul ignore next
-  if (!fs.existsSync(config.templateDir)) {
-    throw new Error(`You must create ${config.templateDir} first.`);
-  }
-  // istanbul ignore next
-  if (!fs.existsSync(config.providerDir)) {
-    throw new Error(`You must create ${config.providerDir} first.`);
-  }
-
-  return config;
-};
-
 export const loadConfig = (cwd: string, configPath: string, override?: Partial<CommandConfig>): CommandConfig => {
   const absPath = path.resolve(cwd, configPath);
 
@@ -989,7 +1009,7 @@ export const formatV2rayConfig = (localPort: string|number, nodeConfig: VmessNod
         path: nodeConfig.path,
         headers: {
           Host: nodeConfig.host,
-          'User-Agent': 'Mozilla/5.0 (iPhone; CPU iPhone OS 12_3_1 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148',
+          'User-Agent': OBFS_UA,
         },
       },
     };
