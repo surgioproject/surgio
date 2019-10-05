@@ -29,3 +29,7 @@ npx surgio generate
 :::warning 注意
 目前 Surgio 仅支持 Node.js 版本 >= 10。
 :::
+
+### 交流
+
+[<img width="207" src="https://raw.githubusercontent.com/geekdada/surgio/master/docs/.vuepress/public/join-telegram.png">](https://t.me/surgiotg)

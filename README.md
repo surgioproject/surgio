@@ -31,6 +31,10 @@
 
 查看完整使用文档，前往 [surgio.royli.dev](https://surgio.royli.dev)。
 
+## 交流
+
+[<img width="207" src="https://raw.githubusercontent.com/geekdada/surgio/master/docs/.vuepress/public/join-telegram.png">](https://t.me/surgiotg)
+
 ## License
 
 [MIT](https://github.com/geekdada/surgio/blob/master/LICENSE)
