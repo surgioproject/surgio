@@ -98,3 +98,18 @@ test('assign local port', async t => {
   t.truthy(conf2.Proxy['测试 1'].includes('local-port = 4000'));
   t.truthy(conf2.Proxy['测试 2'].includes('local-port = 4001'));
 });
+
+test('custom filter', async t => {
+  const { code } = await coffee.fork(cli, ['generate'], {
+    cwd: resolve('custom-filter'),
+    execArgv: ['--require', require.resolve('./stub-axios.js')],
+  })
+    .end();
+  const confString = fs.readFileSync(resolve('custom-filter/dist/ss.conf'), {
+    encoding: 'utf8',
+  });
+  const conf = ini.decode(confString);
+
+  t.is(conf['Proxy Group']['Proxy 1'], 'select, 🇺🇸US 1, 🇺🇸US 2');
+  t.is(conf['Proxy Group']['Proxy 2'], 'select,');
+});
