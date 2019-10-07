@@ -294,3 +294,10 @@ module.exports = {
 - 默认值: `61100`
 
 在生成 Surge 的 Shadowsocksr 和 Vmess 配置文件时，本地监听端口会根据此配置递增。这样做的好处是切换配置文件时不会遇到端口冲突。同一个 Provider 被用在不同的 Artifact 中也会进行递增。
+
+### provider.addFlag
+
+- 类型: `Boolean`
+- 默认值: `false`
+
+在节点名称前加国旗 Emoji。需要注意的是，Surgio 是根据有限的节点名关键词判断位置的，如果无法匹配则会保留原节点名。你可以在所有的过滤器中检索国旗 Emoji。

@@ -71,6 +71,7 @@ export interface ProviderConfig {
   readonly customFilters?: {
     readonly [name: string]: NodeNameFilterType;
   };
+  readonly addFlag: boolean;
 }
 
 export interface BlackSSLProviderConfig extends ProviderConfig {
@@ -155,7 +156,7 @@ export interface VmessNodeConfig extends SimpleNodeConfig {
 export interface SimpleNodeConfig {
   readonly type: NodeTypeEnum;
   readonly enable?: boolean;
-  readonly nodeName: string;
+  nodeName: string; // tslint:disable-line
   binPath?: string; // tslint:disable-line
   localPort?: number; // tslint:disable-line
   surgeConfig?: CommandConfig['surgeConfig']; // tslint:disable-line

@@ -2,6 +2,7 @@
 
 module.exports = {
   type: 'custom',
+  addFlag: true,
   nodeList: [
     {
       type: 'shadowsocks',

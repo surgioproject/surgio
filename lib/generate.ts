@@ -38,6 +38,7 @@ import {
   youtubePremiumFilter as defaultYoutubePremiumFilter,
 } from './utils/filter';
 import getProvider from './utils/getProvider';
+import { prependFlag } from './utils/flag';
 
 const spinner = ora();
 
@@ -123,6 +124,10 @@ export async function generate(
       }
 
       nodeConfig.surgeConfig = config.surgeConfig;
+
+      if (provider.addFlag) {
+        nodeConfig.nodeName = prependFlag(nodeConfig.nodeName);
+      }
 
       if (isValid) {
         nodeNameList.push({
