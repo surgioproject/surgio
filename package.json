@@ -2,6 +2,7 @@
   "name": "surgio",
   "version": "0.10.0",
   "main": "build/index.js",
+  "typings": "build/index.d.ts",
   "bin": {
     "surgio": "bin/surgio.js"
   },
@@ -24,6 +25,7 @@
     "@types/lodash": "^4.14.137",
     "@types/lru-cache": "^5.1.0",
     "@types/mz": "^0.0.32",
+    "@types/node": "^10",
     "@types/nunjucks": "^3.1.1",
     "@types/yaml": "^1.0.2",
     "@vuepress/plugin-google-analytics": "^1.0.0-rc.1",

@@ -14,6 +14,7 @@ export default class Provider {
   public readonly nodeFilter?: NodeFilterType;
   public readonly netflixFilter?: NodeNameFilterType;
   public readonly youtubePremiumFilter?: NodeNameFilterType;
+  public readonly customFilters?: ProviderConfig['customFilters'];
   private startPort?: number;
 
   constructor(config: ProviderConfig) {
@@ -22,6 +23,7 @@ export default class Provider {
     this.nodeFilter = config.nodeFilter;
     this.netflixFilter = config.netflixFilter;
     this.youtubePremiumFilter = config.youtubePremiumFilter;
+    this.customFilters = config.customFilters;
     this.startPort = config.startPort;
   }
 

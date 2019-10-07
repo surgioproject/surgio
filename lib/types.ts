@@ -1,4 +1,6 @@
+import { cst } from 'yaml';
 import Provider from './class/Provider';
+import Node = cst.Node;
 
 export enum NodeTypeEnum {
   HTTPS = 'https',
@@ -66,6 +68,9 @@ export interface ProviderConfig {
   readonly netflixFilter?: NodeNameFilterType;
   readonly youtubePremiumFilter?: NodeNameFilterType;
   readonly startPort?: number;
+  readonly customFilters?: {
+    readonly [name: string]: NodeNameFilterType;
+  };
 }
 
 export interface BlackSSLProviderConfig extends ProviderConfig {

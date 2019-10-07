@@ -813,29 +813,6 @@ export const getClashNodeNames = (
 
 export const toYaml = (obj: JsonObject): string => YAML.stringify(obj);
 
-export const netflixFilter: NodeNameFilterType = item => {
-  const name = item.nodeName.toLowerCase();
-  return [
-    'netflix',
-    'hkbn',
-    'hkt',
-    'hgc',
-  ].some(key => name.includes(key.toLowerCase()));
-};
-
-export const youtubePremiumFilter: NodeNameFilterType = item => {
-  const name = item.nodeName.toLowerCase();
-  return ['日', '美', '韩', '🇯🇵', '🇺🇸', '🇰🇷'].some(key => name.includes(key.toLowerCase()));
-};
-
-export const usFilter: NodeNameFilterType = item => {
-  return ['🇺🇸', '美', 'US'].some(key => item.nodeName.includes(key));
-};
-
-export const hkFilter: NodeNameFilterType = item => {
-  return ['🇭🇰', '港', 'HK'].some(key => item.nodeName.includes(key));
-};
-
 export const pickAndFormatStringList = (obj: object, keyList: readonly string[]): readonly string[] => {
   const result: string[] = [];
   keyList.forEach(key => {

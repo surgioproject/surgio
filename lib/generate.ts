@@ -12,10 +12,9 @@ import {
   ArtifactConfig,
   CommandConfig,
   NodeNameFilterType,
-  PossibleNodeConfigType,
+  PossibleNodeConfigType, ProviderConfig,
   RemoteSnippet,
   SimpleNodeConfig,
-  SupportProviderEnum,
 } from './types';
 import {
   getClashNodeNames,
@@ -27,15 +26,17 @@ import {
   getShadowsocksNodesJSON,
   getShadowsocksrNodes,
   getSurgeNodes,
-  hkFilter,
   loadRemoteSnippetList,
-  netflixFilter as defaultNetflixFilter,
   normalizeClashProxyGroupConfig,
   toBase64,
   toUrlSafeBase64,
+} from './utils';
+import {
+  hkFilter, japanFilter, koreaFilter,
+  netflixFilter as defaultNetflixFilter, singaporeFilter, taiwanFilter,
   usFilter,
   youtubePremiumFilter as defaultYoutubePremiumFilter,
-} from './utils';
+} from './utils/filter';
 import getProvider from './utils/getProvider';
 
 const spinner = ora();
@@ -79,10 +80,9 @@ export async function generate(
   const recipeList = artifact.recipe ? artifact.recipe : [artifact.provider];
   const nodeList: PossibleNodeConfigType[] = [];
   const nodeNameList: SimpleNodeConfig[] = [];
-  const customFilters: {
-    netflixFilter?: NodeNameFilterType;
-    youtubePremiumFilter?: NodeNameFilterType;
-  } = {};
+  let customFilters: ProviderConfig['customFilters'];
+  let netflixFilter: NodeNameFilterType;
+  let youtubePremiumFilter: NodeNameFilterType;
 
   if (config.binPath && config.binPath.v2ray) {
     config.binPath.vmess = config.binPath.v2ray;
@@ -98,11 +98,14 @@ export async function generate(
     const provider = getProvider(require(filePath));
     const nodeConfigList = await provider.getNodeList();
 
-    if (!customFilters.netflixFilter) {
-      customFilters.netflixFilter = provider.netflixFilter || defaultNetflixFilter;
+    if (!netflixFilter) {
+      netflixFilter = provider.netflixFilter || defaultNetflixFilter;
     }
-    if (!customFilters.youtubePremiumFilter) {
-      customFilters.youtubePremiumFilter = provider.youtubePremiumFilter || defaultYoutubePremiumFilter;
+    if (!youtubePremiumFilter) {
+      youtubePremiumFilter = provider.youtubePremiumFilter || defaultYoutubePremiumFilter;
+    }
+    if (!customFilters) {
+      customFilters = provider.customFilters;
     }
 
     nodeConfigList.forEach(nodeConfig => {
@@ -155,10 +158,16 @@ export async function generate(
       getQuantumultNodes,
       usFilter,
       hkFilter,
+      japanFilter,
+      koreaFilter,
+      singaporeFilter,
+      taiwanFilter,
       toUrlSafeBase64,
       toBase64,
       encodeURIComponent,
-      ...customFilters,
+      netflixFilter,
+      youtubePremiumFilter,
+      customFilters,
       ...(customParams ? customParams : {}),
       ...(artifact.proxyGroupModifier ? {
         clashProxyConfig: {
@@ -166,8 +175,14 @@ export async function generate(
           'Proxy Group': normalizeClashProxyGroupConfig(
             nodeList,
             {
-              hkFilter,
               usFilter,
+              hkFilter,
+              japanFilter,
+              koreaFilter,
+              singaporeFilter,
+              taiwanFilter,
+              netflixFilter,
+              youtubePremiumFilter,
               ...customFilters,
             },
             artifact.proxyGroupModifier
