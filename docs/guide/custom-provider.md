@@ -281,6 +281,13 @@ module.exports = {
 
 [内置 `youtubePremiumFilter` 的解释](/guide/custom-template.md#youtubepremiumfilter)。
 
+### provider.customFilters
+
+- 类型: `Object`
+- 默认值: `undefined`
+
+自定义 Filter。关于自定义 Filter 的用法，请阅读 [进阶 - 自定义 Filter](/guide/advance/custom-filter)。
+
 ### provider.startPort
 
 - 类型: `Number`

@@ -1,15 +1,16 @@
 ---
-title: Surge 进阶使用
+title: Surge 进阶 - 生成 SSR 和 V2Ray 订阅
 sidebarDepth: 2
 ---
 
-# Surge 进阶使用
+# Surge 进阶 - 生成 SSR 和 V2Ray 订阅
 
 :::warning
-本文仅针对 Surge for Mac
+- 本文仅针对 Surge for Mac
+- 如果你已经订阅了 Surge 4，推荐使用原生的 Vmess 支持
 :::
 
-Surge 没有原生提供对 V2Ray 和 SSR 的支持（将来也不太可能），但是提供了一个叫做 [External Proxy Provider](https://medium.com/@Blankwonder/surge-mac-new-features-external-proxy-provider-375e0e9ea660) 的功能，能够满足我们连接 V2Ray 和 SSR 服务器。
+Surge 没有原生提供对 V2Ray 和 SSR 的支持 ~~（将来也不太可能）~~ ，但是提供了一个叫做 [External Proxy Provider](https://medium.com/@Blankwonder/surge-mac-new-features-external-proxy-provider-375e0e9ea660) 的功能，能够满足我们连接 V2Ray 和 SSR 服务器。
 
 ## 开始之前
 
