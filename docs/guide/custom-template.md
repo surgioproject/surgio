@@ -57,6 +57,12 @@ DOMAIN-SUFFIX,CN,DIRECT
 DOMAIN-KEYWORD,baidu,DIRECT
 ```
 
+如果你需要直接读取远程片段的内容，可以在模板里这样写：
+
+```
+{{ remoteSnippets.cn.text }}
+```
+
 ### 国别过滤器
 
 Surgio 内置多个节点名国别/地区过滤器。除非是火星文，Surgio 应该都能识别出来。它们是：
@@ -106,6 +112,11 @@ const youtubePremiumFilter = nodeConfig => {
 获取自定义 Filter。关于自定义 Filter 的用法，请阅读 [进阶 - 自定义 Filter](/guide/advance/custom-filter)。
 
 ### clashProxyConfig
+
+:::tip
+- 支持输出 Shadowsocks, Shadowsocksr, Vmess 节点
+- Shadowsocksr 是通过 Clashr 项目支持的，你需要在 [这里](https://t.me/clashr4ssr) 下载可执行文件。项目地址在 [这里](https://github.com/sun8911879/shadowsocksR)。
+:::
 
 Clash 的 `Proxy` 和 `Proxy Group` 配置对象。`clashProxyConfig` 的内容依赖 Artifact 的 [`proxyGroupModifier` 函数](/guide/custom-artifact.md#proxygroupmodifier-nodelist-filters)。
 
