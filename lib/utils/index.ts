@@ -499,6 +499,20 @@ export const getClashNodes = (
             } : null),
           };
 
+        case NodeTypeEnum.Shadowsocksr:
+          return {
+            type: 'ssr',
+            name: nodeConfig.nodeName,
+            server: nodeConfig.hostname,
+            port: nodeConfig.port,
+            password: nodeConfig.password,
+            obfs: nodeConfig.obfs,
+            obfsparam: nodeConfig.obfsparam,
+            protocol: nodeConfig.protocol,
+            protocolparam: nodeConfig.protoparam,
+            cipher: nodeConfig.method,
+          };
+
         // istanbul ignore next
         default:
           console.info(`${nodeConfig.type} is not supported yet, ${nodeConfig.nodeName} will be ignored.`);
@@ -921,6 +935,7 @@ export const loadRemoteSnippetList = (remoteSnippetList: ReadonlyArray<RemoteSni
         main: (rule: string) => addProxyToSurgeRuleSet(res, rule),
         name: item.name,
         url: item.url,
+        text: res, // 原始内容
       }));
   }));
 };
