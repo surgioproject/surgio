@@ -1,3 +1,13 @@
+## [0.11.1](https://github.com/geekdada/surgio/compare/v0.11.0...v0.11.1) (2019-10-08)
+
+
+### Features
+
+* 远程片段支持读取原始内容 ([a1f9e0f](https://github.com/geekdada/surgio/commit/a1f9e0f))
+* add support for clashr ([43c4862](https://github.com/geekdada/surgio/commit/43c4862))
+
+
+
 # [0.11.0](https://github.com/geekdada/surgio/compare/v0.10.0...v0.11.0) (2019-10-08)
 
 
