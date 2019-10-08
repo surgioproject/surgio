@@ -129,7 +129,7 @@ Clash 的 `Proxy` 和 `Proxy Group` 配置对象。`clashProxyConfig` 的内容�
 :::
 
 :::warning
-请参考 [「Surge 进阶使用」](/guide/surge-advance.md) 生成针对 Surge 的 V2Ray 或 SSR 订阅
+请参考 [「Surge 进阶使用」](/guide/advance/surge-advance.md) 生成针对 Surge 的 V2Ray 或 SSR 订阅
 :::
 
 生成 Surge 规范的节点列表，例如：

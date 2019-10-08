@@ -134,7 +134,7 @@ V2Ray 的可执行文件地址，通常是 `/usr/local/bin/v2ray`。
 - 类型: `string`
 - 默认值: `undefined`
 
-SSR 的可执行文件地址。请使用 libev 版本的二进制文件，可以在 [这篇文章](/guide/surge-advance.md) 找到下载地址和使用方法。
+SSR 的可执行文件地址。请使用 libev 版本的二进制文件，可以在 [这篇文章](/guide/advance/surge-advance.md) 找到下载地址和使用方法。
 
 ### surgeConfig
 
