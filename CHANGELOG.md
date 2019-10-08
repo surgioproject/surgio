@@ -1,3 +1,20 @@
+# [0.11.0](https://github.com/geekdada/surgio/compare/v0.10.0...v0.11.0) (2019-10-08)
+
+
+### Bug Fixes
+
+* cannot assign value to read only object ([5bcbecd](https://github.com/geekdada/surgio/commit/5bcbecd))
+
+
+### Features
+
+* 节点名补充国旗 Emoji ([dc1f34e](https://github.com/geekdada/surgio/commit/dc1f34e))
+* 增加国别判断字段 ([ce6828c](https://github.com/geekdada/surgio/commit/ce6828c))
+* add error message ([69b6bff](https://github.com/geekdada/surgio/commit/69b6bff))
+* custom filters ([d5ee8bc](https://github.com/geekdada/surgio/commit/d5ee8bc))
+
+
+
 # [0.10.0](https://github.com/geekdada/surgio/compare/v0.9.0...v0.10.0) (2019-10-04)
 
 
