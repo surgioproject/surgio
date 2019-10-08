@@ -12,7 +12,8 @@ import {
   ArtifactConfig,
   CommandConfig,
   NodeNameFilterType,
-  PossibleNodeConfigType, ProviderConfig,
+  PossibleNodeConfigType,
+  ProviderConfig,
   RemoteSnippet,
   SimpleNodeConfig,
 } from './types';

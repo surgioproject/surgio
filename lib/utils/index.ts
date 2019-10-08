@@ -921,6 +921,7 @@ export const loadRemoteSnippetList = (remoteSnippetList: ReadonlyArray<RemoteSni
         main: (rule: string) => addProxyToSurgeRuleSet(res, rule),
         name: item.name,
         url: item.url,
+        text: res, // 原始内容
       }));
   }));
 };
