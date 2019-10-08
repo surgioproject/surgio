@@ -196,16 +196,7 @@ export async function generate(
       } : {}),
     });
   } catch (err) {
-    switch (err.name) {
-      case 'Template render error':
-        err.name = '模板渲染错误';
-        break;
-
-      // istanbul ignore next
-      default:
-        // no default
-    }
-
+    console.error('模板渲染错误');
     throw err;
   }
 
