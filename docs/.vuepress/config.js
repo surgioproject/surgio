@@ -41,7 +41,8 @@ module.exports = {
           title: '进阶',
           collapsable: false,
           children: [
-            'surge-advance',
+            'advance/surge-advance',
+            'advance/custom-filter',
           ]
         },
       ],

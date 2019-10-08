@@ -57,13 +57,16 @@ DOMAIN-SUFFIX,CN,DIRECT
 DOMAIN-KEYWORD,baidu,DIRECT
 ```
 
-### hkFilter
+### 国别过滤器
 
-香港节点过滤器。
+Surgio 内置多个节点名国别/地区过滤器。除非是火星文，Surgio 应该都能识别出来。它们是：
 
-### usFilter
-
-美国节点过滤器。
+- hkFilter
+- usFilter
+- japanFilter
+- singaporeFilter
+- koreaFilter
+- taiwanFilter
 
 ### netflixFilter
 
@@ -98,6 +101,10 @@ const youtubePremiumFilter = nodeConfig => {
 
 [查看所有支持 Youtube Premium 的国家和地区](https://support.google.com/youtube/answer/6307365?hl=zh-Hans)
 
+### customFilters
+
+获取自定义 Filter。关于自定义 Filter 的用法，请阅读 [进阶 - 自定义 Filter](/guide/advance/custom-filter)。
+
 ### clashProxyConfig
 
 Clash 的 `Proxy` 和 `Proxy Group` 配置对象。`clashProxyConfig` 的内容依赖 Artifact 的 [`proxyGroupModifier` 函数](/guide/custom-artifact.md#proxygroupmodifier-nodelist-filters)。
@@ -122,7 +129,7 @@ Clash 的 `Proxy` 和 `Proxy Group` 配置对象。`clashProxyConfig` 的内容�
 :::
 
 :::warning
-请参考 [「Surge 进阶使用」](/guide/surge-advance.md) 生成针对 Surge 的 V2Ray 或 SSR 订阅
+请参考 [「Surge 进阶使用」](/guide/advance/surge-advance.md) 生成针对 Surge 的 V2Ray 或 SSR 订阅
 :::
 
 生成 Surge 规范的节点列表，例如：

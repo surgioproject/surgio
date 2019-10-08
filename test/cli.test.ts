@@ -19,16 +19,20 @@ test('cli works', async t => {
 
   t.is(code, 0);
 
-  const confString = fs.readFileSync(resolve('plain/dist/ss_json.conf'), {
+  const confString1 = fs.readFileSync(resolve('plain/dist/ss_json.conf'), {
     encoding: 'utf8',
   });
-  const conf = ini.decode(confString);
+  const confString2 = fs.readFileSync(resolve('plain/dist/custom.conf'), {
+    encoding: 'utf8',
+  });
+  const conf = ini.decode(confString1);
 
   t.truthy(fs.existsSync(resolve('plain/dist/ss.conf')));
   t.truthy(fs.existsSync(resolve('plain/dist/ssr.conf')));
   t.truthy(fs.existsSync(resolve('plain/dist/v2rayn.conf')));
   t.truthy(fs.existsSync(resolve('plain/dist/custom.conf')));
-  t.is(confString.split('\n')[0], '#!MANAGED-CONFIG https://example.com/ss_json.conf interval=43200 strict=false');
+  t.is(confString1.split('\n')[0], '#!MANAGED-CONFIG https://example.com/ss_json.conf interval=43200 strict=false');
+  t.true(confString2.includes('select, 🇺🇲 US'));
   t.is(Object.keys(conf.Proxy).length, 4);
 });
 
@@ -97,4 +101,19 @@ test('assign local port', async t => {
   t.truthy(conf1.Proxy.测试中文.includes('local-port = 5000'));
   t.truthy(conf2.Proxy['测试 1'].includes('local-port = 4000'));
   t.truthy(conf2.Proxy['测试 2'].includes('local-port = 4001'));
+});
+
+test('custom filter', async t => {
+  const { code } = await coffee.fork(cli, ['generate'], {
+    cwd: resolve('custom-filter'),
+    execArgv: ['--require', require.resolve('./stub-axios.js')],
+  })
+    .end();
+  const confString = fs.readFileSync(resolve('custom-filter/dist/ss.conf'), {
+    encoding: 'utf8',
+  });
+  const conf = ini.decode(confString);
+
+  t.is(conf['Proxy Group']['Proxy 1'], 'select, 🇺🇸US 1, 🇺🇸US 2');
+  t.is(conf['Proxy Group']['Proxy 2'], 'select,');
 });

@@ -2,6 +2,7 @@
   "name": "surgio",
   "version": "0.10.0",
   "main": "build/index.js",
+  "typings": "build/index.d.ts",
   "bin": {
     "surgio": "bin/surgio.js"
   },
@@ -11,6 +12,7 @@
   "files": [
     "bin",
     "build",
+    "static",
     "README.md"
   ],
   "bugs": {
@@ -21,9 +23,11 @@
     "@istanbuljs/nyc-config-typescript": "^0.1.3",
     "@types/fs-extra": "^8.0.0",
     "@types/inquirer": "^6.0.3",
+    "@types/json5": "^0.0.30",
     "@types/lodash": "^4.14.137",
     "@types/lru-cache": "^5.1.0",
     "@types/mz": "^0.0.32",
+    "@types/node": "^10",
     "@types/nunjucks": "^3.1.1",
     "@types/yaml": "^1.0.2",
     "@vuepress/plugin-google-analytics": "^1.0.0-rc.1",
@@ -77,6 +81,7 @@
     "fs-extra": "^8.1.0",
     "get-port": "^5.0.0",
     "inquirer": "^6.5.0",
+    "json5": "^2.1.1",
     "lodash": "^4.17.12",
     "lru-cache": "^5.1.1",
     "merge-stream": "^2.0.0",

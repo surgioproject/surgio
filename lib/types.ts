@@ -1,4 +1,6 @@
+import { cst } from 'yaml';
 import Provider from './class/Provider';
+import Node = cst.Node;
 
 export enum NodeTypeEnum {
   HTTPS = 'https',
@@ -66,6 +68,10 @@ export interface ProviderConfig {
   readonly netflixFilter?: NodeNameFilterType;
   readonly youtubePremiumFilter?: NodeNameFilterType;
   readonly startPort?: number;
+  readonly customFilters?: {
+    readonly [name: string]: NodeNameFilterType;
+  };
+  readonly addFlag: boolean;
 }
 
 export interface BlackSSLProviderConfig extends ProviderConfig {
@@ -150,7 +156,7 @@ export interface VmessNodeConfig extends SimpleNodeConfig {
 export interface SimpleNodeConfig {
   readonly type: NodeTypeEnum;
   readonly enable?: boolean;
-  readonly nodeName: string;
+  nodeName: string; // tslint:disable-line
   binPath?: string; // tslint:disable-line
   localPort?: number; // tslint:disable-line
   surgeConfig?: CommandConfig['surgeConfig']; // tslint:disable-line

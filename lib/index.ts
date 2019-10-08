@@ -8,6 +8,7 @@ import CheckCommand from './command/check';
 import GenerateCommand from './command/generate';
 import SpeedCommand from './command/speed';
 import UploadCommand from './command/upload';
+import * as filter from './utils/filter';
 
 const envPath = path.resolve(process.cwd(), './.env');
 
@@ -32,4 +33,8 @@ export {
   UploadCommand,
   CheckCommand,
   SpeedCommand,
+};
+
+export const utils = {
+  ...filter,
 };

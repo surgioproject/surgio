@@ -12,6 +12,7 @@ import {
   VmessNodeConfig,
 } from '../lib/types';
 import * as utils from '../lib/utils';
+import * as filter from '../lib/utils/filter';
 
 test.beforeEach(() => {
   moxios.install();
@@ -327,8 +328,8 @@ test('normalizeClashProxyGroupConfig', t => {
       password: 'password',
     },
   ], {
-    hkFilter: utils.hkFilter,
-    usFilter: utils.usFilter,
+    hkFilter: filter.hkFilter,
+    usFilter: filter.usFilter,
   }, proxyGroupModifier as any), result);
 });
 
