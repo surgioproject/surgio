@@ -1,3 +1,14 @@
+## [0.11.3](https://github.com/geekdada/surgio/compare/v0.11.2...v0.11.3) (2019-10-09)
+
+
+### Bug Fixes
+
+* 不手动指定不使用代理 ([d89198a](https://github.com/geekdada/surgio/commit/d89198a))
+* 文件名在 win 上取值错误 ([310518b](https://github.com/geekdada/surgio/commit/310518b))
+* clash 规则不输出 ssr 节点名 ([7360c7b](https://github.com/geekdada/surgio/commit/7360c7b))
+
+
+
 ## [0.11.2](https://github.com/geekdada/surgio/compare/v0.11.1...v0.11.2) (2019-10-09)
 
 
