@@ -43,6 +43,7 @@ module.exports = {
           children: [
             'advance/surge-advance',
             'advance/custom-filter',
+            'advance/automation',
           ]
         },
       ],
