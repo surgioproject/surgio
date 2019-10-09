@@ -1,3 +1,12 @@
+## [0.11.2](https://github.com/geekdada/surgio/compare/v0.11.1...v0.11.2) (2019-10-09)
+
+
+### Bug Fixes
+
+* clash 中 raw tcp 的节点没有 network 字段 ([56244c1](https://github.com/geekdada/surgio/commit/56244c1))
+
+
+
 ## [0.11.1](https://github.com/geekdada/surgio/compare/v0.11.0...v0.11.1) (2019-10-08)
 
 
