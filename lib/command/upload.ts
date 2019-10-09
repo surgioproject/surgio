@@ -5,7 +5,7 @@ import Command from 'common-bin';
 import fs from 'fs';
 import dir from 'node-dir';
 import ora, { Ora } from 'ora';
-import path from "path";
+import path from 'path';
 
 import { loadConfig } from '../utils';
 
@@ -55,7 +55,7 @@ class GenerateCommand extends Command {
     const { prefix } = config.upload;
     const fileList = await dir.promiseFiles(config.output);
     const files = fileList.map(filePath => ({
-      fileName: filePath.split('/').slice(-1)[0],
+      fileName: path.basename(filePath),
       filePath,
     }));
     const fileNameList = files.map(file => file.fileName);

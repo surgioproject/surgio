@@ -58,7 +58,6 @@ export const getBlackSSLConfig = async (config: {
           password,
         },
         timeout: 20000,
-        proxy: false,
         headers: {
           'User-Agent': 'GoAgentX/774 CFNetwork/901.1 Darwin/17.6.0 (x86_64)',
         },
@@ -91,7 +90,6 @@ export const getShadowsocksJSONConfig = async (config: {
 
   async function requestConfigFromRemote(url: string): Promise<ReadonlyArray<ShadowsocksNodeConfig>> {
     const response = await axios.get(url, {
-      proxy: false,
       timeout: 20000,
     });
 
@@ -139,7 +137,6 @@ export const getShadowsocksSubscription = async (config: {
 
   async function requestConfigFromRemote(url: string): Promise<ReadonlyArray<ShadowsocksNodeConfig>> {
     const response = await axios.get(url, {
-      proxy: false,
       timeout: 20000,
       responseType: 'text',
     });
@@ -184,7 +181,6 @@ export const getShadowsocksrSubscription = async (config: {
 
   async function requestConfigFromRemote(url: string): Promise<ReadonlyArray<ShadowsocksrNodeConfig>> {
     const response = await axios.get(url, {
-      proxy: false,
       timeout: 20000,
       responseType: 'text',
     });
@@ -231,7 +227,6 @@ export const getV2rayNSubscription = async (config: {
 
   async function requestConfigFromRemote(url: string): Promise<ReadonlyArray<VmessNodeConfig>> {
     const response = await axios.get(url, {
-      proxy: false,
       timeout: 20000,
       responseType: 'text',
     });
@@ -797,7 +792,7 @@ export const getClashNodeNames = (
   ruleName: string,
   ruleType: 'select' | 'url-test',
   nodeNameList: ReadonlyArray<SimpleNodeConfig>,
-  nodeTypeList: ReadonlyArray<NodeTypeEnum> = [NodeTypeEnum.Shadowsocks],
+  nodeTypeList: ReadonlyArray<NodeTypeEnum> = [NodeTypeEnum.Shadowsocks, NodeTypeEnum.Shadowsocksr, NodeTypeEnum.Vmess],
   filter?: NodeNameFilterType
 ): {
   readonly type: string;
@@ -876,6 +871,7 @@ export const normalizeClashProxyGroupConfig = (
     if (item.filter) {
       return getClashNodeNames(item.name, item.type, nodeList, [
         NodeTypeEnum.Shadowsocks,
+        NodeTypeEnum.Shadowsocksr,
         NodeTypeEnum.Vmess,
       ], item.filter);
     } else if (item.proxies) {
@@ -883,6 +879,7 @@ export const normalizeClashProxyGroupConfig = (
     } else {
       return getClashNodeNames(item.name, item.type, nodeList, [
         NodeTypeEnum.Shadowsocks,
+        NodeTypeEnum.Shadowsocksr,
         NodeTypeEnum.Vmess,
       ]);
     }
@@ -921,7 +918,6 @@ export const loadRemoteSnippetList = (remoteSnippetList: ReadonlyArray<RemoteSni
 
     return axios.get<string>(url, {
       timeout: 20000,
-      proxy: false,
       responseType: 'text',
     })
       .then(data => data.data)
