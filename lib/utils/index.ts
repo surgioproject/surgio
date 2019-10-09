@@ -797,7 +797,7 @@ export const getClashNodeNames = (
   ruleName: string,
   ruleType: 'select' | 'url-test',
   nodeNameList: ReadonlyArray<SimpleNodeConfig>,
-  nodeTypeList: ReadonlyArray<NodeTypeEnum> = [NodeTypeEnum.Shadowsocks],
+  nodeTypeList: ReadonlyArray<NodeTypeEnum> = [NodeTypeEnum.Shadowsocks, NodeTypeEnum.Shadowsocksr, NodeTypeEnum.Vmess],
   filter?: NodeNameFilterType
 ): {
   readonly type: string;
@@ -876,6 +876,7 @@ export const normalizeClashProxyGroupConfig = (
     if (item.filter) {
       return getClashNodeNames(item.name, item.type, nodeList, [
         NodeTypeEnum.Shadowsocks,
+        NodeTypeEnum.Shadowsocksr,
         NodeTypeEnum.Vmess,
       ], item.filter);
     } else if (item.proxies) {
@@ -883,6 +884,7 @@ export const normalizeClashProxyGroupConfig = (
     } else {
       return getClashNodeNames(item.name, item.type, nodeList, [
         NodeTypeEnum.Shadowsocks,
+        NodeTypeEnum.Shadowsocksr,
         NodeTypeEnum.Vmess,
       ]);
     }
