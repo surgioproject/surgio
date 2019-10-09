@@ -144,7 +144,9 @@ export const getShadowsocksSubscription = async (config: {
       responseType: 'text',
     });
 
-    const configList = fromBase64(response.data).split('\n').filter(item => !!item);
+    const configList = fromBase64(response.data).split('\n')
+        .filter(item => !!item)
+        .filter(item => !(item.startsWith("vmess://") || item.startsWith("ssr://")));
     const result = configList.map<any>(item => {
       const scheme = URL.parse(item, true);
       const userInfo = fromUrlSafeBase64(scheme.auth).split(':');
@@ -189,7 +191,9 @@ export const getShadowsocksrSubscription = async (config: {
       responseType: 'text',
     });
 
-    const configList = fromBase64(response.data).split('\n').filter(item => !!item);
+    const configList = fromBase64(response.data).split('\n')
+        .filter(item => !!item)
+        .filter(item => !(item.startsWith("vmess://") || item.startsWith("ss://")));
     const result = configList.map<ShadowsocksrNodeConfig>(item => {
       const pair = fromUrlSafeBase64(item.replace('ssr://', '')).split('/');
       const basicInfo = pair[0].split(':');
@@ -236,7 +240,9 @@ export const getV2rayNSubscription = async (config: {
       responseType: 'text',
     });
 
-    const configList = fromBase64(response.data).split('\n').filter(item => !!item);
+    const configList = fromBase64(response.data).split('\n')
+        .filter(item => !!item)
+        .filter(item => !(item.startsWith("ss://") || item.startsWith("ssr://")));
     const result = configList.map<VmessNodeConfig>(item => {
       const json = JSON.parse(fromBase64(item.replace('vmess://', '')));
 
