@@ -489,7 +489,9 @@ export const getClashNodes = (
             port: nodeConfig.port,
             uuid: nodeConfig.uuid,
             alterId: nodeConfig.alterId,
-            network: nodeConfig.network,
+            ...(nodeConfig.network === 'tcp' ? null : {
+              network: nodeConfig.network,
+            }),
             tls: nodeConfig.tls,
             ...(nodeConfig.network === 'ws' ? {
               'ws-path': nodeConfig.path,

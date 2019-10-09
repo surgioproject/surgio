@@ -235,7 +235,6 @@ test('getClashNodes', async t => {
     name: 'Test Node 4',
     alterId: '64',
     server: '1.1.1.1',
-    network: 'tcp',
     port: 8080,
     tls: false,
     type: 'vmess',
