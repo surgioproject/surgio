@@ -82,9 +82,23 @@ npx surgio generate
 npx surgio upload
 ```
 
+你也可以使用预设好的组合命令，生成后上传规则：
+
+```bash
+npm run update
+```
+
 :::warning 注意
 请确保已配置阿里云 OSS。
 :::
+
+## 升级 Surgio
+
+确保你当前的版本和新版没有兼容性问题后，运行下面命令即可。
+
+```bash
+npm install surgio@latest --save
+```
 
 ## 配置文件
 
