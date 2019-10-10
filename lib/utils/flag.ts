@@ -17,7 +17,7 @@ Object.keys(flag).forEach(emoji => {
 
 export const prependFlag = (str: string): string => {
   for (const key in flagMap) {
-    if (flagMap.hasOwnProperty(key) && str.includes(key)) {
+    if (flagMap.hasOwnProperty(key) && str.toUpperCase().includes(key)) {
       return `${flagMap[key]} ${str}`;
     }
   }
