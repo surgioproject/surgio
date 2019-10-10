@@ -1,3 +1,18 @@
+## [0.11.5](https://github.com/geekdada/surgio/compare/v0.11.4...v0.11.5) (2019-10-10)
+
+
+### Bug Fixes
+
+* clash 规则中出现了 URL-REGEX ([057269d](https://github.com/geekdada/surgio/commit/057269d))
+
+
+### Features
+
+* 增加错误文案方便调试 ([ff28793](https://github.com/geekdada/surgio/commit/ff28793))
+* 增加了 Flag 识别字段 ([86c1489](https://github.com/geekdada/surgio/commit/86c1489))
+
+
+
 ## [0.11.4](https://github.com/geekdada/surgio/compare/v0.11.3...v0.11.4) (2019-10-10)
 
 
