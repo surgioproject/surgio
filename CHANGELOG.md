@@ -1,3 +1,13 @@
+## [0.11.4](https://github.com/geekdada/surgio/compare/v0.11.3...v0.11.4) (2019-10-10)
+
+
+### Bug Fixes
+
+* 不需要 sort ([51f560f](https://github.com/geekdada/surgio/commit/51f560f))
+* SSR URI 识别问题 ([46184fb](https://github.com/geekdada/surgio/commit/46184fb))
+
+
+
 ## [0.11.3](https://github.com/geekdada/surgio/compare/v0.11.2...v0.11.3) (2019-10-09)
 
 
