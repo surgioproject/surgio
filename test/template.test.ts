@@ -44,6 +44,26 @@ test('renderString #4', t => {
   t.is(result, '# Comment');
 });
 
+test('renderString #5', t => {
+  const body = `{{ str | patchYamlArray }}`;
+  const str = `# Comment`;
+  const result = templateEngine.renderString(body, {
+    str,
+  });
+
+  t.is(result, '# Comment');
+});
+
+test('renderString #6', t => {
+  const body = `{{ str | patchYamlArray }}`;
+  const str = `URL-REGEX,xxxxxxxxxxxx`;
+  const result = templateEngine.renderString(body, {
+    str,
+  });
+
+  t.is(result, '');
+});
+
 test('base64', t => {
   const body = `{{ str | base64 }}`;
   const str = `testtesttesttest`;

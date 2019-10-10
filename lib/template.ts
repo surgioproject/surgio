@@ -15,7 +15,8 @@ export default function getEngine(templateDir: string): nunjucks.Environment {
       .filter(item => {
         return item && item.trim() !== '' &&
           item.toUpperCase().indexOf('USER-AGENT') === -1 &&
-          item.toUpperCase().indexOf('PROCESS-NAME') === -1;
+          item.toUpperCase().indexOf('PROCESS-NAME') === -1 &&
+          item.toUpperCase().indexOf('URL-REGEX') === -1;
       })
       .map((item: string) => {
         if (item.startsWith('#')) {
