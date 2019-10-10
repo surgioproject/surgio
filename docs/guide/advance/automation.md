@@ -46,7 +46,7 @@ git init
 image: node:10-stretch
 
 before_script:
-  - 'yarn install --production'
+  - 'npm install --production'
 
 stages:
   - build
@@ -63,7 +63,7 @@ build:
     - triggers # 能够通过 API 触发
     - schedules # 能够定时触发
   script:
-    - yarn update
+    - npm run update
 ```
 
 接下来就是一些常规操作。熟悉一下 Git 操作，然后把代码提交到 remote。
