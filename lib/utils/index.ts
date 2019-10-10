@@ -193,8 +193,16 @@ export const getShadowsocksrSubscription = async (config: {
     const result = configList.map<ShadowsocksrNodeConfig>(item => {
       const pair = fromUrlSafeBase64(item.replace('ssr://', '')).split('/');
       const basicInfo = pair[0].split(':');
-      const extras = pair[1] ? URL.parse(pair[1], true) : null;
-      const nodeName = extras ? fromUrlSafeBase64(extras.query.remarks as string) : null;
+      const extras = pair[1] ? queryString.parse(pair[1], {
+        decode: false,
+      }) : null;
+
+      // value 中的 ` ` 要替换成 + ，不然 base64 解码会有问题
+      Object.keys(extras).forEach(key => {
+        extras[key] = (extras[key] as string).replace(' ', '+');
+      });
+
+      const nodeName = extras ? fromUrlSafeBase64(extras.remarks as string) : null;
 
       if (!nodeName) {
         throw new Error(`${item} doesn\`t contain a remark.`);
@@ -209,8 +217,8 @@ export const getShadowsocksrSubscription = async (config: {
         method: basicInfo[3],
         obfs: basicInfo[4],
         password: fromUrlSafeBase64(basicInfo[5]),
-        protoparam: extras ? fromUrlSafeBase64(extras.query.protoparam as string || '') : '',
-        obfsparam: extras ? fromUrlSafeBase64(extras.query.obfsparam as string || '') : '',
+        protoparam: extras ? fromUrlSafeBase64(extras.protoparam as string || '') : '',
+        obfsparam: extras ? fromUrlSafeBase64(extras.obfsparam as string || '') : '',
       };
     });
 
@@ -529,7 +537,12 @@ export const getClashNodes = (
 export const toUrlSafeBase64 = (str: string): string => URLSafeBase64.encode(Buffer.from(str, 'utf8'));
 
 // istanbul ignore next
-export const fromUrlSafeBase64 = (str: string): string => URLSafeBase64.decode(str).toString();
+export const fromUrlSafeBase64 = (str: string): string => {
+  if (URLSafeBase64.validate(str)) {
+    return URLSafeBase64.decode(str).toString();
+  }
+  return fromBase64(str);
+};
 
 // istanbul ignore next
 export const toBase64 = (str: string): string => Buffer.from(str, 'utf8').toString('base64');
@@ -616,7 +629,10 @@ export const getShadowsocksrNodes = (list: ReadonlyArray<ShadowsocksrNodeConfig>
           return 'ssr://' + toUrlSafeBase64([
             baseUri,
             '/?',
-            queryString.stringify(query),
+            queryString.stringify(query, {
+              encode: false,
+              sort: false,
+            }),
           ].join(''));
         }
 
