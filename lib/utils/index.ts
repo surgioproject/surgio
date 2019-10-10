@@ -631,7 +631,6 @@ export const getShadowsocksrNodes = (list: ReadonlyArray<ShadowsocksrNodeConfig>
             '/?',
             queryString.stringify(query, {
               encode: false,
-              sort: false,
             }),
           ].join(''));
         }
