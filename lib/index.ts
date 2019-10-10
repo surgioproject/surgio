@@ -9,6 +9,7 @@ import GenerateCommand from './command/generate';
 import SpeedCommand from './command/speed';
 import UploadCommand from './command/upload';
 import * as filter from './utils/filter';
+import { errorHandler } from './utils/error-helper';
 
 const envPath = path.resolve(process.cwd(), './.env');
 
@@ -25,6 +26,10 @@ export class SurgioCommand extends Command {
     this.usage = 'Usage: surgio <command> [options]';
     this.load(path.join(__dirname, './command'));
     this.yargs.alias('v', 'version');
+  }
+
+  public errorHandler(err): void {
+    errorHandler.call(this, err);
   }
 }
 

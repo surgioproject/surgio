@@ -3,6 +3,7 @@ import path from 'path';
 
 import { loadConfig } from '../utils';
 import generate from '../generate';
+import { errorHandler } from '../utils/error-helper';
 
 class GenerateCommand extends Command {
   private options: object;
@@ -34,6 +35,10 @@ class GenerateCommand extends Command {
 
   public get description(): string {
     return 'Generate configurations';
+  }
+
+  public errorHandler(err): void {
+    errorHandler.call(this, err);
   }
 }
 

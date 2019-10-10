@@ -8,6 +8,7 @@ import ora, { Ora } from 'ora';
 import path from 'path';
 
 import { loadConfig } from '../utils';
+import { errorHandler } from '../utils/error-helper';
 
 class GenerateCommand extends Command {
   private readonly spinner: Ora;
@@ -44,9 +45,9 @@ class GenerateCommand extends Command {
       accessKeySecret: ctx.env.OSS_ACCESS_KEY_SECRET || config.upload.accessKeySecret,
     };
 
-    assert(ossConfig.bucket);
-    assert(ossConfig.accessKeyId);
-    assert(ossConfig.accessKeySecret);
+    assert(ossConfig.bucket, '未配置 OSS Bucket');
+    assert(ossConfig.accessKeyId, '未配置 OSS accessKeyId');
+    assert(ossConfig.accessKeySecret, '未配置 OSS accessKeySecret');
 
     const client = new OSS({
       secure: true,
@@ -111,7 +112,7 @@ class GenerateCommand extends Command {
   public errorHandler(err): void {
     this.spinner.fail();
 
-    super.errorHandler(err);
+    errorHandler.call(this, err);
   }
 }
 

@@ -18,7 +18,8 @@ import Provider from '../class/Provider';
 
 import { NodeTypeEnum, PossibleNodeConfigType, ShadowsocksNodeConfig } from '../types';
 import { getClashNodes, loadConfig, toYaml } from '../utils';
-import getProvider from '../utils/getProvider';
+import getProvider from '../utils/get-provider';
+import { errorHandler } from '../utils/error-helper';
 
 const { combine, timestamp, printf } = format;
 const speedDebug = debug('speed');
@@ -45,6 +46,10 @@ class SpeedCommand extends Command {
 
   public get description(): string {
     return 'Speed test Shadowsocks server.';
+  }
+
+  public errorHandler(err): void {
+    errorHandler.call(this, err);
   }
 
   public async run(ctx): Promise<void> {

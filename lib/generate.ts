@@ -38,7 +38,7 @@ import {
   usFilter,
   youtubePremiumFilter as defaultYoutubePremiumFilter,
 } from './utils/filter';
-import getProvider from './utils/getProvider';
+import getProvider from './utils/get-provider';
 import { prependFlag } from './utils/flag';
 
 const spinner = ora();
@@ -197,7 +197,6 @@ export async function generate(
       } : {}),
     });
   } catch (err) {
-    console.error('模板渲染错误');
     throw err;
   }
 

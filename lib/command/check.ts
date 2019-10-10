@@ -7,7 +7,8 @@ import path from 'path';
 import {
   loadConfig
 } from '../utils';
-import getProvider from '../utils/getProvider';
+import getProvider from '../utils/get-provider';
+import { errorHandler } from '../utils/error-helper';
 
 class CheckCommand extends Command {
   private options: object;
@@ -43,6 +44,10 @@ class CheckCommand extends Command {
 
   public get description(): string {
     return 'Check configurations from provider';
+  }
+
+  public errorHandler(err): void {
+    errorHandler.call(this, err);
   }
 }
 
