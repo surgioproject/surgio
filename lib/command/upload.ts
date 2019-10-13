@@ -16,13 +16,13 @@ class GenerateCommand extends Command {
 
   constructor(rawArgv) {
     super(rawArgv);
-    this.usage = 'Usage: surgio upload';
+    this.usage = '使用方法: surgio upload';
     this.spinner = ora();
     this.options = {
       output: {
         type: 'string',
         alias: 'o',
-        description: 'folder for saving files',
+        description: '生成规则的目录',
       },
       config: {
         alias: 'c',
@@ -99,14 +99,14 @@ class GenerateCommand extends Command {
       }
     };
 
-    this.spinner.start('Start uploading to Aliyun OSS');
+    this.spinner.start('开始上传到阿里云 OSS');
     await upload();
     await deleteUnwanted();
     this.spinner.succeed();
   }
 
   public get description(): string {
-    return 'Upload configurations to Aliyun OSS';
+    return '上传规则到阿里云 OSS';
   }
 
   public errorHandler(err): void {

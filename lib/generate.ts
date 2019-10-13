@@ -53,13 +53,17 @@ async function run(config: CommandConfig): Promise<void> {
   await fs.mkdir(distPath);
 
   for (const artifact of artifactList) {
-    spinner.start(`Generating ${artifact.name}`);
+    spinner.start(`正在生成规则 ${artifact.name}`);
 
-    const result = await generate(config, artifact, remoteSnippetList);
-    const destFilePath = path.join(config.output, artifact.name);
-
-    await fs.writeFile(destFilePath, result);
-    spinner.succeed();
+    try {
+      const result = await generate(config, artifact, remoteSnippetList);
+      const destFilePath = path.join(config.output, artifact.name);
+      await fs.writeFile(destFilePath, result);
+      spinner.succeed(`规则 ${artifact.name} 生成成功`);
+    } catch (err) {
+      spinner.fail(`规则 ${artifact.name} 生成失败`);
+      throw err;
+    }
   }
 }
 
@@ -75,9 +79,9 @@ export async function generate(
     customParams,
   } = artifact;
 
-  assert(artifactName, 'You must specify the artifact\'s name.');
-  assert(template, 'You must specify the artifact\'s template.');
-  assert(artifact.provider, 'You must specify the artifact\'s provider.');
+  assert(artifactName, '必须指定 artifact 的 name 属性');
+  assert(template, '必须指定 artifact 的 template 属性');
+  assert(artifact.provider, '必须指定 artifact 的 provider 属性');
 
   const recipeList = artifact.recipe ? artifact.recipe : [artifact.provider];
   const nodeList: PossibleNodeConfigType[] = [];
@@ -94,11 +98,26 @@ export async function generate(
     const filePath = path.resolve(config.providerDir, `${providerName}.js`);
 
     if (!fs.existsSync(filePath)) {
-      throw new Error(`${filePath} cannot be found.`);
+      throw new Error(`文件 ${filePath} 不存在`);
     }
 
-    const provider = getProvider(require(filePath));
-    const nodeConfigList = await provider.getNodeList();
+    spinner.text = `正在处理 Provider: ${providerName}`;
+    let provider;
+    let nodeConfigList;
+
+    try {
+      provider = getProvider(require(filePath));
+    } catch (err) {
+      err.message = `处理 Provider 时出现错误，相关文件 ${filePath} ，错误原因: ${err.message}`;
+      throw err;
+    }
+
+    try {
+      nodeConfigList = await provider.getNodeList();
+    } catch (err) {
+      err.message = `获取 Provider 节点时出现错误，相关文件 ${filePath} ，错误原因: ${err.message}`;
+      throw err;
+    }
 
     if (!netflixFilter) {
       netflixFilter = provider.netflixFilter || defaultNetflixFilter;
@@ -203,11 +222,13 @@ export async function generate(
 }
 
 export default async function(config: CommandConfig): Promise<void> {
-  console.log(chalk.cyan('Start generating configs.'));
+  console.log(chalk.cyan('开始生成规则'));
   await run(config)
     .catch(err => {
-      spinner.fail();
+      if (spinner.isSpinning) {
+        spinner.fail();
+      }
       throw err;
     });
-  console.log(chalk.cyan('Configs generated successfully.'));
+  console.log(chalk.cyan('规则生成成功'));
 }

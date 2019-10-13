@@ -10,12 +10,12 @@ class GenerateCommand extends Command {
 
   constructor(rawArgv) {
     super(rawArgv);
-    this.usage = 'Usage: surgio generate';
+    this.usage = '使用方法: surgio generate';
     this.options = {
       output: {
         type: 'string',
         alias: 'o',
-        description: 'folder for saving files',
+        description: '生成规则的目录',
       },
       config: {
         alias: 'c',
@@ -34,7 +34,7 @@ class GenerateCommand extends Command {
   }
 
   public get description(): string {
-    return 'Generate configurations';
+    return '生成规则';
   }
 
   public errorHandler(err): void {

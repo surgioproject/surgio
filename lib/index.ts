@@ -23,7 +23,7 @@ export class SurgioCommand extends Command {
 
     updateNotifier({ pkg: require('../package.json') }).notify();
 
-    this.usage = 'Usage: surgio <command> [options]';
+    this.usage = '使用方法: surgio <command> [options]';
     this.load(path.join(__dirname, './command'));
     this.yargs.alias('v', 'version');
   }

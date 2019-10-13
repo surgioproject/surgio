@@ -1,5 +1,6 @@
 import assert from 'assert';
 import axios from 'axios';
+import chalk from 'chalk';
 import flag from 'country-code-emoji';
 import fs from 'fs-extra';
 import _ from 'lodash';
@@ -87,7 +88,7 @@ export const getShadowsocksJSONConfig = async (config: {
   readonly url: string;
   readonly udpRelay: boolean;
 }): Promise<ReadonlyArray<ShadowsocksNodeConfig>> => {
-  assert(config.url, 'Lack of subscription url.');
+  assert(config.url, '未指定订阅地址 url');
 
   async function requestConfigFromRemote(url: string): Promise<ReadonlyArray<ShadowsocksNodeConfig>> {
     const response = await axios.get(url, {
@@ -134,7 +135,7 @@ export const getShadowsocksSubscription = async (config: {
   readonly url: string;
   readonly udpRelay?: boolean;
 }): Promise<ReadonlyArray<ShadowsocksNodeConfig>> => {
-  assert(config.url, 'Lack of subscription url.');
+  assert(config.url, '未指定订阅地址 url');
 
   async function requestConfigFromRemote(url: string): Promise<ReadonlyArray<ShadowsocksNodeConfig>> {
     const response = await axios.get(url, {
@@ -180,7 +181,7 @@ export const getShadowsocksSubscription = async (config: {
 export const getShadowsocksrSubscription = async (config: {
   readonly url: string;
 }): Promise<ReadonlyArray<ShadowsocksrNodeConfig>> => {
-  assert(config.url, 'Lack of subscription url.');
+  assert(config.url, '未指定订阅地址 url');
 
   async function requestConfigFromRemote(url: string): Promise<ReadonlyArray<ShadowsocksrNodeConfig>> {
     const response = await axios.get(url, {
@@ -206,7 +207,7 @@ export const getShadowsocksrSubscription = async (config: {
 export const getV2rayNSubscription = async (config: {
   readonly url: string;
 }): Promise<ReadonlyArray<VmessNodeConfig>> => {
-  assert(config.url, 'Lack of subscription url.');
+  assert(config.url, '未指定订阅地址 url');
 
   async function requestConfigFromRemote(url: string): Promise<ReadonlyArray<VmessNodeConfig>> {
     const response = await axios.get(url, {
@@ -423,7 +424,8 @@ export const getSurgeNodes = (
 
         // istanbul ignore next
         default:
-          console.info(`${nodeConfig!.type} is not supported, ${nodeConfig!.nodeName} will be ignored.`);
+          console.log();
+          console.log(chalk.yellow(`不支持为 Surge 生成 ${nodeConfig!.type} 的节点，节点 ${nodeConfig!.nodeName} 会被省略`));
           return null;
       }
     })
@@ -497,7 +499,8 @@ export const getClashNodes = (
 
         // istanbul ignore next
         default:
-          console.info(`${nodeConfig.type} is not supported yet, ${nodeConfig.nodeName} will be ignored.`);
+          console.log();
+          console.log(chalk.yellow(`不支持为 Clash 生成 ${nodeConfig.type} 的节点，节点 ${nodeConfig.nodeName} 会被省略`));
           return null;
       }
     })
@@ -564,7 +567,8 @@ export const getShadowsocksNodes = (
 
         // istanbul ignore next
         default:
-          console.info(`${nodeConfig.type} is not supported, ${nodeConfig.nodeName} will be ignored.`);
+          console.log();
+          console.log(chalk.yellow(`在生成 Shadowsocks 节点时出现了 ${nodeConfig.type} 节点，节点 ${nodeConfig.nodeName} 会被省略`));
           return null;
       }
     })
@@ -608,7 +612,8 @@ export const getShadowsocksrNodes = (list: ReadonlyArray<ShadowsocksrNodeConfig>
 
         // istanbul ignore next
         default:
-          console.info(`${nodeConfig.type} is not supported, ${nodeConfig.nodeName} will be ignored.`);
+          console.log();
+          console.log(chalk.yellow(`在生成 Shadowsocksr 节点时出现了 ${nodeConfig.type} 节点，节点 ${nodeConfig.nodeName} 会被省略`));
           return null;
       }
     })
@@ -643,7 +648,8 @@ export const getV2rayNNodes = (list: ReadonlyArray<VmessNodeConfig>): string => 
 
         // istanbul ignore next
         default:
-          console.info(`${nodeConfig.type} is not supported, ${nodeConfig.nodeName} will be ignored.`);
+          console.log();
+          console.log(chalk.yellow(`在生成 V2Ray 节点时出现了 ${nodeConfig.type} 节点，节点 ${nodeConfig.nodeName} 会被省略`));
           return null;
       }
     })
@@ -717,7 +723,8 @@ export const getQuantumultNodes = (
 
         // istanbul ignore next
         default:
-          console.info(`${nodeConfig!.type} is not supported yet, ${nodeConfig!.nodeName} will be ignored.`);
+          console.log();
+          console.log(chalk.yellow(`不支持为 Quantumult 生成 ${nodeConfig!.type} 的节点，节点 ${nodeConfig!.nodeName} 会被省略`));
           return null;
       }
     })
@@ -753,7 +760,8 @@ export const getShadowsocksNodesJSON = (list: ReadonlyArray<ShadowsocksNodeConfi
 
         // istanbul ignore next
         default:
-          console.info(`${nodeConfig!.type} is not supported, ${nodeConfig!.nodeName} will be ignored.`);
+          console.log();
+          console.log(chalk.yellow(`在生成 Shadowsocks 节点时出现了 ${nodeConfig.type} 节点，节点 ${nodeConfig.nodeName} 会被省略`));
           return null;
       }
     })
@@ -839,7 +847,7 @@ export const loadConfig = (cwd: string, configPath: string, override?: Partial<C
   const absPath = path.resolve(cwd, configPath);
 
   if (!fs.existsSync(absPath)) {
-    throw new Error(`${absPath} cannot be found.`);
+    throw new Error(`文件 ${absPath} 不存在`);
   }
 
   if (override) {
@@ -914,7 +922,7 @@ export const loadRemoteSnippetList = (remoteSnippetList: ReadonlyArray<RemoteSni
     })
       .then(data => data.data)
       .catch(err => {
-        console.error(`远程片段 ${url} 下载失败。`);
+        console.error(`远程片段 ${url} 下载失败`);
         throw err;
       });
   }
