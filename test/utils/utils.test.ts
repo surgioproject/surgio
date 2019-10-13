@@ -10,9 +10,9 @@ import {
   ShadowsocksrNodeConfig,
   SimpleNodeConfig,
   VmessNodeConfig,
-} from '../lib/types';
-import * as utils from '../lib/utils';
-import * as filter from '../lib/utils/filter';
+} from '../../lib/types';
+import * as utils from '../../lib/utils';
+import * as filter from '../../lib/utils/filter';
 
 test.beforeEach(() => {
   moxios.install();
@@ -335,7 +335,7 @@ test('normalizeClashProxyGroupConfig', t => {
 test('getShadowsocksJSONConfig', async t => {
   moxios.stubRequest('/gui-config.json', {
     status: 200,
-    responseText: fs.readFileSync(path.join(__dirname, 'asset/gui-config-1.json'), {
+    responseText: fs.readFileSync(path.join(__dirname, '../asset/gui-config-1.json'), {
       encoding: 'utf8',
     }),
   });
@@ -389,19 +389,19 @@ test('getShadowsocksJSONConfig', async t => {
 test('loadRemoteSnippetList', async t => {
   moxios.stubRequest('/test-ruleset.list', {
     status: 200,
-    responseText: fs.readFileSync(path.join(__dirname, 'asset/test-ruleset-1.list'), {
+    responseText: fs.readFileSync(path.join(__dirname, '../asset/test-ruleset-1.list'), {
       encoding: 'utf8',
     }),
   });
   moxios.stubRequest('/netflix.list', {
     status: 200,
-    responseText: fs.readFileSync(path.join(__dirname, 'asset/netflix.list'), {
+    responseText: fs.readFileSync(path.join(__dirname, '../asset/netflix.list'), {
       encoding: 'utf8',
     }),
   });
   moxios.stubRequest('/telegram.list', {
     status: 200,
-    responseText: fs.readFileSync(path.join(__dirname, 'asset/telegram.list'), {
+    responseText: fs.readFileSync(path.join(__dirname, '../asset/telegram.list'), {
       encoding: 'utf8',
     }),
   });
@@ -473,7 +473,7 @@ test('loadRemoteSnippetList with error', async t => {
 test('getV2rayNSubscription', async t => {
   moxios.stubRequest('/test-v2rayn-sub.txt', {
     status: 200,
-    responseText: fs.readFileSync(path.join(__dirname, 'asset/test-v2rayn-sub.txt'), {
+    responseText: fs.readFileSync(path.join(__dirname, '../asset/test-v2rayn-sub.txt'), {
       encoding: 'utf8',
     }),
   });
@@ -704,7 +704,7 @@ test('formatV2rayConfig', t => {
 test('getShadowsocksSubscription with udp', async t => {
   moxios.stubRequest(/\/ss-sub\.txt.*/, {
     status: 200,
-    responseText: fs.readFileSync(path.join(__dirname, 'asset/test-ss-sub.txt'), {
+    responseText: fs.readFileSync(path.join(__dirname, '../asset/test-ss-sub.txt'), {
       encoding: 'utf8',
     }),
   });
@@ -739,7 +739,7 @@ test('getShadowsocksSubscription with udp', async t => {
 test('getShadowsocksSubscription without udp', async t => {
   moxios.stubRequest(/\/ss-sub\.txt.*/, {
     status: 200,
-    responseText: fs.readFileSync(path.join(__dirname, 'asset/test-ss-sub.txt'), {
+    responseText: fs.readFileSync(path.join(__dirname, '../asset/test-ss-sub.txt'), {
       encoding: 'utf8',
     }),
   });
@@ -771,7 +771,7 @@ test('getShadowsocksSubscription without udp', async t => {
 test('getShadowsocksrSubscription', async t => {
   moxios.stubRequest(/\/ssr-sub\.txt.*/, {
     status: 200,
-    responseText: fs.readFileSync(path.join(__dirname, 'asset/test-ssr-sub.txt'), {
+    responseText: fs.readFileSync(path.join(__dirname, '../asset/test-ssr-sub.txt'), {
       encoding: 'utf8',
     }),
   });

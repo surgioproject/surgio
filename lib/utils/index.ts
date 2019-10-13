@@ -30,6 +30,7 @@ import {
   VmessNodeConfig,
 } from '../types';
 import { normalizeConfig } from './config';
+import { parseSSRUri } from './ssr';
 
 export const OBFS_UA = 'Mozilla/5.0 (iPhone; CPU iPhone OS 12_3_1 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148';
 const ConfigCache = new LRU<string, any>({
@@ -190,37 +191,7 @@ export const getShadowsocksrSubscription = async (config: {
     const configList = fromBase64(response.data).split('\n')
         .filter(item => !!item)
         .filter(item => item.startsWith("ssr://"));
-    const result = configList.map<ShadowsocksrNodeConfig>(item => {
-      const pair = fromUrlSafeBase64(item.replace('ssr://', '')).split('/');
-      const basicInfo = pair[0].split(':');
-      const extras = pair[1] ? queryString.parse(pair[1], {
-        decode: false,
-      }) : null;
-
-      // value 中的 ` ` 要替换成 + ，不然 base64 解码会有问题
-      Object.keys(extras).forEach(key => {
-        extras[key] = (extras[key] as string).replace(' ', '+');
-      });
-
-      const nodeName = extras ? fromUrlSafeBase64(extras.remarks as string) : null;
-
-      if (!nodeName) {
-        throw new Error(`${item} doesn\`t contain a remark.`);
-      }
-
-      return {
-        type: NodeTypeEnum.Shadowsocksr,
-        nodeName,
-        hostname: basicInfo[0],
-        port: basicInfo[1],
-        protocol: basicInfo[2],
-        method: basicInfo[3],
-        obfs: basicInfo[4],
-        password: fromUrlSafeBase64(basicInfo[5]),
-        protoparam: extras ? fromUrlSafeBase64(extras.protoparam as string || '') : '',
-        obfsparam: extras ? fromUrlSafeBase64(extras.obfsparam as string || '') : '',
-      };
-    });
+    const result = configList.map<ShadowsocksrNodeConfig>(parseSSRUri);
 
     ConfigCache.set(url, result);
 

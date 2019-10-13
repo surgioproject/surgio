@@ -1,5 +1,5 @@
 import test from 'ava';
-import { prependFlag } from '../lib/utils/flag';
+import { prependFlag } from '../../lib/utils/flag';
 
 test('addFlag', t => {
   t.is(prependFlag('美国'), '🇺🇲 美国');
