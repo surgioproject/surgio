@@ -1,6 +1,6 @@
 import test from 'ava';
-import { NodeTypeEnum } from '../lib/types';
-import * as filter from '../lib/utils/filter';
+import { NodeTypeEnum } from '../../lib/types';
+import * as filter from '../../lib/utils/filter';
 
 test('useKeywords', t => {
   const fn1 = filter.useKeywords(['测试', 'test']);

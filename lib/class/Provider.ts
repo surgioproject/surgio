@@ -5,8 +5,6 @@ import {
   NodeNameFilterType,
   ProviderConfig,
   SupportProviderEnum,
-  PossibleNodeConfigType,
-  SimpleNodeConfig,
 } from '../types';
 
 let globalPort: number = 61100;
@@ -21,7 +19,6 @@ export default class Provider {
   private startPort?: number;
 
   constructor(config: ProviderConfig) {
-    assert(config.type, 'You must specify a provider type.');
     this.type = config.type;
     this.nodeFilter = config.nodeFilter;
     this.netflixFilter = config.netflixFilter;
