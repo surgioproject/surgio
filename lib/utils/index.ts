@@ -1,7 +1,6 @@
 import assert from 'assert';
 import axios from 'axios';
 import chalk from 'chalk';
-import flag from 'country-code-emoji';
 import fs from 'fs-extra';
 import _ from 'lodash';
 import LRU from 'lru-cache';
@@ -66,10 +65,10 @@ export const getBlackSSLConfig = async (config: {
       });
 
     const result = (response.data.ssl_nodes as readonly any[]).map<HttpsNodeConfig>(item => ({
-      nodeName: `${flag(item.country_code as string)}${item.name as string}`,
+      nodeName: item.name,
       type: NodeTypeEnum.HTTPS,
-      hostname: item.server as string,
-      port: item.port as string,
+      hostname: item.server,
+      port: item.port,
       username,
       password,
     }));
