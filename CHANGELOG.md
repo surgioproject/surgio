@@ -1,3 +1,12 @@
+# [0.12.0](https://github.com/geekdada/surgio/compare/v0.11.6...v0.12.0) (2019-10-14)
+
+
+### Features
+
+* support aliyun serverless service ([0108097](https://github.com/geekdada/surgio/commit/0108097f3d20e200698d2eb2da2604f71d4ef1c8))
+
+
+
 ## [0.11.6](https://github.com/geekdada/surgio/compare/v0.11.5...v0.11.6) (2019-10-13)
 
 
