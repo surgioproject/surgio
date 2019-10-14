@@ -74,7 +74,6 @@
     "axios": "^0.19.0",
     "chalk": "^2.4.2",
     "common-bin": "^2.8.1",
-    "country-code-emoji": "^1.0.0",
     "debug": "^4.1.1",
     "emoji-regex": "^8.0.0",
     "env2": "^2.2.2",
