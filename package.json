@@ -62,7 +62,7 @@
     "clean": "rimraf build",
     "build": "run-s clean && tsc -p tsconfig.json",
     "snyk-protect": "snyk protect",
-    "prepublish": "run-s snyk-protect build",
+    "prepublish": "run-s build",
     "changelog": "conventional-changelog -p angular -i CHANGELOG.md -s -r 0",
     "pub": "np",
     "version": "npm run changelog && git add .",
