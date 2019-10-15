@@ -952,7 +952,7 @@ export const ensureConfigFolder = (dir: string = os.homedir()): string => {
     baseDir = dir;
   } catch (err) {
     // can't write
-    baseDir = process.cwd();
+    baseDir = '/tmp';
   }
 
   const configDir = path.join(baseDir, '.config/surgio');
