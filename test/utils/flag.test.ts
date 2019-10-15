@@ -7,4 +7,5 @@ test('addFlag', t => {
   t.is(prependFlag('US'), '🇺🇲 US');
   t.is(prependFlag('us'), '🇺🇲 us');
   t.is(prependFlag('🇺🇲 jp'), '🇺🇲 jp');
+  t.is(prependFlag('🇯🇵 US'), '🇯🇵 US');
 });

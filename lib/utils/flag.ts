@@ -1,7 +1,6 @@
 import EmojiRegex from 'emoji-regex'
 import flag from '../misc/flag_cn';
 
-const emojiRegex = EmojiRegex();
 const flagMap: {
   [name: string]: string; // tslint:disable-line
 } = {};
@@ -13,6 +12,7 @@ Object.keys(flag).forEach(emoji => {
 });
 
 export const prependFlag = (str: string): string => {
+  const emojiRegex = EmojiRegex();
   const existingEmoji = emojiRegex.exec(str);
 
   // 如果已经存在 emoji 则不作处理
