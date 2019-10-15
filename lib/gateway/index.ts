@@ -1,14 +1,16 @@
 import path from 'path';
 import { loadConfig } from '../utils';
 import { Server } from './server';
+import { FcRequest, FcResponse } from './types';
+
 let server;
 
-export function initializer(context, callback): void {
+export function initializer(_, callback): void {
   const cwd = process.cwd();
   const configFile = path.join(cwd, '/surgio.conf.js');
   const config = loadConfig(cwd, configFile);
 
-  server = new Server(config, context);
+  server = new Server(config);
 
   server.init()
     .then(() => {
@@ -19,14 +21,16 @@ export function initializer(context, callback): void {
     });
 }
 
-export function handler(request, response): void {
-  const { url } = request;
+export function handler(request: FcRequest, response: FcResponse): void {
+  const { url, clientIP, headers, method } = request;
   const artifactName = path.basename(url);
 
   if (!artifactName) {
-    server.notFound(response);
+    server.fcNotFound(response);
     return;
   }
+
+  console.log('[request] [%s] %s %s %s', clientIP, method, url, headers['user-agent'] || '-');
 
   server.getArtifact(artifactName)
     .then(result => {
@@ -36,10 +40,10 @@ export function handler(request, response): void {
         response.setHeader('cache-control', 'private, no-cache, no-store');
         response.send(result);
       } else {
-        server.notFound(response);
+        server.fcNotFound(response);
       }
     })
     .catch(err => {
-      server.errorHandler(err, response);
+      server.fcErrorHandler(response, err);
     });
 }

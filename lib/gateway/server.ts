@@ -1,16 +1,15 @@
 import { ArtifactConfig, CommandConfig, RemoteSnippet } from '../types';
 import { loadRemoteSnippetList } from '../utils';
 import { generate } from '../generate';
+import { FcResponse } from './types';
 
 export class Server {
   public remoteSnippetList: ReadonlyArray<RemoteSnippet>;
   public artifactList: ReadonlyArray<ArtifactConfig>;
   private readonly config: CommandConfig;
-  private readonly context: Record<any, any>;
 
-  constructor(config: CommandConfig, context: Record<any, any>) {
+  constructor(config: CommandConfig) {
     this.config = config;
-    this.context = context;
   }
 
   public async init(): Promise<void> {
@@ -31,7 +30,7 @@ export class Server {
     return await generate(this.config, target[0], this.remoteSnippetList);
   }
 
-  public errorHandler(response: any, err: Error): void {
+  public fcErrorHandler(response: FcResponse, err: Error): void {
     response.setStatusCode(500);
     response.setHeader('content-type', 'text/html; charset=UTF-8');
     response.send(
@@ -41,7 +40,7 @@ export class Server {
     );
   }
 
-  public notFound(response: any): void {
+  public fcNotFound(response: FcResponse): void {
     response.setStatusCode(404);
     response.setHeader('content-type', 'text/html; charset=UTF-8');
     response.send(
