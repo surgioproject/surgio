@@ -34,7 +34,7 @@ import { parseSSRUri } from './ssr';
 
 export const OBFS_UA = 'Mozilla/5.0 (iPhone; CPU iPhone OS 12_3_1 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148';
 const ConfigCache = new LRU<string, any>({
-  maxAge: 10 * 60 * 1000, // 10min
+  maxAge: 10 * 60 * 1000, // 1min
 });
 
 // istanbul ignore next
@@ -927,13 +927,20 @@ export const loadRemoteSnippetList = (remoteSnippetList: ReadonlyArray<RemoteSni
   }
 
   return Promise.all(remoteSnippetList.map<Promise<RemoteSnippet>>(item => {
-    return load(item.url)
-      .then(res => ({
-        main: (rule: string) => addProxyToSurgeRuleSet(res, rule),
-        name: item.name,
-        url: item.url,
-        text: res, // 原始内容
-      }));
+    const res = ConfigCache.has(item.url)
+      ? Promise.resolve(ConfigCache.get(item.url)) :
+      load(item.url)
+        .then(str => {
+          ConfigCache.set(item.url, str);
+          return str;
+        });
+
+    return res.then(str => ({
+      main: (rule: string) => addProxyToSurgeRuleSet(str, rule),
+      name: item.name,
+      url: item.url,
+      text: str, // 原始内容
+    }));
   }));
 };
 
