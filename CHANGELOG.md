@@ -1,3 +1,12 @@
+## [0.12.4](https://github.com/geekdada/surgio/compare/v0.12.3...v0.12.4) (2019-10-15)
+
+
+### Bug Fixes
+
+* write permission ([5b34129](https://github.com/geekdada/surgio/commit/5b34129d3edae83996f3a58d3f75f84fcdf89c99))
+
+
+
 ## [0.12.3](https://github.com/geekdada/surgio/compare/v0.12.2...v0.12.3) (2019-10-15)
 
 
