@@ -1,12 +1,7 @@
-import json5 from 'json5';
-import fs from 'fs-extra';
-import path from 'path';
 import EmojiRegex from 'emoji-regex'
+import flag from '../misc/flag_cn';
 
 const emojiRegex = EmojiRegex();
-const flag: any = json5.parse(fs.readFileSync(path.join(__dirname, '../../static/flag_cn.json5'), {
-  encoding: 'utf8',
-}));
 const flagMap: {
   [name: string]: string; // tslint:disable-line
 } = {};
