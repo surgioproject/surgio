@@ -1,3 +1,13 @@
+## [0.12.1](https://github.com/geekdada/surgio/compare/v0.12.0...v0.12.1) (2019-10-15)
+
+
+### Features
+
+* add cache to remote snippet ([265c42c](https://github.com/geekdada/surgio/commit/265c42cab77a965540f56a6e06e32f6a9741eb55))
+* add support to now.sh ([9e23a25](https://github.com/geekdada/surgio/commit/9e23a25c9ba85f068cac5a441685b9630d1fec4c))
+
+
+
 # [0.12.0](https://github.com/geekdada/surgio/compare/v0.11.6...v0.12.0) (2019-10-14)
 
 
