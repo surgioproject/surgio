@@ -1,3 +1,12 @@
+## [0.12.5](https://github.com/geekdada/surgio/compare/v0.12.4...v0.12.5) (2019-10-15)
+
+
+### Bug Fixes
+
+* 国旗被重复添加 ([80eff22](https://github.com/geekdada/surgio/commit/80eff22c9f631b3874c7aa63cbbb63c910476ea5))
+
+
+
 ## [0.12.4](https://github.com/geekdada/surgio/compare/v0.12.3...v0.12.4) (2019-10-15)
 
 
