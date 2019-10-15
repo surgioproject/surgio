@@ -1,3 +1,5 @@
+// tslint:disable-next-line:no-submodule-imports
+import { NowResponse } from '@now/node/dist';
 import { ArtifactConfig, CommandConfig, RemoteSnippet } from '../types';
 import { loadRemoteSnippetList } from '../utils';
 import { generate } from '../generate';
@@ -46,5 +48,25 @@ export class Server {
     response.send(
       '<h1>Not Found</h1>'
     );
+  }
+
+  public nowErrorHandler(response: NowResponse, err: Error): void {
+    response.setHeader('content-type', 'text/html; charset=UTF-8');
+    response
+      .status(500)
+      .send(
+        '<h1>Server Error</h1>' +
+        `<h2>${err.name}: ${err.message}</h2>` +
+        `<pre>${err.stack}</pre>`
+      );
+  }
+
+  public nowNotFound(response: NowResponse): void {
+    response.setHeader('content-type', 'text/html; charset=UTF-8');
+    response
+      .status(404)
+      .send(
+        '<h1>Not Found</h1>'
+      );
   }
 }
