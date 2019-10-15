@@ -945,7 +945,17 @@ export const loadRemoteSnippetList = (remoteSnippetList: ReadonlyArray<RemoteSni
 };
 
 export const ensureConfigFolder = (dir: string = os.homedir()): string => {
-  const configDir = path.join(dir, '.config/surgio');
+  let baseDir;
+
+  try {
+    fs.accessSync(dir, fs.constants.W_OK);
+    baseDir = dir;
+  } catch (err) {
+    // can't write
+    baseDir = process.cwd();
+  }
+
+  const configDir = path.join(baseDir, '.config/surgio');
   fs.mkdirpSync(configDir);
   return configDir;
 };
