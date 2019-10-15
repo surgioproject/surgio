@@ -1,3 +1,12 @@
+## [0.12.3](https://github.com/geekdada/surgio/compare/v0.12.2...v0.12.3) (2019-10-15)
+
+
+### Bug Fixes
+
+* config dir write permission problem ([90b6d71](https://github.com/geekdada/surgio/commit/90b6d711bd22d5fa90e97e87f02cb3c32fc66a62))
+
+
+
 ## [0.12.2](https://github.com/geekdada/surgio/compare/v0.12.1...v0.12.2) (2019-10-15)
 
 
