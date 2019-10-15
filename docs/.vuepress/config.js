@@ -44,6 +44,7 @@ module.exports = {
             'advance/surge-advance',
             'advance/custom-filter',
             'advance/automation',
+            'advance/api-gateway'
           ]
         },
       ],
