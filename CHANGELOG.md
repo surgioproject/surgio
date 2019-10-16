@@ -1,3 +1,12 @@
+## [0.12.6](https://github.com/geekdada/surgio/compare/v0.12.5...v0.12.6) (2019-10-16)
+
+
+### Features
+
+* add more server log ([de77875](https://github.com/geekdada/surgio/commit/de77875fc2befcd2f081b3cb77c4496d1ea53f5f))
+
+
+
 ## [0.12.5](https://github.com/geekdada/surgio/compare/v0.12.4...v0.12.5) (2019-10-15)
 
 
