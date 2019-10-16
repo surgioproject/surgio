@@ -32,7 +32,7 @@ export function handler(request: FcRequest, response: FcResponse): void {
     return;
   }
 
-  console.log('[request] [%s] %s %s %s', clientIP, method, url, headers['user-agent'] || '-');
+  console.log('[request] [%s] %s %s "%s"', clientIP, method, url, headers['user-agent'] || '-');
 
   server.getArtifact(artifactName)
     .then(result => {
@@ -72,7 +72,7 @@ export async function nowHandler(req: NowRequest, res: NowResponse): Promise<voi
     return;
   }
 
-  console.log('[request] [%s] %s %s %s', clientIP, method, url, headers['user-agent'] || '-');
+  console.log('[request] [%s] %s %s "%s"', clientIP, method, url, headers['user-agent'] || '-');
 
   server.getArtifact(artifactName)
     .then(result => {

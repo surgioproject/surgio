@@ -40,6 +40,7 @@ export class Server {
       `<h2>${err.name}: ${err.message}</h2>` +
       `<pre>${err.stack}</pre>`
     );
+    console.error(err);
   }
 
   public fcNotFound(response: FcResponse): void {
@@ -59,6 +60,7 @@ export class Server {
         `<h2>${err.name}: ${err.message}</h2>` +
         `<pre>${err.stack}</pre>`
       );
+    console.error(err);
   }
 
   public nowNotFound(response: NowResponse): void {
