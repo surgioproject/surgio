@@ -47,3 +47,7 @@ Surgio 还处于测试阶段，在 v1.0.0 之前接口和配置可能会改变�
 ## Code of Conduct
 
 Surgio 现在不会将来也不会记录或上报你使用的节点或订阅信息。
+
+## 支持开发
+
+<img src="/support.jpg" style="padding-top:20px;" width=300>
