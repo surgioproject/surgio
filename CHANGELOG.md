@@ -1,3 +1,12 @@
+# [0.13.0](https://github.com/geekdada/surgio/compare/v0.12.6...v0.13.0) (2019-10-19)
+
+
+### Features
+
+* gateway 支持查看所有 artifact ([7cd7dc3](https://github.com/geekdada/surgio/commit/7cd7dc3b8b1f3e576714388ea2adc223327d7885))
+
+
+
 ## [0.12.6](https://github.com/geekdada/surgio/compare/v0.12.5...v0.12.6) (2019-10-16)
 
 
