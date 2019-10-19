@@ -60,31 +60,21 @@ export async function nowHandler(req: NowRequest, res: NowResponse): Promise<voi
   await server.init();
 
   const {
-    query: { name: artifactName },
     headers,
     url,
     method,
   } = req;
+  const gatewayAction = req.query.action || 'get-artifact';
   const clientIP = headers['x-real-ip'] || '-';
-
-  if (!artifactName) {
-    server.nowNotFound(res);
-    return;
-  }
 
   console.log('[request] [%s] %s %s "%s"', clientIP, method, url, headers['user-agent'] || '-');
 
-  server.getArtifact(artifactName)
-    .then(result => {
-      if (result) {
-        res.setHeader('content-type', 'text/plain; charset=utf-8');
-        res.setHeader('cache-control', 'private, no-cache, no-store');
-        res.send(result);
-      } else {
-        server.nowNotFound(res);
-      }
-    })
-    .catch(err => {
-      server.nowErrorHandler(res, err);
-    });
+  switch (gatewayAction) {
+    case 'get-artifact':
+      server.nowGetArtifact(req, res);
+      break;
+    case 'list-artifact':
+      server.nowListArtifact(req, res);
+      break;
+  }
 }

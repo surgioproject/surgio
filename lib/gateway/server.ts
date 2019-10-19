@@ -1,7 +1,9 @@
 // tslint:disable-next-line:no-submodule-imports
-import { NowResponse } from '@now/node/dist';
+import { NowRequest, NowResponse } from '@now/node/dist';
+import nunjucks from 'nunjucks';
+
 import { ArtifactConfig, CommandConfig, RemoteSnippet } from '../types';
-import { loadRemoteSnippetList } from '../utils';
+import { getDownloadUrl, loadRemoteSnippetList } from '../utils';
 import { generate } from '../generate';
 import { FcResponse } from './types';
 
@@ -43,10 +45,10 @@ export class Server {
     console.error(err);
   }
 
-  public fcNotFound(response: FcResponse): void {
-    response.setStatusCode(404);
-    response.setHeader('content-type', 'text/html; charset=UTF-8');
-    response.send(
+  public fcNotFound(res: FcResponse): void {
+    res.setStatusCode(404);
+    res.setHeader('content-type', 'text/html; charset=UTF-8');
+    res.send(
       '<h1>Not Found</h1>'
     );
   }
@@ -63,12 +65,50 @@ export class Server {
     console.error(err);
   }
 
-  public nowNotFound(response: NowResponse): void {
-    response.setHeader('content-type', 'text/html; charset=UTF-8');
-    response
+  public nowNotFound(res: NowResponse): void {
+    res.setHeader('content-type', 'text/html; charset=UTF-8');
+    res
       .status(404)
       .send(
         '<h1>Not Found</h1>'
       );
+  }
+
+  public nowGetArtifact(req: NowRequest, res: NowResponse): void {
+    const {
+      query: { name: artifactName },
+    } = req;
+
+    if (!artifactName) {
+      this.nowNotFound(res);
+      return;
+    }
+
+    this.getArtifact(artifactName as string)
+      .then(result => {
+        if (result) {
+          res.setHeader('content-type', 'text/plain; charset=utf-8');
+          res.setHeader('cache-control', 'private, no-cache, no-store');
+          res.send(result);
+        } else {
+          this.nowNotFound(res);
+        }
+      })
+      .catch(err => {
+        this.nowErrorHandler(res, err);
+      });
+  }
+
+  public nowListArtifact(_: NowRequest, res: NowResponse): void {
+    const engine = nunjucks.configure({
+      autoescape: false,
+    });
+    const artifactListTpl = require('./template/artifact-list').default;
+    const result = engine.renderString(artifactListTpl, {
+      artifactList: this.artifactList,
+      getDownloadUrl: (name: string) => getDownloadUrl(this.config.urlBase, name),
+      encodeURIComponent,
+    });
+    res.send(result);
   }
 }
