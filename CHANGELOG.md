@@ -1,3 +1,13 @@
+## [0.13.1](https://github.com/geekdada/surgio/compare/v0.13.0...v0.13.1) (2019-10-20)
+
+
+### Features
+
+* add direct download ([620b7dd](https://github.com/geekdada/surgio/commit/620b7dd0f799523bb9d55b6129b7db79bb25d35a))
+* add noindex meta ([7fc102a](https://github.com/geekdada/surgio/commit/7fc102a37c53a3c046f664a5f7ff2a184b90b3bf))
+
+
+
 # [0.13.0](https://github.com/geekdada/surgio/compare/v0.12.6...v0.13.0) (2019-10-19)
 
 
