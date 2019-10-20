@@ -17,15 +17,30 @@ export default `
     }
     .container .artifact {
       list-style: none;
-      padding: 20px 15px;
+      padding: 20px 15px 10px;
       border-bottom: 1px solid #eee;
     }
     .artifact .preview {
       background-color: #eee;
       padding: 15px 10px;
       -webkit-overflow-scrolling: touch;
+      font-size: 0.85em;
     }
     .artifact .link {
+      margin-bottom: 10px;
+    }
+    .artifact .tag-list {
+      padding: 5px 0 15px;
+    }
+    .artifact .tag {
+      display: inline-block;
+      font-size: 70%;
+      background-color: #353535;
+      color: #fff;
+      padding: 0 9px;
+      height: 26px;
+      line-height: 26px;
+      border-radius: 13px;
     }
   </style>
 </head>
@@ -37,13 +52,17 @@ export default `
       <li class="artifact">
         <div class="inner-wrapper">
           <div class="name">{{ artifact.name }}</div>
-          <pre class="preview">{{ getDownloadUrl(artifact.name) }}</pre>
+          <pre class="preview">{{ getPreviewUrl(artifact.name) }}</pre>
+          <div class="tag-list">
+            <div class="tag">Provider: {{ artifact.provider }}</div>
+          </div>
           <div class="link-group">
-            <a class="link pure-button pure-button-primary" target="_blank" href="{{ getDownloadUrl(artifact.name) }}">Link</a>
-            <button class="ctc link pure-button pure-button-primary" data-clipboard-text="{{ getDownloadUrl(artifact.name) }}">Copy Link</button>
+            <a class="link pure-button pure-button-primary" target="_blank" href="{{ getDownloadUrl(artifact.name) }}">下载</a>
+            <a class="link pure-button pure-button-primary" target="_blank" href="{{ getPreviewUrl(artifact.name) }}">预览</a>
+            <button class="ctc link pure-button pure-button-primary" data-clipboard-text="{{ getPreviewUrl(artifact.name) }}">复制地址</button>
             
             {% if artifact.name.toLowerCase().includes('surge') %}
-              <a class="link pure-button" target="_blank" href="surge:///install-config?url={{ encodeURIComponent(getDownloadUrl(artifact.name)) }}">Surge</a>
+              <a class="link pure-button" target="_blank" href="surge:///install-config?url={{ encodeURIComponent(getPreviewUrl(artifact.name)) }}">Surge</a>
             {% endif %}
           </div>
         </div>

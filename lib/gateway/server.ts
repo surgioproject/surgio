@@ -1,6 +1,7 @@
 // tslint:disable-next-line:no-submodule-imports
 import { NowRequest, NowResponse } from '@now/node/dist';
 import nunjucks from 'nunjucks';
+import url from 'url';
 
 import { ArtifactConfig, CommandConfig, RemoteSnippet } from '../types';
 import { getDownloadUrl, loadRemoteSnippetList } from '../utils';
@@ -76,7 +77,7 @@ export class Server {
 
   public nowGetArtifact(req: NowRequest, res: NowResponse): void {
     const {
-      query: { name: artifactName },
+      query: { name: artifactName, dl },
     } = req;
 
     if (!artifactName) {
@@ -89,6 +90,11 @@ export class Server {
         if (result) {
           res.setHeader('content-type', 'text/plain; charset=utf-8');
           res.setHeader('cache-control', 'private, no-cache, no-store');
+
+          if (dl === '1'){
+            res.setHeader('content-disposition', `attachment; filename="${artifactName}"`);
+          }
+
           res.send(result);
         } else {
           this.nowNotFound(res);
@@ -106,7 +112,16 @@ export class Server {
     const artifactListTpl = require('./template/artifact-list').default;
     const result = engine.renderString(artifactListTpl, {
       artifactList: this.artifactList,
-      getDownloadUrl: (name: string) => getDownloadUrl(this.config.urlBase, name),
+      getPreviewUrl: (name: string) => getDownloadUrl(this.config.urlBase, name),
+      getDownloadUrl: (name: string) => (
+        url.format({
+          pathname: '/gateway.js',
+          query: {
+            name,
+            dl: '1',
+          },
+        })
+      ),
       encodeURIComponent,
     });
     res.send(result);
