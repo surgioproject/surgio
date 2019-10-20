@@ -3,6 +3,7 @@ export default `
 <html lang="en">
 <head>
   <meta charset="utf-8">
+  <meta name="robots" content="noindex">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/purecss@1.0.1/build/pure-min.min.css" crossorigin="anonymous">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/purecss@1.0.1/build/grids-responsive-min.css" crossorigin="anonymous">
@@ -57,12 +58,12 @@ export default `
             <div class="tag">Provider: {{ artifact.provider }}</div>
           </div>
           <div class="link-group">
-            <a class="link pure-button pure-button-primary" target="_blank" href="{{ getDownloadUrl(artifact.name) }}">下载</a>
-            <a class="link pure-button pure-button-primary" target="_blank" href="{{ getPreviewUrl(artifact.name) }}">预览</a>
+            <a rel="nofollow" class="link pure-button pure-button-primary" target="_blank" href="{{ getDownloadUrl(artifact.name) }}">下载</a>
+            <a rel="nofollow" class="link pure-button pure-button-primary" target="_blank" href="{{ getPreviewUrl(artifact.name) }}">预览</a>
             <button class="ctc link pure-button pure-button-primary" data-clipboard-text="{{ getPreviewUrl(artifact.name) }}">复制地址</button>
             
             {% if artifact.name.toLowerCase().includes('surge') %}
-              <a class="link pure-button" target="_blank" href="surge:///install-config?url={{ encodeURIComponent(getPreviewUrl(artifact.name)) }}">Surge</a>
+              <a rel="nofollow" class="link pure-button" target="_blank" href="surge:///install-config?url={{ encodeURIComponent(getPreviewUrl(artifact.name)) }}">Surge</a>
             {% endif %}
           </div>
         </div>
