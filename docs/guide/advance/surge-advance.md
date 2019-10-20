@@ -5,7 +5,7 @@ sidebarDepth: 2
 
 # Surge 进阶 - 生成 SSR 和 V2Ray 订阅
 
-:::warning
+:::warning 注意
 - 本文仅针对 Surge for Mac
 - 如果你已经订阅了 Surge 4，推荐使用原生的 Vmess 支持
 :::

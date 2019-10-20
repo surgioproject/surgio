@@ -1,6 +1,6 @@
 ---
 title: 快速搭建 API 服务
-sidebarDepth: 2
+sidebarDepth: 1
 ---
 
 :::tip
@@ -191,10 +191,15 @@ $ now login
     }
   ],
   "routes": [
-    { 
+    {
       "src": "/get-artifact/([^/]+)",
       "methods": ["HEAD", "GET"],
       "dest": "/gateway.js?name=$1"
+    },
+    {
+      "src": "/list-artifact",
+      "methods": ["HEAD", "GET"],
+      "dest": "/gateway.js?action=list-artifact"
     }
   ]
 }
@@ -247,6 +252,28 @@ https://xxxxxx.xxx.now.sh/get-artifact/
 ```
 
 最后，再运行一次 `now` 更新服务。
+
+### 更新
+
+#### v0.13.1
+
+:::warning 注意
+该功能仅支持 now.sh 部署。
+:::
+
+新增一个新方法，用于展示所有的 Artifact 项目，并且提供预览、下载、添加到 Surge 等功能。请按照 [这里](/guide/advance/api-gateway.md#配置-2) 最新的 `now.json` 更新你的文件。
+
+![](./images/api-gateway-preview.png)
+
+该页面的地址是：
+
+```
+https://xxxxxx.xxx.now.sh/list-artifact
+```
+
+**注意：**
+
+- 若名称中包含 `surge`（大小写不敏感），则会出现添加到 Surge 的按钮。
 
 ### 最后
 

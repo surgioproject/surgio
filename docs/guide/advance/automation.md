@@ -82,7 +82,7 @@ build:
 
 保存即可。你的配置会在每天凌晨 4 点自动更新。你也可以配置自己的 Cron 规则，让它在任何时候自动触发更新。
 
-:::warning
+:::warning 注意
 如果你使用 Surgio 来生成 Surge 使用的 Vmess 订阅，并且开启了 `external` 模式，就不能使用自动化管理。因为 Surgio 会在本地生成额外的文件，这对 Surge 来说是必须的。
 :::
 
