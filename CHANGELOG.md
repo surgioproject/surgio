@@ -1,3 +1,19 @@
+## [0.13.2](https://github.com/geekdada/surgio/compare/v0.13.1...v0.13.2) (2019-10-25)
+
+
+### Bug Fixes
+
+* package.json to reduce vulnerabilities ([76165a4](https://github.com/geekdada/surgio/commit/76165a45cfb993ac6f91400b40aeb078695d8430))
+
+
+### Features
+
+* add customParams for templates ([8658aa2](https://github.com/geekdada/surgio/commit/8658aa25277a927679822d8cb1fb66f54d71f6e6))
+* add timeout env ([7835e2c](https://github.com/geekdada/surgio/commit/7835e2cc9f23bcbed9d1f8322adf3f8c76c250e7))
+* getQuantumultNodes 增加 filter 支持 ([9b1d280](https://github.com/geekdada/surgio/commit/9b1d280c2cda52c791ed0896263c23505f233bda))
+
+
+
 ## [0.13.1](https://github.com/geekdada/surgio/compare/v0.13.0...v0.13.1) (2019-10-20)
 
 
