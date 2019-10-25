@@ -41,9 +41,30 @@ Surgio 会根据 Artifact 的值来生成配置文件。你可以一次性配置
 
 模板名。会在 `./provider` 目录内寻找同名文件（`.js` 后缀可省略）。
 
+### customParams
+
+- 类型: `object`
+- 默认值: `{}`
+
+自定义的模板对象。可以在模板中获取，方便定义更加定制化的模板。
+
+例如：
+
+```js
+{
+  customParams: {
+    beta: true
+  },
+}
+```
+
+此后即可在模板中使用 `{% if customParams.beta %}{% endif %}`，让你仅通过一个模板就能实现多种不同的配置。Nunjucks 的条件语法请参考其文档。
+
 ## 方法
 
-### proxyGroupModifier(nodeList, filters)
+### proxyGroupModifier
+
+`proxyGroupModifier(nodeList, filters)`
 
 - 类型: `Function`
 - 入参: `(NodeConfig[], { hkFilter, usFilter, netflixFilter, youtubePremiumFilter })`

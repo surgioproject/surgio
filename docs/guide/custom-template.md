@@ -111,6 +111,10 @@ const youtubePremiumFilter = nodeConfig => {
 
 获取自定义 Filter。关于自定义 Filter 的用法，请阅读 [进阶 - 自定义 Filter](/guide/advance/custom-filter)。
 
+### customParams
+
+获取自定义的模板参数。请先在 Artifact 中定义再使用。
+
 ### clashProxyConfig
 
 :::tip
@@ -132,15 +136,14 @@ Clash 的 `Proxy` 和 `Proxy Group` 配置对象。`clashProxyConfig` 的内容�
 
 ## 模板方法
 
-### `getSurgeNodes(nodeList, filter?)`
+### getSurgeNodes
+
+`getSurgeNodes(nodeList, filter?)`
 
 :::tip
 - `filter` 为可选参数
 - 支持输出 Shadowsocks, Shadowsocksr, HTTPS, Snell, Vmess 节点
-:::
-
-:::warning
-请参考 [「Surge 进阶使用」](/guide/advance/surge-advance.md) 生成针对 Surge 的 V2Ray 或 SSR 订阅
+- 请参考 [「Surge 进阶使用」](/guide/advance/surge-advance.md) 生成针对 Surge 的 V2Ray 或 SSR 订阅
 :::
 
 生成 Surge 规范的节点列表，例如：
@@ -150,7 +153,9 @@ Clash 的 `Proxy` 和 `Proxy Group` 配置对象。`clashProxyConfig` 的内容�
 🇭🇰HK(Netflix) = custom, hk.example.com, 10000, chacha20-ietf-poly1305, password, https://raw.githubusercontent.com/ConnersHua/SSEncrypt/master/SSEncrypt.module, udp-relay=true
 ```
 
-### `getShadowsocksNodes(nodeList, providerName)`
+### getShadowsocksNodes
+
+`getShadowsocksNodes(nodeList, providerName)`
 
 :::tip
 - 第二个入参为 Group 名称
@@ -169,10 +174,13 @@ ss://cmM0LW1kNTpwYXNzd29yZA@hk.com:1234/?group=subscribe_demo#%F0%9F%87%AD%F0%9F
 {{ getShadowsocksNodes(nodeList, providerName) | base64 }}
 ```
 
-### `getQuantumultNodes(nodeList, providerName)`
+### getQuantumultNodes
+
+`getQuantumultNodes(nodeList, providerName?, filter?)`
 
 :::tip
-- 第二个入参为 Group 名称
+- 第二个参数为 Group 名称，可选
+- 第三个参数可选，可传入标准的过滤器或自定义的过滤器
 - 支持输出 Shadowsocks, Shadowsocksr, Vmess, HTTPS 节点
 :::
 
@@ -189,7 +197,9 @@ vmess://5rWL6K+VIDIgPSB2bWVzcywxLjEuMS4xLDgwODAsY2hhY2hhMjAtaWV0Zi1wb2x5MTMwNSwi
 {{ getQuantumultNodes(nodeList, providerName) | base64 }}
 ```
 
-### `getNodeNames(nodeList, nodeTypeList?, filter?)`
+### getNodeNames
+
+`getNodeNames(nodeList, nodeTypeList?, filter?)`
 
 :::tip
 - `nodeTypeList`, `filter` 为可选参数
@@ -213,7 +223,9 @@ getNodeNames(nodeList, ['shadowsocks', 'https']);
 getNodeNames(nodeList, ['shadowsocks'], netflixFilter);
 ```
 
-### `getDownloadUrl(name)`
+### getDownloadUrl
+
+`getDownloadUrl(name)`
 
 获得另一个文件的下载地址（链接前面部分取决于 `surgio.conf.js` 中 `urlBase` 的值），则可以这样写：
 
