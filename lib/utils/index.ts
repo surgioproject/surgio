@@ -660,7 +660,8 @@ export const getV2rayNNodes = (list: ReadonlyArray<VmessNodeConfig>): string => 
 
 export const getQuantumultNodes = (
   list: ReadonlyArray<ShadowsocksNodeConfig|VmessNodeConfig|ShadowsocksrNodeConfig|HttpsNodeConfig>,
-  groupName: string = 'Surgio'
+  groupName: string = 'Surgio',
+  filter?: NodeNameFilterType,
 ): string => {
   function getHeader(
     host,
@@ -673,9 +674,13 @@ export const getQuantumultNodes = (
   }
 
   const result: ReadonlyArray<string> = list
+    .filter(item => {
+      if (filter) {
+        return filter(item) && item.enable !== false;
+      }
+      return item.enable !== false;
+    })
     .map<string>(nodeConfig => {
-      if (nodeConfig.enable === false) { return null; }
-
       switch (nodeConfig.type) {
         case NodeTypeEnum.Vmess: {
           const config = [
