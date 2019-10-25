@@ -92,6 +92,10 @@ npm run update
 请确保已配置阿里云 OSS。
 :::
 
+## 样例
+
+除了你使用 init 命令生成的初始仓库之外，你还可以在 [这里](https://github.com/geekdada/surgio/tree/master/examples) 找到其它使用样例。
+
 ## 升级 Surgio
 
 确保你当前的版本和新版没有兼容性问题后，运行下面命令即可。
