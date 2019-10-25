@@ -11,3 +11,4 @@ node_modules/
 coverage
 docs/.vuepress/dist
 /test/fixture/**/dist
+/examples/**/dist

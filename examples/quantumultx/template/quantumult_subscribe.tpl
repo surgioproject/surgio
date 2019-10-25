@@ -1,0 +1,1 @@
+{{ getQuantumultNodes(nodeList, provider, customParams.magicVariable) | base64 }}
