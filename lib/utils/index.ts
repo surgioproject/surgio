@@ -33,6 +33,7 @@ import { normalizeConfig } from './config';
 import { parseSSRUri } from './ssr';
 
 export const OBFS_UA = 'Mozilla/5.0 (iPhone; CPU iPhone OS 12_3_1 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148';
+const NETWORK_TIMEOUT = process.env.SURGIO_NETWORK_TIMEOUT ? Number(process.env.SURGIO_NETWORK_TIMEOUT) : 20000;
 const ConfigCache = new LRU<string, any>({
   maxAge: 10 * 60 * 1000, // 1min
 });
@@ -58,7 +59,7 @@ export const getBlackSSLConfig = async (config: {
           username,
           password,
         },
-        timeout: 20000,
+        timeout: NETWORK_TIMEOUT,
         headers: {
           'User-Agent': 'GoAgentX/774 CFNetwork/901.1 Darwin/17.6.0 (x86_64)',
         },
@@ -91,7 +92,7 @@ export const getShadowsocksJSONConfig = async (config: {
 
   async function requestConfigFromRemote(url: string): Promise<ReadonlyArray<ShadowsocksNodeConfig>> {
     const response = await axios.get(url, {
-      timeout: 20000,
+      timeout: NETWORK_TIMEOUT,
     });
 
     const result = (response.data.configs as readonly any[]).map<ShadowsocksNodeConfig>(item => {
@@ -138,7 +139,7 @@ export const getShadowsocksSubscription = async (config: {
 
   async function requestConfigFromRemote(url: string): Promise<ReadonlyArray<ShadowsocksNodeConfig>> {
     const response = await axios.get(url, {
-      timeout: 20000,
+      timeout: NETWORK_TIMEOUT,
       responseType: 'text',
     });
 
@@ -184,7 +185,7 @@ export const getShadowsocksrSubscription = async (config: {
 
   async function requestConfigFromRemote(url: string): Promise<ReadonlyArray<ShadowsocksrNodeConfig>> {
     const response = await axios.get(url, {
-      timeout: 20000,
+      timeout: NETWORK_TIMEOUT,
       responseType: 'text',
     });
 
@@ -210,7 +211,7 @@ export const getV2rayNSubscription = async (config: {
 
   async function requestConfigFromRemote(url: string): Promise<ReadonlyArray<VmessNodeConfig>> {
     const response = await axios.get(url, {
-      timeout: 20000,
+      timeout: NETWORK_TIMEOUT,
       responseType: 'text',
     });
 
@@ -916,7 +917,7 @@ export const loadRemoteSnippetList = (remoteSnippetList: ReadonlyArray<RemoteSni
     console.log(`下载远程片段：${url}`);
 
     return axios.get<string>(url, {
-      timeout: 20000,
+      timeout: NETWORK_TIMEOUT,
       responseType: 'text',
     })
       .then(data => data.data)
