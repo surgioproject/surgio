@@ -193,7 +193,7 @@ export async function generate(
       netflixFilter,
       youtubePremiumFilter,
       customFilters,
-      ...(customParams ? customParams : {}),
+      customParams: customParams || {},
       ...(artifact.proxyGroupModifier ? {
         clashProxyConfig: {
           Proxy: getClashNodes(nodeList),
