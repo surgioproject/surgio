@@ -1,3 +1,17 @@
+## [1.0.1](https://github.com/geekdada/surgio/compare/v1.0.0...v1.0.1) (2019-10-27)
+
+
+### Bug Fixes
+
+* better hot start for now.sh ([8781c56](https://github.com/geekdada/surgio/commit/8781c566603947d9ca7200fc6b20a231b854b574))
+
+
+### Features
+
+* list-artifact 支持展示 combineProviders ([1526c6b](https://github.com/geekdada/surgio/commit/1526c6ba986b165666edfe215922ba226defff9e))
+
+
+
 # [1.0.0](https://github.com/geekdada/surgio/compare/v0.13.2...v1.0.0) (2019-10-27)
 
 
