@@ -51,13 +51,15 @@ export function handler(request: FcRequest, response: FcResponse): void {
 }
 
 export async function nowHandler(req: NowRequest, res: NowResponse): Promise<void> {
-  const cwd = process.cwd();
-  const configFile = path.join(cwd, '/surgio.conf.js');
-  const config = loadConfig(cwd, configFile);
+  if (!server) {
+    const cwd = process.cwd();
+    const configFile = path.join(cwd, '/surgio.conf.js');
+    const config = loadConfig(cwd, configFile);
 
-  server = new Server(config);
+    server = new Server(config);
 
-  await server.init();
+    await server.init();
+  }
 
   const {
     headers,
