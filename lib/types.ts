@@ -57,7 +57,7 @@ export interface ArtifactConfig {
   readonly name: string;
   readonly template: string;
   readonly provider: string;
-  readonly recipe?: readonly string[];
+  readonly combineProviders?: ReadonlyArray<string>;
   readonly customParams?: PlainObjectOf<string|boolean|number>;
   readonly proxyGroupModifier?: ProxyGroupModifier;
 }
