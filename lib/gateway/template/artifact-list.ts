@@ -9,8 +9,11 @@ export default `
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/purecss@1.0.1/build/grids-responsive-min.css" crossorigin="anonymous">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/modern-normalize@0.5.0/modern-normalize.min.css" crossorigin="anonymous">
   <script src="https://cdn.jsdelivr.net/npm/clipboard@2.0.4/dist/clipboard.min.js"></script>
-  <title>Artifact 查看</title>
+  <title>所有 Artifact</title>
   <style>
+    .container {
+      padding: 0 15px;
+    }
     .container li,
     .container ul {
       margin: 0;
@@ -18,7 +21,7 @@ export default `
     }
     .container .artifact {
       list-style: none;
-      padding: 20px 15px 10px;
+      padding: 20px 0 10px;
       border-bottom: 1px solid #eee;
     }
     .artifact .preview {
@@ -39,15 +42,25 @@ export default `
       background-color: #353535;
       color: #fff;
       padding: 0 9px;
+      margin-bottom: 8px;
       height: 26px;
       line-height: 26px;
       border-radius: 13px;
     }
+    footer {
+      text-align: center;
+      margin-bottom: 10px;
+      padding: 14px 0;
+      color: #999;
+      font-size: 13px;
+      font-family: monospace;
+    }
   </style>
 </head>
 <body>
-<div class="container pure-g">
-  <div class="pure-u-1 pure-u-md-1-2" style="margin: auto">
+<div class="pure-g">
+  <div class="container pure-u-1 pure-u-md-1-2" style="margin: auto">
+    <h1>所有 Artifact</h1>
     <ul>
     {% for artifact in artifactList %}
       <li class="artifact">
@@ -75,6 +88,9 @@ export default `
       </li>
     {% endfor %}
     </ul>
+    <footer>
+      surgio@v{{ surgioVersion }}
+    </footer>
   </div>
 </div>
 <script>

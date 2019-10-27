@@ -124,6 +124,7 @@ export class Server {
         })
       ),
       encodeURIComponent,
+      surgioVersion: require('../../package.json').version,
     });
     res.send(result);
   }
