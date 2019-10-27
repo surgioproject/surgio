@@ -25,6 +25,7 @@ module.exports = {
           children: [
             '',
             'getting-started',
+            '0.x-to-1.0',
             {
               title: '自定义',
               collapsable: false,

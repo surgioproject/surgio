@@ -41,6 +41,29 @@ Surgio 会根据 Artifact 的值来生成配置文件。你可以一次性配置
 
 模板名。会在 `./provider` 目录内寻找同名文件（`.js` 后缀可省略）。
 
+### combineProviders
+
+- 类型: `string[]`
+- 默认值: `undefined`
+
+合并其它 Provider。
+
+:::warning 注意
+- 被合并的 Provider 的过滤器中仅 `nodeFilter` 生效。
+- `provider` 定义的主要 Provider 中的过滤器（包括自定义过滤器）会对合并的 Provider 生效。
+:::
+
+例如：
+
+最终生成的节点配置会包含 `my-provider`, `rixcloud`, `dlercloud` 三个 Provider 的节点。如果 `my-provider` 中定义了过滤器，那这些过滤器对 `rixcloud` 和 `dlercloud` 节点同样有效。
+
+```js
+{
+  provider: 'my-provider',
+  combineProviders: ['rixcloud', 'dlercloud'],
+}
+```
+
 ### customParams
 
 - 类型: `object`
