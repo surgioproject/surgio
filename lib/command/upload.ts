@@ -1,6 +1,5 @@
 // istanbul ignore file
 import OSS from 'ali-oss';
-import assert from 'assert';
 import Command from 'common-bin';
 import fs from 'fs';
 import dir from 'node-dir';
@@ -39,21 +38,16 @@ class GenerateCommand extends Command {
     });
 
     const ossConfig = {
-      region: config.upload.region,
+      region: config.upload.region || 'oss-cn-hangzhou',
       bucket: config.upload.bucket,
       accessKeyId: ctx.env.OSS_ACCESS_KEY_ID || config.upload.accessKeyId,
       accessKeySecret: ctx.env.OSS_ACCESS_KEY_SECRET || config.upload.accessKeySecret,
     };
-
-    assert(ossConfig.bucket, '未配置 OSS Bucket');
-    assert(ossConfig.accessKeyId, '未配置 OSS accessKeyId');
-    assert(ossConfig.accessKeySecret, '未配置 OSS accessKeySecret');
-
     const client = new OSS({
       secure: true,
       ...ossConfig,
     });
-    const { prefix } = config.upload;
+    const prefix = config.upload.prefix || '/';
     const fileList = await dir.promiseFiles(config.output);
     const files = fileList.map(filePath => ({
       fileName: path.basename(filePath),

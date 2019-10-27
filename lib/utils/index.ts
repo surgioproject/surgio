@@ -29,7 +29,7 @@ import {
   SnellNodeConfig,
   VmessNodeConfig,
 } from '../types';
-import { normalizeConfig } from './config';
+import { normalizeConfig, validateConfig } from './config';
 import { parseSSRUri } from './ssr';
 
 export const OBFS_UA = 'Mozilla/5.0 (iPhone; CPU iPhone OS 12_3_1 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148';
@@ -855,14 +855,18 @@ export const loadConfig = (cwd: string, configPath: string, override?: Partial<C
     throw new Error(`文件 ${absPath} 不存在`);
   }
 
+  const userConfig = require(absPath);
+
+  validateConfig(userConfig);
+
   if (override) {
     return {
-      ...normalizeConfig(cwd, require(absPath)),
+      ...normalizeConfig(cwd, userConfig),
       ...override,
     };
   }
 
-  return normalizeConfig(cwd, require(absPath));
+  return normalizeConfig(cwd, userConfig);
 };
 
 export const normalizeClashProxyGroupConfig = (
