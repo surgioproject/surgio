@@ -38,11 +38,9 @@ Surgio 还包括了一个实用工具 —— 上传到阿里云 OSS，能够快�
 
 ## 劝退
 
-目前很多核心功能对动手能力不强的小白和不了解 JavaScript 的朋友来说还有一些门槛，建议等 Surgio 功能稳定后再入坑。
+目前很多核心功能对动手能力不强的小白和不了解 JavaScript 的朋友来说还有一些门槛。如果你在使用过程中感到吃力，推荐使用以下工具：
 
-## Beta
-
-Surgio 还处于测试阶段，在 v1.0.0 之前接口和配置可能会改变，介意的朋友请等正式发布后再使用。
+- [lhie1/Rules](https://github.com/lhie1/Rules)
 
 ## Code of Conduct
 
