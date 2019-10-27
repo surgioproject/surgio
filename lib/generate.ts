@@ -83,7 +83,8 @@ export async function generate(
   assert(template, '必须指定 artifact 的 template 属性');
   assert(artifact.provider, '必须指定 artifact 的 provider 属性');
 
-  const recipeList = artifact.recipe ? artifact.recipe : [artifact.provider];
+  const combineProviders = artifact.combineProviders || [];
+  const providerList = [artifact.provider].concat(combineProviders);
   const nodeList: PossibleNodeConfigType[] = [];
   const nodeNameList: SimpleNodeConfig[] = [];
   let customFilters: ProviderConfig['customFilters'];
@@ -94,7 +95,7 @@ export async function generate(
     config.binPath.vmess = config.binPath.v2ray;
   }
 
-  for (const providerName of recipeList) {
+  for (const providerName of providerList) {
     const filePath = path.resolve(config.providerDir, `${providerName}.js`);
 
     if (!fs.existsSync(filePath)) {
@@ -119,6 +120,7 @@ export async function generate(
       throw err;
     }
 
+    // Filter 仅使用第一个 Provider 中的定义
     if (!netflixFilter) {
       netflixFilter = provider.netflixFilter || defaultNetflixFilter;
     }
@@ -126,7 +128,7 @@ export async function generate(
       youtubePremiumFilter = provider.youtubePremiumFilter || defaultYoutubePremiumFilter;
     }
     if (!customFilters) {
-      customFilters = provider.customFilters;
+      customFilters = provider.customFilters || {};
     }
 
     nodeConfigList.forEach(nodeConfig => {

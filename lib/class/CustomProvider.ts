@@ -1,5 +1,5 @@
-import assert from 'assert';
-import { CustomProviderConfig, PossibleNodeConfigType } from '../types';
+import Joi from '@hapi/joi';
+import { CustomProviderConfig, NodeTypeEnum, PossibleNodeConfigType } from '../types';
 import Provider from './Provider';
 
 export default class CustomProvider extends Provider {
@@ -7,7 +7,28 @@ export default class CustomProvider extends Provider {
 
   constructor(config: CustomProviderConfig) {
     super(config);
-    assert(config.nodeList, 'Lack of nodeList.');
+
+    const nodeSchema = Joi.object({
+      type: Joi.string()
+        .valid(...Object.values<string>(NodeTypeEnum))
+        .required(),
+      nodeName: Joi.string().required(),
+      enable: Joi.boolean(),
+    }).unknown();
+    const schema = Joi.object({
+      nodeList: Joi
+        .array()
+        .items(nodeSchema)
+        .required(),
+    })
+      .unknown();
+
+    const { error } = schema.validate(config);
+
+    if (error) {
+      throw error;
+    }
+
     this.nodeList = config.nodeList;
   }
 

@@ -4,4 +4,4 @@
 {{ getSurgeNodes(nodeList) }}
 
 [Proxy Group]
-Proxy = select, {{ getNodeNames(nodeList, ['shadowsocks']) }}
+Proxy = select, {{ getNodeNames(nodeList) }}

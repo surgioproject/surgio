@@ -1,7 +1,3 @@
-import { cst } from 'yaml';
-import Provider from './class/Provider';
-import Node = cst.Node;
-
 export enum NodeTypeEnum {
   HTTPS = 'https',
   Shadowsocks = 'shadowsocks',
@@ -27,19 +23,19 @@ export interface CommandConfig {
   readonly providerDir: string;
   readonly templateDir: string;
   readonly configDir: string;
-  readonly upload: {
+  readonly upload?: {
     readonly prefix: string;
     readonly region: string;
-    readonly bucket?: string;
-    readonly accessKeyId?: string;
-    readonly accessKeySecret?: string;
+    readonly bucket: string;
+    readonly accessKeyId: string;
+    readonly accessKeySecret: string;
   };
   readonly binPath?: {
     readonly shadowsocksr?: string;
     readonly v2ray?: string;
     vmess?: string; // tslint:disable-line
   };
-  readonly surgeConfig: {
+  readonly surgeConfig?: {
     readonly v2ray: 'native'|'external';
   };
 }
@@ -57,7 +53,7 @@ export interface ArtifactConfig {
   readonly name: string;
   readonly template: string;
   readonly provider: string;
-  readonly recipe?: readonly string[];
+  readonly combineProviders?: ReadonlyArray<string>;
   readonly customParams?: PlainObjectOf<string|boolean|number>;
   readonly proxyGroupModifier?: ProxyGroupModifier;
 }

@@ -1,7 +1,7 @@
 'use strict';
 
 module.exports = {
-  url: '/test-ssr-sub.txt',
+  url: 'http://example.com/test-ssr-sub.txt',
   type: 'shadowsocksr_subscribe',
   startPort: 5000,
 };

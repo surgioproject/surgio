@@ -199,10 +199,10 @@ vmess://5rWL6K+VIDIgPSB2bWVzcywxLjEuMS4xLDgwODAsY2hhY2hhMjAtaWV0Zi1wb2x5MTMwNSwi
 
 ### getNodeNames
 
-`getNodeNames(nodeList, nodeTypeList?, filter?)`
+`getNodeNames(nodeList, filter?)`
 
 :::tip
-- `nodeTypeList`, `filter` 为可选参数
+- `filter` 为可选参数
 :::
 
 生成一段逗号分隔的名称字符串，例如：
@@ -211,16 +211,10 @@ vmess://5rWL6K+VIDIgPSB2bWVzcywxLjEuMS4xLDgwODAsY2hhY2hhMjAtaWV0Zi1wb2x5MTMwNSwi
 🇺🇸US, 🇭🇰HK(Netflix)
 ```
 
-若不传 `nodeTypeList` 则默认输出 Shadowsocks 节点。若需要同时输出其它类型节点则传入：
-
-```js
-getNodeNames(nodeList, ['shadowsocks', 'https']);
-```
-
 若需要过滤 Netflix 节点则传入：
 
 ```js
-getNodeNames(nodeList, ['shadowsocks'], netflixFilter);
+getNodeNames(nodeList, netflixFilter);
 ```
 
 ### getDownloadUrl

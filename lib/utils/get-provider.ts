@@ -9,8 +9,6 @@ import V2rayNSubscribeProvider from '../class/V2rayNSubscribeProvider';
 import { SupportProviderEnum } from '../types';
 
 export default function(config: any): BlackSSLProvider|ShadowsocksJsonSubscribeProvider|ShadowsocksSubscribeProvider|CustomProvider|V2rayNSubscribeProvider|ShadowsocksrSubscribeProvider {
-  assert(config.type, '未指定 Provider 的 type 属性');
-
   switch (config.type) {
     case SupportProviderEnum.BlackSSL:
       return new BlackSSLProvider(config);

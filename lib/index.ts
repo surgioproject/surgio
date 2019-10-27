@@ -4,7 +4,6 @@ import env2 from 'env2';
 import path from 'path';
 import updateNotifier from 'update-notifier';
 
-import CheckCommand from './command/check';
 import GenerateCommand from './command/generate';
 import SpeedCommand from './command/speed';
 import UploadCommand from './command/upload';
@@ -36,7 +35,6 @@ export class SurgioCommand extends Command {
 export {
   GenerateCommand,
   UploadCommand,
-  CheckCommand,
   SpeedCommand,
 };
 

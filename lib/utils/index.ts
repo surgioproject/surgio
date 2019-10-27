@@ -29,7 +29,7 @@ import {
   SnellNodeConfig,
   VmessNodeConfig,
 } from '../types';
-import { normalizeConfig } from './config';
+import { normalizeConfig, validateConfig } from './config';
 import { parseSSRUri } from './ssr';
 
 export const OBFS_UA = 'Mozilla/5.0 (iPhone; CPU iPhone OS 12_3_1 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148';
@@ -777,11 +777,10 @@ export const getShadowsocksNodesJSON = (list: ReadonlyArray<ShadowsocksNodeConfi
 
 export const getNodeNames = (
   list: ReadonlyArray<SimpleNodeConfig>,
-  nodeTypeList: readonly NodeTypeEnum[] = [NodeTypeEnum.Shadowsocks, NodeTypeEnum.HTTPS, NodeTypeEnum.Snell],
   filter?: NodeNameFilterType
 ): string => {
   const nodes = list.filter(item => {
-    const result = nodeTypeList.includes(item.type) && item.enable !== false;
+    const result = item.enable !== false;
 
     if (filter) {
       return filter(item) && result;
@@ -797,7 +796,6 @@ export const getClashNodeNames = (
   ruleName: string,
   ruleType: 'select' | 'url-test',
   nodeNameList: ReadonlyArray<SimpleNodeConfig>,
-  nodeTypeList: ReadonlyArray<NodeTypeEnum> = [NodeTypeEnum.Shadowsocks, NodeTypeEnum.Shadowsocksr, NodeTypeEnum.Vmess],
   filter?: NodeNameFilterType
 ): {
   readonly type: string;
@@ -807,7 +805,7 @@ export const getClashNodeNames = (
   readonly interval?: number;
 } => {
   const nodes = nodeNameList.filter(item => {
-    const result = nodeTypeList.includes(item.type) && item.enable !== false;
+    const result = item.enable !== false;
 
     if (filter) {
       return filter(item) && result;
@@ -855,14 +853,18 @@ export const loadConfig = (cwd: string, configPath: string, override?: Partial<C
     throw new Error(`文件 ${absPath} 不存在`);
   }
 
+  const userConfig = require(absPath);
+
+  validateConfig(userConfig);
+
   if (override) {
     return {
-      ...normalizeConfig(cwd, require(absPath)),
+      ...normalizeConfig(cwd, userConfig),
       ...override,
     };
   }
 
-  return normalizeConfig(cwd, require(absPath));
+  return normalizeConfig(cwd, userConfig);
 };
 
 export const normalizeClashProxyGroupConfig = (
@@ -874,19 +876,11 @@ export const normalizeClashProxyGroupConfig = (
 
   return proxyGroup.map<any>(item => {
     if (item.filter) {
-      return getClashNodeNames(item.name, item.type, nodeList, [
-        NodeTypeEnum.Shadowsocks,
-        NodeTypeEnum.Shadowsocksr,
-        NodeTypeEnum.Vmess,
-      ], item.filter);
+      return getClashNodeNames(item.name, item.type, nodeList, item.filter);
     } else if (item.proxies) {
       return item;
     } else {
-      return getClashNodeNames(item.name, item.type, nodeList, [
-        NodeTypeEnum.Shadowsocks,
-        NodeTypeEnum.Shadowsocksr,
-        NodeTypeEnum.Vmess,
-      ]);
+      return getClashNodeNames(item.name, item.type, nodeList);
     }
   });
 };
@@ -918,16 +912,19 @@ export const addProxyToSurgeRuleSet = (str: string, rule: string): string => {
 };
 
 export const loadRemoteSnippetList = (remoteSnippetList: ReadonlyArray<RemoteSnippetConfig>): Promise<ReadonlyArray<RemoteSnippet>> => {
-  function load(url: string): Promise<string> {
-    console.log(`下载远程片段：${url}`);
+  console.log('正在下载远程片段...');
 
+  function load(url: string): Promise<string> {
     return axios.get<string>(url, {
       timeout: NETWORK_TIMEOUT,
       responseType: 'text',
     })
-      .then(data => data.data)
+      .then(data => {
+        console.log(`远程片段下载成功: ${url}`);
+        return data.data;
+      })
       .catch(err => {
-        console.error(`远程片段 ${url} 下载失败`);
+        console.error(`远程片段下载失败: ${url}`);
         throw err;
       });
   }

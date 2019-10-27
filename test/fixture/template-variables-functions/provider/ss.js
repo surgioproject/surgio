@@ -1,6 +1,6 @@
 'use strict';
 
 module.exports = {
-  url: '/test-ss-sub.txt',
+  url: 'http://example.com/test-ss-sub.txt',
   type: 'shadowsocks_subscribe',
 };

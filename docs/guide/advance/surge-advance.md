@@ -33,14 +33,6 @@ module.exports = {
 }
 ```
 
-## 修改模板
-
-默认情况下，[模板方法 getNodeNames](/guide/custom-template.md#getnodenames-nodelist-nodetypelist-filter) 不会输出 Vmess 和 SSR 的节点名，你需要自己增加它们。
-
-```
-getNodeNames(nodeList, ['shadowsocks', 'https', 'shadowsocksr', 'vmess']);
-```
-
 ## 完成
 
 在 Artifact 中配置一个 V2Ray 订阅的 Provider 即可。
