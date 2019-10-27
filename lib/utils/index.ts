@@ -918,16 +918,19 @@ export const addProxyToSurgeRuleSet = (str: string, rule: string): string => {
 };
 
 export const loadRemoteSnippetList = (remoteSnippetList: ReadonlyArray<RemoteSnippetConfig>): Promise<ReadonlyArray<RemoteSnippet>> => {
-  function load(url: string): Promise<string> {
-    console.log(`下载远程片段：${url}`);
+  console.log('开始下载远程片段');
 
+  function load(url: string): Promise<string> {
     return axios.get<string>(url, {
       timeout: NETWORK_TIMEOUT,
       responseType: 'text',
     })
-      .then(data => data.data)
+      .then(data => {
+        console.log(`远程片段下载成功: ${url}`);
+        return data.data;
+      })
       .catch(err => {
-        console.error(`远程片段 ${url} 下载失败`);
+        console.error(`远程片段下载失败: ${url}`);
         throw err;
       });
   }
