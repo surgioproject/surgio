@@ -1,3 +1,12 @@
+## [1.0.2](https://github.com/geekdada/surgio/compare/v1.0.1...v1.0.2) (2019-10-27)
+
+
+### Bug Fixes
+
+* user config got contaminated during execution in now.sh ([5c64975](https://github.com/geekdada/surgio/commit/5c649753e86f5e9e155a667b93250d33c5cac3f5))
+
+
+
 ## [1.0.1](https://github.com/geekdada/surgio/compare/v1.0.0...v1.0.1) (2019-10-27)
 
 
