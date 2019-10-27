@@ -138,12 +138,10 @@ test('getNodeNames', async t => {
       nodeName: 'Test Node 3',
     }
   ];
-  const txt1 = utils.getNodeNames(nodeNameList, [NodeTypeEnum.Shadowsocks]);
-  const txt2 = utils.getNodeNames(nodeNameList, [NodeTypeEnum.Shadowsocks, NodeTypeEnum.Snell]);
-  const txt3 = utils.getNodeNames(nodeNameList, [NodeTypeEnum.Shadowsocks, NodeTypeEnum.Snell], simpleNodeConfig => simpleNodeConfig.nodeName !== 'Test Node 3');
+  const txt1 = utils.getNodeNames(nodeNameList);
+  const txt3 = utils.getNodeNames(nodeNameList, simpleNodeConfig => simpleNodeConfig.nodeName !== 'Test Node 3');
 
-  t.is(txt1, 'Test Node 1');
-  t.is(txt2, 'Test Node 1, Test Node 3');
+  t.is(txt1, 'Test Node 1, Test Node 3');
   t.is(txt3, 'Test Node 1');
 });
 

@@ -777,11 +777,10 @@ export const getShadowsocksNodesJSON = (list: ReadonlyArray<ShadowsocksNodeConfi
 
 export const getNodeNames = (
   list: ReadonlyArray<SimpleNodeConfig>,
-  nodeTypeList: readonly NodeTypeEnum[] = [NodeTypeEnum.Shadowsocks, NodeTypeEnum.HTTPS, NodeTypeEnum.Snell],
   filter?: NodeNameFilterType
 ): string => {
   const nodes = list.filter(item => {
-    const result = nodeTypeList.includes(item.type) && item.enable !== false;
+    const result = item.enable !== false;
 
     if (filter) {
       return filter(item) && result;
@@ -797,7 +796,6 @@ export const getClashNodeNames = (
   ruleName: string,
   ruleType: 'select' | 'url-test',
   nodeNameList: ReadonlyArray<SimpleNodeConfig>,
-  nodeTypeList: ReadonlyArray<NodeTypeEnum> = [NodeTypeEnum.Shadowsocks, NodeTypeEnum.Shadowsocksr, NodeTypeEnum.Vmess],
   filter?: NodeNameFilterType
 ): {
   readonly type: string;
@@ -807,7 +805,7 @@ export const getClashNodeNames = (
   readonly interval?: number;
 } => {
   const nodes = nodeNameList.filter(item => {
-    const result = nodeTypeList.includes(item.type) && item.enable !== false;
+    const result = item.enable !== false;
 
     if (filter) {
       return filter(item) && result;
@@ -878,19 +876,11 @@ export const normalizeClashProxyGroupConfig = (
 
   return proxyGroup.map<any>(item => {
     if (item.filter) {
-      return getClashNodeNames(item.name, item.type, nodeList, [
-        NodeTypeEnum.Shadowsocks,
-        NodeTypeEnum.Shadowsocksr,
-        NodeTypeEnum.Vmess,
-      ], item.filter);
+      return getClashNodeNames(item.name, item.type, nodeList, item.filter);
     } else if (item.proxies) {
       return item;
     } else {
-      return getClashNodeNames(item.name, item.type, nodeList, [
-        NodeTypeEnum.Shadowsocks,
-        NodeTypeEnum.Shadowsocksr,
-        NodeTypeEnum.Vmess,
-      ]);
+      return getClashNodeNames(item.name, item.type, nodeList);
     }
   });
 };
