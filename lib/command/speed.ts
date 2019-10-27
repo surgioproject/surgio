@@ -14,7 +14,6 @@ import path from 'path';
 import shelljs from 'shelljs';
 import speedTest from 'speedtest-net';
 import winston, { format, Logger } from 'winston';
-import Provider from '../class/Provider';
 
 import { NodeTypeEnum, PossibleNodeConfigType, ShadowsocksNodeConfig } from '../types';
 import { getClashNodes, loadConfig, toYaml } from '../utils';
