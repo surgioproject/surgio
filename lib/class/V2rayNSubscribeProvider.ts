@@ -1,3 +1,4 @@
+import Joi from '@hapi/joi';
 import { V2rayNSubscribeProviderConfig } from '../types';
 import { getV2rayNSubscription } from '../utils';
 import Provider from './Provider';
@@ -7,6 +8,20 @@ export default class V2rayNSubscribeProvider extends Provider {
 
   constructor(config: V2rayNSubscribeProviderConfig) {
     super(config);
+
+    const schema = Joi.object({
+      url: Joi
+        .string()
+        .uri({
+          scheme: [
+            /https?/,
+          ],
+        })
+        .required(),
+    });
+
+    schema.validate(config);
+
     this.url = config.url;
   }
 

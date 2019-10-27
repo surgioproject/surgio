@@ -1,3 +1,4 @@
+import Joi from '@hapi/joi';
 import { BlackSSLProviderConfig } from '../types';
 import { getBlackSSLConfig } from '../utils';
 import Provider from './Provider';
@@ -8,6 +9,18 @@ export default class BlackSSLProvider extends Provider {
 
   constructor(config: BlackSSLProviderConfig) {
     super(config);
+
+    const schema = Joi.object({
+      username: Joi
+        .string()
+        .required(),
+      password: Joi
+        .string()
+        .required(),
+    });
+
+    schema.validate(config);
+
     this.username = config.username;
     this.password = config.password;
   }

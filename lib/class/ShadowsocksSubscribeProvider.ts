@@ -1,3 +1,4 @@
+import Joi from '@hapi/joi';
 import { ShadowsocksSubscribeProviderConfig } from '../types';
 import { getShadowsocksSubscription } from '../utils';
 import Provider from './Provider';
@@ -8,6 +9,21 @@ export default class ShadowsocksSubscribeProvider extends Provider {
 
   constructor(config: ShadowsocksSubscribeProviderConfig) {
     super(config);
+
+    const schema = Joi.object({
+      url: Joi
+        .string()
+        .uri({
+          scheme: [
+            /https?/,
+          ],
+        })
+        .required(),
+      udpRelay: Joi.boolean(),
+    });
+
+    schema.validate(config);
+
     this.url = config.url;
     this.udpRelay = config.udpRelay;
   }
