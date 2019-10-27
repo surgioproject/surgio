@@ -853,7 +853,7 @@ export const loadConfig = (cwd: string, configPath: string, override?: Partial<C
     throw new Error(`文件 ${absPath} 不存在`);
   }
 
-  const userConfig = require(absPath);
+  const userConfig = _.cloneDeep(require(absPath));
 
   validateConfig(userConfig);
 
