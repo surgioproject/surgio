@@ -18,9 +18,14 @@ export default class V2rayNSubscribeProvider extends Provider {
           ],
         })
         .required(),
-    });
+    })
+      .unknown();
 
-    schema.validate(config);
+    const { error } = schema.validate(config);
+
+    if (error) {
+      throw error;
+    }
 
     this.url = config.url;
   }

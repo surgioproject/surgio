@@ -66,9 +66,13 @@ export const validateConfig = (userConfig: Partial<CommandConfig>): void => {
       vmess: Joi.string().pattern(/^\//),
     }),
     surgeConfig: Joi.object({
-      v2ray: Joi.string().allow('native', 'external')
+      v2ray: Joi.string().valid('native', 'external')
     }),
   });
 
-  schema.validate(userConfig);
+  const { error } = schema.validate(userConfig);
+
+  if (error) {
+    throw error;
+  }
 };

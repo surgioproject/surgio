@@ -1,5 +1,3 @@
-import { cst } from 'yaml';
-
 export enum NodeTypeEnum {
   HTTPS = 'https',
   Shadowsocks = 'shadowsocks',

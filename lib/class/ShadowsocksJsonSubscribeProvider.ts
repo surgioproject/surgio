@@ -20,9 +20,14 @@ export default class ShadowsocksJsonSubscribeProvider extends Provider {
         })
         .required(),
       udpRelay: Joi.boolean(),
-    });
+    })
+      .unknown();
 
-    schema.validate(config);
+    const { error } = schema.validate(config);
+
+    if (error) {
+      throw error;
+    }
 
     this.url = config.url;
     this.udpRelay = config.udpRelay;

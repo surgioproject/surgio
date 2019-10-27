@@ -17,9 +17,14 @@ export default class BlackSSLProvider extends Provider {
       password: Joi
         .string()
         .required(),
-    });
+    })
+      .unknown();
 
-    schema.validate(config);
+    const { error } = schema.validate(config);
+
+    if (error) {
+      throw error;
+    }
 
     this.username = config.username;
     this.password = config.password;

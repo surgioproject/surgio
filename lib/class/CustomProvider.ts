@@ -10,25 +10,24 @@ export default class CustomProvider extends Provider {
 
     const nodeSchema = Joi.object({
       type: Joi.string()
-        .allow(
-          NodeTypeEnum.Shadowsocksr,
-          NodeTypeEnum.Shadowsocks,
-          NodeTypeEnum.Vmess,
-          NodeTypeEnum.HTTPS,
-          NodeTypeEnum.Snell
-        )
+        .valid(...Object.values<string>(NodeTypeEnum))
         .required(),
       nodeName: Joi.string().required(),
       enable: Joi.boolean(),
-    });
+    }).unknown();
     const schema = Joi.object({
       nodeList: Joi
         .array()
         .items(nodeSchema)
         .required(),
-    });
+    })
+      .unknown();
 
-    schema.validate(config);
+    const { error } = schema.validate(config);
+
+    if (error) {
+      throw error;
+    }
 
     this.nodeList = config.nodeList;
   }
