@@ -56,6 +56,11 @@ export default `
           <pre class="preview">{{ getPreviewUrl(artifact.name) }}</pre>
           <div class="tag-list">
             <div class="tag">Provider: {{ artifact.provider }}</div>
+            {% if artifact.combineProviders %}
+              {% for provider in artifact.combineProviders %}
+                <div class="tag">Provider: {{ provider }}</div>
+              {% endfor %}
+            {% endif %}
           </div>
           <div class="link-group">
             <a rel="nofollow" class="link pure-button pure-button-primary" target="_blank" href="{{ getDownloadUrl(artifact.name) }}">下载</a>

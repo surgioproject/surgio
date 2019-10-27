@@ -118,6 +118,7 @@ export class Server {
           pathname: '/gateway.js',
           query: {
             name,
+            action: 'get-artifact',
             dl: '1',
           },
         })
