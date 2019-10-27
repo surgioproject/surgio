@@ -10,13 +10,13 @@ export default class CustomProvider extends Provider {
 
     const nodeSchema = Joi.object({
       type: Joi.string()
-        .allow([
+        .allow(
           NodeTypeEnum.Shadowsocksr,
           NodeTypeEnum.Shadowsocks,
           NodeTypeEnum.Vmess,
           NodeTypeEnum.HTTPS,
-          NodeTypeEnum.Snell,
-        ])
+          NodeTypeEnum.Snell
+        )
         .required(),
       nodeName: Joi.string().required(),
       enable: Joi.boolean(),
