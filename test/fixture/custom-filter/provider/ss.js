@@ -3,7 +3,7 @@
 const { utils } = require('../../../../');
 
 module.exports = {
-  url: '/test-ss-sub.txt',
+  url: 'http://example.com/test-ss-sub.txt',
   type: 'shadowsocks_subscribe',
   customFilters: {
     keywordFilter: utils.useKeywords(['US 1', 'US 2']),

@@ -333,14 +333,14 @@ test('normalizeClashProxyGroupConfig', t => {
 });
 
 test('getShadowsocksJSONConfig', async t => {
-  moxios.stubRequest('/gui-config.json', {
+  moxios.stubRequest('http://example.com/gui-config.json', {
     status: 200,
     responseText: fs.readFileSync(path.join(__dirname, '../asset/gui-config-1.json'), {
       encoding: 'utf8',
     }),
   });
 
-  const config = await utils.getShadowsocksJSONConfig({ url: '/gui-config.json', udpRelay: true });
+  const config = await utils.getShadowsocksJSONConfig({ url: 'http://example.com/gui-config.json', udpRelay: true });
 
   t.deepEqual(config[0], {
     nodeName: '🇺🇸US 1',
@@ -387,19 +387,19 @@ test('getShadowsocksJSONConfig', async t => {
 });
 
 test('loadRemoteSnippetList', async t => {
-  moxios.stubRequest('/test-ruleset.list', {
+  moxios.stubRequest('http://example.com/test-ruleset.list', {
     status: 200,
     responseText: fs.readFileSync(path.join(__dirname, '../asset/test-ruleset-1.list'), {
       encoding: 'utf8',
     }),
   });
-  moxios.stubRequest('/netflix.list', {
+  moxios.stubRequest('http://example.com/netflix.list', {
     status: 200,
     responseText: fs.readFileSync(path.join(__dirname, '../asset/netflix.list'), {
       encoding: 'utf8',
     }),
   });
-  moxios.stubRequest('/telegram.list', {
+  moxios.stubRequest('http://example.com/telegram.list', {
     status: 200,
     responseText: fs.readFileSync(path.join(__dirname, '../asset/telegram.list'), {
       encoding: 'utf8',
@@ -408,15 +408,15 @@ test('loadRemoteSnippetList', async t => {
 
   const remoteSnippetList = await utils.loadRemoteSnippetList([
     {
-      url: '/telegram.list',
+      url: 'http://example.com/telegram.list',
       name: 'telegram',
     },
     {
-      url: '/netflix.list',
+      url: 'http://example.com/netflix.list',
       name: 'netflix',
     },
     {
-      url: '/test-ruleset.list',
+      url: 'http://example.com/test-ruleset.list',
       name: 'test',
     },
   ]);
@@ -453,7 +453,7 @@ test('loadRemoteSnippetList', async t => {
 test('loadRemoteSnippetList with error', async t => {
   t.plan(1);
 
-  moxios.stubRequest('/error', {
+  moxios.stubRequest('http://example.com/error', {
     status: 500,
     responseText: '',
   });
@@ -461,24 +461,24 @@ test('loadRemoteSnippetList with error', async t => {
   try {
     const res = await utils.loadRemoteSnippetList([
       {
-        url: '/error',
+        url: 'http://example.com/error',
         name: 'error',
       },
     ]);
   } catch (err) {
     t.truthy(err instanceof Error);
   }
-})
+});
 
 test('getV2rayNSubscription', async t => {
-  moxios.stubRequest('/test-v2rayn-sub.txt', {
+  moxios.stubRequest('http://example.com/test-v2rayn-sub.txt', {
     status: 200,
     responseText: fs.readFileSync(path.join(__dirname, '../asset/test-v2rayn-sub.txt'), {
       encoding: 'utf8',
     }),
   });
 
-  const url = '/test-v2rayn-sub.txt';
+  const url = 'http://example.com/test-v2rayn-sub.txt';
   const configList = await utils.getV2rayNSubscription({ url });
 
   t.deepEqual(configList[0], {
@@ -744,7 +744,7 @@ test('getShadowsocksSubscription with udp', async t => {
   });
 
   const nodeList = await utils.getShadowsocksSubscription({
-    url: '/ss-sub.txt',
+    url: 'http://example.com/ss-sub.txt',
     udpRelay: true,
   });
 
@@ -779,7 +779,7 @@ test('getShadowsocksSubscription without udp', async t => {
   });
 
   const nodeList = await utils.getShadowsocksSubscription({
-    url: '/ss-sub.txt',
+    url: 'http://example.com/ss-sub.txt',
   });
 
   t.deepEqual(nodeList[0], {
@@ -811,7 +811,7 @@ test('getShadowsocksrSubscription', async t => {
   });
 
   const nodeList = await utils.getShadowsocksrSubscription({
-    url: '/ssr-sub.txt',
+    url: 'http://example.com/ssr-sub.txt',
   });
 
   t.deepEqual(nodeList[0], {

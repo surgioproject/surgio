@@ -103,7 +103,7 @@ test('assign local port', async t => {
   t.truthy(conf2.Proxy['测试 2'].includes('local-port = 4001'));
 });
 
-test('custom filter', async t => {
+test.only('custom filter', async t => {
   const { code } = await coffee.fork(cli, ['generate'], {
     cwd: resolve('custom-filter'),
     execArgv: ['--require', require.resolve('./stub-axios.js')],
