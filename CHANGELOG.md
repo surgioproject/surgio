@@ -1,3 +1,23 @@
+# [1.0.0](https://github.com/geekdada/surgio/compare/v0.13.2...v1.0.0) (2019-10-27)
+
+
+### Bug Fixes
+
+* axios stub url ([67c9a99](https://github.com/geekdada/surgio/commit/67c9a992ef640db964f0f71a4da55dd9213cc719))
+* import ([1be8ea4](https://github.com/geekdada/surgio/commit/1be8ea40591c8dc24bc535bae4c2ee514cb4cb14))
+* schema ([ea7a8c0](https://github.com/geekdada/surgio/commit/ea7a8c070a75dde0700d05f14457fab0ec535324))
+* validation ([ec60d1a](https://github.com/geekdada/surgio/commit/ec60d1a0315813b5841829c5a174dec931f2332e))
+
+
+### Features
+
+* 合并 Provider 接口定义 ([f197e19](https://github.com/geekdada/surgio/commit/f197e198aaf826b91af6896d02046c15976e4962))
+* getNodeNames 和 getClashNodeNames 不再过滤 nodeType ([6571511](https://github.com/geekdada/surgio/commit/6571511f3d30aa3a283a69b81afb9aa548031b18))
+* schema validation for config ([9f11254](https://github.com/geekdada/surgio/commit/9f11254d2bc7107e2299e1146553b03da1e9849f))
+* schema validation for provider ([d738e0f](https://github.com/geekdada/surgio/commit/d738e0f999c91f577deb14793889210620757f36))
+
+
+
 ## [0.13.2](https://github.com/geekdada/surgio/compare/v0.13.1...v0.13.2) (2019-10-25)
 
 
