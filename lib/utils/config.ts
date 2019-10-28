@@ -68,7 +68,9 @@ export const validateConfig = (userConfig: Partial<CommandConfig>): void => {
     surgeConfig: Joi.object({
       v2ray: Joi.string().valid('native', 'external')
     }),
-  });
+    analytics: Joi.boolean(),
+  })
+    .unknown();
 
   const { error } = schema.validate(userConfig);
 
