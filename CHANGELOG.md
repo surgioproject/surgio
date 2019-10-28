@@ -1,3 +1,13 @@
+# [1.1.0](https://github.com/geekdada/surgio/compare/v1.0.3...v1.1.0) (2019-10-28)
+
+
+### Features
+
+* add koa server for gateway ([bc4e9fc](https://github.com/geekdada/surgio/commit/bc4e9fce23b50a3fc970f8afaeb6bf087e077b4e))
+* gateway authentication ([48d5371](https://github.com/geekdada/surgio/commit/48d53715a4373fc3fb75439c2902bffcdd7fa960))
+
+
+
 ## [1.0.3](https://github.com/geekdada/surgio/compare/v1.0.2...v1.0.3) (2019-10-28)
 
 
