@@ -33,4 +33,7 @@ module.exports = {
     shadowsocksr: '/usr/local/bin/ssr-local',
     v2ray: '/usr/local/bin/v2ray',
   },
+  gateway: {
+    accessToken: 'abcd',
+  },
 };
