@@ -1,3 +1,17 @@
+## [1.0.3](https://github.com/geekdada/surgio/compare/v1.0.2...v1.0.3) (2019-10-28)
+
+
+### Bug Fixes
+
+* add new validation schema ([8cfcdb4](https://github.com/geekdada/surgio/commit/8cfcdb4eb055d58c585fe58361a9d26f96bf4bc2))
+
+
+### Features
+
+* 优化 list-artifact 样式 ([e03f807](https://github.com/geekdada/surgio/commit/e03f807502fb705b0e6d00fe8761f318bb8dc238))
+
+
+
 ## [1.0.2](https://github.com/geekdada/surgio/compare/v1.0.1...v1.0.2) (2019-10-27)
 
 
