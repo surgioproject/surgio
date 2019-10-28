@@ -912,9 +912,9 @@ export const addProxyToSurgeRuleSet = (str: string, rule: string): string => {
 };
 
 export const loadRemoteSnippetList = (remoteSnippetList: ReadonlyArray<RemoteSnippetConfig>): Promise<ReadonlyArray<RemoteSnippet>> => {
-  console.log('正在下载远程片段...');
-
   function load(url: string): Promise<string> {
+    console.log(`正在下载远程片段: ${url}`);
+
     return axios.get<string>(url, {
       timeout: NETWORK_TIMEOUT,
       responseType: 'text',

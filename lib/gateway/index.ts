@@ -1,6 +1,9 @@
 // tslint:disable-next-line:no-submodule-imports
 import { NowRequest, NowResponse } from '@now/node/dist';
 import path from 'path';
+import Koa from 'koa';
+import Router from 'koa-router';
+
 import { loadConfig } from '../utils';
 import { Server } from './server';
 import { FcRequest, FcResponse } from './types';
@@ -80,3 +83,30 @@ export async function nowHandler(req: NowRequest, res: NowResponse): Promise<voi
       break;
   }
 }
+
+export const createHttpServer = () => {
+  process.env.KOA_SERVER = 'true';
+
+  const app = new Koa();
+  const router = new Router();
+  const cwd = process.cwd();
+  const configFile = path.join(cwd, '/surgio.conf.js');
+  const config = loadConfig(cwd, configFile);
+  const surgioServer = new Server(config);
+
+  router.use((() => {
+    return async (_, next) => {
+      await surgioServer.init();
+      await next();
+    };
+  })());
+
+  router.get('/get-artifact/:name', surgioServer.koaGetArtifact.bind(surgioServer));
+  router.get('/list-artifact', surgioServer.koaListArtifact.bind(surgioServer));
+
+  app
+    .use(router.routes())
+    .use(router.allowedMethods());
+
+  return app.callback();
+};

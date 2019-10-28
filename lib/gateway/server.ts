@@ -1,5 +1,6 @@
 // tslint:disable-next-line:no-submodule-imports
 import { NowRequest, NowResponse } from '@now/node/dist';
+import { Context } from 'koa';
 import nunjucks from 'nunjucks';
 import url from 'url';
 
@@ -127,5 +128,52 @@ export class Server {
       surgioVersion: require('../../package.json').version,
     });
     res.send(result);
+  }
+
+  public async koaGetArtifact(ctx: Context): Promise<void> {
+    const dl = ctx.query.dl;
+    const artifactName = ctx.params.name;
+
+    if (!artifactName) {
+      ctx.status = 400;
+      return;
+    }
+
+    const result = await this.getArtifact(artifactName as string);
+
+    if (result) {
+      ctx.set('content-type', 'text/plain; charset=utf-8');
+      ctx.set('cache-control', 'private, no-cache, no-store');
+
+      if (dl === '1'){
+        ctx.set('content-disposition', `attachment; filename="${artifactName}"`);
+      }
+
+      ctx.body = result;
+    } else {
+      ctx.status = 404;
+    }
+  }
+
+  public async koaListArtifact(ctx: Context): Promise<void> {
+    const engine = nunjucks.configure({
+      autoescape: false,
+    });
+    const artifactListTpl = require('./template/artifact-list').default;
+
+    ctx.body = engine.renderString(artifactListTpl, {
+      artifactList: this.artifactList,
+      getPreviewUrl: (name: string) => getDownloadUrl(this.config.urlBase, name),
+      getDownloadUrl: (name: string) => (
+        url.format({
+          pathname: `/get-artifact/${name}`,
+          query: {
+            dl: '1',
+          },
+        })
+      ),
+      encodeURIComponent,
+      surgioVersion: require('../../package.json').version,
+    });
   }
 }
