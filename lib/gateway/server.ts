@@ -135,7 +135,7 @@ export class Server {
     const artifactName = ctx.params.name;
 
     if (!artifactName) {
-      ctx.status = 400;
+      ctx.throw(400);
       return;
     }
 
@@ -151,7 +151,7 @@ export class Server {
 
       ctx.body = result;
     } else {
-      ctx.status = 404;
+      ctx.throw(404);
     }
   }
 
@@ -160,18 +160,12 @@ export class Server {
       autoescape: false,
     });
     const artifactListTpl = require('./template/artifact-list').default;
+    const accessToken = this.config.gateway && this.config.gateway.accessToken;
 
     ctx.body = engine.renderString(artifactListTpl, {
       artifactList: this.artifactList,
-      getPreviewUrl: (name: string) => getDownloadUrl(this.config.urlBase, name),
-      getDownloadUrl: (name: string) => (
-        url.format({
-          pathname: `/get-artifact/${name}`,
-          query: {
-            dl: '1',
-          },
-        })
-      ),
+      getPreviewUrl: (name: string) => getDownloadUrl(this.config.urlBase, name, true, accessToken),
+      getDownloadUrl: (name: string) => getDownloadUrl(this.config.urlBase, name, false, accessToken),
       encodeURIComponent,
       surgioVersion: require('../../package.json').version,
     });

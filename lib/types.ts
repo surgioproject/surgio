@@ -23,6 +23,7 @@ export interface CommandConfig {
   readonly providerDir: string;
   readonly templateDir: string;
   readonly configDir: string;
+  readonly analytics?: boolean;
   readonly upload?: {
     readonly prefix: string;
     readonly region: string;
@@ -38,6 +39,10 @@ export interface CommandConfig {
   readonly surgeConfig?: {
     readonly v2ray: 'native'|'external';
   };
+  readonly gateway?: {
+    readonly accessToken?: string;
+    readonly auth?: boolean;
+  },
 }
 
 export interface RemoteSnippetConfig {

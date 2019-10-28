@@ -41,7 +41,19 @@ const ConfigCache = new LRU<string, any>({
 // istanbul ignore next
 export const resolveRoot = (...args: readonly string[]): string => path.join(__dirname, '../../', ...args);
 
-export const getDownloadUrl = (baseUrl: string = '/', artifactName: string): string => `${baseUrl}${artifactName}`;
+export const getDownloadUrl = (baseUrl: string = '/', artifactName: string, inline: boolean = true, accessToken?: string): string => {
+  const urlObject = URL.parse(`${baseUrl}${artifactName}`, true);
+
+  if (accessToken) {
+    urlObject.query.access_token = accessToken;
+  }
+
+  if (!inline) {
+    urlObject.query.dl = '1';
+  }
+
+  return URL.format(urlObject);
+};
 
 export const getBlackSSLConfig = async (config: {
   readonly username: string;

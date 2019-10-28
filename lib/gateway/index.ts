@@ -94,6 +94,20 @@ export const createHttpServer = () => {
   const config = loadConfig(cwd, configFile);
   const surgioServer = new Server(config);
 
+  if (config.gateway && config.gateway.auth) {
+    router.use((() => {
+      return async (ctx, next) => {
+        const accessToken = ctx.query.access_token;
+
+        if (accessToken === config.gateway.accessToken) {
+          await next();
+        } else {
+          ctx.throw(401);
+        }
+      };
+    })());
+  }
+
   router.use((() => {
     return async (_, next) => {
       await surgioServer.init();

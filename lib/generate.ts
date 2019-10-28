@@ -83,6 +83,8 @@ export async function generate(
   assert(template, '必须指定 artifact 的 template 属性');
   assert(artifact.provider, '必须指定 artifact 的 provider 属性');
 
+  const gatewayConfig = config.gateway;
+  const gatewayHasToken: boolean = !!(gatewayConfig && gatewayConfig.accessToken);
   const combineProviders = artifact.combineProviders || [];
   const providerList = [artifact.provider].concat(combineProviders);
   const nodeList: PossibleNodeConfigType[] = [];
@@ -164,7 +166,7 @@ export async function generate(
 
   try {
     return templateEngine.render(`${template}.tpl`, {
-      downloadUrl: getDownloadUrl(config.urlBase, artifactName),
+      downloadUrl: getDownloadUrl(config.urlBase, artifactName, true, gatewayHasToken ? gatewayConfig.accessToken : undefined),
       nodes: nodeList,
       names: nodeNameList,
       remoteSnippets: _.keyBy(remoteSnippetList, item => {
@@ -174,7 +176,7 @@ export async function generate(
       provider: artifact.provider,
       providerName: artifact.provider,
       artifactName,
-      getDownloadUrl: (name: string) => getDownloadUrl(config.urlBase, name),
+      getDownloadUrl: (name: string) => getDownloadUrl(config.urlBase, name, true, gatewayHasToken ? gatewayConfig.accessToken : undefined),
       getNodeNames,
       getClashNodes,
       getClashNodeNames,

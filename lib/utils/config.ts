@@ -69,6 +69,10 @@ export const validateConfig = (userConfig: Partial<CommandConfig>): void => {
       v2ray: Joi.string().valid('native', 'external')
     }),
     analytics: Joi.boolean(),
+    gateway: Joi.object({
+      accessToken: Joi.string(),
+      auth: Joi.boolean(),
+    }),
   })
     .unknown();
 
