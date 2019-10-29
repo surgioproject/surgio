@@ -11,6 +11,11 @@ export default `
   <script src="https://cdn.jsdelivr.net/npm/clipboard@2.0.4/dist/clipboard.min.js"></script>
   <title>所有 Artifact</title>
   <style>
+    .clearfix::after {
+      display: block;
+      content: "";
+      clear: both;
+    }
     .container {
       padding: 0 15px;
     }
@@ -34,15 +39,19 @@ export default `
       margin-bottom: 10px;
     }
     .artifact .tag-list {
+      vertical-align: top;
       padding: 5px 0 15px;
     }
+    .artifact .tag-list > a {
+      text-decoration: none;
+    }
     .artifact .tag {
-      display: inline-block;
+      float: left;
       font-size: 70%;
       background-color: #353535;
       color: #fff;
       padding: 0 9px;
-      margin-bottom: 8px;
+      margin: 0 5px 8px 0;
       height: 26px;
       line-height: 26px;
       border-radius: 13px;
@@ -67,21 +76,40 @@ export default `
         <div class="inner-wrapper">
           <div class="name">{{ artifact.name }}</div>
           <pre class="preview">{{ getPreviewUrl(artifact.name) }}</pre>
-          <div class="tag-list">
+          <div class="tag-list clearfix">
+            {% if supportEdit %}
+            <a rel="nofollow" target="_blank" 
+               href="{{ getEditUrl('blob/master/provider/' + artifact.provider + '.js') }}">
+              <div class="tag">Provider: {{ artifact.provider }}</div>
+            </a>
+            {% else %}
             <div class="tag">Provider: {{ artifact.provider }}</div>
+            {% endif %}
+            
             {% if artifact.combineProviders %}
               {% for provider in artifact.combineProviders %}
+                {% if supportEdit %}
+                <a rel="nofollow" target="_blank" 
+                   href="{{ getEditUrl('blob/master/provider/' + provider + '.js') }}">
+                  <div class="tag">Provider: {{ provider }}</div>
+                </a>
+                {% else %}
                 <div class="tag">Provider: {{ provider }}</div>
+                {% endif %}
               {% endfor %}
             {% endif %}
           </div>
           <div class="link-group">
+            {% if supportEdit %}
+            <a rel="nofollow" class="link pure-button pure-button-primary" target="_blank" href="{{ getEditUrl('blob/master/surgio.conf.js') }}">编辑</a>
+            {% endif %}
+            
             <a rel="nofollow" class="link pure-button pure-button-primary" target="_blank" href="{{ getDownloadUrl(artifact.name) }}">下载</a>
             <a rel="nofollow" class="link pure-button pure-button-primary" target="_blank" href="{{ getPreviewUrl(artifact.name) }}">预览</a>
             <button class="ctc link pure-button pure-button-primary" data-clipboard-text="{{ getPreviewUrl(artifact.name) }}">复制地址</button>
             
             {% if artifact.name.toLowerCase().includes('surge') %}
-              <a rel="nofollow" class="link pure-button" target="_blank" href="surge:///install-config?url={{ encodeURIComponent(getPreviewUrl(artifact.name)) }}">Surge</a>
+            <a rel="nofollow" class="link pure-button" target="_blank" href="surge:///install-config?url={{ encodeURIComponent(getPreviewUrl(artifact.name)) }}">Surge</a>
             {% endif %}
           </div>
         </div>

@@ -1,7 +1,10 @@
 // tslint:disable-next-line:no-submodule-imports
 import { NowRequest, NowResponse } from '@now/node/dist';
 import { Context } from 'koa';
+import fs from 'fs-extra';
 import nunjucks from 'nunjucks';
+import path from "path";
+import { PackageJson } from 'type-fest';
 import url from 'url';
 
 import { ArtifactConfig, CommandConfig, RemoteSnippet } from '../types';
@@ -12,17 +15,21 @@ import { FcResponse } from './types';
 export class Server {
   public remoteSnippetList: ReadonlyArray<RemoteSnippet>;
   public artifactList: ReadonlyArray<ArtifactConfig>;
-  private readonly config: CommandConfig;
+  private readonly pkgFile?: PackageJson;
 
-  constructor(config: CommandConfig) {
+  constructor(public cwd: string, private readonly config: CommandConfig) {
+    const pkgFile = path.join(cwd, 'package.json');
+
     this.config = config;
+    this.artifactList = config.artifacts;
+    if (fs.existsSync(pkgFile)) {
+      this.pkgFile = require(pkgFile);
+    }
   }
 
   public async init(): Promise<void> {
-    const config = this.config;
-    const remoteSnippetsConfig = config.remoteSnippets || [];
+    const remoteSnippetsConfig = this.config.remoteSnippets || [];
 
-    this.artifactList = config.artifacts;
     this.remoteSnippetList = await loadRemoteSnippetList(remoteSnippetsConfig);
   }
 
@@ -166,6 +173,19 @@ export class Server {
       artifactList: this.artifactList,
       getPreviewUrl: (name: string) => getDownloadUrl(this.config.urlBase, name, true, accessToken),
       getDownloadUrl: (name: string) => getDownloadUrl(this.config.urlBase, name, false, accessToken),
+      supportEdit: !!(this.pkgFile && this.pkgFile.repository),
+      getEditUrl: (p: string) => {
+        if (this.pkgFile && this.pkgFile.repository) {
+          const repository = typeof this.pkgFile.repository === 'string' ?
+            this.pkgFile.repository :
+            this.pkgFile.repository.url;
+          const base = repository.endsWith('/') ? repository : `${repository}/`;
+
+          return url.resolve(base, p);
+        } else {
+          return '';
+        }
+      },
       encodeURIComponent,
       surgioVersion: require('../../package.json').version,
     });
