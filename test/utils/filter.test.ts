@@ -20,6 +20,32 @@ test('useKeywords', t => {
   }));
 });
 
+test('discardKeywords', t => {
+  const fn1 = filter.discardKeywords(['测试', 'test']);
+  const fn2 = filter.discardKeywords(['测试', 'test'], true);
+
+  t.false(fn1({
+    nodeName: '测试',
+    type: NodeTypeEnum.Shadowsocks,
+  }));
+  t.true(fn1({
+    nodeName: '美国',
+    type: NodeTypeEnum.Shadowsocks,
+  }));
+  t.true(fn2({
+    nodeName: '测试',
+    type: NodeTypeEnum.Shadowsocks,
+  }));
+  t.true(fn2({
+    nodeName: '美国测试',
+    type: NodeTypeEnum.Shadowsocks,
+  }));
+  t.false(fn2({
+    nodeName: '测试 test',
+    type: NodeTypeEnum.Shadowsocks,
+  }));
+});
+
 test('useRegexp', t => {
   const fn = filter.useRegexp(/(测试|test)/i);
 

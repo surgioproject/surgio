@@ -83,6 +83,14 @@ module.exports = {
 };
 ```
 
+### discardKeywords <Badge text="v1.1.1" vertical="middle" />
+
+生成一个反向关键词过滤器。第二个入参是开启严格模式。
+
+:::warning 注意
+`discardKeywords` 的目的是 **过滤掉**，`useKeywords` 的目的是 **过滤出**。
+:::
+
 ### useRegexp
 
 生成一个正则表达式过滤器。
