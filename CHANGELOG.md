@@ -1,3 +1,15 @@
+## [1.1.1](https://github.com/geekdada/surgio/compare/v1.1.0...v1.1.1) (2019-10-29)
+
+
+### Features
+
+* 新增过滤器 discardKeywords ([b9f0ecb](https://github.com/geekdada/surgio/commit/b9f0ecb97366835a71862cd8f032048322266336))
+* better error message ([26fcaa3](https://github.com/geekdada/surgio/commit/26fcaa3310046fbd886cff2370a8bf31be96dcca))
+* gateway request log ([891168b](https://github.com/geekdada/surgio/commit/891168b6a702a0440b5d0475a25d11345d594f52))
+* quick editing from list-artifact ([2d1d605](https://github.com/geekdada/surgio/commit/2d1d605fe5dd36332a8f04476d397cb7a14b6684))
+
+
+
 # [1.1.0](https://github.com/geekdada/surgio/compare/v1.0.3...v1.1.0) (2019-10-28)
 
 
