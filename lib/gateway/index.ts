@@ -136,9 +136,19 @@ export const createHttpServer = () => {
   });
 
   app.use(async (ctx, next) => {
+    const {
+      url,
+      method,
+    } = ctx;
+    const clientIP = ctx.get('x-real-ip') || '-';
+
     try {
       await next();
+
+      console.log('[request] [%s] %s %s %s "%s"', clientIP, method, ctx.status, url, ctx.get('user-agent') || '-');
     } catch (err) {
+      console.log('[request] [%s] %s %s %s "%s"', clientIP, method, ctx.status, url, ctx.get('user-agent') || '-');
+
       ctx.status = err.status || 500;
       ctx.body = `
         <h1>Error</h1>
