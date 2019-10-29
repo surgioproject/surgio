@@ -69,7 +69,7 @@ module.exports = {
 
 ### upload
 
-- 类型: `Object`
+- 类型: `object`
 - 默认值: `undefined`
 
 上传阿里云 OSS 的配置。
@@ -138,7 +138,7 @@ SSR 的可执行文件地址。请使用 libev 版本的二进制文件，可以
 
 ### surgeConfig
 
-- 类型: `Object`
+- 类型: `object`
 - 默认值: `undefined`
 
 #### surgeConfig.v2ray
@@ -152,3 +152,24 @@ SSR 的可执行文件地址。请使用 libev 版本的二进制文件，可以
 :::
 
 定义生成 Vmess 节点配置的类型，默认使用 External Provider 的形式，兼容性更好。也可以选择使用 `native` 的方式。
+
+### gateway <Badge text="v1.1.0" vertical="middle" />
+
+- 类型: `object`
+- 默认值: `undefined`
+
+托管 API 相关配置
+
+#### gateway.auth
+
+- 类型: `boolean`
+- 默认值: `false`
+
+是否开启鉴权，默认关闭。若开启则需要在访问 URL 上增加参数 `access_token`。
+
+#### gateway.accessToken
+
+- 类型: `string`
+- 默认值: `undefined`
+
+鉴权码。

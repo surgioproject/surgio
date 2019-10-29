@@ -276,7 +276,7 @@ module.exports = {
 
 ### provider.customFilters
 
-- 类型: `Object`
+- 类型: `object`
 - 默认值: `undefined`
 
 自定义 Filter。关于自定义 Filter 的用法，请阅读 [进阶 - 自定义 Filter](/guide/advance/custom-filter)。

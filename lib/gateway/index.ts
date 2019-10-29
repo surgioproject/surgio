@@ -3,6 +3,8 @@ import { NowRequest, NowResponse } from '@now/node/dist';
 import path from 'path';
 import Koa from 'koa';
 import Router from 'koa-router';
+import util from 'util';
+import { DEP001 } from '../misc/deprecation';
 
 import { loadConfig } from '../utils';
 import { Server } from './server';
@@ -53,7 +55,7 @@ export function handler(request: FcRequest, response: FcResponse): void {
     });
 }
 
-export async function nowHandler(req: NowRequest, res: NowResponse): Promise<void> {
+export const nowHandler = util.deprecate(async (req: NowRequest, res: NowResponse): Promise<void> => {
   if (!server) {
     const cwd = process.cwd();
     const configFile = path.join(cwd, '/surgio.conf.js');
@@ -82,7 +84,7 @@ export async function nowHandler(req: NowRequest, res: NowResponse): Promise<voi
       server.nowListArtifact(req, res);
       break;
   }
-}
+}, DEP001, 'DEP001');
 
 export const createHttpServer = () => {
   process.env.KOA_SERVER = 'true';

@@ -1,13 +1,13 @@
 ---
-title: 快速搭建 API 服务
+title: 快速搭建托管 API
 sidebarDepth: 1
 ---
 
-:::tip
+# 快速搭建托管 API
+
+:::tip 提示
 本文亦发布于我的个人博客 [blog.dada.li](https://blog.dada.li/2019/surgio-api-gateway)
 :::
-
-# 快速搭建 API 服务
 
 ## 前言
 
@@ -28,7 +28,7 @@ sidebarDepth: 1
 
 - 管理复杂（文档很多很杂）
 
-### now.sh
+### now.sh <Badge text="推荐" vertical="middle" />
 
 优点：
 
@@ -39,6 +39,144 @@ sidebarDepth: 1
 缺点：
 
 - 有免费额度但是源码公开
+
+## 部署 - now.sh <Badge text="推荐" vertical="middle" />
+
+### 准备
+
+1. 注册一个 [now.sh](https://now.sh) 账号
+2. 按量付费需要绑定信用卡（必须）
+
+### 配置
+
+首先，安装工具链。
+
+```bash
+$ npm i -g now
+```
+
+登录账号。
+
+```bash
+$ now login
+```
+
+新建文件 `now.json`，注意修改代码中 `<...>` 部分。
+
+```json
+{
+  "name": "<输入服务名 (例如 surgio-api)>",
+  "version": 2,
+  "public": false,
+  "builds": [
+    { 
+      "src": "gateway.js",
+      "use": "@now/node",
+      "config": {
+        "includeFiles": [
+          "provider/**",
+          "template/**",
+          "*.js",
+          "*.json"
+        ]
+      }
+    }
+  ],
+  "routes": [
+    {
+      "src": "/(.*)",
+      "methods": ["HEAD", "GET"],
+      "dest": "/gateway.js"
+    }
+  ]
+}
+```
+
+在 `package.json` 中增加如下字段：
+
+```json
+{
+  "engines": {
+    "node": "10.x"
+  }
+}
+```
+
+### 编写云函数
+
+新建文件 `gateway.js`。
+
+```js
+'use strict';
+
+const gateway = require('surgio/build/gateway');
+
+module.exports = gateway.createHttpServer();
+```
+
+### 配置
+
+#### 接口鉴权
+
+:::warning 注意
+接口鉴权依赖使用新版的部署方法，旧的 `nowHandler` 不支持。
+:::
+
+在 `surgio.conf.js` 中增加如下字段：
+
+```js
+{
+  gateway: {
+    auth: true,
+    accessToken: 'YOUR_PASSWORD',
+  },
+}
+```
+
+:::tip 提示
+对于已经部署了托管接口的用户，推荐不要第一时间打开鉴权功能，而是配置 `accessToken` 一段时间后再将 `auth` 改为 `true`。这样可以让已经下载过旧托管文件的客户端更新到新的包含有 `access_token` 参数的托管文件。
+:::
+
+### 部署
+
+```bash
+$ now
+```
+
+如果不出意外你会看到如图的信息，高亮的 URL 即为云函数服务的访问地址。
+
+![carbon.png](https://i.typcdn.com/geekdada/8428848087_769637.png) 
+
+为了让托管地址保持一致，你需要到 `surgio.conf.js` 把 `urlBase` 更新为：
+
+```
+https://xxxxxx.xxx.now.sh/get-artifact/
+```
+
+最后，再运行一次 `now` 更新服务。
+
+### 使用
+
+在以下地址能看到所有 Artifact，方便你使用下载。
+
+```
+https://xxxxxx.xxx.now.sh/list-artifact
+```
+
+![](./images/api-gateway-preview.png)
+
+#### 特性
+
+- 若名称中包含 `surge`（大小写不敏感），则会出现添加到 Surge 的按钮。
+- 若项目下的 `package.json` 有 `repository` 字段，则支持直接在界面上跳转到 GitLab 或 GitHub 编辑对应文件。
+
+### 最后
+
+有几点需要大家注意的：
+
+1. 每一次更新本地的代码，都需要执行一次 `now`，保证远端和本地代码一致
+2. 访问日志、监控、域名绑定等复杂功能恕不提供教程
+3. 如果访问地址泄漏，请立即删除云函数然后修改机场密码
 
 ## 部署 - 阿里云函数
 
@@ -124,7 +262,6 @@ $ fun deploy
 
 ![carbon.png](https://i.typcdn.com/geekdada/8428849460_548622.png) 
 
-
 ### 使用
 
 如果你已经配置好了一个 Artifact 名为 `surge.conf`，那该文件的访问地址就是：
@@ -146,140 +283,6 @@ https://1234567890.cn-hongkong.fc.aliyuncs.com/2016-08-15/proxy/surgio-api/get-a
 有几点需要大家注意的：
 
 1. 每一次更新本地的代码，都需要执行一次 `fun deploy`，保证远端和本地代码一致
-2. 访问日志、监控、域名绑定等复杂功能恕不提供教程
-3. 如果访问地址泄漏，请立即删除云函数然后修改机场密码
-
-## 部署 - now.sh
-
-### 准备
-
-1. 注册一个 [now.sh](https://now.sh) 账号
-2. 按量付费需要绑定信用卡（必须）
-
-### 配置
-
-首先，安装工具链。
-
-```bash
-$ npm i -g now
-```
-
-登录账号。
-
-```bash
-$ now login
-```
-
-新建文件 `now.json`，注意修改代码中 `<...>` 部分。
-
-```json
-{
-  "name": "<输入服务名 (例如 surgio-api)>",
-  "version": 2,
-  "public": false,
-  "builds": [
-    { 
-      "src": "gateway.js",
-      "use": "@now/node",
-      "config": {
-        "includeFiles": [
-          "provider/**",
-          "template/**",
-          "*.js"
-        ]
-      }
-    }
-  ],
-  "routes": [
-    {
-      "src": "/get-artifact/([^/]+)",
-      "methods": ["HEAD", "GET"],
-      "dest": "/gateway.js?name=$1"
-    },
-    {
-      "src": "/list-artifact",
-      "methods": ["HEAD", "GET"],
-      "dest": "/gateway.js?action=list-artifact"
-    }
-  ]
-}
-```
-
-在 `package.json` 中增加如下字段：
-
-```json
-{
-  "engines": {
-    "node": "10.x"
-  }
-}
-```
-
-### 编写云函数
-
-新建文件 `gateway.js`。
-
-```js
-'use strict';
-
-const gateway = require('surgio/build/gateway');
-
-module.exports = gateway.nowHandler;
-```
-
-### 部署
-
-```bash
-$ now
-```
-
-如果不出意外你会看到如图的信息，高亮的 URL 即为云函数服务的访问地址。
-
-![carbon.png](https://i.typcdn.com/geekdada/8428848087_769637.png) 
-
-### 使用
-
-如果你已经配置好了一个 Artifact 名为 `surge.conf`，那该文件的访问地址就是：
-
-```
-https://xxxxxx.xxx.now.sh/get-artifact/surge.conf
-```
-
-为了让托管地址保持一致，你需要到 `surgio.conf.js` 把 `urlBase` 更新为：
-
-```
-https://xxxxxx.xxx.now.sh/get-artifact/
-```
-
-最后，再运行一次 `now` 更新服务。
-
-### 更新
-
-#### v0.13.1
-
-:::warning 注意
-该功能仅支持 now.sh 部署。
-:::
-
-新增一个新方法，用于展示所有的 Artifact 项目，并且提供预览、下载、添加到 Surge 等功能。请按照 [这里](/guide/advance/api-gateway.md#配置-2) 最新的 `now.json` 更新你的文件。
-
-![](./images/api-gateway-preview.png)
-
-该页面的地址是：
-
-```
-https://xxxxxx.xxx.now.sh/list-artifact
-```
-
-**注意：**
-
-- 若名称中包含 `surge`（大小写不敏感），则会出现添加到 Surge 的按钮。
-
-### 最后
-
-有几点需要大家注意的：
-
-1. 每一次更新本地的代码，都需要执行一次 `now`，保证远端和本地代码一致
 2. 访问日志、监控、域名绑定等复杂功能恕不提供教程
 3. 如果访问地址泄漏，请立即删除云函数然后修改机场密码
 
