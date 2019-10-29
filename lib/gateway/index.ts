@@ -15,7 +15,7 @@ export function initializer(_, callback): void {
   const configFile = path.join(cwd, '/surgio.conf.js');
   const config = loadConfig(cwd, configFile);
 
-  server = new Server(config);
+  server = new Server(cwd, config);
 
   server.init()
     .then(() => {
@@ -59,7 +59,7 @@ export async function nowHandler(req: NowRequest, res: NowResponse): Promise<voi
     const configFile = path.join(cwd, '/surgio.conf.js');
     const config = loadConfig(cwd, configFile);
 
-    server = new Server(config);
+    server = new Server(cwd, config);
 
     await server.init();
   }
@@ -90,33 +90,66 @@ export const createHttpServer = () => {
   const app = new Koa();
   const router = new Router();
   const cwd = process.cwd();
-  const configFile = path.join(cwd, '/surgio.conf.js');
-  const config = loadConfig(cwd, configFile);
-  const surgioServer = new Server(config);
+  const configFile = path.join(cwd, 'surgio.conf.js');
+  const config = loadConfig(cwd, configFile, {
+    ...(process.env.NODE_ENV === 'development' ? {
+      urlBase: '/get-artifact/',
+    } : null)
+  });
+  const surgioServer = new Server(cwd, config);
 
-  if (config.gateway && config.gateway.auth) {
-    router.use((() => {
-      return async (ctx, next) => {
-        const accessToken = ctx.query.access_token;
+  const authMiddleware = () => {
+    return async (ctx, next) => {
+      const accessToken = ctx.query.access_token;
+      const needAuth = config.gateway && config.gateway.auth;
 
-        if (accessToken === config.gateway.accessToken) {
-          await next();
-        } else {
-          ctx.throw(401);
-        }
-      };
-    })());
-  }
+      if (!needAuth || (needAuth && accessToken === config.gateway.accessToken)) {
+        await next();
+      } else {
+        ctx.throw(401);
+      }
+    };
+  };
 
-  router.use((() => {
+  const prepareArtifact = () => {
     return async (_, next) => {
       await surgioServer.init();
       await next();
     };
-  })());
+  };
 
-  router.get('/get-artifact/:name', surgioServer.koaGetArtifact.bind(surgioServer));
-  router.get('/list-artifact', surgioServer.koaListArtifact.bind(surgioServer));
+  router.use(async (ctx, next) => {
+    await next();
+    ctx.set('x-powered-by', `surgio@${require('../../package.json').version}`);
+    ctx.set('x-robots-tag', 'noindex');
+  });
+  router.get('/', ctx => {
+    ctx.body = 'Surgio Gateway';
+  });
+  router.get('/get-artifact/:name', authMiddleware(), prepareArtifact(), surgioServer.koaGetArtifact.bind(surgioServer));
+  router.get('/list-artifact', authMiddleware(), surgioServer.koaListArtifact.bind(surgioServer));
+  router.get('/robot.txt', ctx => {
+    ctx.body = 'User-agent: *\n' +
+      'Disallow: /';
+  });
+
+  app.use(async (ctx, next) => {
+    try {
+      await next();
+    } catch (err) {
+      ctx.status = err.status || 500;
+      ctx.body = `
+        <h1>Error</h1>
+        <h2>Message:</h2>
+        <p><code>${err.name}: ${err.message}</code></p>
+        ${ctx.status >= 500 ? `
+          <h2>Stack:</h2>
+          <pre>${err.stack}</pre>
+        ` : ''}
+      `;
+      ctx.app.emit('error', err, ctx);
+    }
+  });
 
   app
     .use(router.routes())
