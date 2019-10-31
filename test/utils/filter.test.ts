@@ -72,6 +72,14 @@ test('netflixFilter', t => {
     nodeName: 'HK',
     type: NodeTypeEnum.Shadowsocks,
   }));
+  t.true(filter.netflixFilter({
+    nodeName: 'HK NF',
+    type: NodeTypeEnum.Shadowsocks,
+  }));
+  t.true(filter.netflixFilter({
+    nodeName: 'HK Netflix',
+    type: NodeTypeEnum.Shadowsocks,
+  }));
 });
 
 test('youtubePremiumFilter', t => {

@@ -38,6 +38,7 @@ export const useRegexp = (regexp: RegExp): NodeNameFilterType => {
 export const netflixFilter: NodeNameFilterType = item => {
   return [
     'netflix',
+    'nf',
     'hkbn',
     'hkt',
     'hgc',
