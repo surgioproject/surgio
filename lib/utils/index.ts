@@ -808,7 +808,8 @@ export const getClashNodeNames = (
   ruleName: string,
   ruleType: 'select' | 'url-test',
   nodeNameList: ReadonlyArray<SimpleNodeConfig>,
-  filter?: NodeNameFilterType
+  filter?: NodeNameFilterType,
+  existingProxies?: ReadonlyArray<string>
 ): {
   readonly type: string;
   readonly name: string;
@@ -825,11 +826,14 @@ export const getClashNodeNames = (
 
     return result;
   });
+  const proxies = existingProxies ?
+    [].concat(existingProxies, nodes.map(item => item.nodeName)) :
+    nodes.map(item => item.nodeName);
 
   return {
     type: ruleType,
     name: ruleName,
-    proxies: nodes.map(item => item.nodeName),
+    proxies,
     ...(ruleType === 'url-test' ? {
       url: 'http://www.qualcomm.cn/generate_204',
       interval: 1200,
@@ -888,7 +892,7 @@ export const normalizeClashProxyGroupConfig = (
 
   return proxyGroup.map<any>(item => {
     if (item.filter) {
-      return getClashNodeNames(item.name, item.type, nodeList, item.filter);
+      return getClashNodeNames(item.name, item.type, nodeList, item.filter, item.proxies);
     } else if (item.proxies) {
       return item;
     } else {

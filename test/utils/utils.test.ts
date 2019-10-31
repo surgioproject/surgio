@@ -288,6 +288,12 @@ test('normalizeClashProxyGroupConfig', t => {
         proxies: ['DIRECT', '🚀 Proxy', 'US'],
         type: 'select',
       },
+      {
+        name: 'Mixed',
+        filter: filters.hkFilter,
+        proxies: ['DIRECT'],
+        type: 'url-test',
+      },
     ];
   }
   const result = [
@@ -314,6 +320,13 @@ test('normalizeClashProxyGroupConfig', t => {
       name: '🍎 Apple',
       proxies: ['DIRECT', '🚀 Proxy', 'US'],
       type: 'select',
+    },
+    {
+      name: 'Mixed',
+      proxies: ['DIRECT', '🇭🇰HK(Example)'],
+      type: 'url-test',
+      url: 'http://www.qualcomm.cn/generate_204',
+      interval: 1200,
     },
   ];
 
