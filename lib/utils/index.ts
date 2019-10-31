@@ -233,8 +233,8 @@ export const getV2rayNSubscription = async (config: {
     const result = configList.map<VmessNodeConfig>(item => {
       const json = JSON.parse(fromBase64(item.replace('vmess://', '')));
 
-      if (json.v !== '2') {
-        throw new Error(`暂不支持该订阅类型：${url}`);
+      if (!json.v || Number(json.v) !== 2) {
+        throw new Error(`该订阅 ${url} 可能不是一个有效的 V2rayN 订阅。请参考 http://bit.ly/2N4lZ8X 进行排查`);
       }
 
       return {
