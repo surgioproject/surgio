@@ -16,7 +16,7 @@ test('parseSSRUri 1 - standard base64', t => {
     method: 'chacha20',
     obfs: 'plain',
     password: 'example',
-    protoparam: '123456     :12345qwertyu',
+    protoparam: '123456:12345qwertyu',
     obfsparam: ''
   });
 });

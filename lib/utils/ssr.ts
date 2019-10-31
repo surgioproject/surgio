@@ -17,14 +17,9 @@ export const parseSSRUri = (str: string): ShadowsocksrNodeConfig => {
 
   const extraString = configArray.join('/');
   const extras = extraString ? getUrlParameters(extraString) : {};
-
   const nodeName = extras.remarks ?
     fromUrlSafeBase64(extras.remarks) :
     `${basicInfo[0]}:${basicInfo[1]}`;
-
-  if (!nodeName) {
-    throw new Error('no remark');
-  }
 
   return {
     type: NodeTypeEnum.Shadowsocksr,
@@ -35,8 +30,8 @@ export const parseSSRUri = (str: string): ShadowsocksrNodeConfig => {
     method: basicInfo[3],
     obfs: basicInfo[4],
     password: fromUrlSafeBase64(basicInfo[5]),
-    protoparam: fromUrlSafeBase64(extras.protoparam || ''),
-    obfsparam: fromUrlSafeBase64(extras.obfsparam || ''),
+    protoparam: fromUrlSafeBase64(extras.protoparam || '').replace(/\s/g, ''),
+    obfsparam: fromUrlSafeBase64(extras.obfsparam || '').replace(/\s/g, ''),
   };
 };
 

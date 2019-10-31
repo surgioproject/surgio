@@ -201,9 +201,9 @@ export const getShadowsocksrSubscription = async (config: {
       responseType: 'text',
     });
 
-    const configList = fromBase64(response.data).split('\n')
-        .filter(item => !!item)
-        .filter(item => item.startsWith("ssr://"));
+    const configList = fromBase64(response.data)
+      .split('\n')
+      .filter(item => !!item && item.startsWith("ssr://"));
     const result = configList.map<ShadowsocksrNodeConfig>(parseSSRUri);
 
     ConfigCache.set(url, result);
