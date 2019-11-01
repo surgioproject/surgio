@@ -1,3 +1,23 @@
+# [1.2.0](https://github.com/geekdada/surgio/compare/v1.1.1...v1.2.0) (2019-11-01)
+
+
+### Bug Fixes
+
+* 加国旗正确识别中转节点了 ([3751dbf](https://github.com/geekdada/surgio/commit/3751dbf0f7f0d8619cfa28b2ec2cc8c24c4494a7))
+* protoparam 和 obfsparam 中不能有空格 ([6cdb978](https://github.com/geekdada/surgio/commit/6cdb97880913a594115a59d49bfebcf90c555f7f))
+
+
+### Features
+
+* 不合法 yaml 文件识别 ([1654534](https://github.com/geekdada/surgio/commit/16545347613026a57bac46eb286e52f894384c11))
+* 兼容v2rayn 订阅格式 ([8ba4625](https://github.com/geekdada/surgio/commit/8ba4625955bfb068028303a56148ac20e109e6e3))
+* 允许用户覆盖 clash 订阅的 udp 转发支持 ([bb58c50](https://github.com/geekdada/surgio/commit/bb58c50aa5334ea9ce1ee4c323aa531dcbb32e79))
+* 增加 netflixFilter 规则 ([5cc52f1](https://github.com/geekdada/surgio/commit/5cc52f1c237b9c4fcf2dee56ea3c0caaf82695ad))
+* 支持读取 Clash 订阅 ([45ef59f](https://github.com/geekdada/surgio/commit/45ef59f359e21e37f5dac242a33888c74ec1afbc))
+* proxyGroupModifier 支持 filter 和 proxies 组合 ([ba0f0c6](https://github.com/geekdada/surgio/commit/ba0f0c6bee8a14490c0124a7ff0773e636fd27e4))
+
+
+
 ## [1.1.1](https://github.com/geekdada/surgio/compare/v1.1.0...v1.1.1) (2019-10-29)
 
 
