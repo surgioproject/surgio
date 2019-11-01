@@ -112,7 +112,8 @@
       "test/**/*.test.ts"
     ],
     "require": [
-      "ts-node/register"
+      "ts-node/register",
+      "./test/stub-axios.js"
     ]
   },
   "nyc": {

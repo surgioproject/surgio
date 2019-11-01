@@ -1,3 +1,5 @@
+import Provider from './class/Provider';
+
 export enum NodeTypeEnum {
   HTTPS = 'https',
   Shadowsocks = 'shadowsocks',
@@ -13,6 +15,7 @@ export enum SupportProviderEnum {
   ShadowsocksSubscribe = 'shadowsocks_subscribe',
   ShadowsocksrSubscribe = 'shadowsocksr_subscribe',
   Custom = 'custom',
+  Clash = 'clash',
 }
 
 export interface CommandConfig {
@@ -98,6 +101,10 @@ export interface V2rayNSubscribeProviderConfig extends ProviderConfig {
   readonly url: string;
 }
 
+export interface ClashProviderConfig extends ProviderConfig {
+  readonly url: string;
+}
+
 export interface CustomProviderConfig extends ProviderConfig {
   readonly nodeList: ReadonlyArray<PossibleNodeConfigType>;
 }
@@ -150,13 +157,15 @@ export interface VmessNodeConfig extends SimpleNodeConfig {
   readonly alterId: string;
   readonly network: 'tcp' | 'kcp' | 'ws' | 'http' ;
   readonly tls: boolean;
-  readonly host: string;
-  readonly path: string;
+  readonly host?: string;
+  readonly path?: string;
+  readonly udp?: boolean;
 }
 
 export interface SimpleNodeConfig {
   readonly type: NodeTypeEnum;
   readonly enable?: boolean;
+  readonly tfo?: boolean; // TCP Fast Open
   nodeName: string; // tslint:disable-line
   binPath?: string; // tslint:disable-line
   localPort?: number; // tslint:disable-line

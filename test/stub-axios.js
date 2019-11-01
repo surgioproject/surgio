@@ -36,3 +36,9 @@ moxios.stubRequest('http://example.com/netflix.list', {
     encoding: 'utf8',
   }),
 });
+moxios.stubRequest('http://example.com/clash-sample.yaml', {
+  status: 200,
+  responseText: fs.readFileSync(path.join(__dirname, 'asset/clash-sample.yaml'), {
+    encoding: 'utf8',
+  }),
+});

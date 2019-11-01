@@ -353,7 +353,7 @@ test('getShadowsocksJSONConfig', async t => {
     }),
   });
 
-  const config = await utils.getShadowsocksJSONConfig({ url: 'http://example.com/gui-config.json', udpRelay: true });
+  const config = await utils.getShadowsocksJSONConfig('http://example.com/gui-config.json', true);
 
   t.deepEqual(config[0], {
     nodeName: '🇺🇸US 1',
@@ -492,7 +492,7 @@ test('getV2rayNSubscription', async t => {
   });
 
   const url = 'http://example.com/test-v2rayn-sub.txt';
-  const configList = await utils.getV2rayNSubscription({ url });
+  const configList = await utils.getV2rayNSubscription(url);
 
   t.deepEqual(configList[0], {
     alterId: '64',
@@ -756,10 +756,7 @@ test('getShadowsocksSubscription with udp', async t => {
     }),
   });
 
-  const nodeList = await utils.getShadowsocksSubscription({
-    url: 'http://example.com/ss-sub.txt',
-    udpRelay: true,
-  });
+  const nodeList = await utils.getShadowsocksSubscription('http://example.com/ss-sub.txt', true);
 
   t.deepEqual(nodeList[0], {
     type: NodeTypeEnum.Shadowsocks,
@@ -791,9 +788,7 @@ test('getShadowsocksSubscription without udp', async t => {
     }),
   });
 
-  const nodeList = await utils.getShadowsocksSubscription({
-    url: 'http://example.com/ss-sub.txt',
-  });
+  const nodeList = await utils.getShadowsocksSubscription('http://example.com/ss-sub.txt');
 
   t.deepEqual(nodeList[0], {
     type: NodeTypeEnum.Shadowsocks,
@@ -823,9 +818,7 @@ test('getShadowsocksrSubscription', async t => {
     }),
   });
 
-  const nodeList = await utils.getShadowsocksrSubscription({
-    url: 'http://example.com/ssr-sub.txt',
-  });
+  const nodeList = await utils.getShadowsocksrSubscription('http://example.com/ssr-sub.txt');
 
   t.deepEqual(nodeList[0], {
     nodeName: '测试中文',

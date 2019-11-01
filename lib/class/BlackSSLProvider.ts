@@ -31,6 +31,6 @@ export default class BlackSSLProvider extends Provider {
   }
 
   public getNodeList(): ReturnType<typeof getBlackSSLConfig> {
-    return getBlackSSLConfig(this);
+    return getBlackSSLConfig(this.username, this.password);
   }
 }
