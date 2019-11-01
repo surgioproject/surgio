@@ -79,7 +79,7 @@ Proxy:
     port: 443
     cipher: chacha20-ietf-poly1305
     password: "password"
-    # udp: true
+    udp: true
 
   # old obfs configuration format remove after prerelease
   - name: "ss2"

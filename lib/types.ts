@@ -103,6 +103,7 @@ export interface V2rayNSubscribeProviderConfig extends ProviderConfig {
 
 export interface ClashProviderConfig extends ProviderConfig {
   readonly url: string;
+  readonly udpRelay?: boolean;
 }
 
 export interface CustomProviderConfig extends ProviderConfig {

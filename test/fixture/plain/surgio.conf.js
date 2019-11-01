@@ -27,6 +27,11 @@ module.exports = {
       template: 'test',
       provider: 'custom',
     },
+    {
+      name: 'ss_clash.conf',
+      template: 'test',
+      provider: 'clash',
+    },
   ],
   urlBase: 'https://example.com/',
   binPath: {
