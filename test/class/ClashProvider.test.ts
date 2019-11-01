@@ -47,3 +47,9 @@ test('getClashSubscription', async t => {
     obfs: 'http',
   })
 });
+
+test.only('getClashSubscription - invalid yaml', async t => {
+  await t.throwsAsync(async () => {
+    await ClashProvider.getClashSubscription('http://example.com/test-v2rayn-sub.txt');
+  }, {instanceOf: Error, message: 'http://example.com/test-v2rayn-sub.txt 不是一个合法的 YAML 文件'});
+});

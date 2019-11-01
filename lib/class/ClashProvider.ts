@@ -65,7 +65,18 @@ async function requestConfigFromRemote(url): Promise<ReadonlyArray<SupportConfig
     timeout: NETWORK_TIMEOUT,
     responseType: 'text',
   });
-  const clashConfig = yaml.parse(response.data);
+  let clashConfig;
+
+  try {
+    clashConfig = yaml.parse(response.data);
+
+    if (typeof clashConfig === 'string') {
+      throw new Error();
+    }
+  } catch (err) {
+    throw new Error(`${url} 不是一个合法的 YAML 文件`);
+  }
+
   const proxyList: any[] = clashConfig.Proxy;
   const result = proxyList.map<SupportConfigTypes>(item => {
     switch (item.type) {
