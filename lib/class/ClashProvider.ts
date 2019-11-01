@@ -101,6 +101,10 @@ async function requestConfigFromRemote(url: string, udpRelay?: boolean): Promise
             obfs: item['plugin-opts'].mode,
             'obfs-host': item['plugin-opts'].host || 'www.bing.com',
           } : null),
+          ...(item.obfs ? {
+            obfs: item.obfs,
+            'obfs-host': item['obfs-host'] || 'www.bing.com',
+          } : null)
         };
 
       case 'vmess':

@@ -158,6 +158,15 @@ Proxy:
       # mode: http # or tls
     # host: bing.com
 
+  - name: "ss4"
+    type: ss
+    server: server
+    port: 443
+    cipher: chacha20-ietf-poly1305
+    password: "password"
+    obfs: tls
+    obfs-host: example.com
+
 Proxy Group:
   # url-test select which proxy will be used by benchmarking speed to a URL.
   - name: "auto"
