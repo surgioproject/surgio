@@ -1,3 +1,12 @@
+## [1.2.1](https://github.com/geekdada/surgio/compare/v1.2.0...v1.2.1) (2019-11-01)
+
+
+### Bug Fixes
+
+* 遗漏了一种 clash 的 ss 混淆格式 ([4791328](https://github.com/geekdada/surgio/commit/4791328076b68b01d2b3c64da3738339238c2938))
+
+
+
 # [1.2.0](https://github.com/geekdada/surgio/compare/v1.1.1...v1.2.0) (2019-11-01)
 
 
