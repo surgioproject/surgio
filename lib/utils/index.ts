@@ -31,15 +31,15 @@ import {
 } from '../types';
 import { normalizeConfig, validateConfig } from './config';
 import { parseSSRUri } from './ssr';
+import { OBFS_UA, NETWORK_TIMEOUT } from './constant';
 
-export const OBFS_UA = 'Mozilla/5.0 (iPhone; CPU iPhone OS 12_3_1 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148';
-const NETWORK_TIMEOUT = process.env.SURGIO_NETWORK_TIMEOUT ? Number(process.env.SURGIO_NETWORK_TIMEOUT) : 20000;
-const ConfigCache = new LRU<string, any>({
+export const ConfigCache = new LRU<string, any>({
   maxAge: 10 * 60 * 1000, // 1min
 });
 
 // istanbul ignore next
-export const resolveRoot = (...args: readonly string[]): string => path.join(__dirname, '../../', ...args);
+export const resolveRoot = (...args: readonly string[]): string =>
+  path.join(__dirname, '../../', ...args);
 
 export const getDownloadUrl = (baseUrl: string = '/', artifactName: string, inline: boolean = true, accessToken?: string): string => {
   const urlObject = URL.parse(`${baseUrl}${artifactName}`, true);
@@ -55,16 +55,13 @@ export const getDownloadUrl = (baseUrl: string = '/', artifactName: string, inli
   return URL.format(urlObject);
 };
 
-export const getBlackSSLConfig = async (config: {
-  readonly username: string;
-  readonly password: string;
-}): Promise<ReadonlyArray<HttpsNodeConfig>> => {
-  assert(config.username, 'Lack of BlackSSL username.');
-  assert(config.password, 'Lack of BlackSSL password.');
+export const getBlackSSLConfig = async (username: string, password: string): Promise<ReadonlyArray<HttpsNodeConfig>> => {
+  assert(username, 'Lack of BlackSSL username.');
+  assert(password, 'Lack of BlackSSL password.');
 
-  const key = `blackssl_${config.username}`;
+  const key = `blackssl_${username}`;
 
-  async function requestConfigFromBlackSSL(username: string, password: string): Promise<ReadonlyArray<HttpsNodeConfig>> {
+  async function requestConfigFromBlackSSL(): Promise<ReadonlyArray<HttpsNodeConfig>> {
     const response = await axios
       .get('https://api.darkssl.com/v1/service/ssl_info', {
         params: {
@@ -93,16 +90,13 @@ export const getBlackSSLConfig = async (config: {
 
   return ConfigCache.has(key) ?
     ConfigCache.get(key) :
-    await requestConfigFromBlackSSL(config.username, config.password);
+    await requestConfigFromBlackSSL();
 };
 
-export const getShadowsocksJSONConfig = async (config: {
-  readonly url: string;
-  readonly udpRelay: boolean;
-}): Promise<ReadonlyArray<ShadowsocksNodeConfig>> => {
-  assert(config.url, '未指定订阅地址 url');
+export const getShadowsocksJSONConfig = async (url: string, udpRelay: boolean): Promise<ReadonlyArray<ShadowsocksNodeConfig>> => {
+  assert(url, '未指定订阅地址 url');
 
-  async function requestConfigFromRemote(url: string): Promise<ReadonlyArray<ShadowsocksNodeConfig>> {
+  async function requestConfigFromRemote(): Promise<ReadonlyArray<ShadowsocksNodeConfig>> {
     const response = await axios.get(url, {
       timeout: NETWORK_TIMEOUT,
     });
@@ -117,8 +111,8 @@ export const getShadowsocksJSONConfig = async (config: {
         password: item.password as string,
       };
 
-      if (typeof config.udpRelay === 'boolean') {
-        nodeConfig['udp-relay'] = config.udpRelay ? 'true' : 'false';
+      if (typeof udpRelay === 'boolean') {
+        nodeConfig['udp-relay'] = udpRelay ? 'true' : 'false';
       }
       if (item.plugin === 'obfs-local') {
         const obfs = item.plugin_opts.match(/obfs=(\w+)/);
@@ -138,18 +132,15 @@ export const getShadowsocksJSONConfig = async (config: {
     return result;
   }
 
-  return ConfigCache.has(config.url) ?
-    ConfigCache.get(config.url) :
-    await requestConfigFromRemote(config.url);
+  return ConfigCache.has(url) ?
+    ConfigCache.get(url) :
+    await requestConfigFromRemote();
 };
 
-export const getShadowsocksSubscription = async (config: {
-  readonly url: string;
-  readonly udpRelay?: boolean;
-}): Promise<ReadonlyArray<ShadowsocksNodeConfig>> => {
-  assert(config.url, '未指定订阅地址 url');
+export const getShadowsocksSubscription = async (url: string, udpRelay?: boolean): Promise<ReadonlyArray<ShadowsocksNodeConfig>> => {
+  assert(url, '未指定订阅地址 url');
 
-  async function requestConfigFromRemote(url: string): Promise<ReadonlyArray<ShadowsocksNodeConfig>> {
+  async function requestConfigFromRemote(): Promise<ReadonlyArray<ShadowsocksNodeConfig>> {
     const response = await axios.get(url, {
       timeout: NETWORK_TIMEOUT,
       responseType: 'text',
@@ -170,8 +161,8 @@ export const getShadowsocksSubscription = async (config: {
         port: scheme.port,
         method: userInfo[0],
         password: userInfo[1],
-        ...(typeof config.udpRelay === 'boolean' ? {
-          'udp-relay': config.udpRelay ? 'true' : 'false',
+        ...(typeof udpRelay === 'boolean' ? {
+          'udp-relay': udpRelay ? 'true' : 'false',
         } : null),
         ...(pluginInfo['obfs-local'] ? {
           obfs: pluginInfo.obfs,
@@ -185,17 +176,15 @@ export const getShadowsocksSubscription = async (config: {
     return result;
   }
 
-  return ConfigCache.has(config.url) ?
-    ConfigCache.get(config.url) :
-    await requestConfigFromRemote(config.url);
+  return ConfigCache.has(url) ?
+    ConfigCache.get(url) :
+    await requestConfigFromRemote();
 };
 
-export const getShadowsocksrSubscription = async (config: {
-  readonly url: string;
-}): Promise<ReadonlyArray<ShadowsocksrNodeConfig>> => {
-  assert(config.url, '未指定订阅地址 url');
+export const getShadowsocksrSubscription = async (url: string): Promise<ReadonlyArray<ShadowsocksrNodeConfig>> => {
+  assert(url, '未指定订阅地址 url');
 
-  async function requestConfigFromRemote(url: string): Promise<ReadonlyArray<ShadowsocksrNodeConfig>> {
+  async function requestConfigFromRemote(): Promise<ReadonlyArray<ShadowsocksrNodeConfig>> {
     const response = await axios.get(url, {
       timeout: NETWORK_TIMEOUT,
       responseType: 'text',
@@ -211,17 +200,15 @@ export const getShadowsocksrSubscription = async (config: {
     return result;
   }
 
-  return ConfigCache.has(config.url) ?
-    ConfigCache.get(config.url) :
-    await requestConfigFromRemote(config.url);
+  return ConfigCache.has(url) ?
+    ConfigCache.get(url) :
+    await requestConfigFromRemote();
 };
 
-export const getV2rayNSubscription = async (config: {
-  readonly url: string;
-}): Promise<ReadonlyArray<VmessNodeConfig>> => {
-  assert(config.url, '未指定订阅地址 url');
+export const getV2rayNSubscription = async (url: string): Promise<ReadonlyArray<VmessNodeConfig>> => {
+  assert(url, '未指定订阅地址 url');
 
-  async function requestConfigFromRemote(url: string): Promise<ReadonlyArray<VmessNodeConfig>> {
+  async function requestConfigFromRemote(): Promise<ReadonlyArray<VmessNodeConfig>> {
     const response = await axios.get(url, {
       timeout: NETWORK_TIMEOUT,
       responseType: 'text',
@@ -257,9 +244,9 @@ export const getV2rayNSubscription = async (config: {
     return result;
   }
 
-  return ConfigCache.has(config.url) ?
-    ConfigCache.get(config.url) :
-    await requestConfigFromRemote(config.url);
+  return ConfigCache.has(url) ?
+    ConfigCache.get(url) :
+    await requestConfigFromRemote();
 };
 
 export const getSurgeNodes = (

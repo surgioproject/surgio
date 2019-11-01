@@ -34,9 +34,6 @@ export default class ShadowsocksJsonSubscribeProvider extends Provider {
   }
 
   public getNodeList(): ReturnType<typeof getShadowsocksJSONConfig> {
-    return getShadowsocksJSONConfig({
-      url: this.url,
-      udpRelay: this.udpRelay,
-    });
+    return getShadowsocksJSONConfig(this.url, this.udpRelay);
   }
 }

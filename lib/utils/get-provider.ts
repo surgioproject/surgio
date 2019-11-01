@@ -1,6 +1,7 @@
 import assert from "assert";
 
 import BlackSSLProvider from '../class/BlackSSLProvider';
+import ClashProvider from '../class/ClashProvider';
 import CustomProvider from '../class/CustomProvider';
 import ShadowsocksJsonSubscribeProvider from '../class/ShadowsocksJsonSubscribeProvider';
 import ShadowsocksrSubscribeProvider from '../class/ShadowsocksrSubscribeProvider';
@@ -8,7 +9,7 @@ import ShadowsocksSubscribeProvider from '../class/ShadowsocksSubscribeProvider'
 import V2rayNSubscribeProvider from '../class/V2rayNSubscribeProvider';
 import { SupportProviderEnum } from '../types';
 
-export default function(config: any): BlackSSLProvider|ShadowsocksJsonSubscribeProvider|ShadowsocksSubscribeProvider|CustomProvider|V2rayNSubscribeProvider|ShadowsocksrSubscribeProvider {
+export default function(config: any): BlackSSLProvider|ShadowsocksJsonSubscribeProvider|ShadowsocksSubscribeProvider|CustomProvider|V2rayNSubscribeProvider|ShadowsocksrSubscribeProvider|ClashProvider {
   switch (config.type) {
     case SupportProviderEnum.BlackSSL:
       return new BlackSSLProvider(config);
@@ -28,6 +29,9 @@ export default function(config: any): BlackSSLProvider|ShadowsocksJsonSubscribeP
 
     case SupportProviderEnum.V2rayNSubscribe:
       return new V2rayNSubscribeProvider(config);
+
+    case SupportProviderEnum.Clash:
+      return new ClashProvider(config);
 
     default:
       throw new Error(`Unsupported provider type: ${config.type}`);
