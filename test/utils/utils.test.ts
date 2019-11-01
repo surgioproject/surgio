@@ -346,13 +346,6 @@ test('normalizeClashProxyGroupConfig', t => {
 });
 
 test('getShadowsocksJSONConfig', async t => {
-  moxios.stubRequest('http://example.com/gui-config.json', {
-    status: 200,
-    responseText: fs.readFileSync(path.join(__dirname, '../asset/gui-config-1.json'), {
-      encoding: 'utf8',
-    }),
-  });
-
   const config = await utils.getShadowsocksJSONConfig('http://example.com/gui-config.json', true);
 
   t.deepEqual(config[0], {
@@ -484,13 +477,6 @@ test('loadRemoteSnippetList with error', async t => {
 });
 
 test('getV2rayNSubscription', async t => {
-  moxios.stubRequest('http://example.com/test-v2rayn-sub.txt', {
-    status: 200,
-    responseText: fs.readFileSync(path.join(__dirname, '../asset/test-v2rayn-sub.txt'), {
-      encoding: 'utf8',
-    }),
-  });
-
   const url = 'http://example.com/test-v2rayn-sub.txt';
   const configList = await utils.getV2rayNSubscription(url);
 
@@ -749,14 +735,7 @@ test('formatV2rayConfig', t => {
 });
 
 test('getShadowsocksSubscription with udp', async t => {
-  moxios.stubRequest(/\/ss-sub\.txt.*/, {
-    status: 200,
-    responseText: fs.readFileSync(path.join(__dirname, '../asset/test-ss-sub.txt'), {
-      encoding: 'utf8',
-    }),
-  });
-
-  const nodeList = await utils.getShadowsocksSubscription('http://example.com/ss-sub.txt', true);
+  const nodeList = await utils.getShadowsocksSubscription('http://example.com/test-ss-sub.txt', true);
 
   t.deepEqual(nodeList[0], {
     type: NodeTypeEnum.Shadowsocks,
@@ -781,14 +760,7 @@ test('getShadowsocksSubscription with udp', async t => {
 });
 
 test('getShadowsocksSubscription without udp', async t => {
-  moxios.stubRequest(/\/ss-sub\.txt.*/, {
-    status: 200,
-    responseText: fs.readFileSync(path.join(__dirname, '../asset/test-ss-sub.txt'), {
-      encoding: 'utf8',
-    }),
-  });
-
-  const nodeList = await utils.getShadowsocksSubscription('http://example.com/ss-sub.txt');
+  const nodeList = await utils.getShadowsocksSubscription('http://example.com/test-ss-sub.txt');
 
   t.deepEqual(nodeList[0], {
     type: NodeTypeEnum.Shadowsocks,
@@ -811,14 +783,7 @@ test('getShadowsocksSubscription without udp', async t => {
 });
 
 test('getShadowsocksrSubscription', async t => {
-  moxios.stubRequest(/\/ssr-sub\.txt.*/, {
-    status: 200,
-    responseText: fs.readFileSync(path.join(__dirname, '../asset/test-ssr-sub.txt'), {
-      encoding: 'utf8',
-    }),
-  });
-
-  const nodeList = await utils.getShadowsocksrSubscription('http://example.com/ssr-sub.txt');
+  const nodeList = await utils.getShadowsocksrSubscription('http://example.com/test-ssr-sub.txt');
 
   t.deepEqual(nodeList[0], {
     nodeName: '测试中文',
