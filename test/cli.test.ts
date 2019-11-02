@@ -9,7 +9,7 @@ const cli = path.join(__dirname, '../bin/surgio.js');
 const fixture = path.join(__dirname, './fixture');
 const resolve = p => path.join(fixture, p);
 
-test.only('cli works', async t => {
+test('cli works', async t => {
   const { code } = await coffee.fork(cli, ['generate'], {
     cwd: resolve('plain'),
     execArgv: ['--require', require.resolve('./stub-axios.js')],
