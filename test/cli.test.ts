@@ -9,12 +9,11 @@ const cli = path.join(__dirname, '../bin/surgio.js');
 const fixture = path.join(__dirname, './fixture');
 const resolve = p => path.join(fixture, p);
 
-test('cli works', async t => {
+test.only('cli works', async t => {
   const { code } = await coffee.fork(cli, ['generate'], {
     cwd: resolve('plain'),
     execArgv: ['--require', require.resolve('./stub-axios.js')],
   })
-    .debug()
     .end();
 
   t.is(code, 0);
@@ -23,6 +22,9 @@ test('cli works', async t => {
     encoding: 'utf8',
   });
   const confString2 = fs.readFileSync(resolve('plain/dist/custom.conf'), {
+    encoding: 'utf8',
+  });
+  const confString3 = fs.readFileSync(resolve('plain/dist/template-functions.conf'), {
     encoding: 'utf8',
   });
   const conf = ini.decode(confString1);
@@ -34,6 +36,7 @@ test('cli works', async t => {
   t.is(confString1.split('\n')[0], '#!MANAGED-CONFIG https://example.com/ss_json.conf?access_token=abcd interval=43200 strict=false');
   t.true(confString2.includes('select, 🇺🇲 US'));
   t.is(Object.keys(conf.Proxy).length, 4);
+  t.snapshot(confString3);
 });
 
 test('template error', async t => {

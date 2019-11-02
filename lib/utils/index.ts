@@ -798,10 +798,10 @@ export const getQuantumultXNodes = (
             `password=${nodeConfig.uuid}`,
             ...(nodeConfig['udp-relay'] ? [
               `udp-relay=${nodeConfig['udp-relay']}`,
-            ] : null),
+            ] : []),
             ...(nodeConfig.tfo ? [
               `fast-open=${nodeConfig.tfo}`,
-            ] : null),
+            ] : []),
           ];
 
           switch (nodeConfig.network) {
@@ -830,13 +830,13 @@ export const getQuantumultXNodes = (
             ...(nodeConfig.obfs ? [
               `obfs=${nodeConfig.obfs}`,
               `obfs-host=${nodeConfig['obfs-host']}`,
-            ] : null),
+            ] : []),
             ...(nodeConfig['udp-relay'] ? [
               `udp-relay=${nodeConfig['udp-relay']}`,
-            ] : null),
+            ] : []),
             ...(nodeConfig.tfo ? [
               `fast-open=${nodeConfig.tfo}`,
-            ] : null),
+            ] : []),
             `tag=${nodeConfig.nodeName}`,
           ]
             .join(', ');
@@ -854,7 +854,7 @@ export const getQuantumultXNodes = (
             `obfs-host=${nodeConfig.obfsparam}`,
             ...(nodeConfig.tfo ? [
               `fast-open=${nodeConfig.tfo}`,
-            ] : null),
+            ] : []),
             `tag=${nodeConfig.nodeName}`,
           ]
             .join(', ');
@@ -869,7 +869,7 @@ export const getQuantumultXNodes = (
             'over-tls=true',
             ...(nodeConfig.tfo ? [
               `fast-open=${nodeConfig.tfo}`,
-            ] : null),
+            ] : []),
             `tag=${nodeConfig.nodeName}`,
           ]
             .join(', ');

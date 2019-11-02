@@ -674,6 +674,90 @@ test('getQuantumultNodes with filter', t => {
   t.is(schemeList[0],  'vmess://5rWL6K+VIDEgPSB2bWVzcywxLjEuMS4xLDgwODAsY2hhY2hhMjAtaWV0Zi1wb2x5MTMwNSwiMTM4NmY4NWUtNjU3Yi00ZDZlLTlkNTYtNzhiYWRiNzVlMWZkIiw2NCxncm91cD1TdXJnaW8sb3Zlci10bHM9ZmFsc2UsY2VydGlmaWNhdGU9MSxvYmZzPXdzLG9iZnMtcGF0aD0iLyIsb2Jmcy1oZWFkZXI9Ikhvc3Q6ZXhhbXBsZS5jb21bUnJdW05uXVVzZXItQWdlbnQ6TW96aWxsYS81LjAgKGlQaG9uZTsgQ1BVIGlQaG9uZSBPUyAxMl8zXzEgbGlrZSBNYWMgT1MgWCkgQXBwbGVXZWJLaXQvNjA1LjEuMTUgKEtIVE1MLCBsaWtlIEdlY2tvKSBNb2JpbGUvMTVFMTQ4Ig==');
 });
 
+test('getQuantumultXNodes', t => {
+  const schemeList = utils.getQuantumultXNodes([
+    {
+      type: NodeTypeEnum.Vmess,
+      alterId: '64',
+      hostname: '1.1.1.1',
+      method: 'auto',
+      network: 'ws',
+      nodeName: '测试 1',
+      path: '/',
+      port: 8080,
+      tls: false,
+      host: 'example.com',
+      uuid: '1386f85e-657b-4d6e-9d56-78badb75e1fd',
+    },
+    {
+      type: NodeTypeEnum.Vmess,
+      alterId: '64',
+      hostname: '1.1.1.1',
+      method: 'auto',
+      network: 'tcp',
+      nodeName: '测试 2',
+      path: '/',
+      port: 8080,
+      tls: false,
+      host: '',
+      uuid: '1386f85e-657b-4d6e-9d56-78badb75e1fd',
+    },
+    {
+      type: NodeTypeEnum.Vmess,
+      alterId: '64',
+      hostname: '1.1.1.1',
+      method: 'auto',
+      network: 'ws',
+      nodeName: '测试 3',
+      path: '/',
+      port: 8080,
+      tls: false,
+      host: '',
+      uuid: '1386f85e-657b-4d6e-9d56-78badb75e1fd',
+    },
+    {
+      type: NodeTypeEnum.Shadowsocksr,
+      nodeName: '🇭🇰HK',
+      hostname: 'hk.example.com',
+      port: 10000,
+      method: 'chacha20-ietf',
+      password: 'password',
+      obfs: 'tls1.2_ticket_auth',
+      obfsparam: 'music.163.com',
+      protocol: 'auth_aes128_md5',
+      protoparam: '',
+    },
+    {
+      type: NodeTypeEnum.HTTPS,
+      nodeName: 'test',
+      hostname: 'a.com',
+      port: 443,
+      username: 'snsms',
+      password: 'nndndnd',
+    },
+    {
+      nodeName: '🇺🇸US 1',
+      type: NodeTypeEnum.Shadowsocks,
+      hostname: 'us.example.com',
+      port: 443,
+      method: 'chacha20-ietf-poly1305',
+      password: 'password',
+      'udp-relay': true,
+      obfs: 'tls',
+      'obfs-host': 'gateway-carry.icloud.com',
+      tfo: true,
+    },
+  ])
+    .split('\n');
+
+  t.is(schemeList[0], 'vmess=1.1.1.1:8080, method=auto, password=1386f85e-657b-4d6e-9d56-78badb75e1fd, obfs=ws, obfs-uri=/, tag=测试 1');
+  t.is(schemeList[1], 'vmess=1.1.1.1:8080, method=auto, password=1386f85e-657b-4d6e-9d56-78badb75e1fd, tag=测试 2');
+  t.is(schemeList[2], 'vmess=1.1.1.1:8080, method=auto, password=1386f85e-657b-4d6e-9d56-78badb75e1fd, obfs=ws, obfs-uri=/, tag=测试 3');
+  t.is(schemeList[3], 'shadowsocks=hk.example.com:10000, method=chacha20-ietf, password=password, ssr-protocol=auth_aes128_md5, ssr-protocol-param=, obfs=tls1.2_ticket_auth, obfs-host=music.163.com, tag=🇭🇰HK');
+  t.is(schemeList[4], 'http=a.com:443, username=snsms, password=nndndnd, over-tls=true, tag=test');
+  t.is(schemeList[5], 'shadowsocks=us.example.com:443, method=chacha20-ietf-poly1305, password=password, obfs=tls, obfs-host=gateway-carry.icloud.com, udp-relay=true, fast-open=true, tag=🇺🇸US 1');
+});
+
 test('formatV2rayConfig', t => {
   const json = utils.formatV2rayConfig(100, {
     type: NodeTypeEnum.Vmess,
