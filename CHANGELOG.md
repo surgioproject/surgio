@@ -1,3 +1,12 @@
+# [1.3.0-1](https://github.com/geekdada/surgio/compare/v1.3.0-0...v1.3.0-1) (2019-11-02)
+
+
+### Bug Fixes
+
+* surge tfo 参数缺失 ([47f4293](https://github.com/geekdada/surgio/commit/47f4293e4a59413b1b6574c58580230a6020defb))
+
+
+
 # [1.3.0-0](https://github.com/geekdada/surgio/compare/v1.2.1...v1.3.0-0) (2019-11-02)
 
 
