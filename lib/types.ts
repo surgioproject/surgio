@@ -107,7 +107,7 @@ export interface ClashProviderConfig extends ProviderConfig {
 }
 
 export interface CustomProviderConfig extends ProviderConfig {
-  readonly nodeList: ReadonlyArray<PossibleNodeConfigType>;
+  readonly nodeList: ReadonlyArray<any>;
 }
 
 export interface HttpsNodeConfig extends SimpleNodeConfig {
@@ -124,7 +124,7 @@ export interface ShadowsocksNodeConfig extends SimpleNodeConfig {
   readonly port: number|string;
   readonly method: string;
   readonly password: string;
-  readonly 'udp-relay'?: 'true'|'false';
+  readonly 'udp-relay'?: boolean;
   readonly obfs?: 'tls'|'http';
   readonly 'obfs-host'?: string;
 }

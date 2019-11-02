@@ -13,7 +13,7 @@ test('getClashSubscription', async t => {
     port: 443,
     method: 'chacha20-ietf-poly1305',
     password: 'password',
-    'udp-relay': 'true'
+    'udp-relay': true
   });
   t.deepEqual(config[1], {
     type: NodeTypeEnum.Shadowsocks,
@@ -22,7 +22,7 @@ test('getClashSubscription', async t => {
     port: 443,
     method: 'chacha20-ietf-poly1305',
     password: 'password',
-    'udp-relay': 'false',
+    'udp-relay': false,
     obfs: 'tls',
     'obfs-host': 'www.bing.com'
   });
@@ -53,7 +53,7 @@ test('getClashSubscription', async t => {
     port: 443,
     method: 'chacha20-ietf-poly1305',
     password: 'password',
-    'udp-relay': 'false',
+    'udp-relay': false,
     obfs: 'tls',
     'obfs-host': 'example.com'
   });
@@ -69,7 +69,7 @@ test('getClashSubscription udpRelay', async t => {
     port: 443,
     method: 'chacha20-ietf-poly1305',
     password: 'password',
-    'udp-relay': 'true',
+    'udp-relay': true,
   });
   t.deepEqual(config[1], {
     type: NodeTypeEnum.Shadowsocks,
@@ -78,7 +78,7 @@ test('getClashSubscription udpRelay', async t => {
     port: 443,
     method: 'chacha20-ietf-poly1305',
     password: 'password',
-    'udp-relay': 'true',
+    'udp-relay': true,
     obfs: 'tls',
     'obfs-host': 'www.bing.com'
   });

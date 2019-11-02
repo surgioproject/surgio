@@ -1,9 +1,11 @@
 import Joi from '@hapi/joi';
+import * as util from 'util';
+import { DEP002 } from '../misc/deprecation';
 import { CustomProviderConfig, NodeTypeEnum, PossibleNodeConfigType } from '../types';
 import Provider from './Provider';
 
 export default class CustomProvider extends Provider {
-  public readonly nodeList: ReadonlyArray<PossibleNodeConfigType>;
+  public readonly nodeList: ReadonlyArray<any>;
 
   constructor(config: CustomProviderConfig) {
     super(config);
@@ -33,6 +35,19 @@ export default class CustomProvider extends Provider {
   }
 
   public async getNodeList(): Promise<ReadonlyArray<PossibleNodeConfigType>> {
-    return this.nodeList;
+    return this.nodeList.map(item => {
+      if (item.type === NodeTypeEnum.Shadowsocks) {
+        // 兼容字符串 true 和 false 的写法，会弃用
+        if (typeof item['udp-relay'] === 'string') {
+          notifyDepUdpRelay();
+          item['udp-relay'] = item['udp-relay'] === 'true';
+        }
+      }
+      return item;
+    });
   }
 }
+
+const notifyDepUdpRelay = util.deprecate(() => {
+  // do nothing
+}, DEP002, 'DEP002');

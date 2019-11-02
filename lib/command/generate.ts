@@ -1,7 +1,7 @@
 import Command from 'common-bin';
 import path from 'path';
 
-import { loadConfig } from '../utils';
+import { loadConfig } from '../utils/config';
 import generate from '../generate';
 import { errorHandler } from '../utils/error-helper';
 

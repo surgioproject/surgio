@@ -156,7 +156,7 @@ module.exports = {
   password: 'password',
   obfs: 'tls', // tls 或 http
   'obfs-host': 'gateway-carry.icloud.com',
-  'udp-relay': 'true',
+  'udp-relay': true,
 }
 ```
 

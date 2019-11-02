@@ -96,7 +96,7 @@ async function requestConfigFromRemote(url: string, udpRelay?: boolean): Promise
           port: item.port,
           method: item.cipher,
           password: item.password,
-          'udp-relay': resolveUdpRelay(item.udp, udpRelay) ? 'true' : 'false',
+          'udp-relay': resolveUdpRelay(item.udp, udpRelay),
           ...(item.plugin && item.plugin === 'obfs' ? {
             obfs: item['plugin-opts'].mode,
             'obfs-host': item['plugin-opts'].host || 'www.bing.com',

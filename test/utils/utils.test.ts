@@ -32,7 +32,7 @@ test('getSurgeNodes', async t => {
     password: 'password',
     obfs: 'tls',
     'obfs-host': 'example.com',
-    'udp-relay': 'true',
+    'udp-relay': true,
   }, {
     nodeName: 'Test Node 2',
     type: NodeTypeEnum.Shadowsocks,
@@ -155,7 +155,7 @@ test('getClashNodes', async t => {
     password: 'password',
     obfs: 'tls',
     'obfs-host': 'example.com',
-    'udp-relay': 'true',
+    'udp-relay': true,
   }, {
     nodeName: 'Test Node 2',
     type: NodeTypeEnum.Shadowsocks,
@@ -251,7 +251,7 @@ test('getShadowsocksNodes', async t => {
       password: 'password',
       obfs: 'tls',
       'obfs-host': 'gateway.icloud.com',
-      'udp-relay': 'true',
+      'udp-relay': true,
     },
   ];
   const txt1 = utils.getShadowsocksNodes(nodeList, 'GroupName');
@@ -355,7 +355,7 @@ test('getShadowsocksJSONConfig', async t => {
     port: 443,
     method: 'chacha20-ietf-poly1305',
     password: 'password',
-    'udp-relay': 'true',
+    'udp-relay': true,
     obfs: 'tls',
     'obfs-host': 'gateway-carry.icloud.com',
   });
@@ -366,7 +366,7 @@ test('getShadowsocksJSONConfig', async t => {
     port: 444,
     method: 'chacha20-ietf-poly1305',
     password: 'password',
-    'udp-relay': 'true',
+    'udp-relay': true,
   });
   t.deepEqual(config[2], {
     nodeName: '🇺🇸US 3',
@@ -375,7 +375,7 @@ test('getShadowsocksJSONConfig', async t => {
     port: 445,
     method: 'chacha20-ietf-poly1305',
     password: 'password',
-    'udp-relay': 'true',
+    'udp-relay': true,
     obfs: 'tls',
     'obfs-host': 'www.bing.com',
   });
@@ -386,7 +386,7 @@ test('getShadowsocksJSONConfig', async t => {
     port: 80,
     method: 'chacha20-ietf-poly1305',
     password: 'password',
-    'udp-relay': 'true',
+    'udp-relay': true,
     obfs: 'http',
     'obfs-host': 'www.bing.com',
   });
@@ -625,7 +625,7 @@ test('getQuantumultNodes', t => {
       port: 443,
       method: 'chacha20-ietf-poly1305',
       password: 'password',
-      'udp-relay': 'true',
+      'udp-relay': true,
       obfs: 'tls',
       'obfs-host': 'gateway-carry.icloud.com',
     },
@@ -744,7 +744,7 @@ test('getShadowsocksSubscription with udp', async t => {
     port: '443',
     method: 'chacha20-ietf-poly1305',
     password: 'password',
-    'udp-relay': 'true',
+    'udp-relay': true,
     obfs: 'tls',
     'obfs-host': 'gateway-carry.icloud.com',
   });
@@ -755,7 +755,7 @@ test('getShadowsocksSubscription with udp', async t => {
     port: '443',
     method: 'chacha20-ietf-poly1305',
     password: 'password',
-    'udp-relay': 'true',
+    'udp-relay': true,
   });
 });
 

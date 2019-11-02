@@ -6,6 +6,27 @@ import path from 'path';
 import { CommandConfig } from '../types';
 import { ensureConfigFolder } from './index';
 
+export const loadConfig = (cwd: string, configPath: string, override?: Partial<CommandConfig>): CommandConfig => {
+  const absPath = path.resolve(cwd, configPath);
+
+  if (!fs.existsSync(absPath)) {
+    throw new Error(`配置文件 ${absPath} 不存在`);
+  }
+
+  const userConfig = _.cloneDeep(require(absPath));
+
+  validateConfig(userConfig);
+
+  if (override) {
+    return {
+      ...normalizeConfig(cwd, userConfig),
+      ...override,
+    };
+  }
+
+  return normalizeConfig(cwd, userConfig);
+};
+
 export const normalizeConfig = (cwd: string, userConfig: Partial<CommandConfig>): CommandConfig => {
   const defaultConfig: Partial<CommandConfig> = {
     artifacts: [],

@@ -112,7 +112,7 @@ export const getShadowsocksJSONConfig = async (url: string, udpRelay: boolean): 
       };
 
       if (typeof udpRelay === 'boolean') {
-        nodeConfig['udp-relay'] = udpRelay ? 'true' : 'false';
+        nodeConfig['udp-relay'] = udpRelay;
       }
       if (item.plugin === 'obfs-local') {
         const obfs = item.plugin_opts.match(/obfs=(\w+)/);
@@ -162,7 +162,7 @@ export const getShadowsocksSubscription = async (url: string, udpRelay?: boolean
         method: userInfo[0],
         password: userInfo[1],
         ...(typeof udpRelay === 'boolean' ? {
-          'udp-relay': udpRelay ? 'true' : 'false',
+          'udp-relay': udpRelay,
         } : null),
         ...(pluginInfo['obfs-local'] ? {
           obfs: pluginInfo.obfs,
@@ -451,7 +451,7 @@ export const getClashNodes = (
             password: nodeConfig.password,
             port: nodeConfig.port,
             server: nodeConfig.hostname,
-            udp: nodeConfig['udp-relay'] === 'true',
+            udp: nodeConfig['udp-relay'] || false,
             ...(nodeConfig.obfs ? {
               plugin: 'obfs',
               'plugin-opts': {
@@ -847,27 +847,6 @@ export const decodeStringList = <T = object>(stringList: ReadonlyArray<string>):
     result[pair[0]] = pair[1] || true;
   });
   return result as T;
-};
-
-export const loadConfig = (cwd: string, configPath: string, override?: Partial<CommandConfig>): CommandConfig => {
-  const absPath = path.resolve(cwd, configPath);
-
-  if (!fs.existsSync(absPath)) {
-    throw new Error(`文件 ${absPath} 不存在`);
-  }
-
-  const userConfig = _.cloneDeep(require(absPath));
-
-  validateConfig(userConfig);
-
-  if (override) {
-    return {
-      ...normalizeConfig(cwd, userConfig),
-      ...override,
-    };
-  }
-
-  return normalizeConfig(cwd, userConfig);
 };
 
 export const normalizeClashProxyGroupConfig = (
