@@ -1,3 +1,15 @@
+# [1.3.0-0](https://github.com/geekdada/surgio/compare/v1.2.1...v1.3.0-0) (2019-11-02)
+
+
+### Features
+
+* 节点增加 tfo 参数 ([a820b89](https://github.com/geekdada/surgio/commit/a820b89590ac3379ccf109539000783b0d7b803a))
+* 仅支持读取 ws 和 tcp 类型的 vmess 节点 ([de5bb35](https://github.com/geekdada/surgio/commit/de5bb35fcc3b4b4e6bb1bb12a6cc6f53bd6de2c8))
+* 新增 getQuantumultXNodes ([d284d04](https://github.com/geekdada/surgio/commit/d284d0415e9524dffebd73d6085d1e11ceef3621))
+* udp-relay 的值改为布尔类型，兼容字符串类型 ([f3eaaed](https://github.com/geekdada/surgio/commit/f3eaaed03727de525e12a454a8a966fd923f8d89))
+
+
+
 ## [1.2.1](https://github.com/geekdada/surgio/compare/v1.2.0...v1.2.1) (2019-11-01)
 
 
