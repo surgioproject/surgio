@@ -252,6 +252,12 @@ export const getV2rayNSubscription = async (
         throw new Error(`该订阅 ${url} 可能不是一个有效的 V2rayN 订阅。请参考 http://bit.ly/2N4lZ8X 进行排查`);
       }
 
+      if (['kcp', 'http'].indexOf(json.net) > -1) {
+        console.log();
+        console.log(chalk.yellow(`不支持读取 network 类型为 ${json.net} 的 Vmess 节点，节点 ${json.ps} 会被省略`));
+        return null;
+      }
+
       return {
         nodeName: json.ps,
         type: NodeTypeEnum.Vmess,
@@ -268,7 +274,8 @@ export const getV2rayNSubscription = async (
           tfo,
         } : null),
       };
-    });
+    })
+      .filter(item => !!item);
 
     ConfigCache.set(url, result);
 

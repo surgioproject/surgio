@@ -85,7 +85,7 @@ async function requestConfigFromRemote(url: string, udpRelay?: boolean, tfo?: bo
       case 'ss':
         if (item.plugin && item.plugin !== 'obfs') {
           console.log();
-          console.log(chalk.yellow(`不支持读取 ${item.plugin} 类型的 Clash 节点，节点 ${item.name} 会被省略`));
+          console.log(chalk.yellow(`不支持从 Clash 订阅中读取 ${item.plugin} 类型的 Shadowsocks 节点，节点 ${item.name} 会被省略`));
           return null;
         }
 
@@ -111,6 +111,12 @@ async function requestConfigFromRemote(url: string, udpRelay?: boolean, tfo?: bo
         };
 
       case 'vmess':
+        if (['kcp', 'http'].indexOf(item.network) > -1) {
+          console.log();
+          console.log(chalk.yellow(`不支持从 Clash 订阅中读取 network 类型为 ${item.network} 的 Vmess 节点，节点 ${item.name} 会被省略`));
+          return null;
+        }
+
         return {
           type: NodeTypeEnum.Vmess,
           nodeName: item.name,
@@ -134,7 +140,7 @@ async function requestConfigFromRemote(url: string, udpRelay?: boolean, tfo?: bo
       case 'http':
         if (item.tls !== 'https') {
           console.log();
-          console.log(chalk.yellow(`不支持读取 HTTP 类型的 Clash 节点，节点 ${item.name} 会被省略`));
+          console.log(chalk.yellow(`不支持从 Clash 订阅中读取 HTTP 类型节点，节点 ${item.name} 会被省略`));
           return null;
         }
 
@@ -182,7 +188,7 @@ async function requestConfigFromRemote(url: string, udpRelay?: boolean, tfo?: bo
 
       default:
         console.log();
-        console.log(chalk.yellow(`不支持读取 ${item.type} 的节点，节点 ${item.name} 会被省略`));
+        console.log(chalk.yellow(`不支持从 Clash 订阅中读取 ${item.type} 的节点，节点 ${item.name} 会被省略`));
         return null;
     }
   })

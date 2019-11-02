@@ -154,10 +154,10 @@ export interface VmessNodeConfig extends SimpleNodeConfig {
   readonly type: NodeTypeEnum.Vmess;
   readonly hostname: string;
   readonly port: number|string;
-  readonly method: string;
+  readonly method: 'auto'|'aes-128-gcm'|'chacha20-ietf-poly1305'|'none';
   readonly uuid: string;
   readonly alterId: string;
-  readonly network: 'tcp' | 'kcp' | 'ws' | 'http' ;
+  readonly network: 'tcp'|'ws';
   readonly tls: boolean;
   readonly host?: string;
   readonly path?: string;

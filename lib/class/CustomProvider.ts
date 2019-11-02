@@ -16,7 +16,8 @@ export default class CustomProvider extends Provider {
         .required(),
       nodeName: Joi.string().required(),
       enable: Joi.boolean(),
-    }).unknown();
+    })
+      .unknown();
     const schema = Joi.object({
       nodeList: Joi
         .array()
