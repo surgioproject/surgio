@@ -768,6 +768,120 @@ export const getQuantumultNodes = (
   return result.join('\n');
 };
 
+/**
+ * @see https://github.com/crossutility/Quantumult-X/blob/master/sample.conf
+ */
+export const getQuantumultXNodes = (
+  list: ReadonlyArray<ShadowsocksNodeConfig|VmessNodeConfig|ShadowsocksrNodeConfig|HttpsNodeConfig>,
+  filter?: NodeNameFilterType,
+): string => {
+  const result: ReadonlyArray<string> = list
+    .filter(item => {
+      if (filter) {
+        return filter(item) && item.enable !== false;
+      }
+      return item.enable !== false;
+    })
+    .map<string>(nodeConfig => {
+      switch (nodeConfig.type) {
+        case NodeTypeEnum.Vmess: {
+          const config = [
+            `${nodeConfig.hostname}:${nodeConfig.port}`,
+            ...pickAndFormatStringList(nodeConfig, ['method']),
+            `password=${nodeConfig.uuid}`,
+            ...(nodeConfig['udp-relay'] ? [
+              `udp-relay=${nodeConfig['udp-relay']}`,
+            ] : null),
+            ...(nodeConfig.tfo ? [
+              `fast-open=${nodeConfig.tfo}`,
+            ] : null),
+          ];
+
+          switch (nodeConfig.network) {
+            case 'ws':
+              if (nodeConfig.tls) {
+                config.push(`obfs=wss`);
+              } else {
+                config.push(`obfs=ws`);
+              }
+              config.push(`obfs-uri=${nodeConfig.path || '/'}`);
+
+              break;
+            default:
+              // do nothing
+          }
+
+          config.push(`tag=${nodeConfig.nodeName}`);
+
+          return `vmess=${config.join(', ')}`;
+        }
+
+        case NodeTypeEnum.Shadowsocks: {
+          const config = [
+            `${nodeConfig.hostname}:${nodeConfig.port}`,
+            ...pickAndFormatStringList(nodeConfig, ['method', 'password']),
+            ...(nodeConfig.obfs ? [
+              `obfs=${nodeConfig.obfs}`,
+              `obfs-host=${nodeConfig['obfs-host']}`,
+            ] : null),
+            ...(nodeConfig['udp-relay'] ? [
+              `udp-relay=${nodeConfig['udp-relay']}`,
+            ] : null),
+            ...(nodeConfig.tfo ? [
+              `fast-open=${nodeConfig.tfo}`,
+            ] : null),
+            `tag=${nodeConfig.nodeName}`,
+          ]
+            .join(', ');
+
+          return `shadowsocks=${config}`;
+        }
+
+        case NodeTypeEnum.Shadowsocksr: {
+          const config = [
+            `${nodeConfig.hostname}:${nodeConfig.port}`,
+            ...pickAndFormatStringList(nodeConfig, ['method', 'password']),
+            `ssr-protocol=${nodeConfig.protocol}`,
+            `ssr-protocol-param=${nodeConfig.protoparam}`,
+            `obfs=${nodeConfig.obfs}`,
+            `obfs-host=${nodeConfig.obfsparam}`,
+            ...(nodeConfig.tfo ? [
+              `fast-open=${nodeConfig.tfo}`,
+            ] : null),
+            `tag=${nodeConfig.nodeName}`,
+          ]
+            .join(', ');
+
+          return `shadowsocks=${config}`;
+        }
+
+        case NodeTypeEnum.HTTPS: {
+          const config = [
+            `${nodeConfig.hostname}:${nodeConfig.port}`,
+            ...pickAndFormatStringList(nodeConfig, ['username', 'password']),
+            'over-tls=true',
+            ...(nodeConfig.tfo ? [
+              `fast-open=${nodeConfig.tfo}`,
+            ] : null),
+            `tag=${nodeConfig.nodeName}`,
+          ]
+            .join(', ');
+
+          return `http=${config}`;
+        }
+
+        // istanbul ignore next
+        default:
+          console.log();
+          console.log(chalk.yellow(`不支持为 QuantumultX 生成 ${nodeConfig!.type} 的节点，节点 ${nodeConfig!.nodeName} 会被省略`));
+          return null;
+      }
+    })
+    .filter(item => !!item);
+
+  return result.join('\n');
+};
+
 export const getShadowsocksNodesJSON = (list: ReadonlyArray<ShadowsocksNodeConfig>): string => {
   const nodes: ReadonlyArray<object> = list
     .map(nodeConfig => {
