@@ -309,7 +309,7 @@ export const getSurgeNodes = (
               config.method,
               config.password,
               'https://raw.githubusercontent.com/ConnersHua/SSEncrypt/master/SSEncrypt.module',
-              ...pickAndFormatStringList(config, ['udp-relay', 'obfs', 'obfs-host']),
+              ...pickAndFormatStringList(config, ['udp-relay', 'obfs', 'obfs-host', 'tfo']),
             ].join(', ')
           ].join(' = '));
         }

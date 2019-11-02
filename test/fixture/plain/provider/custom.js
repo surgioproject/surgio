@@ -14,6 +14,7 @@ module.exports = {
       'udp-relay': 'true',
       obfs: 'tls',
       'obfs-host': 'gateway-carry.icloud.com',
+      tfo: true,
     },
     {
       type: 'snell',
