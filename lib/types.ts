@@ -75,7 +75,8 @@ export interface ProviderConfig {
   readonly customFilters?: {
     readonly [name: string]: NodeNameFilterType;
   };
-  readonly addFlag: boolean;
+  readonly addFlag?: boolean;
+  readonly tfo?: boolean;
 }
 
 export interface BlackSSLProviderConfig extends ProviderConfig {

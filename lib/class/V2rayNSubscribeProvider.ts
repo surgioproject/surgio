@@ -31,6 +31,6 @@ export default class V2rayNSubscribeProvider extends Provider {
   }
 
   public getNodeList(): ReturnType<typeof getV2rayNSubscription> {
-    return getV2rayNSubscription(this.url);
+    return getV2rayNSubscription(this.url, this.tfo);
   }
 }

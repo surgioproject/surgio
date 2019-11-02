@@ -93,7 +93,11 @@ export const getBlackSSLConfig = async (username: string, password: string): Pro
     await requestConfigFromBlackSSL();
 };
 
-export const getShadowsocksJSONConfig = async (url: string, udpRelay: boolean): Promise<ReadonlyArray<ShadowsocksNodeConfig>> => {
+export const getShadowsocksJSONConfig = async (
+  url: string,
+  udpRelay?: boolean,
+  tfo?: boolean
+): Promise<ReadonlyArray<ShadowsocksNodeConfig>> => {
   assert(url, '未指定订阅地址 url');
 
   async function requestConfigFromRemote(): Promise<ReadonlyArray<ShadowsocksNodeConfig>> {
@@ -123,6 +127,9 @@ export const getShadowsocksJSONConfig = async (url: string, udpRelay: boolean): 
           nodeConfig['obfs-host'] = obfsHost ? obfsHost[1] : 'www.bing.com';
         }
       }
+      if (tfo !== void 0) {
+        nodeConfig.tfo = tfo;
+      }
 
       return nodeConfig;
     });
@@ -137,7 +144,11 @@ export const getShadowsocksJSONConfig = async (url: string, udpRelay: boolean): 
     await requestConfigFromRemote();
 };
 
-export const getShadowsocksSubscription = async (url: string, udpRelay?: boolean): Promise<ReadonlyArray<ShadowsocksNodeConfig>> => {
+export const getShadowsocksSubscription = async (
+  url: string,
+  udpRelay?: boolean,
+  tfo?: boolean
+): Promise<ReadonlyArray<ShadowsocksNodeConfig>> => {
   assert(url, '未指定订阅地址 url');
 
   async function requestConfigFromRemote(): Promise<ReadonlyArray<ShadowsocksNodeConfig>> {
@@ -168,6 +179,9 @@ export const getShadowsocksSubscription = async (url: string, udpRelay?: boolean
           obfs: pluginInfo.obfs,
           'obfs-host': pluginInfo['obfs-host'],
         } : null),
+        ...(tfo !== void 0 ? {
+          tfo,
+        } : null),
       };
     });
 
@@ -181,7 +195,10 @@ export const getShadowsocksSubscription = async (url: string, udpRelay?: boolean
     await requestConfigFromRemote();
 };
 
-export const getShadowsocksrSubscription = async (url: string): Promise<ReadonlyArray<ShadowsocksrNodeConfig>> => {
+export const getShadowsocksrSubscription = async (
+  url: string,
+  tfo?: boolean,
+): Promise<ReadonlyArray<ShadowsocksrNodeConfig>> => {
   assert(url, '未指定订阅地址 url');
 
   async function requestConfigFromRemote(): Promise<ReadonlyArray<ShadowsocksrNodeConfig>> {
@@ -193,7 +210,15 @@ export const getShadowsocksrSubscription = async (url: string): Promise<Readonly
     const configList = fromBase64(response.data)
       .split('\n')
       .filter(item => !!item && item.startsWith("ssr://"));
-    const result = configList.map<ShadowsocksrNodeConfig>(parseSSRUri);
+    const result = configList.map<ShadowsocksrNodeConfig>(str => {
+      const nodeConfig = parseSSRUri(str);
+
+      if (tfo !== void 0) {
+        (nodeConfig.tfo as boolean) = tfo;
+      }
+
+      return nodeConfig;
+    });
 
     ConfigCache.set(url, result);
 
@@ -205,7 +230,10 @@ export const getShadowsocksrSubscription = async (url: string): Promise<Readonly
     await requestConfigFromRemote();
 };
 
-export const getV2rayNSubscription = async (url: string): Promise<ReadonlyArray<VmessNodeConfig>> => {
+export const getV2rayNSubscription = async (
+  url: string,
+  tfo?: boolean
+): Promise<ReadonlyArray<VmessNodeConfig>> => {
   assert(url, '未指定订阅地址 url');
 
   async function requestConfigFromRemote(): Promise<ReadonlyArray<VmessNodeConfig>> {
@@ -236,6 +264,9 @@ export const getV2rayNSubscription = async (url: string): Promise<ReadonlyArray<
         tls: json.tls === 'tls',
         host: json.host || '',
         path: json.path || '/',
+        ...(tfo !== void 0 ? {
+          tfo,
+        } : null),
       };
     });
 
