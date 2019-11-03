@@ -157,6 +157,7 @@ module.exports = {
   obfs: 'tls', // tls 或 http
   'obfs-host': 'gateway-carry.icloud.com',
   'udp-relay': true,
+  tfo: false, // TCP Fast Open
 }
 ```
 
@@ -192,6 +193,7 @@ module.exports = {
   tls: false,
   host: 'example.com',
   uuid: '1386f85e-657b-4d6e-9d56-78badb75e1fd',
+  tfo: false, // TCP Fast Open
 }
 ```
 
@@ -310,3 +312,10 @@ module.exports = {
 - 默认值: `false`
 
 在节点名称前加国旗 Emoji。需要注意的是，Surgio 是根据有限的节点名关键词判断位置的，如果无法匹配则会保留原节点名。你可以在所有的过滤器中检索国旗 Emoji。
+
+### provider.tfo
+
+- 类型: `Boolean`
+- 默认值: `false`
+
+是否为该订阅强制开启 TFO（TCP Fast Open），部分机场虽然支持 TFO 但是没有在订阅中开启，你可以通过这个配置强制打开。
