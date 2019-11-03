@@ -1,3 +1,12 @@
+# [1.3.0](https://github.com/geekdada/surgio/compare/v1.3.0-1...v1.3.0) (2019-11-03)
+
+
+### Bug Fixes
+
+* example ([ec6da29](https://github.com/geekdada/surgio/commit/ec6da29fd71ea54c768866d8c1b1fce4e8ec2087))
+
+
+
 # [1.3.0-1](https://github.com/geekdada/surgio/compare/v1.3.0-0...v1.3.0-1) (2019-11-02)
 
 
