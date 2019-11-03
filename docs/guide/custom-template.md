@@ -33,7 +33,7 @@ Surgio 为了能够灵活地定义模板而引入了 [Nunjucks](https://nunjucks
 
 ### remoteSnippets
 
-远程模板片段。以 [这个配置](/guide/custom-config.md#remotesnippets) 为例：
+远程模板片段。假如你已经配置了一个像 [这样](/guide/custom-config.md#remotesnippets) 的远程片段，那就能够以下面的方式使用。
 
 ```
 {{ remoteSnippets.cn.main('DIRECT') }}
@@ -63,54 +63,6 @@ DOMAIN-KEYWORD,baidu,DIRECT
 {{ remoteSnippets.cn.text }}
 ```
 
-### 国别过滤器
-
-Surgio 内置多个节点名国别/地区过滤器。除非是火星文，Surgio 应该都能识别出来。它们是：
-
-- hkFilter
-- usFilter
-- japanFilter
-- singaporeFilter
-- koreaFilter
-- taiwanFilter
-
-### netflixFilter
-
-Netflix 节点过滤器。Surgio 默认会将名称中包含 *netflix*, *hkbn*, *hkt*, *hgc*（不分大小写）的节点过滤出来。如果在 Provider 中进行了覆盖则会运行新的方法。
-
-*内置方法定义*
-
-```js
-const netflixFilter: NodeNameFilterType = item => {
-  const name = item.nodeName.toLowerCase();
-  return [
-    'netflix',
-    'hkbn',
-    'hkt',
-    'hgc',
-  ].some(key => name.includes(key.toLowerCase()));
-};
-```
-
-### youtubePremiumFilter
-
-Youtube Premium 节点过滤器。Surgio 默认会将名称中包含 *日*, *美*, *韩*, 🇯🇵, 🇺🇸, 🇰🇷 的节点过滤出来。如果在 Provider 中进行了覆盖则会运行新的方法。
-
-*内置方法定义*
-
-```js
-const youtubePremiumFilter = nodeConfig => {
-  const name = nodeConfig.nodeName.toLowerCase();
-  return ['日', '美', '韩', '🇯🇵', '🇺🇸', '🇰🇷'].some(key => name.includes(key.toLowerCase()));
-};
-```
-
-[查看所有支持 Youtube Premium 的国家和地区](https://support.google.com/youtube/answer/6307365?hl=zh-Hans)
-
-### customFilters
-
-获取自定义 Filter。关于自定义 Filter 的用法，请阅读 [进阶 - 自定义 Filter](/guide/advance/custom-filter)。
-
 ### customParams
 
 获取自定义的模板参数。请先在 Artifact 中定义再使用。
@@ -133,6 +85,55 @@ Clash 的 `Proxy` 和 `Proxy Group` 配置对象。`clashProxyConfig` 的内容�
 :::tip 提示
 你当然可以在模板中使用 Nunjucks 内置的 filter。
 :::
+
+### 如何在模板中使用变量？
+
+相信聪明的你已经洞察一切。对，就是用 `{{ }}` 把变量包裹起来。
+
+```html
+{{ downloadUrl }}
+```
+
+## 过滤器
+
+### 国家和地区过滤器
+
+Surgio 内置多个节点名国别/地区过滤器。除非是火星文，Surgio 应该都能识别出来。它们是：
+
+- hkFilter
+- usFilter
+- japanFilter
+- singaporeFilter
+- koreaFilter
+- taiwanFilter
+
+### netflixFilter
+
+Netflix 节点过滤器。Surgio 默认会将名称中包含 *netflix*, *hkbn*, *hkt*, *hgc*（不分大小写）的节点过滤出来。如果在 Provider 中进行了覆盖则会运行新的方法。
+
+[内置方法定义](https://github.com/geekdada/surgio/blob/master/lib/utils/filter.ts#L38)
+
+### youtubePremiumFilter
+
+Youtube Premium 节点过滤器。Surgio 默认会将名称中包含 *日*, *美*, *韩*, 🇯🇵, 🇺🇸, 🇰🇷 的节点过滤出来。如果在 Provider 中进行了覆盖则会运行新的方法。
+
+- [内置方法定义](https://github.com/geekdada/surgio/blob/master/lib/utils/filter.ts#L81)
+- [查看所有支持 Youtube Premium 的国家和地区](https://support.google.com/youtube/answer/6307365?hl=zh-Hans)
+
+### customFilters
+
+获取自定义 Filter。关于自定义 Filter 的用法，请阅读 [进阶 - 自定义 Filter](/guide/advance/custom-filter)。
+
+### 如何使用过滤器？
+
+我们以 `getSurgeNodes` 为例。默认情况下，使用 `getSurgeNodes(nodeList)` 输出的是所有节点。如果我们在第二个参数的位置传入过滤器，即可过滤想要的节点。
+
+```html
+<!-- .tpl 文件 -->
+{{ getSurgeNodes(nodeList, netflixFilter) }}
+```
+
+这样即可输出支持 Netflix 的节点。
 
 ## 模板方法
 
@@ -170,7 +171,8 @@ ss://cmM0LW1kNTpwYXNzd29yZA@hk.com:1234/?group=subscribe_demo#%F0%9F%87%AD%F0%9F
 
 你可以使用 `base64` filter 来将上面的文本转换成 Quantumult 能够识别的订阅内容。
 
-```
+```html
+<!-- .tpl 文件 -->
 {{ getShadowsocksNodes(nodeList, providerName) | base64 }}
 ```
 
@@ -193,7 +195,8 @@ vmess://5rWL6K+VIDIgPSB2bWVzcywxLjEuMS4xLDgwODAsY2hhY2hhMjAtaWV0Zi1wb2x5MTMwNSwi
 
 你可以使用 `base64` filter 来将上面的文本转换成 Quantumult 能够识别的订阅内容。
 
-```
+```html
+<!-- .tpl 文件 -->
 {{ getQuantumultNodes(nodeList, providerName) | base64 }}
 ```
 
@@ -239,6 +242,17 @@ getNodeNames(nodeList, netflixFilter);
 getDownloadUrl('example.conf'); // https://example.com/example.conf
 ```
 
+### 如何在模板中调用方法？
+
+上面提到的这些模板方法都能够在模板文件中使用。原则就是用 `{{ }}` 把方法包裹起来。
+
+```html
+<!-- .tpl 文件 -->
+{{ getQuantumultNodes(nodeList, providerName) | base64 }}
+
+{{ getSurgeNodes(nodeList) }}
+```
+
 ## 片段 (Snippet)
 
 片段是一种特殊的模板，它依赖 Nunjucks 的 [宏（macro）](https://mozilla.github.io/nunjucks/cn/templating.html#macro) 来实现。什么是宏不重要，你只要依葫芦画瓢就可以写出自己的「片段」。
@@ -258,7 +272,7 @@ DOMAIN-SUFFIX,ytimg.com,{{ rule }}
 
 :::tip 提示
 - 宏暴露了一个 `main` 方法，传入一个字符串变量
-- 你可以使用宏的其它特性
+- 你可以使用 Nunjucks 宏的其它特性
 :::
 
 使用的时候只需要 `import` 这个模板：
