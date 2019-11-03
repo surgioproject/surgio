@@ -11,7 +11,7 @@ Surgio 为了能够灵活地定义模板而引入了 [Nunjucks](https://nunjucks
 
 目录中默认已经包含针对 Surge，Quantumult 和 Clash 的模板和一些网友维护的规则片段 Snippet。
 
-:::tip
+:::tip 提示
 欢迎大家参与到默认规则的修订中！
 
 [项目地址](https://github.com/geekdada/create-surgio-store/tree/master/template/template)
@@ -117,7 +117,7 @@ const youtubePremiumFilter = nodeConfig => {
 
 ### clashProxyConfig
 
-:::tip
+:::tip 提示
 - 支持输出 Shadowsocks, Shadowsocksr, Vmess 节点
 - Shadowsocksr 是通过 Clashr 项目支持的，你需要在 [这里](https://t.me/clashr4ssr) 下载可执行文件。项目地址在 [这里](https://github.com/sun8911879/shadowsocksR)。
 :::
@@ -130,7 +130,7 @@ Clash 的 `Proxy` 和 `Proxy Group` 配置对象。`clashProxyConfig` 的内容�
 {{ clashProxyConfig | yaml }}
 ```
 
-:::tip
+:::tip 提示
 你当然可以在模板中使用 Nunjucks 内置的 filter。
 :::
 
@@ -140,10 +140,10 @@ Clash 的 `Proxy` 和 `Proxy Group` 配置对象。`clashProxyConfig` 的内容�
 
 `getSurgeNodes(nodeList, filter?)`
 
-:::tip
+:::tip 提示
 - `filter` 为可选参数
 - 支持输出 Shadowsocks, Shadowsocksr, HTTPS, Snell, Vmess 节点
-- 请参考 [「Surge 进阶使用」](/guide/advance/surge-advance.md) 生成针对 Surge 的 V2Ray 或 SSR 订阅
+- 请参考 [「Surge 进阶使用」](/guide/advance/surge-advance.md) 生成针对 Surge 的 SSR 订阅
 :::
 
 生成 Surge 规范的节点列表，例如：
@@ -157,7 +157,7 @@ Clash 的 `Proxy` 和 `Proxy Group` 配置对象。`clashProxyConfig` 的内容�
 
 `getShadowsocksNodes(nodeList, providerName)`
 
-:::tip
+:::tip 提示
 - 第二个入参为 Group 名称
 :::
 
@@ -178,13 +178,13 @@ ss://cmM0LW1kNTpwYXNzd29yZA@hk.com:1234/?group=subscribe_demo#%F0%9F%87%AD%F0%9F
 
 `getQuantumultNodes(nodeList, providerName?, filter?)`
 
-:::tip
+:::tip 提示
 - 第二个参数为 Group 名称，可选
 - 第三个参数可选，可传入标准的过滤器或自定义的过滤器
 - 支持输出 Shadowsocks, Shadowsocksr, Vmess, HTTPS 节点
 :::
 
-生成 Quantumult 订阅 Scheme 列表，例如：
+生成 Quantumult 的节点配置，例如：
 
 ```
 vmess://5rWL6K+VIDEgPSB2bWVzcywxLjEuMS4xLDgwODAsY2hhY2hhMjAtaWV0Zi1wb2x5MTMwNSwiMTM4NmY4NWUtNjU3Yi00ZDZlLTlkNTYtNzhiYWRiNzVlMWZkIiw2NCxncm91cD1TdXJnaW8sb3Zlci10bHM9ZmFsc2UsY2VydGlmaWNhdGU9MSxvYmZzPXdzLG9iZnMtcGF0aD0iLyIsb2Jmcy1oZWFkZXI9Ikhvc3Q6ZXhhbXBsZS5jb21bUnJdW05uXVVzZXItQWdlbnQ6TW96aWxsYS81LjAgKGlQaG9uZTsgQ1BVIGlQaG9uZSBPUyAxMl8zXzEgbGlrZSBNYWMgT1MgWCkgQXBwbGVXZWJLaXQvNjA1LjEuMTUgKEtIVE1MLCBsaWtlIEdlY2tvKSBNb2JpbGUvMTVFMTQ4Ig==
@@ -197,11 +197,23 @@ vmess://5rWL6K+VIDIgPSB2bWVzcywxLjEuMS4xLDgwODAsY2hhY2hhMjAtaWV0Zi1wb2x5MTMwNSwi
 {{ getQuantumultNodes(nodeList, providerName) | base64 }}
 ```
 
+### getQuantumultXNodes <Badge text="v1.3.0" vertical="middle" />
+
+`getQuantumultXNodes(nodeList, filter?)`
+
+:::tip 提示
+- 第二个参数可选，可传入标准的过滤器或自定义的过滤器
+- 支持输出 Shadowsocks, Shadowsocksr, Vmess, HTTPS 节点
+- 支持添加 `udp-relay` 和 `fast-open` 配置
+:::
+
+生成 QuantumulX 的节点配置。该配置能用于 [`server_local`](https://github.com/crossutility/Quantumult-X/blob/master/sample.conf#L88) 或者 [`server_remote`](https://github.com/crossutility/Quantumult-X/blob/master/server-complete.txt)。
+
 ### getNodeNames
 
 `getNodeNames(nodeList, filter?)`
 
-:::tip
+:::tip 提示
 - `filter` 为可选参数
 :::
 
@@ -244,7 +256,7 @@ DOMAIN-SUFFIX,ytimg.com,{{ rule }}
 {% endmacro %}
 ```
 
-:::tip
+:::tip 提示
 - 宏暴露了一个 `main` 方法，传入一个字符串变量
 - 你可以使用宏的其它特性
 :::
