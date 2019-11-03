@@ -175,6 +175,8 @@ module.exports = {
   obfsparam: 'music.163.com',
   protocol: 'auth_aes128_md5',
   protoparam: '',
+  'udp-relay': true,
+  tfo: false, // TCP Fast Open
 }
 ```
 
