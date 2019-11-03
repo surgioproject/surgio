@@ -6,7 +6,7 @@ import dir from 'node-dir';
 import ora, { Ora } from 'ora';
 import path from 'path';
 
-import { loadConfig } from '../utils';
+import { loadConfig } from '../utils/config';
 import { errorHandler } from '../utils/error-helper';
 
 class GenerateCommand extends Command {

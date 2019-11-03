@@ -23,6 +23,7 @@ export default class V2rayNSubscribeProvider extends Provider {
 
     const { error } = schema.validate(config);
 
+    // istanbul ignore next
     if (error) {
       throw error;
     }
@@ -31,6 +32,6 @@ export default class V2rayNSubscribeProvider extends Provider {
   }
 
   public getNodeList(): ReturnType<typeof getV2rayNSubscription> {
-    return getV2rayNSubscription(this.url);
+    return getV2rayNSubscription(this.url, this.tfo);
   }
 }

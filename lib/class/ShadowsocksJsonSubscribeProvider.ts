@@ -25,6 +25,7 @@ export default class ShadowsocksJsonSubscribeProvider extends Provider {
 
     const { error } = schema.validate(config);
 
+    // istanbul ignore next
     if (error) {
       throw error;
     }
@@ -34,6 +35,6 @@ export default class ShadowsocksJsonSubscribeProvider extends Provider {
   }
 
   public getNodeList(): ReturnType<typeof getShadowsocksJSONConfig> {
-    return getShadowsocksJSONConfig(this.url, this.udpRelay);
+    return getShadowsocksJSONConfig(this.url, this.udpRelay, this.tfo);
   }
 }

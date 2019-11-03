@@ -55,6 +55,7 @@ export const getDownloadUrl = (baseUrl: string = '/', artifactName: string, inli
   return URL.format(urlObject);
 };
 
+// istanbul ignore next
 export const getBlackSSLConfig = async (username: string, password: string): Promise<ReadonlyArray<HttpsNodeConfig>> => {
   assert(username, 'Lack of BlackSSL username.');
   assert(password, 'Lack of BlackSSL password.');
@@ -93,7 +94,11 @@ export const getBlackSSLConfig = async (username: string, password: string): Pro
     await requestConfigFromBlackSSL();
 };
 
-export const getShadowsocksJSONConfig = async (url: string, udpRelay: boolean): Promise<ReadonlyArray<ShadowsocksNodeConfig>> => {
+export const getShadowsocksJSONConfig = async (
+  url: string,
+  udpRelay?: boolean,
+  tfo?: boolean
+): Promise<ReadonlyArray<ShadowsocksNodeConfig>> => {
   assert(url, '未指定订阅地址 url');
 
   async function requestConfigFromRemote(): Promise<ReadonlyArray<ShadowsocksNodeConfig>> {
@@ -112,7 +117,7 @@ export const getShadowsocksJSONConfig = async (url: string, udpRelay: boolean): 
       };
 
       if (typeof udpRelay === 'boolean') {
-        nodeConfig['udp-relay'] = udpRelay ? 'true' : 'false';
+        nodeConfig['udp-relay'] = udpRelay;
       }
       if (item.plugin === 'obfs-local') {
         const obfs = item.plugin_opts.match(/obfs=(\w+)/);
@@ -122,6 +127,9 @@ export const getShadowsocksJSONConfig = async (url: string, udpRelay: boolean): 
           nodeConfig.obfs = obfs[1];
           nodeConfig['obfs-host'] = obfsHost ? obfsHost[1] : 'www.bing.com';
         }
+      }
+      if (typeof tfo === 'boolean') {
+        nodeConfig.tfo = tfo;
       }
 
       return nodeConfig;
@@ -137,7 +145,11 @@ export const getShadowsocksJSONConfig = async (url: string, udpRelay: boolean): 
     await requestConfigFromRemote();
 };
 
-export const getShadowsocksSubscription = async (url: string, udpRelay?: boolean): Promise<ReadonlyArray<ShadowsocksNodeConfig>> => {
+export const getShadowsocksSubscription = async (
+  url: string,
+  udpRelay?: boolean,
+  tfo?: boolean
+): Promise<ReadonlyArray<ShadowsocksNodeConfig>> => {
   assert(url, '未指定订阅地址 url');
 
   async function requestConfigFromRemote(): Promise<ReadonlyArray<ShadowsocksNodeConfig>> {
@@ -162,11 +174,14 @@ export const getShadowsocksSubscription = async (url: string, udpRelay?: boolean
         method: userInfo[0],
         password: userInfo[1],
         ...(typeof udpRelay === 'boolean' ? {
-          'udp-relay': udpRelay ? 'true' : 'false',
+          'udp-relay': udpRelay,
         } : null),
         ...(pluginInfo['obfs-local'] ? {
           obfs: pluginInfo.obfs,
           'obfs-host': pluginInfo['obfs-host'],
+        } : null),
+        ...(tfo !== void 0 ? {
+          tfo,
         } : null),
       };
     });
@@ -181,7 +196,10 @@ export const getShadowsocksSubscription = async (url: string, udpRelay?: boolean
     await requestConfigFromRemote();
 };
 
-export const getShadowsocksrSubscription = async (url: string): Promise<ReadonlyArray<ShadowsocksrNodeConfig>> => {
+export const getShadowsocksrSubscription = async (
+  url: string,
+  tfo?: boolean,
+): Promise<ReadonlyArray<ShadowsocksrNodeConfig>> => {
   assert(url, '未指定订阅地址 url');
 
   async function requestConfigFromRemote(): Promise<ReadonlyArray<ShadowsocksrNodeConfig>> {
@@ -193,7 +211,15 @@ export const getShadowsocksrSubscription = async (url: string): Promise<Readonly
     const configList = fromBase64(response.data)
       .split('\n')
       .filter(item => !!item && item.startsWith("ssr://"));
-    const result = configList.map<ShadowsocksrNodeConfig>(parseSSRUri);
+    const result = configList.map<ShadowsocksrNodeConfig>(str => {
+      const nodeConfig = parseSSRUri(str);
+
+      if (tfo !== void 0) {
+        (nodeConfig.tfo as boolean) = tfo;
+      }
+
+      return nodeConfig;
+    });
 
     ConfigCache.set(url, result);
 
@@ -205,7 +231,10 @@ export const getShadowsocksrSubscription = async (url: string): Promise<Readonly
     await requestConfigFromRemote();
 };
 
-export const getV2rayNSubscription = async (url: string): Promise<ReadonlyArray<VmessNodeConfig>> => {
+export const getV2rayNSubscription = async (
+  url: string,
+  tfo?: boolean
+): Promise<ReadonlyArray<VmessNodeConfig>> => {
   assert(url, '未指定订阅地址 url');
 
   async function requestConfigFromRemote(): Promise<ReadonlyArray<VmessNodeConfig>> {
@@ -220,8 +249,16 @@ export const getV2rayNSubscription = async (url: string): Promise<ReadonlyArray<
     const result = configList.map<VmessNodeConfig>(item => {
       const json = JSON.parse(fromBase64(item.replace('vmess://', '')));
 
+      // istanbul ignore next
       if (!json.v || Number(json.v) !== 2) {
         throw new Error(`该订阅 ${url} 可能不是一个有效的 V2rayN 订阅。请参考 http://bit.ly/2N4lZ8X 进行排查`);
+      }
+
+      // istanbul ignore next
+      if (['kcp', 'http'].indexOf(json.net) > -1) {
+        console.log();
+        console.log(chalk.yellow(`不支持读取 network 类型为 ${json.net} 的 Vmess 节点，节点 ${json.ps} 会被省略`));
+        return null;
       }
 
       return {
@@ -236,8 +273,12 @@ export const getV2rayNSubscription = async (url: string): Promise<ReadonlyArray<
         tls: json.tls === 'tls',
         host: json.host || '',
         path: json.path || '/',
+        ...(tfo !== void 0 ? {
+          tfo,
+        } : null),
       };
-    });
+    })
+      .filter(item => !!item);
 
     ConfigCache.set(url, result);
 
@@ -271,7 +312,7 @@ export const getSurgeNodes = (
               config.method,
               config.password,
               'https://raw.githubusercontent.com/ConnersHua/SSEncrypt/master/SSEncrypt.module',
-              ...pickAndFormatStringList(config, ['udp-relay', 'obfs', 'obfs-host']),
+              ...pickAndFormatStringList(config, ['udp-relay', 'obfs', 'obfs-host', 'tfo']),
             ].join(', ')
           ].join(' = '));
         }
@@ -451,7 +492,7 @@ export const getClashNodes = (
             password: nodeConfig.password,
             port: nodeConfig.port,
             server: nodeConfig.hostname,
-            udp: nodeConfig['udp-relay'] === 'true',
+            udp: nodeConfig['udp-relay'] || false,
             ...(nodeConfig.obfs ? {
               plugin: 'obfs',
               'plugin-opts': {
@@ -737,6 +778,121 @@ export const getQuantumultNodes = (
   return result.join('\n');
 };
 
+/**
+ * @see https://github.com/crossutility/Quantumult-X/blob/master/sample.conf
+ */
+export const getQuantumultXNodes = (
+  list: ReadonlyArray<ShadowsocksNodeConfig|VmessNodeConfig|ShadowsocksrNodeConfig|HttpsNodeConfig>,
+  filter?: NodeNameFilterType,
+): string => {
+  const result: ReadonlyArray<string> = list
+    .filter(item => {
+      if (filter) {
+        return filter(item) && item.enable !== false;
+      }
+      return item.enable !== false;
+    })
+    .map<string>(nodeConfig => {
+      switch (nodeConfig.type) {
+        case NodeTypeEnum.Vmess: {
+          const config = [
+            `${nodeConfig.hostname}:${nodeConfig.port}`,
+            ...pickAndFormatStringList(nodeConfig, ['method']),
+            `password=${nodeConfig.uuid}`,
+            ...(nodeConfig['udp-relay'] ? [
+              `udp-relay=${nodeConfig['udp-relay']}`,
+            ] : []),
+            ...(nodeConfig.tfo ? [
+              `fast-open=${nodeConfig.tfo}`,
+            ] : []),
+          ];
+
+          switch (nodeConfig.network) {
+            case 'ws':
+              if (nodeConfig.tls) {
+                config.push(`obfs=wss`);
+              } else {
+                config.push(`obfs=ws`);
+              }
+              config.push(`obfs-uri=${nodeConfig.path || '/'}`);
+
+              break;
+            default:
+              // do nothing
+          }
+
+          config.push(`tag=${nodeConfig.nodeName}`);
+
+          return `vmess=${config.join(', ')}`;
+        }
+
+        case NodeTypeEnum.Shadowsocks: {
+          const config = [
+            `${nodeConfig.hostname}:${nodeConfig.port}`,
+            ...pickAndFormatStringList(nodeConfig, ['method', 'password']),
+            ...(nodeConfig.obfs ? [
+              `obfs=${nodeConfig.obfs}`,
+              `obfs-host=${nodeConfig['obfs-host']}`,
+            ] : []),
+            ...(nodeConfig['udp-relay'] ? [
+              `udp-relay=${nodeConfig['udp-relay']}`,
+            ] : []),
+            ...(nodeConfig.tfo ? [
+              `fast-open=${nodeConfig.tfo}`,
+            ] : []),
+            `tag=${nodeConfig.nodeName}`,
+          ]
+            .join(', ');
+
+          return `shadowsocks=${config}`;
+        }
+
+        case NodeTypeEnum.Shadowsocksr: {
+          const config = [
+            `${nodeConfig.hostname}:${nodeConfig.port}`,
+            ...pickAndFormatStringList(nodeConfig, ['method', 'password']),
+            `ssr-protocol=${nodeConfig.protocol}`,
+            `ssr-protocol-param=${nodeConfig.protoparam}`,
+            `obfs=${nodeConfig.obfs}`,
+            `obfs-host=${nodeConfig.obfsparam}`,
+            ...(nodeConfig.tfo ? [
+              `fast-open=${nodeConfig.tfo}`,
+            ] : []),
+            `tag=${nodeConfig.nodeName}`,
+          ]
+            .join(', ');
+
+          return `shadowsocks=${config}`;
+        }
+
+        case NodeTypeEnum.HTTPS: {
+          const config = [
+            `${nodeConfig.hostname}:${nodeConfig.port}`,
+            ...pickAndFormatStringList(nodeConfig, ['username', 'password']),
+            'over-tls=true',
+            ...(nodeConfig.tfo ? [
+              `fast-open=${nodeConfig.tfo}`,
+            ] : []),
+            `tag=${nodeConfig.nodeName}`,
+          ]
+            .join(', ');
+
+          return `http=${config}`;
+        }
+
+        // istanbul ignore next
+        default:
+          console.log();
+          console.log(chalk.yellow(`不支持为 QuantumultX 生成 ${nodeConfig!.type} 的节点，节点 ${nodeConfig!.nodeName} 会被省略`));
+          return null;
+      }
+    })
+    .filter(item => !!item);
+
+  return result.join('\n');
+};
+
+// istanbul ignore next
 export const getShadowsocksNodesJSON = (list: ReadonlyArray<ShadowsocksNodeConfig>): string => {
   const nodes: ReadonlyArray<object> = list
     .map(nodeConfig => {
@@ -847,27 +1003,6 @@ export const decodeStringList = <T = object>(stringList: ReadonlyArray<string>):
     result[pair[0]] = pair[1] || true;
   });
   return result as T;
-};
-
-export const loadConfig = (cwd: string, configPath: string, override?: Partial<CommandConfig>): CommandConfig => {
-  const absPath = path.resolve(cwd, configPath);
-
-  if (!fs.existsSync(absPath)) {
-    throw new Error(`文件 ${absPath} 不存在`);
-  }
-
-  const userConfig = _.cloneDeep(require(absPath));
-
-  validateConfig(userConfig);
-
-  if (override) {
-    return {
-      ...normalizeConfig(cwd, userConfig),
-      ...override,
-    };
-  }
-
-  return normalizeConfig(cwd, userConfig);
 };
 
 export const normalizeClashProxyGroupConfig = (

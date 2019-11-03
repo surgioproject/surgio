@@ -32,6 +32,12 @@ module.exports = {
       template: 'test',
       provider: 'clash',
     },
+    {
+      name: 'template-functions.conf',
+      template: 'template-functions',
+      provider: 'ss',
+      combineProviders: ['custom', 'ss_json', 'v2rayn', 'clash'],
+    },
   ],
   urlBase: 'https://example.com/',
   binPath: {
@@ -40,5 +46,8 @@ module.exports = {
   },
   gateway: {
     accessToken: 'abcd',
+  },
+  surgeConfig: {
+    v2ray: 'native',
   },
 };

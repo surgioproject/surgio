@@ -23,6 +23,7 @@ export default class ShadowsocksrSubscribeProvider extends Provider {
 
     const { error } = schema.validate(config);
 
+    // istanbul ignore next
     if (error) {
       throw error;
     }
@@ -31,6 +32,6 @@ export default class ShadowsocksrSubscribeProvider extends Provider {
   }
 
   public getNodeList(): ReturnType<typeof getShadowsocksrSubscription> {
-    return getShadowsocksrSubscription(this.url);
+    return getShadowsocksrSubscription(this.url, this.tfo);
   }
 }

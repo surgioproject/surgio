@@ -75,7 +75,8 @@ export interface ProviderConfig {
   readonly customFilters?: {
     readonly [name: string]: NodeNameFilterType;
   };
-  readonly addFlag: boolean;
+  readonly addFlag?: boolean;
+  readonly tfo?: boolean;
 }
 
 export interface BlackSSLProviderConfig extends ProviderConfig {
@@ -107,7 +108,7 @@ export interface ClashProviderConfig extends ProviderConfig {
 }
 
 export interface CustomProviderConfig extends ProviderConfig {
-  readonly nodeList: ReadonlyArray<PossibleNodeConfigType>;
+  readonly nodeList: ReadonlyArray<any>;
 }
 
 export interface HttpsNodeConfig extends SimpleNodeConfig {
@@ -124,7 +125,7 @@ export interface ShadowsocksNodeConfig extends SimpleNodeConfig {
   readonly port: number|string;
   readonly method: string;
   readonly password: string;
-  readonly 'udp-relay'?: 'true'|'false';
+  readonly 'udp-relay'?: boolean;
   readonly obfs?: 'tls'|'http';
   readonly 'obfs-host'?: string;
 }
@@ -153,10 +154,10 @@ export interface VmessNodeConfig extends SimpleNodeConfig {
   readonly type: NodeTypeEnum.Vmess;
   readonly hostname: string;
   readonly port: number|string;
-  readonly method: string;
+  readonly method: 'auto'|'aes-128-gcm'|'chacha20-ietf-poly1305'|'none';
   readonly uuid: string;
   readonly alterId: string;
-  readonly network: 'tcp' | 'kcp' | 'ws' | 'http' ;
+  readonly network: 'tcp'|'ws';
   readonly tls: boolean;
   readonly host?: string;
   readonly path?: string;

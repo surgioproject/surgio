@@ -21,12 +21,12 @@ import Provider from './Provider';
 type SupportConfigTypes = ShadowsocksNodeConfig|VmessNodeConfig|HttpsNodeConfig|ShadowsocksrNodeConfig|SnellNodeConfig;
 
 export default class ClashProvider extends Provider {
-  public static async getClashSubscription(url: string, udpRelay?: boolean): Promise<ReadonlyArray<SupportConfigTypes>> {
+  public static async getClashSubscription(url: string, udpRelay?: boolean, tfo?: boolean): Promise<ReadonlyArray<SupportConfigTypes>> {
     assert(url, '未指定订阅地址 url');
 
     return ConfigCache.has(url) ?
       ConfigCache.get(url) :
-      await requestConfigFromRemote(url, udpRelay);
+      await requestConfigFromRemote(url, udpRelay, tfo);
   }
 
   public readonly url: string;
@@ -58,11 +58,11 @@ export default class ClashProvider extends Provider {
   }
 
   public getNodeList(): ReturnType<typeof ClashProvider.getClashSubscription> {
-    return ClashProvider.getClashSubscription(this.url, this.udpRelay);
+    return ClashProvider.getClashSubscription(this.url, this.udpRelay, this.tfo);
   }
 }
 
-async function requestConfigFromRemote(url: string, udpRelay?: boolean): Promise<ReadonlyArray<SupportConfigTypes>> {
+async function requestConfigFromRemote(url: string, udpRelay?: boolean, tfo?: boolean): Promise<ReadonlyArray<SupportConfigTypes>> {
   const response = await axios.get(url, {
     timeout: NETWORK_TIMEOUT,
     responseType: 'text',
@@ -85,7 +85,7 @@ async function requestConfigFromRemote(url: string, udpRelay?: boolean): Promise
       case 'ss':
         if (item.plugin && item.plugin !== 'obfs') {
           console.log();
-          console.log(chalk.yellow(`不支持读取 ${item.plugin} 类型的 Clash 节点，节点 ${item.name} 会被省略`));
+          console.log(chalk.yellow(`不支持从 Clash 订阅中读取 ${item.plugin} 类型的 Shadowsocks 节点，节点 ${item.name} 会被省略`));
           return null;
         }
 
@@ -96,7 +96,7 @@ async function requestConfigFromRemote(url: string, udpRelay?: boolean): Promise
           port: item.port,
           method: item.cipher,
           password: item.password,
-          'udp-relay': resolveUdpRelay(item.udp, udpRelay) ? 'true' : 'false',
+          'udp-relay': resolveUdpRelay(item.udp, udpRelay),
           ...(item.plugin && item.plugin === 'obfs' ? {
             obfs: item['plugin-opts'].mode,
             'obfs-host': item['plugin-opts'].host || 'www.bing.com',
@@ -104,10 +104,20 @@ async function requestConfigFromRemote(url: string, udpRelay?: boolean): Promise
           ...(item.obfs ? {
             obfs: item.obfs,
             'obfs-host': item['obfs-host'] || 'www.bing.com',
-          } : null)
+          } : null),
+          ...(tfo !== void 0 ? {
+            tfo,
+          } : null),
         };
 
       case 'vmess':
+        // istanbul ignore next
+        if (['kcp', 'http'].indexOf(item.network) > -1) {
+          console.log();
+          console.log(chalk.yellow(`不支持从 Clash 订阅中读取 network 类型为 ${item.network} 的 Vmess 节点，节点 ${item.name} 会被省略`));
+          return null;
+        }
+
         return {
           type: NodeTypeEnum.Vmess,
           nodeName: item.name,
@@ -123,12 +133,15 @@ async function requestConfigFromRemote(url: string, udpRelay?: boolean): Promise
             path: _.get(item, 'ws-path', '/'),
             host: _.get(item, 'ws-headers.Host', ''),
           } : null),
+          ...(tfo !== void 0 ? {
+            tfo,
+          } : null),
         };
 
       case 'http':
-        if (item.tls !== 'https') {
+        if (!item.tls) {
           console.log();
-          console.log(chalk.yellow(`不支持读取 HTTP 类型的 Clash 节点，节点 ${item.name} 会被省略`));
+          console.log(chalk.yellow(`不支持从 Clash 订阅中读取 HTTP 类型节点，节点 ${item.name} 会被省略`));
           return null;
         }
 
@@ -139,6 +152,9 @@ async function requestConfigFromRemote(url: string, udpRelay?: boolean): Promise
           port: item.port,
           username: item.username || '',
           password: item.password || '',
+          ...(tfo !== void 0 ? {
+            tfo,
+          } : null),
         };
 
       case 'snell':
@@ -149,8 +165,12 @@ async function requestConfigFromRemote(url: string, udpRelay?: boolean): Promise
           port: item.port,
           psk: item.psk,
           obfs: _.get(item, 'obfs-opts.mode', 'http'),
+          ...(tfo !== void 0 ? {
+            tfo,
+          } : null),
         };
-
+      
+      // istanbul ignore next
       case 'ssr':
         return {
           type: NodeTypeEnum.Shadowsocksr,
@@ -163,11 +183,14 @@ async function requestConfigFromRemote(url: string, udpRelay?: boolean): Promise
           protocol: item.protocol,
           protoparam: item.protocolparam,
           method: item.cipher,
+          ...(tfo !== void 0 ? {
+            tfo,
+          } : null),
         };
 
       default:
         console.log();
-        console.log(chalk.yellow(`不支持读取 ${item.type} 的节点，节点 ${item.name} 会被省略`));
+        console.log(chalk.yellow(`不支持从 Clash 订阅中读取 ${item.type} 的节点，节点 ${item.name} 会被省略`));
         return null;
     }
   })

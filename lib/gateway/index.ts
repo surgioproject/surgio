@@ -6,7 +6,7 @@ import Router from 'koa-router';
 import util from 'util';
 import { DEP001 } from '../misc/deprecation';
 
-import { loadConfig } from '../utils';
+import { loadConfig } from '../utils/config';
 import { Server } from './server';
 import { FcRequest, FcResponse } from './types';
 

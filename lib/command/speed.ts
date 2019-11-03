@@ -16,7 +16,8 @@ import speedTest from 'speedtest-net';
 import winston, { format, Logger } from 'winston';
 
 import { NodeTypeEnum, PossibleNodeConfigType, ShadowsocksNodeConfig } from '../types';
-import { getClashNodes, loadConfig, toYaml } from '../utils';
+import { getClashNodes, toYaml } from '../utils';
+import { loadConfig } from '../utils/config';
 import getProvider from '../utils/get-provider';
 import { errorHandler } from '../utils/error-helper';
 

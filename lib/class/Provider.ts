@@ -16,6 +16,7 @@ export default class Provider {
   public readonly youtubePremiumFilter?: NodeNameFilterType;
   public readonly customFilters?: ProviderConfig['customFilters'];
   public readonly addFlag?: boolean;
+  public readonly tfo?: boolean;
   private startPort?: number;
 
   constructor(config: ProviderConfig) {
@@ -34,6 +35,7 @@ export default class Provider {
 
     const { error } = schema.validate(config);
 
+    // istanbul ignore next
     if (error) {
       throw error;
     }
@@ -44,6 +46,7 @@ export default class Provider {
     this.youtubePremiumFilter = config.youtubePremiumFilter;
     this.customFilters = config.customFilters;
     this.addFlag = config.addFlag;
+    this.tfo = config.tfo;
     this.startPort = config.startPort;
   }
 

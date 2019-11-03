@@ -143,8 +143,18 @@ Proxy:
     type: http
     server: server
     port: 443
-    # username: username
-    # password: password
+    username: username
+    password: password
+    tls: true # https
+    # skip-cert-verify: true
+
+  # http
+  - name: "http"
+    type: http
+    server: server
+    port: 443
+    username: username
+    password: password
     # tls: true # https
     # skip-cert-verify: true
 

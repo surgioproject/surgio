@@ -1,6 +1,5 @@
 // tslint:disable:no-expression-statement
 import test from 'ava';
-import moxios from 'moxios';
 import fs from 'fs';
 import path from 'path';
 
@@ -14,14 +13,6 @@ import {
 import * as utils from '../../lib/utils';
 import * as filter from '../../lib/utils/filter';
 
-test.beforeEach(() => {
-  moxios.install();
-});
-
-test.afterEach(() => {
-  moxios.uninstall();
-});
-
 test('getSurgeNodes', async t => {
   const nodeList: ReadonlyArray<ShadowsocksNodeConfig|ShadowsocksrNodeConfig|VmessNodeConfig> = [{
     nodeName: 'Test Node 1',
@@ -32,7 +23,7 @@ test('getSurgeNodes', async t => {
     password: 'password',
     obfs: 'tls',
     'obfs-host': 'example.com',
-    'udp-relay': 'true',
+    'udp-relay': true,
   }, {
     nodeName: 'Test Node 2',
     type: NodeTypeEnum.Shadowsocks,
@@ -155,7 +146,7 @@ test('getClashNodes', async t => {
     password: 'password',
     obfs: 'tls',
     'obfs-host': 'example.com',
-    'udp-relay': 'true',
+    'udp-relay': true,
   }, {
     nodeName: 'Test Node 2',
     type: NodeTypeEnum.Shadowsocks,
@@ -251,7 +242,7 @@ test('getShadowsocksNodes', async t => {
       password: 'password',
       obfs: 'tls',
       'obfs-host': 'gateway.icloud.com',
-      'udp-relay': 'true',
+      'udp-relay': true,
     },
   ];
   const txt1 = utils.getShadowsocksNodes(nodeList, 'GroupName');
@@ -346,7 +337,8 @@ test('normalizeClashProxyGroupConfig', t => {
 });
 
 test('getShadowsocksJSONConfig', async t => {
-  const config = await utils.getShadowsocksJSONConfig('http://example.com/gui-config.json', true);
+  const config = await utils.getShadowsocksJSONConfig('http://example.com/gui-config.json?v=1', true);
+  const config2 = await utils.getShadowsocksJSONConfig('http://example.com/gui-config.json?v=2', false, true);
 
   t.deepEqual(config[0], {
     nodeName: '🇺🇸US 1',
@@ -355,7 +347,7 @@ test('getShadowsocksJSONConfig', async t => {
     port: 443,
     method: 'chacha20-ietf-poly1305',
     password: 'password',
-    'udp-relay': 'true',
+    'udp-relay': true,
     obfs: 'tls',
     'obfs-host': 'gateway-carry.icloud.com',
   });
@@ -366,7 +358,7 @@ test('getShadowsocksJSONConfig', async t => {
     port: 444,
     method: 'chacha20-ietf-poly1305',
     password: 'password',
-    'udp-relay': 'true',
+    'udp-relay': true,
   });
   t.deepEqual(config[2], {
     nodeName: '🇺🇸US 3',
@@ -375,7 +367,7 @@ test('getShadowsocksJSONConfig', async t => {
     port: 445,
     method: 'chacha20-ietf-poly1305',
     password: 'password',
-    'udp-relay': 'true',
+    'udp-relay': true,
     obfs: 'tls',
     'obfs-host': 'www.bing.com',
   });
@@ -386,32 +378,25 @@ test('getShadowsocksJSONConfig', async t => {
     port: 80,
     method: 'chacha20-ietf-poly1305',
     password: 'password',
-    'udp-relay': 'true',
+    'udp-relay': true,
     obfs: 'http',
     'obfs-host': 'www.bing.com',
+  });
+  t.deepEqual(config2[0], {
+    nodeName: '🇺🇸US 1',
+    type: NodeTypeEnum.Shadowsocks,
+    hostname: 'us.example.com',
+    port: 443,
+    method: 'chacha20-ietf-poly1305',
+    password: 'password',
+    'udp-relay': false,
+    tfo: true,
+    obfs: 'tls',
+    'obfs-host': 'gateway-carry.icloud.com',
   });
 });
 
 test('loadRemoteSnippetList', async t => {
-  moxios.stubRequest('http://example.com/test-ruleset.list', {
-    status: 200,
-    responseText: fs.readFileSync(path.join(__dirname, '../asset/test-ruleset-1.list'), {
-      encoding: 'utf8',
-    }),
-  });
-  moxios.stubRequest('http://example.com/netflix.list', {
-    status: 200,
-    responseText: fs.readFileSync(path.join(__dirname, '../asset/netflix.list'), {
-      encoding: 'utf8',
-    }),
-  });
-  moxios.stubRequest('http://example.com/telegram.list', {
-    status: 200,
-    responseText: fs.readFileSync(path.join(__dirname, '../asset/telegram.list'), {
-      encoding: 'utf8',
-    }),
-  });
-
   const remoteSnippetList = await utils.loadRemoteSnippetList([
     {
       url: 'http://example.com/telegram.list',
@@ -458,12 +443,6 @@ test('loadRemoteSnippetList', async t => {
 
 test('loadRemoteSnippetList with error', async t => {
   t.plan(1);
-
-  moxios.stubRequest('http://example.com/error', {
-    status: 500,
-    responseText: '',
-  });
-
   try {
     const res = await utils.loadRemoteSnippetList([
       {
@@ -625,7 +604,7 @@ test('getQuantumultNodes', t => {
       port: 443,
       method: 'chacha20-ietf-poly1305',
       password: 'password',
-      'udp-relay': 'true',
+      'udp-relay': true,
       obfs: 'tls',
       'obfs-host': 'gateway-carry.icloud.com',
     },
@@ -672,6 +651,90 @@ test('getQuantumultNodes with filter', t => {
     .split('\n');
 
   t.is(schemeList[0],  'vmess://5rWL6K+VIDEgPSB2bWVzcywxLjEuMS4xLDgwODAsY2hhY2hhMjAtaWV0Zi1wb2x5MTMwNSwiMTM4NmY4NWUtNjU3Yi00ZDZlLTlkNTYtNzhiYWRiNzVlMWZkIiw2NCxncm91cD1TdXJnaW8sb3Zlci10bHM9ZmFsc2UsY2VydGlmaWNhdGU9MSxvYmZzPXdzLG9iZnMtcGF0aD0iLyIsb2Jmcy1oZWFkZXI9Ikhvc3Q6ZXhhbXBsZS5jb21bUnJdW05uXVVzZXItQWdlbnQ6TW96aWxsYS81LjAgKGlQaG9uZTsgQ1BVIGlQaG9uZSBPUyAxMl8zXzEgbGlrZSBNYWMgT1MgWCkgQXBwbGVXZWJLaXQvNjA1LjEuMTUgKEtIVE1MLCBsaWtlIEdlY2tvKSBNb2JpbGUvMTVFMTQ4Ig==');
+});
+
+test('getQuantumultXNodes', t => {
+  const schemeList = utils.getQuantumultXNodes([
+    {
+      type: NodeTypeEnum.Vmess,
+      alterId: '64',
+      hostname: '1.1.1.1',
+      method: 'auto',
+      network: 'ws',
+      nodeName: '测试 1',
+      path: '/',
+      port: 8080,
+      tls: false,
+      host: 'example.com',
+      uuid: '1386f85e-657b-4d6e-9d56-78badb75e1fd',
+    },
+    {
+      type: NodeTypeEnum.Vmess,
+      alterId: '64',
+      hostname: '1.1.1.1',
+      method: 'auto',
+      network: 'tcp',
+      nodeName: '测试 2',
+      path: '/',
+      port: 8080,
+      tls: false,
+      host: '',
+      uuid: '1386f85e-657b-4d6e-9d56-78badb75e1fd',
+    },
+    {
+      type: NodeTypeEnum.Vmess,
+      alterId: '64',
+      hostname: '1.1.1.1',
+      method: 'auto',
+      network: 'ws',
+      nodeName: '测试 3',
+      path: '/',
+      port: 8080,
+      tls: false,
+      host: '',
+      uuid: '1386f85e-657b-4d6e-9d56-78badb75e1fd',
+    },
+    {
+      type: NodeTypeEnum.Shadowsocksr,
+      nodeName: '🇭🇰HK',
+      hostname: 'hk.example.com',
+      port: 10000,
+      method: 'chacha20-ietf',
+      password: 'password',
+      obfs: 'tls1.2_ticket_auth',
+      obfsparam: 'music.163.com',
+      protocol: 'auth_aes128_md5',
+      protoparam: '',
+    },
+    {
+      type: NodeTypeEnum.HTTPS,
+      nodeName: 'test',
+      hostname: 'a.com',
+      port: 443,
+      username: 'snsms',
+      password: 'nndndnd',
+    },
+    {
+      nodeName: '🇺🇸US 1',
+      type: NodeTypeEnum.Shadowsocks,
+      hostname: 'us.example.com',
+      port: 443,
+      method: 'chacha20-ietf-poly1305',
+      password: 'password',
+      'udp-relay': true,
+      obfs: 'tls',
+      'obfs-host': 'gateway-carry.icloud.com',
+      tfo: true,
+    },
+  ])
+    .split('\n');
+
+  t.is(schemeList[0], 'vmess=1.1.1.1:8080, method=auto, password=1386f85e-657b-4d6e-9d56-78badb75e1fd, obfs=ws, obfs-uri=/, tag=测试 1');
+  t.is(schemeList[1], 'vmess=1.1.1.1:8080, method=auto, password=1386f85e-657b-4d6e-9d56-78badb75e1fd, tag=测试 2');
+  t.is(schemeList[2], 'vmess=1.1.1.1:8080, method=auto, password=1386f85e-657b-4d6e-9d56-78badb75e1fd, obfs=ws, obfs-uri=/, tag=测试 3');
+  t.is(schemeList[3], 'shadowsocks=hk.example.com:10000, method=chacha20-ietf, password=password, ssr-protocol=auth_aes128_md5, ssr-protocol-param=, obfs=tls1.2_ticket_auth, obfs-host=music.163.com, tag=🇭🇰HK');
+  t.is(schemeList[4], 'http=a.com:443, username=snsms, password=nndndnd, over-tls=true, tag=test');
+  t.is(schemeList[5], 'shadowsocks=us.example.com:443, method=chacha20-ietf-poly1305, password=password, obfs=tls, obfs-host=gateway-carry.icloud.com, udp-relay=true, fast-open=true, tag=🇺🇸US 1');
 });
 
 test('formatV2rayConfig', t => {
@@ -736,6 +799,7 @@ test('formatV2rayConfig', t => {
 
 test('getShadowsocksSubscription with udp', async t => {
   const nodeList = await utils.getShadowsocksSubscription('http://example.com/test-ss-sub.txt', true);
+  const nodeList2 = await utils.getShadowsocksSubscription('http://example.com/test-ss-sub.txt?v=2', false, true);
 
   t.deepEqual(nodeList[0], {
     type: NodeTypeEnum.Shadowsocks,
@@ -744,7 +808,7 @@ test('getShadowsocksSubscription with udp', async t => {
     port: '443',
     method: 'chacha20-ietf-poly1305',
     password: 'password',
-    'udp-relay': 'true',
+    'udp-relay': true,
     obfs: 'tls',
     'obfs-host': 'gateway-carry.icloud.com',
   });
@@ -755,7 +819,19 @@ test('getShadowsocksSubscription with udp', async t => {
     port: '443',
     method: 'chacha20-ietf-poly1305',
     password: 'password',
-    'udp-relay': 'true',
+    'udp-relay': true,
+  });
+  t.deepEqual(nodeList2[0], {
+    type: NodeTypeEnum.Shadowsocks,
+    nodeName: '🇺🇸US 1',
+    hostname: 'us.example.com',
+    port: '443',
+    method: 'chacha20-ietf-poly1305',
+    password: 'password',
+    'udp-relay': false,
+    obfs: 'tls',
+    'obfs-host': 'gateway-carry.icloud.com',
+    tfo: true,
   });
 });
 
@@ -783,7 +859,8 @@ test('getShadowsocksSubscription without udp', async t => {
 });
 
 test('getShadowsocksrSubscription', async t => {
-  const nodeList = await utils.getShadowsocksrSubscription('http://example.com/test-ssr-sub.txt');
+  const nodeList = await utils.getShadowsocksrSubscription('http://example.com/test-ssr-sub.txt?v=1');
+  const nodeList2 = await utils.getShadowsocksrSubscription('http://example.com/test-ssr-sub.txt?v=2', true);
 
   t.deepEqual(nodeList[0], {
     nodeName: '测试中文',
@@ -796,5 +873,18 @@ test('getShadowsocksrSubscription', async t => {
     obfsparam: 'breakwa11.moe',
     protocol: 'auth_aes128_md5',
     protoparam: '',
+  });
+  t.deepEqual(nodeList2[0], {
+    nodeName: '测试中文',
+    type: NodeTypeEnum.Shadowsocksr,
+    hostname: '127.0.0.1',
+    port: '1234',
+    method: 'aes-128-cfb',
+    password: 'aaabbb',
+    obfs: 'tls1.2_ticket_auth',
+    obfsparam: 'breakwa11.moe',
+    protocol: 'auth_aes128_md5',
+    protoparam: '',
+    tfo: true,
   });
 });
