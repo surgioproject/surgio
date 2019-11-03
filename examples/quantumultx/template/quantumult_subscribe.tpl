@@ -1,1 +1,1 @@
-{{ getQuantumultXNodes(nodeList, customParams.magicVariable) | base64 }}
+{{ getQuantumultXNodes(nodeList, customParams.magicVariable) }}
