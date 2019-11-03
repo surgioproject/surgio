@@ -1,44 +1,61 @@
 'use strict';
 
-const moxios = require('moxios');
+const axios = require('axios');
+const MockAdapter = require('axios-mock-adapter');
 const fs = require('fs');
 const path = require('path');
 
-moxios.install();
+const mock = new MockAdapter(axios);
 
-moxios.stubRequest('http://example.com/gui-config.json', {
-  status: 200,
-  responseText: fs.readFileSync(path.join(__dirname, 'asset/gui-config-1.json'), {
+mock.onGet(/\/gui-config\.json/).reply(
+  200,
+  fs.readFileSync(path.join(__dirname, 'asset/gui-config-1.json'), {
     encoding: 'utf8',
-  }),
-});
-moxios.stubRequest('http://example.com/test-ss-sub.txt', {
-  status: 200,
-  responseText: fs.readFileSync(path.join(__dirname, 'asset/test-ss-sub.txt'), {
+  })
+);
+mock.onGet(/\/test-ss-sub\.txt/).reply(
+  200,
+  fs.readFileSync(path.join(__dirname, 'asset/test-ss-sub.txt'), {
     encoding: 'utf8',
-  }),
-});
-moxios.stubRequest('http://example.com/test-ssr-sub.txt', {
-  status: 200,
-  responseText: fs.readFileSync(path.join(__dirname, 'asset/test-ssr-sub.txt'), {
+  })
+);
+mock.onGet(/\/test-ssr-sub\.txt/).reply(
+  200,
+  fs.readFileSync(path.join(__dirname, 'asset/test-ssr-sub.txt'), {
     encoding: 'utf8',
-  }),
-});
-moxios.stubRequest('http://example.com/test-v2rayn-sub.txt', {
-  status: 200,
-  responseText: fs.readFileSync(path.join(__dirname, 'asset/test-v2rayn-sub.txt'), {
+  })
+);
+mock.onGet(/\/test-v2rayn-sub\.txt/).reply(
+  200,
+  fs.readFileSync(path.join(__dirname, 'asset/test-v2rayn-sub.txt'), {
     encoding: 'utf8',
-  }),
-});
-moxios.stubRequest('http://example.com/netflix.list', {
-  status: 200,
-  responseText: fs.readFileSync(path.join(__dirname, 'asset/netflix.list'), {
+  })
+);
+mock.onGet(/\/netflix\.list/).reply(
+  200,
+  fs.readFileSync(path.join(__dirname, 'asset/netflix.list'), {
     encoding: 'utf8',
-  }),
-});
-moxios.stubRequest('http://example.com/clash-sample.yaml', {
-  status: 200,
-  responseText: fs.readFileSync(path.join(__dirname, 'asset/clash-sample.yaml'), {
+  })
+);
+mock.onGet(/\/telegram\.list/).reply(
+  200,
+  fs.readFileSync(path.join(__dirname, 'asset/telegram.list'), {
     encoding: 'utf8',
-  }),
-});
+  })
+);
+mock.onGet(/\/clash-sample\.yaml/).reply(
+  200,
+  fs.readFileSync(path.join(__dirname, 'asset/clash-sample.yaml'), {
+    encoding: 'utf8',
+  })
+);
+mock.onGet(/\/test-ruleset\.list/).reply(
+  200,
+  fs.readFileSync(path.join(__dirname, 'asset/test-ruleset-1.list'), {
+    encoding: 'utf8',
+  })
+);
+mock.onGet(/\/error/).reply(
+  500,
+  ''
+);

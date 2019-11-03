@@ -1,6 +1,5 @@
 // tslint:disable:no-expression-statement
 import test from 'ava';
-import moxios from 'moxios';
 import fs from 'fs';
 import path from 'path';
 
@@ -13,14 +12,6 @@ import {
 } from '../../lib/types';
 import * as utils from '../../lib/utils';
 import * as filter from '../../lib/utils/filter';
-
-test.beforeEach(() => {
-  moxios.install();
-});
-
-test.afterEach(() => {
-  moxios.uninstall();
-});
 
 test('getSurgeNodes', async t => {
   const nodeList: ReadonlyArray<ShadowsocksNodeConfig|ShadowsocksrNodeConfig|VmessNodeConfig> = [{
@@ -346,7 +337,8 @@ test('normalizeClashProxyGroupConfig', t => {
 });
 
 test('getShadowsocksJSONConfig', async t => {
-  const config = await utils.getShadowsocksJSONConfig('http://example.com/gui-config.json', true);
+  const config = await utils.getShadowsocksJSONConfig('http://example.com/gui-config.json?v=1', true);
+  const config2 = await utils.getShadowsocksJSONConfig('http://example.com/gui-config.json?v=2', false, true);
 
   t.deepEqual(config[0], {
     nodeName: '🇺🇸US 1',
@@ -390,28 +382,21 @@ test('getShadowsocksJSONConfig', async t => {
     obfs: 'http',
     'obfs-host': 'www.bing.com',
   });
+  t.deepEqual(config2[0], {
+    nodeName: '🇺🇸US 1',
+    type: NodeTypeEnum.Shadowsocks,
+    hostname: 'us.example.com',
+    port: 443,
+    method: 'chacha20-ietf-poly1305',
+    password: 'password',
+    'udp-relay': false,
+    tfo: true,
+    obfs: 'tls',
+    'obfs-host': 'gateway-carry.icloud.com',
+  });
 });
 
 test('loadRemoteSnippetList', async t => {
-  moxios.stubRequest('http://example.com/test-ruleset.list', {
-    status: 200,
-    responseText: fs.readFileSync(path.join(__dirname, '../asset/test-ruleset-1.list'), {
-      encoding: 'utf8',
-    }),
-  });
-  moxios.stubRequest('http://example.com/netflix.list', {
-    status: 200,
-    responseText: fs.readFileSync(path.join(__dirname, '../asset/netflix.list'), {
-      encoding: 'utf8',
-    }),
-  });
-  moxios.stubRequest('http://example.com/telegram.list', {
-    status: 200,
-    responseText: fs.readFileSync(path.join(__dirname, '../asset/telegram.list'), {
-      encoding: 'utf8',
-    }),
-  });
-
   const remoteSnippetList = await utils.loadRemoteSnippetList([
     {
       url: 'http://example.com/telegram.list',
@@ -458,12 +443,6 @@ test('loadRemoteSnippetList', async t => {
 
 test('loadRemoteSnippetList with error', async t => {
   t.plan(1);
-
-  moxios.stubRequest('http://example.com/error', {
-    status: 500,
-    responseText: '',
-  });
-
   try {
     const res = await utils.loadRemoteSnippetList([
       {
@@ -820,6 +799,7 @@ test('formatV2rayConfig', t => {
 
 test('getShadowsocksSubscription with udp', async t => {
   const nodeList = await utils.getShadowsocksSubscription('http://example.com/test-ss-sub.txt', true);
+  const nodeList2 = await utils.getShadowsocksSubscription('http://example.com/test-ss-sub.txt?v=2', false, true);
 
   t.deepEqual(nodeList[0], {
     type: NodeTypeEnum.Shadowsocks,
@@ -840,6 +820,18 @@ test('getShadowsocksSubscription with udp', async t => {
     method: 'chacha20-ietf-poly1305',
     password: 'password',
     'udp-relay': true,
+  });
+  t.deepEqual(nodeList2[0], {
+    type: NodeTypeEnum.Shadowsocks,
+    nodeName: '🇺🇸US 1',
+    hostname: 'us.example.com',
+    port: '443',
+    method: 'chacha20-ietf-poly1305',
+    password: 'password',
+    'udp-relay': false,
+    obfs: 'tls',
+    'obfs-host': 'gateway-carry.icloud.com',
+    tfo: true,
   });
 });
 
@@ -868,6 +860,7 @@ test('getShadowsocksSubscription without udp', async t => {
 
 test('getShadowsocksrSubscription', async t => {
   const nodeList = await utils.getShadowsocksrSubscription('http://example.com/test-ssr-sub.txt');
+  const nodeList2 = await utils.getShadowsocksrSubscription('http://example.com/test-ssr-sub.txt', true);
 
   t.deepEqual(nodeList[0], {
     nodeName: '测试中文',
@@ -880,5 +873,18 @@ test('getShadowsocksrSubscription', async t => {
     obfsparam: 'breakwa11.moe',
     protocol: 'auth_aes128_md5',
     protoparam: '',
+  });
+  t.deepEqual(nodeList2[0], {
+    nodeName: '测试中文',
+    type: NodeTypeEnum.Shadowsocksr,
+    hostname: '127.0.0.1',
+    port: '1234',
+    method: 'aes-128-cfb',
+    password: 'aaabbb',
+    obfs: 'tls1.2_ticket_auth',
+    obfsparam: 'breakwa11.moe',
+    protocol: 'auth_aes128_md5',
+    protoparam: '',
+    tfo: true,
   });
 });

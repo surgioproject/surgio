@@ -55,6 +55,7 @@ export const getDownloadUrl = (baseUrl: string = '/', artifactName: string, inli
   return URL.format(urlObject);
 };
 
+// istanbul ignore next
 export const getBlackSSLConfig = async (username: string, password: string): Promise<ReadonlyArray<HttpsNodeConfig>> => {
   assert(username, 'Lack of BlackSSL username.');
   assert(password, 'Lack of BlackSSL password.');
@@ -127,7 +128,7 @@ export const getShadowsocksJSONConfig = async (
           nodeConfig['obfs-host'] = obfsHost ? obfsHost[1] : 'www.bing.com';
         }
       }
-      if (tfo !== void 0) {
+      if (typeof tfo === 'boolean') {
         nodeConfig.tfo = tfo;
       }
 
@@ -248,10 +249,12 @@ export const getV2rayNSubscription = async (
     const result = configList.map<VmessNodeConfig>(item => {
       const json = JSON.parse(fromBase64(item.replace('vmess://', '')));
 
+      // istanbul ignore next
       if (!json.v || Number(json.v) !== 2) {
         throw new Error(`该订阅 ${url} 可能不是一个有效的 V2rayN 订阅。请参考 http://bit.ly/2N4lZ8X 进行排查`);
       }
 
+      // istanbul ignore next
       if (['kcp', 'http'].indexOf(json.net) > -1) {
         console.log();
         console.log(chalk.yellow(`不支持读取 network 类型为 ${json.net} 的 Vmess 节点，节点 ${json.ps} 会被省略`));
@@ -889,6 +892,7 @@ export const getQuantumultXNodes = (
   return result.join('\n');
 };
 
+// istanbul ignore next
 export const getShadowsocksNodesJSON = (list: ReadonlyArray<ShadowsocksNodeConfig>): string => {
   const nodes: ReadonlyArray<object> = list
     .map(nodeConfig => {
