@@ -1,3 +1,12 @@
+## [1.3.1](https://github.com/geekdada/surgio/compare/v1.3.0...v1.3.1) (2019-11-03)
+
+
+### Bug Fixes
+
+* 没有在 getQuantumultXNodes 中正确输出支持 udp 的 ssr 节点 ([7815b42](https://github.com/geekdada/surgio/commit/7815b42252c6402c0905e2cc7b238635f37fa6e7))
+
+
+
 # [1.3.0](https://github.com/geekdada/surgio/compare/v1.3.0-1...v1.3.0) (2019-11-03)
 
 
