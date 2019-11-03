@@ -106,11 +106,12 @@ async function requestConfigFromRemote(url: string, udpRelay?: boolean, tfo?: bo
             'obfs-host': item['obfs-host'] || 'www.bing.com',
           } : null),
           ...(tfo !== void 0 ? {
-          tfo,
-        } : null),
+            tfo,
+          } : null),
         };
 
       case 'vmess':
+        // istanbul ignore next
         if (['kcp', 'http'].indexOf(item.network) > -1) {
           console.log();
           console.log(chalk.yellow(`不支持从 Clash 订阅中读取 network 类型为 ${item.network} 的 Vmess 节点，节点 ${item.name} 会被省略`));
@@ -133,12 +134,12 @@ async function requestConfigFromRemote(url: string, udpRelay?: boolean, tfo?: bo
             host: _.get(item, 'ws-headers.Host', ''),
           } : null),
           ...(tfo !== void 0 ? {
-          tfo,
-        } : null),
+            tfo,
+          } : null),
         };
 
       case 'http':
-        if (item.tls !== 'https') {
+        if (!item.tls) {
           console.log();
           console.log(chalk.yellow(`不支持从 Clash 订阅中读取 HTTP 类型节点，节点 ${item.name} 会被省略`));
           return null;
@@ -152,8 +153,8 @@ async function requestConfigFromRemote(url: string, udpRelay?: boolean, tfo?: bo
           username: item.username || '',
           password: item.password || '',
           ...(tfo !== void 0 ? {
-          tfo,
-        } : null),
+            tfo,
+          } : null),
         };
 
       case 'snell':
@@ -165,10 +166,11 @@ async function requestConfigFromRemote(url: string, udpRelay?: boolean, tfo?: bo
           psk: item.psk,
           obfs: _.get(item, 'obfs-opts.mode', 'http'),
           ...(tfo !== void 0 ? {
-          tfo,
-        } : null),
+            tfo,
+          } : null),
         };
-
+      
+      // istanbul ignore next
       case 'ssr':
         return {
           type: NodeTypeEnum.Shadowsocksr,
@@ -182,8 +184,8 @@ async function requestConfigFromRemote(url: string, udpRelay?: boolean, tfo?: bo
           protoparam: item.protocolparam,
           method: item.cipher,
           ...(tfo !== void 0 ? {
-          tfo,
-        } : null),
+            tfo,
+          } : null),
         };
 
       default:

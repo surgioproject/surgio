@@ -25,6 +25,7 @@ export default class ShadowsocksSubscribeProvider extends Provider {
 
     const { error } = schema.validate(config);
 
+    // istanbul ignore next
     if (error) {
       throw error;
     }

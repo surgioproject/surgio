@@ -5,7 +5,7 @@ import { NodeTypeEnum } from '../../lib/types';
 test('getClashSubscription', async t => {
   const config = await ClashProvider.getClashSubscription('http://example.com/clash-sample.yaml');
 
-  t.deepEqual(config.map(item => item.nodeName), ['ss1', 'ss2', 'vmess', 'snell', 'ss4']);
+  t.deepEqual(config.map(item => item.nodeName), ['ss1', 'ss2', 'vmess', 'http', 'snell', 'ss4']);
   t.deepEqual(config[0], {
     type: NodeTypeEnum.Shadowsocks,
     nodeName: 'ss1',
@@ -39,6 +39,14 @@ test('getClashSubscription', async t => {
     udp: false,
   });
   t.deepEqual(config[3], {
+    type: NodeTypeEnum.HTTPS,
+    nodeName: 'http',
+    hostname: 'server',
+    port: 443,
+    username: 'username',
+    password: 'password',
+  });
+  t.deepEqual(config[4], {
     type: NodeTypeEnum.Snell,
     nodeName: 'snell',
     hostname: 'server',
@@ -46,7 +54,7 @@ test('getClashSubscription', async t => {
     psk: 'yourpsk',
     obfs: 'http',
   });
-  t.deepEqual(config[4], {
+  t.deepEqual(config[5], {
     type: NodeTypeEnum.Shadowsocks,
     nodeName: 'ss4',
     hostname: 'server',

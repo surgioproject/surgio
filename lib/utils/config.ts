@@ -99,6 +99,7 @@ export const validateConfig = (userConfig: Partial<CommandConfig>): void => {
 
   const { error } = schema.validate(userConfig);
 
+  // istanbul ignore next
   if (error) {
     throw error;
   }

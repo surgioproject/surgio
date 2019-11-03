@@ -859,8 +859,8 @@ test('getShadowsocksSubscription without udp', async t => {
 });
 
 test('getShadowsocksrSubscription', async t => {
-  const nodeList = await utils.getShadowsocksrSubscription('http://example.com/test-ssr-sub.txt');
-  const nodeList2 = await utils.getShadowsocksrSubscription('http://example.com/test-ssr-sub.txt', true);
+  const nodeList = await utils.getShadowsocksrSubscription('http://example.com/test-ssr-sub.txt?v=1');
+  const nodeList2 = await utils.getShadowsocksrSubscription('http://example.com/test-ssr-sub.txt?v=2', true);
 
   t.deepEqual(nodeList[0], {
     nodeName: '测试中文',

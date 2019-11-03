@@ -23,6 +23,7 @@ export default class V2rayNSubscribeProvider extends Provider {
 
     const { error } = schema.validate(config);
 
+    // istanbul ignore next
     if (error) {
       throw error;
     }
