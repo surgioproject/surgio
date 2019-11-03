@@ -5,6 +5,7 @@ import Provider from './Provider';
 
 export default class ShadowsocksrSubscribeProvider extends Provider {
   public readonly url: string;
+  public readonly udpRelay?: boolean;
 
   constructor(config: ShadowsocksrSubscribeProviderConfig) {
     super(config);
@@ -18,6 +19,7 @@ export default class ShadowsocksrSubscribeProvider extends Provider {
           ],
         })
         .required(),
+      udpRelay: Joi.boolean(),
     })
       .unknown();
 
@@ -29,9 +31,10 @@ export default class ShadowsocksrSubscribeProvider extends Provider {
     }
 
     this.url = config.url;
+    this.udpRelay = config.udpRelay;
   }
 
   public getNodeList(): ReturnType<typeof getShadowsocksrSubscription> {
-    return getShadowsocksrSubscription(this.url, this.tfo);
+    return getShadowsocksrSubscription(this.url, this.udpRelay, this.tfo);
   }
 }

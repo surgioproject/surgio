@@ -198,6 +198,7 @@ export const getShadowsocksSubscription = async (
 
 export const getShadowsocksrSubscription = async (
   url: string,
+  udpRelay?: boolean,
   tfo?: boolean,
 ): Promise<ReadonlyArray<ShadowsocksrNodeConfig>> => {
   assert(url, '未指定订阅地址 url');
@@ -216,6 +217,9 @@ export const getShadowsocksrSubscription = async (
 
       if (tfo !== void 0) {
         (nodeConfig.tfo as boolean) = tfo;
+      }
+      if (udpRelay !== void 0) {
+        (nodeConfig['udp-relay'] as boolean) = udpRelay;
       }
 
       return nodeConfig;
@@ -855,6 +859,9 @@ export const getQuantumultXNodes = (
             `ssr-protocol-param=${nodeConfig.protoparam}`,
             `obfs=${nodeConfig.obfs}`,
             `obfs-host=${nodeConfig.obfsparam}`,
+            ...(nodeConfig['udp-relay'] ? [
+              `udp-relay=${nodeConfig['udp-relay']}`,
+            ] : []),
             ...(nodeConfig.tfo ? [
               `fast-open=${nodeConfig.tfo}`,
             ] : []),

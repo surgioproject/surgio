@@ -11,7 +11,7 @@ export const mergeFilters = (filters: ReadonlyArray<NodeNameFilterType>, isStric
 export const useKeywords = (keywords: ReadonlyArray<string>, isStrict?: boolean): NodeNameFilterType => {
   // istanbul ignore next
   if (!Array.isArray(keywords)) {
-    throw new Error('keywords 请使用数组。');
+    throw new Error('keywords 请使用数组');
   }
 
   return item => keywords[isStrict ? 'every' : 'some'](keyword => item.nodeName.includes(keyword));
@@ -20,7 +20,7 @@ export const useKeywords = (keywords: ReadonlyArray<string>, isStrict?: boolean)
 export const discardKeywords = (keywords: ReadonlyArray<string>, isStrict?: boolean): NodeNameFilterType => {
   // istanbul ignore next
   if (!Array.isArray(keywords)) {
-    throw new Error('keywords 请使用数组。');
+    throw new Error('keywords 请使用数组');
   }
 
   return item => !keywords[isStrict ? 'every' : 'some'](keyword => item.nodeName.includes(keyword));
@@ -29,7 +29,7 @@ export const discardKeywords = (keywords: ReadonlyArray<string>, isStrict?: bool
 export const useRegexp = (regexp: RegExp): NodeNameFilterType => {
   // istanbul ignore next
   if (!_.isRegExp(regexp)) {
-    throw new Error('入参不是一个合法的正则表达式。');
+    throw new Error('入参不是一个合法的正则表达式');
   }
 
   return item => regexp.test(item.nodeName);

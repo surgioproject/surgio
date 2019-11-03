@@ -96,6 +96,7 @@ export interface ShadowsocksSubscribeProviderConfig extends ProviderConfig {
 
 export interface ShadowsocksrSubscribeProviderConfig extends ProviderConfig {
   readonly url: string;
+  readonly udpRelay?: boolean;
 }
 
 export interface V2rayNSubscribeProviderConfig extends ProviderConfig {
@@ -148,6 +149,7 @@ export interface ShadowsocksrNodeConfig extends SimpleNodeConfig {
   readonly password: string;
   readonly obfsparam: string;
   readonly protoparam: string;
+  readonly 'udp-relay'?: boolean;
 }
 
 export interface VmessNodeConfig extends SimpleNodeConfig {

@@ -859,8 +859,8 @@ test('getShadowsocksSubscription without udp', async t => {
 });
 
 test('getShadowsocksrSubscription', async t => {
-  const nodeList = await utils.getShadowsocksrSubscription('http://example.com/test-ssr-sub.txt?v=1');
-  const nodeList2 = await utils.getShadowsocksrSubscription('http://example.com/test-ssr-sub.txt?v=2', true);
+  const nodeList = await utils.getShadowsocksrSubscription('http://example.com/test-ssr-sub.txt?v=1', false);
+  const nodeList2 = await utils.getShadowsocksrSubscription('http://example.com/test-ssr-sub.txt?v=2', true, true);
 
   t.deepEqual(nodeList[0], {
     nodeName: '测试中文',
@@ -873,6 +873,7 @@ test('getShadowsocksrSubscription', async t => {
     obfsparam: 'breakwa11.moe',
     protocol: 'auth_aes128_md5',
     protoparam: '',
+    'udp-relay': false,
   });
   t.deepEqual(nodeList2[0], {
     nodeName: '测试中文',
@@ -886,5 +887,6 @@ test('getShadowsocksrSubscription', async t => {
     protocol: 'auth_aes128_md5',
     protoparam: '',
     tfo: true,
+    'udp-relay': true,
   });
 });

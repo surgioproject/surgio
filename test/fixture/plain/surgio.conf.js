@@ -36,7 +36,7 @@ module.exports = {
       name: 'template-functions.conf',
       template: 'template-functions',
       provider: 'ss',
-      combineProviders: ['custom', 'ss_json', 'v2rayn', 'clash'],
+      combineProviders: ['custom', 'ss_json', 'v2rayn', 'clash', 'ssr_with_udp'],
     },
   ],
   urlBase: 'https://example.com/',
