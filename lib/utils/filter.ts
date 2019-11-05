@@ -78,4 +78,4 @@ export const taiwanFilter: NodeNameFilterType = item => {
   ].some(key => item.nodeName.toLowerCase().includes(key));
 };
 
-export const youtubePremiumFilter: NodeNameFilterType = mergeFilters([usFilter, japanFilter, koreaFilter, hkFilter]);
+export const youtubePremiumFilter: NodeNameFilterType = mergeFilters([usFilter, japanFilter, koreaFilter, hkFilter, singaporeFilter]);
