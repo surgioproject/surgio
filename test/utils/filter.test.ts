@@ -91,18 +91,18 @@ test('youtubePremiumFilter', t => {
     nodeName: '韩国',
     type: NodeTypeEnum.Shadowsocks,
   }));
-  t.false(filter.youtubePremiumFilter({
+  t.true(filter.youtubePremiumFilter({
     nodeName: 'HK',
     type: NodeTypeEnum.Shadowsocks,
   }));
 });
 
 test('usFilter', t => {
-  t.true(filter.youtubePremiumFilter({
+  t.true(filter.usFilter({
     nodeName: '🇺🇸 美国',
     type: NodeTypeEnum.Shadowsocks,
   }));
-  t.false(filter.youtubePremiumFilter({
+  t.false(filter.usFilter({
     nodeName: 'HK',
     type: NodeTypeEnum.Shadowsocks,
   }));
