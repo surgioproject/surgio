@@ -1,3 +1,7 @@
+{{ remoteSnippets.youtube.main('YouTube') | quantumultx }}
+{{ remoteSnippets.netflix.main('Netflix') | quantumultx }}
+{{ remoteSnippets.global.main('PROXY') | quantumultx }}
+
 # LAN, debugging rules should place above this line
 DOMAIN-SUFFIX,local,DIRECT
 IP-CIDR,10.0.0.0/8,DIRECT
