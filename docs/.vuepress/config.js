@@ -45,7 +45,8 @@ module.exports = {
             'advance/surge-advance',
             'advance/custom-filter',
             'advance/automation',
-            'advance/api-gateway'
+            'advance/api-gateway',
+            ['https://blog.dada.li/2019/better-proxy-rules-for-apple-services', '苹果服务的连接策略推荐']
           ]
         },
       ],
