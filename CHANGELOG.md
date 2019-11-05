@@ -1,3 +1,13 @@
+## [1.3.2](https://github.com/geekdada/surgio/compare/v1.3.1...v1.3.2) (2019-11-05)
+
+
+### Features
+
+* youtubePremiumFilter 增加香港 ([821bf3c](https://github.com/geekdada/surgio/commit/821bf3c653767490bf093e0980be091b28f3501d))
+* youtubePremiumFilter 增加新加坡 ([7b32873](https://github.com/geekdada/surgio/commit/7b32873ff906156208ae7a03ea8002534a794c57))
+
+
+
 ## [1.3.1](https://github.com/geekdada/surgio/compare/v1.3.0...v1.3.1) (2019-11-03)
 
 
