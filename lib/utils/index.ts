@@ -733,7 +733,7 @@ export const getQuantumultNodes = (
             `certificate=1`,
             `obfs=${nodeConfig.network}`,
             `obfs-path=${JSON.stringify(nodeConfig.path ?? '/')}`,
-            `obfs-header=${JSON.stringify(getHeader(nodeConfig.host ?? nodeConfig.hostname ))}`,
+            `obfs-header=${JSON.stringify(getHeader(nodeConfig.host || nodeConfig.hostname ))}`,
           ].filter(value => !!value).join(',');
 
           return 'vmess://' + toBase64([
@@ -814,7 +814,7 @@ export const getQuantumultXNodes = (
                 config.push(`obfs=ws`);
               }
               config.push(`obfs-uri=${nodeConfig.path ?? '/'}`);
-              config.push(`obfs-host=${nodeConfig.host ?? nodeConfig.hostname}`);
+              config.push(`obfs-host=${nodeConfig.host || nodeConfig.hostname}`);
 
               break;
             default:
@@ -1146,7 +1146,7 @@ export const formatV2rayConfig = (localPort: string|number, nodeConfig: VmessNod
       ...config.outbound.streamSettings,
       security: 'tls',
       tlsSettings: {
-        serverName: nodeConfig.host ?? nodeConfig.hostname,
+        serverName: nodeConfig.host || nodeConfig.hostname,
       },
     };
   }
