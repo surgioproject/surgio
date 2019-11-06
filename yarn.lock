@@ -958,10 +958,10 @@
     "@types/minimatch" "*"
     "@types/node" "*"
 
-"@types/hapi__joi@^16.0.2":
-  version "16.0.2"
-  resolved "https://registry.yarnpkg.com/@types/hapi__joi/-/hapi__joi-16.0.2.tgz#28dbc647c4fcf736403ad21c30668e3ecf4c19de"
-  integrity sha512-mBJ70SvfnlmeVNRiq34M0FwZ0xkFwwLN2eQkneT2DStDITKiWEV4ycE2Muq0PavBj+pc8wVtxpJwAR+YAMIplg==
+"@types/hapi__joi@^16.0.3":
+  version "16.0.3"
+  resolved "https://registry.yarnpkg.com/@types/hapi__joi/-/hapi__joi-16.0.3.tgz#8ed6a0bd3a3fc40c0b5ff41b399004c5f9bb0b0b"
+  integrity sha512-gPxCfPcdZx9220GP4MFlhyBonQuyy8c/NZkGJkdtGipaExFzNLGYzkH2eG+yo0eEoVWdSC/JxhokSR/IHfap8Q==
 
 "@types/http-assert@*":
   version "1.5.1"
@@ -1054,10 +1054,10 @@
   resolved "https://registry.yarnpkg.com/@types/normalize-package-data/-/normalize-package-data-2.4.0.tgz#e486d0d97396d79beedd0a6e33f4534ff6b4973e"
   integrity sha512-f5j5b/Gf71L+dbqxIpQ4Z2WlmI/mPJ0fOkGGmFgtb6sAu97EPczzbS3/tJKxmcYDj55OX6ssqwDAWOHIYDRDGA==
 
-"@types/nunjucks@^3.1.1":
-  version "3.1.2"
-  resolved "https://registry.yarnpkg.com/@types/nunjucks/-/nunjucks-3.1.2.tgz#2cf954c46d99d1284fffe1719434d8c2fe20760c"
-  integrity sha512-XTNp6i9W0SZZb+mamEB2lYLxi+/V+FHFC35vxUYNnng71sbi72ndGLpUfa5O9Si/uE38X08n6GCbUYsxVUDmrw==
+"@types/nunjucks@^3.1.3":
+  version "3.1.3"
+  resolved "https://registry.yarnpkg.com/@types/nunjucks/-/nunjucks-3.1.3.tgz#55fa2bf6fd34641545a6686217324fde66d31164"
+  integrity sha512-42IiIIBdoB7ZDwCVhCWYT4fMCj+4TeacuVgh7xyT2du5EhkpA+OFeeDdYTFCUt1MrHb8Aw7ZqFvr8s1bwP9l8w==
 
 "@types/q@^1.5.1":
   version "1.5.2"
@@ -10934,10 +10934,10 @@ supports-hyperlinks@^2.0.0:
     has-flag "^4.0.0"
     supports-color "^7.0.0"
 
-surgio@latest:
-  version "1.3.1"
-  resolved "https://registry.yarnpkg.com/surgio/-/surgio-1.3.1.tgz#fae126f3f1dafe061892c27c87d17bb3433cc40e"
-  integrity sha512-mtzipNIslMbHvp8P0LM2nZZ8Yj9QT0xBNRkxqfuFA4Jv+TVj4ntpmQ9eYRc0plyRgR6iWNxYCUD5Q5ascTsWmQ==
+surgio@1.3.2:
+  version "1.3.2"
+  resolved "https://registry.yarnpkg.com/surgio/-/surgio-1.3.2.tgz#b7f610cd02c86b382fa4c26aed80f127e610cb68"
+  integrity sha512-KXg6elA9OHM8+LTtd2CUmGJ9fG3FvouqCBpe908enmWG18XyJNGuWc0t8+FMX5+87gkaqhlS4QJIGigOAv7vQg==
   dependencies:
     "@hapi/joi" "^16.1.7"
     "@types/koa-router" "^7.0.42"
@@ -11340,10 +11340,10 @@ tslint-immutable@^6.0.1:
   dependencies:
     tsutils "^2.28.0 || ^3.0.0"
 
-tslint@^5.19.0:
-  version "5.20.0"
-  resolved "https://registry.yarnpkg.com/tslint/-/tslint-5.20.0.tgz#fac93bfa79568a5a24e7be9cdde5e02b02d00ec1"
-  integrity sha512-2vqIvkMHbnx8acMogAERQ/IuINOq6DFqgF8/VDvhEkBqQh/x6SP0Y+OHnKth9/ZcHQSroOZwUQSN18v8KKF0/g==
+tslint@^5.20.1:
+  version "5.20.1"
+  resolved "https://registry.yarnpkg.com/tslint/-/tslint-5.20.1.tgz#e401e8aeda0152bc44dd07e614034f3f80c67b7d"
+  integrity sha512-EcMxhzCFt8k+/UP5r8waCf/lzmeSyVlqxqMEDQE7rWYiQky8KpIBz1JAoYXfROHrPZ1XXd43q8yQnULOLiBRQg==
   dependencies:
     "@babel/code-frame" "^7.0.0"
     builtin-modules "^1.1.1"
@@ -11442,10 +11442,10 @@ typedarray@^0.0.6:
   resolved "https://registry.yarnpkg.com/typedarray/-/typedarray-0.0.6.tgz#867ac74e3864187b1d3d47d996a78ec5c8830777"
   integrity sha1-hnrHTjhkGHsdPUfZlqeOxciDB3c=
 
-typescript@^3.6.4:
-  version "3.6.4"
-  resolved "https://registry.yarnpkg.com/typescript/-/typescript-3.6.4.tgz#b18752bb3792bc1a0281335f7f6ebf1bbfc5b91d"
-  integrity sha512-unoCll1+l+YK4i4F8f22TaNVPRHcD9PA3yCuZ8g5e0qGqlVlJ/8FSateOLLSagn+Yg5+ZwuPkL8LFUc0Jcvksg==
+typescript@^3.7.2:
+  version "3.7.2"
+  resolved "https://registry.yarnpkg.com/typescript/-/typescript-3.7.2.tgz#27e489b95fa5909445e9fef5ee48d81697ad18fb"
+  integrity sha512-ml7V7JfiN2Xwvcer+XAf2csGO1bPBdRbFCkYBczNZggrBZ9c7G3riSUeJmqEU5uOtXNPMhE3n+R4FA/3YOAWOQ==
 
 uc.micro@^1.0.1, uc.micro@^1.0.5:
   version "1.0.6"
