@@ -1,3 +1,18 @@
+## [1.3.3](https://github.com/geekdada/surgio/compare/v1.3.2...v1.3.3) (2019-11-06)
+
+
+### Bug Fixes
+
+* 没有在 QuantumultX vmess 节点中添加 obfs-host ([2d9ceb5](https://github.com/geekdada/surgio/commit/2d9ceb542eba4a3d7b770e3e46accb792201c28e))
+
+
+### Features
+
+* 面板增加添加 Clash 的按钮 ([b66e5f3](https://github.com/geekdada/surgio/commit/b66e5f31dae975ccac83742666ea7385a6e023e0))
+* check command ([2db635f](https://github.com/geekdada/surgio/commit/2db635ff91cd786daa6852abdd82896ab213f3ab))
+
+
+
 ## [1.3.2](https://github.com/geekdada/surgio/compare/v1.3.1...v1.3.2) (2019-11-05)
 
 
