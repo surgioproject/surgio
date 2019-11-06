@@ -176,6 +176,7 @@ https://xxxxxx.xxx.now.sh/list-artifact?access_token=YOUR_PASSWORD
 #### 特性
 
 - 若名称中包含 `surge`（大小写不敏感），则会出现添加到 Surge 的按钮。
+- 若名称中包含 `clash`（大小写不敏感），则会出现添加到 ClashX/CFW 的按钮。
 - 若项目下的 `package.json` 有 `repository` 字段，则支持直接跳转到 GitLab 或 GitHub 编辑对应文件。
 
 ### 最后

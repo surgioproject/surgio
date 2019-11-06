@@ -111,6 +111,10 @@ export default `
             {% if artifact.name.toLowerCase().includes('surge') %}
             <a rel="nofollow" class="link pure-button" target="_blank" href="surge:///install-config?url={{ encodeURIComponent(getPreviewUrl(artifact.name)) }}">Surge</a>
             {% endif %}
+
+            {% if artifact.name.toLowerCase().includes('clash') %}
+            <a rel="nofollow" class="link pure-button" target="_blank" href="clash://install-config?url={{ encodeURIComponent(getPreviewUrl(artifact.name)) }}">ClashX/CFW</a>
+            {% endif %}
           </div>
         </div>
       </li>
