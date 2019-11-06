@@ -393,10 +393,7 @@ export const getSurgeNodes = (
         case NodeTypeEnum.Vmess: {
           const config = nodeConfig as VmessNodeConfig;
 
-          if (
-            nodeConfig.surgeConfig &&
-            nodeConfig.surgeConfig.v2ray === 'native'
-          ) {
+          if (nodeConfig?.surgeConfig?.v2ray === 'native') {
             // Native support for vmess
 
             const configList = [
@@ -407,8 +404,8 @@ export const getSurgeNodes = (
             ];
 
             function getHeader(
-              host,
-              ua = OBFS_UA
+              host: string,
+              ua: string = OBFS_UA
             ): string {
               return [
                 `Host:${host}`,
@@ -708,7 +705,7 @@ export const getQuantumultNodes = (
   filter?: NodeNameFilterType,
 ): string => {
   function getHeader(
-    host,
+    host: string,
     ua = OBFS_UA
   ): string {
     return [
@@ -735,8 +732,8 @@ export const getQuantumultNodes = (
             `over-tls=${nodeConfig.tls === true ? 'true' : 'false'}`,
             `certificate=1`,
             `obfs=${nodeConfig.network}`,
-            `obfs-path=${JSON.stringify(nodeConfig.path || '/')}`,
-            `obfs-header=${JSON.stringify(getHeader(nodeConfig.host || nodeConfig.hostname ))}`,
+            `obfs-path=${JSON.stringify(nodeConfig.path ?? '/')}`,
+            `obfs-header=${JSON.stringify(getHeader(nodeConfig.host ?? nodeConfig.hostname ))}`,
           ].filter(value => !!value).join(',');
 
           return 'vmess://' + toBase64([
@@ -803,9 +800,7 @@ export const getQuantumultXNodes = (
             `${nodeConfig.hostname}:${nodeConfig.port}`,
             ...pickAndFormatStringList(nodeConfig, ['method']),
             `password=${nodeConfig.uuid}`,
-            ...(nodeConfig['udp-relay'] ? [
-              `udp-relay=${nodeConfig['udp-relay']}`,
-            ] : []),
+            'udp-relay=true',
             ...(nodeConfig.tfo ? [
               `fast-open=${nodeConfig.tfo}`,
             ] : []),
@@ -818,7 +813,8 @@ export const getQuantumultXNodes = (
               } else {
                 config.push(`obfs=ws`);
               }
-              config.push(`obfs-uri=${nodeConfig.path || '/'}`);
+              config.push(`obfs-uri=${nodeConfig.path ?? '/'}`);
+              config.push(`obfs-host=${nodeConfig.host ?? nodeConfig.hostname}`);
 
               break;
             default:
@@ -1150,7 +1146,7 @@ export const formatV2rayConfig = (localPort: string|number, nodeConfig: VmessNod
       ...config.outbound.streamSettings,
       security: 'tls',
       tlsSettings: {
-        serverName: nodeConfig.host || nodeConfig.hostname,
+        serverName: nodeConfig.host ?? nodeConfig.hostname,
       },
     };
   }

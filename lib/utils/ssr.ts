@@ -1,6 +1,8 @@
-import queryString from 'query-string';
 import { NodeTypeEnum, ShadowsocksrNodeConfig } from '../types';
 import { fromUrlSafeBase64 } from './index';
+import Debug from 'debug';
+
+const debug = Debug('surgio:utils:ssr');
 
 /**
  * 协议：https://github.com/shadowsocksr-backup/shadowsocks-rss/wiki/SSR-QRcode-scheme
@@ -11,6 +13,7 @@ export const parseSSRUri = (str: string): ShadowsocksrNodeConfig => {
   const scheme = fromUrlSafeBase64(str.replace('ssr://', ''));
   const configArray = scheme.split('/');
   const basicInfo = configArray[0].split(':');
+  debug('SSR URI', scheme);
 
   // 去除首部分
   configArray.shift();
@@ -30,8 +33,8 @@ export const parseSSRUri = (str: string): ShadowsocksrNodeConfig => {
     method: basicInfo[3],
     obfs: basicInfo[4],
     password: fromUrlSafeBase64(basicInfo[5]),
-    protoparam: fromUrlSafeBase64(extras.protoparam || '').replace(/\s/g, ''),
-    obfsparam: fromUrlSafeBase64(extras.obfsparam || '').replace(/\s/g, ''),
+    protoparam: fromUrlSafeBase64(extras.protoparam ?? '').replace(/\s/g, ''),
+    obfsparam: fromUrlSafeBase64(extras.obfsparam ?? '').replace(/\s/g, ''),
   };
 };
 
