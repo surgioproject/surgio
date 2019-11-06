@@ -7,6 +7,7 @@ import updateNotifier from 'update-notifier';
 import GenerateCommand from './command/generate';
 import SpeedCommand from './command/speed';
 import UploadCommand from './command/upload';
+import CheckCommand from './command/check';
 import * as filter from './utils/filter';
 import { errorHandler } from './utils/error-helper';
 
@@ -36,6 +37,7 @@ export {
   GenerateCommand,
   UploadCommand,
   SpeedCommand,
+  CheckCommand,
 };
 
 export const utils = {
