@@ -9,6 +9,7 @@ import {
   ShadowsocksrNodeConfig,
   SimpleNodeConfig,
   VmessNodeConfig,
+  SnellNodeConfig,
 } from '../../lib/types';
 import * as utils from '../../lib/utils';
 import * as filter from '../../lib/utils/filter';
@@ -137,7 +138,7 @@ test('getNodeNames', async t => {
 });
 
 test('getClashNodes', async t => {
-  const nodeList: ReadonlyArray<ShadowsocksNodeConfig|VmessNodeConfig> = [{
+  const nodeList: ReadonlyArray<ShadowsocksNodeConfig|VmessNodeConfig|SnellNodeConfig> = [{
     nodeName: 'Test Node 1',
     type: NodeTypeEnum.Shadowsocks,
     hostname: 'example.com',
@@ -178,6 +179,13 @@ test('getClashNodes', async t => {
     tls: false,
     type: NodeTypeEnum.Vmess,
     uuid: '1386f85e-657b-4d6e-9d56-78badb75e1fd',
+  }, {
+    nodeName: 'snell',
+    type: NodeTypeEnum.Snell,
+    hostname: '1.1.1.1',
+    port: 443,
+    psk: 'psk',
+    obfs: 'tls',
   }];
   const array = utils.getClashNodes(nodeList);
 
@@ -229,6 +237,16 @@ test('getClashNodes', async t => {
     type: 'vmess',
     uuid: '1386f85e-657b-4d6e-9d56-78badb75e1fd',
   });
+  t.deepEqual(array[4], {
+    name: 'snell',
+    type: 'snell',
+    server: '1.1.1.1',
+    port: 443,
+    psk: 'psk',
+    'obfs-opts': {
+      mode: 'tls',
+    },
+  })
 });
 
 test('getShadowsocksNodes', async t => {
@@ -729,9 +747,9 @@ test('getQuantumultXNodes', t => {
   ])
     .split('\n');
 
-  t.is(schemeList[0], 'vmess=1.1.1.1:8080, method=auto, password=1386f85e-657b-4d6e-9d56-78badb75e1fd, udp-relay=true, obfs=ws, obfs-uri=/, obfs-host=example.com, tag=测试 1');
-  t.is(schemeList[1], 'vmess=1.1.1.1:8080, method=auto, password=1386f85e-657b-4d6e-9d56-78badb75e1fd, udp-relay=true, tag=测试 2');
-  t.is(schemeList[2], 'vmess=1.1.1.1:8080, method=auto, password=1386f85e-657b-4d6e-9d56-78badb75e1fd, udp-relay=true, obfs=ws, obfs-uri=/, obfs-host=1.1.1.1, tag=测试 3');
+  t.is(schemeList[0], 'vmess=1.1.1.1:8080, password=1386f85e-657b-4d6e-9d56-78badb75e1fd, udp-relay=true, obfs=ws, obfs-uri=/, obfs-host=example.com, tag=测试 1');
+  t.is(schemeList[1], 'vmess=1.1.1.1:8080, password=1386f85e-657b-4d6e-9d56-78badb75e1fd, udp-relay=true, tag=测试 2');
+  t.is(schemeList[2], 'vmess=1.1.1.1:8080, password=1386f85e-657b-4d6e-9d56-78badb75e1fd, udp-relay=true, obfs=ws, obfs-uri=/, obfs-host=1.1.1.1, tag=测试 3');
   t.is(schemeList[3], 'shadowsocks=hk.example.com:10000, method=chacha20-ietf, password=password, ssr-protocol=auth_aes128_md5, ssr-protocol-param=, obfs=tls1.2_ticket_auth, obfs-host=music.163.com, tag=🇭🇰HK');
   t.is(schemeList[4], 'http=a.com:443, username=snsms, password=nndndnd, over-tls=true, tag=test');
   t.is(schemeList[5], 'shadowsocks=us.example.com:443, method=chacha20-ietf-poly1305, password=password, obfs=tls, obfs-host=gateway-carry.icloud.com, udp-relay=true, fast-open=true, tag=🇺🇸US 1');

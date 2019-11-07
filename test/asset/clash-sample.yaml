@@ -165,8 +165,8 @@ Proxy:
     port: 44046
     psk: yourpsk
       # obfs-opts:
-      # mode: http # or tls
-    # host: bing.com
+        # mode: http # or tls
+        # host: bing.com
 
   - name: "ss4"
     type: ss

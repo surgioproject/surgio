@@ -537,6 +537,18 @@ export const getClashNodes = (
             protocolparam: nodeConfig.protoparam,
             cipher: nodeConfig.method,
           };
+        
+        case NodeTypeEnum.Snell:
+          return {
+            type: 'snell',
+            name: nodeConfig.nodeName,
+            server: nodeConfig.hostname,
+            port: nodeConfig.port,
+            psk: nodeConfig.psk,
+            'obfs-opts': {
+              mode: nodeConfig.obfs,
+            },
+          };
 
         // istanbul ignore next
         default:
