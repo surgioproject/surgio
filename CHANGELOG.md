@@ -1,3 +1,17 @@
+## [1.3.4](https://github.com/geekdada/surgio/compare/v1.3.3...v1.3.4) (2019-11-07)
+
+
+### Bug Fixes
+
+* vmess method 为 auto 时 qx 会无法识别 ([9adbe77](https://github.com/geekdada/surgio/commit/9adbe776dd1c9743be6878e6610dfb37a0ca4fc5))
+
+
+### Features
+
+* add snell support for clash output [#33](https://github.com/geekdada/surgio/issues/33) ([8c3df9e](https://github.com/geekdada/surgio/commit/8c3df9e97d9b22258f5aa99c8a89fdc6220b0f78))
+
+
+
 ## [1.3.3](https://github.com/geekdada/surgio/compare/v1.3.2...v1.3.3) (2019-11-06)
 
 
