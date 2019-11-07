@@ -798,7 +798,10 @@ export const getQuantumultXNodes = (
         case NodeTypeEnum.Vmess: {
           const config = [
             `${nodeConfig.hostname}:${nodeConfig.port}`,
-            ...pickAndFormatStringList(nodeConfig, ['method']),
+            // method 为 auto 时 qx 会无法识别
+            ...(nodeConfig.method !== 'auto' ? [
+              `method=${nodeConfig.method}`
+            ] : []),
             `password=${nodeConfig.uuid}`,
             'udp-relay=true',
             ...(nodeConfig.tfo ? [
