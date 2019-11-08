@@ -811,9 +811,9 @@ export const getQuantumultXNodes = (
           const config = [
             `${nodeConfig.hostname}:${nodeConfig.port}`,
             // method 为 auto 时 qx 会无法识别
-            ...(nodeConfig.method !== 'auto' ? [
-              `method=${nodeConfig.method}`
-            ] : []),
+            (nodeConfig.method === 'auto' ?
+              `method=chacha20-ietf-poly1305` :
+              `method=${nodeConfig.method}`),
             `password=${nodeConfig.uuid}`,
             'udp-relay=true',
             ...(nodeConfig.tfo ? [
