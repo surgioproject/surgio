@@ -1,3 +1,12 @@
+## [1.3.5](https://github.com/geekdada/surgio/compare/v1.3.4...v1.3.5) (2019-11-08)
+
+
+### Bug Fixes
+
+* QuantumultX 的兼容性问题 ([dfb5c2e](https://github.com/geekdada/surgio/commit/dfb5c2e7b04df85b24a1ca67bde9136ae8c68b97))
+
+
+
 ## [1.3.4](https://github.com/geekdada/surgio/compare/v1.3.3...v1.3.4) (2019-11-07)
 
 
