@@ -316,7 +316,7 @@ test('normalizeClashProxyGroupConfig', t => {
         name: 'fallback-auto',
         filter: filters.hkFilter,
         proxies: ['🚀 Proxy', 'US'],
-        type: 'fallback-auto',
+        type: 'fallback',
       },
     ];
   }
@@ -361,7 +361,7 @@ test('normalizeClashProxyGroupConfig', t => {
     },
     {
       name: 'fallback-auto',
-      type: 'fallback-auto',
+      type: 'fallback',
       proxies: ['🚀 Proxy', 'US', '🇭🇰HK(Example)'],
       url: PROXY_TEST_URL,
       interval: PROXY_TEST_INTERVAL,

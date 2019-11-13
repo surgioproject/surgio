@@ -156,7 +156,7 @@ Surgio 会根据 Artifact 的值来生成配置文件。你可以一次性配置
 {
   name: 'US',
   filter: filters.usFilter,
-  type: 'url-test', // 支持 'url-test', 'fallback-auto', 'load-balance'
+  type: 'url-test', // 支持 'url-test', 'fallback', 'load-balance'
   // proxies: ['Auto'],
 }
 ```
@@ -185,6 +185,6 @@ Surgio 会根据 Artifact 的值来生成配置文件。你可以一次性配置
 {
   name: '🍎 Apple',
   proxies: ['🚀 Proxy', 'US', 'HK'],
-  type: 'url-test', // 支持 'url-test', 'fallback-auto', 'load-balance'
+  type: 'url-test', // 支持 'url-test', 'fallback', 'load-balance'
 }
 ```

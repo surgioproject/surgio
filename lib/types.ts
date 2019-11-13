@@ -193,7 +193,7 @@ export type PossibleNodeConfigType = HttpsNodeConfig|ShadowsocksNodeConfig|Shado
 
 export type ProxyGroupModifier = (nodeList: ReadonlyArray<PossibleNodeConfigType>, filters: PlainObjectOf<NodeNameFilterType>) => ReadonlyArray<{
   readonly name: string;
-  readonly type: 'select'|'url-test'|'fallback-auto'|'load-balance';
+  readonly type: 'select'|'url-test'|'fallback'|'load-balance';
   readonly proxies?: ReadonlyArray<string>;
   readonly filter?: NodeNameFilterType;
 }>;

@@ -1006,7 +1006,7 @@ export const getNodeNames = (
 
 export const getClashNodeNames = (
   ruleName: string,
-  ruleType: 'select'|'url-test'|'fallback-auto'|'load-balance',
+  ruleType: 'select'|'url-test'|'fallback'|'load-balance',
   nodeNameList: ReadonlyArray<SimpleNodeConfig>,
   options: {
     readonly filter?: NodeNameFilterType,
@@ -1038,7 +1038,7 @@ export const getClashNodeNames = (
     type: ruleType,
     name: ruleName,
     proxies,
-    ...(['url-test', 'fallback-auto', 'load-balance'].includes(ruleType) ? {
+    ...(['url-test', 'fallback', 'load-balance'].includes(ruleType) ? {
       url: options.proxyTestUrl,
       interval: options.proxyTestInterval,
     } : null),
