@@ -48,6 +48,9 @@ export interface CommandConfig {
   },
   readonly proxyTestUrl?: string;
   readonly proxyTestInterval?: number;
+  readonly customFilters?: {
+    readonly [name: string]: NodeNameFilterType;
+  };
 }
 
 export interface RemoteSnippetConfig {

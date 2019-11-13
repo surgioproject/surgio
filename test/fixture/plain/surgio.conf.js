@@ -50,4 +50,7 @@ module.exports = {
   surgeConfig: {
     v2ray: 'native',
   },
+  customFilters: {
+    globalFilter: node => node.nodeName === '测试中文',
+  },
 };

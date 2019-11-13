@@ -3,3 +3,5 @@
 {{ getNodeNames(nodeList) }}
 ----
 {{ getQuantumultXNodes(nodeList) }}
+----
+{{ getSurgeNodes(nodeList, customFilters.globalFilter) }}

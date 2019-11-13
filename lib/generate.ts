@@ -131,7 +131,10 @@ export async function generate(
       youtubePremiumFilter = provider.youtubePremiumFilter || defaultYoutubePremiumFilter;
     }
     if (!customFilters) {
-      customFilters = provider.customFilters || {};
+      customFilters = {
+        ...config.customFilters,
+        ...provider.customFilters,
+      };
     }
 
     nodeConfigList.forEach(nodeConfig => {

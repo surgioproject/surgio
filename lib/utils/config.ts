@@ -103,6 +103,7 @@ export const validateConfig = (userConfig: Partial<CommandConfig>): void => {
       ],
     }),
     proxyTestInterval: Joi.number(),
+    customFilters: Joi.object().pattern(Joi.string(), Joi.function()),
   })
     .unknown();
 
