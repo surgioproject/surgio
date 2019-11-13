@@ -76,12 +76,32 @@ Surgio 会根据 Artifact 的值来生成配置文件。你可以一次性配置
 ```js
 {
   customParams: {
-    beta: true
+    beta: true,
+    foo: 'bar',
   },
 }
 ```
 
-此后即可在模板中使用 `{% if customParams.beta %}{% endif %}`，让你仅通过一个模板就能实现多种不同的配置。Nunjucks 的条件语法请参考其文档。
+此后即可在模板中使用 
+
+:::v-pre
+`{{ customParams.foo }}`
+:::
+
+来输出 `foo` 的内容。
+
+你也可以定义布尔值以实现模板中的逻辑判断，比如：
+
+```html
+<!-- .tpl 文件 -->
+{% if customParams.beta %}
+
+{% endif %}
+```
+
+:::tip 提示
+逻辑语句能够让你仅通过一个模板就能实现多种不同的配置。Nunjucks 的条件语法请参考其文档。
+:::
 
 ## 方法
 
@@ -129,7 +149,7 @@ Surgio 会根据 Artifact 的值来生成配置文件。你可以一次性配置
 {
   name: 'US',
   filter: filters.usFilter,
-  type: 'url-test',
+  type: 'url-test', // 支持 'url-test', 'fallback-auto', 'load-balance'
   // proxies: ['Auto'],
 }
 ```
@@ -158,6 +178,6 @@ Surgio 会根据 Artifact 的值来生成配置文件。你可以一次性配置
 {
   name: '🍎 Apple',
   proxies: ['🚀 Proxy', 'US', 'HK'],
-  type: 'url-test',
+  type: 'url-test', // 支持 'url-test', 'fallback-auto', 'load-balance'
 }
 ```

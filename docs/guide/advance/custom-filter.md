@@ -5,15 +5,11 @@ sidebarDepth: 2
 
 # 自定义 Filter（过滤器）
 
-在之前的版本里，我们允许用户使用内置的几个过滤器进行节点过滤。现在 Surgio 已经支持在 Provider 中自定义 Filter。需要提醒一下大家，原来内置的国别过滤器已经拓展了不少，可以在 [这里](/guide/custom-template.md#国别过滤器) 查看。
+在之前的版本里，我们允许用户使用内置的几个过滤器进行节点过滤。现在 Surgio 已经支持在 Provider 和 Surgio 配置中自定义 Filter。需要提醒一下大家，原来内置的国别过滤器已经拓展了不少，可以在 [这里](/guide/custom-template.md#过滤器) 查看。
 
 ## 如何自定义
 
-在 Provider 定义中加入 `customFilters` 字段后可以添加任意个 Filter。Filter 在 TypeScript 中的类型为：
-
-```typescript
-type NodeNameFilterType = (nodeConfig: SimpleNodeConfig) => boolean;
-```
+在 Provider 配置或 `surgio.conf.js` 中加入 `customFilters`，然后参照下面例子来自定义。
 
 看不懂的同学也不用怕，依葫芦画瓢很简单的哈 🙋‍♂️。
 
@@ -27,11 +23,18 @@ module.exports = {
 };
 ```
 
-以上基本就是内置的 `netflixFilter` 实现（滑稽。
+:::tip 提示
+这里只是举个例子，并不推荐你重复实现 Surgio 已经内置的过滤器。
+:::
+
+入参 `nodeConfig` 包含节点的所有属性，其中有一些你可能会用到的属性写在下面：
+
+- `nodeName` - 节点名
+- `type` - 节点类型（例如 `shadowsocks`）
 
 ## 如何使用
 
-在模板（`tpl` 文件）中你可以使用 `customFilters.wo_yao_netflix_jie_dian`。
+在模板（`.tpl` 文件）中你可以使用 `customFilters.wo_yao_netflix_jie_dian`。
 
 Clash 配置比较特殊。你需要到 Artifact 定义的 `proxyGroupModifier` 里使用 `filters.wo_yao_netflix_jie_dian`。例如：
 

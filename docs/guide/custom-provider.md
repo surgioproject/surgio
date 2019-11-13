@@ -17,8 +17,8 @@ sidebarDepth: 2
 |  `shadowsocks_subscribe`  |  通用的 Shadowwsocks 订阅地址  |    |
 |  `shadowsocksr_subscribe`  |  通用的 Shadowwsocksr 订阅地址  |    |
 |  `v2rayn_subscribe`  |  V2rayN 订阅地址  |  [协议](https://github.com/2dust/v2rayN/wiki/%E8%AE%A2%E9%98%85%E5%8A%9F%E8%83%BD%E8%AF%B4%E6%98%8E)  |
-|  `custom`  |  自己维护的节点  |  支持 Shadowsocks, Shadowsocksr, Snell, HTTPS, Vmess  |
-|  `clash`  |  Clash 配置  |  支持 Shadowsocks, Shadowsocksr, Snell, HTTPS, Vmess  |
+|  `custom` <Badge text="推荐" vertical="middle" /> |  自己维护的节点  |  支持 Shadowsocks, Shadowsocksr, Snell, HTTPS, Vmess  |
+|  `clash` <Badge text="推荐" vertical="middle" /> |  Clash 配置  |  支持 Shadowsocks, Shadowsocksr, Snell, HTTPS, Vmess  |
 
 ## shadowsocks_json_subscribe
 
@@ -112,7 +112,7 @@ module.exports = {
 - 如果你正在使用 [DlerCloud](https://dlercloud.com/auth/register?affid=45071)，可以使用「通用」类型的订阅地址
 :::
 
-## clash
+## clash <Badge text="推荐" vertical="middle" />
 
 ### url
 
@@ -127,7 +127,7 @@ module.exports = {
 
 我们发现部分机场的 Clash 订阅并没有设定 `udp`，所以你可以通过配置这个属性来强制设定节点的 UDP 转发支持情况。如果订阅节点中包含 `udp` 字段，则该配置无效。
 
-## custom
+## custom <Badge text="推荐" vertical="middle" />
 
 ```js
 module.exports = {
@@ -300,6 +300,10 @@ module.exports = {
 - 默认值: `undefined`
 
 自定义 Filter。关于自定义 Filter 的用法，请阅读 [进阶 - 自定义 Filter](/guide/advance/custom-filter)。
+
+:::tip 提示
+你现在可以定义 [全局的过滤器](/guide/custom-config.md#customfilters) 了！
+:::
 
 ### provider.startPort
 

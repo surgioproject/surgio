@@ -173,3 +173,14 @@ SSR 的可执行文件地址。请使用 libev 版本的二进制文件，可以
 - 默认值: `undefined`
 
 鉴权码。
+
+### customFilters <Badge text="v1.4.0" vertical="middle" />
+
+- 类型: `object`
+- 默认值: `undefined`
+
+全局自定义 Filter。关于自定义 Filter 的用法，请阅读 [进阶 - 自定义 Filter](/guide/advance/custom-filter)。
+
+:::warning 注意
+全局的过滤器优先级没有 Provider 中定义的过滤器高，如果遇到同名的过滤器则这里定义的值会被覆盖。
+:::
