@@ -4,7 +4,7 @@ import _ from 'lodash';
 import path from 'path';
 
 import { CommandConfig } from '../types';
-import { PROXY_TEST_URL } from './constant';
+import { PROXY_TEST_INTERVAL, PROXY_TEST_URL } from './constant';
 import { ensureConfigFolder } from './index';
 
 export const loadConfig = (cwd: string, configPath: string, override?: Partial<CommandConfig>): CommandConfig => {
@@ -40,6 +40,7 @@ export const normalizeConfig = (cwd: string, userConfig: Partial<CommandConfig>)
       v2ray: 'external',
     },
     proxyTestUrl: PROXY_TEST_URL,
+    proxyTestInterval: PROXY_TEST_INTERVAL,
   };
   const config: CommandConfig = _.defaultsDeep(userConfig, defaultConfig);
 
@@ -101,6 +102,7 @@ export const validateConfig = (userConfig: Partial<CommandConfig>): void => {
         /https?/,
       ],
     }),
+    proxyTestInterval: Joi.number(),
   })
     .unknown();
 

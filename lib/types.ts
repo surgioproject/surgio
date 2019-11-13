@@ -47,6 +47,7 @@ export interface CommandConfig {
     readonly auth?: boolean;
   },
   readonly proxyTestUrl?: string;
+  readonly proxyTestInterval?: number;
 }
 
 export interface RemoteSnippetConfig {
@@ -188,7 +189,7 @@ export type PossibleNodeConfigType = HttpsNodeConfig|ShadowsocksNodeConfig|Shado
 
 export type ProxyGroupModifier = (nodeList: ReadonlyArray<PossibleNodeConfigType>, filters: PlainObjectOf<NodeNameFilterType>) => ReadonlyArray<{
   readonly name: string;
-  readonly type: 'select' | 'url-test';
+  readonly type: 'select'|'url-test'|'fallback-auto'|'load-balance';
   readonly proxies?: ReadonlyArray<string>;
   readonly filter?: NodeNameFilterType;
 }>;

@@ -12,7 +12,7 @@ import {
   SnellNodeConfig,
 } from '../../lib/types';
 import * as utils from '../../lib/utils';
-import { PROXY_TEST_URL } from '../../lib/utils/constant';
+import { PROXY_TEST_INTERVAL, PROXY_TEST_URL } from '../../lib/utils/constant';
 import * as filter from '../../lib/utils/filter';
 
 test('getSurgeNodes', async t => {
@@ -304,6 +304,18 @@ test('normalizeClashProxyGroupConfig', t => {
         proxies: ['DIRECT'],
         type: 'url-test',
       },
+      {
+        name: 'load-balance',
+        filter: filters.hkFilter,
+        proxies: ['🚀 Proxy', 'US'],
+        type: 'load-balance',
+      },
+      {
+        name: 'fallback-auto',
+        filter: filters.hkFilter,
+        proxies: ['🚀 Proxy', 'US'],
+        type: 'fallback-auto',
+      },
     ];
   }
   const result = [
@@ -317,14 +329,14 @@ test('normalizeClashProxyGroupConfig', t => {
       type: 'url-test',
       proxies: [],
       url: PROXY_TEST_URL,
-      interval: 1200,
+      interval: PROXY_TEST_INTERVAL,
     },
     {
       name: 'HK',
       type: 'url-test',
       proxies: ['🇭🇰HK(Example)'],
       url: PROXY_TEST_URL,
-      interval: 1200,
+      interval: PROXY_TEST_INTERVAL,
     },
     {
       name: '🍎 Apple',
@@ -336,7 +348,21 @@ test('normalizeClashProxyGroupConfig', t => {
       proxies: ['DIRECT', '🇭🇰HK(Example)'],
       type: 'url-test',
       url: PROXY_TEST_URL,
-      interval: 1200,
+      interval: PROXY_TEST_INTERVAL,
+    },
+    {
+      name: 'load-balance',
+      type: 'load-balance',
+      proxies: ['🚀 Proxy', 'US', '🇭🇰HK(Example)'],
+      url: PROXY_TEST_URL,
+      interval: PROXY_TEST_INTERVAL,
+    },
+    {
+      name: 'fallback-auto',
+      type: 'fallback-auto',
+      proxies: ['🚀 Proxy', 'US', '🇭🇰HK(Example)'],
+      url: PROXY_TEST_URL,
+      interval: PROXY_TEST_INTERVAL,
     },
   ];
 
@@ -359,6 +385,7 @@ test('normalizeClashProxyGroupConfig', t => {
       proxyGroupModifier as any,
       {
         proxyTestUrl: PROXY_TEST_URL,
+        proxyTestInterval: PROXY_TEST_INTERVAL,
       }
     ),
     result);

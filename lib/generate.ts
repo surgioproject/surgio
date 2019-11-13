@@ -218,6 +218,7 @@ export async function generate(
             artifact.proxyGroupModifier,
             {
               proxyTestUrl: config.proxyTestUrl,
+              proxyTestInterval: config.proxyTestInterval,
             },
           ),
         },

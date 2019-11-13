@@ -971,12 +971,13 @@ export const getNodeNames = (
 
 export const getClashNodeNames = (
   ruleName: string,
-  ruleType: 'select' | 'url-test',
+  ruleType: 'select'|'url-test'|'fallback-auto'|'load-balance',
   nodeNameList: ReadonlyArray<SimpleNodeConfig>,
   options: {
     readonly filter?: NodeNameFilterType,
     readonly existingProxies?: ReadonlyArray<string>,
     readonly proxyTestUrl?: string,
+    readonly proxyTestInterval?: number,
   } = {},
 ): {
   readonly type: string;
@@ -1002,9 +1003,9 @@ export const getClashNodeNames = (
     type: ruleType,
     name: ruleName,
     proxies,
-    ...(ruleType === 'url-test' ? {
+    ...(['url-test', 'fallback-auto', 'load-balance'].includes(ruleType) ? {
       url: options.proxyTestUrl,
-      interval: 1200,
+      interval: options.proxyTestInterval,
     } : null),
   };
 };
@@ -1036,6 +1037,7 @@ export const normalizeClashProxyGroupConfig = (
   proxyGroupModifier: ProxyGroupModifier,
   options: {
     readonly proxyTestUrl?: string,
+    readonly proxyTestInterval?: number,
   } = {},
 ): ReadonlyArray<any> => {
   const proxyGroup = proxyGroupModifier(nodeList, customFilters);
@@ -1046,6 +1048,7 @@ export const normalizeClashProxyGroupConfig = (
         filter: item.filter,
         existingProxies: item.proxies,
         proxyTestUrl: options.proxyTestUrl,
+        proxyTestInterval: options.proxyTestInterval,
       });
     } else if (item.proxies) {
       return item;
