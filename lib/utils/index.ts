@@ -33,6 +33,7 @@ import {
 import { normalizeConfig, validateConfig } from './config';
 import { parseSSRUri } from './ssr';
 import { OBFS_UA, NETWORK_TIMEOUT } from './constant';
+import { formatVmessUri } from './v2ray';
 
 const debug = Debug('surgio:utils');
 
@@ -564,6 +565,38 @@ export const getClashNodes = (
     .filter(item => item !== null);
 };
 
+export const getMellowNodes = (
+  list: ReadonlyArray<ShadowsocksNodeConfig|VmessNodeConfig>,
+  filter?: NodeFilterType
+): string => {
+  const result = list
+    .filter(item => filter ? filter(item) : true)
+    .map(nodeConfig => {
+      if (nodeConfig.enable === false) { return null; }
+
+      switch (nodeConfig.type) {
+        case NodeTypeEnum.Shadowsocks: {
+          const uri = getShadowsocksNodes([nodeConfig]);
+          return [nodeConfig.nodeName, 'ss', uri.trim()].join(', ');
+        }
+
+        case NodeTypeEnum.Vmess: {
+          const uri = formatVmessUri(nodeConfig);
+          return [nodeConfig.nodeName, 'vmess1', uri.trim().replace('vmess://', 'vmess1://')].join(', ');
+        }
+      
+        // istanbul ignore next
+        default:
+            console.log();
+            console.log(chalk.yellow(`不支持为 Mellow 生成 ${nodeConfig!.type} 的节点，节点 ${nodeConfig!.nodeName} 会被省略`));
+          return null;
+      }
+    })
+    .filter(item => !!item);
+
+  return result.join('\n');
+};
+
 // istanbul ignore next
 export const toUrlSafeBase64 = (str: string): string => URLSafeBase64.encode(Buffer.from(str, 'utf8'));
 
@@ -629,7 +662,7 @@ export const getShadowsocksNodes = (
           return null;
       }
     })
-    .filter(item => item !== null);
+    .filter(item => !!item);
 
   return result.join('\n');
 };
@@ -748,7 +781,7 @@ export const getQuantumultNodes = (
             `over-tls=${nodeConfig.tls === true ? 'true' : 'false'}`,
             `certificate=1`,
             `obfs=${nodeConfig.network}`,
-            `obfs-path=${JSON.stringify(nodeConfig.path ?? '/')}`,
+            `obfs-path=${JSON.stringify(nodeConfig.path || '/')}`,
             `obfs-header=${JSON.stringify(getHeader(nodeConfig.host || nodeConfig.hostname ))}`,
           ].filter(value => !!value).join(',');
 
@@ -832,7 +865,7 @@ export const getQuantumultXNodes = (
               } else {
                 config.push(`obfs=ws`);
               }
-              config.push(`obfs-uri=${nodeConfig.path ?? '/'}`);
+              config.push(`obfs-uri=${nodeConfig.path || '/'}`);
               config.push(`obfs-host=${nodeConfig.host || nodeConfig.hostname}`);
 
               break;
@@ -960,7 +993,8 @@ export const getShadowsocksNodesJSON = (list: ReadonlyArray<ShadowsocksNodeConfi
 
 export const getNodeNames = (
   list: ReadonlyArray<SimpleNodeConfig>,
-  filter?: NodeNameFilterType
+  filter?: NodeNameFilterType,
+  separator?: string,
 ): string => {
   const nodes = list.filter(item => {
     const result = item.enable !== false;
@@ -972,7 +1006,7 @@ export const getNodeNames = (
     return result;
   });
 
-  return nodes.map(item => item.nodeName).join(', ');
+  return nodes.map(item => item.nodeName).join(separator || ', ');
 };
 
 export const getClashNodeNames = (

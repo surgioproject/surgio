@@ -14,6 +14,7 @@ test('cli works', async t => {
     cwd: resolve('plain'),
     execArgv: ['--require', require.resolve('./stub-axios.js')],
   })
+  .debug()
     .end();
 
   t.is(code, 0);

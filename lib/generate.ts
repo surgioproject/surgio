@@ -28,6 +28,7 @@ import {
   getShadowsocksNodesJSON,
   getShadowsocksrNodes,
   getSurgeNodes,
+  getMellowNodes,
   loadRemoteSnippetList,
   normalizeClashProxyGroupConfig,
   toBase64,
@@ -173,9 +174,7 @@ export async function generate(
       downloadUrl: getDownloadUrl(config.urlBase, artifactName, true, gatewayHasToken ? gatewayConfig.accessToken : undefined),
       nodes: nodeList,
       names: nodeNameList,
-      remoteSnippets: _.keyBy(remoteSnippetList, item => {
-        return item.name;
-      }),
+      remoteSnippets: _.keyBy(remoteSnippetList, item => item.name),
       nodeList,
       provider: artifact.provider,
       providerName: artifact.provider,
@@ -189,6 +188,7 @@ export async function generate(
       getShadowsocksrNodes,
       getQuantumultNodes,
       getQuantumultXNodes,
+      getMellowNodes,
       usFilter,
       hkFilter,
       japanFilter,

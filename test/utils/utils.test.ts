@@ -132,9 +132,11 @@ test('getNodeNames', async t => {
     }
   ];
   const txt1 = utils.getNodeNames(nodeNameList);
+  const txt2 = utils.getNodeNames(nodeNameList, undefined, ':');
   const txt3 = utils.getNodeNames(nodeNameList, simpleNodeConfig => simpleNodeConfig.nodeName !== 'Test Node 3');
 
   t.is(txt1, 'Test Node 1, Test Node 3');
+  t.is(txt2, 'Test Node 1:Test Node 3');
   t.is(txt3, 'Test Node 1');
 });
 

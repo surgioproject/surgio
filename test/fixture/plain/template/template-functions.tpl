@@ -5,3 +5,5 @@
 {{ getQuantumultXNodes(nodeList) }}
 ----
 {{ getSurgeNodes(nodeList, customFilters.globalFilter) }}
+----
+{{ getMellowNodes(nodeList) }}
