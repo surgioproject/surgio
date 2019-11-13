@@ -781,6 +781,17 @@ test('getQuantumultXNodes', t => {
       'obfs-host': 'gateway-carry.icloud.com',
       tfo: true,
     },
+    {
+      type: NodeTypeEnum.Vmess,
+      alterId: '64',
+      hostname: '1.1.1.1',
+      method: 'auto',
+      network: 'tcp',
+      nodeName: '测试 4',
+      port: 443,
+      tls: true,
+      uuid: '1386f85e-657b-4d6e-9d56-78badb75e1fd',
+    },
   ])
     .split('\n');
 
@@ -790,6 +801,7 @@ test('getQuantumultXNodes', t => {
   t.is(schemeList[3], 'shadowsocks=hk.example.com:10000, method=chacha20-ietf, password=password, ssr-protocol=auth_aes128_md5, ssr-protocol-param=, obfs=tls1.2_ticket_auth, obfs-host=music.163.com, tag=🇭🇰HK');
   t.is(schemeList[4], 'http=a.com:443, username=snsms, password=nndndnd, over-tls=true, tag=test');
   t.is(schemeList[5], 'shadowsocks=us.example.com:443, method=chacha20-ietf-poly1305, password=password, obfs=tls, obfs-host=gateway-carry.icloud.com, udp-relay=true, fast-open=true, tag=🇺🇸US 1');
+  t.is(schemeList[6], 'vmess=1.1.1.1:443, method=chacha20-ietf-poly1305, password=1386f85e-657b-4d6e-9d56-78badb75e1fd, udp-relay=true, obfs=over-tls, tag=测试 4')
 });
 
 test('formatV2rayConfig', t => {

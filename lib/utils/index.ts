@@ -836,6 +836,12 @@ export const getQuantumultXNodes = (
               config.push(`obfs-host=${nodeConfig.host || nodeConfig.hostname}`);
 
               break;
+            case 'tcp':
+              if (nodeConfig.tls) {
+                config.push(`obfs=over-tls`);
+              }
+
+              break;
             default:
               // do nothing
           }
