@@ -84,3 +84,23 @@ test('quantumultx filter', t => {
 
   t.is(result, '');
 });
+
+test('mellow filter 1', t => {
+  const body = `{{ str | mellow }}`;
+  const str = `IP-CIDR,67.198.55.0/24,Proxy,no-resolve // test rule`;
+  const result = templateEngine.renderString(body, {
+    str,
+  });
+
+  t.is(result, 'IP-CIDR,67.198.55.0/24,Proxy');
+});
+
+test('mellow filter 2', t => {
+  const body = `{{ str | mellow }}`;
+  const str = `URL-REGEX,xxxxxxxxxxxx`;
+  const result = templateEngine.renderString(body, {
+    str,
+  });
+
+  t.is(result, '');
+});
