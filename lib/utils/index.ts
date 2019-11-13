@@ -566,7 +566,7 @@ export const getClashNodes = (
 };
 
 export const getMellowNodes = (
-  list: ReadonlyArray<ShadowsocksNodeConfig|VmessNodeConfig>,
+  list: ReadonlyArray<VmessNodeConfig>,
   filter?: NodeFilterType
 ): string => {
   const result = list
@@ -575,11 +575,6 @@ export const getMellowNodes = (
       if (nodeConfig.enable === false) { return null; }
 
       switch (nodeConfig.type) {
-        case NodeTypeEnum.Shadowsocks: {
-          const uri = getShadowsocksNodes([nodeConfig]);
-          return [nodeConfig.nodeName, 'ss', uri.trim()].join(', ');
-        }
-
         case NodeTypeEnum.Vmess: {
           const uri = formatVmessUri(nodeConfig);
           return [nodeConfig.nodeName, 'vmess1', uri.trim().replace('vmess://', 'vmess1://')].join(', ');
