@@ -227,12 +227,31 @@ vmess://5rWL6K+VIDIgPSB2bWVzcywxLjEuMS4xLDgwODAsY2hhY2hhMjAtaWV0Zi1wb2x5MTMwNSwi
 
 生成 QuantumulX 的节点配置。该配置能用于 [`server_local`](https://github.com/crossutility/Quantumult-X/blob/master/sample.conf#L88) 或者 [`server_remote`](https://github.com/crossutility/Quantumult-X/blob/master/server-complete.txt)。
 
+### getMellowNodes <Badge text="v1.4.0" vertical="middle" />
+
+`getMellowNodes(nodeList, filter?)`
+
+:::tip 提示
+- 第二个参数可选，可传入标准的过滤器或自定义的过滤器
+- 支持输出 Vmess 节点
+:::
+
+该方法输出的数据结构如下：
+
+```
+Proxy-1, vmess1, vmess1://75da2e14-4d08-480b-b3cb-0079a0c51275@example.com:443/v2?network=ws&tls=true
+Proxy-2, vmess1, vmess1://75da2e14-4d08-480b-b3cb-0079a0c51275@example.com:10025?network=tcp
+```
+
+使用时请参考 [官方文档](https://github.com/mellow-io/mellow#%E6%9B%B4%E5%A4%9A%E9%85%8D%E7%BD%AE)。
+
 ### getNodeNames
 
-`getNodeNames(nodeList, filter?)`
+`getNodeNames(nodeList, filter?, separator?)`
 
 :::tip 提示
 - `filter` 为可选参数
+- `separator` 为可选参数。可以通过这个参数修改节点名的分隔符，你可能会在编写 Mellow 配置时传入 `:`
 :::
 
 生成一段逗号分隔的名称字符串，例如：
@@ -313,7 +332,8 @@ DOMAIN-SUFFIX,ytimg.com,🚀 Proxy
 
 由于 Yaml 的数组类型必须在每一条数据前加 `-`，所以提供了一个处理函数将规则转换成 Clash 能够识别的数组。
 
-```
+```html
+<!-- .tpl 文件 -->
 {% import './snippet/blocked_rules.tpl' as blocked_rules %}
 
 {{ blocked_rules.main('🚀 Proxy') | patchYamlArray }}
@@ -340,8 +360,20 @@ DOMAIN-SUFFIX,ytimg.com,🚀 Proxy
 
 由于 QuantumultX 目前暂时还不支持 `URL-REGEX` 和 `PROCESS-NAME`，所以需要把这些规则从配置中除去。
 
-```
+```html
+<!-- .tpl 文件 -->
 {% import './snippet/blocked_rules.tpl' as blocked_rules %}
 
 {{ blocked_rules.main('🚀 Proxy') | quantumultx }}
+```
+
+### Mellow 规则处理
+
+由于 Mellow 目前不支持 `URL-REGEX`, `USER-AGENT` 和 `no-resolve` 关键词，如果你需要引入 Surge 的远程片段则需要在引入时加入这个处理器。
+
+```html
+<!-- .tpl 文件 -->
+{% import './snippet/blocked_rules.tpl' as blocked_rules %}
+
+{{ blocked_rules.main('🚀 Proxy') | mellow }}
 ```

@@ -103,6 +103,13 @@ Surgio 会根据 Artifact 的值来生成配置文件。你可以一次性配置
 逻辑语句能够让你仅通过一个模板就能实现多种不同的配置。Nunjucks 的条件语法请参考其文档。
 :::
 
+### destDir <Badge text="v1.4.0" vertical="middle" />
+
+- 类型: `string`
+- 默认值: `undefined`
+
+该 Artifact 的生成目录。对于本地管理规则仓库的朋友可能会非常有用，你不再需要人肉复制粘贴了。
+
 ## 方法
 
 ### proxyGroupModifier
