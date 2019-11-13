@@ -180,7 +180,6 @@ export async function generate(
       getDownloadUrl: (name: string) => getDownloadUrl(config.urlBase, name, true, gatewayHasToken ? gatewayConfig.accessToken : undefined),
       getNodeNames,
       getClashNodes,
-      getClashNodeNames,
       getSurgeNodes,
       getShadowsocksNodes,
       getShadowsocksNodesJSON,
@@ -216,7 +215,10 @@ export async function generate(
               youtubePremiumFilter,
               ...customFilters,
             },
-            artifact.proxyGroupModifier
+            artifact.proxyGroupModifier,
+            {
+              proxyTestUrl: config.proxyTestUrl,
+            },
           ),
         },
       } : {}),

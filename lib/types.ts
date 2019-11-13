@@ -46,6 +46,7 @@ export interface CommandConfig {
     readonly accessToken?: string;
     readonly auth?: boolean;
   },
+  readonly proxyTestUrl?: string;
 }
 
 export interface RemoteSnippetConfig {

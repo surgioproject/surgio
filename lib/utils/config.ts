@@ -4,6 +4,7 @@ import _ from 'lodash';
 import path from 'path';
 
 import { CommandConfig } from '../types';
+import { PROXY_TEST_URL } from './constant';
 import { ensureConfigFolder } from './index';
 
 export const loadConfig = (cwd: string, configPath: string, override?: Partial<CommandConfig>): CommandConfig => {
@@ -38,6 +39,7 @@ export const normalizeConfig = (cwd: string, userConfig: Partial<CommandConfig>)
     surgeConfig: {
       v2ray: 'external',
     },
+    proxyTestUrl: PROXY_TEST_URL,
   };
   const config: CommandConfig = _.defaultsDeep(userConfig, defaultConfig);
 
@@ -93,6 +95,11 @@ export const validateConfig = (userConfig: Partial<CommandConfig>): void => {
     gateway: Joi.object({
       accessToken: Joi.string(),
       auth: Joi.boolean(),
+    }),
+    proxyTestUrl: Joi.string().uri({
+      scheme: [
+        /https?/,
+      ],
     }),
   })
     .unknown();

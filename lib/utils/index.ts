@@ -11,6 +11,7 @@ import URL from 'url';
 import URLSafeBase64 from 'urlsafe-base64';
 import YAML from 'yaml';
 import os from 'os';
+import Debug from 'debug';
 
 import {
   CommandConfig,
@@ -32,6 +33,8 @@ import {
 import { normalizeConfig, validateConfig } from './config';
 import { parseSSRUri } from './ssr';
 import { OBFS_UA, NETWORK_TIMEOUT } from './constant';
+
+const debug = Debug('surgio:utils');
 
 export const ConfigCache = new LRU<string, any>({
   maxAge: 10 * 60 * 1000, // 1min
@@ -162,6 +165,7 @@ export const getShadowsocksSubscription = async (
         .filter(item => !!item)
         .filter(item => item.startsWith("ss://"));
     const result = configList.map<any>(item => {
+      debug('SS URI', item);
       const scheme = URL.parse(item, true);
       const userInfo = fromUrlSafeBase64(scheme.auth).split(':');
       const pluginInfo = typeof scheme.query.plugin === 'string' ? decodeStringList<any>(scheme.query.plugin.split(';')) : {};
@@ -537,7 +541,7 @@ export const getClashNodes = (
             protocolparam: nodeConfig.protoparam,
             cipher: nodeConfig.method,
           };
-        
+
         case NodeTypeEnum.Snell:
           return {
             type: 'snell',
@@ -969,8 +973,11 @@ export const getClashNodeNames = (
   ruleName: string,
   ruleType: 'select' | 'url-test',
   nodeNameList: ReadonlyArray<SimpleNodeConfig>,
-  filter?: NodeNameFilterType,
-  existingProxies?: ReadonlyArray<string>
+  options: {
+    readonly filter?: NodeNameFilterType,
+    readonly existingProxies?: ReadonlyArray<string>,
+    readonly proxyTestUrl?: string,
+  } = {},
 ): {
   readonly type: string;
   readonly name: string;
@@ -981,14 +988,14 @@ export const getClashNodeNames = (
   const nodes = nodeNameList.filter(item => {
     const result = item.enable !== false;
 
-    if (filter) {
-      return filter(item) && result;
+    if (options.filter) {
+      return options.filter(item) && result;
     }
 
     return result;
   });
-  const proxies = existingProxies ?
-    [].concat(existingProxies, nodes.map(item => item.nodeName)) :
+  const proxies = options.existingProxies ?
+    [].concat(options.existingProxies, nodes.map(item => item.nodeName)) :
     nodes.map(item => item.nodeName);
 
   return {
@@ -996,7 +1003,7 @@ export const getClashNodeNames = (
     name: ruleName,
     proxies,
     ...(ruleType === 'url-test' ? {
-      url: 'http://www.qualcomm.cn/generate_204',
+      url: options.proxyTestUrl,
       interval: 1200,
     } : null),
   };
@@ -1026,13 +1033,20 @@ export const decodeStringList = <T = object>(stringList: ReadonlyArray<string>):
 export const normalizeClashProxyGroupConfig = (
   nodeList: ReadonlyArray<PossibleNodeConfigType>,
   customFilters: PlainObjectOf<NodeNameFilterType>,
-  proxyGroupModifier: ProxyGroupModifier
+  proxyGroupModifier: ProxyGroupModifier,
+  options: {
+    readonly proxyTestUrl?: string,
+  } = {},
 ): ReadonlyArray<any> => {
   const proxyGroup = proxyGroupModifier(nodeList, customFilters);
 
   return proxyGroup.map<any>(item => {
     if (item.filter) {
-      return getClashNodeNames(item.name, item.type, nodeList, item.filter, item.proxies);
+      return getClashNodeNames(item.name, item.type, nodeList, {
+        filter: item.filter,
+        existingProxies: item.proxies,
+        proxyTestUrl: options.proxyTestUrl,
+      });
     } else if (item.proxies) {
       return item;
     } else {

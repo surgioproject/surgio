@@ -12,6 +12,7 @@ import {
   SnellNodeConfig,
 } from '../../lib/types';
 import * as utils from '../../lib/utils';
+import { PROXY_TEST_URL } from '../../lib/utils/constant';
 import * as filter from '../../lib/utils/filter';
 
 test('getSurgeNodes', async t => {
@@ -315,14 +316,14 @@ test('normalizeClashProxyGroupConfig', t => {
       name: 'US',
       type: 'url-test',
       proxies: [],
-      url: 'http://www.qualcomm.cn/generate_204',
+      url: PROXY_TEST_URL,
       interval: 1200,
     },
     {
       name: 'HK',
       type: 'url-test',
       proxies: ['🇭🇰HK(Example)'],
-      url: 'http://www.qualcomm.cn/generate_204',
+      url: PROXY_TEST_URL,
       interval: 1200,
     },
     {
@@ -334,24 +335,33 @@ test('normalizeClashProxyGroupConfig', t => {
       name: 'Mixed',
       proxies: ['DIRECT', '🇭🇰HK(Example)'],
       type: 'url-test',
-      url: 'http://www.qualcomm.cn/generate_204',
+      url: PROXY_TEST_URL,
       interval: 1200,
     },
   ];
 
-  t.deepEqual(utils.normalizeClashProxyGroupConfig([
-    {
-      nodeName: '🇭🇰HK(Example)',
-      type: NodeTypeEnum.Shadowsocks,
-      hostname: 'example.com',
-      port: '8443',
-      method: 'chacha20-ietf-poly1305',
-      password: 'password',
-    },
-  ], {
-    hkFilter: filter.hkFilter,
-    usFilter: filter.usFilter,
-  }, proxyGroupModifier as any), result);
+  t.deepEqual(
+    utils.normalizeClashProxyGroupConfig(
+      [
+        {
+          nodeName: '🇭🇰HK(Example)',
+          type: NodeTypeEnum.Shadowsocks,
+          hostname: 'example.com',
+          port: '8443',
+          method: 'chacha20-ietf-poly1305',
+          password: 'password',
+        },
+      ],
+      {
+        hkFilter: filter.hkFilter,
+        usFilter: filter.usFilter,
+      },
+      proxyGroupModifier as any,
+      {
+        proxyTestUrl: PROXY_TEST_URL,
+      }
+    ),
+    result);
 });
 
 test('getShadowsocksJSONConfig', async t => {
