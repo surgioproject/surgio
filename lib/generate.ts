@@ -60,7 +60,14 @@ async function run(config: CommandConfig): Promise<void> {
     try {
       const result = await generate(config, artifact, remoteSnippetList);
       const destFilePath = path.join(config.output, artifact.name);
-      await fs.writeFile(destFilePath, result);
+
+      if (artifact.destDir) {
+        fs.accessSync(artifact.destDir, fs.constants.W_OK);
+        await fs.writeFile(path.join(artifact.destDir, artifact.name), result);
+      } else {
+        await fs.writeFile(destFilePath, result);
+      }
+
       spinner.succeed(`规则 ${artifact.name} 生成成功`);
     } catch (err) {
       spinner.fail(`规则 ${artifact.name} 生成失败`);

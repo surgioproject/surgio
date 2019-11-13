@@ -69,6 +69,7 @@ export interface ArtifactConfig {
   readonly combineProviders?: ReadonlyArray<string>;
   readonly customParams?: PlainObjectOf<string|boolean|number>;
   readonly proxyGroupModifier?: ProxyGroupModifier;
+  readonly destDir?: string;
 }
 
 export interface ProviderConfig {
