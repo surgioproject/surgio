@@ -1,5 +1,6 @@
 import assert from 'assert';
 import axios from 'axios';
+import Bluebird from 'bluebird';
 import chalk from 'chalk';
 import fs from 'fs-extra';
 import _ from 'lodash';
@@ -1137,7 +1138,7 @@ export const loadRemoteSnippetList = (remoteSnippetList: ReadonlyArray<RemoteSni
       });
   }
 
-  return Promise.all(remoteSnippetList.map<Promise<RemoteSnippet>>(item => {
+  return Bluebird.map(remoteSnippetList, item => {
     const res = ConfigCache.has(item.url)
       ? Promise.resolve(ConfigCache.get(item.url)) :
       load(item.url)
@@ -1152,7 +1153,9 @@ export const loadRemoteSnippetList = (remoteSnippetList: ReadonlyArray<RemoteSni
       url: item.url,
       text: str, // 原始内容
     }));
-  }));
+  }, {
+    concurrency: 5,
+  });
 };
 
 export const ensureConfigFolder = (dir: string = os.homedir()): string => {
