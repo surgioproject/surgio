@@ -1,3 +1,13 @@
+## [1.4.2](https://github.com/geekdada/surgio/compare/v1.4.1...v1.4.2) (2019-11-14)
+
+
+### Features
+
+* 优化远程片段获取的并发请求 ([7552fa0](https://github.com/geekdada/surgio/commit/7552fa05b073871aa6a50472f2386bfa4fa9421d))
+* Provider 处理改为并发 ([8bf2738](https://github.com/geekdada/surgio/commit/8bf2738f14f9d30b9bfbf6999fbbdf91a5993469))
+
+
+
 ## [1.4.1](https://github.com/geekdada/surgio/compare/v1.4.0...v1.4.1) (2019-11-13)
 
 
