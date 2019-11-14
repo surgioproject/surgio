@@ -1,6 +1,7 @@
 'use strict';
 
 import assert from 'assert';
+import Bluebird from 'bluebird';
 import chalk from 'chalk';
 import fs from 'fs-extra';
 import _ from 'lodash';
@@ -42,6 +43,8 @@ import {
 } from './utils/filter';
 import getProvider from './utils/get-provider';
 import { prependFlag } from './utils/flag';
+import { NETWORK_CONCURRENCY } from './utils/constant';
+import Provider from './class/Provider';
 
 const spinner = ora();
 
@@ -101,33 +104,33 @@ export async function generate(
   let customFilters: ProviderConfig['customFilters'];
   let netflixFilter: NodeNameFilterType;
   let youtubePremiumFilter: NodeNameFilterType;
+  let progress = 0;
 
   if (config.binPath && config.binPath.v2ray) {
     config.binPath.vmess = config.binPath.v2ray;
   }
 
-  for (const providerName of providerList) {
+  const providerMapper = async (providerName: string): Promise<void> => {
     const filePath = path.resolve(config.providerDir, `${providerName}.js`);
 
     if (!fs.existsSync(filePath)) {
       throw new Error(`文件 ${filePath} 不存在`);
     }
 
-    spinner.text = `正在处理 Provider: ${providerName}`;
-    let provider;
-    let nodeConfigList;
+    let provider: Provider;
+    let nodeConfigList: ReadonlyArray<PossibleNodeConfigType>;
 
     try {
       provider = getProvider(require(filePath));
     } catch (err) {
-      err.message = `处理 Provider 时出现错误，相关文件 ${filePath} ，错误原因: ${err.message}`;
+      err.message = `处理 ${chalk.cyan(providerName)} 时出现错误，相关文件 ${filePath} ，错误原因: ${err.message}`;
       throw err;
     }
 
     try {
       nodeConfigList = await provider.getNodeList();
     } catch (err) {
-      err.message = `获取 Provider 节点时出现错误，相关文件 ${filePath} ，错误原因: ${err.message}`;
+      err.message = `获取 ${chalk.cyan(providerName)} 节点时出现错误，相关文件 ${filePath} ，错误原因: ${err.message}`;
       throw err;
     }
 
@@ -174,7 +177,11 @@ export async function generate(
         nodeList.push(nodeConfig);
       }
     });
+
+    spinner.text = `已处理 Provider ${++progress}/${providerList.length}...`;
   }
+
+  await Bluebird.map(providerList, providerMapper, { concurrency: NETWORK_CONCURRENCY });
 
   try {
     return templateEngine.render(`${template}.tpl`, {

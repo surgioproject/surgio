@@ -33,7 +33,7 @@ import {
 } from '../types';
 import { normalizeConfig, validateConfig } from './config';
 import { parseSSRUri } from './ssr';
-import { OBFS_UA, NETWORK_TIMEOUT } from './constant';
+import { OBFS_UA, NETWORK_TIMEOUT, NETWORK_CONCURRENCY } from './constant';
 import { formatVmessUri } from './v2ray';
 
 const debug = Debug('surgio:utils');
@@ -1154,7 +1154,7 @@ export const loadRemoteSnippetList = (remoteSnippetList: ReadonlyArray<RemoteSni
       text: str, // 原始内容
     }));
   }, {
-    concurrency: 5,
+    concurrency: NETWORK_CONCURRENCY,
   });
 };
 

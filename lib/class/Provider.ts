@@ -5,6 +5,7 @@ import {
   NodeNameFilterType,
   ProviderConfig,
   SupportProviderEnum,
+  PossibleNodeConfigType,
 } from '../types';
 
 let globalPort: number = 61100;
@@ -56,4 +57,8 @@ export default class Provider {
     }
     return globalPort++;
   }
+
+  public getNodeList(): Promise<ReadonlyArray<PossibleNodeConfigType>> {
+    return Promise.resolve([]);
+  };
 }
