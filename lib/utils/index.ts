@@ -1079,7 +1079,12 @@ export const normalizeClashProxyGroupConfig = (
   const proxyGroup = proxyGroupModifier(nodeList, customFilters);
 
   return proxyGroup.map<any>(item => {
-    if (item.filter) {
+    if (item.hasOwnProperty('filter')) {
+      // istanbul ignore next
+      if (!item.filter || typeof item.filter !== 'function') {
+        throw new Error(`过滤器 ${item.filter} 无效，请检查 proxyGroupModifier`);
+      }
+
       return getClashNodeNames(item.name, item.type, nodeList, {
         filter: item.filter,
         existingProxies: item.proxies,

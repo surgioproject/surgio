@@ -97,8 +97,9 @@ export async function generate(
 
   const gatewayConfig = config.gateway;
   const gatewayHasToken: boolean = !!(gatewayConfig && gatewayConfig.accessToken);
+  const mainProviderName = artifact.provider
   const combineProviders = artifact.combineProviders || [];
-  const providerList = [artifact.provider].concat(combineProviders);
+  const providerList = [mainProviderName].concat(combineProviders);
   const nodeList: PossibleNodeConfigType[] = [];
   const nodeNameList: SimpleNodeConfig[] = [];
   let customFilters: ProviderConfig['customFilters'];
@@ -135,17 +136,19 @@ export async function generate(
     }
 
     // Filter 仅使用第一个 Provider 中的定义
-    if (!netflixFilter) {
-      netflixFilter = provider.netflixFilter || defaultNetflixFilter;
-    }
-    if (!youtubePremiumFilter) {
-      youtubePremiumFilter = provider.youtubePremiumFilter || defaultYoutubePremiumFilter;
-    }
-    if (!customFilters) {
-      customFilters = {
-        ...config.customFilters,
-        ...provider.customFilters,
-      };
+    if (providerName === mainProviderName) {
+      if (!netflixFilter) {
+        netflixFilter = provider.netflixFilter || defaultNetflixFilter;
+      }
+      if (!youtubePremiumFilter) {
+        youtubePremiumFilter = provider.youtubePremiumFilter || defaultYoutubePremiumFilter;
+      }
+      if (!customFilters) {
+        customFilters = {
+          ...config.customFilters,
+          ...provider.customFilters,
+        };
+      }
     }
 
     nodeConfigList.forEach(nodeConfig => {
