@@ -115,8 +115,6 @@ test('custom filter', async t => {
   const confString = fs.readFileSync(resolve('custom-filter/dist/ss.conf'), {
     encoding: 'utf8',
   });
-  const conf = ini.decode(confString);
 
-  t.is(conf['Proxy Group']['Proxy 1'], 'select, 🇺🇸US 1, 🇺🇸US 2');
-  t.is(conf['Proxy Group']['Proxy 2'], 'select,');
+  t.snapshot(confString);
 });
