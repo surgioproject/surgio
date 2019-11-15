@@ -1,3 +1,12 @@
+## [1.4.3](https://github.com/geekdada/surgio/compare/v1.4.2...v1.4.3) (2019-11-15)
+
+
+### Bug Fixes
+
+* 某些情况下 Provider 中的 customFilters 未生效 ([48f1b32](https://github.com/geekdada/surgio/commit/48f1b321a2c4fbc6859b67a8975f1c9529bfaa20))
+
+
+
 ## [1.4.2](https://github.com/geekdada/surgio/compare/v1.4.1...v1.4.2) (2019-11-14)
 
 
