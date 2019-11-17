@@ -37,6 +37,18 @@ module.exports = {
       template: 'template-functions',
       provider: 'ss',
       combineProviders: ['custom', 'ss_json', 'v2rayn', 'clash', 'ssr_with_udp'],
+      proxyGroupModifier() {
+        return [
+          {
+            name: 'auto all',
+            type: 'url-test',
+          },
+          {
+            name: 'select all',
+            type: 'select',
+          },
+        ];
+      },
     },
   ],
   urlBase: 'https://example.com/',
@@ -53,4 +65,6 @@ module.exports = {
   customFilters: {
     globalFilter: node => node.nodeName === '测试中文',
   },
+  proxyTestUrl: 'http://www.google.com/generate_204',
+  proxyTestInterval: 2400,
 };

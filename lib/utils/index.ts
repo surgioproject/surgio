@@ -33,7 +33,7 @@ import {
 } from '../types';
 import { normalizeConfig, validateConfig } from './config';
 import { parseSSRUri } from './ssr';
-import { OBFS_UA, NETWORK_TIMEOUT, NETWORK_CONCURRENCY } from './constant';
+import { OBFS_UA, NETWORK_TIMEOUT, NETWORK_CONCURRENCY, PROXY_TEST_URL, PROXY_TEST_INTERVAL } from './constant';
 import { formatVmessUri } from './v2ray';
 
 const debug = Debug('surgio:utils');
@@ -580,7 +580,7 @@ export const getMellowNodes = (
           const uri = formatVmessUri(nodeConfig);
           return [nodeConfig.nodeName, 'vmess1', uri.trim().replace('vmess://', 'vmess1://')].join(', ');
         }
-      
+
         // istanbul ignore next
         default:
             console.log();
@@ -1014,7 +1014,10 @@ export const getClashNodeNames = (
     readonly existingProxies?: ReadonlyArray<string>,
     readonly proxyTestUrl?: string,
     readonly proxyTestInterval?: number,
-  } = {},
+  } = {
+    proxyTestUrl: PROXY_TEST_URL,
+    proxyTestInterval: PROXY_TEST_INTERVAL,
+  },
 ): {
   readonly type: string;
   readonly name: string;
@@ -1094,7 +1097,10 @@ export const normalizeClashProxyGroupConfig = (
     } else if (item.proxies) {
       return item;
     } else {
-      return getClashNodeNames(item.name, item.type, nodeList);
+      return getClashNodeNames(item.name, item.type, nodeList, {
+        proxyTestUrl: options.proxyTestUrl,
+        proxyTestInterval: options.proxyTestInterval,
+      });
     }
   });
 };

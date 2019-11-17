@@ -17,6 +17,8 @@ export const useKeywords = (keywords: ReadonlyArray<string>, isStrict?: boolean)
   return item => keywords[isStrict ? 'every' : 'some'](keyword => item.nodeName.includes(keyword));
 };
 
+// export const useSortedKeywords = ()
+
 export const discardKeywords = (keywords: ReadonlyArray<string>, isStrict?: boolean): NodeNameFilterType => {
   // istanbul ignore next
   if (!Array.isArray(keywords)) {

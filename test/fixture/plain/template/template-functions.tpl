@@ -7,3 +7,5 @@
 {{ getSurgeNodes(nodeList, customFilters.globalFilter) }}
 ----
 {{ getMellowNodes(nodeList) }}
+----
+{{ clashProxyConfig | yaml }}
