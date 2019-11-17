@@ -2,6 +2,7 @@ import nunjucks from 'nunjucks';
 import { JsonObject } from 'type-fest';
 import YAML from 'yaml';
 import { toBase64 } from './utils';
+import { CLASH_UNSUPPORTED_RULE, MELLOW_UNSUPPORTED_RULE, QUANTUMULT_X_UNSUPPORTED_RULE } from './utils/constant';
 
 export default function getEngine(templateDir: string): nunjucks.Environment {
   const engine = nunjucks.configure(templateDir, {
@@ -13,10 +14,10 @@ export default function getEngine(templateDir: string): nunjucks.Environment {
 
     return array
       .filter(item => {
-        return item && item.trim() !== '' &&
-          item.toUpperCase().indexOf('USER-AGENT') === -1 &&
-          item.toUpperCase().indexOf('PROCESS-NAME') === -1 &&
-          item.toUpperCase().indexOf('URL-REGEX') === -1;
+        const testString: string = (!!item && item.trim() !== '') ? item.toUpperCase() : '';
+
+        return testString !== '' &&
+          CLASH_UNSUPPORTED_RULE.every(s => !testString.includes(s));
       })
       .map((item: string) => {
         if (item.startsWith('#')) {
@@ -35,9 +36,10 @@ export default function getEngine(templateDir: string): nunjucks.Environment {
 
     return array
       .filter(item => {
-        return item && item.trim() !== '' &&
-          item.toUpperCase().indexOf('URL-REGEX') === -1 &&
-          item.toUpperCase().indexOf('PROCESS-NAME') === -1;
+        const testString: string = (!!item && item.trim() !== '') ? item.toUpperCase() : '';
+
+        return testString !== '' &&
+          QUANTUMULT_X_UNSUPPORTED_RULE.every(s => !testString.includes(s));
       })
       .join('\n');
   });
@@ -47,9 +49,10 @@ export default function getEngine(templateDir: string): nunjucks.Environment {
 
     return array
       .filter(item => {
-        return item && item.trim() !== '' &&
-          item.toUpperCase().indexOf('URL-REGEX') === -1 &&
-          item.toUpperCase().indexOf('USER-AGENT') === -1;
+        const testString: string = (!!item && item.trim() !== '') ? item.toUpperCase() : '';
+
+        return testString !== '' &&
+          MELLOW_UNSUPPORTED_RULE.every(s => !testString.includes(s));
       })
       .map((item: string) => {
         if (item.startsWith('#')) {
