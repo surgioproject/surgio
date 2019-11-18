@@ -86,6 +86,10 @@ module.exports = {
 };
 ```
 
+:::warning 注意
+1. 该过滤器不保证顺序。
+:::
+
 ### discardKeywords <Badge text="v1.1.1" vertical="middle" />
 
 生成一个反向关键词过滤器。第二个入参是开启严格模式。
@@ -98,7 +102,7 @@ module.exports = {
 
 生成一个正则表达式过滤器。
 
-:::tip
+:::tip 提示
 [JavaScript 正则表达式文档](https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Guide/Regular_Expressions)
 :::
 
@@ -113,3 +117,44 @@ module.exports = {
   },
 };
 ```
+
+### useSortedKeywords <Badge text="v1.5.0" vertical="middle" />
+
+生成一个排序型关键词过滤器。
+
+假设某机场在输出节点列表时按照编码正序排列，你可以采用该过滤器将某几个节点过滤并排序输出。
+
+```js
+const { utils } = require('surgio');
+
+module.exports = {
+  url: 'http://example.com/ss-sub.txt',
+  type: 'shadowsocks_subscribe',
+  customFilters: {
+    preferNodes: utils.useSortedKeywords(['V001', 'V009', 'V003']),
+  },
+};
+```
+
+### mergeSortedFilters <Badge text="v1.5.0" vertical="middle" />
+
+合并多个过滤器，生成一个新的排序型过滤器。
+
+假设某机场在输出节点列表时按照国家或地区进行归集，你可以采用该过滤器将某地区的节点过滤并排序输出。
+
+```js
+const { utils } = require('surgio');
+
+module.exports = {
+  url: 'http://example.com/ss-sub.txt',
+  type: 'shadowsocks_subscribe',
+  customFilters: {
+    preferNodes: utils.useSortedKeywords([utils.hkFilter, utils.usFilter]),
+  },
+};
+```
+
+:::warning 注意
+1. 不能合并排序型过滤器。
+2. 若某个节点同时匹配多个规则，只会出现在第一次匹配的位置。
+:::
