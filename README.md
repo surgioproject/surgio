@@ -14,8 +14,8 @@
 
 [npm-image]: https://img.shields.io/npm/v/surgio.svg?style=flat-square
 [npm-url]: https://npmjs.org/package/surgio
-[travis-image]: https://img.shields.io/travis/geekdada/surgio.svg?style=flat-square
-[travis-url]: https://travis-ci.org/geekdada/surgio
+[travis-image]: https://travis-ci.com/geekdada/surgio.svg?branch=master
+[travis-url]: https://travis-ci.com/geekdada/surgio
 [azure-image]: https://dev.azure.com/yihanglyh/surgio/_apis/build/status/geekdada.surgio?branchName=master
 [azure-url]: https://dev.azure.com/yihanglyh/surgio/_build/latest?definitionId=1&branchName=master
 [codecov-image]: https://codecov.io/gh/geekdada/surgio/branch/master/graph/badge.svg
