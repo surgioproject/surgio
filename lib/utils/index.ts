@@ -383,14 +383,19 @@ export const getSurgeNodes = (
           const configString = [
             'external',
             `exec = ${JSON.stringify(config.binPath)}`,
-            ...(args).map(arg => `args = ${JSON.stringify(arg)}`),
+            ...(args.map(arg => `args = ${JSON.stringify(arg)}`)),
             `local-port = ${config.localPort}`,
-            `addresses = ${config.hostname}`,
-          ].join(', ');
+          ];
+
+          if (config.hostnameIp) {
+            configString.push(...config.hostnameIp.map(item => `addresses = ${item}`));
+          } else {
+            configString.push(`addresses = ${config.hostname}`);
+          }
 
           return ([
             config.nodeName,
-            configString,
+            configString.join(', '),
           ].join(' = '));
         }
 
@@ -451,10 +456,15 @@ export const getSurgeNodes = (
             const configString = [
               'external',
               `exec = ${JSON.stringify(config.binPath)}`,
-              ...(args).map(arg => `args = ${JSON.stringify(arg)}`),
+              ...(args.map(arg => `args = ${JSON.stringify(arg)}`)),
               `local-port = ${config.localPort}`,
-              `addresses = ${config.hostname}`,
-            ].join(', ');
+            ];
+
+            if (config.hostnameIp) {
+              configString.push(...config.hostnameIp.map(item => `addresses = ${item}`));
+            } else {
+              configString.push(`addresses = ${config.hostname}`);
+            }
 
             if (process.env.NODE_ENV !== 'test') {
               fs.writeJSONSync(jsonFilePath, jsonFile);
@@ -462,7 +472,7 @@ export const getSurgeNodes = (
 
             return ([
               config.nodeName,
-              configString,
+              configString.join(', '),
             ].join(' = '));
           }
         }

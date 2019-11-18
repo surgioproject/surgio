@@ -38,6 +38,7 @@ export const normalizeConfig = (cwd: string, userConfig: Partial<CommandConfig>)
     configDir: ensureConfigFolder(),
     surgeConfig: {
       v2ray: 'external',
+      resolveHostname: false,
     },
     proxyTestUrl: PROXY_TEST_URL,
     proxyTestInterval: PROXY_TEST_INTERVAL,
@@ -91,7 +92,8 @@ export const validateConfig = (userConfig: Partial<CommandConfig>): void => {
       vmess: Joi.string().pattern(/^\//),
     }),
     surgeConfig: Joi.object({
-      v2ray: Joi.string().valid('native', 'external')
+      v2ray: Joi.string().valid('native', 'external'),
+      resolveHostname: Joi.boolean(),
     }),
     analytics: Joi.boolean(),
     gateway: Joi.object({

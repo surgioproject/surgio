@@ -12,14 +12,13 @@ import getEngine from './template';
 import {
   ArtifactConfig,
   CommandConfig,
-  NodeNameFilterType,
+  NodeNameFilterType, NodeTypeEnum,
   PossibleNodeConfigType,
   ProviderConfig,
   RemoteSnippet,
   SimpleNodeConfig,
 } from './types';
 import {
-  getClashNodeNames,
   getClashNodes,
   getDownloadUrl,
   getNodeNames,
@@ -35,6 +34,7 @@ import {
   toBase64,
   toUrlSafeBase64,
 } from './utils';
+import { isIp, resolveDomain } from './utils/dns';
 import {
   hkFilter, japanFilter, koreaFilter,
   netflixFilter as defaultNetflixFilter, singaporeFilter, taiwanFilter,
@@ -151,8 +151,12 @@ export async function generate(
       }
     }
 
-    nodeConfigList.forEach(nodeConfig => {
+    nodeConfigList = await Bluebird.map(nodeConfigList, async nodeConfig => {
       let isValid = false;
+
+      if (nodeConfig.enable === false) {
+        return null;
+      }
 
       if (!provider.nodeFilter) {
         isValid = true;
@@ -160,18 +164,34 @@ export async function generate(
         isValid = true;
       }
 
-      if (config.binPath && config.binPath[nodeConfig.type]) {
-        nodeConfig.binPath = config.binPath[nodeConfig.type];
-        nodeConfig.localPort = provider.nextPort;
-      }
-
-      nodeConfig.surgeConfig = config.surgeConfig;
-
-      if (provider.addFlag) {
-        nodeConfig.nodeName = prependFlag(nodeConfig.nodeName);
-      }
-
       if (isValid) {
+        if (config.binPath && config.binPath[nodeConfig.type]) {
+          nodeConfig.binPath = config.binPath[nodeConfig.type];
+          nodeConfig.localPort = provider.nextPort;
+        }
+
+        nodeConfig.surgeConfig = config.surgeConfig;
+
+        if (provider.addFlag) {
+          nodeConfig.nodeName = prependFlag(nodeConfig.nodeName);
+        }
+
+        if (
+          config.surgeConfig.resolveHostname &&
+          !isIp(nodeConfig.hostname) &&
+          [NodeTypeEnum.Vmess, NodeTypeEnum.Shadowsocksr].includes(nodeConfig.type)
+        ) {
+          nodeConfig.hostnameIp = await resolveDomain(nodeConfig.hostname);
+        }
+
+        return nodeConfig;
+      }
+
+      return null;
+    });
+
+    nodeConfigList.forEach(nodeConfig => {
+      if (nodeConfig) {
         nodeNameList.push({
           type: nodeConfig.type,
           enable: nodeConfig.enable,
@@ -182,7 +202,7 @@ export async function generate(
     });
 
     spinner.text = `已处理 Provider ${++progress}/${providerList.length}...`;
-  }
+  };
 
   await Bluebird.map(providerList, providerMapper, { concurrency: NETWORK_CONCURRENCY });
 

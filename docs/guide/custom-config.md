@@ -153,6 +153,15 @@ SSR 的可执行文件地址。请使用 libev 版本的二进制文件，可以
 
 定义生成 Vmess 节点配置的类型，默认使用 External Provider 的形式，兼容性更好。也可以选择使用 `native` 的方式。
 
+#### surgeConfig.resolveHostname <Badge text="v1.5.0" vertical="middle" />
+
+- 类型: `boolean`
+- 默认值: `false`
+
+在 Surge 官方对 External Provider 的 [解释](https://medium.com/@Blankwonder/surge-mac-new-features-external-proxy-provider-375e0e9ea660) 中提到，为了不让代理进程（如 ssr-local）的流量经过 Surge 的 TUN 模块，需要额外指定 `addresses` 参数。在之前版本的 Surgio 里，生成的配置不会对域名进行解析，导致实际使用中仍然会造成额外的性能损耗。
+
+打开这个选项后，Surgio 会在生成配置的时候解析域名。不过，这必然会造成生成时间延长，所以请按照个人的需要进行选择。
+
 ### gateway <Badge text="v1.1.0" vertical="middle" />
 
 - 类型: `object`

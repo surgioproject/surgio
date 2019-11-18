@@ -40,7 +40,8 @@ export interface CommandConfig {
     vmess?: string; // tslint:disable-line
   };
   readonly surgeConfig?: {
-    readonly v2ray: 'native'|'external';
+    readonly v2ray?: 'native'|'external';
+    readonly resolveHostname?: boolean;
   };
   readonly gateway?: {
     readonly accessToken?: string;
@@ -180,6 +181,7 @@ export interface SimpleNodeConfig {
   binPath?: string; // tslint:disable-line
   localPort?: number; // tslint:disable-line
   surgeConfig?: CommandConfig['surgeConfig']; // tslint:disable-line
+  hostnameIp?: ReadonlyArray<string>; // tslint:disable-line
 }
 
 export interface PlainObject { readonly [name: string]: any }
