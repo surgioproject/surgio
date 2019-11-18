@@ -1,9 +1,9 @@
 ---
-title: 自定义 Filter
+title: 自定义过滤器
 sidebarDepth: 2
 ---
 
-# 自定义 Filter（过滤器）
+# 自定义过滤器
 
 在之前的版本里，我们允许用户使用内置的几个过滤器进行节点过滤。现在 Surgio 已经支持在 Provider 和 Surgio 配置中自定义 Filter。需要提醒一下大家，原来内置的国别过滤器已经拓展了不少，可以在 [这里](/guide/custom-template.md#过滤器) 查看。
 
@@ -87,7 +87,7 @@ module.exports = {
 ```
 
 :::warning 注意
-1. 该过滤器不保证顺序。
+该过滤器不保证顺序。
 :::
 
 ### discardKeywords <Badge text="v1.1.1" vertical="middle" />
@@ -157,4 +157,5 @@ module.exports = {
 :::warning 注意
 1. 不能合并排序型过滤器。
 2. 若某个节点同时匹配多个规则，只会出现在第一次匹配的位置。
+3. Provider 的配置项 `nodeFilter` 也支持排序类型的过滤器，但我们并不建议您这么用，因为 Provider 的 `nodeFilter` 配置项仅针对当前 Provider 而非合并进来的所有的节点，再者如果你同时在 `nodeFilter` 和 `getNodeNames`（包括但不限于）中使用排序过滤器，会进行多次排序，很难避免不出错。所以请尽可能在 `nodeFilter` 中使用普通的过滤器。
 :::

@@ -267,6 +267,10 @@ module.exports = {
 };
 ```
 
+:::tip 提示
+关于过滤器的自定义和其它进阶使用方法，请阅读 [「自定义过滤器」](/guide/advance/custom-filter.md)。
+:::
+
 ### provider.netflixFilter
 
 - 类型: `Function`

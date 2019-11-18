@@ -159,7 +159,7 @@ Youtube Premium 节点过滤器。Surgio 默认会将名称中包含 *日*, *美
 :::tip 提示
 - `filter` 为可选参数
 - 支持输出 Shadowsocks, Shadowsocksr, HTTPS, Snell, Vmess 节点
-- 请参考 [「Surge 进阶使用」](/guide/advance/surge-advance.md) 生成针对 Surge 的 SSR 订阅
+- 请参考 [「Surge 进阶 - 生成 SSR 和 V2Ray 订阅」](/guide/advance/surge-advance.md) 生成针对 Surge 的 SSR 订阅
 :::
 
 生成 Surge 规范的节点列表，例如：

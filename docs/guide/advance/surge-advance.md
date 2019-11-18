@@ -30,8 +30,15 @@ module.exports = {
     shadowsocksr: '/usr/local/bin/ssr-local',
     v2ray: '/usr/local/bin/v2ray',
   },
+  surgeConfig: {
+    resolveHostname: true,
+  },
 }
 ```
+
+:::tip 提示
+关于 `resolveHostname` 的解释请看 [这里](/guide/custom-config.md#surgeconfig-resolvehostname)。
+:::
 
 ## 生成
 
