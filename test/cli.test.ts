@@ -106,15 +106,20 @@ test('assign local port', async t => {
   t.truthy(conf2.Proxy['测试 2'].includes('local-port = 4001'));
 });
 
-test('custom filter', async t => {
+test.only('custom filter', async t => {
   const { code } = await coffee.fork(cli, ['generate'], {
     cwd: resolve('custom-filter'),
     execArgv: ['--require', require.resolve('./stub-axios.js')],
   })
+    .debug()
     .end();
-  const confString = fs.readFileSync(resolve('custom-filter/dist/ss.conf'), {
+  const confString1 = fs.readFileSync(resolve('custom-filter/dist/ss.conf'), {
+    encoding: 'utf8',
+  });
+  const confString2 = fs.readFileSync(resolve('custom-filter/dist/test_sorted_filter.conf'), {
     encoding: 'utf8',
   });
 
-  t.snapshot(confString);
+  t.snapshot(confString1);
+  t.snapshot(confString2);
 });

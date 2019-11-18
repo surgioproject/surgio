@@ -6,15 +6,16 @@ import {
   ProviderConfig,
   SupportProviderEnum,
   PossibleNodeConfigType,
+  SortedNodeNameFilterType,
 } from '../types';
 
 let globalPort: number = 61100;
 
 export default class Provider {
   public readonly type: SupportProviderEnum;
-  public readonly nodeFilter?: NodeFilterType;
-  public readonly netflixFilter?: NodeNameFilterType;
-  public readonly youtubePremiumFilter?: NodeNameFilterType;
+  public readonly nodeFilter?: ProviderConfig['nodeFilter'];
+  public readonly netflixFilter?: ProviderConfig['netflixFilter'];
+  public readonly youtubePremiumFilter?: ProviderConfig['youtubePremiumFilter'];
   public readonly customFilters?: ProviderConfig['customFilters'];
   public readonly addFlag?: boolean;
   public readonly tfo?: boolean;
@@ -25,9 +26,9 @@ export default class Provider {
       type: Joi.string()
         .valid(...Object.values<string>(SupportProviderEnum))
         .required(),
-      nodeFilter: Joi.function(),
-      netflixFilter: Joi.function(),
-      youtubePremiumFilter: Joi.function(),
+      nodeFilter: Joi.any().allow(Joi.function(), Joi.object({ filter: Joi.function(), supportSort: Joi.boolean() })),
+      netflixFilter: Joi.any().allow(Joi.function(), Joi.object({ filter: Joi.function(), supportSort: Joi.boolean() })),
+      youtubePremiumFilter: Joi.any().allow(Joi.function(), Joi.object({ filter: Joi.function(), supportSort: Joi.boolean() })),
       customFilters: Joi.object()
         .pattern(
           Joi.string(),

@@ -1,5 +1,7 @@
 {{ getSurgeNodes(nodeList) }}
 ----
+{{ getNodeNames(nodeList) }}
+----
 {{ getNodeNames(nodeList, customFilters.keywordFilter) }}
 ----
 {{ getNodeNames(nodeList, customFilters.strictKeywordFilter) }}
@@ -11,3 +13,7 @@
 {{ getSurgeNodes(nodeList, customFilters.sortFilter) }}
 ----
 {{ getNodeNames(nodeList, customFilters.sortFilter) }}
+----
+{{ getQuantumultXNodes(nodeList) }}
+----
+{{ getQuantumultXNodes(nodeList, customFilters.sortFilter) }}

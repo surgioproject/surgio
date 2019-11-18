@@ -165,8 +165,7 @@ export const getShadowsocksSubscription = async (
     });
 
     const configList = fromBase64(response.data).split('\n')
-        .filter(item => !!item)
-        .filter(item => item.startsWith("ss://"));
+      .filter(item => !!item && item.startsWith("ss://"));
     const result = configList.map<any>(item => {
       debug('SS URI', item);
       const scheme = URL.parse(item, true);

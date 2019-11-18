@@ -38,7 +38,7 @@ import { isIp, resolveDomain } from './utils/dns';
 import {
   hkFilter, japanFilter, koreaFilter,
   netflixFilter as defaultNetflixFilter, singaporeFilter, taiwanFilter,
-  usFilter,
+  usFilter, validateFilter,
   youtubePremiumFilter as defaultYoutubePremiumFilter,
 } from './utils/filter';
 import getProvider from './utils/get-provider';
@@ -97,14 +97,14 @@ export async function generate(
 
   const gatewayConfig = config.gateway;
   const gatewayHasToken: boolean = !!(gatewayConfig && gatewayConfig.accessToken);
-  const mainProviderName = artifact.provider
+  const mainProviderName = artifact.provider;
   const combineProviders = artifact.combineProviders || [];
   const providerList = [mainProviderName].concat(combineProviders);
   const nodeList: PossibleNodeConfigType[] = [];
   const nodeNameList: SimpleNodeConfig[] = [];
   let customFilters: ProviderConfig['customFilters'];
-  let netflixFilter: NodeNameFilterType;
-  let youtubePremiumFilter: NodeNameFilterType;
+  let netflixFilter: ProviderConfig['netflixFilter'];
+  let youtubePremiumFilter: ProviderConfig['youtubePremiumFilter'];
   let progress = 0;
 
   if (config.binPath && config.binPath.v2ray) {
@@ -151,6 +151,14 @@ export async function generate(
       }
     }
 
+    if (
+      validateFilter(provider.nodeFilter) &&
+      typeof provider.nodeFilter === 'object' &&
+      provider.nodeFilter.supportSort
+    ) {
+      nodeConfigList = provider.nodeFilter.filter(nodeConfigList);
+    }
+
     nodeConfigList = await Bluebird.map(nodeConfigList, async nodeConfig => {
       let isValid = false;
 
@@ -160,8 +168,10 @@ export async function generate(
 
       if (!provider.nodeFilter) {
         isValid = true;
-      } else if (provider.nodeFilter(nodeConfig)) {
-        isValid = true;
+      } else if (validateFilter(provider.nodeFilter)) {
+        isValid = typeof provider.nodeFilter === 'function' ?
+          provider.nodeFilter(nodeConfig) :
+          true;
       }
 
       if (isValid) {
@@ -188,7 +198,8 @@ export async function generate(
       }
 
       return null;
-    });
+    })
+      .filter(item => !!item);
 
     nodeConfigList.forEach(nodeConfig => {
       if (nodeConfig) {

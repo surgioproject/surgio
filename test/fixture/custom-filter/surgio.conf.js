@@ -28,6 +28,20 @@ module.exports = {
         ];
       },
     },
+    {
+      name: 'test_sorted_filter.conf',
+      template: 'test2',
+      provider: 'ss2',
+      combineProviders: ['custom'],
+      proxyGroupModifier() {
+        return [
+          {
+            name: 'all',
+            type: 'select',
+          },
+        ];
+      },
+    },
   ],
   urlBase: 'https://example.com/',
   binPath: {
@@ -37,5 +51,6 @@ module.exports = {
   customFilters: {
     globalKeywordFilter: utils.useKeywords(['US 1']),
     sortFilter: utils.useSortedKeywords(['🇺🇸US 2', '🇺🇸US 1']),
+    hkFirstUsSecondFilter: utils.mergeSortedFilters([utils.hkFilter, utils.usFilter]),
   },
 };

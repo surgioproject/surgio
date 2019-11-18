@@ -75,9 +75,9 @@ export interface ArtifactConfig {
 
 export interface ProviderConfig {
   readonly type: SupportProviderEnum;
-  readonly nodeFilter?: NodeFilterType;
-  readonly netflixFilter?: NodeNameFilterType;
-  readonly youtubePremiumFilter?: NodeNameFilterType;
+  readonly nodeFilter?: NodeFilterType|SortedNodeNameFilterType;
+  readonly netflixFilter?: NodeNameFilterType|SortedNodeNameFilterType;
+  readonly youtubePremiumFilter?: NodeNameFilterType|SortedNodeNameFilterType;
   readonly startPort?: number;
   readonly customFilters?: {
     readonly [name: string]: NodeNameFilterType|SortedNodeNameFilterType;
