@@ -259,7 +259,7 @@ module.exports = {
 有一些俗称「外贸机场」的服务商提供很多诸如马来西亚、土耳其的节点，不需要这些国家节点的朋友每次都要在数十个节点中寻找自己想要的。我们可以用这个方法把这些节点过滤掉。
 
 ```js
-const { utils } = require('surgio);
+const { utils } = require('surgio');
 
 module.exports = {
   // 过滤出名字中包含土耳其和马来西亚的节点

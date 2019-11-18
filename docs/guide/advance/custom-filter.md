@@ -149,7 +149,7 @@ module.exports = {
   url: 'http://example.com/ss-sub.txt',
   type: 'shadowsocks_subscribe',
   customFilters: {
-    preferNodes: utils.useSortedKeywords([utils.hkFilter, utils.usFilter]),
+    preferNodes: utils.mergeSortedFilters([utils.hkFilter, utils.usFilter]), // 也支持 useRegexp
   },
 };
 ```
