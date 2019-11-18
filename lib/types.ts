@@ -49,7 +49,7 @@ export interface CommandConfig {
   readonly proxyTestUrl?: string;
   readonly proxyTestInterval?: number;
   readonly customFilters?: {
-    readonly [name: string]: NodeNameFilterType;
+    readonly [name: string]: NodeNameFilterType|SortedNodeNameFilterType;
   };
 }
 
@@ -79,7 +79,7 @@ export interface ProviderConfig {
   readonly youtubePremiumFilter?: NodeNameFilterType;
   readonly startPort?: number;
   readonly customFilters?: {
-    readonly [name: string]: NodeNameFilterType;
+    readonly [name: string]: NodeNameFilterType|SortedNodeNameFilterType;
   };
   readonly addFlag?: boolean;
   readonly tfo?: boolean;
@@ -189,9 +189,14 @@ export type NodeFilterType = (nodeConfig: PossibleNodeConfigType) => boolean;
 
 export type NodeNameFilterType = (simpleNodeConfig: SimpleNodeConfig) => boolean;
 
+export interface SortedNodeNameFilterType {
+  readonly filter: <T>(nodeList: ReadonlyArray<T & SimpleNodeConfig>) => ReadonlyArray<T & SimpleNodeConfig>;
+  readonly supportSort?: boolean;
+}
+
 export type PossibleNodeConfigType = HttpsNodeConfig|ShadowsocksNodeConfig|ShadowsocksrNodeConfig|SnellNodeConfig|VmessNodeConfig;
 
-export type ProxyGroupModifier = (nodeList: ReadonlyArray<PossibleNodeConfigType>, filters: PlainObjectOf<NodeNameFilterType>) => ReadonlyArray<{
+export type ProxyGroupModifier = (nodeList: ReadonlyArray<PossibleNodeConfigType>, filters: PlainObjectOf<NodeNameFilterType|SortedNodeNameFilterType>) => ReadonlyArray<{
   readonly name: string;
   readonly type: 'select'|'url-test'|'fallback'|'load-balance';
   readonly proxies?: ReadonlyArray<string>;

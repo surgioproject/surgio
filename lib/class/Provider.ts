@@ -28,7 +28,11 @@ export default class Provider {
       nodeFilter: Joi.function(),
       netflixFilter: Joi.function(),
       youtubePremiumFilter: Joi.function(),
-      customFilters: Joi.object().pattern(Joi.string(), Joi.function()),
+      customFilters: Joi.object()
+        .pattern(
+          Joi.string(),
+          Joi.any().allow(Joi.function(), Joi.object({ filter: Joi.function(), supportSort: Joi.boolean() }))
+        ),
       addFlag: Joi.boolean(),
       startPort: Joi.number().integer().min(1024).max(65535),
     })

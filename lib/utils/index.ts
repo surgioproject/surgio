@@ -29,9 +29,10 @@ import {
   ShadowsocksrNodeConfig,
   SimpleNodeConfig,
   SnellNodeConfig,
+  SortedNodeNameFilterType,
   VmessNodeConfig,
 } from '../types';
-import { normalizeConfig, validateConfig } from './config';
+import { validateFilter } from './filter';
 import { parseSSRUri } from './ssr';
 import { OBFS_UA, NETWORK_TIMEOUT, NETWORK_CONCURRENCY, PROXY_TEST_URL, PROXY_TEST_INTERVAL } from './constant';
 import { formatVmessUri } from './v2ray';
@@ -302,13 +303,10 @@ export const getV2rayNSubscription = async (
 
 export const getSurgeNodes = (
   list: ReadonlyArray<HttpsNodeConfig|ShadowsocksNodeConfig|SnellNodeConfig|ShadowsocksrNodeConfig|VmessNodeConfig>,
-  filter?: NodeFilterType,
+  filter?: NodeFilterType|SortedNodeNameFilterType,
 ): string => {
-  const result: string[] = list
-    .filter(item => filter ? filter(item) : true)
+  const result: string[] = applyFilter(list, filter)
     .map<string>(nodeConfig => {
-      if (nodeConfig.enable === false) { return null; }
-
       switch (nodeConfig.type) {
         case NodeTypeEnum.Shadowsocks: {
           const config = nodeConfig as ShadowsocksNodeConfig;
@@ -483,10 +481,8 @@ export const getSurgeNodes = (
 
 export const getClashNodes = (
   list: ReadonlyArray<PossibleNodeConfigType>,
-  filter?: NodeFilterType
 ): ReadonlyArray<any> => {
   return list
-    .filter(item => filter ? filter(item) : true)
     .map(nodeConfig => {
       if (nodeConfig.enable === false) { return null; }
 
@@ -568,13 +564,10 @@ export const getClashNodes = (
 
 export const getMellowNodes = (
   list: ReadonlyArray<VmessNodeConfig>,
-  filter?: NodeFilterType
+  filter?: NodeFilterType|SortedNodeNameFilterType
 ): string => {
-  const result = list
-    .filter(item => filter ? filter(item) : true)
+  const result = applyFilter(list, filter)
     .map(nodeConfig => {
-      if (nodeConfig.enable === false) { return null; }
-
       switch (nodeConfig.type) {
         case NodeTypeEnum.Vmess: {
           const uri = formatVmessUri(nodeConfig);
@@ -747,7 +740,7 @@ export const getV2rayNNodes = (list: ReadonlyArray<VmessNodeConfig>): string => 
 export const getQuantumultNodes = (
   list: ReadonlyArray<ShadowsocksNodeConfig|VmessNodeConfig|ShadowsocksrNodeConfig|HttpsNodeConfig>,
   groupName: string = 'Surgio',
-  filter?: NodeNameFilterType,
+  filter?: NodeNameFilterType|SortedNodeNameFilterType,
 ): string => {
   function getHeader(
     host: string,
@@ -759,13 +752,7 @@ export const getQuantumultNodes = (
     ].join('[Rr][Nn]');
   }
 
-  const result: ReadonlyArray<string> = list
-    .filter(item => {
-      if (filter) {
-        return filter(item) && item.enable !== false;
-      }
-      return item.enable !== false;
-    })
+  const result: ReadonlyArray<string> = applyFilter(list, filter)
     .map<string>(nodeConfig => {
       switch (nodeConfig.type) {
         case NodeTypeEnum.Vmess: {
@@ -829,15 +816,9 @@ export const getQuantumultNodes = (
  */
 export const getQuantumultXNodes = (
   list: ReadonlyArray<ShadowsocksNodeConfig|VmessNodeConfig|ShadowsocksrNodeConfig|HttpsNodeConfig>,
-  filter?: NodeNameFilterType,
+  filter?: NodeNameFilterType|SortedNodeNameFilterType,
 ): string => {
-  const result: ReadonlyArray<string> = list
-    .filter(item => {
-      if (filter) {
-        return filter(item) && item.enable !== false;
-      }
-      return item.enable !== false;
-    })
+  const result: ReadonlyArray<string> = applyFilter(list, filter)
     .map<string>(nodeConfig => {
       switch (nodeConfig.type) {
         case NodeTypeEnum.Vmess: {
@@ -989,20 +970,10 @@ export const getShadowsocksNodesJSON = (list: ReadonlyArray<ShadowsocksNodeConfi
 
 export const getNodeNames = (
   list: ReadonlyArray<SimpleNodeConfig>,
-  filter?: NodeNameFilterType,
+  filter?: NodeNameFilterType|SortedNodeNameFilterType,
   separator?: string,
 ): string => {
-  const nodes = list.filter(item => {
-    const result = item.enable !== false;
-
-    if (filter) {
-      return filter(item) && result;
-    }
-
-    return result;
-  });
-
-  return nodes.map(item => item.nodeName).join(separator || ', ');
+  return applyFilter(list, filter).map(item => item.nodeName).join(separator || ', ');
 };
 
 export const getClashNodeNames = (
@@ -1010,7 +981,7 @@ export const getClashNodeNames = (
   ruleType: 'select'|'url-test'|'fallback'|'load-balance',
   nodeNameList: ReadonlyArray<SimpleNodeConfig>,
   options: {
-    readonly filter?: NodeNameFilterType,
+    readonly filter?: NodeNameFilterType|SortedNodeNameFilterType,
     readonly existingProxies?: ReadonlyArray<string>,
     readonly proxyTestUrl?: string,
     readonly proxyTestInterval?: number,
@@ -1025,15 +996,7 @@ export const getClashNodeNames = (
   readonly url?: string;
   readonly interval?: number;
 } => {
-  const nodes = nodeNameList.filter(item => {
-    const result = item.enable !== false;
-
-    if (options.filter) {
-      return options.filter(item) && result;
-    }
-
-    return result;
-  });
+  const nodes = applyFilter(nodeNameList, options.filter);
   const proxies = options.existingProxies ?
     [].concat(options.existingProxies, nodes.map(item => item.nodeName)) :
     nodes.map(item => item.nodeName);
@@ -1072,7 +1035,7 @@ export const decodeStringList = <T = object>(stringList: ReadonlyArray<string>):
 
 export const normalizeClashProxyGroupConfig = (
   nodeList: ReadonlyArray<PossibleNodeConfigType>,
-  customFilters: PlainObjectOf<NodeNameFilterType>,
+  customFilters: PlainObjectOf<NodeNameFilterType|SortedNodeNameFilterType>,
   proxyGroupModifier: ProxyGroupModifier,
   options: {
     readonly proxyTestUrl?: string,
@@ -1084,7 +1047,7 @@ export const normalizeClashProxyGroupConfig = (
   return proxyGroup.map<any>(item => {
     if (item.hasOwnProperty('filter')) {
       // istanbul ignore next
-      if (!item.filter || typeof item.filter !== 'function') {
+      if (!item.filter || !validateFilter(item.filter)) {
         throw new Error(`过滤器 ${item.filter} 无效，请检查 proxyGroupModifier`);
       }
 
@@ -1247,4 +1210,29 @@ export const formatV2rayConfig = (localPort: string|number, nodeConfig: VmessNod
   }
 
   return config;
+};
+
+export const applyFilter = <T extends SimpleNodeConfig>(
+  nodeList: ReadonlyArray<T>,
+  filter?: NodeNameFilterType|SortedNodeNameFilterType
+): ReadonlyArray<T> => {
+  if (filter && !validateFilter(filter)) {
+    throw new Error(`使用了无效的过滤器 ${filter}`);
+  }
+
+  let nodes: ReadonlyArray<T> = nodeList.filter(item => {
+    const result = item.enable !== false;
+
+    if (filter && typeof filter === 'function') {
+      return filter(item) && result;
+    }
+
+    return result;
+  });
+
+  if (filter && typeof filter === 'object' && typeof filter.filter === 'function') {
+    nodes = filter.filter(nodes);
+  }
+
+  return nodes;
 };

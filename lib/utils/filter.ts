@@ -1,8 +1,66 @@
 import _ from 'lodash';
 
-import { NodeNameFilterType, SimpleNodeConfig } from '../types';
+import { NodeNameFilterType, SimpleNodeConfig, SortedNodeNameFilterType } from '../types';
+
+// tslint:disable-next-line:max-classes-per-file
+export class SortFilterWithSortedFilters implements SortedNodeNameFilterType {
+  public supportSort = true;
+
+  constructor(public _filters: ReadonlyArray<NodeNameFilterType>) {
+    this.filter.bind(this);
+  }
+
+  public filter<T>(nodeList: ReadonlyArray<T & SimpleNodeConfig>): ReadonlyArray<T & SimpleNodeConfig> {
+    const result = [];
+
+    this._filters.forEach(filter => {
+      result.push(...nodeList.filter(filter));
+    });
+
+    return _.uniqBy(result, node => node.nodeName);
+  }
+}
+
+// tslint:disable-next-line:max-classes-per-file
+export class SortFilterWithSortedKeywords implements SortedNodeNameFilterType {
+  public supportSort = true;
+
+  constructor(public _keywords: ReadonlyArray<string>) {
+    this.filter.bind(this);
+  }
+
+  public filter<T>(nodeList: ReadonlyArray<T & SimpleNodeConfig>): ReadonlyArray<T & SimpleNodeConfig> {
+    const result = [];
+
+    this._keywords.forEach(keyword => {
+      result.push(...nodeList.filter(node => node.nodeName.includes(keyword)));
+    });
+
+    return _.uniqBy(result, node => node.nodeName);
+  }
+}
+
+export const validateFilter = (filter: any): boolean => {
+  if (filter === null || filter === void 0) {
+    return false;
+  }
+  if (typeof filter === 'function') {
+    return true;
+  }
+  return typeof filter === 'object' && filter.supportSort && typeof filter.filter === 'function';
+};
 
 export const mergeFilters = (filters: ReadonlyArray<NodeNameFilterType>, isStrict?: boolean): NodeNameFilterType => {
+  filters.forEach(filter => {
+    if (filter.hasOwnProperty('supportSort') && (filter as any).supportSort) {
+      throw new Error('mergeFilters 不支持包含排序功能的过滤器');
+    }
+
+    if (typeof filter !== 'function') {
+      throw new Error('mergeFilters 传入了无效的过滤器');
+    }
+  });
+
   return (item: SimpleNodeConfig) => {
     return filters[isStrict ? 'every' : 'some'](filter => filter(item));
   };
@@ -16,8 +74,6 @@ export const useKeywords = (keywords: ReadonlyArray<string>, isStrict?: boolean)
 
   return item => keywords[isStrict ? 'every' : 'some'](keyword => item.nodeName.includes(keyword));
 };
-
-// export const useSortedKeywords = ()
 
 export const discardKeywords = (keywords: ReadonlyArray<string>, isStrict?: boolean): NodeNameFilterType => {
   // istanbul ignore next
@@ -35,6 +91,29 @@ export const useRegexp = (regexp: RegExp): NodeNameFilterType => {
   }
 
   return item => regexp.test(item.nodeName);
+};
+
+export const useSortedKeywords = (keywords: ReadonlyArray<string>): SortedNodeNameFilterType => {
+  // istanbul ignore next
+  if (!Array.isArray(keywords)) {
+    throw new Error('keywords 请使用数组');
+  }
+
+  return new SortFilterWithSortedKeywords(keywords);
+};
+
+export const mergeSortedFilters = (filters: ReadonlyArray<NodeNameFilterType>): SortedNodeNameFilterType => {
+  filters.forEach(filter => {
+    if (filter.hasOwnProperty('supportSort') && (filter as any).supportSort) {
+      throw new Error('mergeSortedFilters 不支持包含排序功能的过滤器');
+    }
+
+    if (typeof filter !== 'function') {
+      throw new Error('mergeSortedFilters 传入了无效的过滤器');
+    }
+  });
+
+  return new SortFilterWithSortedFilters(filters);
 };
 
 export const netflixFilter: NodeNameFilterType = item => {

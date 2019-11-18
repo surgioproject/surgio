@@ -104,7 +104,11 @@ export const validateConfig = (userConfig: Partial<CommandConfig>): void => {
       ],
     }),
     proxyTestInterval: Joi.number(),
-    customFilters: Joi.object().pattern(Joi.string(), Joi.function()),
+    customFilters: Joi.object()
+      .pattern(
+        Joi.string(),
+        Joi.any().allow(Joi.function(), Joi.object({ filter: Joi.function(), supportSort: Joi.boolean() }))
+      ),
   })
     .unknown();
 

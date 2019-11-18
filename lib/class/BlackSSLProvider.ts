@@ -1,3 +1,5 @@
+// istanbul ignore file
+
 import Joi from '@hapi/joi';
 import { BlackSSLProviderConfig } from '../types';
 import { getBlackSSLConfig } from '../utils';

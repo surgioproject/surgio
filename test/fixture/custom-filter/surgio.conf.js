@@ -1,9 +1,6 @@
 'use strict';
 
-const sinon = require('sinon');
 const { utils } = require('../../../');
-
-exports.globalKeywordFilter = sinon.spy(utils.useKeywords(['US 1']));
 
 module.exports = {
   artifacts: [
@@ -23,6 +20,11 @@ module.exports = {
             filter: filters.keywordFilter,
             type: 'select',
           },
+          {
+            name: 'sort filter',
+            filter: filters.sortFilter,
+            type: 'select',
+          },
         ];
       },
     },
@@ -33,6 +35,7 @@ module.exports = {
     v2ray: '/usr/local/bin/v2ray',
   },
   customFilters: {
-    globalKeywordFilter: exports.globalKeywordFilter,
+    globalKeywordFilter: utils.useKeywords(['US 1']),
+    sortFilter: utils.useSortedKeywords(['🇺🇸US 2', '🇺🇸US 1']),
   },
 };

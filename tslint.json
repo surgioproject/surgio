@@ -29,7 +29,8 @@
     "no-class": false,
     "no-mixed-interface": false,
     "no-expression-statement": false,
-    "no-if-statement": false
+    "no-if-statement": false,
+    "variable-name": false
     /* end tslint-immutable rules */
   }
 }
