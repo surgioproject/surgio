@@ -148,7 +148,7 @@ export class Server {
 
     const result = await this.getArtifact(artifactName as string);
 
-    if (result) {
+    if (typeof result === 'string') {
       ctx.set('content-type', 'text/plain; charset=utf-8');
       ctx.set('cache-control', 'private, no-cache, no-store');
 
