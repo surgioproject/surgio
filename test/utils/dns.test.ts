@@ -9,6 +9,6 @@ test('isIp', t => {
 });
 
 test('resolveDomain', async t => {
-  const ip = await dns.resolveDomain('10.0.0.1.xip.io');
-  t.deepEqual(ip, ['10.0.0.1']);
+  const ips = await dns.resolveDomain('gstatic.com');
+  t.true(dns.isIp(ips[0]));
 });
