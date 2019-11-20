@@ -187,6 +187,10 @@ export interface SimpleNodeConfig {
 export interface PlainObject { readonly [name: string]: any }
 export interface PlainObjectOf<T> { readonly [name: string]: T }
 
+export interface CreateServerOptions {
+  readonly cwd?: string;
+}
+
 export type NodeFilterType = (nodeConfig: PossibleNodeConfigType) => boolean;
 
 export type NodeNameFilterType = (simpleNodeConfig: SimpleNodeConfig) => boolean;

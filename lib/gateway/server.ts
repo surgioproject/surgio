@@ -17,7 +17,7 @@ export class Server {
   public artifactList: ReadonlyArray<ArtifactConfig>;
   private readonly pkgFile?: PackageJson;
 
-  constructor(public cwd: string, private readonly config: CommandConfig) {
+  constructor(public cwd: string, public readonly config: CommandConfig) {
     const pkgFile = path.join(cwd, 'package.json');
 
     this.config = config;
