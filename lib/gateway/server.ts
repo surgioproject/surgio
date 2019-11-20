@@ -140,12 +140,6 @@ export class Server {
   public async koaGetArtifact(ctx: Context): Promise<void> {
     const dl = ctx.query.dl;
     const artifactName = ctx.params.name;
-
-    if (!artifactName) {
-      ctx.throw(400);
-      return;
-    }
-
     const result = await this.getArtifact(artifactName as string);
 
     if (typeof result === 'string') {
