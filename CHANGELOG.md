@@ -1,3 +1,13 @@
+## [1.6.1](https://github.com/geekdada/surgio/compare/v1.6.0...v1.6.1) (2019-11-20)
+
+
+### Bug Fixes
+
+* getDownloadUrl 某些情况下无法正确输出 access_token ([ce5cb2d](https://github.com/geekdada/surgio/commit/ce5cb2dd36d8f0d67b4bcf0c01efb77ea10cb4ca))
+* urlBase 错误 ([d1e87dd](https://github.com/geekdada/surgio/commit/d1e87dd4770773bf8ea2763e39a31bb90ee68c62))
+
+
+
 # [1.6.0](https://github.com/geekdada/surgio/compare/v1.5.0...v1.6.0) (2019-11-20)
 
 
