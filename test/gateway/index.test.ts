@@ -111,6 +111,10 @@ test('transform artifact unknown format and filter', async t => {
   });
 
   await request(httpServer)
+    .get('/get-artifact/notfound.conf')
+    .expect(404);
+
+  await request(httpServer)
     .get('/get-artifact/test.conf?format=unknown-format')
     .expect(400)
     .then(res => {

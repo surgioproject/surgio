@@ -16,6 +16,18 @@ import { generate } from '../generate';
 import { FcResponse } from './types';
 
 export class Server {
+  public static getEditUrl(repository: PackageJson['repository'], p: string): string {
+    if (repository) {
+      const base = typeof repository === 'string' ?
+        repository :
+        repository.url;
+
+      return url.resolve(base.endsWith('/') ? base : `${base}/`, p);
+    } else {
+      return '';
+    }
+  }
+
   public remoteSnippetList: ReadonlyArray<RemoteSnippet>;
   public artifactList: ReadonlyArray<ArtifactConfig>;
   private readonly pkgFile?: PackageJson;
@@ -123,23 +135,10 @@ export class Server {
       getPreviewUrl: (name: string) => getDownloadUrl(this.config.urlBase, name, true, accessToken),
       getDownloadUrl: (name: string) => getDownloadUrl(this.config.urlBase, name, false, accessToken),
       supportEdit: !!(this?.pkgFile?.repository),
-      getEditUrl: p => this.getEditUrl(p),
+      getEditUrl: p => Server.getEditUrl(this?.pkgFile?.repository, p),
       encodeURIComponent,
       surgioVersion: require('../../package.json').version,
     });
-  }
-
-  public getEditUrl(p: string): string {
-    if (this?.pkgFile?.repository) {
-      const repository = typeof this.pkgFile.repository === 'string' ?
-        this.pkgFile.repository :
-        this.pkgFile.repository.url;
-      const base = repository.endsWith('/') ? repository : `${repository}/`;
-
-      return url.resolve(base, p);
-    } else {
-      return '';
-    }
   }
 
   // istanbul ignore next
