@@ -37,6 +37,7 @@ class GenerateCommand extends Command {
     return '生成规则';
   }
 
+  // istanbul ignore next
   public errorHandler(err): void {
     errorHandler.call(this, err);
   }

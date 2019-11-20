@@ -226,6 +226,7 @@ export async function generate(
   await Bluebird.map(providerList, providerMapper, { concurrency: NETWORK_CONCURRENCY });
 
   const renderContext = {
+    proxyTestUrl: config.proxyTestUrl,
     downloadUrl: getDownloadUrl(config.urlBase, artifactName, true, gatewayHasToken ? gatewayConfig.accessToken : undefined),
     nodes: nodeList,
     names: nodeNameList,

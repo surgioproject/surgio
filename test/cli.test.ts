@@ -9,14 +9,19 @@ const cli = path.join(__dirname, '../bin/surgio.js');
 const fixture = path.join(__dirname, './fixture');
 const resolve = p => path.join(fixture, p);
 
-test('cli works', async t => {
-  const { code } = await coffee.fork(cli, ['generate'], {
+test.only('cli works', async t => {
+  await coffee.fork(cli, ['generate', '-h'], {
+    cwd: resolve('plain'),
+  })
+    .expect('code', 0)
+    .end();
+
+  await coffee.fork(cli, ['generate'], {
     cwd: resolve('plain'),
     execArgv: ['--require', require.resolve('./stub-axios.js')],
   })
+    .expect('code', 0)
     .end();
-
-  t.is(code, 0);
 
   const confString1 = fs.readFileSync(resolve('plain/dist/ss_json.conf'), {
     encoding: 'utf8',

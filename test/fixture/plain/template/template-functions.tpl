@@ -9,3 +9,7 @@
 {{ getMellowNodes(nodeList) }}
 ----
 {{ clashProxyConfig | yaml }}
+----
+{{ proxyTestUrl }}
+----
+{{ downloadUrl }}
