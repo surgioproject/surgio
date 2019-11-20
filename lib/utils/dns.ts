@@ -9,7 +9,12 @@ const DomainCache = new LRU<string, ReadonlyArray<string>>({
   max: 1000,
 });
 
-resolver.setServers(['223.5.5.5', '114.114.114.114', '8.8.8.8', '1.1.1.1']);
+// istanbul ignore next
+if (process.env.NOW_REGION) {
+  resolver.setServers(['1.1.1.1', '8.8.8.8']);
+} else {
+  resolver.setServers(['223.5.5.5', '114.114.114.114']);
+}
 
 export const resolveDomain = async (domain: string): Promise<ReadonlyArray<string>> => {
   if (DomainCache.has(domain)) {
