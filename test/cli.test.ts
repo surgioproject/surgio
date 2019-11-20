@@ -9,7 +9,7 @@ const cli = path.join(__dirname, '../bin/surgio.js');
 const fixture = path.join(__dirname, './fixture');
 const resolve = p => path.join(fixture, p);
 
-test.only('cli works', async t => {
+test('cli works', async t => {
   await coffee.fork(cli, ['generate', '-h'], {
     cwd: resolve('plain'),
   })
@@ -20,6 +20,7 @@ test.only('cli works', async t => {
     cwd: resolve('plain'),
     execArgv: ['--require', require.resolve('./stub-axios.js')],
   })
+    .debug()
     .expect('code', 0)
     .end();
 
@@ -34,6 +35,7 @@ test.only('cli works', async t => {
   });
   const conf = ini.decode(confString1);
 
+  t.truthy(fs.existsSync(resolve('plain/dist/new_path.conf')));
   t.truthy(fs.existsSync(resolve('plain/dist/ss.conf')));
   t.truthy(fs.existsSync(resolve('plain/dist/ssr.conf')));
   t.truthy(fs.existsSync(resolve('plain/dist/v2rayn.conf')));

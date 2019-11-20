@@ -1,7 +1,15 @@
 'use strict';
 
+const path = require('path');
+
 module.exports = {
   artifacts: [
+    {
+      name: 'new_path.conf',
+      template: 'test',
+      provider: 'ss_json',
+      destDir: path.join(__dirname, './dist'),
+    },
     {
       name: 'ss_json.conf',
       template: 'test',

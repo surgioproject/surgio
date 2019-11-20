@@ -104,3 +104,21 @@ test('mellow filter 2', t => {
 
   t.is(result, '');
 });
+
+test('mellow filter 3', t => {
+  const body = `{{ str | mellow }}`;
+  const str = `# Comment`;
+  const result = templateEngine.renderString(body, {
+    str,
+  });
+
+  t.is(result, '# Comment');
+});
+
+test('spaces in string', t => {
+  const str = `    `;
+
+  t.is(templateEngine.renderString(`{{ str | mellow }}`, { str }), '');
+  t.is(templateEngine.renderString(`{{ str | quantumultx }}`, { str }), '');
+  t.is(templateEngine.renderString(`{{ str | patchYamlArray }}`, { str }), '');
+});
