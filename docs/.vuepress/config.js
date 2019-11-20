@@ -35,6 +35,7 @@ module.exports = {
                 'custom-artifact',
               ]
             },
+            'api',
             '0.x-to-1.0',
           ]
         },

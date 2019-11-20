@@ -157,27 +157,9 @@ https://xxxxxx.xxx.now.sh/get-artifact/
 
 ### 使用
 
-在以下地址能看到所有 Artifact，方便你使用下载。
-
-#### 未开启鉴权
-
-```
-https://xxxxxx.xxx.now.sh/list-artifact
-```
-
-#### 开启鉴权
-
-```
-https://xxxxxx.xxx.now.sh/list-artifact?access_token=YOUR_PASSWORD
-```
-
-![](./images/api-gateway-preview.png)
-
-#### 特性
-
-- 若名称中包含 `surge`（大小写不敏感），则会出现添加到 Surge 的按钮。
-- 若名称中包含 `clash`（大小写不敏感），则会出现添加到 ClashX/CFW 的按钮。
-- 若项目下的 `package.json` 有 `repository` 字段，则支持直接跳转到 GitLab 或 GitHub 编辑对应文件。
+:::tip 移步至
+[托管 API 的功能介绍](/guide/api.md)
+:::
 
 ### 最后
 
