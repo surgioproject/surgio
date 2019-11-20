@@ -5,6 +5,7 @@ import Bluebird from 'bluebird';
 import chalk from 'chalk';
 import fs from 'fs-extra';
 import _ from 'lodash';
+import { Environment } from 'nunjucks';
 import ora from 'ora';
 import path from 'path';
 
@@ -12,7 +13,7 @@ import getEngine from './template';
 import {
   ArtifactConfig,
   CommandConfig,
-  NodeNameFilterType, NodeTypeEnum,
+  NodeTypeEnum,
   PossibleNodeConfigType,
   ProviderConfig,
   RemoteSnippet,
@@ -37,8 +38,11 @@ import {
 import { isIp, resolveDomain } from './utils/dns';
 import {
   hkFilter, japanFilter, koreaFilter,
-  netflixFilter as defaultNetflixFilter, singaporeFilter, taiwanFilter,
-  usFilter, validateFilter,
+  netflixFilter as defaultNetflixFilter,
+  singaporeFilter,
+  taiwanFilter,
+  usFilter,
+  validateFilter,
   youtubePremiumFilter as defaultYoutubePremiumFilter,
 } from './utils/filter';
 import getProvider from './utils/get-provider';
@@ -53,6 +57,7 @@ async function run(config: CommandConfig): Promise<void> {
   const distPath = config.output;
   const remoteSnippetsConfig = config.remoteSnippets || [];
   const remoteSnippetList = await loadRemoteSnippetList(remoteSnippetsConfig);
+  const templateEngine = getEngine(config.templateDir);
 
   await fs.remove(distPath);
   await fs.mkdir(distPath);
@@ -61,7 +66,7 @@ async function run(config: CommandConfig): Promise<void> {
     spinner.start(`正在生成规则 ${artifact.name}`);
 
     try {
-      const result = await generate(config, artifact, remoteSnippetList);
+      const result = await generate(config, artifact, remoteSnippetList, templateEngine);
       const destFilePath = path.join(config.output, artifact.name);
 
       if (artifact.destDir) {
@@ -82,18 +87,21 @@ async function run(config: CommandConfig): Promise<void> {
 export async function generate(
   config: CommandConfig,
   artifact: ArtifactConfig,
-  remoteSnippetList: ReadonlyArray<RemoteSnippet>
+  remoteSnippetList: ReadonlyArray<RemoteSnippet>,
+  templateEngine: Environment = getEngine(config.templateDir),
 ): Promise<string> {
-  const templateEngine = getEngine(config.templateDir);
   const {
     name: artifactName,
     template,
     customParams,
+    templateString,
   } = artifact;
 
   assert(artifactName, '必须指定 artifact 的 name 属性');
-  assert(template, '必须指定 artifact 的 template 属性');
   assert(artifact.provider, '必须指定 artifact 的 provider 属性');
+  if (!templateString) {
+    assert(template, '必须指定 artifact 的 template 属性');
+  }
 
   const gatewayConfig = config.gateway;
   const gatewayHasToken: boolean = !!(gatewayConfig && gatewayConfig.accessToken);
@@ -217,68 +225,68 @@ export async function generate(
 
   await Bluebird.map(providerList, providerMapper, { concurrency: NETWORK_CONCURRENCY });
 
-  try {
-    return templateEngine.render(`${template}.tpl`, {
-      downloadUrl: getDownloadUrl(config.urlBase, artifactName, true, gatewayHasToken ? gatewayConfig.accessToken : undefined),
-      nodes: nodeList,
-      names: nodeNameList,
-      remoteSnippets: _.keyBy(remoteSnippetList, item => item.name),
-      nodeList,
-      provider: artifact.provider,
-      providerName: artifact.provider,
-      artifactName,
-      getDownloadUrl: (name: string) => getDownloadUrl(config.urlBase, name, true, gatewayHasToken ? gatewayConfig.accessToken : undefined),
-      getNodeNames,
-      getClashNodes,
-      getSurgeNodes,
-      getShadowsocksNodes,
-      getShadowsocksNodesJSON,
-      getShadowsocksrNodes,
-      getQuantumultNodes,
-      getQuantumultXNodes,
-      getMellowNodes,
-      usFilter,
-      hkFilter,
-      japanFilter,
-      koreaFilter,
-      singaporeFilter,
-      taiwanFilter,
-      toUrlSafeBase64,
-      toBase64,
-      encodeURIComponent,
-      netflixFilter,
-      youtubePremiumFilter,
-      customFilters,
-      customParams: customParams || {},
-      ...(artifact.proxyGroupModifier ? {
-        clashProxyConfig: {
-          Proxy: getClashNodes(nodeList),
-          'Proxy Group': normalizeClashProxyGroupConfig(
-            nodeList,
-            {
-              usFilter,
-              hkFilter,
-              japanFilter,
-              koreaFilter,
-              singaporeFilter,
-              taiwanFilter,
-              netflixFilter,
-              youtubePremiumFilter,
-              ...customFilters,
-            },
-            artifact.proxyGroupModifier,
-            {
-              proxyTestUrl: config.proxyTestUrl,
-              proxyTestInterval: config.proxyTestInterval,
-            },
-          ),
-        },
-      } : {}),
-    });
-  } catch (err) {
-    throw err;
-  }
+  const renderContext = {
+    downloadUrl: getDownloadUrl(config.urlBase, artifactName, true, gatewayHasToken ? gatewayConfig.accessToken : undefined),
+    nodes: nodeList,
+    names: nodeNameList,
+    remoteSnippets: _.keyBy(remoteSnippetList, item => item.name),
+    nodeList,
+    provider: artifact.provider,
+    providerName: artifact.provider,
+    artifactName,
+    getDownloadUrl: (name: string) => getDownloadUrl(config.urlBase, name, true, gatewayHasToken ? gatewayConfig.accessToken : undefined),
+    getNodeNames,
+    getClashNodes,
+    getSurgeNodes,
+    getShadowsocksNodes,
+    getShadowsocksNodesJSON,
+    getShadowsocksrNodes,
+    getQuantumultNodes,
+    getQuantumultXNodes,
+    getMellowNodes,
+    usFilter,
+    hkFilter,
+    japanFilter,
+    koreaFilter,
+    singaporeFilter,
+    taiwanFilter,
+    toUrlSafeBase64,
+    toBase64,
+    encodeURIComponent,
+    netflixFilter,
+    youtubePremiumFilter,
+    customFilters,
+    customParams: customParams || {},
+    ...(artifact.proxyGroupModifier ? {
+      clashProxyConfig: {
+        Proxy: getClashNodes(nodeList),
+        'Proxy Group': normalizeClashProxyGroupConfig(
+          nodeList,
+          {
+            usFilter,
+            hkFilter,
+            japanFilter,
+            koreaFilter,
+            singaporeFilter,
+            taiwanFilter,
+            netflixFilter,
+            youtubePremiumFilter,
+            ...customFilters,
+          },
+          artifact.proxyGroupModifier,
+          {
+            proxyTestUrl: config.proxyTestUrl,
+            proxyTestInterval: config.proxyTestInterval,
+          },
+        ),
+      },
+    } : {}),
+  };
 
+  if (templateString) {
+    return templateEngine.renderString(templateString, renderContext);
+  }
+  return templateEngine.render(`${template}.tpl`, renderContext);
 }
 
 export default async function(config: CommandConfig): Promise<void> {

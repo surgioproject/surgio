@@ -49,8 +49,77 @@ test('get artifact', async t => {
     });
 
   await request(httpServer)
+    .get('/get-artifact/test.conf?dl=1')
+    .expect(200)
+    .expect('content-disposition', 'attachment; filename="test.conf"');
+
+  await request(httpServer)
     .get('/get-artifact/')
     .expect(404);
+
+  await request(httpServer)
+    .get('/get-artifact/notfound.conf')
+    .expect(404);
+});
+
+test('transform artifact surge', async t => {
+  const fixture = path.join(__dirname, '../fixture/gateway');
+  const httpServer = gateway.createHttpServer({
+    cwd: fixture,
+  });
+
+  await request(httpServer)
+    .get('/get-artifact/test.conf?format=surge-policy')
+    .expect(200)
+    .then(res => {
+      t.snapshot(res.text);
+    });
+
+  await request(httpServer)
+    .get('/get-artifact/test.conf?format=surge-policy&filter=usFilter')
+    .expect(200)
+    .then(res => {
+      t.snapshot(res.text);
+    });
+});
+
+test('transform artifact qx', async t => {
+  const fixture = path.join(__dirname, '../fixture/gateway');
+  const httpServer = gateway.createHttpServer({
+    cwd: fixture,
+  });
+
+  await request(httpServer)
+    .get('/get-artifact/test.conf?format=qx-server')
+    .expect(200)
+    .then(res => {
+      t.snapshot(res.text);
+    });
+
+  await request(httpServer)
+    .get('/get-artifact/test.conf?format=qx-server&filter=globalFilter')
+    .expect(200)
+    .then(res => {
+      t.snapshot(res.text);
+    });
+});
+
+test('transform artifact unknown format and filter', async t => {
+  const fixture = path.join(__dirname, '../fixture/gateway');
+  const httpServer = gateway.createHttpServer({
+    cwd: fixture,
+  });
+
+  await request(httpServer)
+    .get('/get-artifact/test.conf?format=unknown-format')
+    .expect(400)
+    .then(res => {
+      t.true(res.text.includes('unsupported format'));
+    });
+
+  await request(httpServer)
+    .get('/get-artifact/test.conf?format=surge-policy&filter=unknown-filter')
+    .expect(200);
 });
 
 test('list artifact', async t => {

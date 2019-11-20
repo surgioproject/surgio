@@ -88,6 +88,7 @@
     "execa": "^3.2.0",
     "fs-extra": "^8.1.0",
     "get-port": "^5.0.0",
+    "http-errors": "^1.7.3",
     "inquirer": "^7.0.0",
     "koa": "^2.11.0",
     "koa-router": "^7.4.0",

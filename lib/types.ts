@@ -71,6 +71,7 @@ export interface ArtifactConfig {
   readonly customParams?: PlainObjectOf<string|boolean|number>;
   readonly proxyGroupModifier?: ProxyGroupModifier;
   readonly destDir?: string;
+  readonly templateString?: string;
 }
 
 export interface ProviderConfig {
