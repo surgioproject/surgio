@@ -1,0 +1,85 @@
+---
+title: 托管 API 功能
+sidebarDepth: 2
+---
+
+# 托管 API 功能
+
+:::tip 提示
+1. 请先参考 [文档](/guide/advance/api-gateway.md) 搭建托管 API
+2. 该文档仅针对 now.sh 类型的部署
+:::
+
+## 接口鉴权
+
+### 打开鉴权
+
+在 `surgio.conf.js` 中增加如下字段：
+
+```js
+{
+  gateway: {
+    auth: true,
+    accessToken: 'YOUR_PASSWORD',
+  },
+}
+```
+
+### 请求需要鉴权的接口
+
+请在请求的 URL 中加入参数 `access_token`，值为上面所设。
+
+#### 未开启鉴权
+
+```
+https://xxxxxx.xxx.now.sh/list-artifact
+```
+
+#### 开启鉴权
+
+```
+https://xxxxxx.xxx.now.sh/list-artifact?access_token=YOUR_PASSWORD
+```
+
+## 接口
+
+### 展示所有 Artifact
+
+```
+GET /list-artifact
+```
+
+<Badge text="需要鉴权" vertical="middle" />
+
+![](./images/api-gateway-preview.png)
+
+特性：
+
+- 若名称中包含 `surge`（大小写不敏感），则会出现添加到 Surge 的按钮。
+- 若名称中包含 `clash`（大小写不敏感），则会出现添加到 ClashX/CFW 的按钮。
+- 若项目下的 `package.json` 有 `repository` 字段，则支持直接跳转到 GitLab 或 GitHub 编辑对应文件。
+
+### 下载 Artifact
+
+```
+GET /get-artifact/<artifactName>
+```
+
+<Badge text="需要鉴权" vertical="middle" />
+
+可选参数：
+
+| 参数       | 可选值                         | 备注 |
+| -------- | --------------------------- | -- |
+| `format` | `surge-policy`, `qx-server` |  <Badge text="v1.6.0" vertical="middle" />  |
+| `filter` | 内置的过滤器或自定义过滤器               |  <Badge text="v1.6.0" vertical="middle" />  |
+
+定义：
+
+- `surge-policy` Surge 远程节点 Policy
+- `qx-server` QuantumultX 远程节点
+
+:::tip 提示
+1. `format` 使用的是内置的模板，所以你不需要额外定义模板格式，不过仍然需要定义一个完整的 Artifact。我的建议是定义一个有完整节点的 Artifact，然后根据需要过滤出节点。
+2. `filter` 的值为过滤器的名称。你可以直接使用内置的过滤器，例如 `hkFilter`，也可以使用自定义的过滤器。
+:::

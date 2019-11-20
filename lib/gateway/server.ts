@@ -1,27 +1,44 @@
 // tslint:disable-next-line:no-submodule-imports
 import { NowRequest, NowResponse } from '@now/node/dist';
 import { Context } from 'koa';
+import createError from 'http-errors';
 import fs from 'fs-extra';
-import nunjucks from 'nunjucks';
+import nunjucks, { Environment } from 'nunjucks';
 import path from "path";
 import { PackageJson } from 'type-fest';
 import url from 'url';
 
+import getEngine from '../template';
 import { ArtifactConfig, CommandConfig, RemoteSnippet } from '../types';
 import { getDownloadUrl, loadRemoteSnippetList } from '../utils';
+import * as filters from '../utils/filter';
 import { generate } from '../generate';
 import { FcResponse } from './types';
 
 export class Server {
+  public static getEditUrl(repository: PackageJson['repository'], p: string): string {
+    if (repository) {
+      const base = typeof repository === 'string' ?
+        repository :
+        repository.url;
+
+      return url.resolve(base.endsWith('/') ? base : `${base}/`, p);
+    } else {
+      return '';
+    }
+  }
+
   public remoteSnippetList: ReadonlyArray<RemoteSnippet>;
   public artifactList: ReadonlyArray<ArtifactConfig>;
   private readonly pkgFile?: PackageJson;
+  private readonly templateEngine?: Environment;
 
-  constructor(public cwd: string, private readonly config: CommandConfig) {
+  constructor(public cwd: string, public readonly config: CommandConfig) {
     const pkgFile = path.join(cwd, 'package.json');
 
     this.config = config;
     this.artifactList = config.artifacts;
+    this.templateEngine = getEngine(config.templateDir);
     if (fs.existsSync(pkgFile)) {
       this.pkgFile = require(pkgFile);
     }
@@ -40,9 +57,91 @@ export class Server {
       return undefined;
     }
 
-    return await generate(this.config, target[0], this.remoteSnippetList);
+    return await generate(this.config, target[0], this.remoteSnippetList, this.templateEngine);
   }
 
+  public async transformArtifact(artifactName: string, format: string, filter?: string): Promise<string|createError.HttpError> {
+    const target = this.artifactList.filter(item => item.name === artifactName);
+    let filterName;
+
+    if (!target.length) {
+      return undefined;
+    }
+    if (filter) {
+      filterName = filters.hasOwnProperty(filter) ? filter : `customFilters.${filter}`;
+    }
+
+    switch (format) {
+      case 'surge-policy': {
+        const artifact = {
+          ...target[0],
+          template: undefined,
+          templateString: `{{ getSurgeNodes(nodeList${filterName ? `, ${filterName}` : ''}) }}`,
+        };
+        return await generate(this.config, artifact, this.remoteSnippetList, this.templateEngine);
+      }
+
+      case 'qx-server': {
+        const artifact = {
+          ...target[0],
+          template: undefined,
+          templateString: `{{ getQuantumultXNodes(nodeList${filterName ? `, ${filterName}` : ''}) }}`,
+        };
+        return await generate(this.config, artifact, this.remoteSnippetList, this.templateEngine);
+      }
+
+      default:
+        return createError(400, 'unsupported format');
+    }
+  }
+
+  public async koaGetArtifact(ctx: Context): Promise<void> {
+    const dl = ctx.query.dl;
+    const format = ctx.query.format;
+    const filter = ctx.query.filter;
+    const artifactName = ctx.params.name;
+    const result = format !== void 0 ?
+      await this.transformArtifact(artifactName as string, format as string, filter as string) :
+      await this.getArtifact(artifactName as string);
+
+    if (result instanceof createError.HttpError) {
+      ctx.throw(result);
+      return;
+    }
+
+    if (typeof result === 'string') {
+      ctx.set('content-type', 'text/plain; charset=utf-8');
+      ctx.set('cache-control', 'private, no-cache, no-store');
+
+      if (dl === '1') {
+        ctx.set('content-disposition', `attachment; filename="${artifactName}"`);
+      }
+
+      ctx.body = result;
+    } else {
+      ctx.throw(404);
+    }
+  }
+
+  public async koaListArtifact(ctx: Context): Promise<void> {
+    const engine = nunjucks.configure({
+      autoescape: false,
+    });
+    const artifactListTpl = require('./template/artifact-list').default;
+    const accessToken = this.config.gateway && this.config.gateway.accessToken;
+
+    ctx.body = engine.renderString(artifactListTpl, {
+      artifactList: this.artifactList,
+      getPreviewUrl: (name: string) => getDownloadUrl(this.config.urlBase, name, true, accessToken),
+      getDownloadUrl: (name: string) => getDownloadUrl(this.config.urlBase, name, false, accessToken),
+      supportEdit: !!(this?.pkgFile?.repository),
+      getEditUrl: p => Server.getEditUrl(this?.pkgFile?.repository, p),
+      encodeURIComponent,
+      surgioVersion: require('../../package.json').version,
+    });
+  }
+
+  // istanbul ignore next
   public fcErrorHandler(response: FcResponse, err: Error): void {
     response.setStatusCode(500);
     response.setHeader('content-type', 'text/html; charset=UTF-8');
@@ -54,6 +153,7 @@ export class Server {
     console.error(err);
   }
 
+  // istanbul ignore next
   public fcNotFound(res: FcResponse): void {
     res.setStatusCode(404);
     res.setHeader('content-type', 'text/html; charset=UTF-8');
@@ -62,6 +162,7 @@ export class Server {
     );
   }
 
+  // istanbul ignore next
   public nowErrorHandler(response: NowResponse, err: Error): void {
     response.setHeader('content-type', 'text/html; charset=UTF-8');
     response
@@ -74,6 +175,7 @@ export class Server {
     console.error(err);
   }
 
+  // istanbul ignore next
   public nowNotFound(res: NowResponse): void {
     res.setHeader('content-type', 'text/html; charset=UTF-8');
     res
@@ -83,6 +185,7 @@ export class Server {
       );
   }
 
+  // istanbul ignore next
   public nowGetArtifact(req: NowRequest, res: NowResponse): void {
     const {
       query: { name: artifactName, dl },
@@ -113,6 +216,7 @@ export class Server {
       });
   }
 
+  // istanbul ignore next
   public nowListArtifact(_: NowRequest, res: NowResponse): void {
     const engine = nunjucks.configure({
       autoescape: false,
@@ -135,59 +239,5 @@ export class Server {
       surgioVersion: require('../../package.json').version,
     });
     res.send(result);
-  }
-
-  public async koaGetArtifact(ctx: Context): Promise<void> {
-    const dl = ctx.query.dl;
-    const artifactName = ctx.params.name;
-
-    if (!artifactName) {
-      ctx.throw(400);
-      return;
-    }
-
-    const result = await this.getArtifact(artifactName as string);
-
-    if (typeof result === 'string') {
-      ctx.set('content-type', 'text/plain; charset=utf-8');
-      ctx.set('cache-control', 'private, no-cache, no-store');
-
-      if (dl === '1'){
-        ctx.set('content-disposition', `attachment; filename="${artifactName}"`);
-      }
-
-      ctx.body = result;
-    } else {
-      ctx.throw(404);
-    }
-  }
-
-  public async koaListArtifact(ctx: Context): Promise<void> {
-    const engine = nunjucks.configure({
-      autoescape: false,
-    });
-    const artifactListTpl = require('./template/artifact-list').default;
-    const accessToken = this.config.gateway && this.config.gateway.accessToken;
-
-    ctx.body = engine.renderString(artifactListTpl, {
-      artifactList: this.artifactList,
-      getPreviewUrl: (name: string) => getDownloadUrl(this.config.urlBase, name, true, accessToken),
-      getDownloadUrl: (name: string) => getDownloadUrl(this.config.urlBase, name, false, accessToken),
-      supportEdit: !!(this.pkgFile && this.pkgFile.repository),
-      getEditUrl: (p: string) => {
-        if (this.pkgFile && this.pkgFile.repository) {
-          const repository = typeof this.pkgFile.repository === 'string' ?
-            this.pkgFile.repository :
-            this.pkgFile.repository.url;
-          const base = repository.endsWith('/') ? repository : `${repository}/`;
-
-          return url.resolve(base, p);
-        } else {
-          return '';
-        }
-      },
-      encodeURIComponent,
-      surgioVersion: require('../../package.json').version,
-    });
   }
 }

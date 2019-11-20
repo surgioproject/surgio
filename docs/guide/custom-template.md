@@ -21,17 +21,31 @@ Surgio 为了能够灵活地定义模板而引入了 [Nunjucks](https://nunjucks
 
 ### providerName
 
+- 类型: `string`
+
 当前 Provider 的名称。
 
 ### downloadUrl
 
+- 类型: `string`
+
 当前文件对应的订阅地址。
 
+### proxyTestUrl <Badge text="v1.6.0" vertical="middle" />
+
+- 类型: `string`
+
+节点测试地址。Surgio 会内置一个推荐的测试地址，你可以直接在模板文件中使用。如果在设置中使用了新的地址，这里也会变成所设的值。
+
 ### nodeList
+
+- 类型: `object[]`
 
 过滤之后的节点列表。
 
 ### remoteSnippets
+
+- 类型: `object`
 
 远程模板片段。假如你已经配置了一个像 [这样](/guide/custom-config.md#remotesnippets) 的远程片段，那就能够以下面的方式使用。
 
@@ -65,9 +79,13 @@ DOMAIN-KEYWORD,baidu,DIRECT
 
 ### customParams
 
+- 类型: `object`
+
 获取自定义的模板参数。请先在 Artifact 中定义再使用。
 
 ### clashProxyConfig
+
+- 类型: `string`
 
 :::tip 提示
 - 支持输出 Shadowsocks, Shadowsocksr, Vmess 节点
