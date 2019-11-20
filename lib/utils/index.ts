@@ -8,7 +8,7 @@ import LRU from 'lru-cache';
 import path from 'path';
 import queryString from 'query-string';
 import { JsonObject } from 'type-fest';
-import URL from 'url';
+import { default as legacyUrl, URL } from 'url';
 import URLSafeBase64 from 'urlsafe-base64';
 import YAML from 'yaml';
 import os from 'os';
@@ -48,7 +48,7 @@ export const resolveRoot = (...args: readonly string[]): string =>
   path.join(__dirname, '../../', ...args);
 
 export const getDownloadUrl = (baseUrl: string = '/', artifactName: string, inline: boolean = true, accessToken?: string): string => {
-  const urlObject = URL.parse(`${baseUrl}${artifactName}`, true);
+  const urlObject = legacyUrl.parse(`${baseUrl}${artifactName}`, true);
 
   if (accessToken) {
     urlObject.query.access_token = accessToken;
@@ -58,7 +58,10 @@ export const getDownloadUrl = (baseUrl: string = '/', artifactName: string, inli
     urlObject.query.dl = '1';
   }
 
-  return URL.format(urlObject);
+  // tslint:disable-next-line:no-delete
+  delete urlObject.search;
+
+  return legacyUrl.format(urlObject);
 };
 
 // istanbul ignore next
@@ -168,7 +171,7 @@ export const getShadowsocksSubscription = async (
       .filter(item => !!item && item.startsWith("ss://"));
     const result = configList.map<any>(item => {
       debug('SS URI', item);
-      const scheme = URL.parse(item, true);
+      const scheme = legacyUrl.parse(item, true);
       const userInfo = fromUrlSafeBase64(scheme.auth).split(':');
       const pluginInfo = typeof scheme.query.plugin === 'string' ? decodeStringList<any>(scheme.query.plugin.split(';')) : {};
 

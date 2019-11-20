@@ -276,6 +276,7 @@ test('getDownloadUrl', t => {
   t.is(utils.getDownloadUrl(undefined, 'test.conf'), '/test.conf');
   t.is(utils.getDownloadUrl(undefined, 'test.conf', false), '/test.conf?dl=1');
   t.is(utils.getDownloadUrl(undefined, 'test.conf', undefined, 'abcd'), '/test.conf?access_token=abcd');
+  t.is(utils.getDownloadUrl('https://example.com/', 'test.conf?foo=bar', undefined, 'abcd'), 'https://example.com/test.conf?foo=bar&access_token=abcd');
 });
 
 test('normalizeClashProxyGroupConfig', t => {
