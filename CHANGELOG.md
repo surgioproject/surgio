@@ -1,3 +1,19 @@
+# [1.6.0](https://github.com/geekdada/surgio/compare/v1.5.0...v1.6.0) (2019-11-20)
+
+
+### Bug Fixes
+
+* broken ([53b65cc](https://github.com/geekdada/surgio/commit/53b65ccbd97a8d05c2fb5c173d51caadf2f35e78))
+
+
+### Features
+
+* 网关 get-artifact 支持直接输出 surge 和 qx 的节点列表 ([97f78c4](https://github.com/geekdada/surgio/commit/97f78c49ba3eeb050361807e2cbbfc44523f0804))
+* 优化 dns 解析 ([345790e](https://github.com/geekdada/surgio/commit/345790eecd6b2f4745b91999004d921f41b259bc))
+* 在模板中输出 proxyTestUrl ([b95cd8b](https://github.com/geekdada/surgio/commit/b95cd8b157e902a920699618cf1e61d1f615fd31))
+
+
+
 # [1.5.0](https://github.com/geekdada/surgio/compare/v1.4.3...v1.5.0) (2019-11-18)
 
 
