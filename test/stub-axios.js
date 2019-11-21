@@ -55,6 +55,12 @@ mock.onGet(/\/test-ruleset\.list/).reply(
     encoding: 'utf8',
   })
 );
+mock.onGet(/\/ForeignMedia\.list/).reply(
+  200,
+  fs.readFileSync(path.join(__dirname, 'asset/ForeignMedia.list'), {
+    encoding: 'utf8',
+  })
+);
 mock.onGet(/\/error/).reply(
   500,
   ''

@@ -1,5 +1,7 @@
 // tslint:disable:no-expression-statement
 import test from 'ava';
+import fs from 'fs-extra';
+import path from 'path';
 import getEngine from '../lib/template';
 
 const templateEngine = getEngine(process.cwd());
@@ -75,7 +77,7 @@ test('base64', t => {
   t.is(result, 'dGVzdHRlc3R0ZXN0dGVzdA==');
 });
 
-test('quantumultx filter', t => {
+test('quantumultx filter 1', t => {
   const body = `{{ str | quantumultx }}`;
   const str = `PROCESS-NAME,Telegram,Proxy,no-resolve // test rule`;
   const result = templateEngine.renderString(body, {
@@ -121,4 +123,18 @@ test('spaces in string', t => {
   t.is(templateEngine.renderString(`{{ str | mellow }}`, { str }), '');
   t.is(templateEngine.renderString(`{{ str | quantumultx }}`, { str }), '');
   t.is(templateEngine.renderString(`{{ str | patchYamlArray }}`, { str }), '');
+});
+
+test('ForeignMedia', t => {
+  const str = fs.readFileSync(path.join(__dirname, './asset/ForeignMedia.list'), { encoding: 'utf8' });
+
+  t.snapshot(templateEngine.renderString(`{{ str | quantumultx }}`, {
+    str,
+  }));
+  t.snapshot(templateEngine.renderString(`{{ str | patchYamlArray }}`, {
+    str,
+  }));
+  t.snapshot(templateEngine.renderString(`{{ str | mellow }}`, {
+    str,
+  }));
 });

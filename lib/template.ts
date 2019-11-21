@@ -17,7 +17,7 @@ export default function getEngine(templateDir: string): nunjucks.Environment {
         const testString: string = (!!item && item.trim() !== '') ? item.toUpperCase() : '';
 
         return testString !== '' &&
-          CLASH_UNSUPPORTED_RULE.every(s => !testString.includes(s));
+          CLASH_UNSUPPORTED_RULE.every(s => !testString.startsWith(s));
       })
       .map((item: string) => {
         if (item.startsWith('#')) {
@@ -39,7 +39,7 @@ export default function getEngine(templateDir: string): nunjucks.Environment {
         const testString: string = (!!item && item.trim() !== '') ? item.toUpperCase() : '';
 
         return testString !== '' &&
-          QUANTUMULT_X_UNSUPPORTED_RULE.every(s => !testString.includes(s));
+          QUANTUMULT_X_UNSUPPORTED_RULE.every(s => !testString.startsWith(s));
       })
       .join('\n');
   });
@@ -52,7 +52,7 @@ export default function getEngine(templateDir: string): nunjucks.Environment {
         const testString: string = (!!item && item.trim() !== '') ? item.toUpperCase() : '';
 
         return testString !== '' &&
-          MELLOW_UNSUPPORTED_RULE.every(s => !testString.includes(s));
+          MELLOW_UNSUPPORTED_RULE.every(s => !testString.startsWith(s));
       })
       .map((item: string) => {
         if (item.startsWith('#')) {
