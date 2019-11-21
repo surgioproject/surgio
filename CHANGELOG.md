@@ -1,3 +1,12 @@
+## [1.6.2](https://github.com/geekdada/surgio/compare/v1.6.1...v1.6.2) (2019-11-21)
+
+
+### Bug Fixes
+
+* 规则过滤会吃掉内容的问题 ([699b875](https://github.com/geekdada/surgio/commit/699b8750f9b8a4c8ef916f2ad9dfa9b8bf95333c))
+
+
+
 ## [1.6.1](https://github.com/geekdada/surgio/compare/v1.6.0...v1.6.1) (2019-11-20)
 
 
