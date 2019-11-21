@@ -1,17 +1,9 @@
 sudo: false
 os:
   - linux
-  - osx
 language: node_js
 install:
   - yarn install
-node_js:
-  - '10'
-  - '12'
-script:
-  - yarn test:lint
-  - yarn coverage
-  - npx codecov
 
 jobs:
   include:
