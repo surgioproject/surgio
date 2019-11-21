@@ -17,13 +17,13 @@ jobs:
       uses: actions/setup-node@v1
       with:
         node-version: ${{ matrix.node-version }}
-    - name: yarn install, build, and test
+    - name: yarn install, build
       run: |
         yarn install
+    - name: test, report coverage
+      run: |
         yarn test:lint
         yarn coverage
-      env:
-        CI: true
     - uses: codecov/codecov-action@v1
       if: matrix.os == 'ubuntu-latest'
       with:
