@@ -33,19 +33,19 @@ sidebarDepth: 1
 优点：
 
 - 管理简单
-- 按量付费
+- 有免费额度（几乎不可能用完）
 - 有香港边缘服务器节点（源站位于美国）
 
 缺点：
 
-- 有免费额度但是源码公开
+- 英文界面、文档
 
 ## 部署 - now.sh <Badge text="推荐" vertical="middle" />
 
 ### 准备
 
 1. 注册一个 [now.sh](https://now.sh) 账号
-2. 按量付费需要绑定信用卡（必须）
+2. 可以不绑定付款方式
 
 ### 配置
 
@@ -140,7 +140,7 @@ module.exports = gateway.createHttpServer();
 ### 部署
 
 ```bash
-$ now
+$ now --prod
 ```
 
 如果不出意外你会看到如图的信息，高亮的 URL 即为云函数服务的访问地址。
@@ -153,7 +153,13 @@ $ now
 https://xxxxxx.xxx.now.sh/get-artifact/
 ```
 
-最后，再运行一次 `now` 更新服务。
+最后，再运行一次
+
+```bash
+$ now --prod
+```
+
+更新服务。
 
 ### 使用
 
