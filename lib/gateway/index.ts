@@ -52,6 +52,7 @@ export const createKoaApp = (surgioServer: SurgioServer): SurgioKoaApplication =
   });
   router.get('/get-artifact/:name', authMiddleware(), prepareArtifact(), surgioServer.koaGetArtifact.bind(surgioServer));
   router.get('/list-artifact', authMiddleware(), surgioServer.koaListArtifact.bind(surgioServer));
+  router.get('/qx-script', surgioServer.processQuanXScript.bind(surgioServer));
   router.get('/robot.txt', ctx => {
     ctx.body = 'User-agent: *\n' +
       'Disallow: /';

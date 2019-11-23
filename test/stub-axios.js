@@ -65,3 +65,5 @@ mock.onGet(/\/error/).reply(
   500,
   ''
 );
+
+mock.onAny().passThrough();

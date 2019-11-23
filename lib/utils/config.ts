@@ -95,6 +95,9 @@ export const validateConfig = (userConfig: Partial<CommandConfig>): void => {
       v2ray: Joi.string().valid('native', 'external'),
       resolveHostname: Joi.boolean(),
     }),
+    quantumultXConfig: Joi.object({
+      deviceIds: Joi.array().items(Joi.string()),
+    }),
     analytics: Joi.boolean(),
     gateway: Joi.object({
       accessToken: Joi.string(),
