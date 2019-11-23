@@ -43,6 +43,9 @@ export interface CommandConfig {
     readonly v2ray?: 'native'|'external';
     readonly resolveHostname?: boolean;
   };
+  readonly quantumultXConfig?: {
+    readonly deviceIds?: ReadonlyArray<string>;
+  };
   readonly gateway?: {
     readonly accessToken?: string;
     readonly auth?: boolean;

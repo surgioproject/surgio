@@ -6,7 +6,9 @@ import fs from 'fs-extra';
 import nunjucks, { Environment } from 'nunjucks';
 import path from "path";
 import { PackageJson } from 'type-fest';
-import url from 'url';
+import legacyUrl from 'url';
+import axios from 'axios';
+import TransfromScript from './utils/transform-script';
 
 import getEngine from '../template';
 import { ArtifactConfig, CommandConfig, RemoteSnippet } from '../types';
@@ -14,6 +16,7 @@ import { getDownloadUrl, loadRemoteSnippetList } from '../utils';
 import * as filters from '../utils/filter';
 import { generate } from '../generate';
 import { FcResponse } from './types';
+import ReadableStream = NodeJS.ReadableStream;
 
 export class Server {
   public static getEditUrl(repository: PackageJson['repository'], p: string): string {
@@ -22,7 +25,7 @@ export class Server {
         repository :
         repository.url;
 
-      return url.resolve(base.endsWith('/') ? base : `${base}/`, p);
+      return legacyUrl.resolve(base.endsWith('/') ? base : `${base}/`, p);
     } else {
       return '';
     }
@@ -141,6 +144,33 @@ export class Server {
     });
   }
 
+  public async processQuanXScript(ctx: Context): Promise<void> {
+    const { url, id: idFromUrl } = ctx.query;
+    const idFromConfig = this.config?.quantumultXConfig?.deviceIds;
+    const deviceIds = idFromUrl ? idFromUrl.split(',') : (idFromConfig || []);
+
+    if (!url) {
+      ctx.throw(400, 'invalid url');
+      return;
+    }
+
+    const content = await axios.request<ReadableStream>({
+      url,
+      method: 'get',
+      responseType: 'stream',
+    })
+      .catch(err => {
+        throw createError(400, `请求文件时出错: ${err.message}`);
+      });
+
+    const body = new TransfromScript(deviceIds);
+
+    content.data.pipe(body);
+
+    ctx.set('cache-control', 'max-age=3600');
+    ctx.body = body;
+  }
+
   // istanbul ignore next
   public fcErrorHandler(response: FcResponse, err: Error): void {
     response.setStatusCode(500);
@@ -226,7 +256,7 @@ export class Server {
       artifactList: this.artifactList,
       getPreviewUrl: (name: string) => getDownloadUrl(this.config.urlBase, name),
       getDownloadUrl: (name: string) => (
-        url.format({
+        legacyUrl.format({
           pathname: '/gateway.js',
           query: {
             name,

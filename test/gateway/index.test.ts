@@ -164,3 +164,23 @@ test('auth', async t => {
     .get('/list-artifact?access_token=abcd')
     .expect(200);
 });
+
+test.only('qx-script', async t => {
+  const fixture = path.join(__dirname, '../fixture/gateway');
+  const surgioServer = gateway.createSurgioServer(fixture);
+  const app = gateway.createKoaApp(surgioServer);
+
+  const res1 = await request(app.callback())
+    .get('/qx-script?url=https%3A%2F%2Fraw.githubusercontent.com%2Fcrossutility%2FQuantumult-X%2Fmaster%2Fsample-rewrite-with-script.js');
+  const res2 = await request(app.callback())
+    .get('/qx-script?id=abcdef&url=https%3A%2F%2Fraw.githubusercontent.com%2Fcrossutility%2FQuantumult-X%2Fmaster%2Fsample-rewrite-with-script.js');
+  const res3 = await request(app.callback())
+    .get('/qx-script?id=abcdef,bcdefg&url=https%3A%2F%2Fraw.githubusercontent.com%2Fcrossutility%2FQuantumult-X%2Fmaster%2Fsample-rewrite-with-script.js');
+  const res4 = await request(app.callback())
+    .get('/qx-script?id=abcdef&url=https%3A%2F%2Fraw.githubusercontent.com%2Fcrossutility%2FQuantumult-X%2Fmaster%2Fsample-rewrite-with-script.js');
+
+  t.snapshot(res1.body.toString());
+  t.snapshot(res2.body.toString());
+  t.snapshot(res3.body.toString());
+  t.snapshot(res4.body.toString());
+});
