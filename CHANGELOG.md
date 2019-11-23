@@ -1,3 +1,17 @@
+# [1.7.0](https://github.com/geekdada/surgio/compare/v1.6.2...v1.7.0) (2019-11-23)
+
+
+### Bug Fixes
+
+* destDir 兼容 windows 地址 ([e9b60e8](https://github.com/geekdada/surgio/commit/e9b60e8e5d4799b79031f7aecd13e1b9081657c4))
+
+
+### Features
+
+* 支持给 qx 远程 script 添加 device id ([e9b9790](https://github.com/geekdada/surgio/commit/e9b97905e63ee1662310b4b4353308836093316d))
+
+
+
 ## [1.6.2](https://github.com/geekdada/surgio/compare/v1.6.1...v1.6.2) (2019-11-21)
 
 
