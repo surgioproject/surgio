@@ -83,3 +83,20 @@ GET /get-artifact/<artifactName>
 1. `format` 使用的是内置的模板，所以你不需要额外定义模板格式，不过仍然需要定义一个完整的 Artifact。我的建议是定义一个有完整节点的 Artifact，然后根据需要过滤出节点。
 2. `filter` 的值为过滤器的名称。你可以直接使用内置的过滤器，例如 `hkFilter`，也可以使用自定义的过滤器。
 :::
+
+### 转换 Quantumult X 远程脚本
+
+```
+GET /qx-script?url=<远程脚本地址>
+```
+
+可选参数：
+
+| 参数       | 值                         | 备注 |
+| -------- | --------------------------- | -- |
+| `id` | 设备 ID |  多个值以半角 `,` 分隔  |
+
+:::tip 提示
+1. 若 URL 中有参数 `id` 则只会添加参数中的值而忽略配置中的值。
+2. 你可以在全局配置中添加 [固定的设备 ID](/guide/custom-config.md#quantumultxconfig-deviceids)。
+:::

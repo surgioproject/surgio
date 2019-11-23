@@ -162,6 +162,24 @@ SSR 的可执行文件地址。请使用 libev 版本的二进制文件，可以
 
 打开这个选项后，Surgio 会在生成配置的时候解析域名。不过，这必然会造成生成时间延长，所以请按照个人的需要进行选择。
 
+### quantumultXConfig
+
+- 类型: `object`
+- 默认值: `undefined`
+
+#### quantumultXConfig.deviceIds <Badge text="v1.7.0" vertical="middle" />
+
+- 类型: `string[]`
+- 默认值: `undefined`
+
+为了能简便使用 Quantumult X 的第三方远程脚本，你可以在这里设置自己的客户端设备 ID。
+
+:::tip Quantumult X 设备 ID 的获取方法
+点击主页右下角「三角」按钮，再点击右上角「三点」按钮，滚动至页面下方可以看到
+
+<img width="350px" src="./images/qx-device-id.png" alt="">
+:::
+
 ### gateway <Badge text="v1.1.0" vertical="middle" />
 
 - 类型: `object`
