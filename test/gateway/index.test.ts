@@ -165,7 +165,7 @@ test('auth', async t => {
     .expect(200);
 });
 
-test.only('qx-script', async t => {
+test('qx-script', async t => {
   const fixture = path.join(__dirname, '../fixture/gateway');
   const surgioServer = gateway.createSurgioServer(fixture);
   const app = gateway.createKoaApp(surgioServer);
