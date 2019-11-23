@@ -13,6 +13,7 @@ import URLSafeBase64 from 'urlsafe-base64';
 import YAML from 'yaml';
 import os from 'os';
 import Debug from 'debug';
+import crypto from 'crypto';
 
 import {
   CommandConfig,
@@ -35,6 +36,7 @@ import {
 import { validateFilter } from './filter';
 import { parseSSRUri } from './ssr';
 import { OBFS_UA, NETWORK_TIMEOUT, NETWORK_CONCURRENCY, PROXY_TEST_URL, PROXY_TEST_INTERVAL } from './constant';
+import { createTmpFactory } from './tmp-helper';
 import { formatVmessUri } from './v2ray';
 
 const debug = Debug('surgio:utils');
@@ -1125,20 +1127,44 @@ export const loadRemoteSnippetList = (remoteSnippetList: ReadonlyArray<RemoteSni
   }
 
   return Bluebird.map(remoteSnippetList, item => {
-    const res = ConfigCache.has(item.url)
-      ? Promise.resolve(ConfigCache.get(item.url)) :
-      load(item.url)
-        .then(str => {
-          ConfigCache.set(item.url, str);
-          return str;
-        });
+    const tmpFactory = createTmpFactory('remote-snippets');
+    const fileMd5 = crypto.createHash('md5').update(item.url).digest('hex');
 
-    return res.then(str => ({
-      main: (rule: string) => addProxyToSurgeRuleSet(str, rule),
-      name: item.name,
-      url: item.url,
-      text: str, // 原始内容
-    }));
+    return (async () => {
+      if (process.env.NOW_REGION) {
+        const tmp = tmpFactory(fileMd5, 1000 * 60 * 60);
+        let snippet;
+
+        if (await tmp.getContent()) {
+          snippet = await tmp.getContent();
+        } else {
+          snippet = await load(item.url);
+          await tmp.setContent(snippet);
+        }
+
+        return {
+          main: (rule: string) => addProxyToSurgeRuleSet(snippet, rule),
+          name: item.name,
+          url: item.url,
+          text: snippet, // 原始内容
+        };
+      } else {
+        const res = ConfigCache.has(item.url)
+          ? ConfigCache.get(item.url) :
+          load(item.url)
+            .then(str => {
+              ConfigCache.set(item.url, str);
+              return str;
+            });
+
+        return res.then(str => ({
+          main: (rule: string) => addProxyToSurgeRuleSet(str, rule),
+          name: item.name,
+          url: item.url,
+          text: str, // 原始内容
+        }));
+      }
+    })();
   }, {
     concurrency: NETWORK_CONCURRENCY,
   });

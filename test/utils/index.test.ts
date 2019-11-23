@@ -454,7 +454,7 @@ test('getShadowsocksJSONConfig', async t => {
   });
 });
 
-test('loadRemoteSnippetList', async t => {
+test.serial('loadRemoteSnippetList', async t => {
   const remoteSnippetList = await utils.loadRemoteSnippetList([
     {
       url: 'http://example.com/telegram.list',
@@ -478,6 +478,36 @@ test('loadRemoteSnippetList', async t => {
   t.snapshot(remoteSnippetList[1].main('Proxy'));
   t.snapshot(remoteSnippetList[2].main('Proxy'));
   t.snapshot(remoteSnippetList[3].main('Proxy'));
+});
+
+test.serial('loadRemoteSnippetList in now', async t => {
+  process.env.NOW_REGION = 'dev_1';
+
+  const remoteSnippetList = await utils.loadRemoteSnippetList([
+    {
+      url: 'http://example.com/telegram.list',
+      name: 'telegram',
+    },
+    {
+      url: 'http://example.com/netflix.list',
+      name: 'netflix',
+    },
+    {
+      url: 'http://example.com/test-ruleset.list',
+      name: 'test',
+    },
+    {
+      url: 'http://example.com/ForeignMedia.list',
+      name: 'ForeignMedia',
+    },
+  ]);
+
+  t.snapshot(remoteSnippetList[0].main('Proxy'));
+  t.snapshot(remoteSnippetList[1].main('Proxy'));
+  t.snapshot(remoteSnippetList[2].main('Proxy'));
+  t.snapshot(remoteSnippetList[3].main('Proxy'));
+
+  process.env.NOW_REGION = null;
 });
 
 test('loadRemoteSnippetList with error', async t => {
