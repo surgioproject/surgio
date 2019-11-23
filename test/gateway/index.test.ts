@@ -184,3 +184,19 @@ test('qx-script', async t => {
   t.snapshot(res3.body.toString());
   t.snapshot(res4.body.toString());
 });
+
+test('qx-script error', async t => {
+  const fixture = path.join(__dirname, '../fixture/gateway');
+  const surgioServer = gateway.createSurgioServer(fixture);
+  const app = gateway.createKoaApp(surgioServer);
+
+  await request(app.callback())
+    .get('/qx-script?url=http://example.com/error')
+    .expect(400);
+
+  await request(app.callback())
+    .get('/qx-script')
+    .expect(400);
+
+  t.pass();
+});
