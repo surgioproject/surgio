@@ -1,3 +1,13 @@
+## [1.7.1-0](https://github.com/geekdada/surgio/compare/v1.7.0...v1.7.1-0) (2019-11-24)
+
+
+### Features
+
+* 在 Now 平台上开启文件缓存，加快启动速度 ([4456d2e](https://github.com/geekdada/surgio/commit/4456d2eb8b7bd5f387bab96d78e38b8f79c86cb3))
+* 支持转换 Surge 的 Script 部分规则到 Quantumult X 格式 ([82633d2](https://github.com/geekdada/surgio/commit/82633d24221b14931d8c5ad367bb7c88ec7a7952))
+
+
+
 # [1.7.0](https://github.com/geekdada/surgio/compare/v1.6.2...v1.7.0) (2019-11-23)
 
 
