@@ -33,3 +33,5 @@ export const QUANTUMULT_X_SUPPORTED_RULE: ReadonlyArray<string> = [
 export const MELLOW_UNSUPPORTED_RULE: ReadonlyArray<string> = [
   'URL-REGEX', 'USER-AGENT', 'AND', 'OR', 'NOT', 'DEST-PORT', 'IN-PORT', 'SRC-IP', 'RULE-SET'
 ];
+
+export const REMOTE_SNIPPET_CACHE_MAXAGE: number = 1000 * 60 * 60 * 2; // 2h

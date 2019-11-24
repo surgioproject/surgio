@@ -35,7 +35,14 @@ import {
 } from '../types';
 import { validateFilter } from './filter';
 import { parseSSRUri } from './ssr';
-import { OBFS_UA, NETWORK_TIMEOUT, NETWORK_CONCURRENCY, PROXY_TEST_URL, PROXY_TEST_INTERVAL } from './constant';
+import {
+  OBFS_UA,
+  NETWORK_TIMEOUT,
+  NETWORK_CONCURRENCY,
+  PROXY_TEST_URL,
+  PROXY_TEST_INTERVAL,
+  REMOTE_SNIPPET_CACHE_MAXAGE,
+} from './constant';
 import { createTmpFactory } from './tmp-helper';
 import { formatVmessUri } from './v2ray';
 
@@ -1132,7 +1139,7 @@ export const loadRemoteSnippetList = (remoteSnippetList: ReadonlyArray<RemoteSni
 
     return (async () => {
       if (process.env.NOW_REGION) {
-        const tmp = tmpFactory(fileMd5, 1000 * 60 * 60);
+        const tmp = tmpFactory(fileMd5, REMOTE_SNIPPET_CACHE_MAXAGE);
         let snippet;
 
         if (await tmp.getContent()) {
