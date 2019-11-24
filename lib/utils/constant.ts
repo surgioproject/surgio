@@ -13,9 +13,21 @@ export const CLASH_UNSUPPORTED_RULE: ReadonlyArray<string> = [
   'SRC-IP'
 ];
 
-export const QUANTUMULT_X_UNSUPPORTED_RULE: ReadonlyArray<string> = [
-  'URL-REGEX', 'PROCESS-NAME', 'IP-CIDR6', 'AND', 'OR', 'NOT',
-  'DEST-PORT', 'SRC-IP', 'IN-PORT', 'RULE-SET'
+export const QUANTUMULT_X_SUPPORTED_RULE: ReadonlyArray<string> = [
+  // 原生支持
+  'USER-AGENT',
+  'HOST',
+  'HOST-KEYWORD',
+  'HOST-SUFFIX',
+  'DOMAIN',
+  'DOMAIN-SUFFIX',
+  'DOMAIN-KEYWORD',
+  'IP-CIDR',
+  'GEOIP',
+  'FINAL',
+
+  // 转换
+  'HTTP-RESPONSE',
 ];
 
 export const MELLOW_UNSUPPORTED_RULE: ReadonlyArray<string> = [

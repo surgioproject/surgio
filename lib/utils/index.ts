@@ -175,7 +175,7 @@ export const getShadowsocksSubscription = async (
       debug('SS URI', item);
       const scheme = legacyUrl.parse(item, true);
       const userInfo = fromUrlSafeBase64(scheme.auth).split(':');
-      const pluginInfo = typeof scheme.query.plugin === 'string' ? decodeStringList<any>(scheme.query.plugin.split(';')) : {};
+      const pluginInfo = typeof scheme.query.plugin === 'string' ? decodeStringList(scheme.query.plugin.split(';')) : {};
 
       return {
         type: NodeTypeEnum.Shadowsocks,
@@ -1038,7 +1038,7 @@ export const pickAndFormatStringList = (obj: object, keyList: readonly string[])
   return result;
 };
 
-export const decodeStringList = <T = object>(stringList: ReadonlyArray<string>): T => {
+export const decodeStringList = <T = Record<string, string|boolean>>(stringList: ReadonlyArray<string>): T => {
   const result = {};
   stringList.forEach(item => {
     const pair = item.split('=');

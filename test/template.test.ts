@@ -4,7 +4,7 @@ import fs from 'fs-extra';
 import path from 'path';
 import getEngine from '../lib/template';
 
-const templateEngine = getEngine(process.cwd());
+const templateEngine = getEngine(process.cwd(), 'https://example.com/');
 
 test('renderString #1', t => {
   const body = `{{ str | patchYamlArray }}`;
@@ -87,6 +87,16 @@ test('quantumultx filter 1', t => {
   t.is(result, '');
 });
 
+test('quantumultx filter 2', t => {
+  const body = `{{ str | quantumultx }}`;
+  const str = fs.readFileSync(path.join(__dirname, './asset/surge-script-list.txt'), { encoding: 'utf8' });
+  const result = templateEngine.renderString(body, {
+    str,
+  });
+
+  t.snapshot(result);
+});
+
 test('mellow filter 1', t => {
   const body = `{{ str | mellow }}`;
   const str = `IP-CIDR,67.198.55.0/24,Proxy,no-resolve // test rule`;
@@ -120,9 +130,9 @@ test('mellow filter 3', t => {
 test('spaces in string', t => {
   const str = `    `;
 
-  t.is(templateEngine.renderString(`{{ str | mellow }}`, { str }), '');
-  t.is(templateEngine.renderString(`{{ str | quantumultx }}`, { str }), '');
-  t.is(templateEngine.renderString(`{{ str | patchYamlArray }}`, { str }), '');
+  t.is(templateEngine.renderString(`{{ str | mellow }}`, { str }), '    ');
+  t.is(templateEngine.renderString(`{{ str | quantumultx }}`, { str }), '    ');
+  t.is(templateEngine.renderString(`{{ str | patchYamlArray }}`, { str }), '    ');
 });
 
 test('ForeignMedia', t => {
