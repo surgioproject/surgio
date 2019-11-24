@@ -8,7 +8,7 @@ import execa from 'execa';
 import getPort from 'get-port';
 import inquirer from 'inquirer';
 import merge from 'merge-stream';
-import { fs } from 'mz';
+import fs from 'fs-extra';
 import os from 'os';
 import path from 'path';
 import shelljs from 'shelljs';
