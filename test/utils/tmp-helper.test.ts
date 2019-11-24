@@ -35,7 +35,7 @@ test('should work with maxAge 1', async t => {
   t.is(await tmp.getContent(), void 0);
   await tmp.setContent('123456abcdef');
   t.is(await tmp.getContent(), '123456abcdef');
-  await Bluebird.delay(100);
+  await Bluebird.delay(1000);
   t.is(await tmp.getContent(), void 0);
   await tmp.setContent('123456abcdefg');
   t.is(await tmp.getContent(), '123456abcdefg');
@@ -44,7 +44,7 @@ test('should work with maxAge 1', async t => {
 
 test('should work with maxAge 2', async t => {
   const factory = createTmpFactory('tmp-helper-test-folder');
-  const tmp = factory('tmp3.txt', 200);
+  const tmp = factory('tmp3.txt', 1000);
 
   t.is(await tmp.getContent(), void 0);
   await tmp.setContent('123456abcdef');
