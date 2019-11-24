@@ -307,6 +307,8 @@ getDownloadUrl('example.conf'); // https://example.com/example.conf
 
 ## 片段 (Snippet)
 
+### 如何使用片段？
+
 片段是一种特殊的模板，它依赖 Nunjucks 的 [宏（macro）](https://mozilla.github.io/nunjucks/cn/templating.html#macro) 来实现。什么是宏不重要，你只要依葫芦画瓢就可以写出自己的「片段」。
 
 我们以 `snippet` 目录内的 `blocked_rules.tpl` 为例（内容有省略）：
@@ -354,7 +356,7 @@ DOMAIN-SUFFIX,ytimg.com,🚀 Proxy
 <!-- .tpl 文件 -->
 {% import './snippet/blocked_rules.tpl' as blocked_rules %}
 
-{{ blocked_rules.main('🚀 Proxy') | patchYamlArray }}
+{{ blocked_rules.main('🚀 Proxy') | clash }}
 ```
 
 最终得到的规则是：
@@ -368,15 +370,15 @@ DOMAIN-SUFFIX,ytimg.com,🚀 Proxy
 - DOMAIN-SUFFIX,ytimg.com,🚀 Proxy
 ```
 
-需要注意的是，`patchYamlArray` 除了更改格式，还会将 Clash 不支持的规则类型省略，例如：
+需要注意的是，`clash` 除了更改格式，还会将 Clash 不支持的规则类型省略，例如：
 
 - USER-AGENT
 - PROCESS-NAME
 - no-resolve（仅除去该字段，其它部分保留）
 
-### QuantumultX 规则处理
+### Quantumult X 规则处理
 
-由于 QuantumultX 目前暂时还不支持 `URL-REGEX` 和 `PROCESS-NAME`，所以需要把这些规则从配置中除去。
+处理后的规则仅包含 [这里](https://github.com/crossutility/Quantumult-X/blob/master/sample.conf#L103) 列出的几种 Quantumult X 支持的规则类型，以及 `DOMAIN`, `DOMAIN-SUFFIX`, `DOMAIN-KEYWORD`。
 
 ```html
 <!-- .tpl 文件 -->
@@ -384,6 +386,49 @@ DOMAIN-SUFFIX,ytimg.com,🚀 Proxy
 
 {{ blocked_rules.main('🚀 Proxy') | quantumultx }}
 ```
+
+除此之外，规则处理模块还支持以下功能。
+
+#### 转换 Surge Script 规则 <Badge text="v1.7.1" vertical="top" />
+
+规则处理模块能够识别以下类型的 Surge Script 规则，转换成 Quantumult X 的 Rewrite 规则。需要注意的是，为了能够正常使用这些规则，你需要部署 Surgio 托管 API。
+
+由于 Surge Ruleset 的定义中不包含 Script 部分，所以当你要转换 Script 规则时推荐使用下面的方案。
+
+我们前面已经介绍过如何定义规则片段，你要做的就是把要转换的规则全部放进一个规则片段中，例如：
+
+```html
+<!-- ./snippet/surge_script.tpl -->
+
+{% macro main() %}
+http-response ^https?://m?api\.weibo\.c(n|om)/2/(statuses/(unread|extend|positives/get|(friends|video)(/|_)timeline)|stories/(video_stream|home_list)|(groups|fangle)/timeline|profile/statuses|comments/build_comments|photo/recommend_list|service/picfeed|searchall|cardlist|page|\!/photos/pic_recommend_status) script-path=https://raw.githubusercontent.com/yichahucha/surge/master/wb_ad.js,requires-body=true
+http-response ^https?://(sdk|wb)app\.uve\.weibo\.com(/interface/sdk/sdkad.php|/wbapplua/wbpullad.lua) script-path=https://raw.githubusercontent.com/yichahucha/surge/master/wb_launch.js,requires-body=true
+{% endmacro %}
+```
+
+然后在模板文件中引用：
+
+_for Surge_
+
+```{4}
+{% import './snippet/surge_script.tpl' as surge_script %}
+
+[Script]
+{{ blocked_rules.main() }}
+```
+
+_for Quantumult X_
+
+```{4}
+{% import './snippet/surge_script.tpl' as surge_script %}
+
+[rewrite_local]
+{{ blocked_rules.main() | quantumultx }}
+```
+
+:::warning 注意
+Surgio 不会处理类似 `[rewrite_local]` 这样的标题，所以请 **不要** 将它们也放到片段中。
+:::
 
 ### Mellow 规则处理
 

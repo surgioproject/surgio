@@ -23,6 +23,7 @@ export interface CommandConfig {
   readonly artifacts: ReadonlyArray<ArtifactConfig>;
   readonly remoteSnippets?: ReadonlyArray<RemoteSnippetConfig>;
   readonly urlBase: string;
+  publicUrl: string; // tslint:disable-line:readonly-keyword
   readonly providerDir: string;
   readonly templateDir: string;
   readonly configDir: string;
@@ -37,7 +38,7 @@ export interface CommandConfig {
   readonly binPath?: {
     readonly shadowsocksr?: string;
     readonly v2ray?: string;
-    vmess?: string; // tslint:disable-line
+    vmess?: string; // tslint:disable-line:readonly-keyword
   };
   readonly surgeConfig?: {
     readonly v2ray?: 'native'|'external';

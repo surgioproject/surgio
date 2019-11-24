@@ -1,7 +1,9 @@
 import Joi from '@hapi/joi';
 import fs from 'fs-extra';
+import { url } from 'inspector';
 import _ from 'lodash';
 import path from 'path';
+import { URL } from 'url';
 
 import { CommandConfig } from '../types';
 import { PROXY_TEST_INTERVAL, PROXY_TEST_URL } from './constant';
@@ -47,11 +49,18 @@ export const normalizeConfig = (cwd: string, userConfig: Partial<CommandConfig>)
 
   // istanbul ignore next
   if (!fs.existsSync(config.templateDir)) {
-    throw new Error(`You must create ${config.templateDir} first.`);
+    throw new Error(`仓库内缺少 ${config.templateDir} 目录`);
   }
   // istanbul ignore next
   if (!fs.existsSync(config.providerDir)) {
-    throw new Error(`You must create ${config.providerDir} first.`);
+    throw new Error(`仓库内缺少 ${config.providerDir} 目录`);
+  }
+
+  if (/http/i.test(config.urlBase)) {
+    const urlObject = new URL(config.urlBase);
+    config.publicUrl = urlObject.origin + '/';
+  } else {
+    config.publicUrl = '/';
   }
 
   return config;

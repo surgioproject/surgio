@@ -57,7 +57,7 @@ async function run(config: CommandConfig): Promise<void> {
   const distPath = config.output;
   const remoteSnippetsConfig = config.remoteSnippets || [];
   const remoteSnippetList = await loadRemoteSnippetList(remoteSnippetsConfig);
-  const templateEngine = getEngine(config.templateDir);
+  const templateEngine = getEngine(config.templateDir, config.publicUrl);
 
   await fs.remove(distPath);
   await fs.mkdir(distPath);
@@ -88,7 +88,7 @@ export async function generate(
   config: CommandConfig,
   artifact: ArtifactConfig,
   remoteSnippetList: ReadonlyArray<RemoteSnippet>,
-  templateEngine: Environment = getEngine(config.templateDir),
+  templateEngine: Environment,
 ): Promise<string> {
   const {
     name: artifactName,
