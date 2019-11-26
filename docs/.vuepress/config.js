@@ -7,6 +7,10 @@ module.exports = {
     }
   },
   themeConfig: {
+    algolia: {
+      apiKey: '6e7242cfd891a169eb12749ab473ba8f',
+      indexName: 'surgio',
+    },
     nav: [
       {
         text: 'Changelog',
