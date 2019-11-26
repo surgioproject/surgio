@@ -1,3 +1,12 @@
+## [1.7.1-2](https://github.com/geekdada/surgio/compare/v1.7.1-1...v1.7.1-2) (2019-11-26)
+
+
+### Features
+
+* always add domain to surge external provider's args ([98ebd89](https://github.com/geekdada/surgio/commit/98ebd8963f582c934f26f5beff93b362ccfdaa2d))
+
+
+
 ## [1.7.1-1](https://github.com/geekdada/surgio/compare/v1.7.1-0...v1.7.1-1) (2019-11-26)
 
 
