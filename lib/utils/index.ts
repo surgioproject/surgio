@@ -1140,10 +1140,11 @@ export const loadRemoteSnippetList = (remoteSnippetList: ReadonlyArray<RemoteSni
     return (async () => {
       if (process.env.NOW_REGION) {
         const tmp = tmpFactory(fileMd5, REMOTE_SNIPPET_CACHE_MAXAGE);
+        const tmpContent = await tmp.getContent();
         let snippet;
 
-        if (await tmp.getContent()) {
-          snippet = await tmp.getContent();
+        if (tmpContent) {
+          snippet = tmpContent;
         } else {
           snippet = await load(item.url);
           await tmp.setContent(snippet);
