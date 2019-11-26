@@ -12,7 +12,8 @@ import TransfromScript from './utils/transform-script';
 
 import getEngine from '../template';
 import { ArtifactConfig, CommandConfig, RemoteSnippet } from '../types';
-import { getDownloadUrl, loadRemoteSnippetList } from '../utils';
+import { getDownloadUrl } from '../utils';
+import { loadRemoteSnippetList } from '../utils/remote-snippet';
 import * as filters from '../utils/filter';
 import { generate } from '../generate';
 import { FcResponse } from './types';

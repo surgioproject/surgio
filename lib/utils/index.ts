@@ -1,6 +1,5 @@
 import assert from 'assert';
 import axios from 'axios';
-import Bluebird from 'bluebird';
 import chalk from 'chalk';
 import fs from 'fs-extra';
 import _ from 'lodash';
@@ -13,10 +12,8 @@ import URLSafeBase64 from 'urlsafe-base64';
 import YAML from 'yaml';
 import os from 'os';
 import Debug from 'debug';
-import crypto from 'crypto';
 
 import {
-  CommandConfig,
   HttpsNodeConfig,
   NodeFilterType,
   NodeNameFilterType,
@@ -24,8 +21,6 @@ import {
   PlainObjectOf,
   PossibleNodeConfigType,
   ProxyGroupModifier,
-  RemoteSnippet,
-  RemoteSnippetConfig,
   ShadowsocksNodeConfig,
   ShadowsocksrNodeConfig,
   SimpleNodeConfig,
@@ -38,12 +33,9 @@ import { parseSSRUri } from './ssr';
 import {
   OBFS_UA,
   NETWORK_TIMEOUT,
-  NETWORK_CONCURRENCY,
   PROXY_TEST_URL,
   PROXY_TEST_INTERVAL,
-  REMOTE_SNIPPET_CACHE_MAXAGE,
 } from './constant';
-import { createTmpFactory } from './tmp-helper';
 import { formatVmessUri } from './v2ray';
 
 const debug = Debug('surgio:utils');
@@ -1086,95 +1078,6 @@ export const normalizeClashProxyGroupConfig = (
         proxyTestInterval: options.proxyTestInterval,
       });
     }
-  });
-};
-
-export const addProxyToSurgeRuleSet = (str: string, rule: string): string => {
-  const result: string[] = [];
-
-  str
-    .split('\n')
-    .filter(item => item && item.trim() !== '')
-    .forEach(item => {
-      if (!item.startsWith('#') && !item.startsWith('//')) {
-        const comment = item.split('//');
-        const line = comment[0].trim().split(',');
-
-        if (line.length === 2) {
-          line.push(rule);
-        } else {
-          line.splice(2, 0, rule);
-        }
-
-        result.push(line.join(',') + (comment[1] ? ` //${comment[1]}` : ''));
-      } else {
-        result.push(item);
-      }
-    });
-
-  return result.join('\n');
-};
-
-export const loadRemoteSnippetList = (remoteSnippetList: ReadonlyArray<RemoteSnippetConfig>): Promise<ReadonlyArray<RemoteSnippet>> => {
-  function load(url: string): Promise<string> {
-    console.log(`正在下载远程片段: ${url}`);
-
-    return axios.get<string>(url, {
-      timeout: NETWORK_TIMEOUT,
-      responseType: 'text',
-    })
-      .then(data => {
-        console.log(`远程片段下载成功: ${url}`);
-        return data.data;
-      })
-      .catch(err => {
-        console.error(`远程片段下载失败: ${url}`);
-        throw err;
-      });
-  }
-
-  return Bluebird.map(remoteSnippetList, item => {
-    const tmpFactory = createTmpFactory('remote-snippets');
-    const fileMd5 = crypto.createHash('md5').update(item.url).digest('hex');
-
-    return (async () => {
-      if (process.env.NOW_REGION) {
-        const tmp = tmpFactory(fileMd5, REMOTE_SNIPPET_CACHE_MAXAGE);
-        const tmpContent = await tmp.getContent();
-        let snippet;
-
-        if (tmpContent) {
-          snippet = tmpContent;
-        } else {
-          snippet = await load(item.url);
-          await tmp.setContent(snippet);
-        }
-
-        return {
-          main: (rule: string) => addProxyToSurgeRuleSet(snippet, rule),
-          name: item.name,
-          url: item.url,
-          text: snippet, // 原始内容
-        };
-      } else {
-        const res = ConfigCache.has(item.url)
-          ? ConfigCache.get(item.url) :
-          load(item.url)
-            .then(str => {
-              ConfigCache.set(item.url, str);
-              return str;
-            });
-
-        return res.then(str => ({
-          main: (rule: string) => addProxyToSurgeRuleSet(str, rule),
-          name: item.name,
-          url: item.url,
-          text: str, // 原始内容
-        }));
-      }
-    })();
-  }, {
-    concurrency: NETWORK_CONCURRENCY,
   });
 };
 
