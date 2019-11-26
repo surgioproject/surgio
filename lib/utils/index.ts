@@ -400,9 +400,9 @@ export const getSurgeNodes = (
 
           if (config.hostnameIp) {
             configString.push(...config.hostnameIp.map(item => `addresses = ${item}`));
-          } else {
-            configString.push(`addresses = ${config.hostname}`);
           }
+
+          configString.push(`addresses = ${config.hostname}`);
 
           return ([
             config.nodeName,
@@ -473,9 +473,9 @@ export const getSurgeNodes = (
 
             if (config.hostnameIp) {
               configString.push(...config.hostnameIp.map(item => `addresses = ${item}`));
-            } else {
-              configString.push(`addresses = ${config.hostname}`);
             }
+
+            configString.push(`addresses = ${config.hostname}`);
 
             if (process.env.NODE_ENV !== 'test') {
               fs.writeJSONSync(jsonFilePath, jsonFile);
