@@ -1,3 +1,22 @@
+## [1.7.1-2](https://github.com/geekdada/surgio/compare/v1.7.1-1...v1.7.1-2) (2019-11-26)
+
+
+### Features
+
+* always add domain to surge external provider's args ([98ebd89](https://github.com/geekdada/surgio/commit/98ebd8963f582c934f26f5beff93b362ccfdaa2d))
+
+
+
+## [1.7.1-1](https://github.com/geekdada/surgio/compare/v1.7.1-0...v1.7.1-1) (2019-11-26)
+
+
+### Features
+
+* **gateway:** 延长缓存时间至 12 个小时并增加环境变量配置 ([c7bdc5e](https://github.com/geekdada/surgio/commit/c7bdc5e289f9ee0b8063a2fafac94b24008ec909))
+* **utils:** 优化远程片段缓存读取 ([e8133f5](https://github.com/geekdada/surgio/commit/e8133f5abf0f52fa29d6d60db8675e95f60a5e11))
+
+
+
 ## [1.7.1-0](https://github.com/geekdada/surgio/compare/v1.7.0...v1.7.1-0) (2019-11-24)
 
 

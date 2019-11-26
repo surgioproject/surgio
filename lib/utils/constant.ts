@@ -34,4 +34,6 @@ export const MELLOW_UNSUPPORTED_RULE: ReadonlyArray<string> = [
   'URL-REGEX', 'USER-AGENT', 'AND', 'OR', 'NOT', 'DEST-PORT', 'IN-PORT', 'SRC-IP', 'RULE-SET'
 ];
 
-export const REMOTE_SNIPPET_CACHE_MAXAGE: number = 1000 * 60 * 60 * 2; // 2h
+export const REMOTE_SNIPPET_CACHE_MAXAGE: number = process.env.SURGIO_REMOTE_SNIPPET_CACHE_MAXAGE ?
+  Number(process.env.SURGIO_REMOTE_SNIPPET_CACHE_MAXAGE) :
+  1000 * 60 * 60 * 12; // 12h

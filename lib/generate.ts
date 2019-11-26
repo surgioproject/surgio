@@ -30,11 +30,11 @@ import {
   getShadowsocksrNodes,
   getSurgeNodes,
   getMellowNodes,
-  loadRemoteSnippetList,
   normalizeClashProxyGroupConfig,
   toBase64,
   toUrlSafeBase64,
 } from './utils';
+import { loadRemoteSnippetList } from './utils/remote-snippet';
 import { isIp, resolveDomain } from './utils/dns';
 import {
   hkFilter, japanFilter, koreaFilter,
