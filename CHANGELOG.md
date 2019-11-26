@@ -1,3 +1,12 @@
+## [1.7.1](https://github.com/geekdada/surgio/compare/v1.7.1-2...v1.7.1) (2019-11-26)
+
+
+### Features
+
+* **utils:** 重写了 Ruleset 的解析，支持所有 Ruleset 规则了 ([1717964](https://github.com/geekdada/surgio/commit/17179642250ea654931f837a186f10b4d88fc653))
+
+
+
 ## [1.7.1-2](https://github.com/geekdada/surgio/compare/v1.7.1-1...v1.7.1-2) (2019-11-26)
 
 
