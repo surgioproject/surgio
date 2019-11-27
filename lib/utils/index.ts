@@ -41,7 +41,7 @@ import { formatVmessUri } from './v2ray';
 const debug = Debug('surgio:utils');
 
 export const ConfigCache = new LRU<string, any>({
-  maxAge: 10 * 60 * 1000, // 1min
+  maxAge: 10 * 60 * 1000, // 10min
 });
 
 // istanbul ignore next

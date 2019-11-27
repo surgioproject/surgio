@@ -2,7 +2,7 @@ import test from 'ava';
 import * as utils from '../../lib/utils/remote-snippet';
 
 test.serial('loadRemoteSnippetList', async t => {
-  const remoteSnippetList = await utils.loadRemoteSnippetList([
+  const snippets = [
     {
       url: 'http://example.com/telegram.list',
       name: 'telegram',
@@ -19,7 +19,11 @@ test.serial('loadRemoteSnippetList', async t => {
       url: 'http://example.com/ForeignMedia.list',
       name: 'ForeignMedia',
     },
-  ]);
+  ];
+  const remoteSnippetList = await utils.loadRemoteSnippetList(snippets);
+
+  // with cache
+  await utils.loadRemoteSnippetList(snippets);
 
   t.snapshot(remoteSnippetList[0].main('Proxy'));
   t.snapshot(remoteSnippetList[1].main('Proxy'));

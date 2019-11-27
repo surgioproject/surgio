@@ -67,7 +67,7 @@ export const loadRemoteSnippetList = (remoteSnippetList: ReadonlyArray<RemoteSni
       if (process.env.NOW_REGION) {
         const tmp = tmpFactory(fileMd5, REMOTE_SNIPPET_CACHE_MAXAGE);
         const tmpContent = await tmp.getContent();
-        let snippet;
+        let snippet: string;
 
         if (tmpContent) {
           snippet = tmpContent;
@@ -83,20 +83,20 @@ export const loadRemoteSnippetList = (remoteSnippetList: ReadonlyArray<RemoteSni
           text: snippet, // 原始内容
         };
       } else {
-        const res = ConfigCache.has(item.url)
+        const snippet: string = ConfigCache.has(item.url)
           ? ConfigCache.get(item.url) :
-          load(item.url)
-            .then(str => {
-              ConfigCache.set(item.url, str);
-              return str;
+          await load(item.url)
+            .then(res => {
+              ConfigCache.set(item.url, res, REMOTE_SNIPPET_CACHE_MAXAGE);
+              return res;
             });
 
-        return res.then(str => ({
-          main: (rule: string) => addProxyToSurgeRuleSet(str, rule),
+        return {
+          main: (rule: string) => addProxyToSurgeRuleSet(snippet, rule),
           name: item.name,
           url: item.url,
-          text: str, // 原始内容
-        }));
+          text: snippet, // 原始内容
+        };
       }
     })();
   }, {
