@@ -36,19 +36,19 @@ test.serial('loadRemoteSnippetList in now', async t => {
 
   const remoteSnippetList = await utils.loadRemoteSnippetList([
     {
-      url: 'http://example.com/telegram.list',
+      url: 'http://example.com/telegram.list?v=1',
       name: 'telegram',
     },
     {
-      url: 'http://example.com/netflix.list',
+      url: 'http://example.com/netflix.list?v=1',
       name: 'netflix',
     },
     {
-      url: 'http://example.com/test-ruleset.list',
+      url: 'http://example.com/test-ruleset.list?v=1',
       name: 'test',
     },
     {
-      url: 'http://example.com/ForeignMedia.list',
+      url: 'http://example.com/ForeignMedia.list?v=1',
       name: 'ForeignMedia',
     },
   ]);
