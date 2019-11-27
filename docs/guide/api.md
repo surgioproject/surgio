@@ -96,6 +96,27 @@ GET /qx-script?url=<远程脚本地址>
 | -------- | --------------------------- | -- |
 | `id` | 设备 ID |  多个值以半角 `,` 分隔  |
 
+会在脚本内容中注入设备 ID。
+
+:::tip 提示
+1. 若 URL 中有参数 `id` 则只会添加参数中的值而忽略配置中的值。
+2. 你可以在全局配置中添加 [固定的设备 ID](/guide/custom-config.md#quantumultxconfig-deviceids)。
+:::
+
+### 转换 Quantumult X rewrite_remote
+
+```
+GET /qx-rewrite-remote?url=<远程脚本地址>
+```
+
+可选参数：
+
+| 参数       | 值                         | 备注 |
+| -------- | --------------------------- | -- |
+| `id` | 设备 ID |  多个值以半角 `,` 分隔  |
+
+以 [这个脚本](https://github.com/NobyDa/Script/blob/master/QuantumultX/Js.conf) 为例，API 会将内容里的 `script-response-body` 条目的脚本地址替换成注入设备 ID API 的地址。
+
 :::tip 提示
 1. 若 URL 中有参数 `id` 则只会添加参数中的值而忽略配置中的值。
 2. 你可以在全局配置中添加 [固定的设备 ID](/guide/custom-config.md#quantumultxconfig-deviceids)。

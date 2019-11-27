@@ -8,6 +8,7 @@ import path from "path";
 import { PackageJson } from 'type-fest';
 import legacyUrl from 'url';
 import axios from 'axios';
+import { transformQxRewriteRemote } from '../utils/qx-helper';
 import TransfromScript from './utils/transform-script';
 
 import getEngine from '../template';
@@ -152,7 +153,6 @@ export class Server {
 
     if (!url) {
       ctx.throw(400, 'invalid url');
-      return;
     }
 
     const content = await axios.request<ReadableStream>({
@@ -160,16 +160,63 @@ export class Server {
       method: 'get',
       responseType: 'stream',
     })
+      // istanbul ignore next
       .catch(err => {
-        throw createError(400, `请求文件时出错: ${err.message}`);
+        throw createError(500, `请求文件时出错: ${err.message}`);
       });
+    const contentType: string = content.headers['content-type'];
+
+    if (
+      !contentType ||
+      (
+        !contentType.includes('text/plain') &&
+        !contentType.includes('application/javascript')
+      )
+    ) {
+      ctx.throw(400, '该文件不是一个可转换的脚本文件');
+    }
 
     const body = new TransfromScript(deviceIds);
 
     content.data.pipe(body);
 
-    ctx.set('cache-control', 'max-age=3600');
+    ctx.set('content-disposition', 'attachment;filename=script.js');
+    ctx.set('cache-control', 'max-age=3600, s-maxage=3600');
     ctx.body = body;
+  }
+
+  public async processQuanXRewriteRemote(ctx: Context): Promise<void> {
+    const { url, id: idFromUrl } = ctx.query;
+    const deviceIds = idFromUrl ? idFromUrl.split(',') : undefined;
+    const publicUrl = this.config.publicUrl;
+
+    if (!url) {
+      ctx.throw(400, 'invalid url');
+    }
+
+    const content = await axios.request<string>({
+      url,
+      method: 'get',
+      responseType: 'text',
+    })
+      // istanbul ignore next
+      .catch(err => {
+        throw createError(500, `请求文件时出错: ${err.message}`);
+      });
+    const contentType: string = content.headers['content-type'];
+
+    if (
+      !contentType ||
+      !contentType.includes('text/plain')
+    ) {
+      ctx.throw(400, '该文件不是一个可转换的文件');
+      return;
+    }
+
+    ctx.set('content-type', contentType);
+    ctx.set('cache-control', 'max-age=3600, s-maxage=3600');
+    ctx.set('content-disposition', 'attachment;filename=rewrite-remote.conf');
+    ctx.body = transformQxRewriteRemote(content.data, publicUrl, deviceIds);
   }
 
   // istanbul ignore next
