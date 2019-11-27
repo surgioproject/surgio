@@ -49,7 +49,7 @@ export interface CommandConfig {
   };
   readonly gateway?: {
     readonly accessToken?: string;
-    readonly auth?: boolean;
+    auth?: boolean; // tslint:disable-line:readonly-keyword
   },
   readonly proxyTestUrl?: string;
   readonly proxyTestInterval?: number;

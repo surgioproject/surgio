@@ -150,7 +150,6 @@ test('auth', async t => {
   const surgioServer = gateway.createSurgioServer(fixture);
   const app = gateway.createKoaApp(surgioServer);
 
-  // @ts-ignore
   app.surgioConfig.gateway.auth = true;
 
   await request(app.callback())
@@ -171,13 +170,17 @@ test('qx-script', async t => {
   const app = gateway.createKoaApp(surgioServer);
 
   const res1 = await request(app.callback())
-    .get('/qx-script?url=https%3A%2F%2Fraw.githubusercontent.com%2Fcrossutility%2FQuantumult-X%2Fmaster%2Fsample-rewrite-with-script.js');
+    .get('/qx-script?url=https%3A%2F%2Fraw.githubusercontent.com%2Fcrossutility%2FQuantumult-X%2Fmaster%2Fsample-rewrite-with-script.js')
+    .expect(200);
   const res2 = await request(app.callback())
-    .get('/qx-script?id=abcdef&url=https%3A%2F%2Fraw.githubusercontent.com%2Fcrossutility%2FQuantumult-X%2Fmaster%2Fsample-rewrite-with-script.js');
+    .get('/qx-script?id=abcdef&url=https%3A%2F%2Fraw.githubusercontent.com%2Fcrossutility%2FQuantumult-X%2Fmaster%2Fsample-rewrite-with-script.js')
+    .expect(200);
   const res3 = await request(app.callback())
-    .get('/qx-script?id=abcdef,bcdefg&url=https%3A%2F%2Fraw.githubusercontent.com%2Fcrossutility%2FQuantumult-X%2Fmaster%2Fsample-rewrite-with-script.js');
+    .get('/qx-script?id=abcdef,bcdefg&url=https%3A%2F%2Fraw.githubusercontent.com%2Fcrossutility%2FQuantumult-X%2Fmaster%2Fsample-rewrite-with-script.js')
+    .expect(200);
   const res4 = await request(app.callback())
-    .get('/qx-script?id=abcdef&url=https%3A%2F%2Fraw.githubusercontent.com%2Fcrossutility%2FQuantumult-X%2Fmaster%2Fsample-rewrite-with-script.js');
+    .get('/qx-script?id=abcdef&url=https%3A%2F%2Fraw.githubusercontent.com%2Fcrossutility%2FQuantumult-X%2Fmaster%2Fsample-rewrite-with-script.js')
+    .expect(200);
 
   t.snapshot(res1.body.toString());
   t.snapshot(res2.body.toString());
@@ -192,11 +195,37 @@ test('qx-script error', async t => {
 
   await request(app.callback())
     .get('/qx-script?url=http://example.com/error')
-    .expect(400);
+    .expect(500);
 
   await request(app.callback())
     .get('/qx-script')
     .expect(400);
 
   t.pass();
+});
+
+test.only('qx-rewrite-remote', async t => {
+  const fixture = path.join(__dirname, '../fixture/gateway');
+  const surgioServer = gateway.createSurgioServer(fixture);
+  const app = gateway.createKoaApp(surgioServer);
+
+  const res = await request(app.callback())
+    .get('/qx-rewrite-remote?url=https://raw.githubusercontent.com/NobyDa/Script/master/QuantumultX/Js.conf')
+    .expect(200)
+    .expect('content-type', 'text/plain; charset=utf-8')
+    .expect('cache-control', 'max-age=3600, s-maxage=3600');
+
+  t.snapshot(res.text);
+});
+
+test.only('qx-rewrite-remote with id', async t => {
+  const fixture = path.join(__dirname, '../fixture/gateway');
+  const surgioServer = gateway.createSurgioServer(fixture);
+  const app = gateway.createKoaApp(surgioServer);
+
+  const res = await request(app.callback())
+    .get('/qx-rewrite-remote?id=abcde,fghijk&url=https://raw.githubusercontent.com/NobyDa/Script/master/QuantumultX/Js.conf')
+    .expect(200);
+
+  t.snapshot(res.text);
 });
