@@ -1,3 +1,12 @@
+## [1.8.1](https://github.com/geekdada/surgio/compare/v1.8.0...v1.8.1) (2019-11-27)
+
+
+### Bug Fixes
+
+* remote-snippet cache throw error in non-now deployment ([a848988](https://github.com/geekdada/surgio/commit/a848988d2ed393ae1afa14bd5812eed989e9ffc5))
+
+
+
 # [1.8.0](https://github.com/geekdada/surgio/compare/v1.7.1...v1.8.0) (2019-11-27)
 
 
