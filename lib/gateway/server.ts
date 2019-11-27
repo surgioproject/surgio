@@ -167,8 +167,11 @@ export class Server {
     const contentType: string = content.headers['content-type'];
 
     if (
-      !contentType.includes('text/plain') ||
-      !contentType.includes('application/javascript')
+      !contentType ||
+      (
+        !contentType.includes('text/plain') &&
+        !contentType.includes('application/javascript')
+      )
     ) {
       ctx.throw(400, '该文件不是一个可转换的脚本文件');
       return;
@@ -204,6 +207,7 @@ export class Server {
     const contentType: string = content.headers['content-type'];
 
     if (
+      !contentType ||
       !contentType.includes('text/plain')
     ) {
       ctx.throw(400, '该文件不是一个可转换的文件');

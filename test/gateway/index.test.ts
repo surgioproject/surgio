@@ -235,7 +235,7 @@ test('qx-rewrite-remote with binary', async t => {
   const surgioServer = gateway.createSurgioServer(fixture);
   const app = gateway.createKoaApp(surgioServer);
 
-  const res = await request(app.callback())
+  await request(app.callback())
     .get('/qx-rewrite-remote?url=https://github.com/crossutility/Quantumult-X/blob/master/sample.conf')
     .expect(400);
 
