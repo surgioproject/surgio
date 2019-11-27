@@ -204,7 +204,7 @@ test('qx-script error', async t => {
   t.pass();
 });
 
-test.only('qx-rewrite-remote', async t => {
+test('qx-rewrite-remote', async t => {
   const fixture = path.join(__dirname, '../fixture/gateway');
   const surgioServer = gateway.createSurgioServer(fixture);
   const app = gateway.createKoaApp(surgioServer);
@@ -218,7 +218,7 @@ test.only('qx-rewrite-remote', async t => {
   t.snapshot(res.text);
 });
 
-test.only('qx-rewrite-remote with id', async t => {
+test('qx-rewrite-remote with id', async t => {
   const fixture = path.join(__dirname, '../fixture/gateway');
   const surgioServer = gateway.createSurgioServer(fixture);
   const app = gateway.createKoaApp(surgioServer);
