@@ -1,3 +1,17 @@
+# [1.8.0](https://github.com/geekdada/surgio/compare/v1.7.1...v1.8.0) (2019-11-27)
+
+
+### Bug Fixes
+
+* **gateway:** content-type validation ([9b73c03](https://github.com/geekdada/surgio/commit/9b73c03fa3392e076cfed8d72833bf999a989b7b))
+
+
+### Features
+
+* **gateway:** 支持批量转换 rewrite-remote 中的 URL ([f589a83](https://github.com/geekdada/surgio/commit/f589a83c48ef66199fc6b00cb7bf5d96a4899a19))
+
+
+
 ## [1.7.1](https://github.com/geekdada/surgio/compare/v1.7.1-2...v1.7.1) (2019-11-26)
 
 
