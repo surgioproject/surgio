@@ -153,7 +153,6 @@ export class Server {
 
     if (!url) {
       ctx.throw(400, 'invalid url');
-      return;
     }
 
     const content = await axios.request<ReadableStream>({
@@ -161,6 +160,7 @@ export class Server {
       method: 'get',
       responseType: 'stream',
     })
+      // istanbul ignore next
       .catch(err => {
         throw createError(500, `请求文件时出错: ${err.message}`);
       });
@@ -174,7 +174,6 @@ export class Server {
       )
     ) {
       ctx.throw(400, '该文件不是一个可转换的脚本文件');
-      return;
     }
 
     const body = new TransfromScript(deviceIds);
@@ -193,7 +192,6 @@ export class Server {
 
     if (!url) {
       ctx.throw(400, 'invalid url');
-      return;
     }
 
     const content = await axios.request<string>({
@@ -201,6 +199,7 @@ export class Server {
       method: 'get',
       responseType: 'text',
     })
+      // istanbul ignore next
       .catch(err => {
         throw createError(500, `请求文件时出错: ${err.message}`);
       });

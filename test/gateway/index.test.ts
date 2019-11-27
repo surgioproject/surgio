@@ -201,6 +201,10 @@ test('qx-script error', async t => {
     .get('/qx-script')
     .expect(400);
 
+  await request(app.callback())
+    .get('/qx-script?url=https://github.com/crossutility/Quantumult-X/blob/master/sample-rewrite-with-script.js')
+    .expect(400);
+
   t.pass();
 });
 
@@ -230,13 +234,17 @@ test('qx-rewrite-remote with id', async t => {
   t.snapshot(res.text);
 });
 
-test('qx-rewrite-remote with binary', async t => {
+test('qx-rewrite-remote error', async t => {
   const fixture = path.join(__dirname, '../fixture/gateway');
   const surgioServer = gateway.createSurgioServer(fixture);
   const app = gateway.createKoaApp(surgioServer);
 
   await request(app.callback())
     .get('/qx-rewrite-remote?url=https://github.com/crossutility/Quantumult-X/blob/master/sample.conf')
+    .expect(400);
+
+  await request(app.callback())
+    .get('/qx-rewrite-remote')
     .expect(400);
 
   t.pass();
