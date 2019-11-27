@@ -27,6 +27,7 @@
     "@types/hapi__joi": "^16.0.3",
     "@types/inquirer": "^6.0.3",
     "@types/koa": "^2.0.51",
+    "@types/koa-router": "^7.0.42",
     "@types/lodash": "^4.14.144",
     "@types/lru-cache": "^5.1.0",
     "@types/node": "^10",
@@ -76,7 +77,6 @@
   },
   "dependencies": {
     "@hapi/joi": "^16.1.7",
-    "@types/koa-router": "^7.0.42",
     "ali-oss": "^6.1.0",
     "axios": "^0.19.0",
     "bluebird": "^3.7.1",
