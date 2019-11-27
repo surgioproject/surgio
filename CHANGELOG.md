@@ -1,3 +1,12 @@
+## [1.8.2](https://github.com/geekdada/surgio/compare/v1.8.1...v1.8.2) (2019-11-27)
+
+
+### Bug Fixes
+
+* clash conf empty line ([5af023d](https://github.com/geekdada/surgio/commit/5af023d8e96cda22e5df82bfebb18aaca19ccf33))
+
+
+
 ## [1.8.1](https://github.com/geekdada/surgio/compare/v1.8.0...v1.8.1) (2019-11-27)
 
 
