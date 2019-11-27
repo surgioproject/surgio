@@ -24,7 +24,7 @@ export default function getEngine(templateDir: string, publicUrl: string): nunju
         return CLASH_UNSUPPORTED_RULE.every(s => !testString.startsWith(s));
       })
       .map((item: string) => {
-        if (item.startsWith('#') || str.trim() === '') {
+        if (item.startsWith('#') || item.trim() === '') {
           return item;
         }
         return `- ${item}`

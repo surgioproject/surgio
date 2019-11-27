@@ -6,7 +6,7 @@ import getEngine from '../lib/template';
 
 const templateEngine = getEngine(process.cwd(), 'https://example.com/');
 
-test('renderString #1', t => {
+test('clash #1', t => {
   const body = `{{ str | patchYamlArray }}`;
   const str = `IP-CIDR,67.198.55.0/24,Proxy,no-resolve`;
   const result = templateEngine.renderString(body, {
@@ -16,7 +16,7 @@ test('renderString #1', t => {
   t.is(result, `- IP-CIDR,67.198.55.0/24,Proxy`);
 });
 
-test('renderString #2', t => {
+test('clash #2', t => {
   const body = `{{ str | patchYamlArray }}`;
   const str = `IP-CIDR,67.198.55.0/24,Proxy,no-resolve // test rule`;
   const result = templateEngine.renderString(body, {
@@ -26,7 +26,7 @@ test('renderString #2', t => {
   t.is(result, `- IP-CIDR,67.198.55.0/24,Proxy`);
 });
 
-test('renderString #3', t => {
+test('clash #3', t => {
   const body = `{{ str | patchYamlArray }}`;
   const str = `PROCESS-NAME,Telegram,Proxy,no-resolve // test rule`;
   const result = templateEngine.renderString(body, {
@@ -36,7 +36,7 @@ test('renderString #3', t => {
   t.is(result, '');
 });
 
-test('renderString #4', t => {
+test('clash #4', t => {
   const body = `{{ str | patchYamlArray }}`;
   const str = `# Comment`;
   const result = templateEngine.renderString(body, {
@@ -46,7 +46,7 @@ test('renderString #4', t => {
   t.is(result, '# Comment');
 });
 
-test('renderString #5', t => {
+test('clash #5', t => {
   const body = `{{ str | patchYamlArray }}`;
   const str = `# Comment`;
   const result = templateEngine.renderString(body, {
@@ -56,7 +56,7 @@ test('renderString #5', t => {
   t.is(result, '# Comment');
 });
 
-test('renderString #6', t => {
+test('clash #6', t => {
   const body = `{{ str | patchYamlArray }}`;
   const str = `URL-REGEX,xxxxxxxxxxxx`;
   const result = templateEngine.renderString(body, {
@@ -64,6 +64,13 @@ test('renderString #6', t => {
   });
 
   t.is(result, '');
+});
+
+test('clash #7', t => {
+  const body = `{{ str | clash }}`;
+
+  t.is(templateEngine.renderString(body, { str: '# test' }), '# test');
+  t.is(templateEngine.renderString(body, { str: '  ' }), '  ');
 });
 
 test('base64', t => {
@@ -141,7 +148,7 @@ test('ForeignMedia', t => {
   t.snapshot(templateEngine.renderString(`{{ str | quantumultx }}`, {
     str,
   }));
-  t.snapshot(templateEngine.renderString(`{{ str | patchYamlArray }}`, {
+  t.snapshot(templateEngine.renderString(`{{ str | clash }}`, {
     str,
   }));
   t.snapshot(templateEngine.renderString(`{{ str | mellow }}`, {
