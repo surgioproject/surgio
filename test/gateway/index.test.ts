@@ -229,3 +229,15 @@ test('qx-rewrite-remote with id', async t => {
 
   t.snapshot(res.text);
 });
+
+test('qx-rewrite-remote with binary', async t => {
+  const fixture = path.join(__dirname, '../fixture/gateway');
+  const surgioServer = gateway.createSurgioServer(fixture);
+  const app = gateway.createKoaApp(surgioServer);
+
+  const res = await request(app.callback())
+    .get('/qx-rewrite-remote?url=https://github.com/crossutility/Quantumult-X/blob/master/sample.conf')
+    .expect(400);
+
+  t.pass();
+});
