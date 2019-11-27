@@ -141,6 +141,16 @@ SSR 的可执行文件地址。请使用 libev 版本的二进制文件，可以
 - 类型: `object`
 - 默认值: `undefined`
 
+```js
+// surgio.conf.js
+module.exports = {
+  surgeConfig: {
+    v2ray: 'native',
+    resolveHostname: true,
+  },
+};
+```
+
 #### surgeConfig.v2ray
 
 - 类型: `string`
@@ -166,6 +176,15 @@ SSR 的可执行文件地址。请使用 libev 版本的二进制文件，可以
 
 - 类型: `object`
 - 默认值: `undefined`
+
+```js
+// surgio.conf.js
+module.exports = {
+  quantumultXConfig: {
+    deviceIds: ['ABCDE12345'],
+  },
+};
+```
 
 #### quantumultXConfig.deviceIds <Badge text="v1.7.0" vertical="middle" />
 
