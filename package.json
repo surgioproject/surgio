@@ -59,7 +59,8 @@
     "tslint-immutable": "^6.0.1",
     "type-fest": "^0.8.1",
     "typescript": "^3.7.2",
-    "vuepress": "^1.2.0"
+    "vuepress": "^1.2.0",
+    "vuepress-plugin-sitemap": "^2.3.1"
   },
   "scripts": {
     "test": "run-s test:*",

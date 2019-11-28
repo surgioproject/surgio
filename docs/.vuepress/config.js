@@ -62,7 +62,13 @@ module.exports = {
       '@vuepress/google-analytics',
       {
         'ga': 'UA-146417304-1'
-      }
-    ]
+      },
+    ],
+    [
+      'vuepress-plugin-sitemap',
+      {
+        hostname: 'https://surgio.royli.dev',
+      },
+    ],
   ]
 };
