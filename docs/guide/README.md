@@ -48,4 +48,14 @@ Surgio 现在不会将来也不会记录或上报你使用的节点或订阅信�
 
 ## 支持开发
 
+感谢 Surgio 的支持者们！
+
+<a href="https://opencollective.com/surgio"><img src="https://opencollective.com/surgio/contributors.svg?width=890" /></a>
+
+<p>
+  <a href="https://opencollective.com/surgio/donate" target="_blank">
+    <img src="https://opencollective.com/surgio/donate/button@2x.png?color=blue" width=300 />
+  </a>
+</p>
+
 <img src="/support.jpg" style="padding-top:20px;" width=300>
