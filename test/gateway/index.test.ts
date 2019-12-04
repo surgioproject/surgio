@@ -214,7 +214,7 @@ test('qx-rewrite-remote', async t => {
   const app = gateway.createKoaApp(surgioServer);
 
   const res = await request(app.callback())
-    .get('/qx-rewrite-remote?url=https://raw.githubusercontent.com/NobyDa/Script/master/QuantumultX/Js.conf')
+    .get('/qx-rewrite-remote?url=https://gist.githubusercontent.com/geekdada/245b7de6af69a9d8e70e7c867c9fb0a9/raw/59303d7e8ee0e740f63cfff8946233f28909b1a8/Js.conf')
     .expect(200)
     .expect('content-type', 'text/plain; charset=utf-8')
     .expect('cache-control', 'max-age=3600, s-maxage=3600');
@@ -228,7 +228,7 @@ test('qx-rewrite-remote with id', async t => {
   const app = gateway.createKoaApp(surgioServer);
 
   const res = await request(app.callback())
-    .get('/qx-rewrite-remote?id=abcde,fghijk&url=https://raw.githubusercontent.com/NobyDa/Script/master/QuantumultX/Js.conf')
+    .get('/qx-rewrite-remote?id=abcde,fghijk&url=https://gist.githubusercontent.com/geekdada/245b7de6af69a9d8e70e7c867c9fb0a9/raw/59303d7e8ee0e740f63cfff8946233f28909b1a8/Js.conf')
     .expect(200);
 
   t.snapshot(res.text);
