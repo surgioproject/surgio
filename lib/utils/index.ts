@@ -1009,10 +1009,19 @@ export const getClashNodeNames = (
   readonly url?: string;
   readonly interval?: number;
 } => {
-  const nodes = applyFilter(nodeNameList, options.filter);
-  const proxies = options.existingProxies ?
-    [].concat(options.existingProxies, nodes.map(item => item.nodeName)) :
-    nodes.map(item => item.nodeName);
+  let proxies;
+
+  if (options.existingProxies) {
+    if (options.filter) {
+      const nodes = applyFilter(nodeNameList, options.filter);
+      proxies = [].concat(options.existingProxies, nodes.map(item => item.nodeName));
+    } else {
+      proxies = options.existingProxies;
+    }
+  } else {
+    const nodes = applyFilter(nodeNameList, options.filter);
+    proxies = nodes.map(item => item.nodeName);
+  }
 
   return {
     type: ruleType,
@@ -1070,10 +1079,9 @@ export const normalizeClashProxyGroupConfig = (
         proxyTestUrl: options.proxyTestUrl,
         proxyTestInterval: options.proxyTestInterval,
       });
-    } else if (item.proxies) {
-      return item;
     } else {
       return getClashNodeNames(item.name, item.type, nodeList, {
+        existingProxies: item.proxies,
         proxyTestUrl: options.proxyTestUrl,
         proxyTestInterval: options.proxyTestInterval,
       });

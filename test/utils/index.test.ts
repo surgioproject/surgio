@@ -287,6 +287,11 @@ test('normalizeClashProxyGroupConfig', t => {
         type: 'select',
       },
       {
+        name: '🚀 Proxy 2',
+        type: 'select',
+        proxies: ['Another Proxy'],
+      },
+      {
         name: 'US',
         filter: filters.usFilter,
         type: 'url-test',
@@ -319,6 +324,11 @@ test('normalizeClashProxyGroupConfig', t => {
         proxies: ['🚀 Proxy', 'US'],
         type: 'fallback',
       },
+      {
+        name: 'fallback-auto-no-filter',
+        proxies: ['🚀 Proxy', 'US'],
+        type: 'fallback',
+      },
     ];
   }
   const result = [
@@ -326,6 +336,11 @@ test('normalizeClashProxyGroupConfig', t => {
       name: '🚀 Proxy',
       type: 'select',
       proxies: ['🇭🇰HK(Example)'],
+    },
+    {
+      name: '🚀 Proxy 2',
+      type: 'select',
+      proxies: ['Another Proxy'],
     },
     {
       name: 'US',
@@ -364,6 +379,13 @@ test('normalizeClashProxyGroupConfig', t => {
       name: 'fallback-auto',
       type: 'fallback',
       proxies: ['🚀 Proxy', 'US', '🇭🇰HK(Example)'],
+      url: PROXY_TEST_URL,
+      interval: PROXY_TEST_INTERVAL,
+    },
+    {
+      name: 'fallback-auto-no-filter',
+      type: 'fallback',
+      proxies: ['🚀 Proxy', 'US'],
       url: PROXY_TEST_URL,
       interval: PROXY_TEST_INTERVAL,
     },
