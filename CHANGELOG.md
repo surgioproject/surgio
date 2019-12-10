@@ -1,3 +1,12 @@
+## [1.8.4](https://github.com/geekdada/surgio/compare/v1.8.3...v1.8.4) (2019-12-10)
+
+
+### Bug Fixes
+
+* Ruleset 中 IP-CIDR6 的处理不当 ([edee2bd](https://github.com/geekdada/surgio/commit/edee2bd3de6a3154f651629b780319533bd5445b))
+
+
+
 ## [1.8.3](https://github.com/geekdada/surgio/compare/v1.8.2...v1.8.3) (2019-12-04)
 
 
