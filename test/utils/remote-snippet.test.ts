@@ -85,8 +85,16 @@ test('addProxyToSurgeRuleSet', t => {
     'IP-CIDR,192.168.0.0/16,Proxy,no-resolve'
   );
   t.is(
+    utils.addProxyToSurgeRuleSet('IP-CIDR6,2a03:2880:f200:c3:face:b00c::177/128,no-resolve', 'Proxy'),
+    'IP-CIDR6,2a03:2880:f200:c3:face:b00c::177/128,Proxy,no-resolve'
+  );
+  t.is(
     utils.addProxyToSurgeRuleSet('IP-CIDR,192.168.0.0/16', 'Proxy'),
     'IP-CIDR,192.168.0.0/16,Proxy'
+  );
+  t.is(
+    utils.addProxyToSurgeRuleSet('IP-CIDR6,2a03:2880:f200:c3:face:b00c::177/128', 'Proxy'),
+    'IP-CIDR6,2a03:2880:f200:c3:face:b00c::177/128,Proxy'
   );
   t.is(
     utils.addProxyToSurgeRuleSet('GEOIP,US,no-resolve', 'Proxy'),

@@ -25,6 +25,7 @@ export const addProxyToSurgeRuleSet = (str: string, proxyName: string): string =
         case 'NOT':
           return `${item},${proxyName}`;
         case 'IP-CIDR':
+        case 'IP-CIDR6':
         case 'GEOIP':
           rule.splice(2, 0, proxyName);
           return rule.join(',');
