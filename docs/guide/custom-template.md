@@ -284,6 +284,12 @@ Proxy-2, vmess1, vmess1://75da2e14-4d08-480b-b3cb-0079a0c51275@example.com:10025
 getNodeNames(nodeList, netflixFilter);
 ```
 
+如果只需要更改分隔符则这样写：
+
+```js
+getNodeNames(nodeList, undefined, ':');
+```
+
 ### getDownloadUrl
 
 `getDownloadUrl(name)`

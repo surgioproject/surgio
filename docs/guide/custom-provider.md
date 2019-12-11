@@ -14,8 +14,8 @@ sidebarDepth: 2
 |  类型  |  描述  |  备注  |
 |:---:| --- | --- |
 |  `shadowsocks_json_subscribe`  |  针对 Windows 客户端的 Shadowsocks 订阅地址  |  通常命名为 *gui-config.json*  |
-|  `shadowsocks_subscribe`  |  通用的 Shadowwsocks 订阅地址  |    |
-|  `shadowsocksr_subscribe`  |  通用的 Shadowwsocksr 订阅地址  |    |
+|  `shadowsocks_subscribe`  |  通用的 Shadowsocks 订阅地址  |    |
+|  `shadowsocksr_subscribe`  |  通用的 Shadowsocksr 订阅地址  |    |
 |  `v2rayn_subscribe`  |  V2rayN 订阅地址  |  [协议](https://github.com/2dust/v2rayN/wiki/%E8%AE%A2%E9%98%85%E5%8A%9F%E8%83%BD%E8%AF%B4%E6%98%8E)  |
 |  `custom` <Badge text="推荐" vertical="middle" /> |  自己维护的节点  |  支持 Shadowsocks, Shadowsocksr, Snell, HTTPS, Vmess  |
 |  `clash` <Badge text="推荐" vertical="middle" /> |  Clash 配置  |  支持 Shadowsocks, Shadowsocksr, Snell, HTTPS, Vmess  |
@@ -329,3 +329,28 @@ module.exports = {
 - 默认值: `false`
 
 是否为该订阅强制开启 TFO（TCP Fast Open），部分机场虽然支持 TFO 但是没有在订阅中开启，你可以通过这个配置强制打开。
+
+### provider.renameNode <Badge text="v1.8.5" vertical="middle" />
+
+- 类型: `Function`
+- 默认值: `undefined`
+
+更改节点名。如果你对机场的奇葩命名有意见，可以在这里把他们替换掉。
+
+```js
+module.exports = {
+  renameNode: name => {
+    if (name === '社会主义') {
+      return '资本主义';
+    }
+    return name;
+  },
+};
+```
+
+:::warning 注意
+1. `nodeFilter` 只对原始名称有效；
+2. 其它内置过滤器和自定义过滤器仅对新名称有效；
+3. 如果你开启了 `addFlag`，那国家地区判定仅对新名称有效；
+4. 这个方法不一定要在末尾 `return` 内容，如果没有返回内容则保留原名称；
+:::

@@ -190,6 +190,15 @@ export async function generate(
 
         nodeConfig.surgeConfig = config.surgeConfig;
 
+        if (provider.renameNode) {
+          const newName = provider.renameNode(nodeConfig.nodeName);
+
+          if (newName) {
+            nodeConfig.nodeName = newName;
+          }
+        }
+
+        // 给节点名加国旗
         if (provider.addFlag) {
           nodeConfig.nodeName = prependFlag(nodeConfig.nodeName);
         }

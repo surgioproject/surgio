@@ -89,6 +89,7 @@ export interface ProviderConfig {
   };
   readonly addFlag?: boolean;
   readonly tfo?: boolean;
+  readonly renameNode?: (name: string) => string;
 }
 
 export interface BlackSSLProviderConfig extends ProviderConfig {

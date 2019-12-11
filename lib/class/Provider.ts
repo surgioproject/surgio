@@ -1,12 +1,9 @@
 import Joi from '@hapi/joi';
 
 import {
-  NodeFilterType,
-  NodeNameFilterType,
   ProviderConfig,
   SupportProviderEnum,
   PossibleNodeConfigType,
-  SortedNodeNameFilterType,
 } from '../types';
 
 let globalPort: number = 61100;
@@ -19,6 +16,7 @@ export default class Provider {
   public readonly customFilters?: ProviderConfig['customFilters'];
   public readonly addFlag?: boolean;
   public readonly tfo?: boolean;
+  public readonly renameNode?: ProviderConfig['renameNode'];
   private startPort?: number;
 
   constructor(config: ProviderConfig) {
@@ -54,6 +52,7 @@ export default class Provider {
     this.addFlag = config.addFlag;
     this.tfo = config.tfo;
     this.startPort = config.startPort;
+    this.renameNode = config.renameNode;
   }
 
   public get nextPort(): number {

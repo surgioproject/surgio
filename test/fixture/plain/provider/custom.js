@@ -26,11 +26,17 @@ module.exports = {
     },
     {
       type: 'https',
-      nodeName: 'HTTPS',
+      nodeName: 'rename to HTTPS',
       hostname: 'us.example.com',
       port: '443',
       username: 'username',
       password: 'password',
     },
   ],
+  renameNode: name => {
+    if (name === 'rename to HTTPS') {
+      return 'HTTPS';
+    }
+    return name;
+  },
 };
