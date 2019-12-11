@@ -123,6 +123,7 @@ export const netflixFilter: NodeNameFilterType = item => {
     'hkbn',
     'hkt',
     'hgc',
+    'nbu',
   ].some(key => item.nodeName.toLowerCase().includes(key));
 };
 
