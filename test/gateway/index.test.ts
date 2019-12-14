@@ -170,16 +170,16 @@ test('qx-script', async t => {
   const app = gateway.createKoaApp(surgioServer);
 
   const res1 = await request(app.callback())
-    .get('/qx-script?url=https%3A%2F%2Fraw.githubusercontent.com%2Fcrossutility%2FQuantumult-X%2Fmaster%2Fsample-rewrite-with-script.js')
+    .get('/qx-script?url=https%3A%2F%2Fraw.githubusercontent.com%2Fcrossutility%2FQuantumult-X%2Fb7c712ba0ce08bf8c0de9bccc52d1a0c21d4a2d1%2Fsample-rewrite-with-script.js')
     .expect(200);
   const res2 = await request(app.callback())
-    .get('/qx-script?id=abcdef&url=https%3A%2F%2Fraw.githubusercontent.com%2Fcrossutility%2FQuantumult-X%2Fmaster%2Fsample-rewrite-with-script.js')
+    .get('/qx-script?id=abcdef&url=https%3A%2F%2Fraw.githubusercontent.com%2Fcrossutility%2FQuantumult-X%2Fb7c712ba0ce08bf8c0de9bccc52d1a0c21d4a2d1%2Fsample-rewrite-with-script.js')
     .expect(200);
   const res3 = await request(app.callback())
-    .get('/qx-script?id=abcdef,bcdefg&url=https%3A%2F%2Fraw.githubusercontent.com%2Fcrossutility%2FQuantumult-X%2Fmaster%2Fsample-rewrite-with-script.js')
+    .get('/qx-script?id=abcdef,bcdefg&url=https%3A%2F%2Fraw.githubusercontent.com%2Fcrossutility%2FQuantumult-X%2Fb7c712ba0ce08bf8c0de9bccc52d1a0c21d4a2d1%2Fsample-rewrite-with-script.js')
     .expect(200);
   const res4 = await request(app.callback())
-    .get('/qx-script?id=abcdef&url=https%3A%2F%2Fraw.githubusercontent.com%2Fcrossutility%2FQuantumult-X%2Fmaster%2Fsample-rewrite-with-script.js')
+    .get('/qx-script?id=abcdef&url=https%3A%2F%2Fraw.githubusercontent.com%2Fcrossutility%2FQuantumult-X%2Fb7c712ba0ce08bf8c0de9bccc52d1a0c21d4a2d1%2Fsample-rewrite-with-script.js')
     .expect(200);
 
   t.snapshot(res1.body.toString());
