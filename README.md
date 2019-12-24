@@ -34,12 +34,6 @@
 
 [<img width="207" src="https://raw.githubusercontent.com/geekdada/surgio/master/docs/.vuepress/public/join-telegram.png">](https://t.me/surgiotg)
 
-## 支持
-
-感谢 Surgio 的支持者们！
-
-<a href="https://opencollective.com/surgio"><img src="https://opencollective.com/surgio/contributors.svg?width=890" /></a>
-
 ## Contributors
 
 ### Code Contributors
