@@ -177,6 +177,19 @@ Proxy:
     obfs: tls
     obfs-host: example.com
 
+  - name: "ss-wss"
+    type: ss
+    server: server
+    port: 443
+    cipher: chacha20-ietf-poly1305
+    password: "password"
+    plugin: v2ray-plugin
+    plugin-opts:
+      mode: websocket
+      tls: true # wss
+      host: cloudflare.com
+      path: "/ws"
+
 Proxy Group:
   # url-test select which proxy will be used by benchmarking speed to a URL.
   - name: "auto"

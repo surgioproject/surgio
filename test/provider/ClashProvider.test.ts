@@ -5,7 +5,7 @@ import { NodeTypeEnum } from '../../lib/types';
 test('getClashSubscription', async t => {
   const config = await ClashProvider.getClashSubscription('http://example.com/clash-sample.yaml');
 
-  t.deepEqual(config.map(item => item.nodeName), ['ss1', 'ss2', 'vmess', 'http', 'snell', 'ss4']);
+  t.deepEqual(config.map(item => item.nodeName), ['ss1', 'ss2', 'ss3', 'vmess', 'http', 'snell', 'ss4', 'ss-wss']);
   t.deepEqual(config[0], {
     type: NodeTypeEnum.Shadowsocks,
     nodeName: 'ss1',
@@ -27,6 +27,18 @@ test('getClashSubscription', async t => {
     'obfs-host': 'www.bing.com'
   });
   t.deepEqual(config[2], {
+    type: NodeTypeEnum.Shadowsocks,
+    nodeName: 'ss3',
+    hostname: 'server',
+    port: 443,
+    method: 'chacha20-ietf-poly1305',
+    password: 'password',
+    'udp-relay': false,
+    obfs: 'ws',
+    'obfs-host': 'server',
+    'obfs-uri': '/'
+  });
+  t.deepEqual(config[3], {
     type: NodeTypeEnum.Vmess,
     nodeName: 'vmess',
     hostname: 'server',
@@ -38,7 +50,7 @@ test('getClashSubscription', async t => {
     network: 'tcp',
     udp: false,
   });
-  t.deepEqual(config[3], {
+  t.deepEqual(config[4], {
     type: NodeTypeEnum.HTTPS,
     nodeName: 'http',
     hostname: 'server',
@@ -46,7 +58,7 @@ test('getClashSubscription', async t => {
     username: 'username',
     password: 'password',
   });
-  t.deepEqual(config[4], {
+  t.deepEqual(config[5], {
     type: NodeTypeEnum.Snell,
     nodeName: 'snell',
     hostname: 'server',
@@ -54,7 +66,7 @@ test('getClashSubscription', async t => {
     psk: 'yourpsk',
     obfs: 'http',
   });
-  t.deepEqual(config[5], {
+  t.deepEqual(config[6], {
     type: NodeTypeEnum.Shadowsocks,
     nodeName: 'ss4',
     hostname: 'server',
@@ -64,6 +76,18 @@ test('getClashSubscription', async t => {
     'udp-relay': false,
     obfs: 'tls',
     'obfs-host': 'example.com'
+  });
+  t.deepEqual(config[7], {
+    type: NodeTypeEnum.Shadowsocks,
+    nodeName: 'ss-wss',
+    hostname: 'server',
+    port: 443,
+    method: 'chacha20-ietf-poly1305',
+    password: 'password',
+    'udp-relay': false,
+    obfs: 'wss',
+    'obfs-host': 'cloudflare.com',
+    'obfs-uri': '/ws',
   });
 });
 
@@ -88,9 +112,21 @@ test('getClashSubscription udpRelay', async t => {
     password: 'password',
     'udp-relay': true,
     obfs: 'tls',
-    'obfs-host': 'www.bing.com'
+    'obfs-host': 'www.bing.com',
   });
   t.deepEqual(config[2], {
+    type: NodeTypeEnum.Shadowsocks,
+    nodeName: 'ss3',
+    hostname: 'server',
+    port: 443,
+    method: 'chacha20-ietf-poly1305',
+    password: 'password',
+    'udp-relay': true,
+    obfs: 'ws',
+    'obfs-host': 'server',
+    'obfs-uri': '/',
+  });
+  t.deepEqual(config[3], {
     type: NodeTypeEnum.Vmess,
     nodeName: 'vmess',
     hostname: 'server',

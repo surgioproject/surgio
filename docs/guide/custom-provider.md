@@ -59,6 +59,11 @@ module.exports = {
 };
 ```
 
+:::warning 注意
+1. Surgio 支持读取 `obfs-local` 和 `v2ray-plugin` 两种 SIP003 插件配置；
+2. 仅支持 `v2ray-plugin` 的 WebSocket 模式；
+:::
+
 ### url
 
 - 类型: `string`
@@ -114,6 +119,11 @@ module.exports = {
 
 ## clash <Badge text="推荐" vertical="middle" />
 
+:::warning 注意
+1. Surgio 支持读取 `obfs-local` 和 `v2ray-plugin` 两种 SIP003 插件配置；
+2. 仅支持 `v2ray-plugin` 的 WebSocket 模式；
+:::
+
 ### url
 
 - 类型: `string`
@@ -146,7 +156,7 @@ module.exports = {
 
 *Shadowsocks*
 
-```js
+```json5
 {
   type: 'shadowsocks',
   nodeName: '🇺🇸US',
@@ -154,16 +164,21 @@ module.exports = {
   port: 10000,
   method: 'chacha20-ietf-poly1305',
   password: 'password',
-  obfs: 'tls', // tls 或 http
+  obfs: 'tls', // tls, http, ws, wss
   'obfs-host': 'gateway-carry.icloud.com',
+  'obfs-uri': '/', // 当 obfs 为 ws 或 wss 时可配置
   'udp-relay': true,
   tfo: false, // TCP Fast Open
 }
 ```
 
+:::warning 注意
+1. `ws` 和 `wss` 是通过服务端 v2ray-plugin 支持的；
+:::
+
 *Shadowsocksr*
 
-```js
+```json5
 {
   type: 'shadowsocksr',
   nodeName: '🇭🇰HK',
@@ -182,7 +197,7 @@ module.exports = {
 
 *Vmess*
 
-```js
+```json5
 {
   nodeName: '🇭🇰HK',
   type: 'vmess',
@@ -201,7 +216,7 @@ module.exports = {
 
 *Snell*
 
-```js
+```json5
 {
   type: 'snell',
   nodeName: '🇭🇰HK',
@@ -214,7 +229,7 @@ module.exports = {
 
 *HTTPS*
 
-```js
+```json5
 {
   type: 'https',
   nodeName: '🇭🇰HK',
@@ -227,7 +242,7 @@ module.exports = {
 
 ## 公共属性
 
-:::tip
+:::tip 提示
 公共属性可以定义在任何一种 Provider 中。
 :::
 
