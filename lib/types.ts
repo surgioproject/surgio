@@ -1,4 +1,4 @@
-import Provider from './class/Provider';
+import Provider from './provider/Provider';
 
 export enum NodeTypeEnum {
   HTTPS = 'https',
@@ -140,8 +140,9 @@ export interface ShadowsocksNodeConfig extends SimpleNodeConfig {
   readonly method: string;
   readonly password: string;
   readonly 'udp-relay'?: boolean;
-  readonly obfs?: 'tls'|'http';
+  readonly obfs?: 'tls'|'http'|'ws'|'wss';
   readonly 'obfs-host'?: string;
+  readonly 'obfs-uri'?: string;
 }
 
 export interface SnellNodeConfig extends SimpleNodeConfig {

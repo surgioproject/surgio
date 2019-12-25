@@ -48,7 +48,7 @@ import {
 import getProvider from './utils/get-provider';
 import { prependFlag } from './utils/flag';
 import { NETWORK_CONCURRENCY } from './utils/constant';
-import Provider from './class/Provider';
+import Provider from './provider/Provider';
 
 const spinner = ora();
 

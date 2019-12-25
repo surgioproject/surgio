@@ -1,5 +1,5 @@
 import test from 'ava';
-import ClashProvider from '../../lib/class/ClashProvider';
+import ClashProvider from '../../lib/provider/ClashProvider';
 import { NodeTypeEnum } from '../../lib/types';
 
 test('getClashSubscription', async t => {
