@@ -832,7 +832,7 @@ test('formatV2rayConfig', t => {
 
 test('getShadowsocksSubscription with udp', async t => {
   const nodeList = await utils.getShadowsocksSubscription('http://example.com/test-ss-sub.txt', true);
-  const nodeList2 = await utils.getShadowsocksSubscription('http://example.com/test-ss-sub.txt?v=2', false, true);
+  const nodeList2 = await utils.getShadowsocksSubscription('http://example.com/test-ss-sub.txt?v=2', true, true);
 
   t.deepEqual(nodeList[0], {
     type: NodeTypeEnum.Shadowsocks,
@@ -854,6 +854,17 @@ test('getShadowsocksSubscription with udp', async t => {
     password: 'password',
     'udp-relay': true,
   });
+  t.deepEqual(nodeList[2], {
+    nodeName: '🇺🇸US 3',
+    type: NodeTypeEnum.Shadowsocks,
+    hostname: 'us.example.com',
+    port: '443',
+    method: 'chacha20-ietf-poly1305',
+    password: 'password',
+    'udp-relay': true,
+    obfs: 'wss',
+    'obfs-host': 'gateway-carry.icloud.com',
+  });
   t.deepEqual(nodeList2[0], {
     type: NodeTypeEnum.Shadowsocks,
     nodeName: '🇺🇸US 1',
@@ -861,7 +872,7 @@ test('getShadowsocksSubscription with udp', async t => {
     port: '443',
     method: 'chacha20-ietf-poly1305',
     password: 'password',
-    'udp-relay': false,
+    'udp-relay': true,
     obfs: 'tls',
     'obfs-host': 'gateway-carry.icloud.com',
     tfo: true,

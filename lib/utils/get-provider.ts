@@ -1,12 +1,12 @@
 import assert from "assert";
 
-import BlackSSLProvider from '../class/BlackSSLProvider';
-import ClashProvider from '../class/ClashProvider';
-import CustomProvider from '../class/CustomProvider';
-import ShadowsocksJsonSubscribeProvider from '../class/ShadowsocksJsonSubscribeProvider';
-import ShadowsocksrSubscribeProvider from '../class/ShadowsocksrSubscribeProvider';
-import ShadowsocksSubscribeProvider from '../class/ShadowsocksSubscribeProvider';
-import V2rayNSubscribeProvider from '../class/V2rayNSubscribeProvider';
+import BlackSSLProvider from '../provider/BlackSSLProvider';
+import ClashProvider from '../provider/ClashProvider';
+import CustomProvider from '../provider/CustomProvider';
+import ShadowsocksJsonSubscribeProvider from '../provider/ShadowsocksJsonSubscribeProvider';
+import ShadowsocksrSubscribeProvider from '../provider/ShadowsocksrSubscribeProvider';
+import ShadowsocksSubscribeProvider from '../provider/ShadowsocksSubscribeProvider';
+import V2rayNSubscribeProvider from '../provider/V2rayNSubscribeProvider';
 import { SupportProviderEnum } from '../types';
 
 export default function(config: any): BlackSSLProvider|ShadowsocksJsonSubscribeProvider|ShadowsocksSubscribeProvider|CustomProvider|V2rayNSubscribeProvider|ShadowsocksrSubscribeProvider|ClashProvider {

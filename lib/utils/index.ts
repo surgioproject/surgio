@@ -155,6 +155,9 @@ export const getShadowsocksJSONConfig = async (
     await requestConfigFromRemote();
 };
 
+/**
+ * @see https://shadowsocks.org/en/spec/SIP002-URI-Scheme.html
+ */
 export const getShadowsocksSubscription = async (
   url: string,
   udpRelay?: boolean,
@@ -189,6 +192,10 @@ export const getShadowsocksSubscription = async (
         ...(pluginInfo['obfs-local'] ? {
           obfs: pluginInfo.obfs,
           'obfs-host': pluginInfo['obfs-host'],
+        } : null),
+        ...(pluginInfo['v2ray-plugin'] ? {
+          obfs: pluginInfo.tls ? 'wss' : 'ws',
+          'obfs-host': pluginInfo.host,
         } : null),
         ...(tfo !== void 0 ? {
           tfo,
@@ -313,6 +320,12 @@ export const getSurgeNodes = (
       switch (nodeConfig.type) {
         case NodeTypeEnum.Shadowsocks: {
           const config = nodeConfig as ShadowsocksNodeConfig;
+
+          if (['ws', 'wss'].includes(config.obfs)) {
+            console.log();
+            console.log(chalk.yellow(`不支持为 Surge 生成 v2ray-plugin 的 Shadowsocks 节点，节点 ${nodeConfig!.nodeName} 会被省略`));
+            return null;
+          }
 
           return ([
             config.nodeName,
@@ -509,11 +522,20 @@ export const getClashNodes = (
             port: nodeConfig.port,
             server: nodeConfig.hostname,
             udp: nodeConfig['udp-relay'] || false,
-            ...(nodeConfig.obfs ? {
+            ...(['tls', 'http'].includes(nodeConfig.obfs) ? {
               plugin: 'obfs',
               'plugin-opts': {
                 mode: nodeConfig.obfs,
                 host: nodeConfig['obfs-host'],
+              },
+            } : null),
+            ...(['ws', 'wss'].includes(nodeConfig.obfs) ? {
+              plugin: 'v2ray-plugin',
+              'plugin-opts': {
+                mode: 'websocket',
+                tls: nodeConfig.obfs === 'wss',
+                host: nodeConfig['obfs-host'],
+                path: nodeConfig['obfs-uri'] || '/',
               },
             } : null),
           };
@@ -878,9 +900,14 @@ export const getQuantumultXNodes = (
           const config = [
             `${nodeConfig.hostname}:${nodeConfig.port}`,
             ...pickAndFormatStringList(nodeConfig, ['method', 'password']),
-            ...(nodeConfig.obfs ? [
+            ...(['http', 'tls'].includes(nodeConfig.obfs) ? [
               `obfs=${nodeConfig.obfs}`,
               `obfs-host=${nodeConfig['obfs-host']}`,
+            ] : []),
+            ...(['ws', 'wss'].includes(nodeConfig.obfs) ? [
+              `obfs=${nodeConfig.obfs}`,
+              `obfs-host=${nodeConfig['obfs-host'] || nodeConfig.hostname}`,
+              `obfs-uri=${nodeConfig['obfs-uri'] || '/'}`,
             ] : []),
             ...(nodeConfig['udp-relay'] ? [
               `udp-relay=${nodeConfig['udp-relay']}`,

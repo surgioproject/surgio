@@ -83,9 +83,16 @@ async function requestConfigFromRemote(url: string, udpRelay?: boolean, tfo?: bo
   const result = proxyList.map<SupportConfigTypes>(item => {
     switch (item.type) {
       case 'ss':
-        if (item.plugin && item.plugin !== 'obfs') {
+        // istanbul ignore next
+        if (item.plugin && !['obfs', 'v2ray-plugin'].includes(item.plugin)) {
           console.log();
           console.log(chalk.yellow(`不支持从 Clash 订阅中读取 ${item.plugin} 类型的 Shadowsocks 节点，节点 ${item.name} 会被省略`));
+          return null;
+        }
+        // istanbul ignore next
+        if (item.plugin === 'v2ray-plugin' && item['plugin-opts'].mode.toLowerCase() === 'quic') {
+          console.log();
+          console.log(chalk.yellow(`不支持从 Clash 订阅中读取 QUIC 模式的 Shadowsocks 节点，节点 ${item.name} 会被省略`));
           return null;
         }
 
@@ -104,6 +111,11 @@ async function requestConfigFromRemote(url: string, udpRelay?: boolean, tfo?: bo
           ...(item.obfs ? {
             obfs: item.obfs,
             'obfs-host': item['obfs-host'] || 'www.bing.com',
+          } : null),
+          ...(item.plugin && item.plugin === 'v2ray-plugin' && item['plugin-opts'].mode === 'websocket' ? {
+            obfs: item['plugin-opts'].tls === true ? 'wss' : 'ws',
+            'obfs-host': item['plugin-opts'].host || item.server,
+            'obfs-uri': item['plugin-opts'].path || '/',
           } : null),
           ...(tfo !== void 0 ? {
             tfo,
@@ -169,7 +181,7 @@ async function requestConfigFromRemote(url: string, udpRelay?: boolean, tfo?: bo
             tfo,
           } : null),
         };
-      
+
       // istanbul ignore next
       case 'ssr':
         return {
