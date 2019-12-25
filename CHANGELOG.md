@@ -1,3 +1,17 @@
+# [1.9.0](https://github.com/geekdada/surgio/compare/v1.8.5...v1.9.0) (2019-12-25)
+
+
+### Bug Fixes
+
+* test ([6cb39d8](https://github.com/geekdada/surgio/commit/6cb39d822ec02d9237a5420866bb544e09c76f26))
+
+
+### Features
+
+* add support for v2ray-plugin ([118a94a](https://github.com/geekdada/surgio/commit/118a94a531afb2353b61dcb698fd52b23d22df07))
+
+
+
 ## [1.8.5](https://github.com/geekdada/surgio/compare/v1.8.4...v1.8.5) (2019-12-11)
 
 
