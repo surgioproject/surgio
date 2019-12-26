@@ -147,6 +147,8 @@ module.exports = {
   surgeConfig: {
     ss: 'native',
     v2ray: 'native',
+    tls13: false,
+    skipCertVerify: false,
     mptcp: true,
     resolveHostname: true,
   },
@@ -176,6 +178,20 @@ module.exports = {
 :::
 
 定义生成 Vmess 节点配置的类型，默认使用 External Provider 的形式，兼容性更好。也可以选择使用 `native` 的方式。
+
+#### surgeConfig.tls13
+
+- 类型: `boolean`
+- 默认值: `false`
+
+是否启用 TLS1.3。
+
+#### surgeConfig.skipCertVerify
+
+- 类型: `boolean`
+- 默认值: `false`
+
+是否跳过证书检查。
 
 #### surgeConfig.mptcp
 

@@ -43,6 +43,8 @@ export interface CommandConfig {
   readonly surgeConfig?: {
     readonly ss?: 'native'|'external';
     readonly v2ray?: 'native'|'external';
+    readonly tls13? : boolean;
+    readonly skipCertVerify? : boolean;
     readonly mptcp? : boolean;
     readonly resolveHostname?: boolean;
   };

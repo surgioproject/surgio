@@ -41,6 +41,8 @@ export const normalizeConfig = (cwd: string, userConfig: Partial<CommandConfig>)
     surgeConfig: {
       ss: 'external',
       v2ray: 'external',
+      tls13: false,
+      skipCertVerify: false,
       resolveHostname: false,
     },
     proxyTestUrl: PROXY_TEST_URL,
@@ -104,6 +106,8 @@ export const validateConfig = (userConfig: Partial<CommandConfig>): void => {
     surgeConfig: Joi.object({
       ss: Joi.string().valid('native', 'external'),
       v2ray: Joi.string().valid('native', 'external'),
+      tls13: Joi.boolean(),
+      skipCertVerify: Joi.boolean(),
       mptcp: Joi.boolean(),
       resolveHostname: Joi.boolean(),
     }),

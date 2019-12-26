@@ -373,6 +373,12 @@ export const getSurgeNodes = (
               config.port,
               config.username,
               config.password,
+              ...(nodeConfig?.surgeConfig?.tls13 ? [
+                `tls13=${nodeConfig.surgeConfig.tls13}`,
+              ] : []),
+              ...(nodeConfig?.surgeConfig?.skipCertVerify ? [
+                `tls13=${nodeConfig.surgeConfig.skipCertVerify}`,
+              ] : []),
               ...(nodeConfig?.surgeConfig?.mptcp !== undefined && nodeConfig?.surgeConfig?.mptcp !== null ? [
                 `mptcp=${nodeConfig.surgeConfig.mptcp}`,
               ] : []),
@@ -480,6 +486,14 @@ export const getSurgeNodes = (
 
             if (config.tls) {
               configList.push('tls=true');
+            }
+
+            if (nodeConfig?.surgeConfig?.tls13) {
+              configList.push('tls13=true');
+            }
+
+            if (nodeConfig?.surgeConfig?.skipCertVerify) {
+              configList.push('skip-cert-verify=true');
             }
 
             if (nodeConfig?.surgeConfig?.mptcp !== undefined && nodeConfig?.surgeConfig?.mptcp !== null) {
