@@ -102,6 +102,52 @@ test('getSurgeNodes', async t => {
     surgeConfig: {
       v2ray: 'native',
     }
+  }, {
+    nodeName: 'Test Node 4',
+    type: NodeTypeEnum.Shadowsocks,
+    hostname: 'example.com',
+    port: '443',
+    method: 'chacha20-ietf-poly1305',
+    password: 'password',
+    obfs: 'tls',
+    'obfs-host': 'example.com',
+    'udp-relay': true,
+    surgeConfig: {
+      ss: 'native',
+      mptcp: true,
+    }
+  }, {
+    nodeName: 'Test Node 5',
+    type: NodeTypeEnum.Shadowsocks,
+    hostname: 'example2.com',
+    port: '443',
+    method: 'chacha20-ietf-poly1305',
+    password: 'password',
+    surgeConfig: {
+      ss: 'native',
+      mptcp: false,
+    }
+  }, {
+    nodeName: 'Test Node 6',
+    type: NodeTypeEnum.Shadowsocks,
+    hostname: 'example2.com',
+    port: '443',
+    method: 'chacha20-ietf-poly1305',
+    password: 'password',
+    surgeConfig: {
+      ss: 'native',
+      mptcp: null,
+    }
+  }, {
+    nodeName: 'Test Node 7',
+    type: NodeTypeEnum.Shadowsocks,
+    hostname: 'example2.com',
+    port: '443',
+    method: 'chacha20-ietf-poly1305',
+    password: 'password',
+    surgeConfig: {
+      ss: 'native',
+    }
   }];
   const txt1 = utils.getSurgeNodes(nodeList).split('\n');
   const txt2 = utils.getSurgeNodes(nodeList, nodeConfig => nodeConfig.nodeName === 'Test Node 1');
@@ -112,6 +158,10 @@ test('getSurgeNodes', async t => {
   t.is(txt1[3], '测试 3 = external, exec = "/usr/local/bin/v2ray", args = "--config", args = "$HOME/.config/surgio/v2ray_61101_1.1.1.1_8080.json", local-port = 61101, addresses = 1.1.1.1');
   t.is(txt1[4], '测试 4 = vmess, 1.1.1.1, 8080, username=1386f85e-657b-4d6e-9d56-78badb75e1fd, ws=true, ws-path=/, ws-headers=Host:1.1.1.1|User-Agent:"Mozilla/5.0 (iPhone; CPU iPhone OS 12_3_1 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148", tls=true');
   t.is(txt1[5], '测试 5 = vmess, 1.1.1.1, 8080, username=1386f85e-657b-4d6e-9d56-78badb75e1fd');
+  t.is(txt1[6], 'Test Node 4 = ss, example.com, 443, encrypt-method=chacha20-ietf-poly1305, password=password, udp-relay=true, obfs=tls, obfs-host=example.com, mptcp=true');
+  t.is(txt1[7], 'Test Node 5 = ss, example2.com, 443, encrypt-method=chacha20-ietf-poly1305, password=password, mptcp=false');
+  t.is(txt1[8], 'Test Node 6 = ss, example2.com, 443, encrypt-method=chacha20-ietf-poly1305, password=password');
+  t.is(txt1[9], 'Test Node 7 = ss, example2.com, 443, encrypt-method=chacha20-ietf-poly1305, password=password');
   t.is(txt2, 'Test Node 1 = custom, example.com, 443, chacha20-ietf-poly1305, password, https://raw.githubusercontent.com/ConnersHua/SSEncrypt/master/SSEncrypt.module, udp-relay=true, obfs=tls, obfs-host=example.com');
 });
 

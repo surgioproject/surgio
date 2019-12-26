@@ -327,6 +327,24 @@ export const getSurgeNodes = (
             return null;
           }
 
+          // Native support for Shadowsocks
+          if (nodeConfig?.surgeConfig?.ss === 'native') {
+            return ([
+              config.nodeName,
+              [
+                'ss',
+                config.hostname,
+                config.port,
+                'encrypt-method=' + config.method,
+                ...pickAndFormatStringList(config, ['password', 'udp-relay', 'obfs', 'obfs-host', 'tfo']),
+                ...(nodeConfig?.surgeConfig?.mptcp !== undefined && nodeConfig?.surgeConfig?.mptcp !== null ? [
+                  `mptcp=${nodeConfig.surgeConfig.mptcp}`,
+                ] : []),
+              ].join(', ')
+            ].join(' = '));
+          }
+
+          // Using external provider
           return ([
             config.nodeName,
             [
@@ -337,6 +355,9 @@ export const getSurgeNodes = (
               config.password,
               'https://raw.githubusercontent.com/ConnersHua/SSEncrypt/master/SSEncrypt.module',
               ...pickAndFormatStringList(config, ['udp-relay', 'obfs', 'obfs-host', 'tfo']),
+              ...(nodeConfig?.surgeConfig?.mptcp !== undefined && nodeConfig?.surgeConfig?.mptcp !== null ? [
+                `mptcp=${nodeConfig.surgeConfig.mptcp}`,
+              ] : []),
             ].join(', ')
           ].join(' = '));
         }
@@ -352,6 +373,9 @@ export const getSurgeNodes = (
               config.port,
               config.username,
               config.password,
+              ...(nodeConfig?.surgeConfig?.mptcp !== undefined && nodeConfig?.surgeConfig?.mptcp !== null ? [
+                `mptcp=${nodeConfig.surgeConfig.mptcp}`,
+              ] : []),
             ].join(', ')
           ].join(' = '));
         }
@@ -366,6 +390,9 @@ export const getSurgeNodes = (
               config.hostname,
               config.port,
               ...pickAndFormatStringList(config, ['psk', 'obfs']),
+              ...(nodeConfig?.surgeConfig?.mptcp !== undefined && nodeConfig?.surgeConfig?.mptcp !== null ? [
+                `mptcp=${nodeConfig.surgeConfig.mptcp}`,
+              ] : []),
             ].join(', '),
           ].join(' = '));
         }
@@ -409,6 +436,10 @@ export const getSurgeNodes = (
 
           configString.push(`addresses = ${config.hostname}`);
 
+          if (nodeConfig?.surgeConfig?.mptcp !== undefined && nodeConfig?.surgeConfig?.mptcp !== null) {
+            configString.push(`mptcp=${nodeConfig.surgeConfig.mptcp}`);
+          }
+
           return ([
             config.nodeName,
             configString.join(', '),
@@ -451,6 +482,10 @@ export const getSurgeNodes = (
               configList.push('tls=true');
             }
 
+            if (nodeConfig?.surgeConfig?.mptcp !== undefined && nodeConfig?.surgeConfig?.mptcp !== null) {
+              configList.push(`mptcp=${nodeConfig.surgeConfig.mptcp}`);
+            }
+
             return ([
               config.nodeName,
               configList.join(', '),
@@ -481,6 +516,10 @@ export const getSurgeNodes = (
             }
 
             configString.push(`addresses = ${config.hostname}`);
+
+            if (nodeConfig?.surgeConfig?.mptcp !== undefined && nodeConfig?.surgeConfig?.mptcp !== null) {
+              configString.push(`mptcp=${nodeConfig.surgeConfig.mptcp}`);
+            }
 
             if (process.env.NODE_ENV !== 'test') {
               fs.writeJSONSync(jsonFilePath, jsonFile);

@@ -39,6 +39,7 @@ export const normalizeConfig = (cwd: string, userConfig: Partial<CommandConfig>)
     providerDir: path.join(cwd, './provider'),
     configDir: ensureConfigFolder(),
     surgeConfig: {
+      ss: 'external',
       v2ray: 'external',
       resolveHostname: false,
     },
@@ -101,7 +102,9 @@ export const validateConfig = (userConfig: Partial<CommandConfig>): void => {
       vmess: Joi.string().pattern(/^\//),
     }),
     surgeConfig: Joi.object({
+      ss: Joi.string().valid('native', 'external'),
       v2ray: Joi.string().valid('native', 'external'),
+      mptcp: Joi.boolean(),
       resolveHostname: Joi.boolean(),
     }),
     quantumultXConfig: Joi.object({

@@ -145,11 +145,25 @@ SSR 的可执行文件地址。请使用 libev 版本的二进制文件，可以
 // surgio.conf.js
 module.exports = {
   surgeConfig: {
+    ss: 'native',
     v2ray: 'native',
+    mptcp: true,
     resolveHostname: true,
   },
 };
 ```
+
+#### surgeConfig.ss
+
+- 类型: `string`
+- 默认值: `external`
+- 可选值: `external|native`
+
+:::warning 注意
+仅 Surge 4 for iOS 和 Surge 3.3.1 (894) for macOS 之后的版本支持 `native` 方式。
+:::
+
+定义生成 Shadowsocks 节点配置的类型，默认使用 External Provider 的形式，兼容性更好。也可以选择使用 `native` 的方式。
 
 #### surgeConfig.v2ray
 
@@ -162,6 +176,15 @@ module.exports = {
 :::
 
 定义生成 Vmess 节点配置的类型，默认使用 External Provider 的形式，兼容性更好。也可以选择使用 `native` 的方式。
+
+#### surgeConfig.mptcp
+
+- 类型: `boolean`
+- 默认值: `false`
+
+打开这个选项后，Surge 的节点配置会支持 Multipath TCP。
+
+根据 Surge 官方 [说明](https://nssurge.zendesk.com/hc/zh-cn/articles/360016060774-Surge-iOS-3-6-0-TestFlight-%E5%AE%9E%E9%AA%8C%E6%80%A7%E6%94%AF%E6%8C%81-Userspace-Networking-Stack-%E5%92%8C-Multipath-TCP)，至少需要 iOS 12，并且 Surge 已打开 Network.framework 功能才可生效。
 
 #### surgeConfig.resolveHostname <Badge text="v1.5.0" vertical="middle" />
 

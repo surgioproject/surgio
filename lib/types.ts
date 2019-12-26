@@ -41,7 +41,9 @@ export interface CommandConfig {
     vmess?: string; // tslint:disable-line:readonly-keyword
   };
   readonly surgeConfig?: {
+    readonly ss?: 'native'|'external';
     readonly v2ray?: 'native'|'external';
+    readonly mptcp? : boolean;
     readonly resolveHostname?: boolean;
   };
   readonly quantumultXConfig?: {
