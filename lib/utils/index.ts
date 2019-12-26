@@ -442,6 +442,10 @@ export const getSurgeNodes = (
 
           configString.push(`addresses = ${config.hostname}`);
 
+          if (config['udp-relay']) {
+            configString.push('udp-relay=true');
+          }
+
           if (nodeConfig?.surgeConfig?.mptcp !== undefined && nodeConfig?.surgeConfig?.mptcp !== null) {
             configString.push(`mptcp=${nodeConfig.surgeConfig.mptcp}`);
           }
@@ -496,6 +500,10 @@ export const getSurgeNodes = (
               configList.push('skip-cert-verify=true');
             }
 
+            if (config.udp) {
+              configList.push('udp-relay=true');
+            }
+
             if (nodeConfig?.surgeConfig?.mptcp !== undefined && nodeConfig?.surgeConfig?.mptcp !== null) {
               configList.push(`mptcp=${nodeConfig.surgeConfig.mptcp}`);
             }
@@ -530,6 +538,10 @@ export const getSurgeNodes = (
             }
 
             configString.push(`addresses = ${config.hostname}`);
+
+            if (config.udp) {
+              configString.push('udp-relay=true');
+            }
 
             if (nodeConfig?.surgeConfig?.mptcp !== undefined && nodeConfig?.surgeConfig?.mptcp !== null) {
               configString.push(`mptcp=${nodeConfig.surgeConfig.mptcp}`);
@@ -602,6 +614,9 @@ export const getClashNodes = (
             port: nodeConfig.port,
             uuid: nodeConfig.uuid,
             alterId: nodeConfig.alterId,
+            ...(nodeConfig.udp !== undefined && nodeConfig.udp !== null ? {
+              udp: nodeConfig.udp
+            } : null),
             ...(nodeConfig.network === 'tcp' ? null : {
               network: nodeConfig.network,
             }),
@@ -619,6 +634,9 @@ export const getClashNodes = (
             type: 'ssr',
             name: nodeConfig.nodeName,
             server: nodeConfig.hostname,
+            ...(nodeConfig['udp-relay'] !== undefined && nodeConfig['udp-relay'] !== null ? {
+              udp: nodeConfig['udp-relay']
+            } : null),
             port: nodeConfig.port,
             password: nodeConfig.password,
             obfs: nodeConfig.obfs,
@@ -917,7 +935,7 @@ export const getQuantumultXNodes = (
               `method=chacha20-ietf-poly1305` :
               `method=${nodeConfig.method}`),
             `password=${nodeConfig.uuid}`,
-            'udp-relay=true',
+            `udp-relay=${nodeConfig.udp || true}`,
             ...(nodeConfig.tfo ? [
               `fast-open=${nodeConfig.tfo}`,
             ] : []),
