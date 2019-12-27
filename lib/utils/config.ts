@@ -39,10 +39,8 @@ export const normalizeConfig = (cwd: string, userConfig: Partial<CommandConfig>)
     providerDir: path.join(cwd, './provider'),
     configDir: ensureConfigFolder(),
     surgeConfig: {
-      ss: 'external',
+      shadowsocksFormat: 'custom',
       v2ray: 'external',
-      tls13: false,
-      skipCertVerify: false,
       resolveHostname: false,
     },
     proxyTestUrl: PROXY_TEST_URL,
@@ -104,11 +102,8 @@ export const validateConfig = (userConfig: Partial<CommandConfig>): void => {
       vmess: Joi.string().pattern(/^\//),
     }),
     surgeConfig: Joi.object({
-      ss: Joi.string().valid('native', 'external'),
+      shadowsocksFormat: Joi.string().valid('ss', 'custom'),
       v2ray: Joi.string().valid('native', 'external'),
-      tls13: Joi.boolean(),
-      skipCertVerify: Joi.boolean(),
-      mptcp: Joi.boolean(),
       resolveHostname: Joi.boolean(),
     }),
     quantumultXConfig: Joi.object({

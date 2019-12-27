@@ -112,9 +112,9 @@ test('getSurgeNodes', async t => {
     obfs: 'tls',
     'obfs-host': 'example.com',
     'udp-relay': true,
+    mptcp: true,
     surgeConfig: {
-      ss: 'native',
-      mptcp: true,
+      shadowsocksFormat: 'ss',
     }
   }, {
     nodeName: 'Test Node 5',
@@ -123,9 +123,9 @@ test('getSurgeNodes', async t => {
     port: '443',
     method: 'chacha20-ietf-poly1305',
     password: 'password',
+    mptcp: false,
     surgeConfig: {
-      ss: 'native',
-      mptcp: false,
+      shadowsocksFormat: 'ss',
     }
   }, {
     nodeName: 'Test Node 6',
@@ -134,9 +134,9 @@ test('getSurgeNodes', async t => {
     port: '443',
     method: 'chacha20-ietf-poly1305',
     password: 'password',
+    mptcp: null,
     surgeConfig: {
-      ss: 'native',
-      mptcp: null,
+      shadowsocksFormat: 'ss',
     }
   }, {
     nodeName: 'Test Node 7',
@@ -146,7 +146,7 @@ test('getSurgeNodes', async t => {
     method: 'chacha20-ietf-poly1305',
     password: 'password',
     surgeConfig: {
-      ss: 'native',
+      shadowsocksFormat: 'ss',
     }
   }, {
     type: NodeTypeEnum.Vmess,
@@ -158,14 +158,14 @@ test('getSurgeNodes', async t => {
     path: '/',
     port: 8080,
     tls: true,
+    tls13: true,
+    skipCertVerify: true,
     host: '',
     uuid: '1386f85e-657b-4d6e-9d56-78badb75e1fd',
     binPath: '/usr/local/bin/v2ray',
     localPort: 61101,
     surgeConfig: {
       v2ray: 'native',
-      tls13: true,
-      skipCertVerify: true
     }
   }];
   const txt1 = utils.getSurgeNodes(nodeList).split('\n');
@@ -238,6 +238,7 @@ test('getClashNodes', async t => {
     path: '/',
     port: 8080,
     tls: false,
+    skipCertVerify: true,
     type: NodeTypeEnum.Vmess,
     uuid: '1386f85e-657b-4d6e-9d56-78badb75e1fd',
   }, {
@@ -250,6 +251,44 @@ test('getClashNodes', async t => {
     path: '/',
     port: 8080,
     tls: false,
+    type: NodeTypeEnum.Vmess,
+    uuid: '1386f85e-657b-4d6e-9d56-78badb75e1fd',
+  }, {
+    alterId: '64',
+    host: '',
+    hostname: '1.1.1.1',
+    method: 'auto',
+    network: 'tcp',
+    nodeName: 'Test Node 5',
+    path: '/',
+    port: 8080,
+    tls: true,
+    type: NodeTypeEnum.Vmess,
+    uuid: '1386f85e-657b-4d6e-9d56-78badb75e1fd',
+  }, {
+    alterId: '64',
+    host: '',
+    hostname: '1.1.1.1',
+    method: 'auto',
+    network: 'tcp',
+    nodeName: 'Test Node 6',
+    path: '/',
+    port: 8080,
+    tls: true,
+    skipCertVerify: false,
+    type: NodeTypeEnum.Vmess,
+    uuid: '1386f85e-657b-4d6e-9d56-78badb75e1fd',
+  }, {
+    alterId: '64',
+    host: '',
+    hostname: '1.1.1.1',
+    method: 'auto',
+    network: 'tcp',
+    nodeName: 'Test Node 7',
+    path: '/',
+    port: 8080,
+    tls: true,
+    skipCertVerify: true,
     type: NodeTypeEnum.Vmess,
     uuid: '1386f85e-657b-4d6e-9d56-78badb75e1fd',
   }, {
@@ -311,6 +350,38 @@ test('getClashNodes', async t => {
     uuid: '1386f85e-657b-4d6e-9d56-78badb75e1fd',
   });
   t.deepEqual(array[4], {
+    cipher: 'auto',
+    name: 'Test Node 5',
+    alterId: '64',
+    server: '1.1.1.1',
+    port: 8080,
+    tls: true,
+    type: 'vmess',
+    uuid: '1386f85e-657b-4d6e-9d56-78badb75e1fd',
+  });
+  t.deepEqual(array[5], {
+    cipher: 'auto',
+    name: 'Test Node 6',
+    alterId: '64',
+    server: '1.1.1.1',
+    port: 8080,
+    tls: true,
+    'skip-cert-verify': false,
+    type: 'vmess',
+    uuid: '1386f85e-657b-4d6e-9d56-78badb75e1fd',
+  });
+  t.deepEqual(array[6], {
+    cipher: 'auto',
+    name: 'Test Node 7',
+    alterId: '64',
+    server: '1.1.1.1',
+    port: 8080,
+    tls: true,
+    'skip-cert-verify': true,
+    type: 'vmess',
+    uuid: '1386f85e-657b-4d6e-9d56-78badb75e1fd',
+  });
+  t.deepEqual(array[7], {
     name: 'snell',
     type: 'snell',
     server: '1.1.1.1',
@@ -854,6 +925,21 @@ test('formatV2rayConfig', t => {
     host: '',
     uuid: '1386f85e-657b-4d6e-9d56-78badb75e1fd',
   });
+  const json2 = utils.formatV2rayConfig(100, {
+    type: NodeTypeEnum.Vmess,
+    alterId: '64',
+    hostname: '1.1.1.1',
+    method: 'auto',
+    network: 'ws',
+    nodeName: '测试 4',
+    path: '/',
+    port: 8080,
+    tls: true,
+    tls13: true,
+    skipCertVerify: true,
+    host: '',
+    uuid: '1386f85e-657b-4d6e-9d56-78badb75e1fd',
+  });
 
   t.deepEqual(json, {
     log: {
@@ -888,6 +974,54 @@ test('formatV2rayConfig', t => {
       streamSettings: {
         network: 'ws',
         security: 'none',
+        wsSettings: {
+          headers: {
+            Host: '',
+            'User-Agent': 'Mozilla/5.0 (iPhone; CPU iPhone OS 12_3_1 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148',
+          },
+          path: '/',
+        },
+      },
+    }
+  });
+  t.deepEqual(json2, {
+    log: {
+      loglevel: 'warning'
+    },
+    inbound: {
+      port: 100,
+      listen: '127.0.0.1',
+      protocol: 'socks',
+      settings: {
+        auth: 'noauth',
+      }
+    },
+    outbound: {
+      protocol: 'vmess',
+      settings: {
+        vnext: [
+          {
+            address: '1.1.1.1',
+            port: 8080,
+            users: [
+              {
+                id: '1386f85e-657b-4d6e-9d56-78badb75e1fd',
+                alterId: 64,
+                security: 'auto',
+                level: 0,
+              }
+            ]
+          }
+        ]
+      },
+      streamSettings: {
+        security: 'tls',
+        network: 'ws',
+        tlsSettings: {
+          serverName: '1.1.1.1',
+          allowInsecure: true,
+          allowInsecureCiphers: false,
+        },
         wsSettings: {
           headers: {
             Host: '',
