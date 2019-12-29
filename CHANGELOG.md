@@ -1,3 +1,12 @@
+## [1.10.1](https://github.com/geekdada/surgio/compare/v1.10.0...v1.10.1) (2019-12-29)
+
+
+### Features
+
+* remove speed test command ([47dfaa0](https://github.com/geekdada/surgio/commit/47dfaa0e2914bd7e1f9c96e90e4afe4a5f17d303))
+
+
+
 # [1.10.0](https://github.com/geekdada/surgio/compare/v1.9.0...v1.10.0) (2019-12-29)
 
 
