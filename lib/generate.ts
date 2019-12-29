@@ -109,6 +109,7 @@ export async function generate(
   const mainProviderName = artifact.provider;
   const combineProviders = artifact.combineProviders || [];
   const providerList = [mainProviderName].concat(combineProviders);
+  const nodeConfigListMap: Map<string, ReadonlyArray<PossibleNodeConfigType>> = new Map();
   const nodeList: PossibleNodeConfigType[] = [];
   const nodeNameList: SimpleNodeConfig[] = [];
   let customFilters: ProviderConfig['customFilters'];
@@ -234,6 +235,17 @@ export async function generate(
     })
       .filter(item => !!item);
 
+
+    nodeConfigListMap.set(providerName, nodeConfigList);
+
+    spinner.text = `已处理 Provider ${++progress}/${providerList.length}...`;
+  };
+
+  await Bluebird.map(providerList, providerMapper, { concurrency: NETWORK_CONCURRENCY });
+
+  providerList.forEach(providerName => {
+    const nodeConfigList = nodeConfigListMap.get(providerName);
+
     nodeConfigList.forEach(nodeConfig => {
       if (nodeConfig) {
         nodeNameList.push({
@@ -244,11 +256,7 @@ export async function generate(
         nodeList.push(nodeConfig);
       }
     });
-
-    spinner.text = `已处理 Provider ${++progress}/${providerList.length}...`;
-  };
-
-  await Bluebird.map(providerList, providerMapper, { concurrency: NETWORK_CONCURRENCY });
+  });
 
   const renderContext = {
     proxyTestUrl: config.proxyTestUrl,
