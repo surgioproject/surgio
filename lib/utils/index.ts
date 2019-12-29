@@ -1,5 +1,5 @@
 import assert from 'assert';
-import axios from 'axios';
+import got from 'got';
 import chalk from 'chalk';
 import fs from 'fs-extra';
 import _ from 'lodash';
@@ -41,7 +41,7 @@ import { formatVmessUri } from './v2ray';
 
 const debug = Debug('surgio:utils');
 
-export const ConfigCache = new LRU<string, any>({
+export const ConfigCache = new LRU<string, string>({
   maxAge: PROVIDER_CACHE_MAXAGE,
 });
 
@@ -74,19 +74,26 @@ export const getBlackSSLConfig = async (username: string, password: string): Pro
   const key = `blackssl_${username}`;
 
   async function requestConfigFromBlackSSL(): Promise<ReadonlyArray<HttpsNodeConfig>> {
-    const response = await axios
-      .get('https://api.darkssl.com/v1/service/ssl_info', {
-        params: {
-          username,
-          password,
-        },
-        timeout: NETWORK_TIMEOUT,
-        headers: {
-          'User-Agent': 'GoAgentX/774 CFNetwork/901.1 Darwin/17.6.0 (x86_64)',
-        },
-      });
+    const response = ConfigCache.has(key) ? JSON.parse(ConfigCache.get(key)) : await (async () => {
+      const res = await got
+        .get('https://api.darkssl.com/v1/service/ssl_info', {
+          responseType: 'text',
+          searchParams: {
+            username,
+            password,
+          },
+          timeout: NETWORK_TIMEOUT,
+          headers: {
+            'User-Agent': 'GoAgentX/774 CFNetwork/901.1 Darwin/17.6.0 (x86_64)',
+          },
+        });
 
-    const result = (response.data.ssl_nodes as readonly any[]).map<HttpsNodeConfig>(item => ({
+      ConfigCache.set(key, res.body);
+
+      return JSON.parse(res.body);
+    })();
+
+    return (response.ssl_nodes as readonly any[]).map<HttpsNodeConfig>(item => ({
       nodeName: item.name,
       type: NodeTypeEnum.HTTPS,
       hostname: item.server,
@@ -94,15 +101,9 @@ export const getBlackSSLConfig = async (username: string, password: string): Pro
       username,
       password,
     }));
-
-    ConfigCache.set(key, result);
-
-    return result;
   }
 
-  return ConfigCache.has(key) ?
-    ConfigCache.get(key) :
-    await requestConfigFromBlackSSL();
+  return await requestConfigFromBlackSSL();
 };
 
 export const getShadowsocksJSONConfig = async (
@@ -112,11 +113,17 @@ export const getShadowsocksJSONConfig = async (
   assert(url, '未指定订阅地址 url');
 
   async function requestConfigFromRemote(): Promise<ReadonlyArray<ShadowsocksNodeConfig>> {
-    const response = await axios.get(url, {
-      timeout: NETWORK_TIMEOUT,
-    });
+    const response = ConfigCache.has(url) ? JSON.parse(ConfigCache.get(url)) : await (async () => {
+      const res = await got.get(url, {
+        timeout: NETWORK_TIMEOUT,
+      });
 
-    const result = (response.data.configs as readonly any[]).map<ShadowsocksNodeConfig>(item => {
+      ConfigCache.set(url, res.body);
+
+      return JSON.parse(res.body);
+    })();
+
+    return (response.configs as readonly any[]).map<ShadowsocksNodeConfig>(item => {
       const nodeConfig: any = {
         nodeName: item.remarks as string,
         type: NodeTypeEnum.Shadowsocks,
@@ -141,15 +148,9 @@ export const getShadowsocksJSONConfig = async (
 
       return nodeConfig;
     });
-
-    ConfigCache.set(url, result);
-
-    return result;
   }
 
-  return ConfigCache.has(url) ?
-    ConfigCache.get(url) :
-    await requestConfigFromRemote();
+  return await requestConfigFromRemote();
 };
 
 /**
@@ -162,14 +163,20 @@ export const getShadowsocksSubscription = async (
   assert(url, '未指定订阅地址 url');
 
   async function requestConfigFromRemote(): Promise<ReadonlyArray<ShadowsocksNodeConfig>> {
-    const response = await axios.get(url, {
-      timeout: NETWORK_TIMEOUT,
-      responseType: 'text',
-    });
+    const response = ConfigCache.has(url) ? ConfigCache.get(url) : await (async () => {
+      const res = await got.get(url, {
+        timeout: NETWORK_TIMEOUT,
+      });
 
-    const configList = fromBase64(response.data).split('\n')
+      ConfigCache.set(url, res.body);
+
+      return res.body;
+    })();
+
+    const configList = fromBase64(response).split('\n')
       .filter(item => !!item && item.startsWith("ss://"));
-    const result = configList.map<any>(item => {
+
+    return configList.map<any>(item => {
       debug('SS URI', item);
       const scheme = legacyUrl.parse(item, true);
       const userInfo = fromUrlSafeBase64(scheme.auth).split(':');
@@ -195,15 +202,9 @@ export const getShadowsocksSubscription = async (
         } : null),
       };
     });
-
-    ConfigCache.set(url, result);
-
-    return result;
   }
 
-  return ConfigCache.has(url) ?
-    ConfigCache.get(url) :
-    await requestConfigFromRemote();
+  return await requestConfigFromRemote();
 };
 
 export const getShadowsocksrSubscription = async (
@@ -213,15 +214,21 @@ export const getShadowsocksrSubscription = async (
   assert(url, '未指定订阅地址 url');
 
   async function requestConfigFromRemote(): Promise<ReadonlyArray<ShadowsocksrNodeConfig>> {
-    const response = await axios.get(url, {
-      timeout: NETWORK_TIMEOUT,
-      responseType: 'text',
-    });
+    const response = ConfigCache.has(url) ? ConfigCache.get(url) : await (async () => {
+      const res = await got.get(url, {
+        timeout: NETWORK_TIMEOUT,
+      });
 
-    const configList = fromBase64(response.data)
+      ConfigCache.set(url, res.body);
+
+      return res.body;
+    })();
+
+    const configList = fromBase64(response)
       .split('\n')
       .filter(item => !!item && item.startsWith("ssr://"));
-    const result = configList.map<ShadowsocksrNodeConfig>(str => {
+
+    return configList.map<ShadowsocksrNodeConfig>(str => {
       const nodeConfig = parseSSRUri(str);
 
       if (udpRelay !== void 0) {
@@ -230,15 +237,9 @@ export const getShadowsocksrSubscription = async (
 
       return nodeConfig;
     });
-
-    ConfigCache.set(url, result);
-
-    return result;
   }
 
-  return ConfigCache.has(url) ?
-    ConfigCache.get(url) :
-    await requestConfigFromRemote();
+  return await requestConfigFromRemote();
 };
 
 export const getV2rayNSubscription = async (
@@ -247,15 +248,21 @@ export const getV2rayNSubscription = async (
   assert(url, '未指定订阅地址 url');
 
   async function requestConfigFromRemote(): Promise<ReadonlyArray<VmessNodeConfig>> {
-    const response = await axios.get(url, {
-      timeout: NETWORK_TIMEOUT,
-      responseType: 'text',
-    });
+    const response = ConfigCache.has(url) ? ConfigCache.get(url) : await (async () => {
+      const res = await got.get(url, {
+        timeout: NETWORK_TIMEOUT,
+      });
 
-    const configList = fromBase64(response.data).split('\n')
+      ConfigCache.set(url, res.body);
+
+      return res.body;
+    })();
+
+    const configList = fromBase64(response).split('\n')
         .filter(item => !!item)
         .filter(item => item.startsWith("vmess://"));
-    const result = configList.map<VmessNodeConfig>(item => {
+
+    return configList.map<VmessNodeConfig>(item => {
       const json = JSON.parse(fromBase64(item.replace('vmess://', '')));
 
       // istanbul ignore next
@@ -285,15 +292,9 @@ export const getV2rayNSubscription = async (
       };
     })
       .filter(item => !!item);
-
-    ConfigCache.set(url, result);
-
-    return result;
   }
 
-  return ConfigCache.has(url) ?
-    ConfigCache.get(url) :
-    await requestConfigFromRemote();
+  return await requestConfigFromRemote();
 };
 
 export const getSurgeNodes = (

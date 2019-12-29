@@ -16,6 +16,19 @@ module.exports = {
         ];
       },
     },
+    {
+      name: 'test2.conf',
+      template: 'test',
+      provider: 'rename',
+      proxyGroupModifier() {
+        return [
+          {
+            name: 'select all',
+            type: 'select',
+          },
+        ];
+      },
+    },
   ],
   urlBase: 'https://example.com/',
   binPath: {

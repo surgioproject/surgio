@@ -62,6 +62,29 @@ test('get artifact', async t => {
     .expect(404);
 });
 
+test('get artifact should be idempotent', async t => {
+  const fixture = path.join(__dirname, '../fixture/gateway');
+  const httpServer = gateway.createHttpServer({
+    cwd: fixture,
+  });
+
+  const result1 = await request(httpServer)
+    .get('/get-artifact/test2.conf')
+    .expect(200)
+    .then(res => res.text);
+  const result2 = await request(httpServer)
+    .get('/get-artifact/test2.conf')
+    .expect(200)
+    .then(res => res.text);
+  const result3 = await request(httpServer)
+    .get('/get-artifact/test2.conf')
+    .expect(200)
+    .then(res => res.text);
+
+  t.is(result1, result2);
+  t.is(result2, result3);
+});
+
 test('transform artifact surge', async t => {
   const fixture = path.join(__dirname, '../fixture/gateway');
   const httpServer = gateway.createHttpServer({
@@ -140,7 +163,7 @@ test('list artifact', async t => {
       const $container = window.document.querySelector('.container');
       const $artifacts = $container.querySelectorAll('.artifact');
 
-      t.is($artifacts.length, 1);
+      t.is($artifacts.length, 2);
       t.snapshot($container.querySelector('ul').innerHTML);
     });
 });
@@ -182,10 +205,10 @@ test('qx-script', async t => {
     .get('/qx-script?id=abcdef&url=https%3A%2F%2Fraw.githubusercontent.com%2Fcrossutility%2FQuantumult-X%2Fb7c712ba0ce08bf8c0de9bccc52d1a0c21d4a2d1%2Fsample-rewrite-with-script.js')
     .expect(200);
 
-  t.snapshot(res1.body.toString());
-  t.snapshot(res2.body.toString());
-  t.snapshot(res3.body.toString());
-  t.snapshot(res4.body.toString());
+  t.snapshot(res1.text);
+  t.snapshot(res2.text);
+  t.snapshot(res3.text);
+  t.snapshot(res4.text);
 });
 
 test('qx-script error', async t => {
