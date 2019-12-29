@@ -57,6 +57,7 @@ test('getClashSubscription', async t => {
     port: 443,
     username: 'username',
     password: 'password',
+    skipCertVerify: false,
   });
   t.deepEqual(config[5], {
     type: NodeTypeEnum.Snell,
@@ -88,6 +89,7 @@ test('getClashSubscription', async t => {
     obfs: 'wss',
     'obfs-host': 'cloudflare.com',
     'obfs-uri': '/ws',
+    skipCertVerify: false,
   });
 });
 

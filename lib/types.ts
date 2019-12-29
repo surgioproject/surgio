@@ -41,6 +41,7 @@ export interface CommandConfig {
     vmess?: string; // tslint:disable-line:readonly-keyword
   };
   readonly surgeConfig?: {
+    readonly shadowsocksFormat?: 'ss'|'custom';
     readonly v2ray?: 'native'|'external';
     readonly resolveHostname?: boolean;
   };
@@ -89,6 +90,7 @@ export interface ProviderConfig {
   };
   readonly addFlag?: boolean;
   readonly tfo?: boolean;
+  readonly mptcp?: boolean;
   readonly renameNode?: (name: string) => string;
 }
 
@@ -131,6 +133,8 @@ export interface HttpsNodeConfig extends SimpleNodeConfig {
   readonly port: number|string;
   readonly username: string;
   readonly password: string;
+  readonly tls13?: boolean;
+  readonly skipCertVerify?: boolean;
 }
 
 export interface ShadowsocksNodeConfig extends SimpleNodeConfig {
@@ -143,6 +147,7 @@ export interface ShadowsocksNodeConfig extends SimpleNodeConfig {
   readonly obfs?: 'tls'|'http'|'ws'|'wss';
   readonly 'obfs-host'?: string;
   readonly 'obfs-uri'?: string;
+  readonly skipCertVerify?: boolean;
 }
 
 export interface SnellNodeConfig extends SimpleNodeConfig {
@@ -178,12 +183,17 @@ export interface VmessNodeConfig extends SimpleNodeConfig {
   readonly host?: string;
   readonly path?: string;
   readonly udp?: boolean;
+  readonly tls13?: boolean;
+  readonly skipCertVerify?: boolean;
 }
 
 export interface SimpleNodeConfig {
   readonly type: NodeTypeEnum;
   readonly enable?: boolean;
-  readonly tfo?: boolean; // TCP Fast Open
+  // tslint:disable-next-line
+  tfo?: boolean; // TCP Fast Open
+  // tslint:disable-next-line
+  mptcp?: boolean; // Multi-Path TCP
   nodeName: string; // tslint:disable-line
   binPath?: string; // tslint:disable-line
   localPort?: number; // tslint:disable-line

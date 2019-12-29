@@ -169,11 +169,13 @@ module.exports = {
   'obfs-uri': '/', // 当 obfs 为 ws 或 wss 时可配置
   'udp-relay': true,
   tfo: false, // TCP Fast Open
+  tls13: false, // TLS 1.3
 }
 ```
 
 :::warning 注意
 1. `ws` 和 `wss` 是通过服务端 v2ray-plugin 支持的；
+2. TLS 1.3 需要服务端支持
 :::
 
 *Shadowsocksr*
@@ -211,6 +213,7 @@ module.exports = {
   host: 'example.com',
   uuid: '1386f85e-657b-4d6e-9d56-78badb75e1fd',
   tfo: false, // TCP Fast Open
+  tls13: false, // TLS 1.3, TLS 开启时有效
 }
 ```
 
@@ -237,6 +240,7 @@ module.exports = {
   port: 443,
   username: 'username',
   password: 'password',
+  tls13: false, // TLS 1.3
 }
 ```
 
@@ -264,6 +268,44 @@ module.exports = {
   password: 'password',
 }
 ```
+
+### nodeConfig.tfo
+
+- 类型: `Boolean`
+- 默认值: `false`
+
+是否为该节点开启 TFO（TCP Fast Open）。
+
+### nodeConfig.mptcp <Badge text="v1.10.0" vertical="middle" />
+
+- 类型: `Boolean`
+- 默认值: `false`
+
+是否为该节点开启 Multipath TCP。目前仅 Surge 支持这一特性。
+
+### nodeConfig.tls13 <Badge text="v1.10.0" vertical="middle" />
+
+- 类型: `Boolean`
+- 默认值: `false`
+
+为 TLS 节点开启 TLS 1.3 支持。
+
+:::warning 注意
+1. TLS 1.3 需要服务端支持；
+2. 支持 TLS 的节点类型有 Shadowsocks with v2ray-plugin(tls), Vmess(tls), HTTPS；
+:::
+
+### nodeConfig.skipCertVerify <Badge text="v1.10.0" vertical="middle" />
+
+- 类型: `Boolean`
+- 默认值: `false`
+
+关闭 TLS 节点的证书检查。
+
+:::warning 注意
+1. 支持 TLS 的节点类型有 Shadowsocks with v2ray-plugin(tls), Vmess(tls), HTTPS；
+2. 请不要随意将证书检查关闭；
+:::
 
 ### provider.nodeFilter
 
@@ -343,7 +385,14 @@ module.exports = {
 - 类型: `Boolean`
 - 默认值: `false`
 
-是否为该订阅强制开启 TFO（TCP Fast Open），部分机场虽然支持 TFO 但是没有在订阅中开启，你可以通过这个配置强制打开。
+是否为该订阅强制开启 TFO（TCP Fast Open）。部分机场虽然支持 TFO 但是没有在订阅中开启，你可以通过这个配置强制打开。
+
+### provider.mptcp <Badge text="v1.10.0" vertical="middle" />
+
+- 类型: `Boolean`
+- 默认值: `false`
+
+是否为该订阅强制开启 Multipath TCP。目前仅 Surge 支持这一特性。
 
 ### provider.renameNode <Badge text="v1.8.5" vertical="middle" />
 

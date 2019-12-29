@@ -39,6 +39,7 @@ export const normalizeConfig = (cwd: string, userConfig: Partial<CommandConfig>)
     providerDir: path.join(cwd, './provider'),
     configDir: ensureConfigFolder(),
     surgeConfig: {
+      shadowsocksFormat: 'custom',
       v2ray: 'external',
       resolveHostname: false,
     },
@@ -101,6 +102,7 @@ export const validateConfig = (userConfig: Partial<CommandConfig>): void => {
       vmess: Joi.string().pattern(/^\//),
     }),
     surgeConfig: Joi.object({
+      shadowsocksFormat: Joi.string().valid('ss', 'custom'),
       v2ray: Joi.string().valid('native', 'external'),
       resolveHostname: Joi.boolean(),
     }),

@@ -145,11 +145,20 @@ SSR 的可执行文件地址。请使用 libev 版本的二进制文件，可以
 // surgio.conf.js
 module.exports = {
   surgeConfig: {
+    shadowsocksFormat: 'custom', // or 'ss'
     v2ray: 'native',
     resolveHostname: true,
   },
 };
 ```
+
+#### surgeConfig.shadowsocksFormat <Badge text="v1.10.0" vertical="middle" />
+
+- 类型: `string`
+- 默认值: `custom`
+- 可选值: `custom|ss`
+
+定义生成 Shadowsocks 节点配置的类型，默认使用 `custom` 的形式，兼容旧版本。也可以选择使用 `ss` 的方式。
 
 #### surgeConfig.v2ray
 

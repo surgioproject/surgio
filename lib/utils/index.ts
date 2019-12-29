@@ -35,13 +35,14 @@ import {
   NETWORK_TIMEOUT,
   PROXY_TEST_URL,
   PROXY_TEST_INTERVAL,
+  PROVIDER_CACHE_MAXAGE,
 } from './constant';
 import { formatVmessUri } from './v2ray';
 
 const debug = Debug('surgio:utils');
 
 export const ConfigCache = new LRU<string, any>({
-  maxAge: 10 * 60 * 1000, // 10min
+  maxAge: PROVIDER_CACHE_MAXAGE,
 });
 
 // istanbul ignore next
@@ -107,7 +108,6 @@ export const getBlackSSLConfig = async (username: string, password: string): Pro
 export const getShadowsocksJSONConfig = async (
   url: string,
   udpRelay?: boolean,
-  tfo?: boolean
 ): Promise<ReadonlyArray<ShadowsocksNodeConfig>> => {
   assert(url, '未指定订阅地址 url');
 
@@ -138,9 +138,6 @@ export const getShadowsocksJSONConfig = async (
           nodeConfig['obfs-host'] = obfsHost ? obfsHost[1] : 'www.bing.com';
         }
       }
-      if (typeof tfo === 'boolean') {
-        nodeConfig.tfo = tfo;
-      }
 
       return nodeConfig;
     });
@@ -161,7 +158,6 @@ export const getShadowsocksJSONConfig = async (
 export const getShadowsocksSubscription = async (
   url: string,
   udpRelay?: boolean,
-  tfo?: boolean
 ): Promise<ReadonlyArray<ShadowsocksNodeConfig>> => {
   assert(url, '未指定订阅地址 url');
 
@@ -197,9 +193,6 @@ export const getShadowsocksSubscription = async (
           obfs: pluginInfo.tls ? 'wss' : 'ws',
           'obfs-host': pluginInfo.host,
         } : null),
-        ...(tfo !== void 0 ? {
-          tfo,
-        } : null),
       };
     });
 
@@ -216,7 +209,6 @@ export const getShadowsocksSubscription = async (
 export const getShadowsocksrSubscription = async (
   url: string,
   udpRelay?: boolean,
-  tfo?: boolean,
 ): Promise<ReadonlyArray<ShadowsocksrNodeConfig>> => {
   assert(url, '未指定订阅地址 url');
 
@@ -232,9 +224,6 @@ export const getShadowsocksrSubscription = async (
     const result = configList.map<ShadowsocksrNodeConfig>(str => {
       const nodeConfig = parseSSRUri(str);
 
-      if (tfo !== void 0) {
-        (nodeConfig.tfo as boolean) = tfo;
-      }
       if (udpRelay !== void 0) {
         (nodeConfig['udp-relay'] as boolean) = udpRelay;
       }
@@ -254,7 +243,6 @@ export const getShadowsocksrSubscription = async (
 
 export const getV2rayNSubscription = async (
   url: string,
-  tfo?: boolean
 ): Promise<ReadonlyArray<VmessNodeConfig>> => {
   assert(url, '未指定订阅地址 url');
 
@@ -294,9 +282,6 @@ export const getV2rayNSubscription = async (
         tls: json.tls === 'tls',
         host: json.host || '',
         path: json.path || '/',
-        ...(tfo !== void 0 ? {
-          tfo,
-        } : null),
       };
     })
       .filter(item => !!item);
@@ -327,6 +312,24 @@ export const getSurgeNodes = (
             return null;
           }
 
+          // Native support for Shadowsocks
+          if (nodeConfig?.surgeConfig?.shadowsocksFormat === 'ss') {
+            return ([
+              config.nodeName,
+              [
+                'ss',
+                config.hostname,
+                config.port,
+                'encrypt-method=' + config.method,
+                ...pickAndFormatStringList(config, ['password', 'udp-relay', 'obfs', 'obfs-host', 'tfo']),
+                ...(typeof config.mptcp === 'boolean' ? [
+                  `mptcp=${config.mptcp}`,
+                ] : []),
+              ].join(', ')
+            ].join(' = '));
+          }
+
+          // Using external provider
           return ([
             config.nodeName,
             [
@@ -337,6 +340,9 @@ export const getSurgeNodes = (
               config.password,
               'https://raw.githubusercontent.com/ConnersHua/SSEncrypt/master/SSEncrypt.module',
               ...pickAndFormatStringList(config, ['udp-relay', 'obfs', 'obfs-host', 'tfo']),
+              ...(typeof config.mptcp === 'boolean' ? [
+                `mptcp=${config.mptcp}`,
+              ] : []),
             ].join(', ')
           ].join(' = '));
         }
@@ -352,6 +358,18 @@ export const getSurgeNodes = (
               config.port,
               config.username,
               config.password,
+              ...(typeof config.tls13 === 'boolean' ? [
+                `tls13=${config.tls13}`,
+              ] : []),
+              ...(typeof config.skipCertVerify === 'boolean' ? [
+                `skip-cert-verify=${config.skipCertVerify}`,
+              ] : []),
+              ...(typeof config.tfo === 'boolean' ? [
+                `tfo=${config.tfo}`,
+              ] : []),
+              ...(typeof config.mptcp === 'boolean' ? [
+                `mptcp=${config.mptcp}`,
+              ] : []),
             ].join(', ')
           ].join(' = '));
         }
@@ -366,6 +384,12 @@ export const getSurgeNodes = (
               config.hostname,
               config.port,
               ...pickAndFormatStringList(config, ['psk', 'obfs']),
+              ...(typeof config.tfo === 'boolean' ? [
+                `tfo=${config.tfo}`,
+              ] : []),
+              ...(typeof config.mptcp === 'boolean' ? [
+                `mptcp=${config.mptcp}`,
+              ] : []),
             ].join(', '),
           ].join(' = '));
         }
@@ -448,7 +472,23 @@ export const getSurgeNodes = (
             }
 
             if (config.tls) {
-              configList.push('tls=true');
+              configList.push(
+                  'tls=true',
+                  ...(typeof config.tls13 === 'boolean' ? [
+                    `tls13=${config.tls13}`,
+                  ] : []),
+                  ...(typeof config.skipCertVerify === 'boolean' ? [
+                    `skip-cert-verify=${config.skipCertVerify}`,
+                  ] : []),
+              );
+            }
+
+            if (typeof config.tfo === 'boolean') {
+              configList.push(`tfo=${config.tfo}`);
+            }
+
+            if (typeof config.mptcp === 'boolean') {
+              configList.push(`mptcp=${config.mptcp}`);
             }
 
             return ([
@@ -482,6 +522,7 @@ export const getSurgeNodes = (
 
             configString.push(`addresses = ${config.hostname}`);
 
+            // istanbul ignore next
             if (process.env.NODE_ENV !== 'test') {
               fs.writeJSONSync(jsonFilePath, jsonFile);
             }
@@ -534,8 +575,12 @@ export const getClashNodes = (
               'plugin-opts': {
                 mode: 'websocket',
                 tls: nodeConfig.obfs === 'wss',
+                ...(typeof nodeConfig.skipCertVerify === 'boolean' && nodeConfig.obfs === 'wss' ? {
+                  'skip-cert-verify': nodeConfig.skipCertVerify,
+                } : null),
                 host: nodeConfig['obfs-host'],
                 path: nodeConfig['obfs-uri'] || '/',
+                mux: false,
               },
             } : null),
           };
@@ -553,6 +598,9 @@ export const getClashNodes = (
               network: nodeConfig.network,
             }),
             tls: nodeConfig.tls,
+            ...(typeof nodeConfig.skipCertVerify === 'boolean' && nodeConfig.tls ? {
+              'skip-cert-verify': nodeConfig.skipCertVerify,
+            } : null),
             ...(nodeConfig.network === 'ws' ? {
               'ws-path': nodeConfig.path,
               'ws-headers': {
@@ -1175,6 +1223,12 @@ export const formatV2rayConfig = (localPort: string|number, nodeConfig: VmessNod
       security: 'tls',
       tlsSettings: {
         serverName: nodeConfig.host || nodeConfig.hostname,
+        ...(typeof nodeConfig.skipCertVerify === 'boolean' ? {
+          allowInsecure: nodeConfig.skipCertVerify,
+        } : null),
+        ...(typeof nodeConfig.tls13 === 'boolean' ? {
+          allowInsecureCiphers: !nodeConfig.tls13,
+        } : null),
       },
     };
   }
