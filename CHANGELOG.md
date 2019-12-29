@@ -1,3 +1,23 @@
+# [1.10.0](https://github.com/geekdada/surgio/compare/v1.9.0...v1.10.0) (2019-12-29)
+
+
+### Bug Fixes
+
+* 在 external 中开启 tfo 和 mptcp 是没有意义的 ([8b0e6f0](https://github.com/geekdada/surgio/commit/8b0e6f07b35da4a6d0ab7164c1dd572e387b8b90))
+* broken test ([25fcde6](https://github.com/geekdada/surgio/commit/25fcde69365ca66dfcce3fe260a1c6e2d0bd57b3))
+* LRU 缓存可能会被污染 ([929f7bd](https://github.com/geekdada/surgio/commit/929f7bd3a32adc40eb23ec782eba1ce2978569d8))
+* Provider 组合后生成结果排序错乱 ([d051b28](https://github.com/geekdada/surgio/commit/d051b2851ff401038587baa88f0e5ddc134471bc))
+
+
+### Features
+
+* 域名解析失败后跳过 ([66f5af8](https://github.com/geekdada/surgio/commit/66f5af8d31416591a29e28ac8ae03d978fa50862))
+* 支持从 Clash 订阅中读取 skipCertVerify ([c856731](https://github.com/geekdada/surgio/commit/c856731cec14246b1ced594627daa5c50a2959cd))
+* 支持配置 Provider 缓存 ([16dc8fc](https://github.com/geekdada/surgio/commit/16dc8fce9911fee2cae2e8c12e8649d3ede44dfa))
+* v2ray-plugin 强制输出 mux: false ([ba635c5](https://github.com/geekdada/surgio/commit/ba635c599065a88d5ba9d0fcd94a1f4939140da1))
+
+
+
 # [1.9.0](https://github.com/geekdada/surgio/compare/v1.8.5...v1.9.0) (2019-12-25)
 
 
