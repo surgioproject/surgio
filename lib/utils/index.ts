@@ -327,6 +327,24 @@ export const getSurgeNodes = (
             return null;
           }
 
+          // Native support for Shadowsocks
+          if (nodeConfig?.surgeConfig?.shadowsocksFormat === 'ss') {
+            return ([
+              config.nodeName,
+              [
+                'ss',
+                config.hostname,
+                config.port,
+                'encrypt-method=' + config.method,
+                ...pickAndFormatStringList(config, ['password', 'udp-relay', 'obfs', 'obfs-host', 'tfo']),
+                ...(typeof config.mptcp === 'boolean' ? [
+                  `mptcp=${config.mptcp}`,
+                ] : []),
+              ].join(', ')
+            ].join(' = '));
+          }
+
+          // Using external provider
           return ([
             config.nodeName,
             [
@@ -337,6 +355,9 @@ export const getSurgeNodes = (
               config.password,
               'https://raw.githubusercontent.com/ConnersHua/SSEncrypt/master/SSEncrypt.module',
               ...pickAndFormatStringList(config, ['udp-relay', 'obfs', 'obfs-host', 'tfo']),
+              ...(typeof config.mptcp === 'boolean' ? [
+                `mptcp=${config.mptcp}`,
+              ] : []),
             ].join(', ')
           ].join(' = '));
         }
@@ -352,6 +373,18 @@ export const getSurgeNodes = (
               config.port,
               config.username,
               config.password,
+              ...(typeof config.tls13 === 'boolean' ? [
+                `tls13=${config.tls13}`,
+              ] : []),
+              ...(typeof config.skipCertVerify === 'boolean' ? [
+                `skip-cert-verify=${config.skipCertVerify}`,
+              ] : []),
+              ...(typeof config.tfo === 'boolean' ? [
+                `tfo=${config.tfo}`,
+              ] : []),
+              ...(typeof config.mptcp === 'boolean' ? [
+                `mptcp=${config.mptcp}`,
+              ] : []),
             ].join(', ')
           ].join(' = '));
         }
@@ -366,6 +399,12 @@ export const getSurgeNodes = (
               config.hostname,
               config.port,
               ...pickAndFormatStringList(config, ['psk', 'obfs']),
+              ...(typeof config.tfo === 'boolean' ? [
+                `tfo=${config.tfo}`,
+              ] : []),
+              ...(typeof config.mptcp === 'boolean' ? [
+                `mptcp=${config.mptcp}`,
+              ] : []),
             ].join(', '),
           ].join(' = '));
         }
@@ -409,6 +448,14 @@ export const getSurgeNodes = (
 
           configString.push(`addresses = ${config.hostname}`);
 
+          if (typeof config.tfo === 'boolean') {
+            configString.push(`tfo=${config.tfo}`);
+          }
+
+          if (typeof config.mptcp === 'boolean') {
+            configString.push(`mptcp=${config.mptcp}`);
+          }
+
           return ([
             config.nodeName,
             configString.join(', '),
@@ -448,7 +495,23 @@ export const getSurgeNodes = (
             }
 
             if (config.tls) {
-              configList.push('tls=true');
+              configList.push(
+                  'tls=true',
+                  ...(typeof config.tls13 === 'boolean' ? [
+                    `tls13=${config.tls13}`,
+                  ] : []),
+                  ...(typeof config.skipCertVerify === 'boolean' ? [
+                    `skip-cert-verify=${config.skipCertVerify}`,
+                  ] : []),
+              );
+            }
+
+            if (typeof config.tfo === 'boolean') {
+              configList.push(`tfo=${config.tfo}`);
+            }
+
+            if (typeof config.mptcp === 'boolean') {
+              configList.push(`mptcp=${config.mptcp}`);
             }
 
             return ([
@@ -481,6 +544,14 @@ export const getSurgeNodes = (
             }
 
             configString.push(`addresses = ${config.hostname}`);
+
+            if (typeof config.tfo === 'boolean') {
+              configString.push(`tfo=${config.tfo}`);
+            }
+
+            if (typeof config.mptcp === 'boolean') {
+              configString.push(`mptcp=${config.mptcp}`);
+            }
 
             if (process.env.NODE_ENV !== 'test') {
               fs.writeJSONSync(jsonFilePath, jsonFile);
@@ -534,6 +605,9 @@ export const getClashNodes = (
               'plugin-opts': {
                 mode: 'websocket',
                 tls: nodeConfig.obfs === 'wss',
+                ...(typeof nodeConfig.skipCertVerify === 'boolean' && nodeConfig.obfs === 'wss' ? {
+                  'skip-cert-verify': nodeConfig.skipCertVerify,
+                } : null),
                 host: nodeConfig['obfs-host'],
                 path: nodeConfig['obfs-uri'] || '/',
               },
@@ -553,6 +627,9 @@ export const getClashNodes = (
               network: nodeConfig.network,
             }),
             tls: nodeConfig.tls,
+            ...(typeof nodeConfig.skipCertVerify === 'boolean' && nodeConfig.tls ? {
+              'skip-cert-verify': nodeConfig.skipCertVerify,
+            } : null),
             ...(nodeConfig.network === 'ws' ? {
               'ws-path': nodeConfig.path,
               'ws-headers': {
@@ -1175,6 +1252,12 @@ export const formatV2rayConfig = (localPort: string|number, nodeConfig: VmessNod
       security: 'tls',
       tlsSettings: {
         serverName: nodeConfig.host || nodeConfig.hostname,
+        ...(typeof nodeConfig.skipCertVerify === 'boolean' ? {
+          allowInsecure: nodeConfig.skipCertVerify,
+        } : null),
+        ...(typeof nodeConfig.tls13 === 'boolean' ? {
+          allowInsecureCiphers: !nodeConfig.tls13,
+        } : null),
       },
     };
   }
