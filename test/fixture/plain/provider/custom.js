@@ -15,6 +15,7 @@ module.exports = {
       obfs: 'tls',
       'obfs-host': 'gateway-carry.icloud.com',
       tfo: true,
+      mptcp: true,
     },
     {
       type: 'snell',
