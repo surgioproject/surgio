@@ -433,14 +433,6 @@ export const getSurgeNodes = (
 
           configString.push(`addresses = ${config.hostname}`);
 
-          if (typeof config.tfo === 'boolean') {
-            configString.push(`tfo=${config.tfo}`);
-          }
-
-          if (typeof config.mptcp === 'boolean') {
-            configString.push(`mptcp=${config.mptcp}`);
-          }
-
           return ([
             config.nodeName,
             configString.join(', '),
@@ -530,14 +522,7 @@ export const getSurgeNodes = (
 
             configString.push(`addresses = ${config.hostname}`);
 
-            if (typeof config.tfo === 'boolean') {
-              configString.push(`tfo=${config.tfo}`);
-            }
-
-            if (typeof config.mptcp === 'boolean') {
-              configString.push(`mptcp=${config.mptcp}`);
-            }
-
+            // istanbul ignore next
             if (process.env.NODE_ENV !== 'test') {
               fs.writeJSONSync(jsonFilePath, jsonFile);
             }
