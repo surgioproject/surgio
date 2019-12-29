@@ -5,7 +5,6 @@ import path from 'path';
 import updateNotifier from 'update-notifier';
 
 import GenerateCommand from './command/generate';
-import SpeedCommand from './command/speed';
 import UploadCommand from './command/upload';
 import CheckCommand from './command/check';
 import * as filter from './utils/filter';
@@ -36,7 +35,6 @@ export class SurgioCommand extends Command {
 export {
   GenerateCommand,
   UploadCommand,
-  SpeedCommand,
   CheckCommand,
 };
 
