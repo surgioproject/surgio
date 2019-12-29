@@ -21,12 +21,12 @@ import Provider from './Provider';
 type SupportConfigTypes = ShadowsocksNodeConfig|VmessNodeConfig|HttpsNodeConfig|ShadowsocksrNodeConfig|SnellNodeConfig;
 
 export default class ClashProvider extends Provider {
-  public static async getClashSubscription(url: string, udpRelay?: boolean, tfo?: boolean): Promise<ReadonlyArray<SupportConfigTypes>> {
+  public static async getClashSubscription(url: string, udpRelay?: boolean): Promise<ReadonlyArray<SupportConfigTypes>> {
     assert(url, '未指定订阅地址 url');
 
     return ConfigCache.has(url) ?
       ConfigCache.get(url) :
-      await requestConfigFromRemote(url, udpRelay, tfo);
+      await requestConfigFromRemote(url, udpRelay);
   }
 
   public readonly url: string;
@@ -58,11 +58,11 @@ export default class ClashProvider extends Provider {
   }
 
   public getNodeList(): ReturnType<typeof ClashProvider.getClashSubscription> {
-    return ClashProvider.getClashSubscription(this.url, this.udpRelay, this.tfo);
+    return ClashProvider.getClashSubscription(this.url, this.udpRelay);
   }
 }
 
-async function requestConfigFromRemote(url: string, udpRelay?: boolean, tfo?: boolean): Promise<ReadonlyArray<SupportConfigTypes>> {
+async function requestConfigFromRemote(url: string, udpRelay?: boolean): Promise<ReadonlyArray<SupportConfigTypes>> {
   const response = await axios.get(url, {
     timeout: NETWORK_TIMEOUT,
     responseType: 'text',
@@ -117,9 +117,6 @@ async function requestConfigFromRemote(url: string, udpRelay?: boolean, tfo?: bo
             'obfs-host': item['plugin-opts'].host || item.server,
             'obfs-uri': item['plugin-opts'].path || '/',
           } : null),
-          ...(tfo !== void 0 ? {
-            tfo,
-          } : null),
         };
 
       case 'vmess':
@@ -145,9 +142,6 @@ async function requestConfigFromRemote(url: string, udpRelay?: boolean, tfo?: bo
             path: _.get(item, 'ws-path', '/'),
             host: _.get(item, 'ws-headers.Host', ''),
           } : null),
-          ...(tfo !== void 0 ? {
-            tfo,
-          } : null),
         };
 
       case 'http':
@@ -164,9 +158,6 @@ async function requestConfigFromRemote(url: string, udpRelay?: boolean, tfo?: bo
           port: item.port,
           username: item.username || '',
           password: item.password || '',
-          ...(tfo !== void 0 ? {
-            tfo,
-          } : null),
         };
 
       case 'snell':
@@ -177,9 +168,6 @@ async function requestConfigFromRemote(url: string, udpRelay?: boolean, tfo?: bo
           port: item.port,
           psk: item.psk,
           obfs: _.get(item, 'obfs-opts.mode', 'http'),
-          ...(tfo !== void 0 ? {
-            tfo,
-          } : null),
         };
 
       // istanbul ignore next
@@ -195,9 +183,6 @@ async function requestConfigFromRemote(url: string, udpRelay?: boolean, tfo?: bo
           protocol: item.protocol,
           protoparam: item.protocolparam,
           method: item.cipher,
-          ...(tfo !== void 0 ? {
-            tfo,
-          } : null),
         };
 
       default:

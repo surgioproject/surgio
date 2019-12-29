@@ -203,6 +203,16 @@ export async function generate(
           nodeConfig.nodeName = prependFlag(nodeConfig.nodeName);
         }
 
+        // TCP Fast Open
+        if (provider.tfo) {
+          nodeConfig.tfo = provider.tfo;
+        }
+
+        // MPTCP
+        if (provider.mptcp) {
+          nodeConfig.mptcp = provider.mptcp;
+        }
+
         if (
           config.surgeConfig.resolveHostname &&
           !isIp(nodeConfig.hostname) &&

@@ -90,6 +90,7 @@ export interface ProviderConfig {
   };
   readonly addFlag?: boolean;
   readonly tfo?: boolean;
+  readonly mptcp?: boolean;
   readonly renameNode?: (name: string) => string;
 }
 
@@ -189,8 +190,10 @@ export interface VmessNodeConfig extends SimpleNodeConfig {
 export interface SimpleNodeConfig {
   readonly type: NodeTypeEnum;
   readonly enable?: boolean;
-  readonly tfo?: boolean; // TCP Fast Open
-  readonly mptcp?: boolean; // Multipath TCP
+  // tslint:disable-next-line
+  tfo?: boolean; // TCP Fast Open
+  // tslint:disable-next-line
+  mptcp?: boolean; // Multi-Path TCP
   nodeName: string; // tslint:disable-line
   binPath?: string; // tslint:disable-line
   localPort?: number; // tslint:disable-line

@@ -16,6 +16,7 @@ export default class Provider {
   public readonly customFilters?: ProviderConfig['customFilters'];
   public readonly addFlag?: boolean;
   public readonly tfo?: boolean;
+  public readonly mptcp?: boolean;
   public readonly renameNode?: ProviderConfig['renameNode'];
   private startPort?: number;
 
@@ -33,6 +34,8 @@ export default class Provider {
           Joi.any().allow(Joi.function(), Joi.object({ filter: Joi.function(), supportSort: Joi.boolean() }))
         ),
       addFlag: Joi.boolean(),
+      mptcp: Joi.boolean(),
+      tfo: Joi.boolean(),
       startPort: Joi.number().integer().min(1024).max(65535),
     })
       .unknown();
@@ -51,6 +54,7 @@ export default class Provider {
     this.customFilters = config.customFilters;
     this.addFlag = config.addFlag;
     this.tfo = config.tfo;
+    this.mptcp = config.mptcp;
     this.startPort = config.startPort;
     this.renameNode = config.renameNode;
   }

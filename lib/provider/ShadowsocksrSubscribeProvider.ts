@@ -35,6 +35,6 @@ export default class ShadowsocksrSubscribeProvider extends Provider {
   }
 
   public getNodeList(): ReturnType<typeof getShadowsocksrSubscription> {
-    return getShadowsocksrSubscription(this.url, this.udpRelay, this.tfo);
+    return getShadowsocksrSubscription(this.url, this.udpRelay);
   }
 }

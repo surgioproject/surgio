@@ -107,7 +107,6 @@ export const getBlackSSLConfig = async (username: string, password: string): Pro
 export const getShadowsocksJSONConfig = async (
   url: string,
   udpRelay?: boolean,
-  tfo?: boolean
 ): Promise<ReadonlyArray<ShadowsocksNodeConfig>> => {
   assert(url, '未指定订阅地址 url');
 
@@ -138,9 +137,6 @@ export const getShadowsocksJSONConfig = async (
           nodeConfig['obfs-host'] = obfsHost ? obfsHost[1] : 'www.bing.com';
         }
       }
-      if (typeof tfo === 'boolean') {
-        nodeConfig.tfo = tfo;
-      }
 
       return nodeConfig;
     });
@@ -161,7 +157,6 @@ export const getShadowsocksJSONConfig = async (
 export const getShadowsocksSubscription = async (
   url: string,
   udpRelay?: boolean,
-  tfo?: boolean
 ): Promise<ReadonlyArray<ShadowsocksNodeConfig>> => {
   assert(url, '未指定订阅地址 url');
 
@@ -197,9 +192,6 @@ export const getShadowsocksSubscription = async (
           obfs: pluginInfo.tls ? 'wss' : 'ws',
           'obfs-host': pluginInfo.host,
         } : null),
-        ...(tfo !== void 0 ? {
-          tfo,
-        } : null),
       };
     });
 
@@ -216,7 +208,6 @@ export const getShadowsocksSubscription = async (
 export const getShadowsocksrSubscription = async (
   url: string,
   udpRelay?: boolean,
-  tfo?: boolean,
 ): Promise<ReadonlyArray<ShadowsocksrNodeConfig>> => {
   assert(url, '未指定订阅地址 url');
 
@@ -232,9 +223,6 @@ export const getShadowsocksrSubscription = async (
     const result = configList.map<ShadowsocksrNodeConfig>(str => {
       const nodeConfig = parseSSRUri(str);
 
-      if (tfo !== void 0) {
-        (nodeConfig.tfo as boolean) = tfo;
-      }
       if (udpRelay !== void 0) {
         (nodeConfig['udp-relay'] as boolean) = udpRelay;
       }
@@ -254,7 +242,6 @@ export const getShadowsocksrSubscription = async (
 
 export const getV2rayNSubscription = async (
   url: string,
-  tfo?: boolean
 ): Promise<ReadonlyArray<VmessNodeConfig>> => {
   assert(url, '未指定订阅地址 url');
 
@@ -294,9 +281,6 @@ export const getV2rayNSubscription = async (
         tls: json.tls === 'tls',
         host: json.host || '',
         path: json.path || '/',
-        ...(tfo !== void 0 ? {
-          tfo,
-        } : null),
       };
     })
       .filter(item => !!item);

@@ -559,7 +559,7 @@ test('normalizeClashProxyGroupConfig', t => {
 
 test('getShadowsocksJSONConfig', async t => {
   const config = await utils.getShadowsocksJSONConfig('http://example.com/gui-config.json?v=1', true);
-  const config2 = await utils.getShadowsocksJSONConfig('http://example.com/gui-config.json?v=2', false, true);
+  const config2 = await utils.getShadowsocksJSONConfig('http://example.com/gui-config.json?v=2', false);
 
   t.deepEqual(config[0], {
     nodeName: '🇺🇸US 1',
@@ -611,7 +611,6 @@ test('getShadowsocksJSONConfig', async t => {
     method: 'chacha20-ietf-poly1305',
     password: 'password',
     'udp-relay': false,
-    tfo: true,
     obfs: 'tls',
     'obfs-host': 'gateway-carry.icloud.com',
   });
@@ -1036,7 +1035,6 @@ test('formatV2rayConfig', t => {
 
 test('getShadowsocksSubscription with udp', async t => {
   const nodeList = await utils.getShadowsocksSubscription('http://example.com/test-ss-sub.txt', true);
-  const nodeList2 = await utils.getShadowsocksSubscription('http://example.com/test-ss-sub.txt?v=2', true, true);
 
   t.deepEqual(nodeList[0], {
     type: NodeTypeEnum.Shadowsocks,
@@ -1069,18 +1067,6 @@ test('getShadowsocksSubscription with udp', async t => {
     obfs: 'wss',
     'obfs-host': 'gateway-carry.icloud.com',
   });
-  t.deepEqual(nodeList2[0], {
-    type: NodeTypeEnum.Shadowsocks,
-    nodeName: '🇺🇸US 1',
-    hostname: 'us.example.com',
-    port: '443',
-    method: 'chacha20-ietf-poly1305',
-    password: 'password',
-    'udp-relay': true,
-    obfs: 'tls',
-    'obfs-host': 'gateway-carry.icloud.com',
-    tfo: true,
-  });
 });
 
 test('getShadowsocksSubscription without udp', async t => {
@@ -1108,7 +1094,7 @@ test('getShadowsocksSubscription without udp', async t => {
 
 test('getShadowsocksrSubscription', async t => {
   const nodeList = await utils.getShadowsocksrSubscription('http://example.com/test-ssr-sub.txt?v=1', false);
-  const nodeList2 = await utils.getShadowsocksrSubscription('http://example.com/test-ssr-sub.txt?v=2', true, true);
+  const nodeList2 = await utils.getShadowsocksrSubscription('http://example.com/test-ssr-sub.txt?v=2', true);
 
   t.deepEqual(nodeList[0], {
     nodeName: '测试中文',
@@ -1134,7 +1120,6 @@ test('getShadowsocksrSubscription', async t => {
     obfsparam: 'breakwa11.moe',
     protocol: 'auth_aes128_md5',
     protoparam: '',
-    tfo: true,
     'udp-relay': true,
   });
 });
