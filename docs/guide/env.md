@@ -19,4 +19,8 @@ sidebarDepth: 2
 
 ### `SURGIO_REMOTE_SNIPPET_CACHE_MAXAGE`
 
-- 默认值: `43200000`
+- 默认值: `43200000`（12 小时）
+
+### `SURGIO_PROVIDER_CACHE_MAXAGE`
+
+- 默认值: `600000`（10 分钟）

@@ -35,13 +35,14 @@ import {
   NETWORK_TIMEOUT,
   PROXY_TEST_URL,
   PROXY_TEST_INTERVAL,
+  PROVIDER_CACHE_MAXAGE,
 } from './constant';
 import { formatVmessUri } from './v2ray';
 
 const debug = Debug('surgio:utils');
 
 export const ConfigCache = new LRU<string, any>({
-  maxAge: 10 * 60 * 1000, // 10min
+  maxAge: PROVIDER_CACHE_MAXAGE,
 });
 
 // istanbul ignore next

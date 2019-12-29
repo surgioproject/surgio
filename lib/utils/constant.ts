@@ -37,3 +37,7 @@ export const MELLOW_UNSUPPORTED_RULE: ReadonlyArray<string> = [
 export const REMOTE_SNIPPET_CACHE_MAXAGE: number = process.env.SURGIO_REMOTE_SNIPPET_CACHE_MAXAGE ?
   Number(process.env.SURGIO_REMOTE_SNIPPET_CACHE_MAXAGE) :
   1000 * 60 * 60 * 12; // 12h
+
+export const PROVIDER_CACHE_MAXAGE: number = process.env.SURGIO_PROVIDER_CACHE_MAXAGE ?
+  Number(process.env.SURGIO_PROVIDER_CACHE_MAXAGE) :
+  10 * 60 * 1000; // 10min
