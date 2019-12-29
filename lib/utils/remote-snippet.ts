@@ -1,4 +1,4 @@
-import axios from 'axios';
+import got from 'got';
 import Bluebird from 'bluebird';
 import crypto from "crypto";
 
@@ -46,13 +46,12 @@ export const loadRemoteSnippetList = (remoteSnippetList: ReadonlyArray<RemoteSni
   function load(url: string): Promise<string> {
     console.log(`正在下载远程片段: ${url}`);
 
-    return axios.get<string>(url, {
+    return got.get(url, {
       timeout: NETWORK_TIMEOUT,
-      responseType: 'text',
     })
       .then(data => {
         console.log(`远程片段下载成功: ${url}`);
-        return data.data;
+        return data.body;
       })
       .catch(err => {
         console.error(`远程片段下载失败: ${url}`);

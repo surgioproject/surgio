@@ -14,5 +14,5 @@ module.exports = {
       url: 'http://example.com/netflix.list'
     }
   ],
-  urlBase: 'https://example.com/',
+  urlBase: 'http://example.com/',
 };

@@ -10,4 +10,4 @@ http-response https://api.zhihu.com/market/header requires-body=1,max-size=0,scr
 http-response https://api.zhihu.com/people/ requires-body=1,max-size=0,script-path=https://raw.githubusercontent.com/onewayticket255/Surge-Script/master/surge%20zhihu%20people.js,script-update-interval=-1
 
 # RULE 3
-dns dnspod script-path=https://example.com/dnspod.js
+dns dnspod script-path=http://example.com/dnspod.js

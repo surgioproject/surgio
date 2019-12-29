@@ -86,7 +86,7 @@ test('template variables and functions', async t => {
     'DOMAIN-SUFFIX,nflximg.net,Proxy\n' +
     'DOMAIN-SUFFIX,nflxso.net,Proxy\n' +
     'DOMAIN-SUFFIX,nflxvideo.net,Proxy\n' +
-    'https://example.com/ss.conf\n';
+    'http://example.com/ss.conf\n';
 
   t.is(code, 0);
   t.is(confString, result);

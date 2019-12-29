@@ -8,5 +8,5 @@ module.exports = {
       provider: 'ssr',
     },
   ],
-  urlBase: 'https://example.com/',
+  urlBase: 'http://example.com/',
 };
