@@ -594,6 +594,7 @@ export const getClashNodes = (
                 } : null),
                 host: nodeConfig['obfs-host'],
                 path: nodeConfig['obfs-uri'] || '/',
+                mux: false,
               },
             } : null),
           };
