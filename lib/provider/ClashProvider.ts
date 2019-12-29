@@ -116,6 +116,7 @@ async function requestConfigFromRemote(url: string, udpRelay?: boolean): Promise
             obfs: item['plugin-opts'].tls === true ? 'wss' : 'ws',
             'obfs-host': item['plugin-opts'].host || item.server,
             'obfs-uri': item['plugin-opts'].path || '/',
+            skipCertVerify: item['plugin-opts']['skip-cert-verify'] === true,
           } : null),
         };
 
@@ -142,6 +143,7 @@ async function requestConfigFromRemote(url: string, udpRelay?: boolean): Promise
             path: _.get(item, 'ws-path', '/'),
             host: _.get(item, 'ws-headers.Host', ''),
           } : null),
+          skipCertVerify: item['skip-cert-verify'] === true,
         };
 
       case 'http':
@@ -158,6 +160,7 @@ async function requestConfigFromRemote(url: string, udpRelay?: boolean): Promise
           port: item.port,
           username: item.username || '',
           password: item.password || '',
+          skipCertVerify: item['skip-cert-verify'] === true,
         };
 
       case 'snell':
