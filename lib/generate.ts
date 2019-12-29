@@ -218,7 +218,13 @@ export async function generate(
           !isIp(nodeConfig.hostname) &&
           [NodeTypeEnum.Vmess, NodeTypeEnum.Shadowsocksr].includes(nodeConfig.type)
         ) {
-          nodeConfig.hostnameIp = await resolveDomain(nodeConfig.hostname);
+          // istanbul ignore catch
+          try {
+            nodeConfig.hostnameIp = await resolveDomain(nodeConfig.hostname);
+          } catch (err) {
+            console.log();
+            console.warn(`${nodeConfig.hostname} 无法解析，将忽略该域名的解析结果`);
+          }
         }
 
         return nodeConfig;
