@@ -116,7 +116,9 @@ async function requestConfigFromRemote(url: string, udpRelay?: boolean): Promise
             obfs: item['plugin-opts'].tls === true ? 'wss' : 'ws',
             'obfs-host': item['plugin-opts'].host || item.server,
             'obfs-uri': item['plugin-opts'].path || '/',
-            skipCertVerify: item['plugin-opts']['skip-cert-verify'] === true,
+            ...(item['plugin-opts'].tls === true ? {
+              skipCertVerify: item['plugin-opts']['skip-cert-verify'] === true,
+            } : null),
           } : null),
         };
 
@@ -137,13 +139,15 @@ async function requestConfigFromRemote(url: string, udpRelay?: boolean): Promise
           alterId: item.alterId ? `${item.alterId}` : '0',
           method: item.cipher || 'auto',
           udp: resolveUdpRelay(item.udp, udpRelay),
-          tls: item.tls !== void 0 ? item.tls : false,
+          tls: item.tls ?? false,
           network: item.network || 'tcp',
           ...(item.network === 'ws' ? {
             path: _.get(item, 'ws-path', '/'),
             host: _.get(item, 'ws-headers.Host', ''),
           } : null),
-          skipCertVerify: item['skip-cert-verify'] === true,
+          ...(item.tls ? {
+            skipCertVerify: item['skip-cert-verify'] === true,
+          } : null),
         };
 
       case 'http':
