@@ -1,5 +1,6 @@
 import _ from 'lodash';
 
+import flag, { TAIWAN } from '../misc/flag_cn';
 import { NodeNameFilterType, SimpleNodeConfig, SortedNodeNameFilterType } from '../types';
 
 // tslint:disable-next-line:max-classes-per-file
@@ -129,35 +130,38 @@ export const netflixFilter: NodeNameFilterType = item => {
 
 export const usFilter: NodeNameFilterType = item => {
   return [
-    '🇺🇸', '美', 'us', '波特兰', '达拉斯', '俄勒冈',
-    '凤凰城', '费利蒙', '硅谷', '拉斯维加斯', '洛杉矶',
-    '圣何塞', '圣克拉拉', '西雅图', '芝加哥',
-  ].some(key => item.nodeName.toLowerCase().includes(key));
+    '🇺🇸', ...flag['🇺🇲']
+  ].some(key => item.nodeName.toUpperCase().includes(key));
 };
 
 export const hkFilter: NodeNameFilterType = item => {
-  return ['🇭🇰', '港', 'hk'].some(key => item.nodeName.toLowerCase().includes(key));
+  return [
+    '🇭🇰', ...flag['🇭🇰']
+  ].some(key => item.nodeName.toUpperCase().includes(key));
 };
 
 export const japanFilter: NodeNameFilterType = item => {
   return [
-    '🇯🇵', '日', 'jp', 'japan', '东京', '大阪', '埼玉',
-  ].some(key => item.nodeName.toLowerCase().includes(key));
+    '🇯🇵', ...flag['🇯🇵'],
+  ].some(key => item.nodeName.toUpperCase().includes(key));
 };
 
 export const koreaFilter: NodeNameFilterType = item => {
-  return ['🇰🇷', '韩', 'korea', '首尔'].some(key => item.nodeName.toLowerCase().includes(key));
+  return [
+    '🇰🇷', ...flag['🇰🇷']
+  ].some(key => item.nodeName.toUpperCase().includes(key));
 };
 
 export const singaporeFilter: NodeNameFilterType = item => {
-  return ['🇸🇬', '新加坡', 'sin', 'singapore'].some(key => item.nodeName.toLowerCase().includes(key));
+  return [
+    '🇸🇬', ...flag['🇸🇬']
+  ].some(key => item.nodeName.toUpperCase().includes(key));
 };
 
 export const taiwanFilter: NodeNameFilterType = item => {
   return [
-    '🇹🇼', '台湾', '台灣', '臺灣', 'tw', 'taiwan',
-    '台北', '台中', '新北', '彰化',
-  ].some(key => item.nodeName.toLowerCase().includes(key));
+    '🇹🇼', ...TAIWAN
+  ].some(key => item.nodeName.toUpperCase().includes(key));
 };
 
 export const youtubePremiumFilter: NodeNameFilterType = mergeFilters([usFilter, japanFilter, koreaFilter, hkFilter, singaporeFilter]);
