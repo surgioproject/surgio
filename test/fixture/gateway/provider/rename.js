@@ -1,12 +1,10 @@
 'use strict';
 
 module.exports = {
-  url: 'http://example.com/clash-sample.yaml',
-  type: 'clash',
+  url: 'http://example.com/test-ss-sub.txt',
+  type: 'shadowsocks_subscribe',
+  addFlag: true,
   renameNode: name => {
-    if (name.includes('ss1')) {
-      return 'TEST ' + name;
-    }
-    return name;
+    return 'TEST ' + name;
   },
 };
