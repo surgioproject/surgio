@@ -1066,6 +1066,22 @@ export const getNodeNames = (
 };
 
 export const getClashNodeNames = (
+  list: ReadonlyArray<SimpleNodeConfig>,
+  filter?: NodeNameFilterType|SortedNodeNameFilterType,
+  existingProxies?: ReadonlyArray<string>,
+): ReadonlyArray<string> => {
+  const result: string[] = [];
+
+  if (existingProxies) {
+    result.concat(existingProxies);
+  }
+
+  result.concat(applyFilter(list, filter).map(item => item.nodeName));
+
+  return result;
+};
+
+export const generateClashProxyGroup = (
   ruleName: string,
   ruleType: 'select'|'url-test'|'fallback'|'load-balance',
   nodeNameList: ReadonlyArray<SimpleNodeConfig>,
@@ -1149,14 +1165,14 @@ export const normalizeClashProxyGroupConfig = (
         throw new Error(`过滤器 ${item.filter} 无效，请检查 proxyGroupModifier`);
       }
 
-      return getClashNodeNames(item.name, item.type, nodeList, {
+      return generateClashProxyGroup(item.name, item.type, nodeList, {
         filter: item.filter,
         existingProxies: item.proxies,
         proxyTestUrl: options.proxyTestUrl,
         proxyTestInterval: options.proxyTestInterval,
       });
     } else {
-      return getClashNodeNames(item.name, item.type, nodeList, {
+      return generateClashProxyGroup(item.name, item.type, nodeList, {
         existingProxies: item.proxies,
         proxyTestUrl: options.proxyTestUrl,
         proxyTestInterval: options.proxyTestInterval,

@@ -7,7 +7,8 @@ import { decodeStringList, toBase64 } from './utils';
 import {
   CLASH_UNSUPPORTED_RULE,
   MELLOW_UNSUPPORTED_RULE,
-  QUANTUMULT_X_SUPPORTED_RULE } from './utils/constant';
+  QUANTUMULT_X_SUPPORTED_RULE
+} from './utils/constant';
 
 export default function getEngine(templateDir: string, publicUrl: string): nunjucks.Environment {
   const engine = nunjucks.configure(templateDir, {
@@ -82,10 +83,14 @@ export default function getEngine(templateDir: string, publicUrl: string): nunju
       .join('\n');
   });
 
-  // istanbul ignore next
+  // yaml
   engine.addFilter('yaml', (obj: JsonObject) => YAML.stringify(obj));
 
+  // base64
   engine.addFilter('base64', (str: string) => toBase64(str));
+
+  // json
+  engine.addFilter('json', (obj: JsonObject) => JSON.stringify(obj));
 
   return engine;
 };

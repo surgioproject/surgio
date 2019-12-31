@@ -34,6 +34,7 @@ import {
   normalizeClashProxyGroupConfig,
   toBase64,
   toUrlSafeBase64,
+  getClashNodeNames,
 } from './utils';
 import { loadRemoteSnippetList } from './utils/remote-snippet';
 import { isIp, resolveDomain } from './utils/dns';
@@ -270,6 +271,7 @@ export async function generate(
     artifactName,
     getDownloadUrl: (name: string) => getDownloadUrl(config.urlBase, name, true, gatewayHasToken ? gatewayConfig.accessToken : undefined),
     getNodeNames,
+    getClashNodeNames,
     getClashNodes,
     getSurgeNodes,
     getShadowsocksNodes,
