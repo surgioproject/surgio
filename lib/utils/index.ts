@@ -549,8 +549,9 @@ export const getSurgeNodes = (
 
 export const getClashNodes = (
   list: ReadonlyArray<PossibleNodeConfigType>,
+  filter?: NodeFilterType|SortedNodeNameFilterType,
 ): ReadonlyArray<any> => {
-  return list
+  return applyFilter(list, filter)
     .map(nodeConfig => {
       if (nodeConfig.enable === false) { return null; }
 

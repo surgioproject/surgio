@@ -127,6 +127,27 @@ test('transform artifact qx', async t => {
     });
 });
 
+test('transform artifact clash', async t => {
+  const fixture = path.join(__dirname, '../fixture/gateway');
+  const httpServer = gateway.createHttpServer({
+    cwd: fixture,
+  });
+
+  await request(httpServer)
+    .get('/get-artifact/test.conf?format=clash-provider')
+    .expect(200)
+    .then(res => {
+      t.snapshot(res.text);
+    });
+
+  await request(httpServer)
+    .get('/get-artifact/test.conf?format=clash-provider&filter=globalFilter')
+    .expect(200)
+    .then(res => {
+      t.snapshot(res.text);
+    });
+});
+
 test('transform artifact unknown format and filter', async t => {
   const fixture = path.join(__dirname, '../fixture/gateway');
   const httpServer = gateway.createHttpServer({
