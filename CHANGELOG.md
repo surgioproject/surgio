@@ -1,3 +1,14 @@
+# [1.11.0](https://github.com/geekdada/surgio/compare/v1.10.1...v1.11.0) (2020-01-02)
+
+
+### Features
+
+* 支持 Clash 的 Provider 片段 ([5c42328](https://github.com/geekdada/surgio/commit/5c4232809e60514121c1579deaa8ce9dbd151323))
+* 支持新的 Clash 规则配置方法 ([48b90e1](https://github.com/geekdada/surgio/commit/48b90e142dcd5c200ddd1b1e4cae8b6e97d918bb))
+* useProviders, discardProviders ([e11cb75](https://github.com/geekdada/surgio/commit/e11cb75d3d58189e9dacc2c4f699e514ab1a33c1)), closes [#51](https://github.com/geekdada/surgio/issues/51)
+
+
+
 ## [1.10.1](https://github.com/geekdada/surgio/compare/v1.10.0...v1.10.1) (2019-12-29)
 
 
