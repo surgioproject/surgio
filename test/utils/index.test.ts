@@ -214,6 +214,31 @@ test('getNodeNames', async t => {
   t.is(txt3, 'Test Node 1');
 });
 
+test('getClashNodeNames', async t => {
+  const nodeNameList: ReadonlyArray<SimpleNodeConfig> = [
+    {
+      type: NodeTypeEnum.Shadowsocks,
+      enable: true,
+      nodeName: 'Test Node 1',
+    }, {
+      type: NodeTypeEnum.Shadowsocks,
+      enable: false,
+      nodeName: 'Test Node 2',
+    }, {
+      type: NodeTypeEnum.Snell,
+      enable: true,
+      nodeName: 'Test Node 3',
+    }
+  ];
+  const result1 = utils.getClashNodeNames(nodeNameList);
+  const result2 = utils.getClashNodeNames(nodeNameList, undefined, ['TEST']);
+  const result3 = utils.getClashNodeNames(nodeNameList, simpleNodeConfig => simpleNodeConfig.nodeName !== 'Test Node 3');
+
+  t.deepEqual(result1, ['Test Node 1', 'Test Node 3']);
+  t.deepEqual(result2, ['TEST', 'Test Node 1', 'Test Node 3']);
+  t.deepEqual(result3, ['Test Node 1']);
+});
+
 test('getClashNodes', async t => {
   const nodeList: ReadonlyArray<ShadowsocksNodeConfig|VmessNodeConfig|SnellNodeConfig> = [{
     nodeName: 'Test Node 1',
@@ -302,9 +327,18 @@ test('getClashNodes', async t => {
     port: 443,
     psk: 'psk',
     obfs: 'tls',
+  }, {
+    nodeName: 'snell 2',
+    enable: false,
+    type: NodeTypeEnum.Snell,
+    hostname: '1.1.1.1',
+    port: 443,
+    psk: 'psk',
+    obfs: 'tls',
   }];
   const array = utils.getClashNodes(nodeList);
 
+  t.is(array.length, 8);
   t.deepEqual(array[0], {
     name: 'Test Node 1',
     type: 'ss',

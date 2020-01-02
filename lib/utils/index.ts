@@ -1071,13 +1071,13 @@ export const getClashNodeNames = (
   filter?: NodeNameFilterType|SortedNodeNameFilterType,
   existingProxies?: ReadonlyArray<string>,
 ): ReadonlyArray<string> => {
-  const result: string[] = [];
+  let result: string[] = [];
 
   if (existingProxies) {
-    result.concat(existingProxies);
+    result = result.concat(existingProxies);
   }
 
-  result.concat(applyFilter(list, filter).map(item => item.nodeName));
+  result = result.concat(applyFilter(list, filter).map(item => item.nodeName));
 
   return result;
 };
