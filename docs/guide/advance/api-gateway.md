@@ -9,6 +9,8 @@ sidebarDepth: 1
 本文亦发布于我的个人博客 [blog.dada.li](https://blog.dada.li/2019/surgio-api-gateway)
 :::
 
+[[toc]]
+
 ## 前言
 
 相信很多人都用过网络上处理规则的 API 接口，也有人在使用过 Surgio 后觉得更新规则不太灵活。虽然我们已经能够通过自动化的方法每隔一段时间更新一次规则，但还是无法做到实时更新。这篇文章就是想教大家，利用现成的 SAAS(Software as a Service) 服务，来实现一个 Surgio 规则仓库的 API。
