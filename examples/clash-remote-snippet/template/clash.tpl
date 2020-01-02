@@ -14,7 +14,34 @@ dns:
   - 223.5.5.5
 {% endif %}
 
-{{ clashProxyConfig | yaml }}
+Proxy: {{ getClashNodes(nodeList) | json }}
+
+Proxy Group:
+- type: select
+  name: 🚀 Proxy
+  proxies: {{ getClashNodeNames(nodeList) | json }}
+- type: select
+  name: 🎬 Netflix
+  proxies: {{ getClashNodeNames(nodeList, netflixFilter) | json }}
+- type: select
+  name: 📺 Youtube
+  proxies: {{ getClashNodeNames(nodeList, youtubeFilter) | json }}
+- type: url-test
+  name: US
+  proxies: {{ getClashNodeNames(nodeList, usFilter) | json }}
+  url: {{ proxyTestUrl }}
+  interval: 1200
+- type: url-test
+  name: HK
+  proxies: {{ getClashNodeNames(nodeList, hkFilter) | json }}
+  url: {{ proxyTestUrl }}
+  interval: 1200
+- type: select
+  name: 🍎 Apple
+  proxies: ['DIRECT', '🚀 Proxy', 'US', 'HK']
+- type: select
+  name: 🍎 Apple CDN
+  proxies: ['DIRECT', '🍎 Apple']
 
 Rule:
 {{ remoteSnippets.netflix.main('🎬 Netflix') | patchYamlArray }}

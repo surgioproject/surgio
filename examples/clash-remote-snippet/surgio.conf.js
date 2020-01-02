@@ -17,16 +17,14 @@ module.exports = {
   ],
   artifacts: [
     {
-      name: 'Clash.conf',
+      name: 'Clash.yaml',
       template: 'clash',
       provider: 'demo',
-      proxyGroupModifier: proxyGroupModifier,
     },
     {
-      name: 'Clash_enhanced_mode.conf',
+      name: 'Clash_enhanced_mode.yaml',
       template: 'clash',
       provider: 'demo',
-      proxyGroupModifier: proxyGroupModifier,
       customParams: {
         enhancedMode: true,
       },
@@ -36,43 +34,3 @@ module.exports = {
   // https://surgio.royli.dev/guide/custom-config.html#upload
   // upload: {},
 };
-
-function proxyGroupModifier(nodeList, filters) {
-  return [
-    {
-      name: '🚀 Proxy',
-      type: 'select',
-    },
-    {
-      name: '🎬 Netflix',
-      filter: filters.netflixFilter,
-      type: 'select',
-    },
-    {
-      name: '📺 Youtube',
-      filter: filters.youtubePremiumFilter,
-      proxies: ['🚀 Proxy'],
-      type: 'select',
-    },
-    {
-      name: 'US',
-      filter: filters.usFilter,
-      type: 'url-test',
-    },
-    {
-      name: 'HK',
-      filter: filters.hkFilter,
-      type: 'url-test',
-    },
-    {
-      name: '🍎 Apple',
-      proxies: ['DIRECT', '🚀 Proxy', 'US', 'HK'],
-      type: 'select',
-    },
-    {
-      name: '🍎 Apple CDN',
-      proxies: ['DIRECT', '🍎 Apple'],
-      type: 'select',
-    },
-  ];
-}
