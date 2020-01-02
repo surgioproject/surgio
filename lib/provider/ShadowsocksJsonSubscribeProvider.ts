@@ -7,8 +7,8 @@ export default class ShadowsocksJsonSubscribeProvider extends Provider {
   public readonly url: string;
   public readonly udpRelay?: boolean;
 
-  constructor(config: ShadowsocksJsonSubscribeProviderConfig) {
-    super(config);
+  constructor(name: string, config: ShadowsocksJsonSubscribeProviderConfig) {
+    super(name, config);
 
     const schema = Joi.object({
       url: Joi

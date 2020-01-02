@@ -93,6 +93,20 @@ export class Server {
         return await generate(this.config, artifact, this.remoteSnippetList, this.templateEngine);
       }
 
+      case 'clash-provider': {
+        const artifact = {
+          ...target[0],
+          template: undefined,
+          templateString: [
+            '---',
+            'proxies:',
+            `{{ getClashNodes(nodeList${filterName ? `, ${filterName}` : ''}) | yaml }}`,
+            '...'
+          ].join('\n')
+        };
+        return await generate(this.config, artifact, this.remoteSnippetList, this.templateEngine);
+      }
+
       default:
         return createError(400, 'unsupported format');
     }

@@ -120,6 +120,10 @@ Surgio 会根据 Artifact 的值来生成配置文件。你可以一次性配置
 - 入参: `(NodeConfig[], { hkFilter, usFilter, netflixFilter, youtubePremiumFilter })`
 - 返回值: `object[]`
 
+:::tip 提示
+[Clash 规则维护指南](/guide/client/clash.md)
+:::
+
 为了解决 Clash 的 `Proxy Group` 组装引入了这个构造函数。在使用 [`clashProxyConfig` 模板变量](/guide/custom-template#clashproxyconfig) 之前必须要自己实现这个方法。
 
 方法返回的数组中可以包含以下几种对象：

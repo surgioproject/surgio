@@ -19,6 +19,22 @@ Surgio 为了能够灵活地定义模板而引入了 [Nunjucks](https://nunjucks
 
 ## 模板变量
 
+### 如何在模板中使用变量？
+
+相信聪明的你已经洞察一切。对，就是用 `{{ }}` 把变量包裹起来。
+
+```html
+<!-- .tpl 文件 -->
+{{ downloadUrl }}
+```
+
+对于 `customParams`，则可以像这样：
+
+```html
+<!-- .tpl 文件 -->
+{{ customParams.variable }}
+```
+
 ### providerName
 
 - 类型: `string`
@@ -88,7 +104,7 @@ DOMAIN-KEYWORD,baidu,DIRECT
 - 类型: `string`
 
 :::tip 提示
-- 支持输出 Shadowsocks, Shadowsocksr, Vmess 节点
+- 支持输出 Shadowsocks, Shadowsocksr, Snell, Vmess 节点
 - Shadowsocksr 是通过 Clashr 项目支持的，你需要在 [这里](https://t.me/clashr4ssr) 下载可执行文件。项目地址在 [这里](https://github.com/sun8911879/shadowsocksR)。
 :::
 
@@ -104,23 +120,25 @@ Clash 的 `Proxy` 和 `Proxy Group` 配置对象。`clashProxyConfig` 的内容�
 你当然可以在模板中使用 Nunjucks 内置的 filter。
 :::
 
-### 如何在模板中使用变量？
-
-相信聪明的你已经洞察一切。对，就是用 `{{ }}` 把变量包裹起来。
-
-```html
-<!-- .tpl 文件 -->
-{{ downloadUrl }}
-```
-
-对于 `customParams`，则可以像这样：
-
-```html
-<!-- .tpl 文件 -->
-{{ customParams.variable }}
-```
-
 ## 过滤器
+
+### 如何使用过滤器？
+
+我们以 `getSurgeNodes` 为例。默认情况下，使用 `getSurgeNodes(nodeList)` 输出的是所有节点。如果我们在第二个参数的位置传入过滤器，即可过滤想要的节点。
+
+```html
+<!-- .tpl 文件 -->
+{{ getSurgeNodes(nodeList, netflixFilter) }}
+```
+
+这样即可输出支持 Netflix 的节点。
+
+自定义过滤器的使用也非常类似。
+
+```html
+<!-- .tpl 文件 -->
+{{ getSurgeNodes(nodeList, customFilters.this_is_a_filter) }}
+```
 
 ### 国家和地区过滤器
 
@@ -150,25 +168,18 @@ Youtube Premium 节点过滤器。Surgio 默认会将名称中包含 *日*, *美
 
 获取自定义 Filter。关于自定义 Filter 的用法，请阅读 [进阶 - 自定义 Filter](/guide/advance/custom-filter)。
 
-### 如何使用过滤器？
-
-我们以 `getSurgeNodes` 为例。默认情况下，使用 `getSurgeNodes(nodeList)` 输出的是所有节点。如果我们在第二个参数的位置传入过滤器，即可过滤想要的节点。
-
-```html
-<!-- .tpl 文件 -->
-{{ getSurgeNodes(nodeList, netflixFilter) }}
-```
-
-这样即可输出支持 Netflix 的节点。
-
-自定义过滤器的使用也非常类似。
-
-```html
-<!-- .tpl 文件 -->
-{{ getSurgeNodes(nodeList, customFilters.this_is_a_filter) }}
-```
-
 ## 模板方法
+
+### 如何在模板中调用方法？
+
+上面提到的这些模板方法都能够在模板文件中使用。原则就是用 `{{ }}` 把方法包裹起来。
+
+```html
+<!-- .tpl 文件 -->
+{{ getQuantumultNodes(nodeList, providerName) | base64 }}
+
+{{ getSurgeNodes(nodeList) }}
+```
 
 ### getSurgeNodes
 
@@ -263,6 +274,20 @@ Proxy-2, vmess1, vmess1://75da2e14-4d08-480b-b3cb-0079a0c51275@example.com:10025
 
 使用时请参考 [官方文档](https://github.com/mellow-io/mellow#%E6%9B%B4%E5%A4%9A%E9%85%8D%E7%BD%AE)。
 
+### getClashNodes <Badge text="v1.11.0" vertical="middle" />
+
+`getClashNodes(nodeList, filter?)`
+
+:::tip 提示
+- 支持输出 Shadowsocks, Shadowsocksr, HTTPS, Snell, Vmess 节点
+:::
+
+该方法会返回一个包含有节点信息的数组，用于编写 Clash 规则。
+
+:::tip 提示
+[Clash 规则维护指南](/guide/client/clash.md)
+:::
+
 ### getNodeNames
 
 `getNodeNames(nodeList, filter?, separator?)`
@@ -290,6 +315,30 @@ getNodeNames(nodeList, netflixFilter);
 getNodeNames(nodeList, undefined, ':');
 ```
 
+### getClashNodeNames <Badge text="v1.11.0" vertical="middle" />
+
+`getClashNodeNames(nodeList, filter?, prependNodeNames?)`
+
+:::tip 提示
+- `filter` 为可选参数
+- `prependNodeNames` 为可选参数。可以通过这个参数在过滤结果前加入自定义节点名
+- [Clash 规则维护指南](/guide/client/clash.md)
+:::
+
+该方法会返回一个包含有节点名称的数组，用于编写 Clash 规则。
+
+若需要过滤 Netflix 节点则传入：
+
+```js
+getClashNodeNames(nodeList, netflixFilter);
+```
+
+需要过滤 Netflix 节点，并且在前面加入节点 `测试节点`
+
+```js
+getClashNodeNames(nodeList, netflixFilter, ['测试节点']);
+```
+
 ### getDownloadUrl
 
 `getDownloadUrl(name)`
@@ -298,17 +347,6 @@ getNodeNames(nodeList, undefined, ':');
 
 ```js
 getDownloadUrl('example.conf'); // https://example.com/example.conf
-```
-
-### 如何在模板中调用方法？
-
-上面提到的这些模板方法都能够在模板文件中使用。原则就是用 `{{ }}` 把方法包裹起来。
-
-```html
-<!-- .tpl 文件 -->
-{{ getQuantumultNodes(nodeList, providerName) | base64 }}
-
-{{ getSurgeNodes(nodeList) }}
 ```
 
 ## 片段 (Snippet)

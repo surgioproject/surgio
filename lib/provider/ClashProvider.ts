@@ -171,8 +171,8 @@ export default class ClashProvider extends Provider {
   public readonly url: string;
   public readonly udpRelay?: boolean;
 
-  constructor(config: ClashProviderConfig) {
-    super(config);
+  constructor(name: string, config: ClashProviderConfig) {
+    super(name, config);
 
     const schema = Joi.object({
       url: Joi

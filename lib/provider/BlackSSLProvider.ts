@@ -9,8 +9,8 @@ export default class BlackSSLProvider extends Provider {
   public readonly username: string;
   public readonly password: string;
 
-  constructor(config: BlackSSLProviderConfig) {
-    super(config);
+  constructor(name: string, config: BlackSSLProviderConfig) {
+    super(name, config);
 
     const schema = Joi.object({
       username: Joi

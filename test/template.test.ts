@@ -155,3 +155,16 @@ test('ForeignMedia', t => {
     str,
   }));
 });
+
+test('stringify', t => {
+  const obj = {
+    foo: 'bar',
+  };
+
+  t.snapshot(templateEngine.renderString(`{{ obj | yaml }}`, {
+    obj,
+  }));
+  t.snapshot(templateEngine.renderString(`{{ obj | json }}`, {
+    obj,
+  }));
+});

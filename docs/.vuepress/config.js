@@ -11,6 +11,9 @@ module.exports = {
       apiKey: '6e7242cfd891a169eb12749ab473ba8f',
       indexName: 'surgio',
     },
+    markdown: {
+      lineNumbers: true
+    },
     nav: [
       {
         text: 'Changelog',
@@ -37,6 +40,13 @@ module.exports = {
                 'custom-provider',
                 'custom-template',
                 'custom-artifact',
+              ]
+            },
+            {
+              title: '客户端规则维护指南',
+              collapsable: false,
+              children: [
+                'client/clash',
               ]
             },
             'api',
