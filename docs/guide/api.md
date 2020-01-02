@@ -5,6 +5,8 @@ sidebarDepth: 2
 
 # 托管 API 功能
 
+[[toc]]
+
 :::tip 提示
 1. 请先参考 [文档](/guide/advance/api-gateway.md) 搭建托管 API
 2. 该文档仅针对 now.sh 类型的部署

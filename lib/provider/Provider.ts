@@ -20,7 +20,7 @@ export default class Provider {
   public readonly renameNode?: ProviderConfig['renameNode'];
   private startPort?: number;
 
-  constructor(config: ProviderConfig) {
+  constructor(public name: string, config: ProviderConfig) {
     const schema = Joi.object({
       type: Joi.string()
         .valid(...Object.values<string>(SupportProviderEnum))

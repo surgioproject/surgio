@@ -52,5 +52,6 @@ module.exports = {
     globalKeywordFilter: utils.useKeywords(['US 1']),
     sortFilter: utils.useSortedKeywords(['🇺🇸US 2', '🇺🇸US 1']),
     hkFirstUsSecondFilter: utils.mergeSortedFilters([utils.hkFilter, utils.usFilter]),
+    providerFilter: utils.useProviders(['custom']),
   },
 };

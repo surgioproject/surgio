@@ -94,6 +94,24 @@ export const useRegexp = (regexp: RegExp): NodeNameFilterType => {
   return item => regexp.test(item.nodeName);
 };
 
+export const useProviders = (keywords: ReadonlyArray<string>): NodeNameFilterType => {
+  // istanbul ignore next
+  if (!Array.isArray(keywords)) {
+    throw new Error('keywords 请使用数组');
+  }
+
+  return item => keywords.some(keyword => item?.provider?.name.includes(keyword));
+};
+
+export const discardProviders = (keywords: ReadonlyArray<string>): NodeNameFilterType => {
+  // istanbul ignore next
+  if (!Array.isArray(keywords)) {
+    throw new Error('keywords 请使用数组');
+  }
+
+  return item => !keywords.some(keyword => item?.provider?.name.includes(keyword));
+};
+
 export const useSortedKeywords = (keywords: ReadonlyArray<string>): SortedNodeNameFilterType => {
   // istanbul ignore next
   if (!Array.isArray(keywords)) {

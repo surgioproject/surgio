@@ -133,7 +133,7 @@ export async function generate(
     let nodeConfigList: ReadonlyArray<PossibleNodeConfigType>;
 
     try {
-      provider = getProvider(require(filePath));
+      provider = getProvider(providerName, require(filePath));
     } catch (err) {
       err.message = `处理 ${chalk.cyan(providerName)} 时出现错误，相关文件 ${filePath} ，错误原因: ${err.message}`;
       throw err;
@@ -191,6 +191,7 @@ export async function generate(
           nodeConfig.localPort = provider.nextPort;
         }
 
+        nodeConfig.provider = provider;
         nodeConfig.surgeConfig = config.surgeConfig;
 
         if (provider.renameNode) {
@@ -253,6 +254,7 @@ export async function generate(
           type: nodeConfig.type,
           enable: nodeConfig.enable,
           nodeName: nodeConfig.nodeName,
+          provider: nodeConfig.provider,
         });
         nodeList.push(nodeConfig);
       }

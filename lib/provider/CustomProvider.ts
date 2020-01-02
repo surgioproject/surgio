@@ -7,8 +7,8 @@ import Provider from './Provider';
 export default class CustomProvider extends Provider {
   public readonly nodeList: ReadonlyArray<any>;
 
-  constructor(config: CustomProviderConfig) {
-    super(config);
+  constructor(name: string, config: CustomProviderConfig) {
+    super(name, config);
 
     const nodeSchema = Joi.object({
       type: Joi.string()

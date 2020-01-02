@@ -189,16 +189,17 @@ export interface VmessNodeConfig extends SimpleNodeConfig {
 
 export interface SimpleNodeConfig {
   readonly type: NodeTypeEnum;
+  nodeName: string; // tslint:disable-line
   readonly enable?: boolean;
   // tslint:disable-next-line
   tfo?: boolean; // TCP Fast Open
   // tslint:disable-next-line
   mptcp?: boolean; // Multi-Path TCP
-  nodeName: string; // tslint:disable-line
   binPath?: string; // tslint:disable-line
   localPort?: number; // tslint:disable-line
   surgeConfig?: CommandConfig['surgeConfig']; // tslint:disable-line
   hostnameIp?: ReadonlyArray<string>; // tslint:disable-line
+  provider?: Provider; // tslint:disable-line
 }
 
 export interface PlainObject { readonly [name: string]: any }

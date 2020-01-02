@@ -36,7 +36,7 @@ class CheckCommand extends Command {
       throw file;
     }
 
-    const provider = getProvider(file);
+    const provider = getProvider(providerName, file);
     const nodeList = await provider.getNodeList();
 
     console.log(JSON.stringify(nodeList, null ,2));

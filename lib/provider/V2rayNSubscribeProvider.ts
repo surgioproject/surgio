@@ -6,8 +6,8 @@ import Provider from './Provider';
 export default class V2rayNSubscribeProvider extends Provider {
   public readonly url: string;
 
-  constructor(config: V2rayNSubscribeProviderConfig) {
-    super(config);
+  constructor(name: string, config: V2rayNSubscribeProviderConfig) {
+    super(name, config);
 
     const schema = Joi.object({
       url: Joi
