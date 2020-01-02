@@ -1,3 +1,4 @@
+import { bootstrap } from 'global-agent';
 import Command from 'common-bin';
 import fs from 'fs';
 import env2 from 'env2';
@@ -9,6 +10,9 @@ import UploadCommand from './command/upload';
 import CheckCommand from './command/check';
 import * as filter from './utils/filter';
 import { errorHandler } from './utils/error-helper';
+
+// Global proxy
+bootstrap();
 
 const envPath = path.resolve(process.cwd(), './.env');
 

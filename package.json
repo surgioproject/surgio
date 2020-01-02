@@ -89,6 +89,7 @@
     "execa": "^3.2.0",
     "fs-extra": "^8.1.0",
     "get-port": "^5.1.0",
+    "global-agent": "^2.1.7",
     "got": "^10.2.0",
     "http-errors": "^1.7.3",
     "inquirer": "^7.0.1",
