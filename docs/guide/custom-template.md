@@ -349,6 +349,12 @@ getClashNodeNames(nodeList, netflixFilter, ['测试节点']);
 getDownloadUrl('example.conf'); // https://example.com/example.conf
 ```
 
+你也可以在文件名后携带 URL 参数，`getDownloadUrl` 会在解析时候组装完整的 URL，例如：
+
+```js
+getDownloadUrl('example.conf?foo=bar'); // https://example.com/example.conf?foo=bar
+```
+
 ## 片段 (Snippet)
 
 ### 如何使用片段？
