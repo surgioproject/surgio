@@ -29,7 +29,6 @@ export default function getEngine(templateDir: string, publicUrl: string): nunju
           return item;
         }
         return `- ${item}`
-          .replace(/,no-resolve/, '')
           .replace(/\/\/.*$/, '')
           .trim();
       })

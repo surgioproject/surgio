@@ -13,7 +13,7 @@ test('clash #1', t => {
     str,
   });
 
-  t.is(result, `- IP-CIDR,67.198.55.0/24,Proxy`);
+  t.is(result, `- IP-CIDR,67.198.55.0/24,Proxy,no-resolve`);
 });
 
 test('clash #2', t => {
@@ -23,7 +23,7 @@ test('clash #2', t => {
     str,
   });
 
-  t.is(result, `- IP-CIDR,67.198.55.0/24,Proxy`);
+  t.is(result, `- IP-CIDR,67.198.55.0/24,Proxy,no-resolve`);
 });
 
 test('clash #3', t => {
