@@ -125,8 +125,8 @@ export default class ClashProvider extends Provider {
               nodeName: item.name,
               hostname: item.server,
               port: item.port,
-              username: item.username || '',
-              password: item.password || '',
+              username: item.username /* istanbul ignore next */ || '',
+              password: item.password /* istanbul ignore next */ || '',
             };
           }
 
