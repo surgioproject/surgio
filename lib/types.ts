@@ -2,6 +2,7 @@ import Provider from './provider/Provider';
 
 export enum NodeTypeEnum {
   HTTPS = 'https',
+  HTTP = 'http',
   Shadowsocks = 'shadowsocks',
   Shadowsocksr = 'shadowsocksr',
   Snell = 'snell',
@@ -127,6 +128,14 @@ export interface CustomProviderConfig extends ProviderConfig {
   readonly nodeList: ReadonlyArray<any>;
 }
 
+export interface HttpNodeConfig extends SimpleNodeConfig {
+  readonly type: NodeTypeEnum.HTTP;
+  readonly hostname: string;
+  readonly port: number|string;
+  readonly username: string;
+  readonly password: string;
+}
+
 export interface HttpsNodeConfig extends SimpleNodeConfig {
   readonly type: NodeTypeEnum.HTTPS;
   readonly hostname: string;
@@ -218,7 +227,7 @@ export interface SortedNodeNameFilterType {
   readonly supportSort?: boolean;
 }
 
-export type PossibleNodeConfigType = HttpsNodeConfig|ShadowsocksNodeConfig|ShadowsocksrNodeConfig|SnellNodeConfig|VmessNodeConfig;
+export type PossibleNodeConfigType = HttpsNodeConfig|HttpNodeConfig|ShadowsocksNodeConfig|ShadowsocksrNodeConfig|SnellNodeConfig|VmessNodeConfig;
 
 export type ProxyGroupModifier = (nodeList: ReadonlyArray<PossibleNodeConfigType>, filters: PlainObjectOf<NodeNameFilterType|SortedNodeNameFilterType>) => ReadonlyArray<{
   readonly name: string;

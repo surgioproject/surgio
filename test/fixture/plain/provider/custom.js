@@ -32,6 +32,8 @@ module.exports = {
       port: '443',
       username: 'username',
       password: 'password',
+      tfo: true,
+      tls13: true,
     },
   ],
   renameNode: name => {

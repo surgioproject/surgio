@@ -139,7 +139,7 @@ Proxy:
     # udp: true
 
   # http
-  - name: "http"
+  - name: "http 1"
     type: http
     server: server
     port: 443
@@ -149,7 +149,7 @@ Proxy:
     # skip-cert-verify: true
 
   # http
-  - name: "http"
+  - name: "http 2"
     type: http
     server: server
     port: 443

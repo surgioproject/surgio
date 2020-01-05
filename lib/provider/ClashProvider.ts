@@ -7,6 +7,7 @@ import _ from 'lodash';
 
 import {
   ClashProviderConfig,
+  HttpNodeConfig,
   HttpsNodeConfig,
   NodeTypeEnum,
   ShadowsocksNodeConfig,
@@ -18,7 +19,7 @@ import { ConfigCache } from '../utils';
 import { NETWORK_TIMEOUT } from '../utils/constant';
 import Provider from './Provider';
 
-type SupportConfigTypes = ShadowsocksNodeConfig|VmessNodeConfig|HttpsNodeConfig|ShadowsocksrNodeConfig|SnellNodeConfig;
+type SupportConfigTypes = ShadowsocksNodeConfig|VmessNodeConfig|HttpsNodeConfig|HttpNodeConfig|ShadowsocksrNodeConfig|SnellNodeConfig;
 
 export default class ClashProvider extends Provider {
   public static async getClashSubscription(url: string, udpRelay?: boolean): Promise<ReadonlyArray<SupportConfigTypes>> {
@@ -119,9 +120,14 @@ export default class ClashProvider extends Provider {
 
         case 'http':
           if (!item.tls) {
-            console.log();
-            console.log(chalk.yellow(`不支持从 Clash 订阅中读取 HTTP 类型节点，节点 ${item.name} 会被省略`));
-            return null;
+            return {
+              type: NodeTypeEnum.HTTP,
+              nodeName: item.name,
+              hostname: item.server,
+              port: item.port,
+              username: item.username /* istanbul ignore next */ || '',
+              password: item.password /* istanbul ignore next */ || '',
+            };
           }
 
           return {

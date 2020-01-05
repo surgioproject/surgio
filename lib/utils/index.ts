@@ -1,19 +1,20 @@
 import assert from 'assert';
-import got from 'got';
 import chalk from 'chalk';
+import Debug from 'debug';
 import fs from 'fs-extra';
+import got from 'got';
 import _ from 'lodash';
 import LRU from 'lru-cache';
+import os from 'os';
 import path from 'path';
 import queryString from 'query-string';
 import { JsonObject } from 'type-fest';
-import { default as legacyUrl, URL } from 'url';
+import { default as legacyUrl } from 'url';
 import URLSafeBase64 from 'urlsafe-base64';
 import YAML from 'yaml';
-import os from 'os';
-import Debug from 'debug';
 
 import {
+  HttpNodeConfig,
   HttpsNodeConfig,
   NodeFilterType,
   NodeNameFilterType,
@@ -28,15 +29,9 @@ import {
   SortedNodeNameFilterType,
   VmessNodeConfig,
 } from '../types';
+import { NETWORK_TIMEOUT, OBFS_UA, PROVIDER_CACHE_MAXAGE, PROXY_TEST_INTERVAL, PROXY_TEST_URL } from './constant';
 import { validateFilter } from './filter';
 import { parseSSRUri } from './ssr';
-import {
-  OBFS_UA,
-  NETWORK_TIMEOUT,
-  PROXY_TEST_URL,
-  PROXY_TEST_INTERVAL,
-  PROVIDER_CACHE_MAXAGE,
-} from './constant';
 import { formatVmessUri } from './v2ray';
 
 const debug = Debug('surgio:utils');
@@ -298,7 +293,7 @@ export const getV2rayNSubscription = async (
 };
 
 export const getSurgeNodes = (
-  list: ReadonlyArray<HttpsNodeConfig|ShadowsocksNodeConfig|SnellNodeConfig|ShadowsocksrNodeConfig|VmessNodeConfig>,
+  list: ReadonlyArray<HttpsNodeConfig|HttpNodeConfig|ShadowsocksNodeConfig|SnellNodeConfig|ShadowsocksrNodeConfig|VmessNodeConfig>,
   filter?: NodeFilterType|SortedNodeNameFilterType,
 ): string => {
   const result: string[] = applyFilter(list, filter)
@@ -371,6 +366,21 @@ export const getSurgeNodes = (
               ...(typeof config.mptcp === 'boolean' ? [
                 `mptcp=${config.mptcp}`,
               ] : []),
+            ].join(', ')
+          ].join(' = '));
+        }
+
+        case NodeTypeEnum.HTTP: {
+          const config = nodeConfig as HttpNodeConfig;
+
+          return ([
+            config.nodeName,
+            [
+              'http',
+              config.hostname,
+              config.port,
+              config.username,
+              config.password,
             ].join(', ')
           ].join(' = '));
         }
@@ -637,10 +647,32 @@ export const getClashNodes = (
             },
           };
 
+        case NodeTypeEnum.HTTPS:
+          return {
+            type: 'http',
+            name: nodeConfig.nodeName,
+            server: nodeConfig.hostname,
+            port: nodeConfig.port,
+            username: nodeConfig.username /* istanbul ignore next */ || '',
+            password: nodeConfig.password /* istanbul ignore next */ || '',
+            tls: true,
+            skipCertVerify: nodeConfig.skipCertVerify === true,
+          };
+
+        case NodeTypeEnum.HTTP:
+          return {
+            type: 'http',
+            name: nodeConfig.nodeName,
+            server: nodeConfig.hostname,
+            port: nodeConfig.port,
+            username: nodeConfig.username /* istanbul ignore next */ || '',
+            password: nodeConfig.password /* istanbul ignore next */ || '',
+          };
+
         // istanbul ignore next
         default:
           console.log();
-          console.log(chalk.yellow(`不支持为 Clash 生成 ${nodeConfig.type} 的节点，节点 ${nodeConfig.nodeName} 会被省略`));
+          console.log(chalk.yellow(`不支持为 Clash 生成 ${nodeConfig!.type} 的节点，节点 ${nodeConfig!.nodeName} 会被省略`));
           return null;
       }
     })
@@ -900,7 +932,7 @@ export const getQuantumultNodes = (
  * @see https://github.com/crossutility/Quantumult-X/blob/master/sample.conf
  */
 export const getQuantumultXNodes = (
-  list: ReadonlyArray<ShadowsocksNodeConfig|VmessNodeConfig|ShadowsocksrNodeConfig|HttpsNodeConfig>,
+  list: ReadonlyArray<ShadowsocksNodeConfig|VmessNodeConfig|ShadowsocksrNodeConfig|HttpsNodeConfig|HttpNodeConfig>,
   filter?: NodeNameFilterType|SortedNodeNameFilterType,
 ): string => {
   const result: ReadonlyArray<string> = applyFilter(list, filter)
@@ -993,19 +1025,26 @@ export const getQuantumultXNodes = (
           return `shadowsocks=${config}`;
         }
 
+        case NodeTypeEnum.HTTP:
         case NodeTypeEnum.HTTPS: {
           const config = [
             `${nodeConfig.hostname}:${nodeConfig.port}`,
             ...pickAndFormatStringList(nodeConfig, ['username', 'password']),
-            'over-tls=true',
             ...(nodeConfig.tfo ? [
               `fast-open=${nodeConfig.tfo}`,
             ] : []),
-            `tag=${nodeConfig.nodeName}`,
-          ]
-            .join(', ');
+          ];
 
-          return `http=${config}`;
+          if (nodeConfig.type === NodeTypeEnum.HTTPS) {
+            config.push(
+              'over-tls=true',
+              `tls-verification=${nodeConfig.skipCertVerify !== true}`
+            );
+          }
+
+          config.push(`tag=${nodeConfig.nodeName}`);
+
+          return `http=${config.join(', ')}`;
         }
 
         // istanbul ignore next
