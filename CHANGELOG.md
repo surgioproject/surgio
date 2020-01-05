@@ -1,3 +1,13 @@
+## [1.11.2](https://github.com/geekdada/surgio/compare/v1.11.1...v1.11.2) (2020-01-05)
+
+
+### Features
+
+* support clash no-resolve ([cd349bc](https://github.com/geekdada/surgio/commit/cd349bc7be9e48850753f4f42f51b816c5a46fdf))
+* support HTTP protocol ([dde1591](https://github.com/geekdada/surgio/commit/dde1591c885fac2a7c8829f146ffa6264dafbaa7))
+
+
+
 ## [1.11.1](https://github.com/geekdada/surgio/compare/v1.11.0...v1.11.1) (2020-01-02)
 
 
