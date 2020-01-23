@@ -42,22 +42,31 @@ export default function getEngine(templateDir: string, publicUrl: string): nunju
     const array = str.split('\n');
 
     return array
-      .filter(item => {
+      .map(item => {
         const testString: string = (!!item && item.trim() !== '') ? item.toUpperCase() : '';
 
         if (testString.startsWith('#') || testString === '') {
           return item;
         }
 
-        // 过滤出支持的规则类型
-        return QUANTUMULT_X_SUPPORTED_RULE.some(s => testString.startsWith(s));
-      })
-      .map((item: string) => {
-        if (item.startsWith('http-response')) {
+        // Surge Script 处理
+        if (testString.startsWith('HTTP-RESPONSE')) {
           return convertSurgeScriptRuleToQuantumultXRewriteRule(item, publicUrl);
         }
-        return item;
+
+        const matched = testString.match(/^([\w-]+),/);
+
+        if (
+          matched &&
+          QUANTUMULT_X_SUPPORTED_RULE.some(s => matched[1] === s)
+        ) {
+          // 过滤出支持的规则类型
+          return item;
+        }
+
+        return null;
       })
+      .filter(item => !!item)
       .join('\n');
   });
 
