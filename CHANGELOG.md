@@ -1,3 +1,12 @@
+## [1.11.3](https://github.com/geekdada/surgio/compare/v1.11.2...v1.11.3) (2020-01-23)
+
+
+### Bug Fixes
+
+* quanx 规则处理优化 ([036696a](https://github.com/geekdada/surgio/commit/036696a3bcdee4f74ef3aaa3648f25a0a9e9c53f))
+
+
+
 ## [1.11.2](https://github.com/geekdada/surgio/compare/v1.11.1...v1.11.2) (2020-01-05)
 
 
