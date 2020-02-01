@@ -104,7 +104,7 @@
     "query-string": "^6.2.0",
     "rimraf": "^3.0.0",
     "shelljs": "^0.8.3",
-    "update-notifier": "^3.0.1",
+    "update-notifier": "^4.0.0",
     "urlsafe-base64": "^1.0.0",
     "winston": "^3.2.1",
     "yaml": "^1.7.1"
