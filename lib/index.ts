@@ -10,6 +10,7 @@ import UploadCommand from './command/upload';
 import CheckCommand from './command/check';
 import * as filter from './utils/filter';
 import { errorHandler } from './utils/error-helper';
+import { CATEGORIES } from './utils/constant';
 
 // Global proxy
 bootstrap();
@@ -44,4 +45,8 @@ export {
 
 export const utils = {
   ...filter,
+};
+
+export const categories = {
+  ...CATEGORIES,
 };

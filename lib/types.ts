@@ -74,6 +74,7 @@ export interface ArtifactConfig {
   readonly template: string;
   readonly provider: string;
   readonly combineProviders?: ReadonlyArray<string>;
+  readonly categories?: ReadonlyArray<string>;
   readonly customParams?: PlainObjectOf<string|boolean|number>;
   readonly proxyGroupModifier?: ProxyGroupModifier;
   readonly destDir?: string;

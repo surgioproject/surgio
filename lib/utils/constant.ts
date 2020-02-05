@@ -43,3 +43,13 @@ export const REMOTE_SNIPPET_CACHE_MAXAGE: number = process.env.SURGIO_REMOTE_SNI
 export const PROVIDER_CACHE_MAXAGE: number = process.env.SURGIO_PROVIDER_CACHE_MAXAGE ?
   Number(process.env.SURGIO_PROVIDER_CACHE_MAXAGE) :
   10 * 60 * 1000; // 10min
+
+export const CATEGORIES = {
+  SNIPPET: 'Snippet',
+  SURGE: 'Surge',
+  QUANTUMULT_X: 'Quantumult X',
+  QUANTUMULT_X_SERVER: 'Quantumult X Server',
+  QUANTUMULT_X_FILTER: 'Quantumult X Filter',
+  QUANTUMULT_X_REWRITE: 'Quantumult X Rewrite',
+  CLASH: 'Clash',
+};
