@@ -10,9 +10,17 @@ export const PROXY_TEST_URL = 'http://www.qualcomm.cn/generate_204';
 
 export const PROXY_TEST_INTERVAL = 1200;
 
-export const CLASH_UNSUPPORTED_RULE: ReadonlyArray<string> = [
-  'USER-AGENT', 'PROCESS-NAME', 'URL-REGEX', 'DEST-PORT', 'IN-PORT', 'RULE-SET',
-  'SRC-IP'
+export const CLASH_SUPPORTED_RULE: ReadonlyArray<string> = [
+  'DOMAIN-SUFFIX',
+  'DOMAIN-KEYWORD',
+  'DOMAIN',
+  'SRC-IP-CIDR',
+  'IP-CIDR',
+  'GEOIP',
+  'DST-PORT',
+  'SRC-PORT',
+  'MATCH',
+  'FINAL',
 ];
 
 export const QUANTUMULT_X_SUPPORTED_RULE: ReadonlyArray<string> = [
