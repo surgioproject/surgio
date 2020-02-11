@@ -1,3 +1,18 @@
+# [1.12.0](https://github.com/geekdada/surgio/compare/v1.11.3...v1.12.0) (2020-02-11)
+
+
+### Bug Fixes
+
+* package.json & yarn.lock to reduce vulnerabilities ([aea1843](https://github.com/geekdada/surgio/commit/aea184321ec8629e5e8f27ae49bf4d0464acf699))
+
+
+### Features
+
+* Artifact 增加 categories 字段 ([967fc7c](https://github.com/geekdada/surgio/commit/967fc7c5dd3c87e8fe65fb54b74a03b136dc9531))
+* Clash 规则处理优化 ([bec9abe](https://github.com/geekdada/surgio/commit/bec9abea9ec816f545a5dc0254979c817b288541))
+
+
+
 ## [1.11.3](https://github.com/geekdada/surgio/compare/v1.11.2...v1.11.3) (2020-01-23)
 
 
