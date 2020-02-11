@@ -5,9 +5,9 @@ import { URL } from 'url';
 
 import { decodeStringList, toBase64 } from './utils';
 import {
-  CLASH_UNSUPPORTED_RULE,
   MELLOW_UNSUPPORTED_RULE,
-  QUANTUMULT_X_SUPPORTED_RULE
+  QUANTUMULT_X_SUPPORTED_RULE,
+  CLASH_SUPPORTED_RULE,
 } from './utils/constant';
 
 export default function getEngine(templateDir: string, publicUrl: string): nunjucks.Environment {
@@ -19,19 +19,28 @@ export default function getEngine(templateDir: string, publicUrl: string): nunju
     const array = str.split('\n');
 
     return array
-      .filter(item => {
+      .map(item => {
         const testString: string = (!!item && item.trim() !== '') ? item.toUpperCase() : '';
 
-        return CLASH_UNSUPPORTED_RULE.every(s => !testString.startsWith(s));
-      })
-      .map((item: string) => {
-        if (item.startsWith('#') || item.trim() === '') {
+        if (testString.startsWith('#') || testString === '') {
           return item;
         }
-        return `- ${item}`
-          .replace(/\/\/.*$/, '')
-          .trim();
+
+        const matched = testString.match(/^([\w-]+),/);
+
+        if (
+          matched &&
+          CLASH_SUPPORTED_RULE.some(s => matched[1] === s)
+        ) {
+          // 过滤出支持的规则类型
+          return `- ${item}`
+            .replace(/\/\/.*$/, '')
+            .trim();
+        }
+
+        return null;
       })
+      .filter(item => !!item)
       .join('\n');
   };
 

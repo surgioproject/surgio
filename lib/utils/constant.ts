@@ -10,9 +10,17 @@ export const PROXY_TEST_URL = 'http://www.qualcomm.cn/generate_204';
 
 export const PROXY_TEST_INTERVAL = 1200;
 
-export const CLASH_UNSUPPORTED_RULE: ReadonlyArray<string> = [
-  'USER-AGENT', 'PROCESS-NAME', 'URL-REGEX', 'DEST-PORT', 'IN-PORT', 'RULE-SET',
-  'SRC-IP'
+export const CLASH_SUPPORTED_RULE: ReadonlyArray<string> = [
+  'DOMAIN-SUFFIX',
+  'DOMAIN-KEYWORD',
+  'DOMAIN',
+  'SRC-IP-CIDR',
+  'IP-CIDR',
+  'GEOIP',
+  'DST-PORT',
+  'SRC-PORT',
+  'MATCH',
+  'FINAL',
 ];
 
 export const QUANTUMULT_X_SUPPORTED_RULE: ReadonlyArray<string> = [
@@ -43,3 +51,13 @@ export const REMOTE_SNIPPET_CACHE_MAXAGE: number = process.env.SURGIO_REMOTE_SNI
 export const PROVIDER_CACHE_MAXAGE: number = process.env.SURGIO_PROVIDER_CACHE_MAXAGE ?
   Number(process.env.SURGIO_PROVIDER_CACHE_MAXAGE) :
   10 * 60 * 1000; // 10min
+
+export const CATEGORIES = {
+  SNIPPET: 'Snippet',
+  SURGE: 'Surge',
+  QUANTUMULT_X: 'Quantumult X',
+  QUANTUMULT_X_SERVER: 'Quantumult X Server',
+  QUANTUMULT_X_FILTER: 'Quantumult X Filter',
+  QUANTUMULT_X_REWRITE: 'Quantumult X Rewrite',
+  CLASH: 'Clash',
+};

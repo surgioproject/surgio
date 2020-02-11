@@ -1,6 +1,5 @@
 import Joi from '@hapi/joi';
 import fs from 'fs-extra';
-import { url } from 'inspector';
 import _ from 'lodash';
 import path from 'path';
 import { URL } from 'url';
@@ -70,6 +69,7 @@ export const normalizeConfig = (cwd: string, userConfig: Partial<CommandConfig>)
 export const validateConfig = (userConfig: Partial<CommandConfig>): void => {
   const artifactSchema = Joi.object({
     name: Joi.string().required(),
+    categories: Joi.array().items(Joi.string()),
     template: Joi.string().required(),
     provider: Joi.string().required(),
     combineProviders: Joi.array().items(Joi.string()),
