@@ -19,17 +19,6 @@ sidebarDepth: 1
 
 目前 Surgio 支持两个部署平台，阿里云函数服务和 zeit 的 now.sh。他们各自有各自的优缺点，由各位定夺使用谁（无法同时使用）。
 
-### 阿里云函数
-
-优点：
-
-- 有免费额度
-- 有香港机房
-
-缺点：
-
-- 管理复杂（文档很多很杂）
-
 ### now.sh <Badge text="推荐" vertical="middle" />
 
 优点：
@@ -41,6 +30,17 @@ sidebarDepth: 1
 缺点：
 
 - 英文界面、文档
+
+### 阿里云函数
+
+优点：
+
+- 有免费额度
+- 有香港机房
+
+缺点：
+
+- 管理复杂（文档很多很杂）
 
 ## 部署 - now.sh <Badge text="推荐" vertical="middle" />
 
@@ -67,12 +67,11 @@ $ now login
 
 ```json
 {
-  "name": "<输入服务名 (例如 surgio-api)>",
   "version": 2,
   "public": false,
   "builds": [
     { 
-      "src": "gateway.js",
+      "src": "/gateway.js",
       "use": "@now/node",
       "config": {
         "includeFiles": [
@@ -87,7 +86,6 @@ $ now login
   "routes": [
     {
       "src": "/(.*)",
-      "methods": ["HEAD", "GET"],
       "dest": "/gateway.js"
     }
   ]
@@ -177,7 +175,7 @@ $ now --prod
 2. 访问日志、监控、域名绑定等复杂功能恕不提供教程
 3. 如果访问地址泄漏，请立即删除云函数然后修改机场密码
 
-## 部署 - 阿里云函数
+## 部署 - 阿里云函数 <Badge text="即将废弃" vertical="middle" type="error" />
 
 首先需要确保本地 Surgio 版本已经更新到 v0.12.4 或更新。
 

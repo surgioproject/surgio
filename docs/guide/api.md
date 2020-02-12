@@ -93,6 +93,8 @@ GET /get-artifact/<artifactName>
 GET /qx-script?url=<远程脚本地址>
 ```
 
+<Badge text="即将废弃" vertical="middle" type="error" />
+
 可选参数：
 
 | 参数       | 值                         | 备注 |
@@ -118,6 +120,8 @@ GET /qx-script?url=<远程脚本地址>
 ```
 GET /qx-rewrite-remote?url=<远程脚本地址>
 ```
+
+<Badge text="即将废弃" vertical="middle" type="error" />
 
 可选参数：
 
