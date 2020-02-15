@@ -74,7 +74,7 @@ npx surgio generate
 
 规则已经生成到 `dist` 目录了。
 
-<img src="/generate-result.png" width="318">
+<img src="./images/generate-result.png" width="318">
 
 ## 上传规则
 
