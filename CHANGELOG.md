@@ -1,3 +1,12 @@
+## [1.12.1](https://github.com/geekdada/surgio/compare/v1.12.0...v1.12.1) (2020-02-15)
+
+
+### Bug Fixes
+
+* 修复某些情况下代理环境变量不生效的问题 ([7deb7d9](https://github.com/geekdada/surgio/commit/7deb7d9becf6d52310943286dbbb4c067be5f3eb))
+
+
+
 # [1.12.0](https://github.com/geekdada/surgio/compare/v1.11.3...v1.12.0) (2020-02-11)
 
 
