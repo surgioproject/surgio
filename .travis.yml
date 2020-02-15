@@ -1,14 +1,15 @@
 sudo: false
 os:
   - linux
+branches:
+  only:
+    - master
 language: node_js
 install:
-  - yarn install
-
+    - yarn install
 jobs:
   include:
     - name: deploy docs
-      if: branch = master
       node_js: "10"
       script: yarn docs:build
       deploy:
