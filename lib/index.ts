@@ -1,3 +1,5 @@
+import './utils/patch-proxy';
+
 import { bootstrap } from 'global-agent';
 import Command from 'common-bin';
 import fs from 'fs';
