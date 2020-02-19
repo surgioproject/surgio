@@ -1,3 +1,12 @@
+## [1.12.2](https://github.com/geekdada/surgio/compare/v1.12.1...v1.12.2) (2020-02-19)
+
+
+### Features
+
+* allow new unknown keys to gateway ([ec0d3a9](https://github.com/geekdada/surgio/commit/ec0d3a9a0fc1e64352b09d36688bf9f89a7f8262))
+
+
+
 ## [1.12.1](https://github.com/geekdada/surgio/compare/v1.12.0...v1.12.1) (2020-02-15)
 
 
