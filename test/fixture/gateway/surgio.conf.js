@@ -37,6 +37,7 @@ module.exports = {
   },
   gateway: {
     accessToken: 'abcd',
+    auth: false,
   },
   surgeConfig: {
     v2ray: 'native',

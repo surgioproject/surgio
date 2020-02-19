@@ -51,7 +51,8 @@ export interface CommandConfig {
   };
   readonly gateway?: {
     readonly accessToken?: string;
-    auth?: boolean; // tslint:disable-line:readonly-keyword
+    readonly auth?: boolean; // tslint:disable-line:readonly-keyword
+    readonly cookieMaxAge?: number;
   },
   readonly proxyTestUrl?: string;
   readonly proxyTestInterval?: number;

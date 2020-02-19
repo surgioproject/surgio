@@ -2,6 +2,7 @@ import test from 'ava';
 import path from 'path';
 import request from 'supertest';
 import { JSDOM } from 'jsdom';
+import sinon from 'sinon';
 
 import * as gateway from '../../lib/gateway';
 
@@ -190,11 +191,12 @@ test('list artifact', async t => {
 });
 
 test('auth', async t => {
+  const sandbox = sinon.createSandbox();
   const fixture = path.join(__dirname, '../fixture/gateway');
   const surgioServer = gateway.createSurgioServer(fixture);
   const app = gateway.createKoaApp(surgioServer);
 
-  app.surgioConfig.gateway.auth = true;
+  sandbox.stub(app.surgioConfig.gateway, 'auth').value(true);
 
   await request(app.callback())
     .get('/list-artifact')
@@ -206,6 +208,8 @@ test('auth', async t => {
   await request(app.callback())
     .get('/list-artifact?access_token=abcd')
     .expect(200);
+
+  sandbox.restore();
 });
 
 test('qx-script', async t => {
