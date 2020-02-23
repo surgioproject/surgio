@@ -103,3 +103,25 @@ module.exports = {
 - `categories.QUANTUMULT_X_FILTER` - Remote Filter 片段
 - `categories.QUANTUMULT_X_REWRITE` - Remote Rewrite 片段
 - `categories.CLASH` - 完整 Clash 配置
+
+### 2. 全新面板
+
+### 3. 自有服务器部署
+
+```js
+// gateway.js
+
+'use strict';
+
+const gateway = require('@surgio/gateway');
+
+(async () => {
+  const app = await gateway.bootstrapServer();
+  await app.listen(3000, '0.0.0.0');
+  console.log('> Your app is ready at http://0.0.0.0:3000');
+})();
+```
+
+```bash
+node gateway.js
+```
