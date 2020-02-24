@@ -38,14 +38,9 @@ module.exports = {
 
 在模板（`.tpl` 文件）中你可以使用 `customFilters.wo_yao_netflix_jie_dian`。
 
-Clash 配置比较特殊。你需要到 Artifact 定义的 `proxyGroupModifier` 里使用 `filters.wo_yao_netflix_jie_dian`。例如：
-
-```js
-{
-  name: '🎬 Netflix',
-  filter: filters.wo_yao_netflix_jie_dian,
-  type: 'select',
-}
+```html
+<!-- .tpl 文件 -->
+{{ getSurgeNodes(nodeList, customFilters.wo_yao_netflix_jie_dian) }}
 ```
 
 ## 工具方法

@@ -152,6 +152,7 @@ Surgio 内置多个节点名国别/地区过滤器。除非是火星文，Surgio
 - singaporeFilter
 - koreaFilter
 - taiwanFilter
+- chinaBackFilter（回国节点过滤）<Badge text="v1.12.3" vertical="middle" />
 
 ### netflixFilter
 
