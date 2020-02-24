@@ -182,4 +182,20 @@ export const taiwanFilter: NodeNameFilterType = item => {
   ].some(key => item.nodeName.toUpperCase().includes(key));
 };
 
+export const chinaBackFilter: NodeNameFilterType = item => {
+  return [
+    '回国',
+    'Back',
+    '中国上海',
+    '中国北京',
+    '中国徐州',
+    '中国深圳',
+    '中国枣庄',
+    '中国郑州',
+    '硅谷上海',
+    '东京上海',
+    'GCX',
+  ].some(key => item.nodeName.includes(key));
+};
+
 export const youtubePremiumFilter: NodeNameFilterType = mergeFilters([usFilter, japanFilter, koreaFilter, hkFilter, singaporeFilter]);
