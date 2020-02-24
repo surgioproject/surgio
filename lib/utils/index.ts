@@ -1248,7 +1248,7 @@ export const formatV2rayConfig = (localPort: string|number, nodeConfig: VmessNod
       loglevel: 'warning'
     },
     inbound: {
-      port: localPort,
+      port: Number(localPort),
       listen: '127.0.0.1',
       protocol: 'socks',
       settings: {
@@ -1261,7 +1261,7 @@ export const formatV2rayConfig = (localPort: string|number, nodeConfig: VmessNod
         vnext: [
           {
             address: nodeConfig.hostname,
-            port: nodeConfig.port,
+            port: Number(nodeConfig.port),
             users: [
               {
                 id: nodeConfig.uuid,
