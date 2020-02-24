@@ -1,3 +1,18 @@
+## [1.12.3](https://github.com/geekdada/surgio/compare/v1.12.2...v1.12.3) (2020-02-24)
+
+
+### Bug Fixes
+
+* 某些情况下 v2ray 配置 port 为字符串 ([b8af4d7](https://github.com/geekdada/surgio/commit/b8af4d799d70d02c5b4361954f38625afd891973)), closes [#59](https://github.com/geekdada/surgio/issues/59)
+* external provider 的 addresses 参数只应该写 IP ([f7006d6](https://github.com/geekdada/surgio/commit/f7006d676317db5eb0b6aac66440f9a76f7d8db4))
+
+
+### Features
+
+* 新增回国节点 Filter chinaBackFilter ([4f86829](https://github.com/geekdada/surgio/commit/4f868292c8660f227ff449c3767224bdf19fe7b9)), closes [#57](https://github.com/geekdada/surgio/issues/57)
+
+
+
 ## [1.12.2](https://github.com/geekdada/surgio/compare/v1.12.1...v1.12.2) (2020-02-19)
 
 
