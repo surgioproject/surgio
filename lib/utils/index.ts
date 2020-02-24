@@ -1,5 +1,4 @@
 import assert from 'assert';
-import chalk from 'chalk';
 import Debug from 'debug';
 import fs from 'fs-extra';
 import got from 'got';
@@ -12,6 +11,7 @@ import { JsonObject } from 'type-fest';
 import { default as legacyUrl } from 'url';
 import URLSafeBase64 from 'urlsafe-base64';
 import YAML from 'yaml';
+import { logger } from '@surgio/logger';
 
 import {
   HttpNodeConfig,
@@ -268,8 +268,7 @@ export const getV2rayNSubscription = async (
 
       // istanbul ignore next
       if (['kcp', 'http'].indexOf(json.net) > -1) {
-        console.log();
-        console.log(chalk.yellow(`不支持读取 network 类型为 ${json.net} 的 Vmess 节点，节点 ${json.ps} 会被省略`));
+        logger.warn(`不支持读取 network 类型为 ${json.net} 的 Vmess 节点，节点 ${json.ps} 会被省略`);
         return null;
       }
 
@@ -304,8 +303,7 @@ export const getSurgeNodes = (
           const config = nodeConfig as ShadowsocksNodeConfig;
 
           if (['ws', 'wss'].includes(config.obfs)) {
-            console.log();
-            console.log(chalk.yellow(`不支持为 Surge 生成 v2ray-plugin 的 Shadowsocks 节点，节点 ${nodeConfig!.nodeName} 会被省略`));
+            logger.warn(`不支持为 Surge 生成 v2ray-plugin 的 Shadowsocks 节点，节点 ${nodeConfig!.nodeName} 会被省略`);
             return null;
           }
 
@@ -552,8 +550,7 @@ export const getSurgeNodes = (
 
         // istanbul ignore next
         default:
-          console.log();
-          console.log(chalk.yellow(`不支持为 Surge 生成 ${nodeConfig!.type} 的节点，节点 ${nodeConfig!.nodeName} 会被省略`));
+          logger.warn(`不支持为 Surge 生成 ${nodeConfig!.type} 的节点，节点 ${nodeConfig!.nodeName} 会被省略`);
           return null;
       }
     })
@@ -676,8 +673,7 @@ export const getClashNodes = (
 
         // istanbul ignore next
         default:
-          console.log();
-          console.log(chalk.yellow(`不支持为 Clash 生成 ${nodeConfig!.type} 的节点，节点 ${nodeConfig!.nodeName} 会被省略`));
+          logger.warn(`不支持为 Clash 生成 ${nodeConfig!.type} 的节点，节点 ${nodeConfig!.nodeName} 会被省略`);
           return null;
       }
     })
@@ -698,8 +694,7 @@ export const getMellowNodes = (
 
         // istanbul ignore next
         default:
-            console.log();
-            console.log(chalk.yellow(`不支持为 Mellow 生成 ${nodeConfig!.type} 的节点，节点 ${nodeConfig!.nodeName} 会被省略`));
+            logger.warn(`不支持为 Mellow 生成 ${nodeConfig!.type} 的节点，节点 ${nodeConfig!.nodeName} 会被省略`);
           return null;
       }
     })
@@ -768,8 +763,7 @@ export const getShadowsocksNodes = (
 
         // istanbul ignore next
         default:
-          console.log();
-          console.log(chalk.yellow(`在生成 Shadowsocks 节点时出现了 ${nodeConfig.type} 节点，节点 ${nodeConfig.nodeName} 会被省略`));
+          logger.warn(`在生成 Shadowsocks 节点时出现了 ${nodeConfig.type} 节点，节点 ${nodeConfig.nodeName} 会被省略`);
           return null;
       }
     })
@@ -813,8 +807,7 @@ export const getShadowsocksrNodes = (list: ReadonlyArray<ShadowsocksrNodeConfig>
 
         // istanbul ignore next
         default:
-          console.log();
-          console.log(chalk.yellow(`在生成 Shadowsocksr 节点时出现了 ${nodeConfig.type} 节点，节点 ${nodeConfig.nodeName} 会被省略`));
+          logger.warn(`在生成 Shadowsocksr 节点时出现了 ${nodeConfig.type} 节点，节点 ${nodeConfig.nodeName} 会被省略`);
           return null;
       }
     })
@@ -849,8 +842,7 @@ export const getV2rayNNodes = (list: ReadonlyArray<VmessNodeConfig>): string => 
 
         // istanbul ignore next
         default:
-          console.log();
-          console.log(chalk.yellow(`在生成 V2Ray 节点时出现了 ${nodeConfig.type} 节点，节点 ${nodeConfig.nodeName} 会被省略`));
+          logger.warn(`在生成 V2Ray 节点时出现了 ${nodeConfig.type} 节点，节点 ${nodeConfig.nodeName} 会被省略`);
           return null;
       }
     })
@@ -923,8 +915,7 @@ export const getQuantumultNodes = (
 
         // istanbul ignore next
         default:
-          console.log();
-          console.log(chalk.yellow(`不支持为 Quantumult 生成 ${nodeConfig!.type} 的节点，节点 ${nodeConfig!.nodeName} 会被省略`));
+          logger.warn(`不支持为 Quantumult 生成 ${nodeConfig!.type} 的节点，节点 ${nodeConfig!.nodeName} 会被省略`);
           return null;
       }
     })
@@ -1054,8 +1045,7 @@ export const getQuantumultXNodes = (
 
         // istanbul ignore next
         default:
-          console.log();
-          console.log(chalk.yellow(`不支持为 QuantumultX 生成 ${nodeConfig!.type} 的节点，节点 ${nodeConfig!.nodeName} 会被省略`));
+          logger.warn(`不支持为 QuantumultX 生成 ${nodeConfig!.type} 的节点，节点 ${nodeConfig!.nodeName} 会被省略`);
           return null;
       }
     })
@@ -1092,8 +1082,7 @@ export const getShadowsocksNodesJSON = (list: ReadonlyArray<ShadowsocksNodeConfi
 
         // istanbul ignore next
         default:
-          console.log();
-          console.log(chalk.yellow(`在生成 Shadowsocks 节点时出现了 ${nodeConfig.type} 节点，节点 ${nodeConfig.nodeName} 会被省略`));
+          logger.warn(`在生成 Shadowsocks 节点时出现了 ${nodeConfig.type} 节点，节点 ${nodeConfig.nodeName} 会被省略`);
           return null;
       }
     })

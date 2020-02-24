@@ -8,6 +8,7 @@ import _ from 'lodash';
 import { Environment } from 'nunjucks';
 import ora from 'ora';
 import path from 'path';
+import { logger } from '@surgio/logger';
 
 import getEngine from './template';
 import {
@@ -225,8 +226,7 @@ export async function generate(
           try {
             nodeConfig.hostnameIp = await resolveDomain(nodeConfig.hostname);
           } /* istanbul ignore next */ catch (err) {
-            console.log();
-            console.warn(`${nodeConfig.hostname} 无法解析，将忽略该域名的解析结果`);
+            logger.warn(`${nodeConfig.hostname} 无法解析，将忽略该域名的解析结果`);
           }
         }
 
@@ -329,7 +329,7 @@ export async function generate(
 }
 
 export default async function(config: CommandConfig): Promise<void> {
-  console.log(chalk.cyan('开始生成规则'));
+  logger.info('开始生成规则');
   await run(config)
     .catch(err => {
       if (spinner.isSpinning) {
@@ -337,5 +337,5 @@ export default async function(config: CommandConfig): Promise<void> {
       }
       throw err;
     });
-  console.log(chalk.cyan('规则生成成功'));
+  logger.info('规则生成成功');
 }
