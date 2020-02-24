@@ -1,6 +1,7 @@
 import got from 'got';
 import Bluebird from 'bluebird';
-import crypto from "crypto";
+import crypto from 'crypto';
+import { logger } from '@surgio/logger';
 
 import { RemoteSnippet, RemoteSnippetConfig } from '../types';
 import { NETWORK_CONCURRENCY, NETWORK_TIMEOUT, REMOTE_SNIPPET_CACHE_MAXAGE } from './constant';
@@ -44,17 +45,17 @@ export const addProxyToSurgeRuleSet = (str: string, proxyName: string): string =
 
 export const loadRemoteSnippetList = (remoteSnippetList: ReadonlyArray<RemoteSnippetConfig>): Promise<ReadonlyArray<RemoteSnippet>> => {
   function load(url: string): Promise<string> {
-    console.log(`正在下载远程片段: ${url}`);
+    logger.info(`正在下载远程片段: ${url}`);
 
     return got.get(url, {
       timeout: NETWORK_TIMEOUT,
     })
       .then(data => {
-        console.log(`远程片段下载成功: ${url}`);
+        logger.info(`远程片段下载成功: ${url}`);
         return data.body;
       })
       .catch(err => {
-        console.error(`远程片段下载失败: ${url}`);
+        logger.error(`远程片段下载失败: ${url}`);
         throw err;
       });
   }

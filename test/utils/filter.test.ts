@@ -192,6 +192,21 @@ test('taiwanFilter', t => {
   }));
 });
 
+test('chinaBackFilter', t => {
+  t.true(filter.chinaBackFilter({
+    nodeName: '回国',
+    type: NodeTypeEnum.Shadowsocks,
+  }));
+  t.true(filter.chinaBackFilter({
+    nodeName: '中国上海',
+    type: NodeTypeEnum.Shadowsocks,
+  }));
+  t.false(filter.chinaBackFilter({
+    nodeName: 'US 1',
+    type: NodeTypeEnum.Shadowsocks,
+  }));
+});
+
 test('useSortedKeywords', t => {
   const fn = filter.useSortedKeywords(['test', '测试']);
   const result = fn.filter([

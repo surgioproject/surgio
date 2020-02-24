@@ -1,9 +1,9 @@
 import Joi from '@hapi/joi';
 import assert from 'assert';
 import got from 'got';
-import chalk from 'chalk';
 import yaml from 'yaml';
 import _ from 'lodash';
+import { logger } from '@surgio/logger';
 
 import {
   ClashProviderConfig,
@@ -53,14 +53,12 @@ export default class ClashProvider extends Provider {
         case 'ss':
           // istanbul ignore next
           if (item.plugin && !['obfs', 'v2ray-plugin'].includes(item.plugin)) {
-            console.log();
-            console.log(chalk.yellow(`不支持从 Clash 订阅中读取 ${item.plugin} 类型的 Shadowsocks 节点，节点 ${item.name} 会被省略`));
+            logger.warn(`不支持从 Clash 订阅中读取 ${item.plugin} 类型的 Shadowsocks 节点，节点 ${item.name} 会被省略`);
             return null;
           }
           // istanbul ignore next
           if (item.plugin === 'v2ray-plugin' && item['plugin-opts'].mode.toLowerCase() === 'quic') {
-            console.log();
-            console.log(chalk.yellow(`不支持从 Clash 订阅中读取 QUIC 模式的 Shadowsocks 节点，节点 ${item.name} 会被省略`));
+            logger.warn(`不支持从 Clash 订阅中读取 QUIC 模式的 Shadowsocks 节点，节点 ${item.name} 会被省略`);
             return null;
           }
 
@@ -93,8 +91,7 @@ export default class ClashProvider extends Provider {
         case 'vmess':
           // istanbul ignore next
           if (['kcp', 'http'].indexOf(item.network) > -1) {
-            console.log();
-            console.log(chalk.yellow(`不支持从 Clash 订阅中读取 network 类型为 ${item.network} 的 Vmess 节点，节点 ${item.name} 会被省略`));
+            logger.warn(`不支持从 Clash 订阅中读取 network 类型为 ${item.network} 的 Vmess 节点，节点 ${item.name} 会被省略`);
             return null;
           }
 
@@ -166,8 +163,7 @@ export default class ClashProvider extends Provider {
           };
 
         default:
-          console.log();
-          console.log(chalk.yellow(`不支持从 Clash 订阅中读取 ${item.type} 的节点，节点 ${item.name} 会被省略`));
+          logger.warn(`不支持从 Clash 订阅中读取 ${item.type} 的节点，节点 ${item.name} 会被省略`);
           return null;
       }
     })
