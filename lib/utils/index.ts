@@ -30,6 +30,7 @@ import {
   VmessNodeConfig,
 } from '../types';
 import { NETWORK_TIMEOUT, OBFS_UA, PROVIDER_CACHE_MAXAGE, PROXY_TEST_INTERVAL, PROXY_TEST_URL } from './constant';
+import { isIp } from './dns';
 import { validateFilter } from './filter';
 import { parseSSRUri } from './ssr';
 import { formatVmessUri } from './v2ray';
@@ -442,7 +443,9 @@ export const getSurgeNodes = (
             configString.push(...config.hostnameIp.map(item => `addresses = ${item}`));
           }
 
-          configString.push(`addresses = ${config.hostname}`);
+          if (isIp(config.hostname)) {
+            configString.push(`addresses = ${config.hostname}`);
+          }
 
           return ([
             config.nodeName,
@@ -531,7 +534,9 @@ export const getSurgeNodes = (
               configString.push(...config.hostnameIp.map(item => `addresses = ${item}`));
             }
 
-            configString.push(`addresses = ${config.hostname}`);
+            if (isIp(config.hostname)) {
+              configString.push(`addresses = ${config.hostname}`);
+            }
 
             // istanbul ignore next
             if (process.env.NODE_ENV !== 'test') {
