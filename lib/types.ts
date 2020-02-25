@@ -220,6 +220,13 @@ export interface CreateServerOptions {
   readonly cwd?: string;
 }
 
+export interface SubscriptionUserinfo {
+  readonly upload: number;
+  readonly download: number;
+  readonly total: number;
+  readonly expire: number;
+}
+
 export type NodeFilterType = (nodeConfig: PossibleNodeConfigType) => boolean;
 
 export type NodeNameFilterType = (simpleNodeConfig: SimpleNodeConfig) => boolean;

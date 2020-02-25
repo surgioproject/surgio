@@ -18,6 +18,7 @@ export default class Provider {
   public readonly tfo?: boolean;
   public readonly mptcp?: boolean;
   public readonly renameNode?: ProviderConfig['renameNode'];
+
   private startPort?: number;
 
   constructor(public name: string, config: ProviderConfig) {

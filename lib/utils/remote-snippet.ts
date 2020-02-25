@@ -5,7 +5,7 @@ import { logger } from '@surgio/logger';
 
 import { RemoteSnippet, RemoteSnippetConfig } from '../types';
 import { NETWORK_CONCURRENCY, NETWORK_TIMEOUT, REMOTE_SNIPPET_CACHE_MAXAGE } from './constant';
-import { ConfigCache } from './index';
+import { ConfigCache } from './cache';
 import { createTmpFactory } from './tmp-helper';
 
 export const addProxyToSurgeRuleSet = (str: string, proxyName: string): string => {
