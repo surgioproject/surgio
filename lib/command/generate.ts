@@ -12,13 +12,13 @@ class GenerateCommand extends Command {
     super(rawArgv);
     this.usage = '使用方法: surgio generate';
     this.options = {
-      output: {
+      o: {
         type: 'string',
-        alias: 'o',
+        alias: 'output',
         description: '生成规则的目录',
       },
-      config: {
-        alias: 'c',
+      c: {
+        alias: 'config',
         default: './surgio.conf.js',
       },
     };

@@ -1,4 +1,11 @@
+import BlackSSLProvider from './provider/BlackSSLProvider';
+import ClashProvider from './provider/ClashProvider';
+import CustomProvider from './provider/CustomProvider';
 import Provider from './provider/Provider';
+import ShadowsocksJsonSubscribeProvider from './provider/ShadowsocksJsonSubscribeProvider';
+import ShadowsocksrSubscribeProvider from './provider/ShadowsocksrSubscribeProvider';
+import ShadowsocksSubscribeProvider from './provider/ShadowsocksSubscribeProvider';
+import V2rayNSubscribeProvider from './provider/V2rayNSubscribeProvider';
 
 export enum NodeTypeEnum {
   HTTPS = 'https',

@@ -1232,23 +1232,3 @@ export const applyFilter = <T extends SimpleNodeConfig>(
 
   return nodes;
 };
-
-export const parseSubscriptionUserInfo = (str: string): SubscriptionUserinfo => {
-  const res = {
-    upload: 0,
-    download: 0,
-    total: 0,
-    expire: 0,
-  };
-
-  str.split(';').forEach(item => {
-    const pair = item.split('=');
-    const value = Number(pair[1].trim());
-
-    if (!Number.isNaN(value)) {
-      res[pair[0].trim()] = Number(pair[1].trim())
-    }
-  });
-
-  return res;
-};

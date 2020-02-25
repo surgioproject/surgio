@@ -6,6 +6,7 @@ import fs from 'fs';
 import env2 from 'env2';
 import path from 'path';
 import updateNotifier from 'update-notifier';
+import { transports } from '@surgio/logger';
 
 import GenerateCommand from './command/generate';
 import UploadCommand from './command/upload';
@@ -30,8 +31,18 @@ export class SurgioCommand extends Command {
     updateNotifier({ pkg: require('../package.json') }).notify();
 
     this.usage = '使用方法: surgio <command> [options]';
+    this.yargs.option('V', {
+      alias: 'verbose',
+      demandOption: false,
+      describe: '打印调试日志',
+      type: 'boolean',
+    });
+
     this.load(path.join(__dirname, './command'));
-    this.yargs.alias('v', 'version');
+
+    if (this.yargs.argv.verbose) {
+      transports.console.level = 'debug';
+    }
   }
 
   public errorHandler(err): void {

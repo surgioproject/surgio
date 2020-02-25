@@ -10,7 +10,8 @@ import {
   ShadowsocksSubscribeProviderConfig,
   SubscriptionUserinfo,
 } from '../types';
-import { decodeStringList, fromBase64, fromUrlSafeBase64, parseSubscriptionUserInfo } from '../utils';
+import { decodeStringList, fromBase64, fromUrlSafeBase64 } from '../utils';
+import { parseSubscriptionUserInfo } from '../utils/subscription';
 import { SubsciptionCacheItem, SubscriptionCache } from '../utils/cache';
 import { NETWORK_TIMEOUT } from '../utils/constant';
 import Provider from './Provider';

@@ -3,7 +3,8 @@ import assert from 'assert';
 import got from 'got';
 
 import { ShadowsocksrNodeConfig, ShadowsocksrSubscribeProviderConfig, SubscriptionUserinfo } from '../types';
-import { fromBase64, parseSubscriptionUserInfo } from '../utils';
+import { fromBase64 } from '../utils';
+import { parseSubscriptionUserInfo } from '../utils/subscription';
 import { SubsciptionCacheItem, SubscriptionCache } from '../utils/cache';
 import { NETWORK_TIMEOUT } from '../utils/constant';
 import { parseSSRUri } from '../utils/ssr';
@@ -38,6 +39,15 @@ export default class ShadowsocksrSubscribeProvider extends Provider {
 
     this.url = config.url;
     this.udpRelay = config.udpRelay;
+  }
+
+  public async getSubscriptionUserInfo(): Promise<SubscriptionUserinfo> {
+    const { subscriptionUserinfo } = await getShadowsocksrSubscription(this.url, this.udpRelay);
+
+    if (subscriptionUserinfo) {
+      return subscriptionUserinfo;
+    }
+    return null;
   }
 
   public async getNodeList(): Promise<ReadonlyArray<ShadowsocksrNodeConfig>> {

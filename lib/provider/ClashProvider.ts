@@ -15,8 +15,8 @@ import {
   SnellNodeConfig, SubscriptionUserinfo,
   VmessNodeConfig,
 } from '../types';
-import { parseSubscriptionUserInfo } from '../utils';
-import { ConfigCache, SubsciptionCacheItem, SubscriptionCache } from '../utils/cache';
+import { parseSubscriptionUserInfo } from '../utils/subscription';
+import { SubsciptionCacheItem, SubscriptionCache } from '../utils/cache';
 import { NETWORK_TIMEOUT } from '../utils/constant';
 import Provider from './Provider';
 
