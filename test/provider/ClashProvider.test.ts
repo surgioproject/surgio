@@ -1,6 +1,32 @@
 import test from 'ava';
-import { getClashSubscription } from '../../lib/provider/ClashProvider';
-import { NodeTypeEnum } from '../../lib/types';
+import ClashProvider, { getClashSubscription } from '../../lib/provider/ClashProvider';
+import { NodeTypeEnum, SupportProviderEnum } from '../../lib/types';
+
+test('ClashProvider', async t => {
+  const provider = new ClashProvider('test', {
+    type: SupportProviderEnum.Clash,
+    url: 'http://example.com/clash-sample.yaml',
+  });
+
+  await t.notThrowsAsync(async () => {
+    await provider.getNodeList();
+  });
+});
+
+test('ClashProvider.getSubscriptionUserInfo', async t => {
+  const provider = new ClashProvider('test', {
+    type: SupportProviderEnum.Clash,
+    url: 'http://example.com/clash-sample-with-user-info.yaml',
+  });
+  const userInfo = await provider.getSubscriptionUserInfo();
+
+  t.deepEqual(userInfo, {
+    upload: 891332010,
+    download: 29921186546,
+    total: 322122547200,
+    expire: 1586330887,
+  });
+});
 
 test('getClashSubscription', async t => {
   const { nodeList } = await getClashSubscription('http://example.com/clash-sample.yaml');
