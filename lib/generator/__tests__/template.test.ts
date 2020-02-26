@@ -1,10 +1,11 @@
 // tslint:disable:no-expression-statement
 import test from 'ava';
 import fs from 'fs-extra';
-import path from 'path';
-import getEngine from '../lib/template';
+import { join } from 'path';
+import { getEngine } from '../template';
 
 const templateEngine = getEngine(process.cwd(), 'https://example.com/');
+const assetDir = join(__dirname, '../../../test/asset/');
 
 test('clash #1', t => {
   const body = `{{ str | patchYamlArray }}`;
@@ -96,7 +97,7 @@ test('quantumultx filter 1', t => {
 
 test('quantumultx filter 2', t => {
   const body = `{{ str | quantumultx }}`;
-  const str = fs.readFileSync(path.join(__dirname, './asset/surge-script-list.txt'), { encoding: 'utf8' });
+  const str = fs.readFileSync(join(assetDir, 'surge-script-list.txt'), { encoding: 'utf8' });
   const result = templateEngine.renderString(body, {
     str,
   });
@@ -143,7 +144,7 @@ test('spaces in string', t => {
 });
 
 test('ForeignMedia', t => {
-  const str = fs.readFileSync(path.join(__dirname, './asset/ForeignMedia.list'), { encoding: 'utf8' });
+  const str = fs.readFileSync(join(assetDir, 'ForeignMedia.list'), { encoding: 'utf8' });
 
   t.snapshot(templateEngine.renderString(`{{ str | quantumultx }}`, {
     str,

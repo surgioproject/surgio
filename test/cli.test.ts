@@ -9,7 +9,7 @@ const cli = path.join(__dirname, '../bin/surgio.js');
 const fixture = path.join(__dirname, './fixture');
 const resolve = p => path.join(fixture, p);
 
-test('cli works', async t => {
+test.only('cli works', async t => {
   await coffee.fork(cli, ['generate', '-h'], {
     cwd: resolve('plain'),
   })

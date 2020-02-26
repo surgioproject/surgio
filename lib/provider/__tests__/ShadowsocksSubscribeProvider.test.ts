@@ -1,7 +1,7 @@
 import test from 'ava';
 
-import { getShadowsocksSubscription } from '../../lib/provider/ShadowsocksSubscribeProvider';
-import { NodeTypeEnum } from '../../lib/types';
+import { getShadowsocksSubscription } from '../ShadowsocksSubscribeProvider';
+import { NodeTypeEnum } from '../../types';
 
 test('getShadowsocksSubscription with udp', async t => {
   const { nodeList } = await getShadowsocksSubscription('http://example.com/test-ss-sub.txt', true);

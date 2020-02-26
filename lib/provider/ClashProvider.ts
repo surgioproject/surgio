@@ -12,7 +12,8 @@ import {
   NodeTypeEnum,
   ShadowsocksNodeConfig,
   ShadowsocksrNodeConfig,
-  SnellNodeConfig, SubscriptionUserinfo,
+  SnellNodeConfig,
+  SubscriptionUserinfo,
   VmessNodeConfig,
 } from '../types';
 import { parseSubscriptionUserInfo } from '../utils/subscription';

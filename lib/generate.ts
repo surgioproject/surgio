@@ -1,57 +1,18 @@
 'use strict';
 
-import assert from 'assert';
-import Bluebird from 'bluebird';
-import chalk from 'chalk';
 import fs from 'fs-extra';
-import _ from 'lodash';
 import { Environment } from 'nunjucks';
 import ora from 'ora';
 import path from 'path';
 import { logger } from '@surgio/logger';
+import { Artifact } from './generator/artifact';
 
-import getEngine from './template';
+import { getEngine } from './generator/template';
 import {
   ArtifactConfig,
-  CommandConfig,
-  NodeTypeEnum,
-  PossibleNodeConfigType,
-  ProviderConfig,
-  RemoteSnippet,
-  SimpleNodeConfig,
+  CommandConfig, RemoteSnippet,
 } from './types';
-import {
-  getClashNodes,
-  getDownloadUrl,
-  getNodeNames,
-  getQuantumultNodes,
-  getV2rayNNodes,
-  getQuantumultXNodes,
-  getShadowsocksNodes,
-  getShadowsocksNodesJSON,
-  getShadowsocksrNodes,
-  getSurgeNodes,
-  getMellowNodes,
-  normalizeClashProxyGroupConfig,
-  toBase64,
-  toUrlSafeBase64,
-  getClashNodeNames,
-} from './utils';
 import { loadRemoteSnippetList } from './utils/remote-snippet';
-import { isIp, resolveDomain } from './utils/dns';
-import {
-  hkFilter, japanFilter, koreaFilter,
-  netflixFilter as defaultNetflixFilter,
-  singaporeFilter,
-  taiwanFilter,
-  usFilter,
-  validateFilter,
-  youtubePremiumFilter as defaultYoutubePremiumFilter,
-} from './utils/filter';
-import getProvider from './utils/get-provider';
-import { prependFlag } from './utils/flag';
-import { NETWORK_CONCURRENCY } from './utils/constant';
-import Provider from './provider/Provider';
 
 const spinner = ora();
 
@@ -69,7 +30,17 @@ async function run(config: CommandConfig): Promise<void> {
     spinner.start(`正在生成规则 ${artifact.name}`);
 
     try {
-      const result = await generate(config, artifact, remoteSnippetList, templateEngine);
+      const artifactInstance = new Artifact(config, artifact, {
+        remoteSnippetList,
+      });
+
+      artifactInstance.on('initProvider:end', () => {
+        spinner.text = `已处理 Provider ${artifactInstance.initProgress}/${artifactInstance.providerNameList.length}...`;
+      });
+
+      await artifactInstance.init();
+
+      const result = artifactInstance.render(templateEngine);
       const destFilePath = path.join(config.output, artifact.name);
 
       if (artifact.destDir) {
@@ -93,239 +64,13 @@ export async function generate(
   remoteSnippetList: ReadonlyArray<RemoteSnippet>,
   templateEngine: Environment,
 ): Promise<string> {
-  const {
-    name: artifactName,
-    template,
-    customParams,
-    templateString,
-  } = artifact;
-
-  assert(artifactName, '必须指定 artifact 的 name 属性');
-  assert(artifact.provider, '必须指定 artifact 的 provider 属性');
-  if (!templateString) {
-    assert(template, '必须指定 artifact 的 template 属性');
-  }
-
-  const gatewayConfig = config.gateway;
-  const gatewayHasToken: boolean = !!(gatewayConfig && gatewayConfig.accessToken);
-  const mainProviderName = artifact.provider;
-  const combineProviders = artifact.combineProviders || [];
-  const providerList = [mainProviderName].concat(combineProviders);
-  const nodeConfigListMap: Map<string, ReadonlyArray<PossibleNodeConfigType>> = new Map();
-  const nodeList: PossibleNodeConfigType[] = [];
-  const nodeNameList: SimpleNodeConfig[] = [];
-  let customFilters: ProviderConfig['customFilters'];
-  let netflixFilter: ProviderConfig['netflixFilter'];
-  let youtubePremiumFilter: ProviderConfig['youtubePremiumFilter'];
-  let progress = 0;
-
-  if (config.binPath && config.binPath.v2ray) {
-    config.binPath.vmess = config.binPath.v2ray;
-  }
-
-  const providerMapper = async (providerName: string): Promise<void> => {
-    const filePath = path.resolve(config.providerDir, `${providerName}.js`);
-
-    if (!fs.existsSync(filePath)) {
-      throw new Error(`文件 ${filePath} 不存在`);
-    }
-
-    let provider: Provider;
-    let nodeConfigList: ReadonlyArray<PossibleNodeConfigType>;
-
-    try {
-      provider = getProvider(providerName, require(filePath));
-    } catch (err) {
-      err.message = `处理 ${chalk.cyan(providerName)} 时出现错误，相关文件 ${filePath} ，错误原因: ${err.message}`;
-      throw err;
-    }
-
-    try {
-      nodeConfigList = await provider.getNodeList();
-    } catch (err) {
-      err.message = `获取 ${chalk.cyan(providerName)} 节点时出现错误，相关文件 ${filePath} ，错误原因: ${err.message}`;
-      throw err;
-    }
-
-    // Filter 仅使用第一个 Provider 中的定义
-    if (providerName === mainProviderName) {
-      if (!netflixFilter) {
-        netflixFilter = provider.netflixFilter || defaultNetflixFilter;
-      }
-      if (!youtubePremiumFilter) {
-        youtubePremiumFilter = provider.youtubePremiumFilter || defaultYoutubePremiumFilter;
-      }
-      if (!customFilters) {
-        customFilters = {
-          ...config.customFilters,
-          ...provider.customFilters,
-        };
-      }
-    }
-
-    if (
-      validateFilter(provider.nodeFilter) &&
-      typeof provider.nodeFilter === 'object' &&
-      provider.nodeFilter.supportSort
-    ) {
-      nodeConfigList = provider.nodeFilter.filter(nodeConfigList);
-    }
-
-    nodeConfigList = await Bluebird.map(nodeConfigList, async nodeConfig => {
-      let isValid = false;
-
-      if (nodeConfig.enable === false) {
-        return null;
-      }
-
-      if (!provider.nodeFilter) {
-        isValid = true;
-      } else if (validateFilter(provider.nodeFilter)) {
-        isValid = typeof provider.nodeFilter === 'function' ?
-          provider.nodeFilter(nodeConfig) :
-          true;
-      }
-
-      if (isValid) {
-        if (config.binPath && config.binPath[nodeConfig.type]) {
-          nodeConfig.binPath = config.binPath[nodeConfig.type];
-          nodeConfig.localPort = provider.nextPort;
-        }
-
-        nodeConfig.provider = provider;
-        nodeConfig.surgeConfig = config.surgeConfig;
-
-        if (provider.renameNode) {
-          const newName = provider.renameNode(nodeConfig.nodeName);
-
-          if (newName) {
-            nodeConfig.nodeName = newName;
-          }
-        }
-
-        // 给节点名加国旗
-        if (provider.addFlag) {
-          nodeConfig.nodeName = prependFlag(nodeConfig.nodeName);
-        }
-
-        // TCP Fast Open
-        if (provider.tfo) {
-          nodeConfig.tfo = provider.tfo;
-        }
-
-        // MPTCP
-        if (provider.mptcp) {
-          nodeConfig.mptcp = provider.mptcp;
-        }
-
-        if (
-          config.surgeConfig.resolveHostname &&
-          !isIp(nodeConfig.hostname) &&
-          [NodeTypeEnum.Vmess, NodeTypeEnum.Shadowsocksr].includes(nodeConfig.type)
-        ) {
-          try {
-            nodeConfig.hostnameIp = await resolveDomain(nodeConfig.hostname);
-          } /* istanbul ignore next */ catch (err) {
-            logger.warn(`${nodeConfig.hostname} 无法解析，将忽略该域名的解析结果`);
-          }
-        }
-
-        return nodeConfig;
-      }
-
-      return null;
-    })
-      .filter(item => !!item);
-
-
-    nodeConfigListMap.set(providerName, nodeConfigList);
-
-    spinner.text = `已处理 Provider ${++progress}/${providerList.length}...`;
-  };
-
-  await Bluebird.map(providerList, providerMapper, { concurrency: NETWORK_CONCURRENCY });
-
-  providerList.forEach(providerName => {
-    const nodeConfigList = nodeConfigListMap.get(providerName);
-
-    nodeConfigList.forEach(nodeConfig => {
-      if (nodeConfig) {
-        nodeNameList.push({
-          type: nodeConfig.type,
-          enable: nodeConfig.enable,
-          nodeName: nodeConfig.nodeName,
-          provider: nodeConfig.provider,
-        });
-        nodeList.push(nodeConfig);
-      }
-    });
+  const artifactInstance = new Artifact(config, artifact, {
+    remoteSnippetList,
   });
 
-  const renderContext = {
-    proxyTestUrl: config.proxyTestUrl,
-    downloadUrl: getDownloadUrl(config.urlBase, artifactName, true, gatewayHasToken ? gatewayConfig.accessToken : undefined),
-    nodes: nodeList,
-    names: nodeNameList,
-    remoteSnippets: _.keyBy(remoteSnippetList, item => item.name),
-    nodeList,
-    provider: artifact.provider,
-    providerName: artifact.provider,
-    artifactName,
-    getDownloadUrl: (name: string) => getDownloadUrl(config.urlBase, name, true, gatewayHasToken ? gatewayConfig.accessToken : undefined),
-    getNodeNames,
-    getClashNodeNames,
-    getClashNodes,
-    getSurgeNodes,
-    getShadowsocksNodes,
-    getShadowsocksNodesJSON,
-    getShadowsocksrNodes,
-    getQuantumultNodes,
-    getV2rayNNodes,
-    getQuantumultXNodes,
-    getMellowNodes,
-    usFilter,
-    hkFilter,
-    japanFilter,
-    koreaFilter,
-    singaporeFilter,
-    taiwanFilter,
-    toUrlSafeBase64,
-    toBase64,
-    encodeURIComponent,
-    netflixFilter,
-    youtubePremiumFilter,
-    customFilters,
-    customParams: customParams || {},
-    ...(artifact.proxyGroupModifier ? {
-      clashProxyConfig: {
-        Proxy: getClashNodes(nodeList),
-        'Proxy Group': normalizeClashProxyGroupConfig(
-          nodeList,
-          {
-            usFilter,
-            hkFilter,
-            japanFilter,
-            koreaFilter,
-            singaporeFilter,
-            taiwanFilter,
-            netflixFilter,
-            youtubePremiumFilter,
-            ...customFilters,
-          },
-          artifact.proxyGroupModifier,
-          {
-            proxyTestUrl: config.proxyTestUrl,
-            proxyTestInterval: config.proxyTestInterval,
-          },
-        ),
-      },
-    } : {}),
-  };
+  await artifactInstance.init();
 
-  if (templateString) {
-    return templateEngine.renderString(templateString, renderContext);
-  }
-  return templateEngine.render(`${template}.tpl`, renderContext);
+  return artifactInstance.render(templateEngine);
 }
 
 export default async function(config: CommandConfig): Promise<void> {

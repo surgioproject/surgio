@@ -1,6 +1,6 @@
 import test from 'ava';
-import ClashProvider, { getClashSubscription } from '../../lib/provider/ClashProvider';
-import { NodeTypeEnum, SupportProviderEnum } from '../../lib/types';
+import ClashProvider, { getClashSubscription } from '../ClashProvider';
+import { NodeTypeEnum, SupportProviderEnum } from '../../types';
 
 test('ClashProvider', async t => {
   const provider = new ClashProvider('test', {

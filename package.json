@@ -119,7 +119,8 @@
       "js"
     ],
     "files": [
-      "test/**/*.test.ts"
+      "test/**/*.test.ts",
+      "lib/**/*.test.ts"
     ],
     "require": [
       "ts-node/register",

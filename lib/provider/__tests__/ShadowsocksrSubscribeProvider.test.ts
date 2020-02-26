@@ -1,7 +1,7 @@
 import test from 'ava';
 
-import { NodeTypeEnum } from '../../lib/types';
-import { getShadowsocksrSubscription } from '../../lib/provider/ShadowsocksrSubscribeProvider';
+import { NodeTypeEnum } from '../../types';
+import { getShadowsocksrSubscription } from '../ShadowsocksrSubscribeProvider';
 
 test('getShadowsocksrSubscription', async t => {
   const { nodeList } = await getShadowsocksrSubscription('http://example.com/test-ssr-sub.txt?v=1', false);

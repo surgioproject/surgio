@@ -3,14 +3,14 @@ import { JsonObject } from 'type-fest';
 import YAML from 'yaml';
 import { URL } from 'url';
 
-import { decodeStringList, toBase64 } from './utils';
+import { decodeStringList, toBase64 } from '../utils';
 import {
   MELLOW_UNSUPPORTED_RULE,
   QUANTUMULT_X_SUPPORTED_RULE,
   CLASH_SUPPORTED_RULE,
-} from './utils/constant';
+} from '../utils/constant';
 
-export default function getEngine(templateDir: string, publicUrl: string): nunjucks.Environment {
+export function getEngine(templateDir: string, publicUrl: string): nunjucks.Environment {
   const engine = nunjucks.configure(templateDir, {
     autoescape: false,
   });

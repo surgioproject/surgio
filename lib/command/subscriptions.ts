@@ -15,7 +15,7 @@ import { CommandConfig } from '../types';
 import {
   loadConfig
 } from '../utils/config';
-import getProvider from '../utils/get-provider';
+import { getProvider } from '../provider';
 import { errorHandler } from '../utils/error-helper';
 import { formatSubscriptionUserInfo } from '../utils/subscription';
 

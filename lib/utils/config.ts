@@ -63,6 +63,10 @@ export const normalizeConfig = (cwd: string, userConfig: Partial<CommandConfig>)
     config.publicUrl = '/';
   }
 
+  if (config.binPath && config.binPath.v2ray) {
+    config.binPath.vmess = config.binPath.v2ray;
+  }
+
   return config;
 };
 

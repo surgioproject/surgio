@@ -1,15 +1,13 @@
-import assert from "assert";
-
-import BlackSSLProvider from '../provider/BlackSSLProvider';
-import ClashProvider from '../provider/ClashProvider';
-import CustomProvider from '../provider/CustomProvider';
-import ShadowsocksJsonSubscribeProvider from '../provider/ShadowsocksJsonSubscribeProvider';
-import ShadowsocksrSubscribeProvider from '../provider/ShadowsocksrSubscribeProvider';
-import ShadowsocksSubscribeProvider from '../provider/ShadowsocksSubscribeProvider';
-import V2rayNSubscribeProvider from '../provider/V2rayNSubscribeProvider';
 import { SupportProviderEnum } from '../types';
+import BlackSSLProvider from './BlackSSLProvider';
+import ClashProvider from './ClashProvider';
+import CustomProvider from './CustomProvider';
+import ShadowsocksJsonSubscribeProvider from './ShadowsocksJsonSubscribeProvider';
+import ShadowsocksrSubscribeProvider from './ShadowsocksrSubscribeProvider';
+import ShadowsocksSubscribeProvider from './ShadowsocksSubscribeProvider';
+import V2rayNSubscribeProvider from './V2rayNSubscribeProvider';
 
-export default function(name: string, config: any): BlackSSLProvider|ShadowsocksJsonSubscribeProvider|ShadowsocksSubscribeProvider|CustomProvider|V2rayNSubscribeProvider|ShadowsocksrSubscribeProvider|ClashProvider {
+export function getProvider(name: string, config: any): BlackSSLProvider|ShadowsocksJsonSubscribeProvider|ShadowsocksSubscribeProvider|CustomProvider|V2rayNSubscribeProvider|ShadowsocksrSubscribeProvider|ClashProvider {
   switch (config.type) {
     case SupportProviderEnum.BlackSSL:
       return new BlackSSLProvider(name, config);
