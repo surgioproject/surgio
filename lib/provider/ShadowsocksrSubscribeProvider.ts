@@ -39,6 +39,7 @@ export default class ShadowsocksrSubscribeProvider extends Provider {
 
     this.url = config.url;
     this.udpRelay = config.udpRelay;
+    this.supportGetSubscriptionUserInfo = true;
   }
 
   public async getSubscriptionUserInfo(): Promise<SubscriptionUserinfo> {

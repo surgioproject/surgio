@@ -48,7 +48,7 @@ class SubscriptionsCommand extends Command {
     const providerList = await this.listProviders();
 
     for (const provider of providerList) {
-      if (provider.getSubscriptionUserInfo) {
+      if (provider.supportGetSubscriptionUserInfo) {
         const userInfo = await provider.getSubscriptionUserInfo();
 
         if (userInfo) {

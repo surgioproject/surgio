@@ -3,7 +3,7 @@ import Joi from '@hapi/joi';
 import {
   ProviderConfig,
   SupportProviderEnum,
-  PossibleNodeConfigType,
+  PossibleNodeConfigType, SubscriptionUserinfo,
 } from '../types';
 
 let globalPort: number = 61100;
@@ -18,7 +18,7 @@ export default class Provider {
   public readonly tfo?: boolean;
   public readonly mptcp?: boolean;
   public readonly renameNode?: ProviderConfig['renameNode'];
-
+  public supportGetSubscriptionUserInfo: boolean;
   private startPort?: number;
 
   constructor(public name: string, config: ProviderConfig) {
@@ -58,6 +58,7 @@ export default class Provider {
     this.mptcp = config.mptcp;
     this.startPort = config.startPort;
     this.renameNode = config.renameNode;
+    this.supportGetSubscriptionUserInfo = false;
   }
 
   public get nextPort(): number {
@@ -65,6 +66,10 @@ export default class Provider {
       return this.startPort++;
     }
     return globalPort++;
+  }
+
+  public async getSubscriptionUserInfo(): Promise<SubscriptionUserinfo> {
+    throw new Error('此 Provider 不支持该功能');
   }
 
   public getNodeList(): Promise<ReadonlyArray<PossibleNodeConfigType>> {
