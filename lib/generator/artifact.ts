@@ -160,7 +160,7 @@ export class Artifact extends EventEmitter {
     };
   }
 
-  public async init(templateEngine?: Environment): Promise<void> {
+  public async init(templateEngine?: Environment): Promise<this> {
     if (this.isReady) {
       throw new Error('Artifact 已经初始化完成');
     }
@@ -193,6 +193,8 @@ export class Artifact extends EventEmitter {
     });
 
     this.emit('initArtifact:end', { artifact: this.artifact });
+
+    return this;
   }
 
   public render(templateEngine?: Environment): string {
