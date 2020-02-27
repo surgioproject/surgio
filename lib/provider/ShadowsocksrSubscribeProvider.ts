@@ -4,7 +4,7 @@ import got from 'got';
 
 import { ShadowsocksrNodeConfig, ShadowsocksrSubscribeProviderConfig, SubscriptionUserinfo } from '../types';
 import { fromBase64 } from '../utils';
-import { parseSubscriptionUserInfo } from '../utils/subscription';
+import { parseSubscriptionNode, parseSubscriptionUserInfo } from '../utils/subscription';
 import { SubsciptionCacheItem, SubscriptionCache } from '../utils/cache';
 import { NETWORK_TIMEOUT } from '../utils/constant';
 import { parseSSRUri } from '../utils/ssr';
@@ -102,6 +102,15 @@ export const getShadowsocksrSubscription = async (
 
         return nodeConfig;
       });
+
+    if (
+      !response.subscriptionUserinfo &&
+      nodeList[0].nodeName.includes('剩余流量')
+    ) {
+      const dataNode = nodeList[0];
+      const expireNode = nodeList[1];
+      response.subscriptionUserinfo = parseSubscriptionNode(dataNode.nodeName, expireNode.nodeName);
+    }
 
     return {
       nodeList,

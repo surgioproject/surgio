@@ -1,4 +1,5 @@
 import filesize from 'filesize';
+import bytes from 'bytes';
 import { format, formatDistanceToNow } from 'date-fns';
 
 import { SubscriptionUserinfo } from '../types';
@@ -21,6 +22,30 @@ export const parseSubscriptionUserInfo = (str: string): SubscriptionUserinfo => 
   });
 
   return res;
+};
+
+export const parseSubscriptionNode = (dataString: string, expireString: string): SubscriptionUserinfo => {
+  // dataString => 剩余流量：57.37% 1.01TB
+  // expireString => 过期时间：2020-04-21 22:27:38
+
+  const dataMatch = dataString.match(/剩余流量：(\d{0,2}(\.\d{1,4})?)%\s(.*)$/);
+  const expireMatch = expireString.match(/过期时间：(.*)$/);
+
+  if (dataMatch && expireMatch) {
+    const percent = Number(dataMatch[1]) / 100;
+    const leftData = bytes.parse(dataMatch[3]);
+    const total = Number((leftData / percent).toFixed(0));
+    const expire = new Date(expireMatch[1]).getTime() - Date.now();
+
+    return {
+      upload: 0,
+      download: total - leftData,
+      total,
+      expire,
+    };
+  } else {
+    return null;
+  }
 };
 
 export const formatSubscriptionUserInfo = (userInfo: SubscriptionUserinfo): {
