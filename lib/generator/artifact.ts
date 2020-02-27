@@ -49,6 +49,7 @@ export class Artifact extends EventEmitter {
   private customFilters?: ProviderConfig['customFilters'];
   private netflixFilter?: ProviderConfig['netflixFilter'];
   private youtubePremiumFilter?: ProviderConfig['youtubePremiumFilter'];
+  private templateEngine?: Environment;
 
   constructor(
     public surgioConfig: CommandConfig,
@@ -159,9 +160,13 @@ export class Artifact extends EventEmitter {
     };
   }
 
-  public async init(): Promise<void> {
+  public async init(templateEngine?: Environment): Promise<void> {
     if (this.isReady) {
       throw new Error('Artifact 已经初始化完成');
+    }
+
+    if (templateEngine) {
+      this.templateEngine = templateEngine;
     }
 
     this.emit('initArtifact:start', { artifact: this.artifact });
@@ -190,9 +195,15 @@ export class Artifact extends EventEmitter {
     this.emit('initArtifact:end', { artifact: this.artifact });
   }
 
-  public render(templateEngine: Environment): string {
+  public render(templateEngine?: Environment): string {
     if (!this.isReady) {
       throw new Error('Artifact 还未初始化');
+    }
+
+    const targetTemplateEngine = templateEngine || this.templateEngine;
+
+    if (!targetTemplateEngine) {
+      throw new Error('没有可用的 Nunjucks 环境');
     }
 
     const renderContext = this.renderContext;
@@ -201,8 +212,8 @@ export class Artifact extends EventEmitter {
       template,
     } = this.artifact;
     const result = templateString
-    ? templateEngine.renderString(templateString, renderContext)
-    : templateEngine.render(`${template}.tpl`, renderContext);
+    ? targetTemplateEngine.renderString(templateString, renderContext)
+    : targetTemplateEngine.render(`${template}.tpl`, renderContext);
 
     this.emit('renderArtifact', { artifact: this.artifact, result });
 
