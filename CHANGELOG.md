@@ -1,3 +1,22 @@
+# [1.13.0](https://github.com/geekdada/surgio/compare/v1.12.3...v1.13.0) (2020-02-28)
+
+
+### Bug Fixes
+
+* 避免有的 Provider 不支持获取流量的方法 ([3f6a6ee](https://github.com/geekdada/surgio/commit/3f6a6ee1b1f163838ad7d0df659274c99026372b))
+
+
+### Features
+
+* 为常用 Provider 类型增加订阅流量信息接口 ([ed68cab](https://github.com/geekdada/surgio/commit/ed68cab12a5417850229acbfa564a4436577e5cb))
+* 修改 Artifact 初始化接口 ([4c3ac84](https://github.com/geekdada/surgio/commit/4c3ac847adae2bb492fa851e53b12213a6e379c7))
+* 增加查询流量命令 ([a94eeab](https://github.com/geekdada/surgio/commit/a94eeab89b0a0c3432af2f9796d44e700084b93c))
+* 支持从 SSR 订阅中读取剩余流量 ([fb2e886](https://github.com/geekdada/surgio/commit/fb2e886cac5428cdfac49bd6696a68e2494c2ea1))
+* 支持在 Artifact 初始化时传入 Environment ([75ae51f](https://github.com/geekdada/surgio/commit/75ae51f3e9fafddade282d4348cbbcb9db774d36))
+* Artifact 初始化后返回实例 ([7ca04cf](https://github.com/geekdada/surgio/commit/7ca04cfb07fa308abd90f475b1bd35ce58d183df))
+
+
+
 ## [1.12.3](https://github.com/geekdada/surgio/compare/v1.12.2...v1.12.3) (2020-02-24)
 
 
