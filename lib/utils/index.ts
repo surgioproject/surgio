@@ -3,7 +3,6 @@ import Debug from 'debug';
 import fs from 'fs-extra';
 import got from 'got';
 import _ from 'lodash';
-import LRU from 'lru-cache';
 import os from 'os';
 import path from 'path';
 import queryString from 'query-string';
@@ -26,20 +25,17 @@ import {
   ShadowsocksrNodeConfig,
   SimpleNodeConfig,
   SnellNodeConfig,
-  SortedNodeNameFilterType,
+  SortedNodeNameFilterType, SubscriptionUserinfo,
   VmessNodeConfig,
 } from '../types';
-import { NETWORK_TIMEOUT, OBFS_UA, PROVIDER_CACHE_MAXAGE, PROXY_TEST_INTERVAL, PROXY_TEST_URL } from './constant';
+import { NETWORK_TIMEOUT, OBFS_UA, PROXY_TEST_INTERVAL, PROXY_TEST_URL } from './constant';
 import { isIp } from './dns';
 import { validateFilter } from './filter';
 import { parseSSRUri } from './ssr';
 import { formatVmessUri } from './v2ray';
+import { ConfigCache, SubsciptionCacheItem, SubscriptionCache } from './cache';
 
 const debug = Debug('surgio:utils');
-
-export const ConfigCache = new LRU<string, string>({
-  maxAge: PROVIDER_CACHE_MAXAGE,
-});
 
 // istanbul ignore next
 export const resolveRoot = (...args: readonly string[]): string =>
@@ -140,95 +136,6 @@ export const getShadowsocksJSONConfig = async (
           nodeConfig.obfs = obfs[1];
           nodeConfig['obfs-host'] = obfsHost ? obfsHost[1] : 'www.bing.com';
         }
-      }
-
-      return nodeConfig;
-    });
-  }
-
-  return await requestConfigFromRemote();
-};
-
-/**
- * @see https://shadowsocks.org/en/spec/SIP002-URI-Scheme.html
- */
-export const getShadowsocksSubscription = async (
-  url: string,
-  udpRelay?: boolean,
-): Promise<ReadonlyArray<ShadowsocksNodeConfig>> => {
-  assert(url, '未指定订阅地址 url');
-
-  async function requestConfigFromRemote(): Promise<ReadonlyArray<ShadowsocksNodeConfig>> {
-    const response = ConfigCache.has(url) ? ConfigCache.get(url) : await (async () => {
-      const res = await got.get(url, {
-        timeout: NETWORK_TIMEOUT,
-      });
-
-      ConfigCache.set(url, res.body);
-
-      return res.body;
-    })();
-
-    const configList = fromBase64(response).split('\n')
-      .filter(item => !!item && item.startsWith("ss://"));
-
-    return configList.map<any>(item => {
-      debug('SS URI', item);
-      const scheme = legacyUrl.parse(item, true);
-      const userInfo = fromUrlSafeBase64(scheme.auth).split(':');
-      const pluginInfo = typeof scheme.query.plugin === 'string' ? decodeStringList(scheme.query.plugin.split(';')) : {};
-
-      return {
-        type: NodeTypeEnum.Shadowsocks,
-        nodeName: decodeURIComponent(scheme.hash.replace('#', '')),
-        hostname: scheme.hostname,
-        port: scheme.port,
-        method: userInfo[0],
-        password: userInfo[1],
-        ...(typeof udpRelay === 'boolean' ? {
-          'udp-relay': udpRelay,
-        } : null),
-        ...(pluginInfo['obfs-local'] ? {
-          obfs: pluginInfo.obfs,
-          'obfs-host': pluginInfo['obfs-host'],
-        } : null),
-        ...(pluginInfo['v2ray-plugin'] ? {
-          obfs: pluginInfo.tls ? 'wss' : 'ws',
-          'obfs-host': pluginInfo.host,
-        } : null),
-      };
-    });
-  }
-
-  return await requestConfigFromRemote();
-};
-
-export const getShadowsocksrSubscription = async (
-  url: string,
-  udpRelay?: boolean,
-): Promise<ReadonlyArray<ShadowsocksrNodeConfig>> => {
-  assert(url, '未指定订阅地址 url');
-
-  async function requestConfigFromRemote(): Promise<ReadonlyArray<ShadowsocksrNodeConfig>> {
-    const response = ConfigCache.has(url) ? ConfigCache.get(url) : await (async () => {
-      const res = await got.get(url, {
-        timeout: NETWORK_TIMEOUT,
-      });
-
-      ConfigCache.set(url, res.body);
-
-      return res.body;
-    })();
-
-    const configList = fromBase64(response)
-      .split('\n')
-      .filter(item => !!item && item.startsWith("ssr://"));
-
-    return configList.map<ShadowsocksrNodeConfig>(str => {
-      const nodeConfig = parseSSRUri(str);
-
-      if (udpRelay !== void 0) {
-        (nodeConfig['udp-relay'] as boolean) = udpRelay;
       }
 
       return nodeConfig;

@@ -1,7 +1,5 @@
 // tslint:disable:no-expression-statement
 import test from 'ava';
-import fs from 'fs';
-import path from 'path';
 
 import {
   NodeTypeEnum,
@@ -1068,96 +1066,5 @@ test('formatV2rayConfig', t => {
         },
       },
     }
-  });
-});
-
-test('getShadowsocksSubscription with udp', async t => {
-  const nodeList = await utils.getShadowsocksSubscription('http://example.com/test-ss-sub.txt', true);
-
-  t.deepEqual(nodeList[0], {
-    type: NodeTypeEnum.Shadowsocks,
-    nodeName: '🇺🇸US 1',
-    hostname: 'us.example.com',
-    port: '443',
-    method: 'chacha20-ietf-poly1305',
-    password: 'password',
-    'udp-relay': true,
-    obfs: 'tls',
-    'obfs-host': 'gateway-carry.icloud.com',
-  });
-  t.deepEqual(nodeList[1], {
-    nodeName: '🇺🇸US 2',
-    type: NodeTypeEnum.Shadowsocks,
-    hostname: 'us.example.com',
-    port: '443',
-    method: 'chacha20-ietf-poly1305',
-    password: 'password',
-    'udp-relay': true,
-  });
-  t.deepEqual(nodeList[2], {
-    nodeName: '🇺🇸US 3',
-    type: NodeTypeEnum.Shadowsocks,
-    hostname: 'us.example.com',
-    port: '443',
-    method: 'chacha20-ietf-poly1305',
-    password: 'password',
-    'udp-relay': true,
-    obfs: 'wss',
-    'obfs-host': 'gateway-carry.icloud.com',
-  });
-});
-
-test('getShadowsocksSubscription without udp', async t => {
-  const nodeList = await utils.getShadowsocksSubscription('http://example.com/test-ss-sub.txt');
-
-  t.deepEqual(nodeList[0], {
-    type: NodeTypeEnum.Shadowsocks,
-    nodeName: '🇺🇸US 1',
-    hostname: 'us.example.com',
-    port: '443',
-    method: 'chacha20-ietf-poly1305',
-    password: 'password',
-    obfs: 'tls',
-    'obfs-host': 'gateway-carry.icloud.com',
-  });
-  t.deepEqual(nodeList[1], {
-    nodeName: '🇺🇸US 2',
-    type: NodeTypeEnum.Shadowsocks,
-    hostname: 'us.example.com',
-    port: '443',
-    method: 'chacha20-ietf-poly1305',
-    password: 'password',
-  });
-});
-
-test('getShadowsocksrSubscription', async t => {
-  const nodeList = await utils.getShadowsocksrSubscription('http://example.com/test-ssr-sub.txt?v=1', false);
-  const nodeList2 = await utils.getShadowsocksrSubscription('http://example.com/test-ssr-sub.txt?v=2', true);
-
-  t.deepEqual(nodeList[0], {
-    nodeName: '测试中文',
-    type: NodeTypeEnum.Shadowsocksr,
-    hostname: '127.0.0.1',
-    port: '1234',
-    method: 'aes-128-cfb',
-    password: 'aaabbb',
-    obfs: 'tls1.2_ticket_auth',
-    obfsparam: 'breakwa11.moe',
-    protocol: 'auth_aes128_md5',
-    protoparam: '',
-    'udp-relay': false,
-  });
-  t.deepEqual(nodeList2[0], {
-    nodeName: '测试中文',
-    type: NodeTypeEnum.Shadowsocksr,
-    hostname: '127.0.0.1',
-    port: '1234',
-    method: 'aes-128-cfb',
-    password: 'aaabbb',
-    obfs: 'tls1.2_ticket_auth',
-    obfsparam: 'breakwa11.moe',
-    protocol: 'auth_aes128_md5',
-    protoparam: '',
-    'udp-relay': true,
   });
 });

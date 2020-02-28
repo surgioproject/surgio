@@ -7,7 +7,7 @@ import path from 'path';
 import {
   loadConfig
 } from '../utils/config';
-import getProvider from '../utils/get-provider';
+import { getProvider } from '../provider';
 import { errorHandler } from '../utils/error-helper';
 
 class CheckCommand extends Command {
@@ -17,9 +17,12 @@ class CheckCommand extends Command {
     super(rawArgv);
     this.usage = '使用方法: surgio check [provider]';
     this.options = {
-      config: {
-        alias: 'c',
+      c: {
+        alias: 'config',
+        demandOption: false,
+        describe: 'Surgio 配置文件',
         default: './surgio.conf.js',
+        type: 'string',
       },
     };
   }

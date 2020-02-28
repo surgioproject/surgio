@@ -10,7 +10,7 @@ import legacyUrl from 'url';
 import got from 'got';
 import { transformQxRewriteRemote } from '../utils/qx-helper';
 
-import getEngine from '../template';
+import { getEngine } from '../generator/template';
 import { ArtifactConfig, CommandConfig, RemoteSnippet } from '../types';
 import { getDownloadUrl } from '../utils';
 import { loadRemoteSnippetList } from '../utils/remote-snippet';

@@ -54,6 +54,16 @@ const scope = nock('http://example.com')
       encoding: 'utf8',
     })
   )
+  .get(/\/clash-sample-with-user-info\.yaml/)
+  .reply(
+    200,
+    fs.readFileSync(path.join(__dirname, 'asset/clash-sample.yaml'), {
+      encoding: 'utf8',
+    }),
+    {
+      'subscription-userinfo': 'upload=891332010; download=29921186546; total=322122547200; expire=1586330887',
+    }
+  )
   .get(/\/test-ruleset\.list/)
   .reply(
     200,

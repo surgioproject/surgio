@@ -18,14 +18,17 @@ class GenerateCommand extends Command {
     this.usage = '使用方法: surgio upload';
     this.spinner = ora();
     this.options = {
-      output: {
+      o: {
         type: 'string',
-        alias: 'o',
+        alias: 'output',
         description: '生成规则的目录',
       },
-      config: {
-        alias: 'c',
+      c: {
+        alias: 'config',
+        demandOption: false,
+        describe: 'Surgio 配置文件',
         default: './surgio.conf.js',
+        type: 'string',
       },
     };
   }

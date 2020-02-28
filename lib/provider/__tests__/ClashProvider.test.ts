@@ -1,9 +1,36 @@
 import test from 'ava';
-import ClashProvider from '../../lib/provider/ClashProvider';
-import { NodeTypeEnum } from '../../lib/types';
+import ClashProvider, { getClashSubscription } from '../ClashProvider';
+import { NodeTypeEnum, SupportProviderEnum } from '../../types';
+
+test('ClashProvider', async t => {
+  const provider = new ClashProvider('test', {
+    type: SupportProviderEnum.Clash,
+    url: 'http://example.com/clash-sample.yaml',
+  });
+
+  await t.notThrowsAsync(async () => {
+    await provider.getNodeList();
+  });
+});
+
+test('ClashProvider.getSubscriptionUserInfo', async t => {
+  const provider = new ClashProvider('test', {
+    type: SupportProviderEnum.Clash,
+    url: 'http://example.com/clash-sample-with-user-info.yaml',
+  });
+  const userInfo = await provider.getSubscriptionUserInfo();
+
+  t.deepEqual(userInfo, {
+    upload: 891332010,
+    download: 29921186546,
+    total: 322122547200,
+    expire: 1586330887,
+  });
+});
 
 test('getClashSubscription', async t => {
-  const config = [...await ClashProvider.getClashSubscription('http://example.com/clash-sample.yaml')];
+  const { nodeList } = await getClashSubscription('http://example.com/clash-sample.yaml');
+  const config = [...nodeList];
 
   t.deepEqual(config.map(item => item.nodeName), ['ss1', 'ss2', 'ss3', 'vmess', 'http 1', 'http 2','snell', 'ss4', 'ss-wss']);
   t.deepEqual(config.shift(), {
@@ -102,7 +129,7 @@ test('getClashSubscription', async t => {
 });
 
 test('getClashSubscription udpRelay', async t => {
-  const config = await ClashProvider.getClashSubscription('http://example.com/clash-sample.yaml', true);
+  const { nodeList: config } = await getClashSubscription('http://example.com/clash-sample.yaml', true);
 
   t.deepEqual(config[0], {
     type: NodeTypeEnum.Shadowsocks,
@@ -152,6 +179,6 @@ test('getClashSubscription udpRelay', async t => {
 
 test('getClashSubscription - invalid yaml', async t => {
   await t.throwsAsync(async () => {
-    await ClashProvider.getClashSubscription('http://example.com/test-v2rayn-sub.txt');
+    await getClashSubscription('http://example.com/test-v2rayn-sub.txt');
   }, {instanceOf: Error, message: 'http://example.com/test-v2rayn-sub.txt 不是一个合法的 YAML 文件'});
 });
