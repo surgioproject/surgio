@@ -238,14 +238,14 @@ export class Artifact extends EventEmitter {
     try {
       provider = getProvider(providerName, require(filePath));
       this.providerMap.set(providerName, provider);
-    } catch (err) {
+    } catch (err) /* istanbul ignore next */ {
       err.message = `处理 ${chalk.cyan(providerName)} 时出现错误，相关文件 ${filePath} ，错误原因: ${err.message}`;
       throw err;
     }
 
     try {
       nodeConfigList = await provider.getNodeList();
-    } catch (err) {
+    } catch (err) /* istanbul ignore next */ {
       err.message = `获取 ${chalk.cyan(providerName)} 节点时出现错误，相关文件 ${filePath} ，错误原因: ${err.message}`;
       throw err;
     }
@@ -328,7 +328,7 @@ export class Artifact extends EventEmitter {
         ) {
           try {
             nodeConfig.hostnameIp = await resolveDomain(nodeConfig.hostname);
-          } /* istanbul ignore next */catch (err) {
+          } catch (err) /* istanbul ignore next */ {
             logger.warn(`${nodeConfig.hostname} 无法解析，将忽略该域名的解析结果`);
           }
         }

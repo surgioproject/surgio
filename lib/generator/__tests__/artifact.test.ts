@@ -14,10 +14,15 @@ test('new Artifact()', async t => {
     template: 'test',
     provider: 'ss_json',
   });
+  const templateEngine = getEngine(config.templateDir, config.publicUrl);
 
   t.is(artifact.isReady, false);
   await artifact.init();
   t.is(artifact.isReady, true);
+
+  t.notThrows(() => {
+    artifact.render(templateEngine);
+  });
 
   await t.throwsAsync(async () => {
     await artifact.init();
@@ -33,6 +38,10 @@ test('Artifact without templateEngine', async t => {
     provider: 'ss_json',
   });
   const templateEngine = getEngine(config.templateDir, config.publicUrl);
+
+  t.throws(() => {
+    artifact.render();
+  });
 
   await artifact.init();
 
