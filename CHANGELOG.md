@@ -1,3 +1,12 @@
+## [1.13.1](https://github.com/geekdada/surgio/compare/v1.13.0...v1.13.1) (2020-02-28)
+
+
+### Bug Fixes
+
+* chinaBackFilter 无法使用 ([26f03a2](https://github.com/geekdada/surgio/commit/26f03a2b199e433abe79cabf72aca5b02eaaa29c))
+
+
+
 # [1.13.0](https://github.com/geekdada/surgio/compare/v1.12.3...v1.13.0) (2020-02-28)
 
 
