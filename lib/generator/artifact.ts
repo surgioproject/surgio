@@ -36,6 +36,7 @@ import { prependFlag } from '../utils/flag';
 
 export interface ArtifactOptions {
   readonly remoteSnippetList?: ReadonlyArray<RemoteSnippet>;
+  readonly templateEngine?: Environment;
 }
 
 export class Artifact extends EventEmitter {
@@ -49,12 +50,11 @@ export class Artifact extends EventEmitter {
   private customFilters?: ProviderConfig['customFilters'];
   private netflixFilter?: ProviderConfig['netflixFilter'];
   private youtubePremiumFilter?: ProviderConfig['youtubePremiumFilter'];
-  private templateEngine?: Environment;
 
   constructor(
     public surgioConfig: CommandConfig,
     public artifact: ArtifactConfig,
-    public options: ArtifactOptions = {}
+    private options: ArtifactOptions = {}
   ) {
     super();
 
@@ -160,13 +160,9 @@ export class Artifact extends EventEmitter {
     };
   }
 
-  public async init(templateEngine?: Environment): Promise<this> {
+  public async init(): Promise<this> {
     if (this.isReady) {
       throw new Error('Artifact 已经初始化完成');
-    }
-
-    if (templateEngine) {
-      this.templateEngine = templateEngine;
     }
 
     this.emit('initArtifact:start', { artifact: this.artifact });
@@ -202,7 +198,7 @@ export class Artifact extends EventEmitter {
       throw new Error('Artifact 还未初始化');
     }
 
-    const targetTemplateEngine = templateEngine || this.templateEngine;
+    const targetTemplateEngine = templateEngine || this.options.templateEngine;
 
     if (!targetTemplateEngine) {
       throw new Error('没有可用的 Nunjucks 环境');
@@ -332,7 +328,7 @@ export class Artifact extends EventEmitter {
         ) {
           try {
             nodeConfig.hostnameIp = await resolveDomain(nodeConfig.hostname);
-          } /* istanbul ignore next */ catch (err) {
+          } /* istanbul ignore next */catch (err) {
             logger.warn(`${nodeConfig.hostname} 无法解析，将忽略该域名的解析结果`);
           }
         }
@@ -343,7 +339,6 @@ export class Artifact extends EventEmitter {
       return null;
     })
       .filter(item => !!item);
-
 
     this.nodeConfigListMap.set(providerName, nodeConfigList);
     this.initProgress++;

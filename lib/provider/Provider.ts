@@ -68,10 +68,12 @@ export default class Provider {
     return globalPort++;
   }
 
+  // istanbul ignore next
   public async getSubscriptionUserInfo(): Promise<SubscriptionUserinfo> {
     throw new Error('此 Provider 不支持该功能');
   }
 
+  // istanbul ignore next
   public getNodeList(): Promise<ReadonlyArray<PossibleNodeConfigType>> {
     return Promise.resolve([]);
   };
