@@ -28,8 +28,15 @@ import {
 import { NETWORK_CONCURRENCY } from '../utils/constant';
 import { isIp, resolveDomain } from '../utils/dns';
 import {
-  hkFilter, japanFilter, koreaFilter,
-  netflixFilter as defaultNetflixFilter, singaporeFilter, taiwanFilter, usFilter, validateFilter,
+  hkFilter,
+  japanFilter,
+  koreaFilter,
+  netflixFilter as defaultNetflixFilter,
+  singaporeFilter,
+  taiwanFilter,
+  usFilter,
+  chinaBackFilter,
+  validateFilter,
   youtubePremiumFilter as defaultYoutubePremiumFilter,
 } from '../utils/filter';
 import { prependFlag } from '../utils/flag';
@@ -126,6 +133,7 @@ export class Artifact extends EventEmitter {
       koreaFilter,
       singaporeFilter,
       taiwanFilter,
+      chinaBackFilter,
       toUrlSafeBase64,
       toBase64,
       encodeURIComponent,
@@ -145,6 +153,7 @@ export class Artifact extends EventEmitter {
               koreaFilter,
               singaporeFilter,
               taiwanFilter,
+              chinaBackFilter,
               netflixFilter,
               youtubePremiumFilter,
               ...customFilters,
