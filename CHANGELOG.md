@@ -1,3 +1,12 @@
+## [1.13.2](https://github.com/geekdada/surgio/compare/v1.13.1...v1.13.2) (2020-03-04)
+
+
+### Features
+
+* 支持从 Clash 订阅中读取 vmess 自定义 header ([2ce351a](https://github.com/geekdada/surgio/commit/2ce351a0ac8a659925bdf8cf995c9347127699dd))
+
+
+
 ## [1.13.1](https://github.com/geekdada/surgio/compare/v1.13.0...v1.13.1) (2020-02-28)
 
 
