@@ -1,4 +1,4 @@
-# Snapshot report for `test/template.test.ts`
+# Snapshot report for `lib/generator/__tests__/template.test.ts`
 
 The actual snapshot is saved in `template.test.ts.snap`.
 

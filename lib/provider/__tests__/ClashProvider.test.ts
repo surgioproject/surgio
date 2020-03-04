@@ -32,7 +32,7 @@ test('getClashSubscription', async t => {
   const { nodeList } = await getClashSubscription('http://example.com/clash-sample.yaml');
   const config = [...nodeList];
 
-  t.deepEqual(config.map(item => item.nodeName), ['ss1', 'ss2', 'ss3', 'vmess', 'http 1', 'http 2','snell', 'ss4', 'ss-wss']);
+  t.deepEqual(config.map(item => item.nodeName), ['ss1', 'ss2', 'ss3', 'vmess', 'vmess custom header', 'http 1', 'http 2','snell', 'ss4', 'ss-wss']);
   t.deepEqual(config.shift(), {
     type: NodeTypeEnum.Shadowsocks,
     nodeName: 'ss1',
@@ -40,7 +40,7 @@ test('getClashSubscription', async t => {
     port: 443,
     method: 'chacha20-ietf-poly1305',
     password: 'password',
-    'udp-relay': true
+    'udp-relay': true,
   });
   t.deepEqual(config.shift(), {
     type: NodeTypeEnum.Shadowsocks,
@@ -63,7 +63,8 @@ test('getClashSubscription', async t => {
     'udp-relay': false,
     obfs: 'ws',
     'obfs-host': 'server',
-    'obfs-uri': '/'
+    'obfs-uri': '/',
+    wsHeaders: {},
   });
   t.deepEqual(config.shift(), {
     type: NodeTypeEnum.Vmess,
@@ -76,6 +77,24 @@ test('getClashSubscription', async t => {
     tls: false,
     network: 'tcp',
     udp: false,
+  });
+  t.deepEqual(config.shift(), {
+    type: NodeTypeEnum.Vmess,
+    nodeName: 'vmess custom header',
+    hostname: 'server',
+    host: 'server',
+    path: '/path',
+    port: 443,
+    uuid: 'uuid',
+    alterId: '32',
+    method: 'auto',
+    network: 'ws',
+    udp: false,
+    tls: true,
+    skipCertVerify: false,
+    wsHeaders: {
+      edge: 'www.baidu.com',
+    },
   });
   t.deepEqual(config.shift(), {
     type: NodeTypeEnum.HTTPS,
@@ -125,6 +144,7 @@ test('getClashSubscription', async t => {
     'obfs-host': 'cloudflare.com',
     'obfs-uri': '/ws',
     skipCertVerify: false,
+    wsHeaders: {},
   });
 });
 
@@ -162,6 +182,7 @@ test('getClashSubscription udpRelay', async t => {
     obfs: 'ws',
     'obfs-host': 'server',
     'obfs-uri': '/',
+    wsHeaders: {},
   });
   t.deepEqual(config[3], {
     type: NodeTypeEnum.Vmess,

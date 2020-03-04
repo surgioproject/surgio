@@ -166,6 +166,7 @@ export interface ShadowsocksNodeConfig extends SimpleNodeConfig {
   readonly 'obfs-host'?: string;
   readonly 'obfs-uri'?: string;
   readonly skipCertVerify?: boolean;
+  readonly wsHeaders?: Record<string, string>;
 }
 
 export interface SnellNodeConfig extends SimpleNodeConfig {
@@ -203,7 +204,7 @@ export interface VmessNodeConfig extends SimpleNodeConfig {
   readonly udp?: boolean;
   readonly tls13?: boolean;
   readonly skipCertVerify?: boolean;
-  readonly headers?: Record<string, string>;
+  readonly wsHeaders?: Record<string, string>;
 }
 
 export interface SimpleNodeConfig {
