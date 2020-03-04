@@ -16,6 +16,7 @@ import {
   SubscriptionUserinfo,
   VmessNodeConfig,
 } from '../types';
+import { lowercaseHeaderKeys } from '../utils';
 import { parseSubscriptionUserInfo } from '../utils/subscription';
 import { SubsciptionCacheItem, SubscriptionCache } from '../utils/cache';
 import { NETWORK_TIMEOUT } from '../utils/constant';
@@ -115,7 +116,7 @@ export const getClashSubscription = async (
 
   const nodeList = proxyList.map<SupportConfigTypes>(item => {
     switch (item.type) {
-      case 'ss':
+      case 'ss': {
         // istanbul ignore next
         if (item.plugin && !['obfs', 'v2ray-plugin'].includes(item.plugin)) {
           logger.warn(`不支持从 Clash 订阅中读取 ${item.plugin} 类型的 Shadowsocks 节点，节点 ${item.name} 会被省略`);
@@ -126,6 +127,8 @@ export const getClashSubscription = async (
           logger.warn(`不支持从 Clash 订阅中读取 QUIC 模式的 Shadowsocks 节点，节点 ${item.name} 会被省略`);
           return null;
         }
+
+        const wsHeaders = lowercaseHeaderKeys(_.get(item, 'plugin-opts.headers', {}));
 
         return {
           type: NodeTypeEnum.Shadowsocks,
@@ -147,18 +150,22 @@ export const getClashSubscription = async (
             obfs: item['plugin-opts'].tls === true ? 'wss' : 'ws',
             'obfs-host': item['plugin-opts'].host || item.server,
             'obfs-uri': item['plugin-opts'].path || '/',
+            wsHeaders,
             ...(item['plugin-opts'].tls === true ? {
               skipCertVerify: item['plugin-opts']['skip-cert-verify'] === true,
             } : null),
           } : null),
         };
+      }
 
-      case 'vmess':
+      case 'vmess': {
         // istanbul ignore next
         if (['kcp', 'http'].indexOf(item.network) > -1) {
           logger.warn(`不支持从 Clash 订阅中读取 network 类型为 ${item.network} 的 Vmess 节点，节点 ${item.name} 会被省略`);
           return null;
         }
+
+        const wsHeaders = lowercaseHeaderKeys(_.get(item, 'ws-headers', {}));
 
         return {
           type: NodeTypeEnum.Vmess,
@@ -173,12 +180,14 @@ export const getClashSubscription = async (
           network: item.network || 'tcp',
           ...(item.network === 'ws' ? {
             path: _.get(item, 'ws-path', '/'),
-            host: _.get(item, 'ws-headers.Host', ''),
+            host: _.get(wsHeaders, 'host', item.server),
+            wsHeaders,
           } : null),
           ...(item.tls ? {
             skipCertVerify: item['skip-cert-verify'] === true,
           } : null),
         };
+      }
 
       case 'http':
         if (!item.tls) {

@@ -145,60 +145,6 @@ export const getShadowsocksJSONConfig = async (
   return await requestConfigFromRemote();
 };
 
-export const getV2rayNSubscription = async (
-  url: string,
-): Promise<ReadonlyArray<VmessNodeConfig>> => {
-  assert(url, '未指定订阅地址 url');
-
-  async function requestConfigFromRemote(): Promise<ReadonlyArray<VmessNodeConfig>> {
-    const response = ConfigCache.has(url) ? ConfigCache.get(url) : await (async () => {
-      const res = await got.get(url, {
-        timeout: NETWORK_TIMEOUT,
-      });
-
-      ConfigCache.set(url, res.body);
-
-      return res.body;
-    })();
-
-    const configList = fromBase64(response).split('\n')
-        .filter(item => !!item)
-        .filter(item => item.startsWith("vmess://"));
-
-    return configList.map<VmessNodeConfig>(item => {
-      const json = JSON.parse(fromBase64(item.replace('vmess://', '')));
-
-      // istanbul ignore next
-      if (!json.v || Number(json.v) !== 2) {
-        throw new Error(`该订阅 ${url} 可能不是一个有效的 V2rayN 订阅。请参考 http://bit.ly/2N4lZ8X 进行排查`);
-      }
-
-      // istanbul ignore next
-      if (['kcp', 'http'].indexOf(json.net) > -1) {
-        logger.warn(`不支持读取 network 类型为 ${json.net} 的 Vmess 节点，节点 ${json.ps} 会被省略`);
-        return null;
-      }
-
-      return {
-        nodeName: json.ps,
-        type: NodeTypeEnum.Vmess,
-        hostname: json.add,
-        port: json.port,
-        method: 'auto',
-        uuid: json.id,
-        alterId: json.aid || '0',
-        network: json.net,
-        tls: json.tls === 'tls',
-        host: json.host || '',
-        path: json.path || '/',
-      };
-    })
-      .filter(item => !!item);
-  }
-
-  return await requestConfigFromRemote();
-};
-
 export const getSurgeNodes = (
   list: ReadonlyArray<HttpsNodeConfig|HttpNodeConfig|ShadowsocksNodeConfig|SnellNodeConfig|ShadowsocksrNodeConfig|VmessNodeConfig>,
   filter?: NodeFilterType|SortedNodeNameFilterType,
@@ -372,13 +318,11 @@ export const getSurgeNodes = (
             ];
 
             function getHeader(
-              host: string,
-              ua: string = OBFS_UA
+              wsHeaders: Record<string, string>,
             ): string {
-              return [
-                `Host:${host}`,
-                `User-Agent:${JSON.stringify(ua)}`,
-              ].join('|');
+              return Object.keys(wsHeaders)
+                .map(headerKey => `${headerKey}:${wsHeaders[headerKey]}`)
+                .join('|');
             }
 
             if (config.network === 'ws') {
@@ -386,7 +330,11 @@ export const getSurgeNodes = (
               configList.push(`ws-path=${config.path}`);
               configList.push(
                 'ws-headers=' +
-                getHeader(config.host || config.hostname)
+                getHeader({
+                  host: config.host || config.hostname,
+                  'user-agent': JSON.stringify(OBFS_UA), // 需要用 "" 包裹否则 Surge 会无法解析
+                  ..._.omit(config.wsHeaders, ['host']),
+                })
               );
             }
 
@@ -502,6 +450,7 @@ export const getClashNodes = (
                 host: nodeConfig['obfs-host'],
                 path: nodeConfig['obfs-uri'] || '/',
                 mux: false,
+                headers: nodeConfig.wsHeaders || {},
               },
             } : null),
           };
@@ -525,7 +474,8 @@ export const getClashNodes = (
             ...(nodeConfig.network === 'ws' ? {
               'ws-path': nodeConfig.path,
               'ws-headers': {
-                ...(nodeConfig.host ? { Host: nodeConfig.host } : null),
+                ...(nodeConfig.host ? { host: nodeConfig.host } : null),
+                ...nodeConfig.wsHeaders,
               },
             } : null),
           };
@@ -764,13 +714,11 @@ export const getQuantumultNodes = (
   filter?: NodeNameFilterType|SortedNodeNameFilterType,
 ): string => {
   function getHeader(
-    host: string,
-    ua = OBFS_UA
+    wsHeaders: Record<string, string>
   ): string {
-    return [
-      `Host:${host}`,
-      `User-Agent:${ua}`,
-    ].join('[Rr][Nn]');
+    return Object.keys(wsHeaders)
+      .map(headerKey => `${headerKey}:${wsHeaders[headerKey]}`)
+      .join('[Rr][Nn]');
   }
 
   const result: ReadonlyArray<string> = applyFilter(list, filter)
@@ -786,7 +734,11 @@ export const getQuantumultNodes = (
             `certificate=1`,
             `obfs=${nodeConfig.network}`,
             `obfs-path=${JSON.stringify(nodeConfig.path || '/')}`,
-            `obfs-header=${JSON.stringify(getHeader(nodeConfig.host || nodeConfig.hostname ))}`,
+            `obfs-header=${JSON.stringify(getHeader({
+              host: nodeConfig.host || nodeConfig.hostname,
+              'user-agent': OBFS_UA, // 需要用 "" 包裹否则 Surge 会无法解析
+              ..._.omit(nodeConfig.wsHeaders, ['host'])
+            }))}`,
           ].filter(value => !!value).join(',');
 
           return 'vmess://' + toBase64([
@@ -878,6 +830,11 @@ export const getQuantumultXNodes = (
 
           config.push(`tag=${nodeConfig.nodeName}`);
 
+          // istanbul-ignore-next
+          if (nodeConfig.wsHeaders && Object.keys(nodeConfig.wsHeaders).length > 1) {
+            logger.warn(`Quantumult X 不支持自定义额外的 Header 字段，节点 ${nodeConfig.nodeName} 可能不可用`);
+          }
+
           return `vmess=${config.join(', ')}`;
         }
 
@@ -903,6 +860,11 @@ export const getQuantumultXNodes = (
             `tag=${nodeConfig.nodeName}`,
           ]
             .join(', ');
+
+          // istanbul-ignore-next
+          if (nodeConfig.wsHeaders && Object.keys(nodeConfig.wsHeaders).length > 1) {
+            logger.warn(`Quantumult X 不支持自定义额外的 Header 字段，节点 ${nodeConfig.nodeName} 可能不可用`);
+          }
 
           return `shadowsocks=${config}`;
         }
@@ -1231,4 +1193,15 @@ export const applyFilter = <T extends SimpleNodeConfig>(
   }
 
   return nodes;
+};
+
+export const lowercaseHeaderKeys = (headers: Record<string, string>) => {
+  const wsHeaders = {};
+
+  Object.keys(headers)
+    .forEach(key => {
+      wsHeaders[key.toLowerCase()] = headers[key];
+    });
+
+  return wsHeaders;
 };

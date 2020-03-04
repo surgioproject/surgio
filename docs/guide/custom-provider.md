@@ -214,6 +214,9 @@ module.exports = {
   uuid: '1386f85e-657b-4d6e-9d56-78badb75e1fd',
   tfo: false, // TCP Fast Open
   tls13: false, // TLS 1.3, TLS 开启时有效
+  wsHeaders: {
+    key: 'value',
+  },
 }
 ```
 

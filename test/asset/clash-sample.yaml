@@ -127,6 +127,19 @@ Proxy:
     # ws-headers:
     #   Host: v2ray.com
 
+  - name: "vmess custom header"
+    type: vmess
+    server: server
+    port: 443
+    uuid: uuid
+    alterId: 32
+    cipher: auto
+    tls: true
+    network: ws
+    ws-path: /path
+    ws-headers:
+      edge: www.baidu.com
+
   # socks5
   - name: "socks"
     type: socks5
