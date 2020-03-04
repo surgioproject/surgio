@@ -203,6 +203,7 @@ export interface VmessNodeConfig extends SimpleNodeConfig {
   readonly udp?: boolean;
   readonly tls13?: boolean;
   readonly skipCertVerify?: boolean;
+  readonly headers?: Record<string, string>;
 }
 
 export interface SimpleNodeConfig {

@@ -652,38 +652,6 @@ test('getShadowsocksJSONConfig', async t => {
   });
 });
 
-test('getV2rayNSubscription', async t => {
-  const url = 'http://example.com/test-v2rayn-sub.txt';
-  const configList = await utils.getV2rayNSubscription(url);
-
-  t.deepEqual(configList[0], {
-    alterId: '64',
-    host: 'example.com',
-    hostname: '1.1.1.1',
-    method: 'auto',
-    network: 'ws',
-    nodeName: '测试 1',
-    path: '/',
-    port: 8080,
-    tls: false,
-    type: NodeTypeEnum.Vmess,
-    uuid: '1386f85e-657b-4d6e-9d56-78badb75e1fd',
-  });
-  t.deepEqual(configList[1], {
-    alterId: '64',
-    host: 'example.com',
-    hostname: '1.1.1.1',
-    method: 'auto',
-    network: 'tcp',
-    nodeName: '测试 2',
-    path: '/',
-    port: 8080,
-    tls: false,
-    type: NodeTypeEnum.Vmess,
-    uuid: '1386f85e-657b-4d6e-9d56-78badb75e1fd',
-  });
-});
-
 test('getV2rayNNodes', t => {
   const schemeList = utils.getV2rayNNodes([
     {
