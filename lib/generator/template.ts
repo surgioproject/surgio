@@ -10,7 +10,7 @@ import {
   CLASH_SUPPORTED_RULE,
 } from '../utils/constant';
 
-export function getEngine(templateDir: string, publicUrl: string): nunjucks.Environment {
+export function getEngine(templateDir: string): nunjucks.Environment {
   const engine = nunjucks.configure(templateDir, {
     autoescape: false,
   });
@@ -60,7 +60,7 @@ export function getEngine(templateDir: string, publicUrl: string): nunjucks.Envi
 
         // Surge Script 处理
         if (testString.startsWith('HTTP-RESPONSE')) {
-          return convertSurgeScriptRuleToQuantumultXRewriteRule(item, publicUrl);
+          return convertSurgeScriptRuleToQuantumultXRewriteRule(item);
         }
 
         const matched = testString.match(/^([\w-]+),/);
@@ -112,7 +112,7 @@ export function getEngine(templateDir: string, publicUrl: string): nunjucks.Envi
   return engine;
 };
 
-export const convertSurgeScriptRuleToQuantumultXRewriteRule = (str: string, publicUrl: string): string => {
+export const convertSurgeScriptRuleToQuantumultXRewriteRule = (str: string): string => {
   const parts = str.split(' ');
   const result = [];
 
@@ -120,12 +120,9 @@ export const convertSurgeScriptRuleToQuantumultXRewriteRule = (str: string, publ
     case 'http-response':
       const params = decodeStringList(parts.splice(2).join('').split(','));
       const scriptPath = params['script-path'];
-      const apiEndpoint = new URL(publicUrl);
-      apiEndpoint.pathname = '/qx-script';
-      apiEndpoint.searchParams.set('url', `${scriptPath}`);
 
       // parts[1] => Effective URL Rule
-      result.push(parts[1], 'url', 'script-response-body', apiEndpoint.toString());
+      result.push(parts[1], 'url', 'script-response-body', scriptPath);
 
       return result.join(' ');
 

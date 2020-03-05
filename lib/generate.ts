@@ -21,7 +21,7 @@ async function run(config: CommandConfig): Promise<void> {
   const distPath = config.output;
   const remoteSnippetsConfig = config.remoteSnippets || [];
   const remoteSnippetList = await loadRemoteSnippetList(remoteSnippetsConfig);
-  const templateEngine = getEngine(config.templateDir, config.publicUrl);
+  const templateEngine = getEngine(config.templateDir);
 
   await fs.remove(distPath);
   await fs.mkdir(distPath);

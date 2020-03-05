@@ -14,7 +14,7 @@ test('new Artifact()', async t => {
     template: 'test',
     provider: 'ss_json',
   });
-  const templateEngine = getEngine(config.templateDir, config.publicUrl);
+  const templateEngine = getEngine(config.templateDir);
 
   t.is(artifact.isReady, false);
   await artifact.init();
@@ -37,7 +37,7 @@ test('Artifact without templateEngine', async t => {
     template: 'test',
     provider: 'ss_json',
   });
-  const templateEngine = getEngine(config.templateDir, config.publicUrl);
+  const templateEngine = getEngine(config.templateDir);
 
   t.throws(() => {
     artifact.render();

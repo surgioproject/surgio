@@ -41,7 +41,7 @@ export class Server {
 
     this.config = config;
     this.artifactList = config.artifacts;
-    this.templateEngine = getEngine(config.templateDir, config.publicUrl);
+    this.templateEngine = getEngine(config.templateDir);
     if (fs.existsSync(pkgFile)) {
       this.pkgFile = require(pkgFile);
     }

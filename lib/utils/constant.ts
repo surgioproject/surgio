@@ -35,9 +35,6 @@ export const QUANTUMULT_X_SUPPORTED_RULE: ReadonlyArray<string> = [
   'IP-CIDR',
   'GEOIP',
   'FINAL',
-
-  // 转换
-  'HTTP-RESPONSE',
 ];
 
 export const MELLOW_UNSUPPORTED_RULE: ReadonlyArray<string> = [

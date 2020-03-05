@@ -4,7 +4,7 @@ import fs from 'fs-extra';
 import { join } from 'path';
 import { getEngine } from '../template';
 
-const templateEngine = getEngine(process.cwd(), 'https://example.com/');
+const templateEngine = getEngine(process.cwd());
 const assetDir = join(__dirname, '../../../test/asset/');
 
 test('clash #1', t => {
