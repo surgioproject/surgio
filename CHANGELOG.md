@@ -1,3 +1,12 @@
+## [1.13.3](https://github.com/geekdada/surgio/compare/v1.13.2...v1.13.3) (2020-03-05)
+
+
+### Bug Fixes
+
+* quantumultx 模板处理器不再使用 /qx-script API 地址 ([e39366c](https://github.com/geekdada/surgio/commit/e39366c772e558943c884059893fb0fa4468c14c))
+
+
+
 ## [1.13.2](https://github.com/geekdada/surgio/compare/v1.13.1...v1.13.2) (2020-03-04)
 
 
