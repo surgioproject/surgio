@@ -1,3 +1,17 @@
+## [1.13.4](https://github.com/geekdada/surgio/compare/v1.13.3...v1.13.4) (2020-03-08)
+
+
+### Bug Fixes
+
+* 流量 header 解析容错不足 ([f00c539](https://github.com/geekdada/surgio/commit/f00c53994bd07342d873f6eef4ff83c32848bf8b))
+
+
+### Features
+
+* 优化 check 命令体验 ([b6e6094](https://github.com/geekdada/surgio/commit/b6e60942795c89b375f9919a42467a5d33f99024))
+
+
+
 ## [1.13.3](https://github.com/geekdada/surgio/compare/v1.13.2...v1.13.3) (2020-03-05)
 
 
