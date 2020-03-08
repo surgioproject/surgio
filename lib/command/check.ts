@@ -1,12 +1,13 @@
 // istanbul ignore file
 import assert from 'assert';
-import Command from 'common-bin';
+import Command, { Context } from 'common-bin';
 import fs from 'fs';
 import path from 'path';
+import Listr from 'listr';
+import inquirer from 'inquirer';
+import { PossibleNodeConfigType } from '../types';
 
-import {
-  loadConfig
-} from '../utils/config';
+import { loadConfig } from '../utils/config';
 import { getProvider } from '../provider';
 import { errorHandler } from '../utils/error-helper';
 
@@ -28,21 +29,24 @@ class CheckCommand extends Command {
   }
 
   public async run(ctx): Promise<void> {
-    assert(ctx.argv._[0], '没有指定 Provider');
+    const tasks = this.getTasks();
+    const tasksResult = await tasks.run({
+      cmdCtx: ctx,
+    });
+    const { nodeList } = tasksResult;
+    const answers = await inquirer.prompt([
+      {
+        type: 'list',
+        name: 'node',
+        message: '请选择节点',
+        choices: nodeList.map(node => ({
+          name: `${node.nodeName} - ${node.hostname}:${node.port}`,
+          value: node,
+        })),
+      }
+    ]);
 
-    const providerName = ctx.argv._[0];
-    const config = loadConfig(ctx.cwd, ctx.argv.config);
-    const filePath = path.resolve(config.providerDir, `./${providerName}.js`);
-    const file: any|Error = fs.existsSync(filePath) ? require(filePath) : new Error('找不到该 Provider');
-
-    if (file instanceof Error) {
-      throw file;
-    }
-
-    const provider = getProvider(providerName, file);
-    const nodeList = await provider.getNodeList();
-
-    console.log(JSON.stringify(nodeList, null ,2));
+    console.log(JSON.stringify(answers.node, null, 2));
   }
 
   public get description(): string {
@@ -51,6 +55,35 @@ class CheckCommand extends Command {
 
   public errorHandler(err): void {
     errorHandler.call(this, err);
+  }
+
+  private getTasks(): Listr {
+    return new Listr<{
+      cmdCtx: Context;
+      nodeList?: ReadonlyArray<PossibleNodeConfigType>;
+    }>([
+      {
+        title: '获取 Provider 信息',
+        task: async ctx => {
+          const { cmdCtx } = ctx;
+
+          assert(cmdCtx.argv._[0], '没有指定 Provider');
+
+          const providerName = cmdCtx.argv._[0];
+          const config = loadConfig(cmdCtx.cwd, cmdCtx.argv.config);
+          const filePath = path.resolve(config.providerDir, `./${providerName}.js`);
+          const file: any|Error = fs.existsSync(filePath) ? require(filePath) : new Error('找不到该 Provider');
+
+          if (file instanceof Error) {
+            throw file;
+          }
+
+          const provider = getProvider(providerName, file);
+
+          ctx.nodeList = await provider.getNodeList();
+        },
+      },
+    ]);
   }
 }
 
