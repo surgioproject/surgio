@@ -13,6 +13,9 @@ export const parseSubscriptionUserInfo = (str: string): SubscriptionUserinfo => 
   };
 
   str.split(';').forEach(item => {
+    if (!item) {
+      return;
+    }
     const pair = item.split('=');
     const value = Number(pair[1].trim());
 
