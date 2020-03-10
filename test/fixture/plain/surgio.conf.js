@@ -72,6 +72,7 @@ module.exports = {
   },
   customFilters: {
     globalFilter: node => node.nodeName === '测试中文',
+    unused: () => true,
   },
   proxyTestUrl: 'http://www.google.com/generate_204',
   proxyTestInterval: 2400,
