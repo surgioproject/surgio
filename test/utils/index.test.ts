@@ -448,6 +448,53 @@ test('getShadowsocksNodes', async t => {
   t.is(txt1, 'ss://Y2hhY2hhMjAtaWV0Zi1wb2x5MTMwNTpwYXNzd29yZA@example.com:8443/?plugin=obfs-local%3Bobfs%3Dtls%3Bobfs-host%3Dgateway.icloud.com&group=GroupName#%F0%9F%87%AD%F0%9F%87%B0HK(Example)');
 });
 
+test('getMellowNodes', async t => {
+  const nodeList: ReadonlyArray<VmessNodeConfig> = [
+    {
+      alterId: '64',
+      host: 'example.com',
+      hostname: '1.1.1.1',
+      method: 'auto',
+      network: 'ws',
+      nodeName: 'Test Node 3',
+      path: '/',
+      port: 8080,
+      tls: false,
+      skipCertVerify: true,
+      type: NodeTypeEnum.Vmess,
+      uuid: '1386f85e-657b-4d6e-9d56-78badb75e1fd',
+    },
+    {
+      alterId: '64',
+      host: '',
+      hostname: '1.1.1.1',
+      method: 'auto',
+      network: 'tcp',
+      nodeName: 'Test Node 4',
+      path: '/',
+      port: 8080,
+      tls: false,
+      type: NodeTypeEnum.Vmess,
+      uuid: '1386f85e-657b-4d6e-9d56-78badb75e1fd',
+    }, {
+      alterId: '64',
+      host: '',
+      hostname: '1.1.1.1',
+      method: 'auto',
+      network: 'tcp',
+      nodeName: 'Test Node 5',
+      path: '/',
+      port: 8080,
+      tls: true,
+      type: NodeTypeEnum.Vmess,
+      uuid: '1386f85e-657b-4d6e-9d56-78badb75e1fd',
+    },
+  ];
+
+  t.snapshot(utils.getMellowNodes(nodeList));
+  t.snapshot(utils.getMellowNodes(nodeList, nodeConfig => nodeConfig.nodeName === 'Test Node 5'));
+});
+
 test('getDownloadUrl', t => {
   t.is(utils.getDownloadUrl('http://example.com/', 'test.conf'), 'http://example.com/test.conf');
   t.is(utils.getDownloadUrl(undefined, 'test.conf'), '/test.conf');
