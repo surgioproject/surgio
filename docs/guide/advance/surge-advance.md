@@ -23,7 +23,7 @@ Surge 没有原生提供对 V2Ray 和 SSR 的支持 ~~（将来也不太可能�
 
 找到 `surgio.conf.js`，补充如下字段：
 
-```js
+```js{3-9}
 module.exports = {
   // ...
   binPath: {

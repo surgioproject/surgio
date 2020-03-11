@@ -91,7 +91,7 @@ module.exports = {
             },
             'api',
             'cli',
-            '0.x-to-1.0',
+            'faq',
           ]
         },
         {
