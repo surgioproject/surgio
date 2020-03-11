@@ -1,3 +1,12 @@
+## [1.13.5](https://github.com/geekdada/surgio/compare/v1.13.4...v1.13.5) (2020-03-11)
+
+
+### Bug Fixes
+
+* surge ws-headers 值应用引号包裹 ([6be6ef4](https://github.com/geekdada/surgio/commit/6be6ef4eb094977a0cb2f9ef77c348aa8057399a))
+
+
+
 ## [1.13.4](https://github.com/geekdada/surgio/compare/v1.13.3...v1.13.4) (2020-03-08)
 
 
