@@ -329,12 +329,13 @@ export const getSurgeNodes = (
               configList.push('ws=true');
               configList.push(`ws-path=${config.path}`);
               configList.push(
-                'ws-headers=' +
-                getHeader({
-                  host: config.host || config.hostname,
-                  'user-agent': JSON.stringify(OBFS_UA), // 需要用 "" 包裹否则 Surge 会无法解析
-                  ..._.omit(config.wsHeaders, ['host']),
-                })
+                'ws-headers=' + JSON.stringify(
+                  getHeader({
+                    host: config.host || config.hostname,
+                    'user-agent': OBFS_UA,
+                    ..._.omit(config.wsHeaders, ['host']),
+                  })
+                )
               );
             }
 
