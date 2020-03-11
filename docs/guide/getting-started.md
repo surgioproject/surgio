@@ -101,7 +101,7 @@ npm run update
 确保你当前的版本和新版没有兼容性问题后，运行下面命令即可。
 
 ```bash
-npm install surgio@latest --save
+npm install surgio@latest
 ```
 
 ## 配置文件

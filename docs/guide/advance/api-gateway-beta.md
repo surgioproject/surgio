@@ -10,10 +10,10 @@ sidebarDepth: 1
 规则仓库目录内运行：
 
 ```bash
-npm i @surgio/gateway@latest --save
+npm i @surgio/gateway@latest
 ```
 
-同时需要保证 Surgio 版本号大于 v1.12.0。
+同时需要保证 Surgio 版本号大于 v1.13.0。
 
 ## 修改 now.json
 

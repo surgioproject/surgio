@@ -18,6 +18,6 @@ export https_proxy=http://127.0.0.1:6152;export http_proxy=http://127.0.0.1:6152
 
 点击 _check the logs_，可以看到错误日志，截图后反馈至交流群。
 
-Build logs 通常不会出错，如果没有看错误请在 Functions 页面查看运行期错误。
+Build logs 通常不会出错，如果没有看到错误请在 Functions 页面查看运行期错误。
 
 ![](./images/now-logs.png)
