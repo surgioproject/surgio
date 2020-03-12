@@ -466,7 +466,7 @@ test('getShadowsocksNodes', async t => {
 });
 
 test('getMellowNodes', async t => {
-  const nodeList: ReadonlyArray<VmessNodeConfig> = [
+  const nodeList: ReadonlyArray<VmessNodeConfig|ShadowsocksNodeConfig> = [
     {
       alterId: '64',
       host: 'example.com',
@@ -505,7 +505,17 @@ test('getMellowNodes', async t => {
       tls: true,
       type: NodeTypeEnum.Vmess,
       uuid: '1386f85e-657b-4d6e-9d56-78badb75e1fd',
-    },
+    }, {
+      nodeName: '🇭🇰HK(Example)',
+      type: NodeTypeEnum.Shadowsocks,
+      hostname: 'example.com',
+      port: '8443',
+      method: 'chacha20-ietf-poly1305',
+      password: 'password',
+      obfs: 'tls',
+      'obfs-host': 'gateway.icloud.com',
+      'udp-relay': true,
+    }
   ];
 
   t.snapshot(utils.getMellowNodes(nodeList));

@@ -1,3 +1,4 @@
+import { logger } from '@surgio/logger';
 import assert from 'assert';
 import Debug from 'debug';
 import fs from 'fs-extra';
@@ -10,7 +11,6 @@ import { JsonObject } from 'type-fest';
 import { default as legacyUrl } from 'url';
 import URLSafeBase64 from 'urlsafe-base64';
 import YAML from 'yaml';
-import { logger } from '@surgio/logger';
 
 import {
   HttpNodeConfig,
@@ -25,15 +25,15 @@ import {
   ShadowsocksrNodeConfig,
   SimpleNodeConfig,
   SnellNodeConfig,
-  SortedNodeNameFilterType, SubscriptionUserinfo, TrojanNodeConfig,
+  SortedNodeNameFilterType,
+  TrojanNodeConfig,
   VmessNodeConfig,
 } from '../types';
+import { ConfigCache } from './cache';
 import { NETWORK_TIMEOUT, OBFS_UA, PROXY_TEST_INTERVAL, PROXY_TEST_URL } from './constant';
 import { isIp } from './dns';
 import { validateFilter } from './filter';
-import { parseSSRUri } from './ssr';
 import { formatVmessUri } from './v2ray';
-import { ConfigCache, SubsciptionCacheItem, SubscriptionCache } from './cache';
 
 const debug = Debug('surgio:utils');
 
@@ -561,7 +561,7 @@ export const getClashNodes = (
 };
 
 export const getMellowNodes = (
-  list: ReadonlyArray<VmessNodeConfig>,
+  list: ReadonlyArray<VmessNodeConfig|ShadowsocksNodeConfig>,
   filter?: NodeFilterType|SortedNodeNameFilterType
 ): string => {
   const result = applyFilter(list, filter)
@@ -570,6 +570,11 @@ export const getMellowNodes = (
         case NodeTypeEnum.Vmess: {
           const uri = formatVmessUri(nodeConfig);
           return [nodeConfig.nodeName, 'vmess1', uri.trim().replace('vmess://', 'vmess1://')].join(', ');
+        }
+
+        case NodeTypeEnum.Shadowsocks: {
+          const uri = getShadowsocksNodes([nodeConfig]);
+          return [nodeConfig.nodeName, 'ss', uri.trim()].join(', ');
         }
 
         // istanbul ignore next
