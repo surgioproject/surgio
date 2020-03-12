@@ -16,6 +16,10 @@ export default class CustomProvider extends Provider {
         .required(),
       nodeName: Joi.string().required(),
       enable: Joi.boolean(),
+      tfo: Joi.boolean(),
+      mptcp: Joi.boolean(),
+      binPath: Joi.string(),
+      localPort: Joi.number(),
     })
       .unknown();
     const schema = Joi.object({

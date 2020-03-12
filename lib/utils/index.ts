@@ -25,7 +25,7 @@ import {
   ShadowsocksrNodeConfig,
   SimpleNodeConfig,
   SnellNodeConfig,
-  SortedNodeNameFilterType, SubscriptionUserinfo,
+  SortedNodeNameFilterType, SubscriptionUserinfo, TrojanNodeConfig,
   VmessNodeConfig,
 } from '../types';
 import { NETWORK_TIMEOUT, OBFS_UA, PROXY_TEST_INTERVAL, PROXY_TEST_URL } from './constant';
@@ -146,7 +146,7 @@ export const getShadowsocksJSONConfig = async (
 };
 
 export const getSurgeNodes = (
-  list: ReadonlyArray<HttpsNodeConfig|HttpNodeConfig|ShadowsocksNodeConfig|SnellNodeConfig|ShadowsocksrNodeConfig|VmessNodeConfig>,
+  list: ReadonlyArray<HttpsNodeConfig|HttpNodeConfig|ShadowsocksNodeConfig|SnellNodeConfig|ShadowsocksrNodeConfig|VmessNodeConfig|TrojanNodeConfig>,
   filter?: NodeFilterType|SortedNodeNameFilterType,
 ): string => {
   const result: string[] = applyFilter(list, filter)
@@ -402,6 +402,28 @@ export const getSurgeNodes = (
               configString.join(', '),
             ].join(' = '));
           }
+        }
+
+        case NodeTypeEnum.Trojan: {
+          const configList: string[] = [
+            'trojan',
+            nodeConfig.hostname,
+            `${nodeConfig.port}`,
+            `password=${nodeConfig.password}`,
+            ...(typeof nodeConfig.tfo === 'boolean' ? [
+              `tfo=${nodeConfig.tfo}`,
+            ] : []),
+            ...(typeof nodeConfig.mptcp === 'boolean' ? [
+              `mptcp=${nodeConfig.mptcp}`,
+            ] : []),
+          ];
+
+          return (
+            [
+              nodeConfig.nodeName,
+              configList.join(', ')
+            ]
+          ).join(' = ');
         }
 
         // istanbul ignore next
