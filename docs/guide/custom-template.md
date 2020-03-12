@@ -265,7 +265,7 @@ vmess://5rWL6K+VIDIgPSB2bWVzcywxLjEuMS4xLDgwODAsY2hhY2hhMjAtaWV0Zi1wb2x5MTMwNSwi
 
 :::tip 提示
 - 第二个参数可选，可传入标准的过滤器或自定义的过滤器
-- 支持输出 Vmess 节点
+- 支持输出 Vmess 和 Shadowsocks 节点
 :::
 
 该方法输出的数据结构如下：

@@ -260,6 +260,18 @@ module.exports = {
 }
 ```
 
+*Trojan* <Badge text="v1.14.0" vertical="middle" />
+
+```json5
+{
+  type: 'trojan',
+  nodeName: '🇭🇰HK',
+  hostname: 'hk.example.com',
+  port: 443,
+  password: 'password',
+}
+```
+
 ## 公共属性
 
 :::tip 提示
