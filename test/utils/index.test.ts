@@ -7,14 +7,14 @@ import {
   ShadowsocksrNodeConfig,
   SimpleNodeConfig,
   VmessNodeConfig,
-  SnellNodeConfig,
+  SnellNodeConfig, TrojanNodeConfig,
 } from '../../lib/types';
 import * as utils from '../../lib/utils';
-import { PROXY_TEST_INTERVAL, PROXY_TEST_URL } from '../../lib/utils/constant';
+import { ERR_INVALID_FILTER, PROXY_TEST_INTERVAL, PROXY_TEST_URL } from '../../lib/utils/constant';
 import * as filter from '../../lib/utils/filter';
 
 test('getSurgeNodes', async t => {
-  const nodeList: ReadonlyArray<ShadowsocksNodeConfig|ShadowsocksrNodeConfig|VmessNodeConfig> = [{
+  const nodeList: ReadonlyArray<ShadowsocksNodeConfig|ShadowsocksrNodeConfig|VmessNodeConfig|TrojanNodeConfig> = [{
     nodeName: 'Test Node 1',
     type: NodeTypeEnum.Shadowsocks,
     hostname: 'example.com',
@@ -169,6 +169,20 @@ test('getSurgeNodes', async t => {
     },
     tfo: true,
     mptcp: true,
+  }, {
+    type: NodeTypeEnum.Trojan,
+    nodeName: 'trojan node 1',
+    hostname: 'example.com',
+    port: 443,
+    password: 'password1',
+  }, {
+    type: NodeTypeEnum.Trojan,
+    nodeName: 'trojan node 2',
+    hostname: 'example.com',
+    port: 443,
+    password: 'password1',
+    tfo: true,
+    mptcp: true,
   }];
   const txt1 = utils.getSurgeNodes(nodeList).split('\n');
   const txt2 = utils.getSurgeNodes(nodeList, nodeConfig => nodeConfig.nodeName === 'Test Node 1');
@@ -184,6 +198,9 @@ test('getSurgeNodes', async t => {
   t.is(txt1[8], 'Test Node 6 = ss, example2.com, 443, encrypt-method=chacha20-ietf-poly1305, password=password');
   t.is(txt1[9], 'Test Node 7 = ss, example2.com, 443, encrypt-method=chacha20-ietf-poly1305, password=password, tfo=true, mptcp=true');
   t.is(txt1[10], '测试 6 = vmess, 1.1.1.1, 8080, username=1386f85e-657b-4d6e-9d56-78badb75e1fd, ws=true, ws-path=/, ws-headers="host:1.1.1.1|user-agent:Mozilla/5.0 (iPhone; CPU iPhone OS 12_3_1 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148", tls=true, tls13=true, skip-cert-verify=true, tfo=true, mptcp=true');
+  t.is(txt1[11], 'trojan node 1 = trojan, example.com, 443, password=password1');
+  t.is(txt1[12], 'trojan node 2 = trojan, example.com, 443, password=password1, tfo=true, mptcp=true');
+
   t.is(txt2, 'Test Node 1 = custom, example.com, 443, chacha20-ietf-poly1305, password, https://raw.githubusercontent.com/ConnersHua/SSEncrypt/master/SSEncrypt.module, udp-relay=true, obfs=tls, obfs-host=example.com');
 });
 
@@ -449,7 +466,7 @@ test('getShadowsocksNodes', async t => {
 });
 
 test('getMellowNodes', async t => {
-  const nodeList: ReadonlyArray<VmessNodeConfig> = [
+  const nodeList: ReadonlyArray<VmessNodeConfig|ShadowsocksNodeConfig> = [
     {
       alterId: '64',
       host: 'example.com',
@@ -488,7 +505,17 @@ test('getMellowNodes', async t => {
       tls: true,
       type: NodeTypeEnum.Vmess,
       uuid: '1386f85e-657b-4d6e-9d56-78badb75e1fd',
-    },
+    }, {
+      nodeName: '🇭🇰HK(Example)',
+      type: NodeTypeEnum.Shadowsocks,
+      hostname: 'example.com',
+      port: '8443',
+      method: 'chacha20-ietf-poly1305',
+      password: 'password',
+      obfs: 'tls',
+      'obfs-host': 'gateway.icloud.com',
+      'udp-relay': true,
+    }
   ];
 
   t.snapshot(utils.getMellowNodes(nodeList));
@@ -1082,4 +1109,28 @@ test('formatV2rayConfig', t => {
       },
     }
   });
+});
+
+test('output api should fail with invalid filter', t => {
+  t.throws(() => {
+    utils.getSurgeNodes([], undefined);
+  }, null, ERR_INVALID_FILTER);
+  t.throws(() => {
+    utils.getClashNodes([], undefined);
+  }, null, ERR_INVALID_FILTER);
+  t.throws(() => {
+    utils.getClashNodeNames([], undefined);
+  }, null, ERR_INVALID_FILTER);
+  t.throws(() => {
+    utils.getNodeNames([], undefined);
+  }, null, ERR_INVALID_FILTER);
+  t.throws(() => {
+    utils.getQuantumultNodes([], undefined, undefined);
+  }, null, ERR_INVALID_FILTER);
+  t.throws(() => {
+    utils.getQuantumultXNodes([], undefined);
+  }, null, ERR_INVALID_FILTER);
+  t.throws(() => {
+    utils.getMellowNodes([], undefined);
+  }, null, ERR_INVALID_FILTER);
 });

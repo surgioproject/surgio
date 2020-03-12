@@ -35,6 +35,13 @@ module.exports = {
       tfo: true,
       tls13: true,
     },
+    {
+      type: 'trojan',
+      nodeName: 'trojan node',
+      hostname: 'trojan.example.com',
+      port: '443',
+      password: 'password',
+    }
   ],
   renameNode: name => {
     if (name === 'rename to HTTPS') {

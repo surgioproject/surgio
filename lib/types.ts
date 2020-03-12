@@ -1,11 +1,4 @@
-import BlackSSLProvider from './provider/BlackSSLProvider';
-import ClashProvider from './provider/ClashProvider';
-import CustomProvider from './provider/CustomProvider';
 import Provider from './provider/Provider';
-import ShadowsocksJsonSubscribeProvider from './provider/ShadowsocksJsonSubscribeProvider';
-import ShadowsocksrSubscribeProvider from './provider/ShadowsocksrSubscribeProvider';
-import ShadowsocksSubscribeProvider from './provider/ShadowsocksSubscribeProvider';
-import V2rayNSubscribeProvider from './provider/V2rayNSubscribeProvider';
 
 export enum NodeTypeEnum {
   HTTPS = 'https',
@@ -14,6 +7,7 @@ export enum NodeTypeEnum {
   Shadowsocksr = 'shadowsocksr',
   Snell = 'snell',
   Vmess = 'vmess',
+  Trojan = 'trojan',
 }
 
 export enum SupportProviderEnum {
@@ -207,6 +201,13 @@ export interface VmessNodeConfig extends SimpleNodeConfig {
   readonly wsHeaders?: Record<string, string>;
 }
 
+export interface TrojanNodeConfig extends SimpleNodeConfig {
+  readonly type: NodeTypeEnum.Trojan;
+  readonly hostname: string;
+  readonly port: number|string;
+  readonly password: string;
+}
+
 export interface SimpleNodeConfig {
   readonly type: NodeTypeEnum;
   nodeName: string; // tslint:disable-line
@@ -245,7 +246,7 @@ export interface SortedNodeNameFilterType {
   readonly supportSort?: boolean;
 }
 
-export type PossibleNodeConfigType = HttpsNodeConfig|HttpNodeConfig|ShadowsocksNodeConfig|ShadowsocksrNodeConfig|SnellNodeConfig|VmessNodeConfig;
+export type PossibleNodeConfigType = HttpsNodeConfig|HttpNodeConfig|ShadowsocksNodeConfig|ShadowsocksrNodeConfig|SnellNodeConfig|VmessNodeConfig|TrojanNodeConfig;
 
 export type ProxyGroupModifier = (nodeList: ReadonlyArray<PossibleNodeConfigType>, filters: PlainObjectOf<NodeNameFilterType|SortedNodeNameFilterType>) => ReadonlyArray<{
   readonly name: string;

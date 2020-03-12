@@ -1,3 +1,4 @@
+import { logger } from '@surgio/logger';
 import assert from 'assert';
 import Debug from 'debug';
 import fs from 'fs-extra';
@@ -10,7 +11,6 @@ import { JsonObject } from 'type-fest';
 import { default as legacyUrl } from 'url';
 import URLSafeBase64 from 'urlsafe-base64';
 import YAML from 'yaml';
-import { logger } from '@surgio/logger';
 
 import {
   HttpNodeConfig,
@@ -25,15 +25,15 @@ import {
   ShadowsocksrNodeConfig,
   SimpleNodeConfig,
   SnellNodeConfig,
-  SortedNodeNameFilterType, SubscriptionUserinfo,
+  SortedNodeNameFilterType,
+  TrojanNodeConfig,
   VmessNodeConfig,
 } from '../types';
-import { NETWORK_TIMEOUT, OBFS_UA, PROXY_TEST_INTERVAL, PROXY_TEST_URL } from './constant';
+import { ConfigCache } from './cache';
+import { ERR_INVALID_FILTER, NETWORK_TIMEOUT, OBFS_UA, PROXY_TEST_INTERVAL, PROXY_TEST_URL } from './constant';
 import { isIp } from './dns';
 import { validateFilter } from './filter';
-import { parseSSRUri } from './ssr';
 import { formatVmessUri } from './v2ray';
-import { ConfigCache, SubsciptionCacheItem, SubscriptionCache } from './cache';
 
 const debug = Debug('surgio:utils');
 
@@ -145,10 +145,14 @@ export const getShadowsocksJSONConfig = async (
   return await requestConfigFromRemote();
 };
 
-export const getSurgeNodes = (
-  list: ReadonlyArray<HttpsNodeConfig|HttpNodeConfig|ShadowsocksNodeConfig|SnellNodeConfig|ShadowsocksrNodeConfig|VmessNodeConfig>,
+export const getSurgeNodes = function(
+  list: ReadonlyArray<HttpsNodeConfig|HttpNodeConfig|ShadowsocksNodeConfig|SnellNodeConfig|ShadowsocksrNodeConfig|VmessNodeConfig|TrojanNodeConfig>,
   filter?: NodeFilterType|SortedNodeNameFilterType,
-): string => {
+): string {
+  if (arguments.length === 2 && typeof filter === 'undefined') {
+    throw new Error(ERR_INVALID_FILTER);
+  }
+
   const result: string[] = applyFilter(list, filter)
     .map<string>(nodeConfig => {
       switch (nodeConfig.type) {
@@ -404,6 +408,28 @@ export const getSurgeNodes = (
           }
         }
 
+        case NodeTypeEnum.Trojan: {
+          const configList: string[] = [
+            'trojan',
+            nodeConfig.hostname,
+            `${nodeConfig.port}`,
+            `password=${nodeConfig.password}`,
+            ...(typeof nodeConfig.tfo === 'boolean' ? [
+              `tfo=${nodeConfig.tfo}`,
+            ] : []),
+            ...(typeof nodeConfig.mptcp === 'boolean' ? [
+              `mptcp=${nodeConfig.mptcp}`,
+            ] : []),
+          ];
+
+          return (
+            [
+              nodeConfig.nodeName,
+              configList.join(', ')
+            ]
+          ).join(' = ');
+        }
+
         // istanbul ignore next
         default:
           logger.warn(`不支持为 Surge 生成 ${nodeConfig!.type} 的节点，节点 ${nodeConfig!.nodeName} 会被省略`);
@@ -415,10 +441,14 @@ export const getSurgeNodes = (
   return result.join('\n');
 };
 
-export const getClashNodes = (
+export const getClashNodes = function(
   list: ReadonlyArray<PossibleNodeConfigType>,
   filter?: NodeFilterType|SortedNodeNameFilterType,
-): ReadonlyArray<any> => {
+): ReadonlyArray<any> {
+  if (arguments.length === 2 && typeof filter === 'undefined') {
+    throw new Error(ERR_INVALID_FILTER);
+  }
+
   return applyFilter(list, filter)
     .map(nodeConfig => {
       if (nodeConfig.enable === false) { return null; }
@@ -538,16 +568,25 @@ export const getClashNodes = (
     .filter(item => item !== null);
 };
 
-export const getMellowNodes = (
-  list: ReadonlyArray<VmessNodeConfig>,
+export const getMellowNodes = function(
+  list: ReadonlyArray<VmessNodeConfig|ShadowsocksNodeConfig>,
   filter?: NodeFilterType|SortedNodeNameFilterType
-): string => {
+): string {
+  if (arguments.length === 2 && typeof filter === 'undefined') {
+    throw new Error(ERR_INVALID_FILTER);
+  }
+
   const result = applyFilter(list, filter)
     .map(nodeConfig => {
       switch (nodeConfig.type) {
         case NodeTypeEnum.Vmess: {
           const uri = formatVmessUri(nodeConfig);
           return [nodeConfig.nodeName, 'vmess1', uri.trim().replace('vmess://', 'vmess1://')].join(', ');
+        }
+
+        case NodeTypeEnum.Shadowsocks: {
+          const uri = getShadowsocksNodes([nodeConfig]);
+          return [nodeConfig.nodeName, 'ss', uri.trim()].join(', ');
         }
 
         // istanbul ignore next
@@ -709,11 +748,15 @@ export const getV2rayNNodes = (list: ReadonlyArray<VmessNodeConfig>): string => 
   return result.join('\n');
 };
 
-export const getQuantumultNodes = (
+export const getQuantumultNodes = function(
   list: ReadonlyArray<ShadowsocksNodeConfig|VmessNodeConfig|ShadowsocksrNodeConfig|HttpsNodeConfig>,
   groupName: string = 'Surgio',
   filter?: NodeNameFilterType|SortedNodeNameFilterType,
-): string => {
+): string {
+  if (arguments.length === 3 && typeof filter === 'undefined') {
+    throw new Error(ERR_INVALID_FILTER);
+  }
+
   function getHeader(
     wsHeaders: Record<string, string>
   ): string {
@@ -787,10 +830,14 @@ export const getQuantumultNodes = (
 /**
  * @see https://github.com/crossutility/Quantumult-X/blob/master/sample.conf
  */
-export const getQuantumultXNodes = (
+export const getQuantumultXNodes = function(
   list: ReadonlyArray<ShadowsocksNodeConfig|VmessNodeConfig|ShadowsocksrNodeConfig|HttpsNodeConfig|HttpNodeConfig>,
   filter?: NodeNameFilterType|SortedNodeNameFilterType,
-): string => {
+): string {
+  if (arguments.length === 2 && typeof filter === 'undefined') {
+    throw new Error(ERR_INVALID_FILTER);
+  }
+
   const result: ReadonlyArray<string> = applyFilter(list, filter)
     .map<string>(nodeConfig => {
       switch (nodeConfig.type) {
@@ -961,19 +1008,27 @@ export const getShadowsocksNodesJSON = (list: ReadonlyArray<ShadowsocksNodeConfi
   return JSON.stringify(nodes, null, 2);
 };
 
-export const getNodeNames = (
+export const getNodeNames = function(
   list: ReadonlyArray<SimpleNodeConfig>,
   filter?: NodeNameFilterType|SortedNodeNameFilterType,
   separator?: string,
-): string => {
+): string {
+  if (arguments.length === 2 && typeof filter === 'undefined') {
+    throw new Error(ERR_INVALID_FILTER);
+  }
+
   return applyFilter(list, filter).map(item => item.nodeName).join(separator || ', ');
 };
 
-export const getClashNodeNames = (
+export const getClashNodeNames = function(
   list: ReadonlyArray<SimpleNodeConfig>,
   filter?: NodeNameFilterType|SortedNodeNameFilterType,
   existingProxies?: ReadonlyArray<string>,
-): ReadonlyArray<string> => {
+): ReadonlyArray<string> {
+  if (arguments.length === 2 && typeof filter === 'undefined') {
+    throw new Error(ERR_INVALID_FILTER);
+  }
+
   let result: string[] = [];
 
   if (existingProxies) {
