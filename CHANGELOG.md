@@ -1,3 +1,14 @@
+# [1.14.0](https://github.com/geekdada/surgio/compare/v1.13.5...v1.14.0) (2020-03-12)
+
+
+### Features
+
+* 支持加入自定义 trojan 节点 ([40b6714](https://github.com/geekdada/surgio/commit/40b67143fbf1f5e59cf5c4b08ef4eb62238f4678))
+* 支持检查模板方法中无效的 filter ([9c2690b](https://github.com/geekdada/surgio/commit/9c2690b31d9266833e45c892fdad4daca6ce947e))
+* 支持为 mellow 输出 ss uri ([c26cdb5](https://github.com/geekdada/surgio/commit/c26cdb552a882cc7e29448cd0a1129c25a9bccc7))
+
+
+
 ## [1.13.5](https://github.com/geekdada/surgio/compare/v1.13.4...v1.13.5) (2020-03-11)
 
 

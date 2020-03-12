@@ -1,6 +1,6 @@
 {
   "name": "surgio",
-  "version": "1.13.5",
+  "version": "1.14.0",
   "main": "build/index.js",
   "typings": "build/index.d.ts",
   "bin": {
