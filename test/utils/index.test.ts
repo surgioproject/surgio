@@ -10,7 +10,7 @@ import {
   SnellNodeConfig, TrojanNodeConfig,
 } from '../../lib/types';
 import * as utils from '../../lib/utils';
-import { PROXY_TEST_INTERVAL, PROXY_TEST_URL } from '../../lib/utils/constant';
+import { ERR_INVALID_FILTER, PROXY_TEST_INTERVAL, PROXY_TEST_URL } from '../../lib/utils/constant';
 import * as filter from '../../lib/utils/filter';
 
 test('getSurgeNodes', async t => {
@@ -1109,4 +1109,28 @@ test('formatV2rayConfig', t => {
       },
     }
   });
+});
+
+test('output api should fail with invalid filter', t => {
+  t.throws(() => {
+    utils.getSurgeNodes([], undefined);
+  }, null, ERR_INVALID_FILTER);
+  t.throws(() => {
+    utils.getClashNodes([], undefined);
+  }, null, ERR_INVALID_FILTER);
+  t.throws(() => {
+    utils.getClashNodeNames([], undefined);
+  }, null, ERR_INVALID_FILTER);
+  t.throws(() => {
+    utils.getNodeNames([], undefined);
+  }, null, ERR_INVALID_FILTER);
+  t.throws(() => {
+    utils.getQuantumultNodes([], undefined, undefined);
+  }, null, ERR_INVALID_FILTER);
+  t.throws(() => {
+    utils.getQuantumultXNodes([], undefined);
+  }, null, ERR_INVALID_FILTER);
+  t.throws(() => {
+    utils.getMellowNodes([], undefined);
+  }, null, ERR_INVALID_FILTER);
 });
