@@ -1,7 +1,6 @@
 import { logger } from '@surgio/logger';
 import assert from 'assert';
 import Bluebird from 'bluebird';
-import chalk from 'chalk';
 import fs from 'fs-extra';
 import _ from 'lodash';
 import { Environment } from 'nunjucks';
@@ -248,14 +247,14 @@ export class Artifact extends EventEmitter {
       provider = getProvider(providerName, require(filePath));
       this.providerMap.set(providerName, provider);
     } catch (err) /* istanbul ignore next */ {
-      err.message = `处理 ${chalk.cyan(providerName)} 时出现错误，相关文件 ${filePath} ，错误原因: ${err.message}`;
+      err.message = `处理 ${providerName} 时出现错误，相关文件 ${filePath} ，错误原因: ${err.message}`;
       throw err;
     }
 
     try {
       nodeConfigList = await provider.getNodeList();
     } catch (err) /* istanbul ignore next */ {
-      err.message = `获取 ${chalk.cyan(providerName)} 节点时出现错误，相关文件 ${filePath} ，错误原因: ${err.message}`;
+      err.message = `获取 ${providerName} 节点时出现错误，相关文件 ${filePath} ，错误原因: ${err.message}`;
       throw err;
     }
 

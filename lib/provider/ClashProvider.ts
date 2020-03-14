@@ -105,7 +105,7 @@ export const getClashSubscription = async (
   try {
     clashConfig = yaml.parse(response.body);
 
-    if (typeof clashConfig === 'string') {
+    if (typeof clashConfig !== 'object' || !('Proxy' in clashConfig)) {
       throw new Error();
     }
   } catch (err) {
