@@ -6,7 +6,7 @@ import { getEngine } from '../template';
 
 const resolve = p => join(__dirname, '../../../test/fixture/', p);
 
-test('new Artifact()', async t => {
+test('new Artifact()', async (t) => {
   const fixture = resolve('plain');
   const config = loadConfig(fixture, './surgio.conf.js');
   const artifact = new Artifact(config, {
@@ -29,7 +29,7 @@ test('new Artifact()', async t => {
   });
 });
 
-test('Artifact without templateEngine', async t => {
+test('Artifact without templateEngine', async (t) => {
   const fixture = resolve('plain');
   const config = loadConfig(fixture, './surgio.conf.js');
   const artifact = new Artifact(config, {
@@ -62,4 +62,53 @@ test('Artifact without templateEngine', async t => {
       .init();
     instance.render();
   });
+});
+
+test('render with extendRenderContext', async (t) => {
+  const fixture = resolve('plain');
+  const config = loadConfig(fixture, './surgio.conf.js');
+  const templateEngine = getEngine(config.templateDir);
+
+  {
+    const artifact = new Artifact(config, {
+      name: 'new_path.conf',
+      template: 'extend-render-context',
+      provider: 'ss_json',
+    }, { templateEngine });
+    await artifact.init();
+
+    t.snapshot(artifact.render());
+  }
+
+  {
+    const artifact = new Artifact(config, {
+      name: 'new_path.conf',
+      template: 'extend-render-context',
+      provider: 'ss_json',
+      customParams: {
+        foo: 'bar',
+      },
+    }, { templateEngine });
+    await artifact.init();
+
+    t.snapshot(artifact.render());
+  }
+
+  {
+    const artifact = new Artifact(config, {
+      name: 'new_path.conf',
+      template: 'extend-render-context',
+      provider: 'ss_json',
+      customParams: {
+        foo: 'bar',
+      },
+    }, { templateEngine });
+    await artifact.init();
+
+    t.snapshot(artifact.render(undefined, {
+      urlParams: {
+        foo: 'foo',
+      },
+    }));
+  }
 });

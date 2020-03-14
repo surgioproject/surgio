@@ -13,7 +13,8 @@ import {
   CommandConfig,
   NodeTypeEnum,
   PossibleNodeConfigType,
-  ProviderConfig, RemoteSnippet,
+  ProviderConfig,
+  RemoteSnippet,
   SimpleNodeConfig,
 } from '../types';
 import {
@@ -43,6 +44,10 @@ import { prependFlag } from '../utils/flag';
 export interface ArtifactOptions {
   readonly remoteSnippetList?: ReadonlyArray<RemoteSnippet>;
   readonly templateEngine?: Environment;
+}
+
+export interface ExtendableRenderContext {
+  readonly urlParams?: Record<string, string>;
 }
 
 export class Artifact extends EventEmitter {
@@ -86,7 +91,7 @@ export class Artifact extends EventEmitter {
     return this.initProgress === this.providerNameList.length;
   }
 
-  public get renderContext(): any {
+  public getRenderContext(extendRenderContext: ExtendableRenderContext = {}): any {
     const config = this.surgioConfig;
     const gatewayConfig = config.gateway;
     const gatewayHasToken = !!(gatewayConfig && gatewayConfig.accessToken);
@@ -139,7 +144,10 @@ export class Artifact extends EventEmitter {
       netflixFilter,
       youtubePremiumFilter,
       customFilters,
-      customParams: customParams || {},
+      customParams: {
+        ...customParams,
+        ...(extendRenderContext?.urlParams),
+      },
       ...(this.artifact.proxyGroupModifier ? {
         clashProxyConfig: {
           Proxy: getClashNodes(nodeList),
@@ -201,7 +209,7 @@ export class Artifact extends EventEmitter {
     return this;
   }
 
-  public render(templateEngine?: Environment): string {
+  public render(templateEngine?: Environment, extendRenderContext?: ExtendableRenderContext): string {
     if (!this.isReady) {
       throw new Error('Artifact 还未初始化');
     }
@@ -212,7 +220,7 @@ export class Artifact extends EventEmitter {
       throw new Error('没有可用的 Nunjucks 环境');
     }
 
-    const renderContext = this.renderContext;
+    const renderContext = this.getRenderContext(extendRenderContext);
     const {
       templateString,
       template,
