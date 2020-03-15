@@ -13,7 +13,7 @@ sidebarDepth: 1
 npm i @surgio/gateway@latest
 ```
 
-同时需要保证 Surgio 版本号大于 v1.13.0。
+同时需要保证 Surgio 版本号大于 v1.15.0。
 
 ## 修改 now.json
 
@@ -125,3 +125,20 @@ const gateway = require('@surgio/gateway');
 ```bash
 node gateway.js
 ```
+
+### 4. 获取配置文件接口支持自定义 URL 参数
+
+URL 中的 Query 参数能够传入到模板变量 `customParams` 中，方便用户拓展模板。
+
+比如：
+
+```
+https://example.now.sh/get-artifact/Surge.conf?access_token=token&foo=bar
+```
+
+那模板变量 `customParams.foo` 值为 `bar`。如果已经在 Artifact 中定义了这个 Key，那预先定义的值将被覆盖。
+
+:::warning 注意
+1. URL 参数中的值的类型都是字符串，形如 `true`、`1` 这样的值在模板中是 `"true"` 和 `"1"`；
+2. `access_token`, `format`, `filter`, `dl` 为保留 Key 无法被定义；
+:::
