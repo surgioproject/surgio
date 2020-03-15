@@ -1,3 +1,18 @@
+# [1.15.0](https://github.com/geekdada/surgio/compare/v1.14.0...v1.15.0) (2020-03-15)
+
+
+### Bug Fixes
+
+* 改善了错误信息提示 ([04a1536](https://github.com/geekdada/surgio/commit/04a15362cb0ca6935a2bb4d50500dbd5a7e1dc7a))
+* 时间转换错误 ([3835f3f](https://github.com/geekdada/surgio/commit/3835f3f1c64357021e05538bd36b039b7ab0c65f))
+
+
+### Features
+
+* render 支持额外参数拓展 ([3638eb9](https://github.com/geekdada/surgio/commit/3638eb9a92f7b564e7e5789e658686987d5efe6c))
+
+
+
 # [1.14.0](https://github.com/geekdada/surgio/compare/v1.13.5...v1.14.0) (2020-03-12)
 
 
