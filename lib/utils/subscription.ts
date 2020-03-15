@@ -1,6 +1,6 @@
 import filesize from 'filesize';
 import bytes from 'bytes';
-import { format, formatDistanceToNow } from 'date-fns';
+import { format, formatDistanceToNow, getSeconds } from 'date-fns';
 
 import { SubscriptionUserinfo } from '../types';
 
@@ -38,7 +38,7 @@ export const parseSubscriptionNode = (dataString: string, expireString: string):
     const percent = Number(dataMatch[1]) / 100;
     const leftData = bytes.parse(dataMatch[3]);
     const total = Number((leftData / percent).toFixed(0));
-    const expire = new Date(expireMatch[1]).getTime() - Date.now();
+    const expire = Math.floor(new Date(expireMatch[1]).getTime() / 1000);
 
     return {
       upload: 0,
@@ -66,7 +66,7 @@ export const formatSubscriptionUserInfo = (userInfo: SubscriptionUserinfo): {
     left: filesize(userInfo.total - userInfo.upload - userInfo.download),
     total: filesize(userInfo.total),
     expire: userInfo.expire
-      ? `${format(Date.now() + userInfo.expire, 'yyyy-MM-dd')} (${formatDistanceToNow(Date.now() + userInfo.expire)})`
+      ? `${format(new Date(userInfo.expire * 1000), 'yyyy-MM-dd')} (${formatDistanceToNow(new Date(userInfo.expire * 1000))})`
       : '无数据',
   };
 };
