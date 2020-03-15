@@ -1,12 +1,12 @@
+import { createLogger } from '@surgio/logger';
 import os from 'os';
 import path from 'path';
 import fs from 'fs-extra';
-import Debug from 'debug';
 
-const debug = Debug('surgio:utils:tmp-helper');
+const logger = createLogger({ service: 'surgio:utils:tmp-helper' });
 const tmpDir = path.join(os.tmpdir(), 'surgio-config');
 
-debug('tmpDir: %s', tmpDir);
+logger.debug('tmpDir: %s', tmpDir);
 
 export class TmpFile {
   public filename: string;

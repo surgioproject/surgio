@@ -1,4 +1,5 @@
 import Joi from '@hapi/joi';
+import { createLogger } from '@surgio/logger';
 import assert from 'assert';
 import got from 'got';
 
@@ -9,6 +10,8 @@ import { SubsciptionCacheItem, SubscriptionCache } from '../utils/cache';
 import { NETWORK_TIMEOUT } from '../utils/constant';
 import { parseSSRUri } from '../utils/ssr';
 import Provider from './Provider';
+
+const logger = createLogger({ service: 'surgio:ShadowsocksrSubscribeProvider' });
 
 export default class ShadowsocksrSubscribeProvider extends Provider {
   public readonly url: string;
@@ -82,6 +85,12 @@ export const getShadowsocksrSubscription = async (
 
           if (res.headers['subscription-userinfo']) {
             subsciptionCacheItem.subscriptionUserinfo = parseSubscriptionUserInfo(res.headers['subscription-userinfo'] as string);
+            logger.debug(
+              '%s received subscription userinfo - raw: %s | parsed: %j',
+              url,
+              res.headers['subscription-userinfo'],
+              subsciptionCacheItem.subscriptionUserinfo
+            );
           }
 
           SubscriptionCache.set(url, subsciptionCacheItem);
@@ -110,6 +119,13 @@ export const getShadowsocksrSubscription = async (
       const dataNode = nodeList[0];
       const expireNode = nodeList[1];
       response.subscriptionUserinfo = parseSubscriptionNode(dataNode.nodeName, expireNode.nodeName);
+      logger.debug(
+        '%s received subscription node - raw: %s %s | parsed: %j',
+        url,
+        dataNode.nodeName,
+        expireNode.nodeName,
+        response.subscriptionUserinfo
+      );
     }
 
     return {

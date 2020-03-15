@@ -1,6 +1,5 @@
-import { logger } from '@surgio/logger';
+import { createLogger } from '@surgio/logger';
 import assert from 'assert';
-import Debug from 'debug';
 import fs from 'fs-extra';
 import got from 'got';
 import _ from 'lodash';
@@ -35,7 +34,7 @@ import { isIp } from './dns';
 import { validateFilter } from './filter';
 import { formatVmessUri } from './v2ray';
 
-const debug = Debug('surgio:utils');
+const logger = createLogger({ service: 'surgio:utils' });
 
 // istanbul ignore next
 export const resolveRoot = (...args: readonly string[]): string =>

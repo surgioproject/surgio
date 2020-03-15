@@ -2,6 +2,7 @@ import Joi from '@hapi/joi';
 import assert from 'assert';
 import got from 'got';
 import { default as legacyUrl } from 'url';
+import Debug from 'debug';
 import { createLogger } from '@surgio/logger';
 
 import {
@@ -19,6 +20,7 @@ import Provider from './Provider';
 const logger = createLogger({
   service: 'surgio:ShadowsocksSubscribeProvider',
 });
+const debug = Debug('surgio:ShadowsocksSubscribeProvider');
 
 export default class ShadowsocksSubscribeProvider extends Provider {
   public readonly url: string;
@@ -95,6 +97,12 @@ export const getShadowsocksSubscription = async (
 
           if (res.headers['subscription-userinfo']) {
             subsciptionCacheItem.subscriptionUserinfo = parseSubscriptionUserInfo(res.headers['subscription-userinfo'] as string);
+            logger.debug(
+              '%s received subscription userinfo - raw: %s | parsed: %j',
+              url,
+              res.headers['subscription-userinfo'],
+              subsciptionCacheItem.subscriptionUserinfo
+            );
           }
 
           SubscriptionCache.set(url, subsciptionCacheItem);
@@ -107,7 +115,7 @@ export const getShadowsocksSubscription = async (
       .split('\n')
       .filter(item => !!item && item.startsWith('ss://'))
       .map<any>(item => {
-        logger.debug('Parsing Shadowsocks URI', item);
+        debug('Parsing Shadowsocks URI', item);
         const scheme = legacyUrl.parse(item, true);
         const userInfo = fromUrlSafeBase64(scheme.auth).split(':');
         const pluginInfo = typeof scheme.query.plugin === 'string' ? decodeStringList(scheme.query.plugin.split(';')) : {};

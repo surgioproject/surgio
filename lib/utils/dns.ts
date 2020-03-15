@@ -1,13 +1,13 @@
 import { promises as dns } from 'dns';
-import Debug from 'debug';
 import LRU from 'lru-cache';
+import { createLogger } from '@surgio/logger';
 
-const debug = Debug('surgio:utils:dns');
 const Resolver = dns.Resolver;
 const resolver = new Resolver();
 const DomainCache = new LRU<string, ReadonlyArray<string>>({
   max: 1000,
 });
+const logger = createLogger({ service: 'surgio:utils:dns' });
 
 // istanbul ignore next
 if (process.env.NOW_REGION) {
@@ -21,9 +21,9 @@ export const resolveDomain = async (domain: string): Promise<ReadonlyArray<strin
     return DomainCache.get(domain);
   }
 
-  debug(`try to resolve domain ${domain}`);
+  logger.debug(`try to resolve domain ${domain}`);
   const records = await resolver.resolve4(domain, { ttl: true });
-  debug(`resolved domain ${domain}: ${JSON.stringify(records)}`);
+  logger.debug(`resolved domain ${domain}: ${JSON.stringify(records)}`);
 
   const address = records.map(item => item.address);
 

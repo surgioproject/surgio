@@ -1,8 +1,8 @@
 // istanbul ignore file
 
-import Debug from 'debug';
+import { createLogger } from '@surgio/logger';
 
-const debug = Debug('surgio:utils:patch-proxy');
+const logger = createLogger({ service: 'surgio:utils:patch-proxy' });
 const keys: ReadonlyArray<string> = [
   'http_proxy',
   'https_proxy',
@@ -16,7 +16,7 @@ keys.forEach(key => {
     const newKey = key.toUpperCase();
     const value = process.env[key];
 
-    debug('Patched environment variable %s=%s', newKey, value);
+    logger.debug('patched environment variable %s=%s', newKey, value);
     process.env[newKey] = value;
   }
 });

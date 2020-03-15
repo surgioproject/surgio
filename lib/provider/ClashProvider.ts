@@ -3,7 +3,7 @@ import assert from 'assert';
 import got from 'got';
 import yaml from 'yaml';
 import _ from 'lodash';
-import { logger } from '@surgio/logger';
+import { createLogger } from '@surgio/logger';
 
 import {
   ClashProviderConfig,
@@ -23,6 +23,10 @@ import { NETWORK_TIMEOUT } from '../utils/constant';
 import Provider from './Provider';
 
 type SupportConfigTypes = ShadowsocksNodeConfig|VmessNodeConfig|HttpsNodeConfig|HttpNodeConfig|ShadowsocksrNodeConfig|SnellNodeConfig;
+
+const logger = createLogger({
+  service: 'surgio:ClashProvider',
+});
 
 export default class ClashProvider extends Provider {
   public readonly url: string;
@@ -93,6 +97,12 @@ export const getClashSubscription = async (
 
         if (res.headers['subscription-userinfo']) {
           subsciptionCacheItem.subscriptionUserinfo = parseSubscriptionUserInfo(res.headers['subscription-userinfo'] as string);
+          logger.debug(
+            '%s received subscription userinfo - raw: %s | parsed: %j',
+            url,
+            res.headers['subscription-userinfo'],
+            subsciptionCacheItem.subscriptionUserinfo
+          );
         }
 
         SubscriptionCache.set(url, subsciptionCacheItem);
