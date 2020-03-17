@@ -1,0 +1,4 @@
+---
+to: template/<%= name %>.tpl
+
+---
