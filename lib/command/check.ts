@@ -34,6 +34,12 @@ class CheckCommand extends Command {
       cmdCtx: ctx,
     });
     const { nodeList } = tasksResult;
+
+    if (!process.stdin.isTTY) {
+      console.log(JSON.stringify(nodeList, null, 2));
+      return;
+    }
+
     const answers = await inquirer.prompt([
       {
         type: 'list',

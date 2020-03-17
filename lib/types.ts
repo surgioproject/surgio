@@ -11,13 +11,13 @@ export enum NodeTypeEnum {
 }
 
 export enum SupportProviderEnum {
-  BlackSSL = 'blackssl',
-  ShadowsocksJsonSubscribe = 'shadowsocks_json_subscribe',
-  V2rayNSubscribe = 'v2rayn_subscribe',
+  Clash = 'clash',
+  Custom = 'custom',
   ShadowsocksSubscribe = 'shadowsocks_subscribe',
   ShadowsocksrSubscribe = 'shadowsocksr_subscribe',
-  Custom = 'custom',
-  Clash = 'clash',
+  ShadowsocksJsonSubscribe = 'shadowsocks_json_subscribe',
+  V2rayNSubscribe = 'v2rayn_subscribe',
+  BlackSSL = 'blackssl',
 }
 
 export interface CommandConfig {

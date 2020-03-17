@@ -1,3 +1,4 @@
+// istanbul ignore file
 import { createLogger } from '@surgio/logger';
 import { join } from 'path';
 import { runner } from 'hygen';

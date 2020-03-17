@@ -1,4 +1,3 @@
-// tslint:disable:no-expression-statement
 import test from 'ava';
 import coffee from 'coffee';
 import path from 'path';
@@ -129,4 +128,35 @@ test('custom filter', async t => {
 
   t.snapshot(confString1);
   t.snapshot(confString2);
+});
+
+test('new command', async t => {
+  await coffee.fork(cli, ['new', '-h'], {
+    cwd: resolve('plain'),
+  })
+    .expect('code', 0)
+    .end();
+
+  t.pass();
+});
+
+test('subscriptions command', async t => {
+  await coffee.fork(cli, ['subscriptions', '-h'], {
+    cwd: resolve('plain'),
+  })
+    .expect('code', 0)
+    .end();
+
+  t.pass();
+});
+
+test('check command', async t => {
+  const { stdout } = await coffee.fork(cli, ['check', 'custom'], {
+    cwd: resolve('plain'),
+  })
+    .expect('code', 0)
+    .debug()
+    .end();
+
+  t.snapshot(stdout);
 });
