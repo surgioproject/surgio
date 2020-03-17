@@ -1,3 +1,12 @@
+# [1.16.0](https://github.com/geekdada/surgio/compare/v1.15.0...v1.16.0) (2020-03-17)
+
+
+### Features
+
+* 新增 new 命令 ([c4e27c5](https://github.com/geekdada/surgio/commit/c4e27c5e10941e37941e9da46e5ad0b0466d9a4d))
+
+
+
 # [1.15.0](https://github.com/geekdada/surgio/compare/v1.14.0...v1.15.0) (2020-03-15)
 
 
