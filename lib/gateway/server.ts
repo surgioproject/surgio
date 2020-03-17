@@ -1,4 +1,3 @@
-// tslint:disable-next-line:no-submodule-imports
 import { NowRequest, NowResponse } from '@now/node/dist';
 import { Context } from 'koa';
 import createError from 'http-errors';

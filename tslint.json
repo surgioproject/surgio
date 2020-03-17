@@ -26,6 +26,7 @@
 
     // Functional style rules
     "only-arrow-functions": false,
+    "no-submodule-imports": false,
     "no-this": false,
     "no-class": false,
     "no-mixed-interface": false,

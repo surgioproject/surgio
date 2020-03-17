@@ -31,6 +31,18 @@ $ npx surgio subscriptions
 2. 不论 Provider 有没有被使用都会查询
 :::
 
+## `new`
+
+> 新建助手 <Badge text="v1.16.0" vertical="middle" />
+
+```bash
+$ npx surgio new provider|artifact|template
+```
+
+:::tip 提示
+1. 目前新建 Artifact 助手无法识别 `artifacts: require(...)` 这样的配置文件，可能会破坏文件结构；
+:::
+
 ## 全局参数
 
 ### `-V --verbose` 调试模式

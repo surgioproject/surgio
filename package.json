@@ -12,6 +12,7 @@
   "files": [
     "bin",
     "build",
+    "hygen-template",
     "README.md"
   ],
   "bugs": {
@@ -97,6 +98,7 @@
     "global-agent": "^2.1.7",
     "got": "^10.6.0",
     "http-errors": "^1.7.3",
+    "hygen": "^5.0.3",
     "inquirer": "^7.1.0",
     "koa": "^2.11.0",
     "koa-router": "^7.4.0",

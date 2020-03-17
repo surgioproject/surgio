@@ -5,8 +5,8 @@ import fs from 'fs';
 import path from 'path';
 import Listr from 'listr';
 import inquirer from 'inquirer';
-import { PossibleNodeConfigType } from '../types';
 
+import { PossibleNodeConfigType } from '../types';
 import { loadConfig } from '../utils/config';
 import { getProvider } from '../provider';
 import { errorHandler } from '../utils/error-helper';
@@ -34,6 +34,12 @@ class CheckCommand extends Command {
       cmdCtx: ctx,
     });
     const { nodeList } = tasksResult;
+
+    if (!process.stdin.isTTY) {
+      console.log(JSON.stringify(nodeList, null, 2));
+      return;
+    }
+
     const answers = await inquirer.prompt([
       {
         type: 'list',

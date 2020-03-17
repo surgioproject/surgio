@@ -9,8 +9,10 @@ import updateNotifier from 'update-notifier';
 import { transports } from '@surgio/logger';
 
 import GenerateCommand from './command/generate';
+import SubscriptionsCommand from './command/subscriptions';
 import UploadCommand from './command/upload';
 import CheckCommand from './command/check';
+import NewCommand from './command/new';
 import * as filter from './utils/filter';
 import { errorHandler } from './utils/error-helper';
 import { CATEGORIES } from './utils/constant';
@@ -54,6 +56,8 @@ export {
   GenerateCommand,
   UploadCommand,
   CheckCommand,
+  NewCommand,
+  SubscriptionsCommand,
 };
 
 export const utils = {
