@@ -8,7 +8,7 @@ const cli = path.join(__dirname, '../bin/surgio.js');
 const fixture = path.join(__dirname, './fixture');
 const resolve = p => path.join(fixture, p);
 
-test('cli works', async t => {
+test.serial('cli works', async t => {
   await coffee.fork(cli, ['generate', '-h'], {
     cwd: resolve('plain'),
   })
@@ -45,7 +45,7 @@ test('cli works', async t => {
   t.snapshot(confString3);
 });
 
-test('template error', async t => {
+test.serial('template error', async t => {
   const { code } = await coffee.fork(cli, ['generate'], {
     cwd: resolve('template-error'),
     execArgv: ['--require', require.resolve('./stub-axios.js')],
@@ -55,7 +55,7 @@ test('template error', async t => {
   t.is(code, 1);
 });
 
-test('not specify binPath', async t => {
+test.serial('not specify binPath', async t => {
   const { stderr, code } = await coffee.fork(cli, ['generate'], {
     cwd: resolve('not-specify-binPath'),
     execArgv: ['--require', require.resolve('./stub-axios.js')],
@@ -66,7 +66,7 @@ test('not specify binPath', async t => {
   t.truthy(stderr.includes('You must specify a binary file path for Shadowsocksr'));
 });
 
-test('template variables and functions', async t => {
+test.serial('template variables and functions', async t => {
   const { code } = await coffee.fork(cli, ['generate'], {
     cwd: resolve('template-variables-functions'),
     execArgv: ['--require', require.resolve('./stub-axios.js')],
@@ -91,7 +91,7 @@ test('template variables and functions', async t => {
   t.is(confString, result);
 });
 
-test('assign local port', async t => {
+test.serial('assign local port', async t => {
   const { code } = await coffee.fork(cli, ['generate'], {
     cwd: resolve('assign-local-port'),
     execArgv: ['--require', require.resolve('./stub-axios.js')],
@@ -112,7 +112,7 @@ test('assign local port', async t => {
   t.truthy(conf2.Proxy['测试 2'].includes('local-port = 4001'));
 });
 
-test('custom filter', async t => {
+test.serial('custom filter', async t => {
   const { code } = await coffee.fork(cli, ['generate'], {
     cwd: resolve('custom-filter'),
     execArgv: ['--require', require.resolve('./stub-axios.js')],
@@ -130,7 +130,7 @@ test('custom filter', async t => {
   t.snapshot(confString2);
 });
 
-test('new command', async t => {
+test.serial('new command', async t => {
   await coffee.fork(cli, ['new', '-h'], {
     cwd: resolve('plain'),
   })
@@ -140,7 +140,7 @@ test('new command', async t => {
   t.pass();
 });
 
-test('subscriptions command', async t => {
+test.serial('subscriptions command', async t => {
   await coffee.fork(cli, ['subscriptions', '-h'], {
     cwd: resolve('plain'),
   })
@@ -150,7 +150,7 @@ test('subscriptions command', async t => {
   t.pass();
 });
 
-test('check command', async t => {
+test.serial('check command', async t => {
   await coffee.fork(cli, ['check', 'custom'], {
     cwd: resolve('plain'),
   })
