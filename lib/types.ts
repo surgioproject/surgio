@@ -169,6 +169,8 @@ export interface SnellNodeConfig extends SimpleNodeConfig {
   readonly port: number|string;
   readonly psk: string;
   readonly obfs: string;
+  readonly 'obfs-host'?: string;
+  readonly version?: string;
 }
 
 export interface ShadowsocksrNodeConfig extends SimpleNodeConfig {

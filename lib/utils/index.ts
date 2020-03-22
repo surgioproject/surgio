@@ -249,7 +249,7 @@ export const getSurgeNodes = function(
               'snell',
               config.hostname,
               config.port,
-              ...pickAndFormatStringList(config, ['psk', 'obfs']),
+              ...pickAndFormatStringList(config, ['psk', 'obfs', 'obfs-host', 'version']),
               ...(typeof config.tfo === 'boolean' ? [
                 `tfo=${config.tfo}`,
               ] : []),
@@ -533,6 +533,12 @@ export const getClashNodes = function(
             psk: nodeConfig.psk,
             'obfs-opts': {
               mode: nodeConfig.obfs,
+              ...(nodeConfig['obfs-host'] ? {
+                host: nodeConfig['obfs-host'],
+              } : null),
+              ...(nodeConfig.version ? {
+                host: nodeConfig.version,
+              } : null),
             },
           };
 
