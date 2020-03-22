@@ -54,6 +54,7 @@ async function run(config: CommandConfig, skipFail?: boolean): Promise<void> {
     } catch (err) {
       spinner.fail(`规则 ${artifact.name} 生成失败`);
 
+      // istanbul ignore next
       if (skipFail) {
         console.error(err.stack || err);
       } else {
@@ -82,6 +83,7 @@ export default async function(config: CommandConfig, skipFail?: boolean): Promis
   logger.info('开始生成规则');
   await run(config, skipFail)
     .catch(err => {
+      // istanbul ignore next
       if (spinner.isSpinning) {
         spinner.fail();
       }
