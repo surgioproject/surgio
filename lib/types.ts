@@ -197,7 +197,7 @@ export interface VmessNodeConfig extends SimpleNodeConfig {
   readonly tls: boolean;
   readonly host?: string;
   readonly path?: string;
-  readonly udp?: boolean;
+  readonly udp?: boolean; // TODO: 统一为 udp-relay
   readonly tls13?: boolean;
   readonly skipCertVerify?: boolean;
   readonly wsHeaders?: Record<string, string>;
@@ -208,6 +208,10 @@ export interface TrojanNodeConfig extends SimpleNodeConfig {
   readonly hostname: string;
   readonly port: number|string;
   readonly password: string;
+  readonly skipCertVerify?: boolean;
+  readonly alpn?: ReadonlyArray<string>;
+  readonly sni?: string;
+  readonly 'udp-relay'?: boolean;
 }
 
 export interface SimpleNodeConfig {

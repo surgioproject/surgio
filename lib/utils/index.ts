@@ -145,7 +145,7 @@ export const getShadowsocksJSONConfig = async (
 };
 
 export const getSurgeNodes = function(
-  list: ReadonlyArray<HttpsNodeConfig|HttpNodeConfig|ShadowsocksNodeConfig|SnellNodeConfig|ShadowsocksrNodeConfig|VmessNodeConfig|TrojanNodeConfig>,
+  list: ReadonlyArray<PossibleNodeConfigType>,
   filter?: NodeFilterType|SortedNodeNameFilterType,
 ): string {
   if (arguments.length === 2 && typeof filter === 'undefined') {
@@ -419,6 +419,9 @@ export const getSurgeNodes = function(
             ...(typeof nodeConfig.mptcp === 'boolean' ? [
               `mptcp=${nodeConfig.mptcp}`,
             ] : []),
+            ...(typeof nodeConfig.skipCertVerify === 'boolean' ? [
+              `skip-cert-verify=${nodeConfig.skipCertVerify}`,
+            ] : []),
           ];
 
           return (
@@ -536,10 +539,10 @@ export const getClashNodes = function(
               ...(nodeConfig['obfs-host'] ? {
                 host: nodeConfig['obfs-host'],
               } : null),
-              ...(nodeConfig.version ? {
-                host: nodeConfig.version,
-              } : null),
             },
+            ...(nodeConfig.version ? {
+              version: nodeConfig.version,
+            } : null),
           };
 
         case NodeTypeEnum.HTTPS:
@@ -551,7 +554,7 @@ export const getClashNodes = function(
             username: nodeConfig.username /* istanbul ignore next */ || '',
             password: nodeConfig.password /* istanbul ignore next */ || '',
             tls: true,
-            skipCertVerify: nodeConfig.skipCertVerify === true,
+            'skip-cert-verify': nodeConfig.skipCertVerify === true,
           };
 
         case NodeTypeEnum.HTTP:
@@ -562,6 +565,19 @@ export const getClashNodes = function(
             port: nodeConfig.port,
             username: nodeConfig.username /* istanbul ignore next */ || '',
             password: nodeConfig.password /* istanbul ignore next */ || '',
+          };
+
+        case NodeTypeEnum.Trojan:
+          return {
+            type: 'trojan',
+            name: nodeConfig.nodeName,
+            server: nodeConfig.hostname,
+            port: nodeConfig.port,
+            password: nodeConfig.password,
+            ...(nodeConfig['udp-relay'] ? { udp: nodeConfig['udp-relay'] } : null),
+            ...(nodeConfig.alpn ? { alpn: nodeConfig.alpn } : null),
+            ...(nodeConfig.sni ? { sni: nodeConfig.sni } : null),
+            'skip-cert-verify': nodeConfig.skipCertVerify === true,
           };
 
         // istanbul ignore next
@@ -836,7 +852,7 @@ export const getQuantumultNodes = function(
  * @see https://github.com/crossutility/Quantumult-X/blob/master/sample.conf
  */
 export const getQuantumultXNodes = function(
-  list: ReadonlyArray<ShadowsocksNodeConfig|VmessNodeConfig|ShadowsocksrNodeConfig|HttpsNodeConfig|HttpNodeConfig>,
+  list: ReadonlyArray<PossibleNodeConfigType>,
   filter?: NodeNameFilterType|SortedNodeNameFilterType,
 ): string {
   if (arguments.length === 2 && typeof filter === 'undefined') {
@@ -956,13 +972,31 @@ export const getQuantumultXNodes = function(
           if (nodeConfig.type === NodeTypeEnum.HTTPS) {
             config.push(
               'over-tls=true',
-              `tls-verification=${nodeConfig.skipCertVerify !== true}`
+              `tls-verification=${nodeConfig.skipCertVerify !== true}`,
             );
           }
 
           config.push(`tag=${nodeConfig.nodeName}`);
 
           return `http=${config.join(', ')}`;
+        }
+
+        case NodeTypeEnum.Trojan: {
+          const config = [
+            `${nodeConfig.hostname}:${nodeConfig.port}`,
+            ...pickAndFormatStringList(nodeConfig, ['password']),
+            'over-tls=true',
+            `tls-verification=${nodeConfig.skipCertVerify !== true}`,
+            ...(nodeConfig.tfo ? [
+              `fast-open=${nodeConfig.tfo}`,
+            ] : []),
+            ...(nodeConfig['udp-relay'] ? [
+              `udp-relay=${nodeConfig['udp-relay']}`,
+            ] : []),
+            `tag=${nodeConfig.nodeName}`,
+          ];
+
+          return `trojan=${config.join(', ')}`;
         }
 
         // istanbul ignore next
