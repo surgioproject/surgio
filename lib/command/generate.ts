@@ -21,6 +21,10 @@ class GenerateCommand extends Command {
         alias: 'config',
         default: './surgio.conf.js',
       },
+      'skip-fail': {
+        type: 'boolean',
+        default: false,
+      },
     };
   }
 
@@ -30,7 +34,7 @@ class GenerateCommand extends Command {
         output: path.resolve(ctx.cwd, ctx.argv.output),
       } : null)
     });
-    await generate(config);
+    await generate(config, ctx.argv.skipFail);
   }
 
   public get description(): string {

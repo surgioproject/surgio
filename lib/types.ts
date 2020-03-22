@@ -69,6 +69,7 @@ export interface RemoteSnippetConfig {
 
 export interface RemoteSnippet extends RemoteSnippetConfig {
   readonly main: (rule: string) => string;
+  readonly text: string;
 }
 
 export interface ArtifactConfig {
