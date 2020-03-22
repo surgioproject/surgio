@@ -10,6 +10,16 @@
 $ npx surgio generate
 ```
 
+### 可选参数
+
+#### `--skip-fail`
+
+略过 Artifact 生成过程中的错误。
+
+:::tip 提示
+推荐不要在 CI 环境使用这个参数
+:::
+
 ## `upload`
 
 > 上传 Artifact
