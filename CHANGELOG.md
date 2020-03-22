@@ -1,3 +1,19 @@
+# [1.17.0](https://github.com/geekdada/surgio/compare/v1.16.0...v1.17.0) (2020-03-22)
+
+
+### Bug Fixes
+
+* optimize error handling for Clash subscription ([5cdd916](https://github.com/geekdada/surgio/commit/5cdd9164ec6f6aa7bb51fb160b6aa1ca79e0514b))
+
+
+### Features
+
+* add a new command option `--skip-fail` for `surgio generate` ([3c5023e](https://github.com/geekdada/surgio/commit/3c5023eee728499b8cfd2c6c312628c8ee6360c5))
+* add support for generating Trojan config for QuantumultX and Clash. ([f0c7936](https://github.com/geekdada/surgio/commit/f0c79363f6adb9476ef47b3428f4807088d1cf37))
+* add support for snell v2 ([3afe5bd](https://github.com/geekdada/surgio/commit/3afe5bd1f4313f0f3ffc918ab9a8830b9c59200f))
+
+
+
 # [1.16.0](https://github.com/geekdada/surgio/compare/v1.15.0...v1.16.0) (2020-03-17)
 
 
