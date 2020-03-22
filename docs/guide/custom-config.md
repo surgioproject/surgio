@@ -1,5 +1,4 @@
 ---
-title: 配置文件
 sidebarDepth: 2
 ---
 
