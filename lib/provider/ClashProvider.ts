@@ -124,6 +124,11 @@ export const getClashSubscription = async (
 
   const proxyList: any[] = clashConfig.Proxy;
 
+  // istanbul ignore next
+  if (!Array.isArray(proxyList)) {
+    throw new Error(`${url} 订阅内容有误，请检查后重试`);
+  }
+
   const nodeList = proxyList.map<SupportConfigTypes>(item => {
     switch (item.type) {
       case 'ss': {
