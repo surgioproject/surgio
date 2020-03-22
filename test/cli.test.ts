@@ -45,6 +45,18 @@ test.serial('cli works', async t => {
   t.snapshot(confString3);
 });
 
+test.serial('--skip-fail should work', async t => {
+  await t.notThrowsAsync(async () => {
+    await coffee.fork(cli, ['generate', '--skip-fail'], {
+      cwd: resolve('plain'),
+      execArgv: ['--require', require.resolve('./stub-axios.js')],
+    })
+      .debug()
+      .expect('code', 0)
+      .end();
+  });
+});
+
 test.serial('template error', async t => {
   const { code } = await coffee.fork(cli, ['generate'], {
     cwd: resolve('template-error'),

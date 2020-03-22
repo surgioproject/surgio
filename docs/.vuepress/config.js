@@ -92,6 +92,7 @@ module.exports = {
             'api',
             'cli',
             'faq',
+            'learning-resources',
           ]
         },
         {

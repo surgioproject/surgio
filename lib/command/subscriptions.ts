@@ -3,6 +3,7 @@ import Command from 'common-bin';
 import { promises as fsp } from 'fs';
 import { basename, join } from 'path';
 import { createLogger } from '@surgio/logger';
+
 import BlackSSLProvider from '../provider/BlackSSLProvider';
 import ClashProvider from '../provider/ClashProvider';
 import CustomProvider from '../provider/CustomProvider';
@@ -10,7 +11,6 @@ import ShadowsocksJsonSubscribeProvider from '../provider/ShadowsocksJsonSubscri
 import ShadowsocksrSubscribeProvider from '../provider/ShadowsocksrSubscribeProvider';
 import ShadowsocksSubscribeProvider from '../provider/ShadowsocksSubscribeProvider';
 import V2rayNSubscribeProvider from '../provider/V2rayNSubscribeProvider';
-
 import { CommandConfig } from '../types';
 import { loadConfig } from '../utils/config';
 import { getProvider } from '../provider';

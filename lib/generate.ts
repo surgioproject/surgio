@@ -16,7 +16,7 @@ import { loadRemoteSnippetList } from './utils/remote-snippet';
 
 const spinner = ora();
 
-async function run(config: CommandConfig): Promise<void> {
+async function run(config: CommandConfig, skipFail?: boolean): Promise<void> {
   const artifactList: ReadonlyArray<ArtifactConfig> = config.artifacts;
   const distPath = config.output;
   const remoteSnippetsConfig = config.remoteSnippets || [];
@@ -53,7 +53,12 @@ async function run(config: CommandConfig): Promise<void> {
       spinner.succeed(`规则 ${artifact.name} 生成成功`);
     } catch (err) {
       spinner.fail(`规则 ${artifact.name} 生成失败`);
-      throw err;
+
+      if (skipFail) {
+        console.error(err.stack || err);
+      } else {
+        throw err;
+      }
     }
   }
 }
@@ -73,9 +78,9 @@ export async function generate(
   return artifactInstance.render(templateEngine);
 }
 
-export default async function(config: CommandConfig): Promise<void> {
+export default async function(config: CommandConfig, skipFail?: boolean): Promise<void> {
   logger.info('开始生成规则');
-  await run(config)
+  await run(config, skipFail)
     .catch(err => {
       if (spinner.isSpinning) {
         spinner.fail();

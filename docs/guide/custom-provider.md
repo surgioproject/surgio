@@ -230,6 +230,7 @@ module.exports = {
   port: 10000,
   psk: 'RjEJRhNPps3DrYBcEQrcMe3q9NzFLMP',
   obfs: 'tls', // tls 或 http
+  version: '2', // 可选
 }
 ```
 
@@ -269,6 +270,10 @@ module.exports = {
   hostname: 'hk.example.com',
   port: 443,
   password: 'password',
+  sni: 'example.com', // 可选
+  alpn: ['http/1.1'], // 可选
+  skipCertVerify: true, // 可选
+  'udp-relay': true, // 可选
 }
 ```
 

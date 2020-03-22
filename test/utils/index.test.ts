@@ -7,14 +7,16 @@ import {
   ShadowsocksrNodeConfig,
   SimpleNodeConfig,
   VmessNodeConfig,
-  SnellNodeConfig, TrojanNodeConfig,
+  SnellNodeConfig,
+  TrojanNodeConfig,
+  PossibleNodeConfigType,
 } from '../../lib/types';
 import * as utils from '../../lib/utils';
 import { ERR_INVALID_FILTER, PROXY_TEST_INTERVAL, PROXY_TEST_URL } from '../../lib/utils/constant';
 import * as filter from '../../lib/utils/filter';
 
 test('getSurgeNodes', async t => {
-  const nodeList: ReadonlyArray<ShadowsocksNodeConfig|ShadowsocksrNodeConfig|VmessNodeConfig|TrojanNodeConfig> = [{
+  const nodeList: ReadonlyArray<PossibleNodeConfigType> = [{
     nodeName: 'Test Node 1',
     type: NodeTypeEnum.Shadowsocks,
     hostname: 'example.com',
@@ -169,20 +171,6 @@ test('getSurgeNodes', async t => {
     },
     tfo: true,
     mptcp: true,
-  }, {
-    type: NodeTypeEnum.Trojan,
-    nodeName: 'trojan node 1',
-    hostname: 'example.com',
-    port: 443,
-    password: 'password1',
-  }, {
-    type: NodeTypeEnum.Trojan,
-    nodeName: 'trojan node 2',
-    hostname: 'example.com',
-    port: 443,
-    password: 'password1',
-    tfo: true,
-    mptcp: true,
   }];
   const txt1 = utils.getSurgeNodes(nodeList).split('\n');
   const txt2 = utils.getSurgeNodes(nodeList, nodeConfig => nodeConfig.nodeName === 'Test Node 1');
@@ -198,10 +186,33 @@ test('getSurgeNodes', async t => {
   t.is(txt1[8], 'Test Node 6 = ss, example2.com, 443, encrypt-method=chacha20-ietf-poly1305, password=password');
   t.is(txt1[9], 'Test Node 7 = ss, example2.com, 443, encrypt-method=chacha20-ietf-poly1305, password=password, tfo=true, mptcp=true');
   t.is(txt1[10], '测试 6 = vmess, 1.1.1.1, 8080, username=1386f85e-657b-4d6e-9d56-78badb75e1fd, ws=true, ws-path=/, ws-headers="host:1.1.1.1|user-agent:Mozilla/5.0 (iPhone; CPU iPhone OS 12_3_1 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148", tls=true, tls13=true, skip-cert-verify=true, tfo=true, mptcp=true');
-  t.is(txt1[11], 'trojan node 1 = trojan, example.com, 443, password=password1');
-  t.is(txt1[12], 'trojan node 2 = trojan, example.com, 443, password=password1, tfo=true, mptcp=true');
 
   t.is(txt2, 'Test Node 1 = custom, example.com, 443, chacha20-ietf-poly1305, password, https://raw.githubusercontent.com/ConnersHua/SSEncrypt/master/SSEncrypt.module, udp-relay=true, obfs=tls, obfs-host=example.com');
+
+  t.is(
+    utils.getSurgeNodes([{
+      type: NodeTypeEnum.Trojan,
+      nodeName: 'trojan node 1',
+      hostname: 'example.com',
+      port: 443,
+      password: 'password1',
+    }]),
+    'trojan node 1 = trojan, example.com, 443, password=password1',
+  );
+
+  t.is(
+    utils.getSurgeNodes([{
+      type: NodeTypeEnum.Trojan,
+      nodeName: 'trojan node 2',
+      hostname: 'example.com',
+      port: 443,
+      password: 'password1',
+      tfo: true,
+      mptcp: true,
+      skipCertVerify: true,
+    }]),
+    'trojan node 2 = trojan, example.com, 443, password=password1, tfo=true, mptcp=true, skip-cert-verify=true',
+  );
 });
 
 test('getNodeNames', async t => {
@@ -255,7 +266,7 @@ test('getClashNodeNames', async t => {
 });
 
 test('getClashNodes', async t => {
-  const nodeList: ReadonlyArray<ShadowsocksNodeConfig|VmessNodeConfig|SnellNodeConfig> = [{
+  const nodeList: ReadonlyArray<PossibleNodeConfigType> = [{
     nodeName: 'Test Node 1',
     type: NodeTypeEnum.Shadowsocks,
     hostname: 'example.com',
@@ -335,25 +346,10 @@ test('getClashNodes', async t => {
     skipCertVerify: true,
     type: NodeTypeEnum.Vmess,
     uuid: '1386f85e-657b-4d6e-9d56-78badb75e1fd',
-  }, {
-    nodeName: 'snell',
-    type: NodeTypeEnum.Snell,
-    hostname: '1.1.1.1',
-    port: 443,
-    psk: 'psk',
-    obfs: 'tls',
-  }, {
-    nodeName: 'snell 2',
-    enable: false,
-    type: NodeTypeEnum.Snell,
-    hostname: '1.1.1.1',
-    port: 443,
-    psk: 'psk',
-    obfs: 'tls',
   }];
   const array = utils.getClashNodes(nodeList);
 
-  t.is(array.length, 8);
+  t.is(array.length, nodeList.length);
   t.deepEqual(array[0], {
     name: 'Test Node 1',
     type: 'ss',
@@ -434,16 +430,110 @@ test('getClashNodes', async t => {
     type: 'vmess',
     uuid: '1386f85e-657b-4d6e-9d56-78badb75e1fd',
   });
-  t.deepEqual(array[7], {
-    name: 'snell',
-    type: 'snell',
-    server: '1.1.1.1',
-    port: 443,
-    psk: 'psk',
-    'obfs-opts': {
-      mode: 'tls',
-    },
-  })
+
+  t.deepEqual(
+    utils.getClashNodes([{
+      nodeName: 'snell',
+      type: NodeTypeEnum.Snell,
+      hostname: '1.1.1.1',
+      port: 443,
+      psk: 'psk',
+      obfs: 'tls',
+    }]),
+    [{
+      name: 'snell',
+      type: 'snell',
+      server: '1.1.1.1',
+      port: 443,
+      psk: 'psk',
+      'obfs-opts': {
+        mode: 'tls',
+      },
+    }]
+  );
+  t.deepEqual(
+    utils.getClashNodes([{
+      nodeName: 'snell',
+      type: NodeTypeEnum.Snell,
+      hostname: '1.1.1.1',
+      port: 443,
+      psk: 'psk',
+      obfs: 'tls',
+      'obfs-host': 'example.com',
+      version: '2',
+    }]),
+    [{
+      name: 'snell',
+      type: 'snell',
+      server: '1.1.1.1',
+      port: 443,
+      psk: 'psk',
+      'obfs-opts': {
+        mode: 'tls',
+        host: 'example.com',
+      },
+      version: '2',
+    }]
+  );
+  t.deepEqual(
+    utils.getClashNodes([{
+      nodeName: 'snell',
+      enable: false,
+      type: NodeTypeEnum.Snell,
+      hostname: '1.1.1.1',
+      port: 443,
+      psk: 'psk',
+      obfs: 'tls',
+    }]),
+    []
+  );
+  t.deepEqual(
+    utils.getClashNodes([{
+      nodeName: 'trojan',
+      type: NodeTypeEnum.Trojan,
+      hostname: '1.1.1.1',
+      port: 443,
+      password: 'password1',
+    }]),
+    [{
+      name: 'trojan',
+      type: 'trojan',
+      server: '1.1.1.1',
+      port: 443,
+      password: 'password1',
+      'skip-cert-verify': false,
+    }]
+  );
+  t.deepEqual(
+    utils.getClashNodes([{
+      nodeName: 'trojan',
+      type: NodeTypeEnum.Trojan,
+      hostname: '1.1.1.1',
+      port: 443,
+      password: 'password1',
+      'udp-relay': true,
+      alpn: [
+        'h2',
+        'http/1.1',
+      ],
+      sni: 'example.com',
+      skipCertVerify: true,
+    }]),
+    [{
+      name: 'trojan',
+      type: 'trojan',
+      server: '1.1.1.1',
+      port: 443,
+      password: 'password1',
+      udp: true,
+      alpn: [
+        'h2',
+        'http/1.1',
+      ],
+      sni: 'example.com',
+      'skip-cert-verify': true,
+    }]
+  );
 });
 
 test('getShadowsocksNodes', async t => {
@@ -985,7 +1075,31 @@ test('getQuantumultXNodes', t => {
   t.is(schemeList[3], 'shadowsocks=hk.example.com:10000, method=chacha20-ietf, password=password, ssr-protocol=auth_aes128_md5, ssr-protocol-param=, obfs=tls1.2_ticket_auth, obfs-host=music.163.com, tag=🇭🇰HK');
   t.is(schemeList[4], 'http=a.com:443, username=snsms, password=nndndnd, over-tls=true, tls-verification=true, tag=test');
   t.is(schemeList[5], 'shadowsocks=us.example.com:443, method=chacha20-ietf-poly1305, password=password, obfs=tls, obfs-host=gateway-carry.icloud.com, udp-relay=true, fast-open=true, tag=🇺🇸US 1');
-  t.is(schemeList[6], 'vmess=1.1.1.1:443, method=chacha20-ietf-poly1305, password=1386f85e-657b-4d6e-9d56-78badb75e1fd, udp-relay=true, obfs=over-tls, tag=测试 4')
+  t.is(schemeList[6], 'vmess=1.1.1.1:443, method=chacha20-ietf-poly1305, password=1386f85e-657b-4d6e-9d56-78badb75e1fd, udp-relay=true, obfs=over-tls, tag=测试 4');
+
+  t.is(
+    utils.getQuantumultXNodes([{
+      type: NodeTypeEnum.Trojan,
+      nodeName: 'trojan',
+      hostname: 'example.com',
+      port: 443,
+      password: 'password1',
+    }]),
+    'trojan=example.com:443, password=password1, over-tls=true, tls-verification=true, tag=trojan'
+  );
+  t.is(
+    utils.getQuantumultXNodes([{
+      type: NodeTypeEnum.Trojan,
+      nodeName: 'trojan',
+      hostname: 'example.com',
+      port: 443,
+      password: 'password1',
+      'udp-relay': true,
+      skipCertVerify: true,
+      tfo: true,
+    }]),
+    'trojan=example.com:443, password=password1, over-tls=true, tls-verification=false, fast-open=true, udp-relay=true, tag=trojan'
+  );
 });
 
 test('formatV2rayConfig', t => {

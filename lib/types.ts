@@ -69,6 +69,7 @@ export interface RemoteSnippetConfig {
 
 export interface RemoteSnippet extends RemoteSnippetConfig {
   readonly main: (rule: string) => string;
+  readonly text: string;
 }
 
 export interface ArtifactConfig {
@@ -169,6 +170,8 @@ export interface SnellNodeConfig extends SimpleNodeConfig {
   readonly port: number|string;
   readonly psk: string;
   readonly obfs: string;
+  readonly 'obfs-host'?: string;
+  readonly version?: string;
 }
 
 export interface ShadowsocksrNodeConfig extends SimpleNodeConfig {
@@ -195,7 +198,7 @@ export interface VmessNodeConfig extends SimpleNodeConfig {
   readonly tls: boolean;
   readonly host?: string;
   readonly path?: string;
-  readonly udp?: boolean;
+  readonly udp?: boolean; // TODO: 统一为 udp-relay
   readonly tls13?: boolean;
   readonly skipCertVerify?: boolean;
   readonly wsHeaders?: Record<string, string>;
@@ -206,6 +209,10 @@ export interface TrojanNodeConfig extends SimpleNodeConfig {
   readonly hostname: string;
   readonly port: number|string;
   readonly password: string;
+  readonly skipCertVerify?: boolean;
+  readonly alpn?: ReadonlyArray<string>;
+  readonly sni?: string;
+  readonly 'udp-relay'?: boolean;
 }
 
 export interface SimpleNodeConfig {
