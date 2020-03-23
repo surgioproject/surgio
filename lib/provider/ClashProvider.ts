@@ -115,14 +115,16 @@ export const getClashSubscription = async (
 
   try {
     clashConfig = yaml.parse(response.body);
-  } catch (err) {
+  } catch (err) /* istanbul ignore next */ {
     throw new Error(`${url} 不是一个合法的 YAML 文件`);
   }
 
   if (
-    typeof clashConfig !== 'object' ||
-    !('Proxy' in clashConfig) ||
-    !('proxies' in clashConfig)
+    !_.isPlainObject(clashConfig) ||
+    (
+      !('Proxy' in clashConfig) &&
+      !('proxies' in clashConfig)
+    )
   ) {
     throw new Error(`${url} 订阅内容有误，请检查后重试`);
   }
@@ -134,7 +136,15 @@ export const getClashSubscription = async (
     throw new Error(`${url} 订阅内容有误，请检查后重试`);
   }
 
-  const nodeList = proxyList.map<SupportConfigTypes>(item => {
+  return {
+    nodeList: parseClashConfig(proxyList, udpRelay),
+    subscriptionUserinfo: response.subscriptionUserinfo,
+  };
+};
+
+export const parseClashConfig = (proxyList: ReadonlyArray<any>, udpRelay?: boolean): ReadonlyArray<SupportConfigTypes> => {
+  return proxyList
+    .map<SupportConfigTypes>(item => {
     switch (item.type) {
       case 'ss': {
         // istanbul ignore next
@@ -239,7 +249,7 @@ export const getClashSubscription = async (
           port: item.port,
           psk: item.psk,
           obfs: _.get(item, 'obfs-opts.mode', 'http'),
-          ...('host' in item?.['obfs-opts'] ? { 'obfs-host': item['obfs-opts'].host } : null),
+          ...(typeof item?.['obfs-opts']?.host !== 'undefined' ? { 'obfs-host': item['obfs-opts'].host } : null),
           ...('version' in item ? { version: item.version } : null),
         } as SnellNodeConfig;
 
@@ -277,11 +287,6 @@ export const getClashSubscription = async (
     }
   })
     .filter(item => !!item);
-
-  return {
-    nodeList,
-    subscriptionUserinfo: response.subscriptionUserinfo,
-  };
 };
 
 function resolveUdpRelay(val?: boolean, defaultVal = false): boolean {
