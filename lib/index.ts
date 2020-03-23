@@ -26,6 +26,7 @@ export class SurgioCommand extends Command {
   constructor(rawArgv) {
     super(rawArgv);
 
+    // istanbul ignore next
     if (fs.existsSync(envPath)) {
       env2(envPath);
     }
@@ -42,6 +43,7 @@ export class SurgioCommand extends Command {
 
     this.load(path.join(__dirname, './command'));
 
+    // istanbul ignore next
     if (this.yargs.argv.verbose) {
       transports.console.level = 'debug';
     }

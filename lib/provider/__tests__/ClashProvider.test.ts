@@ -1,5 +1,7 @@
 import test from 'ava';
-import ClashProvider, { getClashSubscription } from '../ClashProvider';
+import nock from 'nock';
+
+import ClashProvider, { getClashSubscription, parseClashConfig } from '../ClashProvider';
 import { NodeTypeEnum, SupportProviderEnum } from '../../types';
 
 test('ClashProvider', async t => {
@@ -11,6 +13,21 @@ test('ClashProvider', async t => {
   await t.notThrowsAsync(async () => {
     await provider.getNodeList();
   });
+});
+
+test('ClashProvider new format', async t => {
+  const scope = nock('http://local')
+    .get('/success-1')
+    .reply(200, `
+proxies: []
+    `);
+
+  const provider = new ClashProvider('test', {
+    type: SupportProviderEnum.Clash,
+    url: 'http://local/success-1',
+  });
+
+  t.deepEqual(await provider.getNodeList(), []);
 });
 
 test('ClashProvider.getSubscriptionUserInfo', async t => {
@@ -199,7 +216,93 @@ test('getClashSubscription udpRelay', async t => {
 });
 
 test('getClashSubscription - invalid yaml', async t => {
+  const scope = nock('http://local')
+    .get('/fail-1')
+    .reply(200, '')
+    .get('/fail-2')
+    .reply(200, `
+foo: bar
+    `);
+
   await t.throwsAsync(async () => {
     await getClashSubscription('http://example.com/test-v2rayn-sub.txt');
-  }, {instanceOf: Error, message: 'http://example.com/test-v2rayn-sub.txt 不是一个合法的 YAML 文件'});
+  }, {instanceOf: Error, message: 'http://example.com/test-v2rayn-sub.txt 订阅内容有误，请检查后重试'});
+
+  await t.throwsAsync(async () => {
+    await getClashSubscription('http://local/fail-1');
+  }, {instanceOf: Error, message: 'http://local/fail-1 订阅内容有误，请检查后重试'});
+
+  await t.throwsAsync(async () => {
+    await getClashSubscription('http://local/fail-2');
+  }, {instanceOf: Error, message: 'http://local/fail-2 订阅内容有误，请检查后重试'});
+});
+
+test('snell Configurations', t => {
+  t.deepEqual(
+    parseClashConfig([{
+      type: 'snell',
+      name: 'snell',
+      server: 'server',
+      port: 44046,
+      psk: 'yourpsk',
+      'obfs-opts': {
+        mode: 'tls',
+        host: 'example.com'
+      },
+      version: '2',
+    }]),
+    [{
+      type: NodeTypeEnum.Snell,
+      nodeName: 'snell',
+      hostname: 'server',
+      port: 44046,
+      psk: 'yourpsk',
+      obfs: 'tls',
+      'obfs-host': 'example.com',
+      version: '2',
+    }]
+  );
+});
+
+test('trojan configurations', t => {
+  t.deepEqual(
+    parseClashConfig([{
+      type: 'trojan',
+      name: 'trojan',
+      server: 'example.com',
+      port: 443,
+      password: 'password1',
+    }]),
+    [{
+      type: NodeTypeEnum.Trojan,
+      nodeName: 'trojan',
+      hostname: 'example.com',
+      port: 443,
+      password: 'password1',
+    }]
+  );
+  t.deepEqual(
+    parseClashConfig([{
+      type: 'trojan',
+      name: 'trojan',
+      server: 'example.com',
+      port: 443,
+      password: 'password1',
+      skipCertVerify: true,
+      alpn: ['http/1.1'],
+      sni: 'sni.example.com',
+      udp: true,
+    }]),
+    [{
+      type: NodeTypeEnum.Trojan,
+      nodeName: 'trojan',
+      hostname: 'example.com',
+      port: 443,
+      password: 'password1',
+      skipCertVerify: true,
+      alpn: ['http/1.1'],
+      sni: 'sni.example.com',
+      'udp-relay': true,
+    }]
+  );
 });

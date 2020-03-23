@@ -30,6 +30,7 @@ class GenerateCommand extends Command {
 
   public async run(ctx): Promise<void> {
     const config = loadConfig(ctx.cwd, ctx.argv.config, {
+      // istanbul ignore next
       ...(ctx.argv.output ? {
         output: path.resolve(ctx.cwd, ctx.argv.output),
       } : null)
@@ -37,6 +38,7 @@ class GenerateCommand extends Command {
     await generate(config, ctx.argv.skipFail);
   }
 
+  // istanbul ignore next
   public get description(): string {
     return '生成规则';
   }
