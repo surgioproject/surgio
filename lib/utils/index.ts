@@ -27,7 +27,6 @@ import {
   SortedNodeNameFilterType,
   TrojanNodeConfig,
   Socks5NodeConfig,
-  Socks5TLSNodeConfig,
   VmessNodeConfig,
 } from '../types';
 import { ConfigCache } from './cache';
@@ -434,16 +433,15 @@ export const getSurgeNodes = function(
           ).join(' = ');
         }
 
-        case NodeTypeEnum.Socks5:
-        case NodeTypeEnum.Socks5TLS: {
+        case NodeTypeEnum.Socks5: {
           const config = [
-            nodeConfig.type === NodeTypeEnum.Socks5TLS ? "socks5-tls": "socks5",
+            nodeConfig.tls === true ? "socks5-tls": "socks5",
             nodeConfig.hostname,
             nodeConfig.port,
             ...pickAndFormatStringList(nodeConfig, ['username', 'password', 'sni', 'tfo']),
           ]
 
-          if (nodeConfig.type === NodeTypeEnum.Socks5TLS) {
+          if (nodeConfig.tls === true) {
             config.push(
               ...(typeof nodeConfig.skipCertVerify === 'boolean' ? [
                 `skip-cert-verify=${nodeConfig.skipCertVerify}`
@@ -616,9 +614,9 @@ export const getClashNodes = function(
             port: nodeConfig.port,
             ...(nodeConfig.username ? {username: nodeConfig.username} : null),
             ...(nodeConfig.password ? {password: nodeConfig.password} : null),
-            ...(nodeConfig.tls ? {tls: nodeConfig.tls} : null),
-            ...(nodeConfig.skipCertVerify ? {'skip-cert-verify': nodeConfig.skipCertVerify} : null),
-            ...(nodeConfig.udp ? {udp: nodeConfig.udp} : null),
+            ...(typeof nodeConfig.tls === 'boolean' ? {tls: nodeConfig.tls} : null),
+            ...(typeof nodeConfig.skipCertVerify === 'boolean' ? {'skip-cert-verify': nodeConfig.skipCertVerify} : null),
+            ...(typeof nodeConfig.udp === 'boolean' ? {udp: nodeConfig.udp} : null),
           };
         }
 
