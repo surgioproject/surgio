@@ -216,37 +216,40 @@ test('getSurgeNodes', async t => {
 
   t.is(
     utils.getSurgeNodes([{
-      type: NodeTypeEnum.Socks5TLS,
+      type: NodeTypeEnum.Socks5,
       nodeName: 'socks5-tls node 1',
       hostname: '1.1.1.1',
       port: 443,
+      tls: true,
     }]), 'socks5-tls node 1 = socks5-tls, 1.1.1.1, 443'
   )
 
   t.is(
     utils.getSurgeNodes([{
-      type: NodeTypeEnum.Socks5TLS,
+      type: NodeTypeEnum.Socks5,
       nodeName: 'socks5-tls node 2',
       hostname: '1.1.1.1',
       port: 443,
       tfo: true,
+      tls: true,
     }]), 'socks5-tls node 2 = socks5-tls, 1.1.1.1, 443, tfo=true'
   )
 
   t.is(
     utils.getSurgeNodes([{
-      type: NodeTypeEnum.Socks5TLS,
+      type: NodeTypeEnum.Socks5,
       nodeName: 'socks5-tls node 3',
       hostname: '1.1.1.1',
       port: 443,
       username: 'auto',
-      password: 'auto'
+      password: 'auto',
+      tls: true,
     }]), 'socks5-tls node 3 = socks5-tls, 1.1.1.1, 443, username=auto, password=auto'
   )
 
   t.is(
     utils.getSurgeNodes([{
-      type: NodeTypeEnum.Socks5TLS,
+      type: NodeTypeEnum.Socks5,
       nodeName: 'socks5-tls node 4',
       hostname: '1.1.1.1',
       port: 443,
@@ -254,13 +257,14 @@ test('getSurgeNodes', async t => {
       password: 'auto',
       skipCertVerify: true,
       sni: 'example.com',
-      tfo: true
+      tfo: true,
+      tls: true,
     }]), 'socks5-tls node 4 = socks5-tls, 1.1.1.1, 443, username=auto, password=auto, sni=example.com, tfo=true, skip-cert-verify=true'
   )
 
   t.is(
     utils.getSurgeNodes([{
-      type: NodeTypeEnum.Socks5TLS,
+      type: NodeTypeEnum.Socks5,
       nodeName: 'socks5-tls node 5',
       hostname: '1.1.1.1',
       port: 443,
@@ -269,7 +273,8 @@ test('getSurgeNodes', async t => {
       skipCertVerify: true,
       sni: 'example.com',
       tfo: true,
-      clientCert: 'item'
+      clientCert: 'item',
+      tls: true,
     }]), 'socks5-tls node 5 = socks5-tls, 1.1.1.1, 443, username=auto, password=auto, sni=example.com, tfo=true, skip-cert-verify=true, client-cert=item'
   )
 
@@ -634,8 +639,8 @@ test('getClashNodes', async t => {
       port: 443,
     }]),
     [{
-      name: 'socks5',
       type: 'socks5',
+      name: 'socks5',
       server: '1.1.1.1',
       port: 443,
     }]
@@ -654,14 +659,39 @@ test('getClashNodes', async t => {
       udp: false
     }]),
     [{
-      name: 'socks5',
       type: 'socks5',
+      name: 'socks5',
       server: '1.1.1.1',
       port: 443,
       username: 'username',
       password: 'password',
       tls: true,
       'skip-cert-verify': true,
+      udp: false
+    }]
+  )
+
+  t.deepEqual(
+    utils.getClashNodes([{
+      nodeName: 'socks5',
+      type: NodeTypeEnum.Socks5,
+      hostname: '1.1.1.1',
+      port: 443,
+      username: 'username',
+      password: 'password',
+      tls: false,
+      skipCertVerify: false,
+      udp: false
+    }]),
+    [{
+      type: 'socks5',
+      name: 'socks5',
+      server: '1.1.1.1',
+      port: 443,
+      username: 'username',
+      password: 'password',
+      tls: false,
+      'skip-cert-verify': false,
       udp: false
     }]
   )

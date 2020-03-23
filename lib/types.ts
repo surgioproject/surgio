@@ -9,7 +9,6 @@ export enum NodeTypeEnum {
   Vmess = 'vmess',
   Trojan = 'trojan',
   Socks5 = 'socks5',
-  Socks5TLS = 'socks5-tls',
 }
 
 export enum SupportProviderEnum {
@@ -226,15 +225,6 @@ export interface Socks5NodeConfig extends SimpleNodeConfig {
   readonly tls?: boolean;
   readonly skipCertVerify?: boolean;
   readonly udp?: boolean;
-}
-
-export interface Socks5TLSNodeConfig extends SimpleNodeConfig {
-  readonly type: NodeTypeEnum.Socks5TLS;
-  readonly hostname: string;
-  readonly port: number|string;
-  readonly username?: string;
-  readonly password?: string;
-  readonly skipCertVerify?: boolean;
   readonly sni?: string;
   readonly clientCert?: string;
 }
@@ -277,7 +267,7 @@ export interface SortedNodeNameFilterType {
   readonly supportSort?: boolean;
 }
 
-export type PossibleNodeConfigType = HttpsNodeConfig|HttpNodeConfig|ShadowsocksNodeConfig|ShadowsocksrNodeConfig|SnellNodeConfig|VmessNodeConfig|TrojanNodeConfig|Socks5NodeConfig|Socks5TLSNodeConfig;
+export type PossibleNodeConfigType = HttpsNodeConfig|HttpNodeConfig|ShadowsocksNodeConfig|ShadowsocksrNodeConfig|SnellNodeConfig|VmessNodeConfig|TrojanNodeConfig|Socks5NodeConfig;
 
 export type ProxyGroupModifier = (nodeList: ReadonlyArray<PossibleNodeConfigType>, filters: PlainObjectOf<NodeNameFilterType|SortedNodeNameFilterType>) => ReadonlyArray<{
   readonly name: string;
