@@ -213,6 +213,97 @@ test('getSurgeNodes', async t => {
     }]),
     'trojan node 2 = trojan, example.com, 443, password=password1, tfo=true, mptcp=true, skip-cert-verify=true',
   );
+
+  t.is(
+    utils.getSurgeNodes([{
+      type: NodeTypeEnum.Socks5TLS,
+      nodeName: 'socks5-tls node 1',
+      hostname: '1.1.1.1',
+      port: 443,
+    }]), 'socks5-tls node 1 = socks5-tls, 1.1.1.1, 443'
+  )
+
+  t.is(
+    utils.getSurgeNodes([{
+      type: NodeTypeEnum.Socks5TLS,
+      nodeName: 'socks5-tls node 2',
+      hostname: '1.1.1.1',
+      port: 443,
+      tfo: true,
+    }]), 'socks5-tls node 2 = socks5-tls, 1.1.1.1, 443, tfo=true'
+  )
+
+  t.is(
+    utils.getSurgeNodes([{
+      type: NodeTypeEnum.Socks5TLS,
+      nodeName: 'socks5-tls node 3',
+      hostname: '1.1.1.1',
+      port: 443,
+      username: 'auto',
+      password: 'auto'
+    }]), 'socks5-tls node 3 = socks5-tls, 1.1.1.1, 443, username=auto, password=auto'
+  )
+
+  t.is(
+    utils.getSurgeNodes([{
+      type: NodeTypeEnum.Socks5TLS,
+      nodeName: 'socks5-tls node 4',
+      hostname: '1.1.1.1',
+      port: 443,
+      username: 'auto',
+      password: 'auto',
+      skipCertVerify: true,
+      sni: 'example.com',
+      tfo: true
+    }]), 'socks5-tls node 4 = socks5-tls, 1.1.1.1, 443, username=auto, password=auto, sni=example.com, tfo=true, skip-cert-verify=true'
+  )
+
+  t.is(
+    utils.getSurgeNodes([{
+      type: NodeTypeEnum.Socks5TLS,
+      nodeName: 'socks5-tls node 5',
+      hostname: '1.1.1.1',
+      port: 443,
+      username: 'auto',
+      password: 'auto',
+      skipCertVerify: true,
+      sni: 'example.com',
+      tfo: true,
+      clientCert: 'item'
+    }]), 'socks5-tls node 5 = socks5-tls, 1.1.1.1, 443, username=auto, password=auto, sni=example.com, tfo=true, skip-cert-verify=true, client-cert=item'
+  )
+
+  t.is(
+    utils.getSurgeNodes([{
+      type: NodeTypeEnum.Socks5,
+      nodeName: 'socks node 1',
+      hostname: '1.1.1.1',
+      port: '80'
+    }]) , 'socks node 1 = socks5, 1.1.1.1, 80'
+  )
+
+  t.is(
+    utils.getSurgeNodes([{
+      type: NodeTypeEnum.Socks5,
+      nodeName: 'socks node 2',
+      hostname: '1.1.1.1',
+      port: '80',
+      tfo: true
+    }]) , 'socks node 2 = socks5, 1.1.1.1, 80, tfo=true'
+  )
+
+  t.is(
+    utils.getSurgeNodes([{
+      type: NodeTypeEnum.Socks5,
+      nodeName: 'socks node 3',
+      hostname: '1.1.1.1',
+      port: '80',
+      username: 'auto',
+      password: 'auto',
+      tfo: true
+    }]) , 'socks node 3 = socks5, 1.1.1.1, 80, username=auto, password=auto, tfo=true'
+  )
+
 });
 
 test('getNodeNames', async t => {
@@ -534,6 +625,46 @@ test('getClashNodes', async t => {
       'skip-cert-verify': true,
     }]
   );
+
+  t.deepEqual(
+    utils.getClashNodes([{
+      nodeName: 'socks5',
+      type: NodeTypeEnum.Socks5,
+      hostname: '1.1.1.1',
+      port: 443,
+    }]),
+    [{
+      name: 'socks5',
+      type: 'socks5',
+      server: '1.1.1.1',
+      port: 443,
+    }]
+  )
+
+  t.deepEqual(
+    utils.getClashNodes([{
+      nodeName: 'socks5',
+      type: NodeTypeEnum.Socks5,
+      hostname: '1.1.1.1',
+      port: 443,
+      username: 'username',
+      password: 'password',
+      tls: true,
+      skipCertVerify: true,
+      udp: false
+    }]),
+    [{
+      name: 'socks5',
+      type: 'socks5',
+      server: '1.1.1.1',
+      port: 443,
+      username: 'username',
+      password: 'password',
+      tls: true,
+      'skip-cert-verify': true,
+      udp: false
+    }]
+  )
 });
 
 test('getShadowsocksNodes', async t => {

@@ -26,6 +26,8 @@ import {
   SnellNodeConfig,
   SortedNodeNameFilterType,
   TrojanNodeConfig,
+  Socks5NodeConfig,
+  Socks5TLSNodeConfig,
   VmessNodeConfig,
 } from '../types';
 import { ConfigCache } from './cache';
@@ -432,6 +434,32 @@ export const getSurgeNodes = function(
           ).join(' = ');
         }
 
+        case NodeTypeEnum.Socks5:
+        case NodeTypeEnum.Socks5TLS: {
+          const config = [
+            nodeConfig.type === NodeTypeEnum.Socks5TLS ? "socks5-tls": "socks5",
+            nodeConfig.hostname,
+            nodeConfig.port,
+            ...pickAndFormatStringList(nodeConfig, ['username', 'password', 'sni', 'tfo']),
+          ]
+
+          if (nodeConfig.type === NodeTypeEnum.Socks5TLS) {
+            config.push(
+              ...(typeof nodeConfig.skipCertVerify === 'boolean' ? [
+                `skip-cert-verify=${nodeConfig.skipCertVerify}`
+              ]: []),
+              ...(typeof nodeConfig.clientCert === 'string' ? [
+                `client-cert=${nodeConfig.clientCert}`
+              ]: []),
+            )
+          }
+
+          return ([
+              nodeConfig.nodeName,
+              config.join(', '),
+          ].join(' = '));
+        }
+
         // istanbul ignore next
         default:
           logger.warn(`不支持为 Surge 生成 ${nodeConfig!.type} 的节点，节点 ${nodeConfig!.nodeName} 会被省略`);
@@ -579,6 +607,20 @@ export const getClashNodes = function(
             ...(nodeConfig.sni ? { sni: nodeConfig.sni } : null),
             'skip-cert-verify': nodeConfig.skipCertVerify === true,
           };
+
+        case NodeTypeEnum.Socks5: {
+          return {
+            type: 'socks5',
+            name: nodeConfig.nodeName,
+            server: nodeConfig.hostname,
+            port: nodeConfig.port,
+            ...(nodeConfig.username ? {username: nodeConfig.username} : null),
+            ...(nodeConfig.password ? {password: nodeConfig.password} : null),
+            ...(nodeConfig.tls ? {tls: nodeConfig.tls} : null),
+            ...(nodeConfig.skipCertVerify ? {'skip-cert-verify': nodeConfig.skipCertVerify} : null),
+            ...(nodeConfig.udp ? {udp: nodeConfig.udp} : null),
+          };
+        }
 
         // istanbul ignore next
         default:
