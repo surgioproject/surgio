@@ -1,3 +1,13 @@
+## [1.17.1](https://github.com/geekdada/surgio/compare/v1.17.0...v1.17.1) (2020-03-23)
+
+
+### Bug Fixes
+
+* should now be able to get trojan config from clash subscriptions ([dfb9d5e](https://github.com/geekdada/surgio/commit/dfb9d5e58bf693461882c433a683e33c1f827d60))
+* unable to parse trojan config in Clash subscription ([14a3cb7](https://github.com/geekdada/surgio/commit/14a3cb70c552b0505c8b09520ef38573536be47e))
+
+
+
 # [1.17.0](https://github.com/geekdada/surgio/compare/v1.16.0...v1.17.0) (2020-03-22)
 
 
