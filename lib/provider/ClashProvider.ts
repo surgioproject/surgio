@@ -14,6 +14,7 @@ import {
   ShadowsocksrNodeConfig,
   SnellNodeConfig,
   SubscriptionUserinfo,
+  TrojanNodeConfig,
   VmessNodeConfig,
 } from '../types';
 import { lowercaseHeaderKeys } from '../utils';
@@ -22,7 +23,7 @@ import { SubsciptionCacheItem, SubscriptionCache } from '../utils/cache';
 import { NETWORK_TIMEOUT } from '../utils/constant';
 import Provider from './Provider';
 
-type SupportConfigTypes = ShadowsocksNodeConfig|VmessNodeConfig|HttpsNodeConfig|HttpNodeConfig|ShadowsocksrNodeConfig|SnellNodeConfig;
+type SupportConfigTypes = ShadowsocksNodeConfig|VmessNodeConfig|HttpsNodeConfig|HttpNodeConfig|ShadowsocksrNodeConfig|SnellNodeConfig|TrojanNodeConfig;
 
 const logger = createLogger({
   service: 'surgio:ClashProvider',
@@ -114,15 +115,19 @@ export const getClashSubscription = async (
 
   try {
     clashConfig = yaml.parse(response.body);
-
-    if (typeof clashConfig !== 'object' || !('Proxy' in clashConfig)) {
-      throw new Error();
-    }
   } catch (err) {
     throw new Error(`${url} 不是一个合法的 YAML 文件`);
   }
 
-  const proxyList: any[] = clashConfig.Proxy;
+  if (
+    typeof clashConfig !== 'object' ||
+    !('Proxy' in clashConfig) ||
+    !('proxies' in clashConfig)
+  ) {
+    throw new Error(`${url} 订阅内容有误，请检查后重试`);
+  }
+
+  const proxyList: any[] = clashConfig.Proxy || clashConfig.proxies;
 
   // istanbul ignore next
   if (!Array.isArray(proxyList)) {
@@ -170,7 +175,7 @@ export const getClashSubscription = async (
               skipCertVerify: item['plugin-opts']['skip-cert-verify'] === true,
             } : null),
           } : null),
-        };
+        } as ShadowsocksNodeConfig;
       }
 
       case 'vmess': {
@@ -201,7 +206,7 @@ export const getClashSubscription = async (
           ...(item.tls ? {
             skipCertVerify: item['skip-cert-verify'] === true,
           } : null),
-        };
+        } as VmessNodeConfig;
       }
 
       case 'http':
@@ -213,7 +218,7 @@ export const getClashSubscription = async (
             port: item.port,
             username: item.username /* istanbul ignore next */ || '',
             password: item.password /* istanbul ignore next */ || '',
-          };
+          } as HttpNodeConfig;
         }
 
         return {
@@ -224,7 +229,7 @@ export const getClashSubscription = async (
           username: item.username || '',
           password: item.password || '',
           skipCertVerify: item['skip-cert-verify'] === true,
-        };
+        } as HttpsNodeConfig;
 
       case 'snell':
         return {
@@ -234,7 +239,9 @@ export const getClashSubscription = async (
           port: item.port,
           psk: item.psk,
           obfs: _.get(item, 'obfs-opts.mode', 'http'),
-        };
+          ...('host' in item?.['obfs-opts'] ? { 'obfs-host': item['obfs-opts'].host } : null),
+          ...('version' in item ? { version: item.version } : null),
+        } as SnellNodeConfig;
 
       // istanbul ignore next
       case 'ssr':
@@ -249,7 +256,20 @@ export const getClashSubscription = async (
           protocol: item.protocol,
           protoparam: item.protocolparam,
           method: item.cipher,
-        };
+        } as ShadowsocksrNodeConfig;
+
+      case 'trojan':
+        return {
+          type: NodeTypeEnum.Trojan,
+          nodeName: item.name,
+          hostname: item.server,
+          port: item.port,
+          password: item.password,
+          ...('skipCertVerify' in item ? { skipCertVerify: item.skipCertVerify } : null),
+          ...('alpn' in item ? { alpn: item.alpn } : null),
+          ...('sni' in item ? { sni: item.sni } : null),
+          ...('udp' in item ? { 'udp-relay': item.udp } : null),
+        } as TrojanNodeConfig;
 
       default:
         logger.warn(`不支持从 Clash 订阅中读取 ${item.type} 的节点，节点 ${item.name} 会被省略`);
