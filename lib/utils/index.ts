@@ -616,7 +616,7 @@ export const getClashNodes = function(
             ...(nodeConfig.password ? {password: nodeConfig.password} : null),
             ...(typeof nodeConfig.tls === 'boolean' ? {tls: nodeConfig.tls} : null),
             ...(typeof nodeConfig.skipCertVerify === 'boolean' ? {'skip-cert-verify': nodeConfig.skipCertVerify} : null),
-            ...(typeof nodeConfig.udp === 'boolean' ? {udp: nodeConfig.udp} : null),
+            ...(typeof nodeConfig.udpRelay === 'boolean' ? {udp: nodeConfig.udpRelay} : null),
           };
         }
 

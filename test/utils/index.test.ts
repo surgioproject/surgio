@@ -656,7 +656,7 @@ test('getClashNodes', async t => {
       password: 'password',
       tls: true,
       skipCertVerify: true,
-      udp: false
+      udpRelay: false
     }]),
     [{
       type: 'socks5',
@@ -681,7 +681,7 @@ test('getClashNodes', async t => {
       password: 'password',
       tls: false,
       skipCertVerify: false,
-      udp: false
+      udpRelay: false
     }]),
     [{
       type: 'socks5',

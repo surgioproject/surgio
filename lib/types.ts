@@ -224,7 +224,7 @@ export interface Socks5NodeConfig extends SimpleNodeConfig {
   readonly password?: string;
   readonly tls?: boolean;
   readonly skipCertVerify?: boolean;
-  readonly udp?: boolean;
+  readonly udpRelay?: boolean;
   readonly sni?: string;
   readonly clientCert?: string;
 }

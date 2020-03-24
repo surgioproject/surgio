@@ -289,7 +289,7 @@ module.exports = {
   password: 'password', // 可选
   tls: true, // 可选
   skipCertVerify: true, // 可选
-  udp: false, // 可选, clash配置
+  udpRelay: false, // 可选, clash配置
   sni: 'example.com', // 可选, surge配置
   tfo: true, // 可选, surge配置
   clientCert: 'item' // 可选, surge配置, 参考 https://github.com/Blankwonder/Surge-Manual/blob/master/release-note/surge-mac.md#version-250 
