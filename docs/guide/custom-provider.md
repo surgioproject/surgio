@@ -17,7 +17,7 @@ sidebarDepth: 2
 |  `shadowsocks_subscribe`  |  通用的 Shadowsocks 订阅地址  |    |
 |  `shadowsocksr_subscribe`  |  通用的 Shadowsocksr 订阅地址  |    |
 |  `v2rayn_subscribe`  |  V2rayN 订阅地址  |  [协议](https://github.com/2dust/v2rayN/wiki/%E8%AE%A2%E9%98%85%E5%8A%9F%E8%83%BD%E8%AF%B4%E6%98%8E)  |
-|  `custom` <Badge text="推荐" vertical="middle" /> |  自己维护的节点  |  支持 Shadowsocks, Shadowsocksr, Snell, HTTPS, HTTP, Vmess  |
+|  `custom` <Badge text="推荐" vertical="middle" /> |  自己维护的节点  |  支持 Shadowsocks, Shadowsocksr, Snell, HTTPS, HTTP, Vmess, Socks5  |
 |  `clash` <Badge text="推荐" vertical="middle" /> |  Clash 配置  |  支持 Shadowsocks, Shadowsocksr, Snell, HTTPS, HTTP, Vmess  |
 
 ## shadowsocks_json_subscribe
@@ -274,6 +274,25 @@ module.exports = {
   alpn: ['http/1.1'], // 可选
   skipCertVerify: true, // 可选
   'udp-relay': true, // 可选
+}
+```
+
+*Socks5*
+
+```json5
+{
+  type: 'socks5',
+  nodeName: '🇭🇰HK',
+  hostname: 'hk.example.com',
+  port: 80,
+  username: 'username', // 可选
+  password: 'password', // 可选
+  tls: true, // 可选
+  skipCertVerify: true, // 可选
+  udpRelay: false, // 可选, clash配置
+  sni: 'example.com', // 可选, surge配置
+  tfo: true, // 可选, surge配置
+  clientCert: 'item' // 可选, surge配置, 参考 https://github.com/Blankwonder/Surge-Manual/blob/master/release-note/surge-mac.md#version-250 
 }
 ```
 
