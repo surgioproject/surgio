@@ -1,6 +1,6 @@
 ---
 title: 参与测试新版托管 API
-sidebarDepth: 1
+sidebarDepth: 2
 ---
 
 # 参与测试新版托管 API
@@ -142,3 +142,21 @@ https://example.now.sh/get-artifact/Surge.conf?access_token=token&foo=bar
 1. URL 参数中的值的类型都是字符串，形如 `true`、`1` 这样的值在模板中是 `"true"` 和 `"1"`；
 2. `access_token`, `format`, `filter`, `dl` 为保留 Key 无法被定义；
 :::
+
+### 5. Heroku 部署
+
+你可以在 [这里](https://github.com/surgioproject/heroku_demo) 找到完整的运行 Demo。
+
+把仓库更新至 GitHub 后，到 Heroku 关联该项目。
+
+![](../images/heroku_1.png)
+
+关联项目后，开启 `master` 分支自动部署。
+
+![](../images/heroku_2.png)
+
+最后，手动触发一次部署。
+
+![](../images/heroku_3.png)
+
+你可能还需要更新 `surgio.conf.js` 内 `urlBase` 的值。以这个 Demo 为例，它应该是 `https://surgio-demo.herokuapp.com/get-artifact/`。

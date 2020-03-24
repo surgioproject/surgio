@@ -470,3 +470,10 @@ module.exports = {
 3. 如果你开启了 `addFlag`，那国家地区判定仅对新名称有效；
 4. 这个方法不一定要在末尾 `return` 内容，如果没有返回内容则保留原名称；
 :::
+
+### provider.relayUrl <Badge text="v1.18.0" vertical="middle" />
+
+- 类型: `Boolean`
+- 默认值: `undefined`
+
+开启订阅地址转发。由于部分机场禁止 AWS 等共有云服务器访问，所以面板无法获取订阅内容。开启后会使用一个免费并且安全的转发服务进行获取。
