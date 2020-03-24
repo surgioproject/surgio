@@ -15,13 +15,13 @@ module.exports = {
         {
           type: 'input',
           name: 'name',
-          message: 'Artifact 名称（建议文件名包含后缀，如 .conf）？',
+          message: 'Artifact 名称（建议文件名包含后缀，如 .conf）',
           validate: result => !!result,
         },
         {
           type: 'list',
           name: 'provider',
-          message: 'Provider 名称？',
+          message: 'Provider 名称',
           choices: async () => {
             const files = await listFolder(config.providerDir);
 
@@ -35,7 +35,7 @@ module.exports = {
         {
           type: 'list',
           name: 'template',
-          message: 'Template 名称？',
+          message: 'Template 名称',
           choices: async () => {
             const files = await listFolder(config.templateDir);
 
@@ -49,7 +49,7 @@ module.exports = {
         {
           type: 'checkbox',
           name: 'combineProviders',
-          message: '是否合并其它 Provider（不合并直接回车跳过）？',
+          message: '是否合并其它 Provider（不合并直接回车跳过）',
           choices: async results => {
             const files = await listFolder(config.providerDir);
 

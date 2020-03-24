@@ -7,7 +7,7 @@ module.exports = {
         {
           type: 'input',
           name: 'name',
-          message: 'Template 名称？',
+          message: 'Template 名称',
         },
       ]);
   }
