@@ -20,7 +20,7 @@ import {
 import { lowercaseHeaderKeys } from '../utils';
 import { parseSubscriptionUserInfo } from '../utils/subscription';
 import { SubsciptionCacheItem, SubscriptionCache } from '../utils/cache';
-import { NETWORK_TIMEOUT } from '../utils/constant';
+import { NETWORK_TIMEOUT, RELAY_SERVICE } from '../utils/constant';
 import Provider from './Provider';
 
 type SupportConfigTypes = ShadowsocksNodeConfig|VmessNodeConfig|HttpsNodeConfig|HttpNodeConfig|ShadowsocksrNodeConfig|SnellNodeConfig|TrojanNodeConfig;
@@ -30,7 +30,7 @@ const logger = createLogger({
 });
 
 export default class ClashProvider extends Provider {
-  public readonly url: string;
+  public readonly _url: string;
   public readonly udpRelay?: boolean;
 
   constructor(name: string, config: ClashProviderConfig) {
@@ -54,9 +54,16 @@ export default class ClashProvider extends Provider {
       throw error;
     }
 
-    this.url = config.url;
+    this._url = config.url;
     this.udpRelay = config.udpRelay;
     this.supportGetSubscriptionUserInfo = true;
+  }
+
+  public get url(): string {
+    if (this.relayUrl) {
+      return `${RELAY_SERVICE}${this._url}`;
+    }
+    return this._url;
   }
 
   public async getSubscriptionUserInfo(): Promise<SubscriptionUserinfo> {

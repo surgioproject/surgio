@@ -7,15 +7,15 @@ import { ShadowsocksrNodeConfig, ShadowsocksrSubscribeProviderConfig, Subscripti
 import { fromBase64 } from '../utils';
 import { parseSubscriptionNode, parseSubscriptionUserInfo } from '../utils/subscription';
 import { SubsciptionCacheItem, SubscriptionCache } from '../utils/cache';
-import { NETWORK_TIMEOUT } from '../utils/constant';
+import { NETWORK_TIMEOUT, RELAY_SERVICE } from '../utils/constant';
 import { parseSSRUri } from '../utils/ssr';
 import Provider from './Provider';
 
 const logger = createLogger({ service: 'surgio:ShadowsocksrSubscribeProvider' });
 
 export default class ShadowsocksrSubscribeProvider extends Provider {
-  public readonly url: string;
   public readonly udpRelay?: boolean;
+  private readonly _url: string;
 
   constructor(name: string, config: ShadowsocksrSubscribeProviderConfig) {
     super(name, config);
@@ -40,9 +40,16 @@ export default class ShadowsocksrSubscribeProvider extends Provider {
       throw error;
     }
 
-    this.url = config.url;
+    this._url = config.url;
     this.udpRelay = config.udpRelay;
     this.supportGetSubscriptionUserInfo = true;
+  }
+
+  public get url(): string {
+    if (this.relayUrl) {
+      return `${RELAY_SERVICE}${this._url}`;
+    }
+    return this._url;
   }
 
   public async getSubscriptionUserInfo(): Promise<SubscriptionUserinfo> {
