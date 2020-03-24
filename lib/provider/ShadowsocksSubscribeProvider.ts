@@ -54,6 +54,7 @@ export default class ShadowsocksSubscribeProvider extends Provider {
     this.supportGetSubscriptionUserInfo = true;
   }
 
+  // istanbul ignore next
   public get url(): string {
     if (this.relayUrl) {
       return `${RELAY_SERVICE}${this._url}`;

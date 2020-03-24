@@ -37,6 +37,7 @@ export default class V2rayNSubscribeProvider extends Provider {
     this._url = config.url;
   }
 
+  // istanbul ignore next
   public get url(): string {
     if (this.relayUrl) {
       return `${RELAY_SERVICE}${this._url}`;

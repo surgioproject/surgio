@@ -1,5 +1,6 @@
 import test from 'ava';
 import nock from 'nock';
+import { RELAY_SERVICE } from '../../utils/constant';
 
 import ClashProvider, { getClashSubscription, parseClashConfig } from '../ClashProvider';
 import { NodeTypeEnum, SupportProviderEnum } from '../../types';
@@ -305,4 +306,14 @@ test('trojan configurations', t => {
       'udp-relay': true,
     }]
   );
+});
+
+test('ClashProvider relayUrl', async t => {
+  const provider = new ClashProvider('test', {
+    type: SupportProviderEnum.Clash,
+    url: 'http://example.com/clash-sample.yaml',
+    relayUrl: true,
+  });
+
+  t.is(provider.url, `${RELAY_SERVICE}http://example.com/clash-sample.yaml`);
 });

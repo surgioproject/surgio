@@ -35,6 +35,7 @@ export default class ShadowsocksJsonSubscribeProvider extends Provider {
     this.udpRelay = config.udpRelay;
   }
 
+  // istanbul ignore next
   public get url(): string {
     if (this.relayUrl) {
       return `${RELAY_SERVICE}${this._url}`;
