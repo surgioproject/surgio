@@ -6,11 +6,11 @@ import got from 'got';
 import { NodeTypeEnum, V2rayNSubscribeProviderConfig, VmessNodeConfig } from '../types';
 import { fromBase64 } from '../utils';
 import { ConfigCache } from '../utils/cache';
-import { NETWORK_TIMEOUT } from '../utils/constant';
+import { NETWORK_TIMEOUT, RELAY_SERVICE } from '../utils/constant';
 import Provider from './Provider';
 
 export default class V2rayNSubscribeProvider extends Provider {
-  public readonly url: string;
+  private readonly _url: string;
 
   constructor(name: string, config: V2rayNSubscribeProviderConfig) {
     super(name, config);
@@ -34,7 +34,15 @@ export default class V2rayNSubscribeProvider extends Provider {
       throw error;
     }
 
-    this.url = config.url;
+    this._url = config.url;
+  }
+
+  // istanbul ignore next
+  public get url(): string {
+    if (this.relayUrl) {
+      return `${RELAY_SERVICE}${this._url}`;
+    }
+    return this._url;
   }
 
   public getNodeList(): ReturnType<typeof getV2rayNSubscription> {

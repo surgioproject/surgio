@@ -18,6 +18,7 @@ export default class Provider {
   public readonly tfo?: boolean;
   public readonly mptcp?: boolean;
   public readonly renameNode?: ProviderConfig['renameNode'];
+  public readonly relayUrl?: boolean;
   public supportGetSubscriptionUserInfo: boolean;
   private startPort?: number;
 
@@ -38,6 +39,8 @@ export default class Provider {
       mptcp: Joi.boolean(),
       tfo: Joi.boolean(),
       startPort: Joi.number().integer().min(1024).max(65535),
+      relayUrl: Joi.boolean(),
+      renameNode: Joi.function(),
     })
       .unknown();
 
@@ -58,6 +61,7 @@ export default class Provider {
     this.mptcp = config.mptcp;
     this.startPort = config.startPort;
     this.renameNode = config.renameNode;
+    this.relayUrl = config.relayUrl;
     this.supportGetSubscriptionUserInfo = false;
   }
 

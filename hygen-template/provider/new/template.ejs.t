@@ -20,5 +20,8 @@ module.exports = {
 <% if (udpRelay === true) { -%>
   udpRelay: true,
 <% } -%>
+<% if (relayUrl === true) { -%>
+  relayUrl: true,
+<% } -%>
 };
 
