@@ -33,6 +33,13 @@ const scope = nock('http://example.com')
       encoding: 'utf8',
     })
   )
+  .get(/\/test-v2rayn-sub-compatible\.txt/)
+  .reply(
+    200,
+    fs.readFileSync(path.join(__dirname, 'asset/test-v2rayn-sub-compatible.txt'), {
+      encoding: 'utf8',
+    })
+  )
   .get(/\/netflix\.list/)
   .reply(
     200,

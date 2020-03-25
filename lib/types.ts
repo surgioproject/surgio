@@ -123,6 +123,7 @@ export interface ShadowsocksrSubscribeProviderConfig extends ProviderConfig {
 
 export interface V2rayNSubscribeProviderConfig extends ProviderConfig {
   readonly url: string;
+  readonly compatibleMode?: boolean;
 }
 
 export interface ClashProviderConfig extends ProviderConfig {
