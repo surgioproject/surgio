@@ -1,3 +1,13 @@
+# [1.18.0](https://github.com/geekdada/surgio/compare/v1.17.1...v1.18.0) (2020-03-25)
+
+
+### Features
+
+* 更新模板生成工具 ([fd8eed0](https://github.com/geekdada/surgio/commit/fd8eed0b0f527698ec203f347d7bbdae397ee897))
+* add a relay service for subscriptions ([4b789a8](https://github.com/geekdada/surgio/commit/4b789a89f1cf68ce978d0fecd58daaf82f4a039a))
+
+
+
 ## [1.17.1](https://github.com/geekdada/surgio/compare/v1.17.0...v1.17.1) (2020-03-23)
 
 
