@@ -117,6 +117,13 @@ module.exports = {
 - 如果你正在使用 [DlerCloud](https://dlercloud.com/auth/register?affid=45071)，可以使用「通用」类型的订阅地址
 :::
 
+### compatibleMode
+
+- 类型: `boolean`
+- 默认值: `false`
+
+部分机场提供的订阅地址不符合标准，提供一个兼容模式进行解析。
+
 ## clash <Badge text="推荐" vertical="middle" />
 
 :::warning 注意
