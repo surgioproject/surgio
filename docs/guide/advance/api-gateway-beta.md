@@ -147,11 +147,11 @@ https://example.now.sh/get-artifact/Surge.conf?access_token=token&foo=bar
 
 你可以在 [这里](https://github.com/surgioproject/heroku_demo) 找到完整的运行 Demo。
 
-把仓库更新至 GitHub 后，到 Heroku 关联该项目。
+把你的规则仓库同步至 GitHub 后，到 Heroku 关联该项目。
 
 ![](../images/heroku_1.png)
 
-关联项目后，开启 `master` 分支自动部署。
+关联项目后，开启 `master` 分支自动部署。你可以不开启这一项，后续如果需要更新服务代码则进行手动更新。
 
 ![](../images/heroku_2.png)
 
@@ -159,4 +159,12 @@ https://example.now.sh/get-artifact/Surge.conf?access_token=token&foo=bar
 
 ![](../images/heroku_3.png)
 
-你可能还需要更新 `surgio.conf.js` 内 `urlBase` 的值。以这个 Demo 为例，它应该是 `https://surgio-demo.herokuapp.com/get-artifact/`。
+你可能还需要更新 _surgio.conf.js_ 内 `urlBase` 的值。以这个 Demo 为例，它应该是：
+
+```
+https://surgio-demo.herokuapp.com/get-artifact/
+```
+
+:::tip 提示
+Heroku 今后会和 now.sh 一样成为推荐的部署网关平台。
+:::

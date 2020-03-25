@@ -277,7 +277,7 @@ module.exports = {
 }
 ```
 
-*Socks5*
+*Socks5* <Badge text="v1.18.0" vertical="middle" />
 
 ```json5
 {
@@ -289,10 +289,10 @@ module.exports = {
   password: 'password', // 可选
   tls: true, // 可选
   skipCertVerify: true, // 可选
-  udpRelay: false, // 可选, clash配置
-  sni: 'example.com', // 可选, surge配置
-  tfo: true, // 可选, surge配置
-  clientCert: 'item' // 可选, surge配置, 参考 https://github.com/Blankwonder/Surge-Manual/blob/master/release-note/surge-mac.md#version-250 
+  udpRelay: false, // 可选, 仅 Clash 支持
+  sni: 'example.com', // 可选, 仅 Surge 支持
+  tfo: true, // 可选, 仅 Surge 支持
+  clientCert: 'item' // 可选, 仅 Surge 支持, 参考 https://github.com/Blankwonder/Surge-Manual/blob/master/release-note/surge-mac.md#version-250 
 }
 ```
 
