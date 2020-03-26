@@ -117,7 +117,7 @@ module.exports = {
 - 如果你正在使用 [DlerCloud](https://dlercloud.com/auth/register?affid=45071)，可以使用「通用」类型的订阅地址
 :::
 
-### compatibleMode
+### compatibleMode <Badge text="v1.18.1" vertical="middle" />
 
 - 类型: `boolean`
 - 默认值: `false`
