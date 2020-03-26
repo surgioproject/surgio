@@ -1,3 +1,12 @@
+## [1.18.1](https://github.com/geekdada/surgio/compare/v1.18.0...v1.18.1) (2020-03-26)
+
+
+### Features
+
+* **Provider:**  v2rayn_subscribe add compatible mode ([534e883](https://github.com/geekdada/surgio/commit/534e883521f0dd0a1de47c04fa8473c1ec2b0912))
+
+
+
 # [1.18.0](https://github.com/geekdada/surgio/compare/v1.17.1...v1.18.0) (2020-03-25)
 
 
