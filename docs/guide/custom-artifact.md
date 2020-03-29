@@ -49,13 +49,14 @@ Surgio 会根据 Artifact 的值来生成配置文件。你可以一次性配置
 合并其它 Provider。
 
 :::warning 注意
-- 被合并的 Provider 的过滤器中仅 `nodeFilter` 生效。
-- `provider` 定义的主要 Provider 中的过滤器（包括自定义过滤器）会对合并的 Provider 生效。
+由于我们可以在 Provider 中定义属于自己的 `customFilters` 和 `nodeFilter`，它们在合并时需要你注意以下几点：
+- 不论是主 Provider（即 `provider` 定义的 Provider），还是合并进来的 Provider，它们的 `nodeFilter` 只对自身的节点有效；
+- 对于 `customFilters` 来说，只有主 Provider 中定义的才会生效；
 :::
 
 例如：
 
-最终生成的节点配置会包含 `my-provider`, `rixcloud`, `dlercloud` 三个 Provider 的节点。如果 `my-provider` 中定义了过滤器，那这些过滤器对 `rixcloud` 和 `dlercloud` 节点同样有效。
+最终生成的节点配置会包含 `my-provider`, `rixcloud`, `dlercloud` 三个 Provider 的节点。如果 `my-provider` 中有自定义过滤器 `customFilters`，那这些过滤器对 `rixcloud` 和 `dlercloud` 节点同样有效。
 
 ```js
 {
