@@ -414,12 +414,7 @@ export const getSurgeNodes = function(
             nodeConfig.hostname,
             `${nodeConfig.port}`,
             `password=${nodeConfig.password}`,
-            ...(typeof nodeConfig.tfo === 'boolean' ? [
-              `tfo=${nodeConfig.tfo}`,
-            ] : []),
-            ...(typeof nodeConfig.mptcp === 'boolean' ? [
-              `mptcp=${nodeConfig.mptcp}`,
-            ] : []),
+            ...pickAndFormatStringList(nodeConfig, ['tfo', 'mptcp', 'sni']),
             ...(typeof nodeConfig.skipCertVerify === 'boolean' ? [
               `skip-cert-verify=${nodeConfig.skipCertVerify}`,
             ] : []),

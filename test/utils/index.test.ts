@@ -207,11 +207,12 @@ test('getSurgeNodes', async t => {
       hostname: 'example.com',
       port: 443,
       password: 'password1',
+      sni: 'sni.com',
       tfo: true,
       mptcp: true,
       skipCertVerify: true,
     }]),
-    'trojan node 2 = trojan, example.com, 443, password=password1, tfo=true, mptcp=true, skip-cert-verify=true',
+    'trojan node 2 = trojan, example.com, 443, password=password1, tfo=true, mptcp=true, sni=sni.com, skip-cert-verify=true',
   );
 
   t.is(
