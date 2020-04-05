@@ -1,3 +1,17 @@
+## [1.18.2](https://github.com/geekdada/surgio/compare/v1.18.1...v1.18.2) (2020-04-05)
+
+
+### Bug Fixes
+
+* sni is missing in surge trojan config ([be0c340](https://github.com/geekdada/surgio/commit/be0c34099b733fcda1f0baf5f85d1b19efb410b0))
+
+
+### Features
+
+* 优化国家地区识别 ([2d01be4](https://github.com/geekdada/surgio/commit/2d01be4b8a44bde120a5fef3533581469d93a8a8))
+
+
+
 ## [1.18.1](https://github.com/geekdada/surgio/compare/v1.18.0...v1.18.1) (2020-03-26)
 
 
