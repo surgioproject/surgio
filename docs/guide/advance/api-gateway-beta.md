@@ -168,3 +168,14 @@ https://surgio-demo.herokuapp.com/get-artifact/
 :::tip 提示
 Heroku 今后会和 now.sh 一样成为推荐的部署网关平台。
 :::
+
+### 6. 直接导出 Provider
+
+有时候你只想将 Provider 导出成类似 Surge Policy 或者其它格式的配置，那么可以借助这个功能快速达到目的，免去了新建一个 Artifact 的麻烦。即使这个 Provider 没有被任何一个 Artifact 使用，它也是能够被直接导出的！
+
+
+你可以在面板的 Provider 页面找到复制链接按钮。目前面板还不支持复制组装多个 Provider 的 URL。如果你想组装多个 Provider，可以修改 URL 中的 `providers` 参数，多个 Provider 名称以逗号分隔，例如：
+
+```
+https://example.com/export-providers?providers=maying,dlercloud&format=surge-policy
+```
