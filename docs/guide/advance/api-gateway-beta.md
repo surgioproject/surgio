@@ -179,3 +179,7 @@ Heroku 今后会和 now.sh 一样成为推荐的部署网关平台。
 ```
 https://example.com/export-providers?providers=maying,dlercloud&format=surge-policy
 ```
+
+:::tip 提示
+合并多个 Provider 时，第一个 Provider 为主 Provider，遵循过滤器的合并规则。
+:::

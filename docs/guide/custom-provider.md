@@ -124,6 +124,20 @@ module.exports = {
 
 部分机场提供的订阅地址不符合标准，提供一个兼容模式进行解析。
 
+### udpRelay <Badge text="v1.18.3" vertical="middle" />
+
+- 类型: `boolean`
+- 默认值: `false`
+
+由于这种订阅协议不支持定义 UDP 转发的支持情况，所以单独出来进行配置。
+
+### skipCertVerify <Badge text="v1.18.3" vertical="middle" />
+
+- 类型: `boolean`
+- 默认值: `false`
+
+由于这种订阅协议不支持定义跳过证书验证，所以单独出来进行配置。
+
 ## clash <Badge text="推荐" vertical="middle" />
 
 :::warning 注意
@@ -176,7 +190,7 @@ module.exports = {
   'obfs-uri': '/', // 当 obfs 为 ws 或 wss 时可配置
   'udp-relay': true,
   tfo: false, // TCP Fast Open
-  tls13: false, // TLS 1.3
+  tls13: false, // TLS 1.3，适用于 v2ray-plugin
 }
 ```
 
@@ -281,6 +295,7 @@ module.exports = {
   alpn: ['http/1.1'], // 可选
   skipCertVerify: true, // 可选
   'udp-relay': true, // 可选
+  tls13: false, // TLS 1.3
 }
 ```
 
@@ -352,6 +367,7 @@ module.exports = {
 :::warning 注意
 1. TLS 1.3 需要服务端支持；
 2. 支持 TLS 的节点类型有 Shadowsocks with v2ray-plugin(tls), Vmess(tls), HTTPS；
+3. 如果你使用 Surge，
 :::
 
 ### nodeConfig.skipCertVerify <Badge text="v1.10.0" vertical="middle" />
