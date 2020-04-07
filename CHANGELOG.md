@@ -1,3 +1,14 @@
+## [1.18.3](https://github.com/geekdada/surgio/compare/v1.18.2...v1.18.3) (2020-04-07)
+
+
+### Features
+
+* `v2rayn_subscribe` 支持强制覆盖 `skipCertVerify` 和 `udpRelay` ([3a326d4](https://github.com/geekdada/surgio/commit/3a326d463f47bba6a000d299eb1dee19d790e29c))
+* 支持从 Surge 配置中解析转换 Quantumult X 的以下几种脚本 ([066060d](https://github.com/geekdada/surgio/commit/066060d3d26b6f0172c568897fc492a77ccfcfb9))
+* add support for quantumultx tls1.3 ([007db56](https://github.com/geekdada/surgio/commit/007db568c2a9ac7685bd0a344fa5093c22429e81))
+
+
+
 ## [1.18.2](https://github.com/geekdada/surgio/compare/v1.18.1...v1.18.2) (2020-04-05)
 
 
