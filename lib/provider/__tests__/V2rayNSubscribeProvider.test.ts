@@ -63,3 +63,24 @@ test('getV2rayNSubscription compatible mode', async t => {
     uuid: '1386f85e-657b-4d6e-9d56-78badb75e1fd',
   });
 });
+
+test('getV2rayNSubscription udpRelay skipCertVerify', async t => {
+  const url = 'http://example.com/test-v2rayn-sub-compatible.txt';
+  const configList = await getV2rayNSubscription(url, true, true, true);
+
+  t.deepEqual(configList[0], {
+    alterId: '64',
+    host: 'example.com',
+    hostname: '1.1.1.1',
+    method: 'auto',
+    network: 'ws',
+    nodeName: '测试 1',
+    path: '/',
+    port: 8080,
+    tls: false,
+    type: NodeTypeEnum.Vmess,
+    uuid: '1386f85e-657b-4d6e-9d56-78badb75e1fd',
+    skipCertVerify: true,
+    udp: true,
+  });
+});

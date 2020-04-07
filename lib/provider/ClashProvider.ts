@@ -282,7 +282,7 @@ export const parseClashConfig = (proxyList: ReadonlyArray<any>, udpRelay?: boole
           hostname: item.server,
           port: item.port,
           password: item.password,
-          ...('skipCertVerify' in item ? { skipCertVerify: item.skipCertVerify } : null),
+          ...('skip-cert-verify' in item ? { skipCertVerify: item['skip-cert-verify'] === true } : null),
           ...('alpn' in item ? { alpn: item.alpn } : null),
           ...('sni' in item ? { sni: item.sni } : null),
           ...('udp' in item ? { 'udp-relay': item.udp } : null),

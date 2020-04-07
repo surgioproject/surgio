@@ -2,7 +2,7 @@
 import test from 'ava';
 import fs from 'fs-extra';
 import { join } from 'path';
-import { getEngine } from '../template';
+import { convertSurgeScriptRuleToQuantumultXRewriteRule, getEngine } from '../template';
 
 const templateEngine = getEngine(process.cwd());
 const assetDir = join(__dirname, '../../../test/asset/');
@@ -168,4 +168,8 @@ test('stringify', t => {
   t.snapshot(templateEngine.renderString(`{{ obj | json }}`, {
     obj,
   }));
+});
+
+test('convertSurgeScriptRuleToQuantumultXRewriteRule', t => {
+  t.is(convertSurgeScriptRuleToQuantumultXRewriteRule(''), '');
 });

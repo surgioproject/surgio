@@ -62,6 +62,9 @@ export function getEngine(templateDir: string): nunjucks.Environment {
         if (testString.startsWith('HTTP-RESPONSE')) {
           return convertSurgeScriptRuleToQuantumultXRewriteRule(item);
         }
+        if (testString.startsWith('HTTP-REQUEST')) {
+          return convertSurgeScriptRuleToQuantumultXRewriteRule(item);
+        }
 
         const matched = testString.match(/^([\w-]+),/);
 
@@ -117,17 +120,35 @@ export const convertSurgeScriptRuleToQuantumultXRewriteRule = (str: string): str
   const result = [];
 
   switch (parts[0]) {
-    case 'http-response':
+    case 'http-response': {
       const params = decodeStringList(parts.splice(2).join('').split(','));
       const scriptPath = params['script-path'];
+      const isRequireBody = 'requires-body' in params;
 
-      // parts[1] => Effective URL Rule
-      result.push(parts[1], 'url', 'script-response-body', scriptPath);
+      if (isRequireBody) {
+        // parts[1] => Effective URL Rule
+        result.push(parts[1], 'url', 'script-response-body', scriptPath);
+      } else {
+        result.push(parts[1], 'url', 'script-response-header', scriptPath);
+      }
 
       return result.join(' ');
+    }
+    case 'http-request': {
+      const params = decodeStringList(parts.splice(2).join('').split(','));
+      const scriptPath = params['script-path'];
+      const isRequireBody = 'requires-body' in params;
 
+      if (isRequireBody) {
+        // parts[1] => Effective URL Rule
+        result.push(parts[1], 'url', 'script-request-body', scriptPath);
+      } else {
+        result.push(parts[1], 'url', 'script-request-header', scriptPath);
+      }
+
+      return result.join(' ');
+    }
     default:
       return '';
   }
-
 };

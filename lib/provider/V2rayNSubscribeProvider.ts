@@ -10,11 +10,15 @@ import { NETWORK_TIMEOUT, RELAY_SERVICE } from '../utils/constant';
 import Provider from './Provider';
 
 export default class V2rayNSubscribeProvider extends Provider {
+  public readonly compatibleMode?: boolean;
+  public readonly skipCertVerify?: boolean;
+  public readonly udpRelay?: boolean;
+
   private readonly _url: string;
-  private readonly _compatibleMode?: boolean;
+
   constructor(name: string, config: V2rayNSubscribeProviderConfig) {
     super(name, config);
-    this._compatibleMode = config.compatibleMode;
+
     const schema = Joi.object({
       url: Joi
         .string()
@@ -35,6 +39,9 @@ export default class V2rayNSubscribeProvider extends Provider {
     }
 
     this._url = config.url;
+    this.compatibleMode = config.compatibleMode;
+    this.skipCertVerify = config.skipCertVerify;
+    this.udpRelay = config.udpRelay;
   }
 
   // istanbul ignore next
@@ -46,16 +53,20 @@ export default class V2rayNSubscribeProvider extends Provider {
   }
 
   public getNodeList(): ReturnType<typeof getV2rayNSubscription> {
-    return getV2rayNSubscription(this.url, this._compatibleMode);
+    return getV2rayNSubscription(this.url, this.compatibleMode, this.skipCertVerify, this.udpRelay);
   }
 }
 
 export const getV2rayNSubscription = async (
   url: string,
-  isCompatibleMode: boolean
+  isCompatibleMode?: boolean|undefined,
+  skipCertVerify?: boolean|undefined,
+  udpRelay?: boolean|undefined,
 ): Promise<ReadonlyArray<VmessNodeConfig>> => {
   assert(url, '未指定订阅地址 url');
+
   if (isCompatibleMode) { logger.warn('运行在兼容模式，请注意生成的节点是否正确。'); }
+
   async function requestConfigFromRemote(): Promise<ReadonlyArray<VmessNodeConfig>> {
     const response = ConfigCache.has(url) ? ConfigCache.get(url) : await (async () => {
       const res = await got.get(url, {
@@ -96,6 +107,12 @@ export const getV2rayNSubscription = async (
         tls: json.tls === 'tls',
         host: json.host || '',
         path: json.path || '/',
+        ...(udpRelay ? {
+          udp: udpRelay,
+        } : null),
+        ...(skipCertVerify ? {
+          skipCertVerify,
+        } : null),
       };
     })
       .filter(item => !!item);

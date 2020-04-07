@@ -124,6 +124,8 @@ export interface ShadowsocksrSubscribeProviderConfig extends ProviderConfig {
 export interface V2rayNSubscribeProviderConfig extends ProviderConfig {
   readonly url: string;
   readonly compatibleMode?: boolean;
+  readonly skipCertVerify?: boolean;
+  readonly udpRelay?: boolean;
 }
 
 export interface ClashProviderConfig extends ProviderConfig {
@@ -165,6 +167,7 @@ export interface ShadowsocksNodeConfig extends SimpleNodeConfig {
   readonly 'obfs-uri'?: string;
   readonly skipCertVerify?: boolean;
   readonly wsHeaders?: Record<string, string>;
+  readonly tls13?: boolean;
 }
 
 export interface SnellNodeConfig extends SimpleNodeConfig {
@@ -216,6 +219,7 @@ export interface TrojanNodeConfig extends SimpleNodeConfig {
   readonly alpn?: ReadonlyArray<string>;
   readonly sni?: string;
   readonly 'udp-relay'?: boolean;
+  readonly tls13?: boolean;
 }
 
 export interface Socks5NodeConfig extends SimpleNodeConfig {

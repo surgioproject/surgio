@@ -920,6 +920,10 @@ export const getQuantumultXNodes = function(
               }
               config.push(`obfs-uri=${nodeConfig.path || '/'}`);
               config.push(`obfs-host=${nodeConfig.host || nodeConfig.hostname}`);
+              // istanbul ignore next
+              if (nodeConfig.tls13) {
+                config.push(`tls13=true`);
+              }
 
               break;
             case 'tcp':
@@ -934,7 +938,7 @@ export const getQuantumultXNodes = function(
 
           config.push(`tag=${nodeConfig.nodeName}`);
 
-          // istanbul-ignore-next
+          // istanbul ignore next
           if (nodeConfig.wsHeaders && Object.keys(nodeConfig.wsHeaders).length > 1) {
             logger.warn(`Quantumult X 不支持自定义额外的 Header 字段，节点 ${nodeConfig.nodeName} 可能不可用`);
           }
@@ -961,11 +965,14 @@ export const getQuantumultXNodes = function(
             ...(nodeConfig.tfo ? [
               `fast-open=${nodeConfig.tfo}`,
             ] : []),
+            ...(nodeConfig.tls13 ? [
+              `tls13=${nodeConfig.tls13}`,
+            ] : []),
             `tag=${nodeConfig.nodeName}`,
           ]
             .join(', ');
 
-          // istanbul-ignore-next
+          // istanbul ignore next
           if (nodeConfig.wsHeaders && Object.keys(nodeConfig.wsHeaders).length > 1) {
             logger.warn(`Quantumult X 不支持自定义额外的 Header 字段，节点 ${nodeConfig.nodeName} 可能不可用`);
           }
@@ -1008,6 +1015,9 @@ export const getQuantumultXNodes = function(
             config.push(
               'over-tls=true',
               `tls-verification=${nodeConfig.skipCertVerify !== true}`,
+              ...(nodeConfig.tls13 ? [
+                `tls13=${nodeConfig.tls13}`,
+              ] : []),
             );
           }
 
@@ -1022,11 +1032,17 @@ export const getQuantumultXNodes = function(
             ...pickAndFormatStringList(nodeConfig, ['password']),
             'over-tls=true',
             `tls-verification=${nodeConfig.skipCertVerify !== true}`,
+            ...(nodeConfig.sni ? [
+              `tls-host=${nodeConfig.sni}`,
+            ] : []),
             ...(nodeConfig.tfo ? [
               `fast-open=${nodeConfig.tfo}`,
             ] : []),
             ...(nodeConfig['udp-relay'] ? [
               `udp-relay=${nodeConfig['udp-relay']}`,
+            ] : []),
+            ...(nodeConfig.tls13 ? [
+              `tls13=${nodeConfig.tls13}`,
             ] : []),
             `tag=${nodeConfig.nodeName}`,
           ];
@@ -1221,7 +1237,8 @@ export const ensureConfigFolder = (dir: string = os.homedir()): string => {
     fs.accessSync(dir, fs.constants.W_OK);
     baseDir = dir;
   } catch (err) {
-    // can't write
+    // if the user do not have write permission
+    // istanbul ignore next
     baseDir = '/tmp';
   }
 
@@ -1304,6 +1321,7 @@ export const applyFilter = <T extends SimpleNodeConfig>(
   nodeList: ReadonlyArray<T>,
   filter?: NodeNameFilterType|SortedNodeNameFilterType
 ): ReadonlyArray<T> => {
+  // istanbul ignore next
   if (filter && !validateFilter(filter)) {
     throw new Error(`使用了无效的过滤器 ${filter}`);
   }
