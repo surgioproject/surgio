@@ -920,6 +920,9 @@ export const getQuantumultXNodes = function(
               }
               config.push(`obfs-uri=${nodeConfig.path || '/'}`);
               config.push(`obfs-host=${nodeConfig.host || nodeConfig.hostname}`);
+              if (nodeConfig.tls13) {
+                config.push(`tls13=true`);
+              }
 
               break;
             case 'tcp':
@@ -960,6 +963,9 @@ export const getQuantumultXNodes = function(
             ] : []),
             ...(nodeConfig.tfo ? [
               `fast-open=${nodeConfig.tfo}`,
+            ] : []),
+            ...(nodeConfig.tls13 ? [
+              `tls13=${nodeConfig.tls13}`,
             ] : []),
             `tag=${nodeConfig.nodeName}`,
           ]
@@ -1008,6 +1014,9 @@ export const getQuantumultXNodes = function(
             config.push(
               'over-tls=true',
               `tls-verification=${nodeConfig.skipCertVerify !== true}`,
+              ...(nodeConfig.tls13 ? [
+                `tls13=${nodeConfig.tls13}`,
+              ] : []),
             );
           }
 
@@ -1022,11 +1031,17 @@ export const getQuantumultXNodes = function(
             ...pickAndFormatStringList(nodeConfig, ['password']),
             'over-tls=true',
             `tls-verification=${nodeConfig.skipCertVerify !== true}`,
+            ...(nodeConfig.sni ? [
+              `tls-host=${nodeConfig.sni}`,
+            ] : []),
             ...(nodeConfig.tfo ? [
               `fast-open=${nodeConfig.tfo}`,
             ] : []),
             ...(nodeConfig['udp-relay'] ? [
               `udp-relay=${nodeConfig['udp-relay']}`,
+            ] : []),
+            ...(nodeConfig.tls13 ? [
+              `tls13=${nodeConfig.tls13}`,
             ] : []),
             `tag=${nodeConfig.nodeName}`,
           ];
