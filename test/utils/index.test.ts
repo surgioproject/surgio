@@ -1241,6 +1241,33 @@ test('getQuantumultXNodes', t => {
 
   t.is(
     utils.getQuantumultXNodes([{
+      type: NodeTypeEnum.Vmess,
+      alterId: '64',
+      hostname: '1.1.1.1',
+      method: 'auto',
+      network: 'tcp',
+      nodeName: '测试',
+      port: 443,
+      tls: true,
+      tls13: true,
+      uuid: '1386f85e-657b-4d6e-9d56-78badb75e1fd',
+    }]),
+    'vmess=1.1.1.1:443, method=chacha20-ietf-poly1305, password=1386f85e-657b-4d6e-9d56-78badb75e1fd, udp-relay=true, obfs=over-tls, tag=测试'
+  );
+  t.is(
+    utils.getQuantumultXNodes([{
+      type: NodeTypeEnum.HTTPS,
+      nodeName: 'test',
+      hostname: 'a.com',
+      port: 443,
+      tls13: true,
+      username: 'snsms',
+      password: 'nndndnd',
+    }]),
+    'http=a.com:443, username=snsms, password=nndndnd, over-tls=true, tls-verification=true, tls13=true, tag=test'
+  );
+  t.is(
+    utils.getQuantumultXNodes([{
       type: NodeTypeEnum.Trojan,
       nodeName: 'trojan',
       hostname: 'example.com',
@@ -1261,6 +1288,21 @@ test('getQuantumultXNodes', t => {
       tfo: true,
     }]),
     'trojan=example.com:443, password=password1, over-tls=true, tls-verification=false, fast-open=true, udp-relay=true, tag=trojan'
+  );
+  t.is(
+    utils.getQuantumultXNodes([{
+      type: NodeTypeEnum.Trojan,
+      nodeName: 'trojan',
+      hostname: 'example.com',
+      port: 443,
+      password: 'password1',
+      sni: 'sni.example.com',
+      'udp-relay': true,
+      skipCertVerify: true,
+      tfo: true,
+      tls13: true,
+    }]),
+    'trojan=example.com:443, password=password1, over-tls=true, tls-verification=false, tls-host=sni.example.com, fast-open=true, udp-relay=true, tls13=true, tag=trojan'
   );
 });
 
