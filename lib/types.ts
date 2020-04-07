@@ -124,6 +124,8 @@ export interface ShadowsocksrSubscribeProviderConfig extends ProviderConfig {
 export interface V2rayNSubscribeProviderConfig extends ProviderConfig {
   readonly url: string;
   readonly compatibleMode?: boolean;
+  readonly skipCertVerify?: boolean;
+  readonly udpRelay?: boolean;
 }
 
 export interface ClashProviderConfig extends ProviderConfig {
