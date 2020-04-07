@@ -5,6 +5,8 @@
 </p>
 
 [![NPM version][npm-image]][npm-url]
+[![TAONPM version][taonpm-image]][taonpm-url]
+![Nodejs][nodejs-version]
 ![Github Actions][github-actions-image]
 [![build status][travis-image]][travis-url]
 [![Test coverage][codecov-image]][codecov-url]
@@ -25,6 +27,9 @@
 [download-image]: https://img.shields.io/npm/dm/surgio.svg?style=flat-square
 [download-url]: https://npmjs.org/package/surgio
 [github-actions-image]: https://github.com/geekdada/surgio/workflows/Node%20CI/badge.svg
+[taonpm-image]: https://npm.taobao.org/badge/v/surgio.svg
+[taonpm-url]: https://npm.taobao.org/package/surgio
+[nodejs-version]: https://img.shields.io/node/v/surgio
 
 ## 文档
 
