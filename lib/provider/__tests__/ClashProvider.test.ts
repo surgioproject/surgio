@@ -289,7 +289,7 @@ test('trojan configurations', t => {
       server: 'example.com',
       port: 443,
       password: 'password1',
-      skipCertVerify: true,
+      'skip-cert-verify': true,
       alpn: ['http/1.1'],
       sni: 'sni.example.com',
       udp: true,
