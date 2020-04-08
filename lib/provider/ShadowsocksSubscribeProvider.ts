@@ -62,13 +62,13 @@ export default class ShadowsocksSubscribeProvider extends Provider {
     return this._url;
   }
 
-  public async getSubscriptionUserInfo(): Promise<SubscriptionUserinfo> {
+  public async getSubscriptionUserInfo(): Promise<SubscriptionUserinfo|undefined> {
     const { subscriptionUserinfo } = await getShadowsocksSubscription(this.url, this.udpRelay);
 
     if (subscriptionUserinfo) {
       return subscriptionUserinfo;
     }
-    return null;
+    return undefined;
   }
 
   public async getNodeList(): Promise<ReadonlyArray<ShadowsocksNodeConfig>> {
@@ -91,8 +91,8 @@ export const getShadowsocksSubscription = async (
   assert(url, '未指定订阅地址 url');
 
   async function requestConfigFromRemote(): ReturnType<typeof getShadowsocksSubscription> {
-    const response: SubsciptionCacheItem = SubscriptionCache.has(url)
-      ? SubscriptionCache.get(url)
+    const response = SubscriptionCache.has(url)
+      ? SubscriptionCache.get(url) as SubsciptionCacheItem
       : await (
         async () => {
           const res = await got.get(url, {
@@ -125,12 +125,12 @@ export const getShadowsocksSubscription = async (
       .map<any>(item => {
         debug('Parsing Shadowsocks URI', item);
         const scheme = legacyUrl.parse(item, true);
-        const userInfo = fromUrlSafeBase64(scheme.auth).split(':');
+        const userInfo = fromUrlSafeBase64(scheme.auth as string).split(':');
         const pluginInfo = typeof scheme.query.plugin === 'string' ? decodeStringList(scheme.query.plugin.split(';')) : {};
 
         return {
           type: NodeTypeEnum.Shadowsocks,
-          nodeName: decodeURIComponent(scheme.hash.replace('#', '')),
+          nodeName: decodeURIComponent((scheme.hash as string).replace('#', '')),
           hostname: scheme.hostname,
           port: scheme.port,
           method: userInfo[0],

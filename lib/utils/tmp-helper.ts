@@ -30,7 +30,7 @@ export class TmpFile {
     return this;
   }
 
-  public async getContent(): Promise<string> {
+  public async getContent(): Promise<string|undefined> {
     const tmpContent = await this.validateContent();
     if (tmpContent) {
       return tmpContent.content;
@@ -38,7 +38,7 @@ export class TmpFile {
     return undefined;
   }
 
-  private async validateContent(): Promise<TmpContent> {
+  private async validateContent(): Promise<TmpContent|undefined> {
     if (!fs.existsSync(this.filePath)) {
       return undefined;
     }

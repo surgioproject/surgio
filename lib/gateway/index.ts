@@ -96,7 +96,7 @@ export const createKoaApp = (surgioServer: SurgioServer): SurgioKoaApplication =
 export const createSurgioServer = (cwd: string): SurgioServer => {
   const configFile = path.join(cwd, 'surgio.conf.js');
   const config = loadConfig(cwd, configFile, {
-    ...(['development', 'test'].indexOf(process.env.NODE_ENV) > -1 ? {
+    ...(['development', 'test'].indexOf(process.env.NODE_ENV as string) > -1 ? {
       urlBase: '/get-artifact/',
     } : null),
   });
@@ -108,7 +108,7 @@ export const createHttpServer = (
   ) => {
   process.env.KOA_SERVER = 'true';
 
-  const surgioServer = createSurgioServer(options.cwd);
+  const surgioServer = createSurgioServer(options.cwd as string);
   const app = createKoaApp(surgioServer);
 
   return app.callback();

@@ -66,13 +66,13 @@ export default class ClashProvider extends Provider {
     return this._url;
   }
 
-  public async getSubscriptionUserInfo(): Promise<SubscriptionUserinfo> {
+  public async getSubscriptionUserInfo(): Promise<SubscriptionUserinfo|undefined> {
     const { subscriptionUserinfo } = await getClashSubscription(this.url, this.udpRelay);
 
     if (subscriptionUserinfo) {
       return subscriptionUserinfo;
     }
-    return null;
+    return void 0;
   }
 
   public async getNodeList(): Promise<ReadonlyArray<SupportConfigTypes>> {
@@ -91,8 +91,8 @@ export const getClashSubscription = async (
 }> => {
   assert(url, '未指定订阅地址 url');
 
-  const response: SubsciptionCacheItem = SubscriptionCache.has(url)
-    ? SubscriptionCache.get(url)
+  const response = SubscriptionCache.has(url)
+    ? SubscriptionCache.get(url) as SubsciptionCacheItem
     : await (
       async () => {
         const res = await got.get(url, {
@@ -150,150 +150,151 @@ export const getClashSubscription = async (
 };
 
 export const parseClashConfig = (proxyList: ReadonlyArray<any>, udpRelay?: boolean): ReadonlyArray<SupportConfigTypes> => {
-  return proxyList
-    .map<SupportConfigTypes>(item => {
-    switch (item.type) {
-      case 'ss': {
-        // istanbul ignore next
-        if (item.plugin && !['obfs', 'v2ray-plugin'].includes(item.plugin)) {
-          logger.warn(`不支持从 Clash 订阅中读取 ${item.plugin} 类型的 Shadowsocks 节点，节点 ${item.name} 会被省略`);
-          return null;
-        }
-        // istanbul ignore next
-        if (item.plugin === 'v2ray-plugin' && item['plugin-opts'].mode.toLowerCase() === 'quic') {
-          logger.warn(`不支持从 Clash 订阅中读取 QUIC 模式的 Shadowsocks 节点，节点 ${item.name} 会被省略`);
-          return null;
-        }
+  const nodeList: ReadonlyArray<SupportConfigTypes|undefined> = proxyList
+    .map(item => {
+      switch (item.type) {
+        case 'ss': {
+          // istanbul ignore next
+          if (item.plugin && !['obfs', 'v2ray-plugin'].includes(item.plugin)) {
+            logger.warn(`不支持从 Clash 订阅中读取 ${item.plugin} 类型的 Shadowsocks 节点，节点 ${item.name} 会被省略`);
+            return void 0;
+          }
+          // istanbul ignore next
+          if (item.plugin === 'v2ray-plugin' && item['plugin-opts'].mode.toLowerCase() === 'quic') {
+            logger.warn(`不支持从 Clash 订阅中读取 QUIC 模式的 Shadowsocks 节点，节点 ${item.name} 会被省略`);
+            return void 0;
+          }
 
-        const wsHeaders = lowercaseHeaderKeys(_.get(item, 'plugin-opts.headers', {}));
+          const wsHeaders = lowercaseHeaderKeys(_.get(item, 'plugin-opts.headers', {}));
 
-        return {
-          type: NodeTypeEnum.Shadowsocks,
-          nodeName: item.name,
-          hostname: item.server,
-          port: item.port,
-          method: item.cipher,
-          password: item.password,
-          'udp-relay': resolveUdpRelay(item.udp, udpRelay),
-          ...(item.plugin && item.plugin === 'obfs' ? {
-            obfs: item['plugin-opts'].mode,
-            'obfs-host': item['plugin-opts'].host || 'www.bing.com',
-          } : null),
-          ...(item.obfs ? {
-            obfs: item.obfs,
-            'obfs-host': item['obfs-host'] || 'www.bing.com',
-          } : null),
-          ...(item.plugin && item.plugin === 'v2ray-plugin' && item['plugin-opts'].mode === 'websocket' ? {
-            obfs: item['plugin-opts'].tls === true ? 'wss' : 'ws',
-            'obfs-host': item['plugin-opts'].host || item.server,
-            'obfs-uri': item['plugin-opts'].path || '/',
-            wsHeaders,
-            ...(item['plugin-opts'].tls === true ? {
-              skipCertVerify: item['plugin-opts']['skip-cert-verify'] === true,
-            } : null),
-          } : null),
-        } as ShadowsocksNodeConfig;
-      }
-
-      case 'vmess': {
-        // istanbul ignore next
-        if (['kcp', 'http'].indexOf(item.network) > -1) {
-          logger.warn(`不支持从 Clash 订阅中读取 network 类型为 ${item.network} 的 Vmess 节点，节点 ${item.name} 会被省略`);
-          return null;
-        }
-
-        const wsHeaders = lowercaseHeaderKeys(_.get(item, 'ws-headers', {}));
-
-        return {
-          type: NodeTypeEnum.Vmess,
-          nodeName: item.name,
-          hostname: item.server,
-          port: item.port,
-          uuid: item.uuid,
-          alterId: item.alterId ? `${item.alterId}` : '0',
-          method: item.cipher || 'auto',
-          udp: resolveUdpRelay(item.udp, udpRelay),
-          tls: item.tls ?? false,
-          network: item.network || 'tcp',
-          ...(item.network === 'ws' ? {
-            path: _.get(item, 'ws-path', '/'),
-            host: _.get(wsHeaders, 'host', item.server),
-            wsHeaders,
-          } : null),
-          ...(item.tls ? {
-            skipCertVerify: item['skip-cert-verify'] === true,
-          } : null),
-        } as VmessNodeConfig;
-      }
-
-      case 'http':
-        if (!item.tls) {
           return {
-            type: NodeTypeEnum.HTTP,
+            type: NodeTypeEnum.Shadowsocks,
             nodeName: item.name,
             hostname: item.server,
             port: item.port,
-            username: item.username /* istanbul ignore next */ || '',
-            password: item.password /* istanbul ignore next */ || '',
-          } as HttpNodeConfig;
+            method: item.cipher,
+            password: item.password,
+            'udp-relay': resolveUdpRelay(item.udp, udpRelay),
+            ...(item.plugin && item.plugin === 'obfs' ? {
+              obfs: item['plugin-opts'].mode,
+              'obfs-host': item['plugin-opts'].host || 'www.bing.com',
+            } : null),
+            ...(item.obfs ? {
+              obfs: item.obfs,
+              'obfs-host': item['obfs-host'] || 'www.bing.com',
+            } : null),
+            ...(item.plugin && item.plugin === 'v2ray-plugin' && item['plugin-opts'].mode === 'websocket' ? {
+              obfs: item['plugin-opts'].tls === true ? 'wss' : 'ws',
+              'obfs-host': item['plugin-opts'].host || item.server,
+              'obfs-uri': item['plugin-opts'].path || '/',
+              wsHeaders,
+              ...(item['plugin-opts'].tls === true ? {
+                skipCertVerify: item['plugin-opts']['skip-cert-verify'] === true,
+              } : null),
+            } : null),
+          } as ShadowsocksNodeConfig;
         }
 
-        return {
-          type: NodeTypeEnum.HTTPS,
-          nodeName: item.name,
-          hostname: item.server,
-          port: item.port,
-          username: item.username || '',
-          password: item.password || '',
-          skipCertVerify: item['skip-cert-verify'] === true,
-        } as HttpsNodeConfig;
+        case 'vmess': {
+          // istanbul ignore next
+          if (['kcp', 'http'].indexOf(item.network) > -1) {
+            logger.warn(`不支持从 Clash 订阅中读取 network 类型为 ${item.network} 的 Vmess 节点，节点 ${item.name} 会被省略`);
+            return void 0;
+          }
 
-      case 'snell':
-        return {
-          type: NodeTypeEnum.Snell,
-          nodeName: item.name,
-          hostname: item.server,
-          port: item.port,
-          psk: item.psk,
-          obfs: _.get(item, 'obfs-opts.mode', 'http'),
-          ...(typeof item?.['obfs-opts']?.host !== 'undefined' ? { 'obfs-host': item['obfs-opts'].host } : null),
-          ...('version' in item ? { version: item.version } : null),
-        } as SnellNodeConfig;
+          const wsHeaders = lowercaseHeaderKeys(_.get(item, 'ws-headers', {}));
 
-      // istanbul ignore next
-      case 'ssr':
-        return {
-          type: NodeTypeEnum.Shadowsocksr,
-          nodeName: item.name,
-          hostname: item.server,
-          port: item.port,
-          password: item.password,
-          obfs: item.obfs,
-          obfsparam: item.obfsparam,
-          protocol: item.protocol,
-          protoparam: item.protocolparam,
-          method: item.cipher,
-        } as ShadowsocksrNodeConfig;
+          return {
+            type: NodeTypeEnum.Vmess,
+            nodeName: item.name,
+            hostname: item.server,
+            port: item.port,
+            uuid: item.uuid,
+            alterId: item.alterId ? `${item.alterId}` : '0',
+            method: item.cipher || 'auto',
+            udp: resolveUdpRelay(item.udp, udpRelay),
+            tls: item.tls ?? false,
+            network: item.network || 'tcp',
+            ...(item.network === 'ws' ? {
+              path: _.get(item, 'ws-path', '/'),
+              host: _.get(wsHeaders, 'host', item.server),
+              wsHeaders,
+            } : null),
+            ...(item.tls ? {
+              skipCertVerify: item['skip-cert-verify'] === true,
+            } : null),
+          } as VmessNodeConfig;
+        }
 
-      case 'trojan':
-        return {
-          type: NodeTypeEnum.Trojan,
-          nodeName: item.name,
-          hostname: item.server,
-          port: item.port,
-          password: item.password,
-          ...('skip-cert-verify' in item ? { skipCertVerify: item['skip-cert-verify'] === true } : null),
-          ...('alpn' in item ? { alpn: item.alpn } : null),
-          ...('sni' in item ? { sni: item.sni } : null),
-          ...('udp' in item ? { 'udp-relay': item.udp } : null),
-        } as TrojanNodeConfig;
+        case 'http':
+          if (!item.tls) {
+            return {
+              type: NodeTypeEnum.HTTP,
+              nodeName: item.name,
+              hostname: item.server,
+              port: item.port,
+              username: item.username /* istanbul ignore next */ || '',
+              password: item.password /* istanbul ignore next */ || '',
+            } as HttpNodeConfig;
+          }
 
-      default:
-        logger.warn(`不支持从 Clash 订阅中读取 ${item.type} 的节点，节点 ${item.name} 会被省略`);
-        return null;
-    }
-  })
-    .filter(item => !!item);
+          return {
+            type: NodeTypeEnum.HTTPS,
+            nodeName: item.name,
+            hostname: item.server,
+            port: item.port,
+            username: item.username || '',
+            password: item.password || '',
+            skipCertVerify: item['skip-cert-verify'] === true,
+          } as HttpsNodeConfig;
+
+        case 'snell':
+          return {
+            type: NodeTypeEnum.Snell,
+            nodeName: item.name,
+            hostname: item.server,
+            port: item.port,
+            psk: item.psk,
+            obfs: _.get(item, 'obfs-opts.mode', 'http'),
+            ...(typeof item?.['obfs-opts']?.host !== 'undefined' ? { 'obfs-host': item['obfs-opts'].host } : null),
+            ...('version' in item ? { version: item.version } : null),
+          } as SnellNodeConfig;
+
+        // istanbul ignore next
+        case 'ssr':
+          return {
+            type: NodeTypeEnum.Shadowsocksr,
+            nodeName: item.name,
+            hostname: item.server,
+            port: item.port,
+            password: item.password,
+            obfs: item.obfs,
+            obfsparam: item.obfsparam,
+            protocol: item.protocol,
+            protoparam: item.protocolparam,
+            method: item.cipher,
+          } as ShadowsocksrNodeConfig;
+
+        case 'trojan':
+          return {
+            type: NodeTypeEnum.Trojan,
+            nodeName: item.name,
+            hostname: item.server,
+            port: item.port,
+            password: item.password,
+            ...('skip-cert-verify' in item ? { skipCertVerify: item['skip-cert-verify'] === true } : null),
+            ...('alpn' in item ? { alpn: item.alpn } : null),
+            ...('sni' in item ? { sni: item.sni } : null),
+            ...('udp' in item ? { 'udp-relay': item.udp } : null),
+          } as TrojanNodeConfig;
+
+        default:
+          logger.warn(`不支持从 Clash 订阅中读取 ${item.type} 的节点，节点 ${item.name} 会被省略`);
+          return void 0;
+      }
+    });
+
+  return nodeList.filter((item): item is SupportConfigTypes => item !== undefined);
 };
 
 function resolveUdpRelay(val?: boolean, defaultVal = false): boolean {

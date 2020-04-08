@@ -254,6 +254,7 @@ test('mergeSortedFilters 2', t => {
   });
 
   t.throws(() => {
+    // @ts-ignore
     filter.mergeSortedFilters([undefined]);
   });
 });
@@ -265,6 +266,7 @@ test('mergeFilters', t => {
   });
 
   t.throws(() => {
+    // @ts-ignore
     filter.mergeFilters([undefined]);
   });
 });

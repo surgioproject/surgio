@@ -85,12 +85,12 @@ export const loadRemoteSnippetList = (remoteSnippetList: ReadonlyArray<RemoteSni
         };
       } else {
         const snippet: string = ConfigCache.has(item.url)
-          ? ConfigCache.get(item.url) :
-          await load(item.url)
-            .then(res => {
-              ConfigCache.set(item.url, res, REMOTE_SNIPPET_CACHE_MAXAGE);
-              return res;
-            });
+          ? ConfigCache.get(item.url) as string
+          : await load(item.url)
+              .then(res => {
+                ConfigCache.set(item.url, res, REMOTE_SNIPPET_CACHE_MAXAGE);
+                return res;
+              });
 
         return {
           main: (rule: string) => addProxyToSurgeRuleSet(snippet, rule),

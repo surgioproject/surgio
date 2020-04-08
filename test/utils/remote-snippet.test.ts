@@ -58,6 +58,7 @@ test.serial('loadRemoteSnippetList in now', async t => {
   t.snapshot(remoteSnippetList[2].main('Proxy'));
   t.snapshot(remoteSnippetList[3].main('Proxy'));
 
+  // @ts-ignore
   process.env.NOW_REGION = null;
 });
 

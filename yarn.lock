@@ -1390,6 +1390,13 @@
   dependencies:
     "@types/node" "*"
 
+"@types/urlsafe-base64@^1.0.28":
+  version "1.0.28"
+  resolved "https://registry.yarnpkg.com/@types/urlsafe-base64/-/urlsafe-base64-1.0.28.tgz#2cf2098518e98c730a7e00de79a455e0269a3f4d"
+  integrity sha1-LPIJhRjpjHMKfgDeeaRV4CaaP00=
+  dependencies:
+    "@types/node" "*"
+
 "@types/yaml@^1.2.0":
   version "1.2.0"
   resolved "https://registry.yarnpkg.com/@types/yaml/-/yaml-1.2.0.tgz#4ed577fc4ebbd6b829b28734e56d10c9e6984e09"

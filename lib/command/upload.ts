@@ -41,16 +41,16 @@ class GenerateCommand extends Command {
     });
 
     const ossConfig = {
-      region: config.upload.region || 'oss-cn-hangzhou',
-      bucket: config.upload.bucket,
-      accessKeyId: ctx.env.OSS_ACCESS_KEY_ID || config.upload.accessKeyId,
-      accessKeySecret: ctx.env.OSS_ACCESS_KEY_SECRET || config.upload.accessKeySecret,
+      region: config?.upload?.region || 'oss-cn-hangzhou',
+      bucket: config?.upload?.bucket,
+      accessKeyId: ctx.env.OSS_ACCESS_KEY_ID || config?.upload?.accessKeyId,
+      accessKeySecret: ctx.env.OSS_ACCESS_KEY_SECRET || config?.upload?.accessKeySecret,
     };
     const client = new OSS({
       secure: true,
       ...ossConfig,
     });
-    const prefix = config.upload.prefix || '/';
+    const prefix = config?.upload?.prefix || '/';
     const fileList = await dir.promiseFiles(config.output);
     const files = fileList.map(filePath => ({
       fileName: path.basename(filePath),
@@ -77,7 +77,7 @@ class GenerateCommand extends Command {
         prefix,
         delimiter: '/',
       });
-      const deleteList = [];
+      const deleteList: string[] = [];
 
       for (const key in list.objects) {
         if (list.objects.hasOwnProperty(key)) {

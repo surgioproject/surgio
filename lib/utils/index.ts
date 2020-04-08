@@ -66,7 +66,7 @@ export const getBlackSSLConfig = async (username: string, password: string): Pro
   const key = `blackssl_${username}`;
 
   async function requestConfigFromBlackSSL(): Promise<ReadonlyArray<HttpsNodeConfig>> {
-    const response = ConfigCache.has(key) ? JSON.parse(ConfigCache.get(key)) : await (async () => {
+    const response = ConfigCache.has(key) ? JSON.parse(ConfigCache.get(key) as string) : await (async () => {
       const res = await got
         .get('https://api.darkssl.com/v1/service/ssl_info', {
           responseType: 'text',
@@ -105,7 +105,7 @@ export const getShadowsocksJSONConfig = async (
   assert(url, '未指定订阅地址 url');
 
   async function requestConfigFromRemote(): Promise<ReadonlyArray<ShadowsocksNodeConfig>> {
-    const response = ConfigCache.has(url) ? JSON.parse(ConfigCache.get(url)) : await (async () => {
+    const response = ConfigCache.has(url) ? JSON.parse(ConfigCache.get(url) as string) : await (async () => {
       const res = await got.get(url, {
         timeout: NETWORK_TIMEOUT,
       });
@@ -154,14 +154,14 @@ export const getSurgeNodes = function(
   }
 
   const result: string[] = applyFilter(list, filter)
-    .map<string>(nodeConfig => {
+    .map<string|undefined>(nodeConfig => {
       switch (nodeConfig.type) {
         case NodeTypeEnum.Shadowsocks: {
           const config = nodeConfig as ShadowsocksNodeConfig;
 
-          if (['ws', 'wss'].includes(config.obfs)) {
+          if (config.obfs && ['ws', 'wss'].includes(config.obfs)) {
             logger.warn(`不支持为 Surge 生成 v2ray-plugin 的 Shadowsocks 节点，节点 ${nodeConfig!.nodeName} 会被省略`);
-            return null;
+            return void 0;
           }
 
           // Native support for Shadowsocks
@@ -377,7 +377,7 @@ export const getSurgeNodes = function(
 
             const jsonFileName = `v2ray_${config.localPort}_${config.hostname}_${config.port}.json`;
             const jsonFilePath = path.join(ensureConfigFolder(), jsonFileName);
-            const jsonFile = formatV2rayConfig(config.localPort, nodeConfig);
+            const jsonFile = formatV2rayConfig(config.localPort as number, nodeConfig);
             const args = [
               '--config', jsonFilePath.replace(os.homedir(), '$HOME'),
             ];
@@ -456,10 +456,10 @@ export const getSurgeNodes = function(
         // istanbul ignore next
         default:
           logger.warn(`不支持为 Surge 生成 ${nodeConfig!.type} 的节点，节点 ${nodeConfig!.nodeName} 会被省略`);
-          return null;
+          return void 0;
       }
     })
-    .filter(item => item !== null);
+    .filter((item): item is string => item !== undefined);
 
   return result.join('\n');
 };
@@ -486,14 +486,14 @@ export const getClashNodes = function(
             port: nodeConfig.port,
             server: nodeConfig.hostname,
             udp: nodeConfig['udp-relay'] || false,
-            ...(['tls', 'http'].includes(nodeConfig.obfs) ? {
+            ...(nodeConfig.obfs && ['tls', 'http'].includes(nodeConfig.obfs) ? {
               plugin: 'obfs',
               'plugin-opts': {
                 mode: nodeConfig.obfs,
                 host: nodeConfig['obfs-host'],
               },
             } : null),
-            ...(['ws', 'wss'].includes(nodeConfig.obfs) ? {
+            ...(nodeConfig.obfs && ['ws', 'wss'].includes(nodeConfig.obfs) ? {
               plugin: 'v2ray-plugin',
               'plugin-opts': {
                 mode: 'websocket',
@@ -726,9 +726,9 @@ export const getShadowsocksNodes = (
 };
 
 export const getShadowsocksrNodes = (list: ReadonlyArray<ShadowsocksrNodeConfig>, groupName: string): string => {
-  const result: ReadonlyArray<string> = list
+  const result: ReadonlyArray<string|undefined> = list
     .map(nodeConfig => {
-      if (nodeConfig.enable === false) { return null; }
+      if (nodeConfig.enable === false) { return void 0; }
 
       switch (nodeConfig.type) {
         case NodeTypeEnum.Shadowsocksr: {
@@ -761,18 +761,18 @@ export const getShadowsocksrNodes = (list: ReadonlyArray<ShadowsocksrNodeConfig>
         // istanbul ignore next
         default:
           logger.warn(`在生成 Shadowsocksr 节点时出现了 ${nodeConfig.type} 节点，节点 ${nodeConfig.nodeName} 会被省略`);
-          return null;
+          return void 0;
       }
     })
-    .filter(item => item !== null);
+    .filter(item => item !== undefined);
 
   return result.join('\n');
 };
 
 export const getV2rayNNodes = (list: ReadonlyArray<VmessNodeConfig>): string => {
   const result: ReadonlyArray<string> = list
-    .map<string>(nodeConfig => {
-      if (nodeConfig.enable === false) { return null; }
+    .map<string|undefined>(nodeConfig => {
+      if (nodeConfig.enable === false) { return void 0; }
 
       switch (nodeConfig.type) {
         case NodeTypeEnum.Vmess: {
@@ -796,10 +796,10 @@ export const getV2rayNNodes = (list: ReadonlyArray<VmessNodeConfig>): string => 
         // istanbul ignore next
         default:
           logger.warn(`在生成 V2Ray 节点时出现了 ${nodeConfig.type} 节点，节点 ${nodeConfig.nodeName} 会被省略`);
-          return null;
+          return void 0;
       }
     })
-    .filter(item => !!item);
+    .filter((item): item is string => item !== undefined);
 
   return result.join('\n');
 };
@@ -822,7 +822,7 @@ export const getQuantumultNodes = function(
   }
 
   const result: ReadonlyArray<string> = applyFilter(list, filter)
-    .map<string>(nodeConfig => {
+    .map<string|undefined>(nodeConfig => {
       switch (nodeConfig.type) {
         case NodeTypeEnum.Vmess: {
           const config = [
@@ -875,10 +875,10 @@ export const getQuantumultNodes = function(
         // istanbul ignore next
         default:
           logger.warn(`不支持为 Quantumult 生成 ${nodeConfig!.type} 的节点，节点 ${nodeConfig!.nodeName} 会被省略`);
-          return null;
+          return void 0;
       }
     })
-    .filter(item => !!item);
+    .filter((item): item is string => item !== undefined);
 
   return result.join('\n');
 };
@@ -895,7 +895,7 @@ export const getQuantumultXNodes = function(
   }
 
   const result: ReadonlyArray<string> = applyFilter(list, filter)
-    .map<string>(nodeConfig => {
+    .map<string|undefined>(nodeConfig => {
       switch (nodeConfig.type) {
         case NodeTypeEnum.Vmess: {
           const config = [
@@ -950,11 +950,11 @@ export const getQuantumultXNodes = function(
           const config = [
             `${nodeConfig.hostname}:${nodeConfig.port}`,
             ...pickAndFormatStringList(nodeConfig, ['method', 'password']),
-            ...(['http', 'tls'].includes(nodeConfig.obfs) ? [
+            ...(nodeConfig.obfs && ['http', 'tls'].includes(nodeConfig.obfs) ? [
               `obfs=${nodeConfig.obfs}`,
               `obfs-host=${nodeConfig['obfs-host']}`,
             ] : []),
-            ...(['ws', 'wss'].includes(nodeConfig.obfs) ? [
+            ...(nodeConfig.obfs && ['ws', 'wss'].includes(nodeConfig.obfs) ? [
               `obfs=${nodeConfig.obfs}`,
               `obfs-host=${nodeConfig['obfs-host'] || nodeConfig.hostname}`,
               `obfs-uri=${nodeConfig['obfs-uri'] || '/'}`,
@@ -1053,17 +1053,17 @@ export const getQuantumultXNodes = function(
         // istanbul ignore next
         default:
           logger.warn(`不支持为 QuantumultX 生成 ${nodeConfig!.type} 的节点，节点 ${nodeConfig!.nodeName} 会被省略`);
-          return null;
+          return void 0;
       }
     })
-    .filter(item => !!item);
+    .filter((item): item is string => item !== undefined);
 
   return result.join('\n');
 };
 
 // istanbul ignore next
 export const getShadowsocksNodesJSON = (list: ReadonlyArray<ShadowsocksNodeConfig>): string => {
-  const nodes: ReadonlyArray<object> = list
+  const nodes: ReadonlyArray<any> = list
     .map(nodeConfig => {
       if (nodeConfig.enable === false) { return null; }
 
@@ -1090,10 +1090,10 @@ export const getShadowsocksNodesJSON = (list: ReadonlyArray<ShadowsocksNodeConfi
         // istanbul ignore next
         default:
           logger.warn(`在生成 Shadowsocks 节点时出现了 ${nodeConfig.type} 节点，节点 ${nodeConfig.nodeName} 会被省略`);
-          return null;
+          return undefined;
       }
     })
-    .filter(item => item !== null);
+    .filter(item => item !== undefined);
 
   return JSON.stringify(nodes, null, 2);
 };
@@ -1155,7 +1155,7 @@ export const generateClashProxyGroup = (
   if (options.existingProxies) {
     if (options.filter) {
       const nodes = applyFilter(nodeNameList, options.filter);
-      proxies = [].concat(options.existingProxies, nodes.map(item => item.nodeName));
+      proxies = ([] as string[]).concat(options.existingProxies, nodes.map(item => item.nodeName));
     } else {
       proxies = options.existingProxies;
     }
@@ -1247,7 +1247,7 @@ export const ensureConfigFolder = (dir: string = os.homedir()): string => {
   return configDir;
 };
 
-export const formatV2rayConfig = (localPort: string|number, nodeConfig: VmessNodeConfig): JsonObject => {
+export const formatV2rayConfig = (localPort: number, nodeConfig: VmessNodeConfig): JsonObject => {
   const config: any = {
     log: {
       loglevel: 'warning'

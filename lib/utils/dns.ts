@@ -18,7 +18,7 @@ if (process.env.NOW_REGION) {
 
 export const resolveDomain = async (domain: string): Promise<ReadonlyArray<string>> => {
   if (DomainCache.has(domain)) {
-    return DomainCache.get(domain);
+    return DomainCache.get(domain) as ReadonlyArray<string>;
   }
 
   logger.debug(`try to resolve domain ${domain}`);

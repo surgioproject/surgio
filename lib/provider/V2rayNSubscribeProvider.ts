@@ -68,7 +68,7 @@ export const getV2rayNSubscription = async (
   if (isCompatibleMode) { logger.warn('运行在兼容模式，请注意生成的节点是否正确。'); }
 
   async function requestConfigFromRemote(): Promise<ReadonlyArray<VmessNodeConfig>> {
-    const response = ConfigCache.has(url) ? ConfigCache.get(url) : await (async () => {
+    const response = ConfigCache.has(url) ? ConfigCache.get(url) as string : await (async () => {
       const res = await got.get(url, {
         timeout: NETWORK_TIMEOUT,
       });
@@ -82,40 +82,41 @@ export const getV2rayNSubscription = async (
       .filter(item => !!item)
       .filter(item => item.startsWith("vmess://"));
 
-    return configList.map<VmessNodeConfig>(item => {
-      const json = JSON.parse(fromBase64(item.replace('vmess://', '')));
+    return configList
+      .map<VmessNodeConfig|undefined>(item => {
+        const json = JSON.parse(fromBase64(item.replace('vmess://', '')));
 
-      // istanbul ignore next
-      if (!isCompatibleMode && (!json.v || Number(json.v) !== 2)) {
-          throw new Error(`该订阅 ${url} 可能不是一个有效的 V2rayN 订阅。请参考 http://bit.ly/2N4lZ8X 进行排查, 或者将解析模式改为兼容模式`);
-      }
-      // istanbul ignore next
-      if (['kcp', 'http'].indexOf(json.net) > -1) {
-        logger.warn(`不支持读取 network 类型为 ${json.net} 的 Vmess 节点，节点 ${json.ps} 会被省略`);
-        return null;
-      }
+        // istanbul ignore next
+        if (!isCompatibleMode && (!json.v || Number(json.v) !== 2)) {
+            throw new Error(`该订阅 ${url} 可能不是一个有效的 V2rayN 订阅。请参考 http://bit.ly/2N4lZ8X 进行排查, 或者将解析模式改为兼容模式`);
+        }
+        // istanbul ignore next
+        if (['kcp', 'http'].indexOf(json.net) > -1) {
+          logger.warn(`不支持读取 network 类型为 ${json.net} 的 Vmess 节点，节点 ${json.ps} 会被省略`);
+          return undefined;
+        }
 
-      return {
-        nodeName: json.ps,
-        type: NodeTypeEnum.Vmess,
-        hostname: json.add,
-        port: json.port,
-        method: 'auto',
-        uuid: json.id,
-        alterId: json.aid || '0',
-        network: json.net,
-        tls: json.tls === 'tls',
-        host: json.host || '',
-        path: json.path || '/',
-        ...(udpRelay ? {
-          udp: udpRelay,
-        } : null),
-        ...(skipCertVerify ? {
-          skipCertVerify,
-        } : null),
-      };
-    })
-      .filter(item => !!item);
+        return {
+          nodeName: json.ps,
+          type: NodeTypeEnum.Vmess,
+          hostname: json.add,
+          port: json.port,
+          method: 'auto',
+          uuid: json.id,
+          alterId: json.aid || '0',
+          network: json.net,
+          tls: json.tls === 'tls',
+          host: json.host || '',
+          path: json.path || '/',
+          ...(udpRelay ? {
+            udp: udpRelay,
+          } : null),
+          ...(skipCertVerify ? {
+            skipCertVerify,
+          } : null),
+        };
+      })
+      .filter((item): item is VmessNodeConfig => !!item);
   }
 
   return await requestConfigFromRemote();

@@ -12,7 +12,7 @@ export class SortFilterWithSortedFilters implements SortedNodeNameFilterType {
   }
 
   public filter<T>(nodeList: ReadonlyArray<T & SimpleNodeConfig>): ReadonlyArray<T & SimpleNodeConfig> {
-    const result = [];
+    const result: (T & SimpleNodeConfig)[] = [];
 
     this._filters.forEach(filter => {
       result.push(...nodeList.filter(filter));
@@ -31,7 +31,7 @@ export class SortFilterWithSortedKeywords implements SortedNodeNameFilterType {
   }
 
   public filter<T>(nodeList: ReadonlyArray<T & SimpleNodeConfig>): ReadonlyArray<T & SimpleNodeConfig> {
-    const result = [];
+    const result: (T & SimpleNodeConfig)[] = [];
 
     this._keywords.forEach(keyword => {
       result.push(...nodeList.filter(node => node.nodeName.includes(keyword)));

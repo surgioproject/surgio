@@ -4,6 +4,7 @@ import { formatSubscriptionUserInfo, parseSubscriptionNode, parseSubscriptionUse
 
 test('parseSubscriptionNode', t => {
   const result = parseSubscriptionNode('剩余流量：57.37% 1.01TB', '过期时间：2020-04-21 22:27:38');
+  if (!result) throw new Error();
   const reformat = formatSubscriptionUserInfo(result);
 
   t.is(result.upload, 0);

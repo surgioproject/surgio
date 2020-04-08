@@ -117,7 +117,7 @@ export function getEngine(templateDir: string): nunjucks.Environment {
 
 export const convertSurgeScriptRuleToQuantumultXRewriteRule = (str: string): string => {
   const parts = str.split(' ');
-  const result = [];
+  const result: string[] = [];
 
   switch (parts[0]) {
     case 'http-response': {
@@ -127,9 +127,9 @@ export const convertSurgeScriptRuleToQuantumultXRewriteRule = (str: string): str
 
       if (isRequireBody) {
         // parts[1] => Effective URL Rule
-        result.push(parts[1], 'url', 'script-response-body', scriptPath);
+        result.push(parts[1], 'url', 'script-response-body', scriptPath as string);
       } else {
-        result.push(parts[1], 'url', 'script-response-header', scriptPath);
+        result.push(parts[1], 'url', 'script-response-header', scriptPath as string);
       }
 
       return result.join(' ');
@@ -141,9 +141,9 @@ export const convertSurgeScriptRuleToQuantumultXRewriteRule = (str: string): str
 
       if (isRequireBody) {
         // parts[1] => Effective URL Rule
-        result.push(parts[1], 'url', 'script-request-body', scriptPath);
+        result.push(parts[1], 'url', 'script-request-body', scriptPath as string);
       } else {
-        result.push(parts[1], 'url', 'script-request-header', scriptPath);
+        result.push(parts[1], 'url', 'script-request-header', scriptPath as string);
       }
 
       return result.join(' ');

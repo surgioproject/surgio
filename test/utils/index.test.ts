@@ -4,11 +4,8 @@ import test from 'ava';
 import {
   NodeTypeEnum,
   ShadowsocksNodeConfig,
-  ShadowsocksrNodeConfig,
   SimpleNodeConfig,
   VmessNodeConfig,
-  SnellNodeConfig,
-  TrojanNodeConfig,
   PossibleNodeConfigType,
 } from '../../lib/types';
 import * as utils from '../../lib/utils';
@@ -134,7 +131,6 @@ test('getSurgeNodes', async t => {
     port: '443',
     method: 'chacha20-ietf-poly1305',
     password: 'password',
-    mptcp: null,
     surgeConfig: {
       shadowsocksFormat: 'ss',
     }

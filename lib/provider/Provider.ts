@@ -73,7 +73,7 @@ export default class Provider {
   }
 
   // istanbul ignore next
-  public async getSubscriptionUserInfo(): Promise<SubscriptionUserinfo> {
+  public async getSubscriptionUserInfo(): Promise<SubscriptionUserinfo|undefined> {
     throw new Error('此 Provider 不支持该功能');
   }
 

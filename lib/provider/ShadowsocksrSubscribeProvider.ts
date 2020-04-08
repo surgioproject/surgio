@@ -53,13 +53,13 @@ export default class ShadowsocksrSubscribeProvider extends Provider {
     return this._url;
   }
 
-  public async getSubscriptionUserInfo(): Promise<SubscriptionUserinfo> {
+  public async getSubscriptionUserInfo(): Promise<SubscriptionUserinfo|undefined> {
     const { subscriptionUserinfo } = await getShadowsocksrSubscription(this.url, this.udpRelay);
 
     if (subscriptionUserinfo) {
       return subscriptionUserinfo;
     }
-    return null;
+    return undefined;
   }
 
   public async getNodeList(): Promise<ReadonlyArray<ShadowsocksrNodeConfig>> {
@@ -79,8 +79,8 @@ export const getShadowsocksrSubscription = async (
   assert(url, '未指定订阅地址 url');
 
   async function requestConfigFromRemote(): ReturnType<typeof getShadowsocksrSubscription> {
-    const response: SubsciptionCacheItem = SubscriptionCache.has(url)
-      ? SubscriptionCache.get(url)
+    const response = SubscriptionCache.has(url)
+      ? SubscriptionCache.get(url) as SubsciptionCacheItem
       : await (
         async () => {
           const res = await got.get(url, {

@@ -27,7 +27,7 @@ export const parseSubscriptionUserInfo = (str: string): SubscriptionUserinfo => 
   return res;
 };
 
-export const parseSubscriptionNode = (dataString: string, expireString: string): SubscriptionUserinfo => {
+export const parseSubscriptionNode = (dataString: string, expireString: string): SubscriptionUserinfo|undefined => {
   // dataString => 剩余流量：57.37% 1.01TB
   // expireString => 过期时间：2020-04-21 22:27:38
 
@@ -47,7 +47,7 @@ export const parseSubscriptionNode = (dataString: string, expireString: string):
       expire,
     };
   } else {
-    return null;
+    return undefined;
   }
 };
 

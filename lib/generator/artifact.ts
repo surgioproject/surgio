@@ -58,9 +58,9 @@ export class Artifact extends EventEmitter {
   public nodeList: PossibleNodeConfigType[] = []; // tslint:disable-line:readonly-array
   public nodeNameList: SimpleNodeConfig[] = []; // tslint:disable-line:readonly-array
 
-  private customFilters?: ProviderConfig['customFilters'];
-  private netflixFilter?: ProviderConfig['netflixFilter'];
-  private youtubePremiumFilter?: ProviderConfig['youtubePremiumFilter'];
+  private customFilters: NonNullable<ProviderConfig['customFilters']>;
+  private netflixFilter: NonNullable<ProviderConfig['netflixFilter']>;
+  private youtubePremiumFilter: NonNullable<ProviderConfig['youtubePremiumFilter']>;
 
   constructor(
     public surgioConfig: CommandConfig,
@@ -94,7 +94,7 @@ export class Artifact extends EventEmitter {
   public getRenderContext(extendRenderContext: ExtendableRenderContext = {}): any {
     const config = this.surgioConfig;
     const gatewayConfig = config.gateway;
-    const gatewayHasToken = !!(gatewayConfig && gatewayConfig.accessToken);
+    const gatewayHasToken = !!(gatewayConfig?.accessToken);
     const {
       name: artifactName,
       customParams,
@@ -111,7 +111,7 @@ export class Artifact extends EventEmitter {
 
     return {
       proxyTestUrl: config.proxyTestUrl,
-      downloadUrl: getDownloadUrl(config.urlBase, artifactName, true, gatewayHasToken ? gatewayConfig.accessToken : undefined),
+      downloadUrl: getDownloadUrl(config.urlBase, artifactName, true, gatewayHasToken ? gatewayConfig?.accessToken : undefined),
       nodes: nodeList,
       names: nodeNameList,
       remoteSnippets,
@@ -119,7 +119,7 @@ export class Artifact extends EventEmitter {
       provider: this.artifact.provider,
       providerName: this.artifact.provider,
       artifactName,
-      getDownloadUrl: (name: string) => getDownloadUrl(config.urlBase, name, true, gatewayHasToken ? gatewayConfig.accessToken : undefined),
+      getDownloadUrl: (name: string) => getDownloadUrl(config.urlBase, name, true, gatewayHasToken ? gatewayConfig?.accessToken : undefined),
       getNodeNames,
       getClashNodeNames,
       getClashNodes,
@@ -191,17 +191,19 @@ export class Artifact extends EventEmitter {
     this.providerNameList.forEach(providerName => {
       const nodeConfigList = this.nodeConfigListMap.get(providerName);
 
-      nodeConfigList.forEach(nodeConfig => {
-        if (nodeConfig) {
-          this.nodeNameList.push({
-            type: nodeConfig.type,
-            enable: nodeConfig.enable,
-            nodeName: nodeConfig.nodeName,
-            provider: nodeConfig.provider,
-          });
-          this.nodeList.push(nodeConfig);
-        }
-      });
+      if (nodeConfigList) {
+        nodeConfigList.forEach(nodeConfig => {
+          if (nodeConfig) {
+            this.nodeNameList.push({
+              type: nodeConfig.type,
+              enable: nodeConfig.enable,
+              nodeName: nodeConfig.nodeName,
+              provider: nodeConfig.provider,
+            });
+            this.nodeList.push(nodeConfig);
+          }
+        });
+      }
     });
 
     this.emit('initArtifact:end', { artifact: this.artifact });
@@ -290,11 +292,11 @@ export class Artifact extends EventEmitter {
       nodeConfigList = provider.nodeFilter.filter(nodeConfigList);
     }
 
-    nodeConfigList = await Bluebird.map(nodeConfigList, async nodeConfig => {
+    nodeConfigList = (await Bluebird.map(nodeConfigList, async nodeConfig => {
       let isValid = false;
 
       if (nodeConfig.enable === false) {
-        return null;
+        return undefined;
       }
 
       if (!provider.nodeFilter) {
@@ -338,7 +340,7 @@ export class Artifact extends EventEmitter {
         }
 
         if (
-          config.surgeConfig.resolveHostname &&
+          config?.surgeConfig?.resolveHostname &&
           !isIp(nodeConfig.hostname) &&
           [NodeTypeEnum.Vmess, NodeTypeEnum.Shadowsocksr].includes(nodeConfig.type)
         ) {
@@ -352,9 +354,9 @@ export class Artifact extends EventEmitter {
         return nodeConfig;
       }
 
-      return null;
-    })
-      .filter(item => !!item);
+      return undefined;
+    }))
+      .filter((item): item is PossibleNodeConfigType => item !== undefined);
 
     this.nodeConfigListMap.set(providerName, nodeConfigList);
     this.initProgress++;

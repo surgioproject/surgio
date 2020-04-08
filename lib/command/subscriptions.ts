@@ -75,7 +75,7 @@ class SubscriptionsCommand extends Command {
     });
     const providerList: PossibleProviderType[] = [];
 
-    async function readProvider(path): Promise<PossibleProviderType> {
+    async function readProvider(path): Promise<PossibleProviderType|undefined> {
       let provider;
 
       try {

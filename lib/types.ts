@@ -75,7 +75,7 @@ export interface RemoteSnippet extends RemoteSnippetConfig {
 
 export interface ArtifactConfig {
   readonly name: string;
-  readonly template: string;
+  readonly template: string|undefined;
   readonly provider: string;
   readonly combineProviders?: ReadonlyArray<string>;
   readonly categories?: ReadonlyArray<string>;

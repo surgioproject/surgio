@@ -33,7 +33,7 @@ export class Server {
   public remoteSnippetList: ReadonlyArray<RemoteSnippet>;
   public artifactList: ReadonlyArray<ArtifactConfig>;
   private readonly pkgFile?: PackageJson;
-  private readonly templateEngine?: Environment;
+  private readonly templateEngine: Environment;
 
   constructor(public cwd: string, public readonly config: CommandConfig) {
     const pkgFile = path.join(cwd, 'package.json');
@@ -52,7 +52,7 @@ export class Server {
     this.remoteSnippetList = await loadRemoteSnippetList(remoteSnippetsConfig);
   }
 
-  public async getArtifact(artifactName: string): Promise<string> {
+  public async getArtifact(artifactName: string): Promise<string|undefined> {
     const target = this.artifactList.filter(item => item.name === artifactName);
 
     if (!target.length) {
@@ -171,7 +171,7 @@ export class Server {
       .catch(err => {
         throw createError(500, `请求文件时出错: ${err.message}`);
       });
-    const contentType: string = content.headers['content-type'];
+    const contentType: string|undefined = content.headers['content-type'];
 
     if (
       !contentType ||
@@ -211,7 +211,7 @@ export class Server {
       .catch(err => {
         throw createError(500, `请求文件时出错: ${err.message}`);
       });
-    const contentType: string = content.headers['content-type'];
+    const contentType: string|undefined = content.headers['content-type'];
 
     if (
       !contentType ||
