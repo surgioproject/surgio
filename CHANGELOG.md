@@ -1,3 +1,12 @@
+## [1.18.4](https://github.com/geekdada/surgio/compare/v1.18.3...v1.18.4) (2020-04-08)
+
+
+### Bug Fixes
+
+* change types definition ([ea9aaa3](https://github.com/geekdada/surgio/commit/ea9aaa38f78f67748d4f3cf14e585cc5abfd1188))
+
+
+
 ## [1.18.3](https://github.com/geekdada/surgio/compare/v1.18.2...v1.18.3) (2020-04-07)
 
 
