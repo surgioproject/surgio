@@ -47,7 +47,7 @@ export interface ArtifactOptions {
 }
 
 export interface ExtendableRenderContext {
-  readonly urlParams?: Record<string, string>;
+  readonly urlParams?: object;
 }
 
 export class Artifact extends EventEmitter {
