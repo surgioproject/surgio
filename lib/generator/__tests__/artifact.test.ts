@@ -127,6 +127,15 @@ test('getRenderContext', async t => {
 
   const ctx = artifact.getRenderContext();
 
+  t.is(ctx.downloadUrl, 'https://example.com/new_path.conf?access_token=abcd');
   t.is(ctx.getUrl('/extend-provider?format=foo'), 'https://example.com/extend-provider?format=foo&access_token=abcd');
   t.is(ctx.getUrl('get-artifact/test.conf?format=foo'), 'https://example.com/get-artifact/test.conf?format=foo&access_token=abcd');
+  t.is(ctx.getDownloadUrl('test.conf?format=foo'), 'https://example.com/test.conf?format=foo&access_token=abcd');
+  t.deepEqual(ctx.customParams, {
+    globalVariable: 'foo',
+    globalVariableWillBeRewritten: 'bar',
+    subLevel: {
+      anotherVariableWillBeRewritten: 'value',
+    },
+  });
 });
