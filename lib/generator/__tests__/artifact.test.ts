@@ -112,3 +112,30 @@ test('render with extendRenderContext', async (t) => {
     }));
   }
 });
+
+test('getRenderContext', async t => {
+  const fixture = resolve('plain');
+  const config = loadConfig(fixture, './surgio.conf.js');
+  const templateEngine = getEngine(config.templateDir);
+  const artifact = new Artifact(config, {
+    name: 'new_path.conf',
+    template: 'extend-render-context',
+    provider: 'ss_json',
+  }, { templateEngine });
+
+  await artifact.init();
+
+  const ctx = artifact.getRenderContext();
+
+  t.is(ctx.downloadUrl, 'https://example.com/new_path.conf?access_token=abcd');
+  t.is(ctx.getUrl('/extend-provider?format=foo'), 'https://example.com/extend-provider?format=foo&access_token=abcd');
+  t.is(ctx.getUrl('get-artifact/test.conf?format=foo'), 'https://example.com/get-artifact/test.conf?format=foo&access_token=abcd');
+  t.is(ctx.getDownloadUrl('test.conf?format=foo'), 'https://example.com/test.conf?format=foo&access_token=abcd');
+  t.deepEqual(ctx.customParams, {
+    globalVariable: 'foo',
+    globalVariableWillBeRewritten: 'bar',
+    subLevel: {
+      anotherVariableWillBeRewritten: 'value',
+    },
+  });
+});

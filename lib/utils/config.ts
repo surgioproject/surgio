@@ -131,6 +131,7 @@ export const validateConfig = (userConfig: Partial<CommandConfig>): void => {
         Joi.string(),
         Joi.any().allow(Joi.function(), Joi.object({ filter: Joi.function(), supportSort: Joi.boolean() }))
       ),
+    customParams: Joi.object(),
   })
     .unknown();
 

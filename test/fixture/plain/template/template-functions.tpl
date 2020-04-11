@@ -13,3 +13,9 @@
 {{ proxyTestUrl }}
 ----
 {{ downloadUrl }}
+---
+{{ customParams.globalVariable }}
+---
+{{ customParams.globalVariableWillBeRewritten }}
+---
+{{ customParams.subLevel.anotherVariableWillBeRewritten }}

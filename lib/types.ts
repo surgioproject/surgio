@@ -61,6 +61,7 @@ export interface CommandConfig {
   readonly customFilters?: {
     readonly [name: string]: NodeNameFilterType|SortedNodeNameFilterType;
   };
+  readonly customParams?: PlainObjectOf<string|boolean|number>;
 }
 
 export interface RemoteSnippetConfig {

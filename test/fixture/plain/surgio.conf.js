@@ -45,6 +45,12 @@ module.exports = {
       template: 'template-functions',
       provider: 'ss',
       combineProviders: ['custom', 'ss_json', 'v2rayn', 'clash', 'ssr_with_udp'],
+      customParams: {
+        globalVariableWillBeRewritten: 'barbar',
+        subLevel: {
+          anotherVariableWillBeRewritten: 'another-value',
+        },
+      },
       proxyGroupModifier() {
         return [
           {
@@ -73,6 +79,13 @@ module.exports = {
   customFilters: {
     globalFilter: node => node.nodeName === '测试中文',
     unused: () => true,
+  },
+  customParams: {
+    globalVariable: 'foo',
+    globalVariableWillBeRewritten: 'bar',
+    subLevel: {
+      anotherVariableWillBeRewritten: 'value',
+    },
   },
   proxyTestUrl: 'http://www.google.com/generate_204',
   proxyTestInterval: 2400,

@@ -100,7 +100,7 @@ DOMAIN-KEYWORD,baidu,DIRECT
 
 - 类型: `object`
 
-获取自定义的模板参数。请先在 Artifact 中定义再使用。
+获取自定义的模板参数。请 [先在 Artifact 中定义](/guide/custom-artifact.md#customparams) 再使用。
 
 ### clashProxyConfig
 
@@ -359,6 +359,20 @@ getDownloadUrl('example.conf'); // https://example.com/example.conf
 getDownloadUrl('example.conf?foo=bar'); // https://example.com/example.conf?foo=bar
 ```
 
+:::tip 提示
+请不用担心参数中的 `access_token`，如果需要会自动加上的 👌。
+:::
+
+### getUrl <Badge text="v1.19.0" vertical="middle" />
+
+`getUrl(path)`
+
+拼装完整的 URL。这个方法和 `getDownloadUrl` 不同的地方是 —— 它更通用。将来 Surgio 可能会在面板增加新的 API，你可以用这个方法来获取完整的地址，例如：
+
+```
+getUrl('/export-provider?format=surge-policy');
+```
+
 ## 片段 (Snippet)
 
 ### 如何使用片段？
@@ -468,7 +482,7 @@ _for Surge_
 {% import './snippet/surge_script.tpl' as surge_script %}
 
 [Script]
-{{ blocked_rules.main() }}
+{{ surge_script.main() }}
 ```
 
 _for Quantumult X_
@@ -477,7 +491,7 @@ _for Quantumult X_
 {% import './snippet/surge_script.tpl' as surge_script %}
 
 [rewrite_local]
-{{ blocked_rules.main() | quantumultx }}
+{{ surge_script.main() | quantumultx }}
 ```
 
 :::warning 注意
