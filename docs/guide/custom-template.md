@@ -100,7 +100,7 @@ DOMAIN-KEYWORD,baidu,DIRECT
 
 - 类型: `object`
 
-获取自定义的模板参数。请先在 Artifact 中定义再使用。
+获取自定义的模板参数。请 [先在 Artifact 中定义](/guide/custom-artifact.md#customparams) 再使用。
 
 ### clashProxyConfig
 
@@ -482,7 +482,7 @@ _for Surge_
 {% import './snippet/surge_script.tpl' as surge_script %}
 
 [Script]
-{{ blocked_rules.main() }}
+{{ surge_script.main() }}
 ```
 
 _for Quantumult X_
@@ -491,7 +491,7 @@ _for Quantumult X_
 {% import './snippet/surge_script.tpl' as surge_script %}
 
 [rewrite_local]
-{{ blocked_rules.main() | quantumultx }}
+{{ surge_script.main() | quantumultx }}
 ```
 
 :::warning 注意
