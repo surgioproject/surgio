@@ -4,10 +4,10 @@ import fs from 'fs-extra';
 import got from 'got';
 import _ from 'lodash';
 import os from 'os';
-import path from 'path';
+import { join } from 'path';
 import queryString from 'query-string';
 import { JsonObject } from 'type-fest';
-import { default as legacyUrl } from 'url';
+import { parse, format, URL } from 'url';
 import URLSafeBase64 from 'urlsafe-base64';
 import YAML from 'yaml';
 
@@ -25,8 +25,6 @@ import {
   SimpleNodeConfig,
   SnellNodeConfig,
   SortedNodeNameFilterType,
-  TrojanNodeConfig,
-  Socks5NodeConfig,
   VmessNodeConfig,
 } from '../types';
 import { ConfigCache } from './cache';
@@ -37,25 +35,27 @@ import { formatVmessUri } from './v2ray';
 
 const logger = createLogger({ service: 'surgio:utils' });
 
-// istanbul ignore next
-export const resolveRoot = (...args: readonly string[]): string =>
-  path.join(__dirname, '../../', ...args);
-
 export const getDownloadUrl = (baseUrl: string = '/', artifactName: string, inline: boolean = true, accessToken?: string): string => {
-  const urlObject = legacyUrl.parse(`${baseUrl}${artifactName}`, true);
-
+  const urlObject = parse(`${baseUrl}${artifactName}`, true);
   if (accessToken) {
     urlObject.query.access_token = accessToken;
   }
-
   if (!inline) {
     urlObject.query.dl = '1';
   }
-
   // tslint:disable-next-line:no-delete
   delete urlObject.search;
+  return format(urlObject);
+};
 
-  return legacyUrl.format(urlObject);
+export const getUrl = (baseUrl: string, path: string, accessToken?: string): string => {
+  // tslint:disable-next-line:no-parameter-reassignment
+  path = path.replace(/^\//, '');
+  const url = new URL(path, baseUrl);
+  if (accessToken) {
+    url.searchParams.set('access_token', accessToken);
+  }
+  return url.toString();
 };
 
 // istanbul ignore next
@@ -376,7 +376,7 @@ export const getSurgeNodes = function(
             }
 
             const jsonFileName = `v2ray_${config.localPort}_${config.hostname}_${config.port}.json`;
-            const jsonFilePath = path.join(ensureConfigFolder(), jsonFileName);
+            const jsonFilePath = join(ensureConfigFolder(), jsonFileName);
             const jsonFile = formatV2rayConfig(config.localPort as number, nodeConfig);
             const args = [
               '--config', jsonFilePath.replace(os.homedir(), '$HOME'),
@@ -1242,7 +1242,7 @@ export const ensureConfigFolder = (dir: string = os.homedir()): string => {
     baseDir = '/tmp';
   }
 
-  const configDir = path.join(baseDir, '.config/surgio');
+  const configDir = join(baseDir, '.config/surgio');
   fs.mkdirpSync(configDir);
   return configDir;
 };

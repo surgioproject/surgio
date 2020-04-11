@@ -359,6 +359,20 @@ getDownloadUrl('example.conf'); // https://example.com/example.conf
 getDownloadUrl('example.conf?foo=bar'); // https://example.com/example.conf?foo=bar
 ```
 
+:::tip 提示
+请不用担心参数中的 `access_token`，如果需要会自动加上的 👌。
+:::
+
+### getUrl <Badge text="v1.19.0" vertical="middle" />
+
+`getUrl(path)`
+
+拼装完整的 URL。这个方法和 `getDownloadUrl` 不同的地方是 —— 它更通用。将来 Surgio 可能会在面板增加新的 API，你可以用这个方法来获取完整的地址，例如：
+
+```
+getUrl('/export-provider?format=surge-policy');
+```
+
 ## 片段 (Snippet)
 
 ### 如何使用片段？

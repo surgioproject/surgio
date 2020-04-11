@@ -23,7 +23,7 @@ import {
   getDownloadUrl, getMellowNodes,
   getNodeNames, getQuantumultNodes, getQuantumultXNodes,
   getShadowsocksNodes, getShadowsocksNodesJSON, getShadowsocksrNodes,
-  getSurgeNodes, getV2rayNNodes, normalizeClashProxyGroupConfig, toBase64, toUrlSafeBase64,
+  getSurgeNodes, getUrl, getV2rayNNodes, normalizeClashProxyGroupConfig, toBase64, toUrlSafeBase64,
 } from '../utils';
 import { NETWORK_CONCURRENCY } from '../utils/constant';
 import { isIp, resolveDomain } from '../utils/dns';
@@ -122,6 +122,7 @@ export class Artifact extends EventEmitter {
       providerName: this.artifact.provider,
       artifactName,
       getDownloadUrl: (name: string) => getDownloadUrl(config.urlBase, name, true, gatewayHasToken ? gatewayConfig?.accessToken : undefined),
+      getUrl: (p: string) => getUrl(config.publicUrl, p, gatewayHasToken ? gatewayConfig?.accessToken : undefined),
       getNodeNames,
       getClashNodeNames,
       getClashNodes,
