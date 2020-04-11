@@ -47,6 +47,11 @@ module.exports = {
   },
   head,
   themeConfig: {
+    repo: 'geekdada/surgio',
+    repoLabel: 'GitHub',
+    editLinks: true,
+    editLinkText: '帮助我们改善此页面！',
+    docsDir: 'docs',
     algolia: {
       apiKey: '6e7242cfd891a169eb12749ab473ba8f',
       indexName: 'surgio',
@@ -58,10 +63,6 @@ module.exports = {
       {
         text: 'Changelog',
         link: 'https://github.com/geekdada/surgio/blob/master/CHANGELOG.md'
-      },
-      {
-        text: 'GitHub',
-        link: 'https://github.com/geekdada/surgio'
       },
     ],
     sidebar: {
