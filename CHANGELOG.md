@@ -1,3 +1,13 @@
+# [1.19.0](https://github.com/geekdada/surgio/compare/v1.18.4...v1.19.0) (2020-04-11)
+
+
+### Features
+
+* 支持定义全局 customParams ([a8a092f](https://github.com/geekdada/surgio/commit/a8a092fc74c5fbb7fedaa3a00dbffe2f3e9e9432))
+* add template method getUrl ([d02df8f](https://github.com/geekdada/surgio/commit/d02df8f2dbac0722381832944e06a11a3b0f3b40))
+
+
+
 ## [1.18.4](https://github.com/geekdada/surgio/compare/v1.18.3...v1.18.4) (2020-04-08)
 
 
