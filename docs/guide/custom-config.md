@@ -252,3 +252,15 @@ Clash 规则中的 `url`。
 - 默认值: `1200`
 
 Clash 规则中的 `interval`。
+
+### customParams <Badge text="v1.19.0" vertical="middle" />
+
+- 类型: `object`
+- 默认值: `{}`
+
+自定义的 **全局** 模板变量。可以在模板中获取，方便定制化模板。
+
+:::tip 提示
+1. 全局模板变量的用法和 Artifact 中定义的模板变量相同，相关文档请查阅 [这里](/guide/custom-artifact.md#customparams)；
+2. 在合并全局、局部模板变量和面板 URL 参数时的优先级为：URL 参数 > 局部 > 全局；
+:::

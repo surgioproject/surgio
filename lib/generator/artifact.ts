@@ -108,6 +108,8 @@ export class Artifact extends EventEmitter {
       customFilters,
     } = this;
     const remoteSnippets = _.keyBy(this.options.remoteSnippetList || [], item => item.name);
+    const globalCustomParams = config.customParams;
+    const mergedCustomParams = _.merge({}, globalCustomParams, customParams, extendRenderContext?.urlParams);
 
     return {
       proxyTestUrl: config.proxyTestUrl,
@@ -144,10 +146,7 @@ export class Artifact extends EventEmitter {
       netflixFilter,
       youtubePremiumFilter,
       customFilters,
-      customParams: {
-        ...customParams,
-        ...(extendRenderContext?.urlParams),
-      },
+      customParams: mergedCustomParams,
       ...(this.artifact.proxyGroupModifier ? {
         clashProxyConfig: {
           Proxy: getClashNodes(nodeList),
