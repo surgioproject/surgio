@@ -13,7 +13,7 @@ sidebarDepth: 2
 npm i @surgio/gateway@latest
 ```
 
-同时需要保证 Surgio 版本号大于 v1.15.0。
+同时需要保证 Surgio 版本号大于 v1.20.0。
 
 ## 修改 now.json
 
@@ -171,8 +171,13 @@ Heroku 今后会和 now.sh 一样成为推荐的部署网关平台。
 
 ### 6. 直接导出 Provider
 
+```
+/export-providers
+```
+
 有时候你只想将 Provider 导出成类似 Surge Policy 或者其它格式的配置，那么可以借助这个功能快速达到目的，免去了新建一个 Artifact 的麻烦。即使这个 Provider 没有被任何一个 Artifact 使用，它也是能够被直接导出的！
 
+#### 使用内置 `format` 导出
 
 你可以在面板的 Provider 页面找到复制链接按钮。目前面板还不支持复制组装多个 Provider 的 URL。如果你想组装多个 Provider，可以修改 URL 中的 `providers` 参数，多个 Provider 名称以逗号分隔，例如：
 
@@ -182,4 +187,28 @@ https://example.com/export-providers?providers=maying,dlercloud&format=surge-pol
 
 :::tip 提示
 合并多个 Provider 时，第一个 Provider 为主 Provider，遵循过滤器的合并规则。
+:::
+
+#### 指定 Template 导出
+
+你可以通过增加 URL 参数 `template` 来制定使用某个 Template 来导出 Provider。值得一提的是，这种方法不需要新定义 Artifact。
+
+### 7. 直接渲染模板
+
+```
+/render?template=
+```
+
+有时候我们并不需要将节点和规则完整的渲染出来，而是渲染某个模板。通过这个接口我们可以方便地渲染某个 Template，例如：
+
+```
+https://example.com/render?template=static
+```
+
+这样 Surgio 就会渲染仓库目录下 _./template/static.tpl_ 的内容。
+
+:::tip 提示
+1. 只有 `downloadUrl` 和 `getUrl` 这两个模板变量（方法）有效；
+2. 你不可以在这里的模板中引用 `nodeList` 之类的变量，因为根本不会解析节点；
+3. 子目录下的模板也是可以直接渲染的；
 :::
