@@ -81,7 +81,8 @@ export const validateConfig = (userConfig: Partial<CommandConfig>): void => {
     proxyGroupModifier: Joi.function(),
     destDir: Joi.string(),
     downloadUrl: Joi.string(),
-  });
+  })
+    .unknown();
   const remoteSnippetSchema = Joi.object({
     url: Joi.string().uri({
       scheme: [
@@ -120,7 +121,7 @@ export const validateConfig = (userConfig: Partial<CommandConfig>): void => {
       auth: Joi.boolean(),
       cookieMaxAge: Joi.number(),
     })
-    .unknown(),
+      .unknown(),
     proxyTestUrl: Joi.string().uri({
       scheme: [
         /https?/,
