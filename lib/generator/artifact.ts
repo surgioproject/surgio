@@ -75,6 +75,7 @@ export class Artifact extends EventEmitter {
       name: artifactName,
       template,
       templateString,
+      downloadUrl,
     } = artifact;
 
     assert(artifactName, '必须指定 artifact 的 name 属性');
@@ -100,6 +101,7 @@ export class Artifact extends EventEmitter {
     const {
       name: artifactName,
       customParams,
+      downloadUrl,
     } = this.artifact;
     // tslint:disable-next-line:no-this-assignment
     const {
@@ -118,7 +120,7 @@ export class Artifact extends EventEmitter {
 
     return {
       proxyTestUrl: config.proxyTestUrl,
-      downloadUrl: getDownloadUrl(config.urlBase, artifactNameWithParams, true, gatewayHasToken ? gatewayConfig?.accessToken : undefined),
+      downloadUrl: downloadUrl ? downloadUrl : getDownloadUrl(config.urlBase, artifactNameWithParams, true, gatewayHasToken ? gatewayConfig?.accessToken : undefined),
       nodes: nodeList,
       names: nodeNameList,
       remoteSnippets,

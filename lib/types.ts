@@ -84,6 +84,7 @@ export interface ArtifactConfig {
   readonly proxyGroupModifier?: ProxyGroupModifier;
   readonly destDir?: string;
   readonly templateString?: string;
+  readonly downloadUrl?: string;
 }
 
 export interface ProviderConfig {

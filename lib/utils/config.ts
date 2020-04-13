@@ -80,6 +80,7 @@ export const validateConfig = (userConfig: Partial<CommandConfig>): void => {
     customParams: Joi.object(),
     proxyGroupModifier: Joi.function(),
     destDir: Joi.string(),
+    downloadUrl: Joi.string(),
   });
   const remoteSnippetSchema = Joi.object({
     url: Joi.string().uri({
