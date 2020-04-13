@@ -6,6 +6,7 @@ import _ from 'lodash';
 import { Environment } from 'nunjucks';
 import path from 'path';
 import { EventEmitter } from 'events';
+import { stringify } from 'query-string';
 
 import { getProvider } from '../provider';
 import {
@@ -48,6 +49,7 @@ export interface ArtifactOptions {
 
 export interface ExtendableRenderContext {
   readonly urlParams?: object;
+  readonly rawUrlParams?: Record<string, string>;
 }
 
 export class Artifact extends EventEmitter {
@@ -110,10 +112,13 @@ export class Artifact extends EventEmitter {
     const remoteSnippets = _.keyBy(this.options.remoteSnippetList || [], item => item.name);
     const globalCustomParams = config.customParams;
     const mergedCustomParams = _.merge({}, globalCustomParams, customParams, extendRenderContext?.urlParams);
+    const artifactNameWithParams = extendRenderContext?.rawUrlParams
+      ? `${artifactName}?${stringify(extendRenderContext?.rawUrlParams)}`
+      : artifactName;
 
     return {
       proxyTestUrl: config.proxyTestUrl,
-      downloadUrl: getDownloadUrl(config.urlBase, artifactName, true, gatewayHasToken ? gatewayConfig?.accessToken : undefined),
+      downloadUrl: getDownloadUrl(config.urlBase, artifactNameWithParams, true, gatewayHasToken ? gatewayConfig?.accessToken : undefined),
       nodes: nodeList,
       names: nodeNameList,
       remoteSnippets,
