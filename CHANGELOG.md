@@ -1,3 +1,17 @@
+# [1.20.0](https://github.com/geekdada/surgio/compare/v1.19.0...v1.20.0) (2020-04-13)
+
+
+### Bug Fixes
+
+* artifact 配置应该允许其他 key ([efdde7d](https://github.com/geekdada/surgio/commit/efdde7d9daa762ad36769e5ea1f13e60f6cdf447))
+
+
+### Features
+
+* 允许直接定义 Artifact 的下载地址 ([bade49b](https://github.com/geekdada/surgio/commit/bade49b13b31a8fe6f35eedf72961c092ad8e83c))
+
+
+
 # [1.19.0](https://github.com/geekdada/surgio/compare/v1.18.4...v1.19.0) (2020-04-11)
 
 
