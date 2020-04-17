@@ -242,7 +242,7 @@ module.exports = {
 ### proxyTestUrl <Badge text="v1.4.0" vertical="middle" />
 
 - 类型: `string`
-- 默认值: `http://www.qualcomm.cn/generate_204`
+- 默认值: `http://cp.cloudflare.com/generate_204`
 
 Clash 规则中的 `url`。
 

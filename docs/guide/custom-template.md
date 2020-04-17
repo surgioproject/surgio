@@ -52,7 +52,7 @@ Surgio 为了能够灵活地定义模板而引入了 [Nunjucks](https://nunjucks
 ### proxyTestUrl <Badge text="v1.6.0" vertical="middle" />
 
 - 类型: `string`
-- 默认值: `http://www.qualcomm.cn/generate_204`
+- 默认值: `http://cp.cloudflare.com/generate_204`
 
 节点测试地址。Surgio 会内置一个推荐的测试地址，你可以直接在模板文件中使用。如果在设置中使用了新的地址，这里也会变成所设的值。
 
