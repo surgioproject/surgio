@@ -1,7 +1,7 @@
 # https://github.com/crossutility/Quantumult-X/blob/master/sample.conf
 
 [general]
-server_check_url=http://www.qualcomm.cn/generate_204
+server_check_url=http://cp.cloudflare.com/generate_204
 
 [dns]
 server=223.5.5.5
