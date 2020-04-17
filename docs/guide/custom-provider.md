@@ -395,7 +395,7 @@ const { utils } = require('surgio');
 
 module.exports = {
   // 过滤出名字中包含土耳其和马来西亚的节点
-  nodeFilter: utils.useKeywords(['土耳其', '马来西亚']),
+  nodeFilter: utils.discardKeywords(['土耳其', '马来西亚']),
 };
 ```
 
