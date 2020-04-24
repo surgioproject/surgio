@@ -8,6 +8,7 @@ import { RemoteSnippet, RemoteSnippetConfig } from '../types';
 import { NETWORK_CONCURRENCY, NETWORK_TIMEOUT, REMOTE_SNIPPET_CACHE_MAXAGE } from './constant';
 import { ConfigCache } from './cache';
 import httpClient from './http-client';
+import { isNow } from './index';
 import { createTmpFactory } from './tmp-helper';
 
 export const addProxyToSurgeRuleSet = (str: string, proxyName: string): string => {
@@ -66,7 +67,7 @@ export const loadRemoteSnippetList = (remoteSnippetList: ReadonlyArray<RemoteSni
     const fileMd5 = crypto.createHash('md5').update(item.url).digest('hex');
 
     return (async () => {
-      if (process.env.NOW_REGION) {
+      if (isNow()) {
         const tmp = tmpFactory(fileMd5, REMOTE_SNIPPET_CACHE_MAXAGE);
         const tmpContent = await tmp.getContent();
         let snippet: string;

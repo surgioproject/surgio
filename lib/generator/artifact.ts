@@ -23,10 +23,10 @@ import {
   getDownloadUrl, getMellowNodes,
   getNodeNames, getQuantumultNodes, getQuantumultXNodes,
   getShadowsocksNodes, getShadowsocksNodesJSON, getShadowsocksrNodes,
-  getSurgeNodes, getUrl, getV2rayNNodes, normalizeClashProxyGroupConfig, toBase64, toUrlSafeBase64,
+  getSurgeNodes, getUrl, getV2rayNNodes, isIp, normalizeClashProxyGroupConfig, toBase64, toUrlSafeBase64,
 } from '../utils';
 import { NETWORK_CONCURRENCY } from '../utils/constant';
-import { isIp, resolveDomain } from '../utils/dns';
+import { resolveDomain } from '../utils/dns';
 import {
   hkFilter,
   japanFilter,

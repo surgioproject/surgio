@@ -13,12 +13,13 @@ import SubscriptionsCommand from './command/subscriptions';
 import UploadCommand from './command/upload';
 import CheckCommand from './command/check';
 import NewCommand from './command/new';
+import { isHeroku, isNow } from './utils';
 import * as filter from './utils/filter';
 import { errorHandler } from './utils/error-helper';
 import { CATEGORIES } from './utils/constant';
 
 // istanbul ignore next
-if (!process.env.NOW_REGION) {
+if (!isNow() && !isHeroku()) {
   // Global proxy
   bootstrap();
 }

@@ -29,7 +29,6 @@ import {
 } from '../types';
 import { ConfigCache } from './cache';
 import { ERR_INVALID_FILTER, NETWORK_TIMEOUT, OBFS_UA, PROXY_TEST_INTERVAL, PROXY_TEST_URL } from './constant';
-import { isIp } from './dns';
 import { validateFilter } from './filter';
 import { formatVmessUri } from './v2ray';
 
@@ -1353,3 +1352,11 @@ export const lowercaseHeaderKeys = (headers: Record<string, string>) => {
 
   return wsHeaders;
 };
+
+export const isIp = (str: string): boolean => /^(?:(?:^|\.)(?:2(?:5[0-5]|[0-4]\d)|1?\d?\d)){4}$/gm.test(str);
+
+// istanbul ignore next
+export const isNow = () => typeof process.env.NOW_REGION !== 'undefined';
+
+// istanbul ignore next
+export const isHeroku = () => typeof process.env.DYNO !== 'undefined';

@@ -1448,3 +1448,10 @@ test('output api should fail with invalid filter', t => {
     utils.getMellowNodes([], undefined);
   }, null, ERR_INVALID_FILTER);
 });
+
+test('isIp', t => {
+  t.true(utils.isIp('0.0.0.0'));
+  t.true(utils.isIp('255.255.255.255'));
+  t.false(utils.isIp('256.256.256.256'));
+  t.false(utils.isIp('example.com'));
+});
