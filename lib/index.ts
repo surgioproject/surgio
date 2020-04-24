@@ -17,8 +17,11 @@ import * as filter from './utils/filter';
 import { errorHandler } from './utils/error-helper';
 import { CATEGORIES } from './utils/constant';
 
-// Global proxy
-bootstrap();
+// istanbul ignore next
+if (!process.env.NOW_REGION) {
+  // Global proxy
+  bootstrap();
+}
 
 const envPath = path.resolve(process.cwd(), './.env');
 
