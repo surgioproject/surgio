@@ -57,7 +57,6 @@ export const loadRemoteSnippetList = (remoteSnippetList: ReadonlyArray<RemoteSni
       })
       .catch(err => {
         logger.error(`远程片段下载失败: ${url}`);
-        console.log(err.response)
         throw err;
       });
   }
