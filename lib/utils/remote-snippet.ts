@@ -7,6 +7,7 @@ import detectNewline from 'detect-newline';
 import { RemoteSnippet, RemoteSnippetConfig } from '../types';
 import { NETWORK_CONCURRENCY, NETWORK_TIMEOUT, REMOTE_SNIPPET_CACHE_MAXAGE } from './constant';
 import { ConfigCache } from './cache';
+import httpClient from './http-client';
 import { createTmpFactory } from './tmp-helper';
 
 export const addProxyToSurgeRuleSet = (str: string, proxyName: string): string => {
@@ -47,17 +48,16 @@ export const addProxyToSurgeRuleSet = (str: string, proxyName: string): string =
 
 export const loadRemoteSnippetList = (remoteSnippetList: ReadonlyArray<RemoteSnippetConfig>): Promise<ReadonlyArray<RemoteSnippet>> => {
   function load(url: string): Promise<string> {
-    logger.info(`正在下载远程片段: ${url}`);
+    // logger.info(`正在下载远程片段: ${url}`);
 
-    return got.get(url, {
-      timeout: NETWORK_TIMEOUT,
-    })
+    return httpClient.get(url)
       .then(data => {
         logger.info(`远程片段下载成功: ${url}`);
         return data.body;
       })
       .catch(err => {
         logger.error(`远程片段下载失败: ${url}`);
+        console.log(err.response)
         throw err;
       });
   }

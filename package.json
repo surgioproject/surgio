@@ -82,6 +82,7 @@
   "dependencies": {
     "@hapi/joi": "^16.1.8",
     "@surgio/logger": "^1.1.0",
+    "agentkeepalive": "^4.1.0",
     "ali-oss": "^6.7.0",
     "bluebird": "^3.7.2",
     "bytes": "^3.1.0",
