@@ -1,3 +1,18 @@
+## [1.20.2](https://github.com/geekdada/surgio/compare/v1.20.1...v1.20.2) (2020-04-24)
+
+
+### Bug Fixes
+
+* 无法识别外部资源的 EOL ([bee0c12](https://github.com/geekdada/surgio/commit/bee0c1224781330c35a27cbfee4549d338de65d2))
+* should not enable proxy on now.sh and heroku ([3713850](https://github.com/geekdada/surgio/commit/37138507c126d7b2da900c833fea2af0bf153f4d))
+
+
+### Features
+
+* turn on keepalive for requesting remote resources ([5cdfeaf](https://github.com/geekdada/surgio/commit/5cdfeaf24b0eea4a3d12d4bcd264258e37e6969b))
+
+
+
 ## [1.20.1](https://github.com/geekdada/surgio/compare/v1.20.0...v1.20.1) (2020-04-17)
 
 
