@@ -87,6 +87,7 @@
     "bluebird": "^3.7.2",
     "bytes": "^3.1.0",
     "chalk": "^4.0.0",
+    "check-node-version": "^4.0.3",
     "common-bin": "^2.8.3",
     "cross-env": "^7.0.2",
     "date-fns": "^2.12.0",

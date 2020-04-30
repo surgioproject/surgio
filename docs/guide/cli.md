@@ -53,6 +53,20 @@ $ npx surgio new provider|artifact|template
 1. 目前新建 Artifact 助手无法识别 `artifacts: require(...)` 这样的配置文件，可能会破坏文件结构；
 :::
 
+## `doctor`
+
+> 检查运行环境 <Badge text="v1.21.0" vertical="middle" />
+
+```bash
+$ npx surgio doctor
+@surgio/gateway: 0.12.2
+surgio: 1.20.2
+node: 12.16.2 (/usr/local/Cellar/node@12/12.16.2_1/bin/node)
+npx: 6.14.4
+yarn: 1.22.4
+npm: 6.14.4
+```
+
 ## 全局参数
 
 ### `-V --verbose` 调试模式

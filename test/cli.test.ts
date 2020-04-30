@@ -8,6 +8,16 @@ const cli = path.join(__dirname, '../bin/surgio.js');
 const fixture = path.join(__dirname, './fixture');
 const resolve = p => path.join(fixture, p);
 
+test.serial('doctor command', async t => {
+  await t.notThrowsAsync(async () => {
+    await coffee.fork(cli, ['doctor'], {
+      cwd: resolve('plain'),
+    })
+      .expect('code', 0)
+      .end();
+  });
+});
+
 test.serial('cli works', async t => {
   await coffee.fork(cli, ['generate', '-h'], {
     cwd: resolve('plain'),
