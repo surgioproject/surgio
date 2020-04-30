@@ -1,3 +1,12 @@
+# [1.21.0](https://github.com/geekdada/surgio/compare/v1.20.2...v1.21.0) (2020-04-30)
+
+
+### Features
+
+* 增加 doctor 命令方便检查环境信息 ([14e9141](https://github.com/geekdada/surgio/commit/14e91418aec5485b3f0047604a4ea8871efee143))
+
+
+
 ## [1.20.2](https://github.com/geekdada/surgio/compare/v1.20.1...v1.20.2) (2020-04-24)
 
 
