@@ -1,3 +1,12 @@
+## [1.21.1](https://github.com/geekdada/surgio/compare/v1.21.0...v1.21.1) (2020-05-01)
+
+
+### Bug Fixes
+
+* doctor command throws error ([1635aaa](https://github.com/geekdada/surgio/commit/1635aaae0500730d75894dde56c638064a970703))
+
+
+
 # [1.21.0](https://github.com/geekdada/surgio/compare/v1.20.2...v1.21.0) (2020-04-30)
 
 
