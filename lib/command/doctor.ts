@@ -3,6 +3,7 @@ import Command from 'common-bin';
 import check from 'check-node-version';
 import { promisify } from 'util';
 import { join } from 'path';
+import { isPkgBundle } from '../utils';
 
 import { errorHandler } from '../utils/error-helper';
 
@@ -42,7 +43,7 @@ class DoctorCommand extends Command {
   public static async generateDoctorInfo(cwd: string): Promise<ReadonlyArray<string>> {
     const doctorInfo: string[] = [];
     const pkg = require('../../package.json');
-    const checkInfo: any = await promisify(check)();
+    const checkInfo: any = isPkgBundle() ? null : await promisify(check)();
 
     try {
       const gatewayPkg = require(join(cwd, 'node_modules/@surgio/gateway/package.json'));
@@ -53,13 +54,15 @@ class DoctorCommand extends Command {
 
     doctorInfo.push(`surgio: ${pkg.version}`);
 
-    Object.keys(checkInfo.versions).forEach(key => {
-      if (key === 'node') {
-        doctorInfo.push(`${key}: ${checkInfo.versions[key].version.version} (${process.execPath})`);
-      } else {
-        doctorInfo.push(`${key}: ${checkInfo.versions[key].version.version}`);
-      }
-    });
+    if (checkInfo) {
+      Object.keys(checkInfo.versions).forEach(key => {
+        if (key === 'node') {
+          doctorInfo.push(`${key}: ${checkInfo.versions[key].version.version} (${process.execPath})`);
+        } else {
+          doctorInfo.push(`${key}: ${checkInfo.versions[key].version.version}`);
+        }
+      });
+    }
 
     return doctorInfo;
   }

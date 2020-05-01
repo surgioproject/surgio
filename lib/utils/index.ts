@@ -1360,3 +1360,5 @@ export const isNow = () => typeof process.env.NOW_REGION !== 'undefined';
 
 // istanbul ignore next
 export const isHeroku = () => typeof process.env.DYNO !== 'undefined';
+
+export const isPkgBundle = () => __dirname.startsWith('/snapshot');

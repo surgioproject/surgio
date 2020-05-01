@@ -5,6 +5,7 @@
 node_modules/
 /dist/
 /build/
+/binary-build/
 .env
 .idea
 .nyc_output
