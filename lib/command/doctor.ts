@@ -7,6 +7,9 @@ import { isPkgBundle } from '../utils';
 
 import { errorHandler } from '../utils/error-helper';
 
+type OnComplete = Parameters<typeof check>[1];
+type CheckInfo = Parameters<OnComplete>[1];
+
 class DoctorCommand extends Command {
   private options: object;
 
@@ -43,7 +46,7 @@ class DoctorCommand extends Command {
   public static async generateDoctorInfo(cwd: string): Promise<ReadonlyArray<string>> {
     const doctorInfo: string[] = [];
     const pkg = require('../../package.json');
-    const checkInfo: any = isPkgBundle() ? null : await promisify(check)();
+    const checkInfo = isPkgBundle() ? null : await promisify<CheckInfo>(check)();
 
     try {
       const gatewayPkg = require(join(cwd, 'node_modules/@surgio/gateway/package.json'));
@@ -56,10 +59,13 @@ class DoctorCommand extends Command {
 
     if (checkInfo) {
       Object.keys(checkInfo.versions).forEach(key => {
-        if (key === 'node') {
-          doctorInfo.push(`${key}: ${checkInfo.versions[key].version.version} (${process.execPath})`);
-        } else {
-          doctorInfo.push(`${key}: ${checkInfo.versions[key].version.version}`);
+        const version = checkInfo.versions[key].version;
+        if (version) {
+          if (key === 'node') {
+            doctorInfo.push(`${key}: ${version} (${process.execPath})`);
+          } else {
+            doctorInfo.push(`${key}: ${version}`);
+          }
         }
       });
     }
