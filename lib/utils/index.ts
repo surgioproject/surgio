@@ -351,6 +351,9 @@ export const getSurgeNodes = function(
                   ...(typeof config.skipCertVerify === 'boolean' ? [
                     `skip-cert-verify=${config.skipCertVerify}`,
                   ] : []),
+                  ...(config.host ? [
+                    `sni=${config.host}`,
+                  ] : []),
               );
             }
 
