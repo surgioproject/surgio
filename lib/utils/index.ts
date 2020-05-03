@@ -505,7 +505,7 @@ export const getClashNodes = function(
                 } : null),
                 host: nodeConfig['obfs-host'],
                 path: nodeConfig['obfs-uri'] || '/',
-                mux: false,
+                mux: true,
                 headers: nodeConfig.wsHeaders || {},
               },
             } : null),
