@@ -85,7 +85,7 @@ test.serial('not specify binPath', async t => {
     .end();
 
   t.is(code, 1);
-  t.truthy(stderr.includes('You must specify a binary file path for Shadowsocksr'));
+  t.truthy(stderr.includes('请按照文档 https://bit.ly/2WnHB3p 添加 Shadowsocksr 二进制文件路径'));
 });
 
 test.serial('template variables and functions', async t => {

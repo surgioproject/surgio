@@ -155,6 +155,7 @@ export interface HttpsNodeConfig extends SimpleNodeConfig {
   readonly password: string;
   readonly tls13?: boolean;
   readonly skipCertVerify?: boolean;
+  readonly sni?: string;
 }
 
 export interface ShadowsocksNodeConfig extends SimpleNodeConfig {

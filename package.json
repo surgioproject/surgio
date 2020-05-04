@@ -39,7 +39,7 @@
     "@types/urlsafe-base64": "^1.0.28",
     "@types/yaml": "^1.9.7",
     "@vuepress/plugin-google-analytics": "^1.4.1",
-    "ava": "^3.7.1",
+    "ava": "^3.8.1",
     "codecov": "^3.5.0",
     "coffee": "^5.3.0",
     "conventional-changelog-cli": "^2.0.31",
