@@ -191,6 +191,7 @@ module.exports = {
   'udp-relay': true,
   tfo: false, // TCP Fast Open
   tls13: false, // TLS 1.3，适用于 v2ray-plugin
+  mux: false, // 目前仅 Clash + Shadowsocks + v2ray-plugin 可用
 }
 ```
 
