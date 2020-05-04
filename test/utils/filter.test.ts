@@ -273,33 +273,61 @@ test('mergeFilters', t => {
 
 test('useProviders', t => {
   const fn = filter.useProviders(['测试', 'test']);
+  const fn2 = filter.useProviders(['测试', 'test'], true);
 
   t.is(fn({
     ...generateVmessNode('test'),
-    provider: { name: '测试' }
+    provider: { name: '测试 asdf' }
   } as any), true);
   t.is(fn({
     ...generateVmessNode('test'),
-    provider: { name: 'test' }
+    provider: { name: 'test asdf' }
   } as any), true);
   t.is(fn({
     ...generateVmessNode('test'),
     provider: { name: 'other' }
   } as any), false);
+
+  t.is(fn2({
+    ...generateVmessNode('test'),
+    provider: { name: '测试 asdf' }
+  } as any), false);
+  t.is(fn2({
+    ...generateVmessNode('test'),
+    provider: { name: 'test asdf' }
+  } as any), false);
+  t.is(fn2({
+    ...generateVmessNode('test'),
+    provider: { name: 'test' }
+  } as any), true);
 });
 
 test('discardProviders', t => {
   const fn = filter.discardProviders(['测试', 'test']);
+  const fn2 = filter.discardProviders(['测试', 'test'], true);
 
   t.is(fn({
     ...generateVmessNode('test'),
-    provider: { name: '测试' }
+    provider: { name: '测试 asdf' }
   } as any), false);
   t.is(fn({
     ...generateVmessNode('test'),
-    provider: { name: 'test' }
+    provider: { name: 'test asdf' }
   } as any), false);
   t.is(fn({
+    ...generateVmessNode('test'),
+    provider: { name: 'other' }
+  } as any), true);
+
+  t.is(fn2({
+    ...generateVmessNode('test'),
+    provider: { name: 'test' }
+  } as any), false);
+  t.is(fn2({
+    ...generateVmessNode('test'),
+    provider: { name: 'test asdf' }
+  } as any), true);
+  t.is(fn2({
     ...generateVmessNode('test'),
     provider: { name: 'other' }
   } as any), true);
