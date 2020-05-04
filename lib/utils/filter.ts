@@ -62,6 +62,7 @@ export const mergeFilters = (filters: ReadonlyArray<NodeNameFilterType>, isStric
       throw new Error('mergeFilters 不支持包含排序功能的过滤器');
     }
 
+    // istanbul ignore next
     if (typeof filter !== 'function') {
       throw new Error('mergeFilters 传入了无效的过滤器');
     }
@@ -140,6 +141,7 @@ export const mergeSortedFilters = (filters: ReadonlyArray<NodeNameFilterType>): 
       throw new Error('mergeSortedFilters 不支持包含排序功能的过滤器');
     }
 
+    // istanbul ignore next
     if (typeof filter !== 'function') {
       throw new Error('mergeSortedFilters 传入了无效的过滤器');
     }
