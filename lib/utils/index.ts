@@ -144,6 +144,9 @@ export const getShadowsocksJSONConfig = async (
   return await requestConfigFromRemote();
 };
 
+/**
+ * @see https://manual.nssurge.com/policy/proxy.html
+ */
 export const getSurgeNodes = function(
   list: ReadonlyArray<PossibleNodeConfigType>,
   filter?: NodeFilterType|SortedNodeNameFilterType,
@@ -220,6 +223,9 @@ export const getSurgeNodes = function(
               ] : []),
               ...(typeof config.mptcp === 'boolean' ? [
                 `mptcp=${config.mptcp}`,
+              ] : []),
+              ...(typeof config.sni === 'string' ? [
+                `sni=${config.sni}`,
               ] : []),
             ].join(', ')
           ].join(' = '));
@@ -336,7 +342,7 @@ export const getSurgeNodes = function(
                   getHeader({
                     host: config.host || config.hostname,
                     'user-agent': OBFS_UA,
-                    ..._.omit(config.wsHeaders, ['host']),
+                    ..._.omit(config.wsHeaders, ['host']), // host 本质上是一个头信息，所以可能存在冲突的情况。以 host 属性为准。
                   })
                 )
               );
@@ -344,13 +350,16 @@ export const getSurgeNodes = function(
 
             if (config.tls) {
               configList.push(
-                  'tls=true',
-                  ...(typeof config.tls13 === 'boolean' ? [
-                    `tls13=${config.tls13}`,
-                  ] : []),
-                  ...(typeof config.skipCertVerify === 'boolean' ? [
-                    `skip-cert-verify=${config.skipCertVerify}`,
-                  ] : []),
+                'tls=true',
+                ...(typeof config.tls13 === 'boolean' ? [
+                  `tls13=${config.tls13}`,
+                ] : []),
+                ...(typeof config.skipCertVerify === 'boolean' ? [
+                  `skip-cert-verify=${config.skipCertVerify}`,
+                ] : []),
+                ...(config.host ? [
+                  `sni=${config.host}`,
+                ] : []),
               );
             }
 
@@ -447,8 +456,8 @@ export const getSurgeNodes = function(
           }
 
           return ([
-              nodeConfig.nodeName,
-              config.join(', '),
+            nodeConfig.nodeName,
+            config.join(', '),
           ].join(' = '));
         }
 
