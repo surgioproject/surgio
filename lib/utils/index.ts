@@ -508,7 +508,7 @@ export const getClashNodes = function(
                 ...(typeof nodeConfig.mux === 'boolean' ? {
                     mux: nodeConfig.mux,
                 } : {
-                    mux : false,
+                    mux: false,
                 }),
                 headers: nodeConfig.wsHeaders || {},
               },
