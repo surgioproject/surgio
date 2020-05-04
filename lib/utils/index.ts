@@ -271,7 +271,7 @@ export const getSurgeNodes = function(
 
           // istanbul ignore next
           if (!config.binPath) {
-            throw new Error('You must specify a binary file path for Shadowsocksr.');
+            throw new Error('请按照文档 https://bit.ly/2WnHB3p 添加 Shadowsocksr 二进制文件路径');
           }
 
           const args = [
@@ -380,7 +380,7 @@ export const getSurgeNodes = function(
 
             // istanbul ignore next
             if (!config.binPath) {
-              throw new Error('You must specify a binary file path for V2Ray.');
+              throw new Error('请按照文档 https://bit.ly/2WnHB3p 添加 V2Ray 二进制文件路径');
             }
 
             const jsonFileName = `v2ray_${config.localPort}_${config.hostname}_${config.port}.json`;
