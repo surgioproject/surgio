@@ -170,6 +170,7 @@ export interface ShadowsocksNodeConfig extends SimpleNodeConfig {
   readonly skipCertVerify?: boolean;
   readonly wsHeaders?: Record<string, string>;
   readonly tls13?: boolean;
+  readonly mux?: boolean;
 }
 
 export interface SnellNodeConfig extends SimpleNodeConfig {
