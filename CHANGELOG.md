@@ -1,3 +1,21 @@
+# [1.22.0](https://github.com/geekdada/surgio/compare/v1.21.1...v1.22.0) (2020-05-04)
+
+
+### Bug Fixes
+
+* 在配置了 vmess 的 host 的情况下，为 surge 增加 sni 参数 ([55cf85a](https://github.com/geekdada/surgio/commit/55cf85a89d0214717ae773755ec2f292549e6a04))
+
+
+### Features
+
+* 错误信息补充 ([ef4946c](https://github.com/geekdada/surgio/commit/ef4946cac0eb9897586875118399624dbe44d8d9))
+* 更新内置默认 UA ([640ee2c](https://github.com/geekdada/surgio/commit/640ee2cddd392a97b61b9c5511335075bdb1b0ca))
+* 优化未设置 binPath 的错误文案 ([f6d3e89](https://github.com/geekdada/surgio/commit/f6d3e895e783788c5f8b8bcf1622220f411b3e9a))
+* 支持从 Clash 订阅中读取 v2ray-plugin mux 信息 ([f06f279](https://github.com/geekdada/surgio/commit/f06f2793af92f2a68aca51e461cad2c6b9165f5d))
+* useProviders 和 discardProviders 增加严格模式 ([bcd9fe9](https://github.com/geekdada/surgio/commit/bcd9fe942b9814ae453f4f13103245f8bf32384c))
+
+
+
 ## [1.21.1](https://github.com/geekdada/surgio/compare/v1.21.0...v1.21.1) (2020-05-01)
 
 
