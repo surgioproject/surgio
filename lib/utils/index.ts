@@ -511,7 +511,11 @@ export const getClashNodes = function(
                 } : null),
                 host: nodeConfig['obfs-host'],
                 path: nodeConfig['obfs-uri'] || '/',
-                mux: false,
+                ...(typeof nodeConfig.mux === 'boolean' ? {
+                    mux: nodeConfig.mux,
+                } : {
+                    mux: false,
+                }),
                 headers: nodeConfig.wsHeaders || {},
               },
             } : null),
