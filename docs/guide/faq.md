@@ -28,3 +28,7 @@ export https_proxy=http://127.0.0.1:6152;export http_proxy=http://127.0.0.1:6152
 Build logs 通常不会出错，如果没有看到错误请在 Functions 页面查看运行期错误。
 
 ![](./images/now-logs.png)
+
+## 使用 `combineProviders` 后过滤器不生效
+
+在使用合并 Provider 功能时，`combineProviders` 里 Provider 的过滤器 `customFilters`，`netflixFilter`，`youtubePremiumFilter` 不会生效，请在主 Provider 中定义它们。
