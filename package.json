@@ -20,6 +20,8 @@
   },
   "homepage": "https://surgio.royli.dev",
   "devDependencies": {
+    "@commitlint/cli": "^8.3.5",
+    "@commitlint/config-angular": "^8.3.4",
     "@istanbuljs/nyc-config-typescript": "^1.0.1",
     "@now/node": "^1.5.1",
     "@types/bluebird": "^3.5.30",
@@ -156,6 +158,7 @@
   },
   "husky": {
     "hooks": {
+      "commit-msg": "commitlint -c .commitlintrc.json -E HUSKY_GIT_PARAMS",
       "pre-commit": "npm-debug-log-cleaner && lint-staged"
     }
   },
