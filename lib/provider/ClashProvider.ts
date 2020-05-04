@@ -191,6 +191,9 @@ export const parseClashConfig = (proxyList: ReadonlyArray<any>, udpRelay?: boole
               ...(item['plugin-opts'].tls === true ? {
                 skipCertVerify: item['plugin-opts']['skip-cert-verify'] === true,
               } : null),
+              ...(typeof item['plugin-opts'].mux === 'boolean' ? {
+                mux: item['plugin-opts'].mux,
+              } : null),
             } : null),
           } as ShadowsocksNodeConfig;
         }

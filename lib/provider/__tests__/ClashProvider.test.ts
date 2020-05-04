@@ -308,6 +308,46 @@ test('trojan configurations', t => {
   );
 });
 
+test('shadowsocks v2ray mux', async t => {
+  t.deepEqual(
+    parseClashConfig([{
+      name: 'ss-v2ray-mux',
+      type: 'ss',
+      server: 'server',
+      port: 443,
+      cipher: 'chacha20-ietf-poly1305',
+      password: 'password',
+      plugin: 'v2ray-plugin',
+      'plugin-opts': {
+        mode: 'websocket',
+        mux: true,
+        tls: true,
+        headers: {
+          custom: 'value'
+        },
+        'skip-cert-verify': true,
+      }
+    }]),
+    [{
+      type: NodeTypeEnum.Shadowsocks,
+      nodeName: 'ss-v2ray-mux',
+      hostname: 'server',
+      port: 443,
+      method: 'chacha20-ietf-poly1305',
+      password: 'password',
+      obfs: 'wss',
+      'obfs-host': 'server',
+      'obfs-uri': '/',
+      mux: true,
+      'udp-relay': false,
+      skipCertVerify: true,
+      wsHeaders: {
+        custom: 'value',
+      },
+    }]
+  );
+});
+
 test('ClashProvider relayUrl', async t => {
   const provider = new ClashProvider('test', {
     type: SupportProviderEnum.Clash,
