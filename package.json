@@ -1,6 +1,6 @@
 {
   "name": "surgio",
-  "version": "1.22.0",
+  "version": "1.23.0",
   "main": "build/index.js",
   "typings": "build/index.d.ts",
   "bin": {
@@ -98,8 +98,8 @@
     "detect-newline": "^3.1.0",
     "emoji-regex": "^8.0.0",
     "env2": "^2.2.2",
-    "execa": "^4.0.0",
     "eslint": "^6.6.0",
+    "execa": "^4.0.0",
     "filesize": "^6.1.0",
     "fs-extra": "^9.0.0",
     "get-port": "^5.1.0",

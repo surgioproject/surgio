@@ -1,3 +1,21 @@
+# [1.23.0](https://github.com/geekdada/surgio/compare/v1.22.0...v1.23.0) (2020-05-05)
+
+
+### Bug Fixes
+
+* **command:new:** 生成 custom 类型 provider 报错 ([be83268](https://github.com/geekdada/surgio/commit/be832687b0cb1a5ceb96e6742eb451e9ed5e5903))
+* 服务器地址为 ipv6 时触发解析 ([aa79c93](https://github.com/geekdada/surgio/commit/aa79c931bac1a81b2406e4c36180c62e064e0292))
+* SSR URI 中包含 ipv6 地址解析错误 ([1cd8436](https://github.com/geekdada/surgio/commit/1cd8436a6335a4f018fc96532f297502cec8ce3b))
+
+
+### Features
+
+* 生成规则前进行 eslint 检查 ([a769458](https://github.com/geekdada/surgio/commit/a769458225905b228ef8903da593ded2c42ab49d))
+* 支持解析 ipv6 地址 ([b96489b](https://github.com/geekdada/surgio/commit/b96489b6f92daa9e87f3863fb80e97b4af225fa6))
+* 支持转换 surge ip-cidr6 至 quantumult x ip6-cidr ([c823677](https://github.com/geekdada/surgio/commit/c82367707e21ecd6856801a0e0d1758e58338a03))
+
+
+
 # [1.22.0](https://github.com/geekdada/surgio/compare/v1.21.1...v1.22.0) (2020-05-04)
 
 
