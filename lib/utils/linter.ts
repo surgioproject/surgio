@@ -3,24 +3,14 @@
 import { CLIEngine } from 'eslint';
 
 const linterConfig = {
+  useEslintrc: true,
   baseConfig: {
-    extends: ['eslint:recommended'],
-    parserOptions: {
-      ecmaVersion: 2020
-    },
-    env: {
-      es6: true,
-      node: true,
-      commonjs: true,
-    },
-    rules: {
-      'array-bracket-spacing': 0,
-      'comma-dangle': 0,
-      'dot-notation': 0,
-      'valid-jsdoc': 0,
-      'no-unused-vars': 0,
-      'eqeqeq': 'error',
-    },
+    extends: [
+      '@surgio/eslint-config-surgio',
+    ].map(
+      // @ts-ignore
+      require.resolve
+    ),
   },
 };
 
@@ -35,11 +25,13 @@ export const checkAndFix = (cwd: string): boolean => {
   const cli = createCli({ fix: true, cwd, });
   const report = cli.executeOnFiles(['.']);
   const formatter = cli.getFormatter();
-  const { errorCount, fixableErrorCount } = report;
+  const { errorCount } = report;
 
   console.log(formatter(report.results));
 
-  if (errorCount - fixableErrorCount > 0) {
+  CLIEngine.outputFixes(report);
+
+  if (errorCount > 0) {
     throw new Error('ESLint 测试不通过');
   }
 

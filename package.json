@@ -84,6 +84,7 @@
   },
   "dependencies": {
     "@hapi/joi": "^16.1.8",
+    "@surgio/eslint-config-surgio": "^1.0.2",
     "@surgio/logger": "^1.1.0",
     "agentkeepalive": "^4.1.0",
     "ali-oss": "^6.7.0",
