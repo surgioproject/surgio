@@ -72,6 +72,10 @@ export function getEngine(templateDir: string): nunjucks.Environment {
           matched &&
           QUANTUMULT_X_SUPPORTED_RULE.some(s => matched[1] === s)
         ) {
+          if (matched[1] === 'IP-CIDR6') {
+            return item.replace(/IP-CIDR6/i, 'IP6-CIDR');
+          }
+
           // 过滤出支持的规则类型
           return item;
         }

@@ -87,12 +87,19 @@ test('base64', t => {
 
 test('quantumultx filter 1', t => {
   const body = `{{ str | quantumultx }}`;
-  const str = `PROCESS-NAME,Telegram,Proxy,no-resolve // test rule`;
-  const result = templateEngine.renderString(body, {
-    str,
-  });
 
-  t.is(result, '');
+  t.is(
+    templateEngine.renderString(body, {
+      str: `PROCESS-NAME,Telegram,Proxy,no-resolve // test rule`,
+    }),
+    ''
+  );
+  t.is(
+    templateEngine.renderString(body, {
+      str: 'IP-CIDR6, 2001:4860:4860::8888/32, DIRECT',
+    }),
+    'IP6-CIDR, 2001:4860:4860::8888/32, DIRECT'
+  );
 });
 
 test('quantumultx filter 2', t => {
