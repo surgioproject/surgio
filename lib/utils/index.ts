@@ -10,6 +10,7 @@ import { JsonObject } from 'type-fest';
 import { parse, format, URL } from 'url';
 import URLSafeBase64 from 'urlsafe-base64';
 import YAML from 'yaml';
+import net from 'net';
 
 import {
   HttpNodeConfig,
@@ -299,7 +300,7 @@ export const getSurgeNodes = function(
             `local-port = ${config.localPort}`,
           ];
 
-          if (config.hostnameIp) {
+          if (config.hostnameIp && config.hostnameIp.length) {
             configString.push(...config.hostnameIp.map(item => `addresses = ${item}`));
           }
 
@@ -396,7 +397,7 @@ export const getSurgeNodes = function(
               `local-port = ${config.localPort}`,
             ];
 
-            if (config.hostnameIp) {
+            if (config.hostnameIp && config.hostnameIp.length) {
               configString.push(...config.hostnameIp.map(item => `addresses = ${item}`));
             }
 
@@ -1362,7 +1363,8 @@ export const lowercaseHeaderKeys = (headers: Record<string, string>) => {
   return wsHeaders;
 };
 
-export const isIp = (str: string): boolean => /^(?:(?:^|\.)(?:2(?:5[0-5]|[0-4]\d)|1?\d?\d)){4}$/gm.test(str);
+// istanbul ignore next
+export const isIp = (str: string): boolean => net.isIPv4(str) || net.isIPv6(str);
 
 // istanbul ignore next
 export const isNow = () => typeof process.env.NOW_REGION !== 'undefined';
