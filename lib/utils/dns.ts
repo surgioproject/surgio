@@ -32,10 +32,12 @@ export const resolveDomain = async (domain: string): Promise<ReadonlyArray<strin
     return address;
   }
 
+  // istanbul ignore next
   return [];
 };
 
 export const resolve4And6 = async (domain: string): Promise<ReadonlyArray<RecordWithTtl>> => {
+  // istanbul ignore next
   function onErr(): ReadonlyArray<never> {
     return [];
   }
