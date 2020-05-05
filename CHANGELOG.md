@@ -1,3 +1,12 @@
+## [1.23.1](https://github.com/geekdada/surgio/compare/v1.23.0...v1.23.1) (2020-05-05)
+
+
+### Bug Fixes
+
+* eslint 修复文件未生效 ([0e41b77](https://github.com/geekdada/surgio/commit/0e41b77ee10d529a098859c8f7bae66264a819c5))
+
+
+
 # [1.23.0](https://github.com/geekdada/surgio/compare/v1.22.0...v1.23.0) (2020-05-05)
 
 
