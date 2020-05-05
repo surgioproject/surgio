@@ -10,6 +10,8 @@
 $ npx surgio generate
 ```
 
+从 1.23.0 版本开始，Surgio 会在生成过程前进行前置的代码检查和修复。这个过程会方便不了解 JS 的用户进行问题修正，熟悉 ESLint 的用户也也可以自己配置 `.eslintrc` 来覆盖 Surgio 内置的规则。Surgio 默认开启了 ESLint 的 Fix 功能且无法关闭。
+
 ### 可选参数
 
 #### `--skip-fail`
@@ -19,6 +21,10 @@ $ npx surgio generate
 :::tip 提示
 推荐不要在 CI 环境使用这个参数
 :::
+
+#### `--skip-lint`
+
+略过前置代码检查（不建议）。
 
 ## `upload`
 
