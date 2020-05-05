@@ -8,7 +8,7 @@ const { utils } = require('surgio');
 
 module.exports = {
   type: '<%= type %>',
-<% if (url) { -%>
+<% if (typeof url !== 'undefined') { -%>
   url: '<%= url %>',
 <% } -%>
 <% if (type === 'custom') { -%>
@@ -17,10 +17,10 @@ module.exports = {
 <% if (addFlag === true) { -%>
   addFlag: true,
 <% } -%>
-<% if (udpRelay === true) { -%>
+<% if (typeof udpRelay !== 'undefined' && udpRelay === true) { -%>
   udpRelay: true,
 <% } -%>
-<% if (relayUrl === true) { -%>
+<% if (typeof relayUrl !== 'undefined' && relayUrl === true) { -%>
   relayUrl: true,
 <% } -%>
 };
