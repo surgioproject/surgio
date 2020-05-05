@@ -14,7 +14,7 @@ export const errorHandler = function(this: Command, err: Error): void {
       console.error(chalk.red(err.stack));
       console.error();
       doctorInfo.forEach(item => {
-        console.error('  ', item);
+        console.error(item);
       });
       console.error();
 
