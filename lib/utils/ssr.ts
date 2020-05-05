@@ -20,19 +20,25 @@ export const parseSSRUri = (str: string): ShadowsocksrNodeConfig => {
 
   const extraString = configArray.join('/');
   const extras = extraString ? getUrlParameters(extraString) : {};
+  const password = fromUrlSafeBase64(basicInfo.pop() as string);
+  const obfs = basicInfo.pop() as string;
+  const method = basicInfo.pop() as string;
+  const protocol = basicInfo.pop() as string;
+  const port = basicInfo.pop() as string;
+  const hostname = basicInfo.join(':');
   const nodeName = extras.remarks ?
     fromUrlSafeBase64(extras.remarks) :
-    `${basicInfo[0]}:${basicInfo[1]}`;
+    `${hostname}:${port}`;
 
   return {
     type: NodeTypeEnum.Shadowsocksr,
     nodeName,
-    hostname: basicInfo[0],
-    port: basicInfo[1],
-    protocol: basicInfo[2],
-    method: basicInfo[3],
-    obfs: basicInfo[4],
-    password: fromUrlSafeBase64(basicInfo[5]),
+    hostname,
+    port,
+    protocol,
+    method,
+    obfs,
+    password,
     protoparam: fromUrlSafeBase64(extras.protoparam ?? '').replace(/\s/g, ''),
     obfsparam: fromUrlSafeBase64(extras.obfsparam ?? '').replace(/\s/g, ''),
   };

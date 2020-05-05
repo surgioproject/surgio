@@ -1,4 +1,4 @@
-import { promises as dns } from 'dns';
+import { promises as dns, RecordWithTtl } from 'dns';
 import LRU from 'lru-cache';
 import { createLogger } from '@surgio/logger';
 import { isHeroku, isNow } from './';
@@ -23,12 +23,29 @@ export const resolveDomain = async (domain: string): Promise<ReadonlyArray<strin
   }
 
   logger.debug(`try to resolve domain ${domain}`);
-  const records = await resolver.resolve4(domain, { ttl: true });
+  const records = await resolve4And6(domain);
   logger.debug(`resolved domain ${domain}: ${JSON.stringify(records)}`);
 
-  const address = records.map(item => item.address);
+  if (records.length) {
+    const address = records.map(item => item.address);
+    DomainCache.set(domain, address, records[0].ttl * 1000);
+    return address;
+  }
 
-  DomainCache.set(domain, address, records[0].ttl * 1000);
+  // istanbul ignore next
+  return [];
+};
 
-  return address;
+export const resolve4And6 = async (domain: string): Promise<ReadonlyArray<RecordWithTtl>> => {
+  // istanbul ignore next
+  function onErr(): ReadonlyArray<never> {
+    return [];
+  }
+
+  const [ipv4, ipv6] = await Promise.all([
+    resolver.resolve4(domain, { ttl: true }).catch(onErr),
+    resolver.resolve6(domain, { ttl: true }).catch(onErr),
+  ]);
+
+  return [...ipv4, ...ipv6];
 };

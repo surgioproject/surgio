@@ -33,6 +33,7 @@ export const QUANTUMULT_X_SUPPORTED_RULE: ReadonlyArray<string> = [
   'DOMAIN-SUFFIX',
   'DOMAIN-KEYWORD',
   'IP-CIDR',
+  'IP-CIDR6',
   'GEOIP',
   'FINAL',
 ];
