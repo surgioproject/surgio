@@ -1101,10 +1101,10 @@
   resolved "https://registry.yarnpkg.com/@sinonjs/text-encoding/-/text-encoding-0.7.1.tgz#8da5c6530915653f3a1f38fd5f101d8c3f8079c5"
   integrity sha512-+iTbntw2IZPb/anVDbypzfQa+ay64MW0Zo8aJ8gZPWMMK6/OubMVb6lUPMagqjOPnmtauXnFCACVl3O7ogjeqQ==
 
-"@surgio/eslint-config-surgio@^1.0.2":
-  version "1.0.2"
-  resolved "https://registry.yarnpkg.com/@surgio/eslint-config-surgio/-/eslint-config-surgio-1.0.2.tgz#8d84d662709b267be064c16a2792391d94715a43"
-  integrity sha512-G9M6Ayp75kAbUJoBf7eWFflPT5rXkx9cKBoFg7t5jVfUQLeF+ytq1i0oMxac1yFeyKo5cRSNtaQPpTEWPiSB5g==
+"@surgio/eslint-config-surgio@^1.0.3":
+  version "1.0.3"
+  resolved "https://registry.yarnpkg.com/@surgio/eslint-config-surgio/-/eslint-config-surgio-1.0.3.tgz#e2b9df5c8dbd867755a17a795f8b82d37ebbd3f2"
+  integrity sha512-D4zYW/HpuiZO9ibGhW1dzQpA1B8I1aI0DkAR++R3QIX8Cw0RrsBeWJhnQLW2apeu45lFbiy4Wn5Gj4J8k+xrLg==
 
 "@surgio/logger@^1.1.0":
   version "1.1.0"
