@@ -6,7 +6,7 @@ import Bluebird from 'bluebird';
 import { createTmpFactory, TmpFile } from '../../lib/utils/tmp-helper';
 
 test.after.always(async () => {
-  const dir = path.join(os.tmpdir(), 'surgio-config', 'tmp-helper-test-folder');
+  const dir = path.join(os.tmpdir(), 'surgio-config', 'tmp-helper-test-folder' + `_nodejs_${process.version}`);
   if (fs.existsSync(dir)) {
     await fs.remove(dir);
   }
@@ -19,7 +19,7 @@ test.serial('no permission', t => {
 });
 
 test.serial('should work', async t => {
-  const factory = createTmpFactory('tmp-helper-test-folder');
+  const factory = createTmpFactory('tmp-helper-test-folder' + `_nodejs_${process.version}`);
   const tmp = factory('tmp1.txt');
 
   t.is(await tmp.getContent(), void 0);
@@ -29,7 +29,7 @@ test.serial('should work', async t => {
 });
 
 test.serial('should work with maxAge 1', async t => {
-  const factory = createTmpFactory('tmp-helper-test-folder');
+  const factory = createTmpFactory('tmp-helper-test-folder' + `_nodejs_${process.version}`);
   const tmp = factory('tmp2.txt', 50);
 
   t.is(await tmp.getContent(), void 0);
@@ -43,7 +43,7 @@ test.serial('should work with maxAge 1', async t => {
 });
 
 test.serial('should work with maxAge 2', async t => {
-  const factory = createTmpFactory('tmp-helper-test-folder');
+  const factory = createTmpFactory('tmp-helper-test-folder' + `_nodejs_${process.version}`);
   const tmp = factory('tmp3.txt', 1000);
 
   t.is(await tmp.getContent(), void 0);
