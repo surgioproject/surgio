@@ -2,19 +2,19 @@
 
 import { CLIEngine } from 'eslint';
 
-const linterConfig = {
-  useEslintrc: true,
-  baseConfig: {
-    extends: [
-      '@surgio/eslint-config-surgio',
-    ].map(
-      // @ts-ignore
-      require.resolve
-    ),
-  },
-};
-
 export const createCli = (cliConfig?: object) => {
+  const linterConfig = {
+    useEslintrc: true,
+    baseConfig: {
+      extends: [
+        '@surgio/eslint-config-surgio',
+      ].map(
+        // @ts-ignore
+        require.resolve
+      ),
+    },
+  };
+
   return new CLIEngine({
     ...linterConfig,
     ...cliConfig,

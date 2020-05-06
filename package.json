@@ -168,5 +168,11 @@
     "assets": [
       "hygen-template/**/*"
     ]
-  }
+  },
+  "keywords": [
+    "surgio",
+    "surge",
+    "quantumult",
+    "clash"
+  ]
 }

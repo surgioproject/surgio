@@ -8,12 +8,6 @@ import path from 'path';
 import updateNotifier from 'update-notifier';
 import { transports } from '@surgio/logger';
 
-import GenerateCommand from './command/generate';
-import SubscriptionsCommand from './command/subscriptions';
-import UploadCommand from './command/upload';
-import CheckCommand from './command/check';
-import NewCommand from './command/new';
-import DoctorCommand from './command/doctor';
 import { isHeroku, isNow } from './utils';
 import * as filter from './utils/filter';
 import { errorHandler } from './utils/error-helper';
@@ -58,15 +52,6 @@ export class SurgioCommand extends Command {
     errorHandler.call(this, err);
   }
 }
-
-export {
-  GenerateCommand,
-  UploadCommand,
-  CheckCommand,
-  NewCommand,
-  SubscriptionsCommand,
-  DoctorCommand,
-};
 
 export const utils = {
   ...filter,
