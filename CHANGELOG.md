@@ -1,3 +1,12 @@
+## [1.23.2](https://github.com/geekdada/surgio/compare/v1.23.1...v1.23.2) (2020-05-06)
+
+
+### Bug Fixes
+
+* 修复 now.sh 下运行的依赖问题 ([e413c60](https://github.com/geekdada/surgio/commit/e413c60d911095c25ed9cd99139f3bc6e6939a9b))
+
+
+
 ## [1.23.1](https://github.com/geekdada/surgio/compare/v1.23.0...v1.23.1) (2020-05-05)
 
 
