@@ -20,7 +20,7 @@ import { formatSubscriptionUserInfo } from '../utils/subscription';
 const logger = createLogger({
   service: 'surgio:SubscriptionsCommand',
 });
-type PossibleProviderType = BlackSSLProvider & ShadowsocksJsonSubscribeProvider & ShadowsocksSubscribeProvider & CustomProvider & V2rayNSubscribeProvider & ShadowsocksrSubscribeProvider & ClashProvider;
+type PossibleProviderType = BlackSSLProvider|ShadowsocksJsonSubscribeProvider|ShadowsocksSubscribeProvider|CustomProvider|V2rayNSubscribeProvider|ShadowsocksrSubscribeProvider|ClashProvider;
 
 class SubscriptionsCommand extends Command {
   private options: object;
