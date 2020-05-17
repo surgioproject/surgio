@@ -65,6 +65,12 @@ export function getEngine(templateDir: string): nunjucks.Environment {
         if (testString.startsWith('HTTP-REQUEST')) {
           return convertSurgeScriptRuleToQuantumultXRewriteRule(item);
         }
+        if (/type\s?=\s?http-response/.test(item)) {
+          return convertNewSurgeScriptRuleToQuantumultXRewriteRule(item);
+        }
+        if (/type\s?=\s?http-request/.test(item)) {
+          return convertNewSurgeScriptRuleToQuantumultXRewriteRule(item);
+        }
 
         const matched = testString.match(/^([\w-]+),/);
 
@@ -148,6 +154,46 @@ export const convertSurgeScriptRuleToQuantumultXRewriteRule = (str: string): str
         result.push(parts[1], 'url', 'script-request-body', scriptPath as string);
       } else {
         result.push(parts[1], 'url', 'script-request-header', scriptPath as string);
+      }
+
+      return result.join(' ');
+    }
+    default:
+      return '';
+  }
+};
+
+export const convertNewSurgeScriptRuleToQuantumultXRewriteRule = (str: string): string => {
+  const matched = str.match(/([\w\s]+)=(.+)/);
+  const result: string[] = [];
+
+  if (!matched) {
+    return '';
+  }
+
+  const params = decodeStringList(matched[2].trim().split(','));
+
+  switch (params.type) {
+    case 'http-response': {
+      const isRequireBody = 'requires-body' in params;
+
+      if (isRequireBody) {
+        // parts[1] => Effective URL Rule
+        result.push(params.pattern as string, 'url', 'script-response-body', params['script-path'] as string);
+      } else {
+        result.push(params.pattern as string, 'url', 'script-response-header', params['script-path'] as string);
+      }
+
+      return result.join(' ');
+    }
+    case 'http-request': {
+      const isRequireBody = 'requires-body' in params;
+
+      if (isRequireBody) {
+        // parts[1] => Effective URL Rule
+        result.push(params.pattern as string, 'url', 'script-request-body', params['script-path'] as string);
+      } else {
+        result.push(params.pattern as string, 'url', 'script-request-header', params['script-path'] as string);
       }
 
       return result.join(' ');
