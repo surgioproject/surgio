@@ -1,3 +1,13 @@
+## [1.23.3](https://github.com/geekdada/surgio/compare/v1.23.2...v1.23.3) (2020-05-17)
+
+
+### Features
+
+* change emoji rules ([a4f41e9](https://github.com/geekdada/surgio/commit/a4f41e9628384419ba97ca7e6706dbac4b6ae065))
+* convert surge's new script format to quantumult x config ([9ddb8f5](https://github.com/geekdada/surgio/commit/9ddb8f5a5b185e2683e48eaf07c1023d73071659))
+
+
+
 ## [1.23.2](https://github.com/geekdada/surgio/compare/v1.23.1...v1.23.2) (2020-05-06)
 
 
