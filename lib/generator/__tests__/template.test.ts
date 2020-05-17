@@ -183,9 +183,11 @@ test('stringify', t => {
 
 test('convertSurgeScriptRuleToQuantumultXRewriteRule', t => {
   t.is(convertSurgeScriptRuleToQuantumultXRewriteRule(''), '');
+  t.is(convertSurgeScriptRuleToQuantumultXRewriteRule('unknown-type https://api.zhihu.com/people/ script-path=https://raw.githubusercontent.com/onewayticket255/Surge-Script/master/surge%20zhihu%20people.js'), '');
 });
 
 test('convertNewSurgeScriptRuleToQuantumultXRewriteRule', t => {
+  t.is(convertNewSurgeScriptRuleToQuantumultXRewriteRule(''), '');
   t.is(
     convertNewSurgeScriptRuleToQuantumultXRewriteRule('zhihu people = type=http-response,requires-body=1,max-size=0,pattern=https://api.zhihu.com/people/,script-path=https://raw.githubusercontent.com/onewayticket255/Surge-Script/master/surge%20zhihu%20people.js'),
     'https://api.zhihu.com/people/ url script-response-body https://raw.githubusercontent.com/onewayticket255/Surge-Script/master/surge%20zhihu%20people.js'
@@ -201,5 +203,9 @@ test('convertNewSurgeScriptRuleToQuantumultXRewriteRule', t => {
   t.is(
     convertNewSurgeScriptRuleToQuantumultXRewriteRule('zhihu people = type=http-request,pattern=https://api.zhihu.com/people/,script-path=https://raw.githubusercontent.com/onewayticket255/Surge-Script/master/surge%20zhihu%20people.js'),
     'https://api.zhihu.com/people/ url script-request-header https://raw.githubusercontent.com/onewayticket255/Surge-Script/master/surge%20zhihu%20people.js'
+  );
+  t.is(
+    convertNewSurgeScriptRuleToQuantumultXRewriteRule('zhihu people = type=unknown-type'),
+    ''
   );
 });
