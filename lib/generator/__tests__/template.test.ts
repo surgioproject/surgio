@@ -2,7 +2,11 @@
 import test from 'ava';
 import fs from 'fs-extra';
 import { join } from 'path';
-import { convertSurgeScriptRuleToQuantumultXRewriteRule, getEngine } from '../template';
+import {
+  convertNewSurgeScriptRuleToQuantumultXRewriteRule,
+  convertSurgeScriptRuleToQuantumultXRewriteRule,
+  getEngine,
+} from '../template';
 
 const templateEngine = getEngine(process.cwd());
 const assetDir = join(__dirname, '../../../test/asset/');
@@ -179,4 +183,23 @@ test('stringify', t => {
 
 test('convertSurgeScriptRuleToQuantumultXRewriteRule', t => {
   t.is(convertSurgeScriptRuleToQuantumultXRewriteRule(''), '');
+});
+
+test('convertNewSurgeScriptRuleToQuantumultXRewriteRule', t => {
+  t.is(
+    convertNewSurgeScriptRuleToQuantumultXRewriteRule('zhihu people = type=http-response,requires-body=1,max-size=0,pattern=https://api.zhihu.com/people/,script-path=https://raw.githubusercontent.com/onewayticket255/Surge-Script/master/surge%20zhihu%20people.js'),
+    'https://api.zhihu.com/people/ url script-response-body https://raw.githubusercontent.com/onewayticket255/Surge-Script/master/surge%20zhihu%20people.js'
+  );
+  t.is(
+    convertNewSurgeScriptRuleToQuantumultXRewriteRule('zhihu people = type=http-request,requires-body=1,max-size=0,pattern=https://api.zhihu.com/people/,script-path=https://raw.githubusercontent.com/onewayticket255/Surge-Script/master/surge%20zhihu%20people.js'),
+    'https://api.zhihu.com/people/ url script-request-body https://raw.githubusercontent.com/onewayticket255/Surge-Script/master/surge%20zhihu%20people.js'
+  );
+  t.is(
+    convertNewSurgeScriptRuleToQuantumultXRewriteRule('zhihu people = type=http-response,pattern=https://api.zhihu.com/people/,script-path=https://raw.githubusercontent.com/onewayticket255/Surge-Script/master/surge%20zhihu%20people.js'),
+    'https://api.zhihu.com/people/ url script-response-header https://raw.githubusercontent.com/onewayticket255/Surge-Script/master/surge%20zhihu%20people.js'
+  );
+  t.is(
+    convertNewSurgeScriptRuleToQuantumultXRewriteRule('zhihu people = type=http-request,pattern=https://api.zhihu.com/people/,script-path=https://raw.githubusercontent.com/onewayticket255/Surge-Script/master/surge%20zhihu%20people.js'),
+    'https://api.zhihu.com/people/ url script-request-header https://raw.githubusercontent.com/onewayticket255/Surge-Script/master/surge%20zhihu%20people.js'
+  );
 });
