@@ -20,7 +20,7 @@ import {
 import { lowercaseHeaderKeys } from '../utils';
 import { parseSubscriptionUserInfo } from '../utils/subscription';
 import { SubsciptionCacheItem, SubscriptionCache } from '../utils/cache';
-import { NETWORK_TIMEOUT, RELAY_SERVICE } from '../utils/constant';
+import { NETWORK_RETRY, NETWORK_TIMEOUT, RELAY_SERVICE } from '../utils/constant';
 import Provider from './Provider';
 
 type SupportConfigTypes = ShadowsocksNodeConfig|VmessNodeConfig|HttpsNodeConfig|HttpNodeConfig|ShadowsocksrNodeConfig|SnellNodeConfig|TrojanNodeConfig;
@@ -98,6 +98,7 @@ export const getClashSubscription = async (
         const res = await got.get(url, {
           timeout: NETWORK_TIMEOUT,
           responseType: 'text',
+          retry: NETWORK_RETRY,
         });
         const subsciptionCacheItem: SubsciptionCacheItem = {
           body: res.body,

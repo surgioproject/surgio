@@ -6,7 +6,7 @@ import got from 'got';
 import { NodeTypeEnum, V2rayNSubscribeProviderConfig, VmessNodeConfig } from '../types';
 import { fromBase64 } from '../utils';
 import { ConfigCache } from '../utils/cache';
-import { NETWORK_TIMEOUT, RELAY_SERVICE } from '../utils/constant';
+import { NETWORK_RETRY, NETWORK_TIMEOUT, RELAY_SERVICE } from '../utils/constant';
 import Provider from './Provider';
 
 export default class V2rayNSubscribeProvider extends Provider {
@@ -74,6 +74,7 @@ export const getV2rayNSubscription = async (
     const response = ConfigCache.has(url) ? ConfigCache.get(url) as string : await (async () => {
       const res = await got.get(url, {
         timeout: NETWORK_TIMEOUT,
+        retry: NETWORK_RETRY,
       });
 
       ConfigCache.set(url, res.body);

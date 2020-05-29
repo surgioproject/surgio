@@ -7,7 +7,7 @@ import { ShadowsocksrNodeConfig, ShadowsocksrSubscribeProviderConfig, Subscripti
 import { fromBase64 } from '../utils';
 import { parseSubscriptionNode, parseSubscriptionUserInfo } from '../utils/subscription';
 import { SubsciptionCacheItem, SubscriptionCache } from '../utils/cache';
-import { NETWORK_TIMEOUT, RELAY_SERVICE } from '../utils/constant';
+import { NETWORK_RETRY, NETWORK_TIMEOUT, RELAY_SERVICE } from '../utils/constant';
 import { parseSSRUri } from '../utils/ssr';
 import Provider from './Provider';
 
@@ -85,6 +85,7 @@ export const getShadowsocksrSubscription = async (
         async () => {
           const res = await got.get(url, {
             timeout: NETWORK_TIMEOUT,
+            retry: NETWORK_RETRY,
             responseType: 'text',
           });
           const subsciptionCacheItem: SubsciptionCacheItem = {

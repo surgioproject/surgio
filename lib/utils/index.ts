@@ -29,7 +29,14 @@ import {
   VmessNodeConfig,
 } from '../types';
 import { ConfigCache } from './cache';
-import { ERR_INVALID_FILTER, NETWORK_TIMEOUT, OBFS_UA, PROXY_TEST_INTERVAL, PROXY_TEST_URL } from './constant';
+import {
+  ERR_INVALID_FILTER,
+  NETWORK_RETRY,
+  NETWORK_TIMEOUT,
+  OBFS_UA,
+  PROXY_TEST_INTERVAL,
+  PROXY_TEST_URL,
+} from './constant';
 import { validateFilter } from './filter';
 import { formatVmessUri } from './v2ray';
 
@@ -75,6 +82,7 @@ export const getBlackSSLConfig = async (username: string, password: string): Pro
             password,
           },
           timeout: NETWORK_TIMEOUT,
+          retry: NETWORK_RETRY,
           headers: {
             'User-Agent': 'GoAgentX/774 CFNetwork/901.1 Darwin/17.6.0 (x86_64)',
           },
@@ -108,6 +116,7 @@ export const getShadowsocksJSONConfig = async (
     const response = ConfigCache.has(url) ? JSON.parse(ConfigCache.get(url) as string) : await (async () => {
       const res = await got.get(url, {
         timeout: NETWORK_TIMEOUT,
+        retry: NETWORK_RETRY,
       });
 
       ConfigCache.set(url, res.body);

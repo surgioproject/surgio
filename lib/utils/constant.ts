@@ -4,6 +4,8 @@ export const NETWORK_TIMEOUT = process.env.SURGIO_NETWORK_TIMEOUT ? Number(proce
 
 export const NETWORK_CONCURRENCY = process.env.SURGIO_NETWORK_CONCURRENCY ? Number(process.env.SURGIO_NETWORK_CONCURRENCY) : 5;
 
+export const NETWORK_RETRY = process.env.SURGIO_NETWORK_RETRY ? Number(process.env.SURGIO_NETWORK_RETRY) : 2;
+
 export const OBFS_UA = 'Mozilla/5.0 (iPhone; CPU iPhone OS 13_5 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/13.1.1 Mobile/15E148 Safari/604.1';
 
 export const PROXY_TEST_URL = 'http://cp.cloudflare.com/generate_204';

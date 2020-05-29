@@ -60,6 +60,19 @@ module.exports = gateway.createHttpServer();
 
 欢迎在交流群内汇报问题！
 
+## 常见问题
+
+1. 由于免费用户单次请求的超时时间为 10s，所以不建议使用过多的远程片段、较高的超时时间和重试机制。你可以在 `now.json` 中加入以下的环境变量缓解遇到 Vercel 超时报错的概率：
+
+  ```json
+  {
+    "env": {
+      "NETWORK_RETRY": 0,
+      "NETWORK_TIMEOUT": "5000"
+    }
+  }
+  ```
+
 ## 新增功能
 
 ### 1. Artifact 分类
@@ -166,7 +179,7 @@ https://surgio-demo.herokuapp.com/get-artifact/
 ```
 
 :::tip 提示
-Heroku 今后会和 now.sh 一样成为推荐的部署网关平台。
+Heroku 今后会和 Vercel 一样成为推荐的部署网关平台。
 :::
 
 ### 6. 直接导出 Provider

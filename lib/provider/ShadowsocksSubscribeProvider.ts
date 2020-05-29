@@ -14,7 +14,7 @@ import {
 import { decodeStringList, fromBase64, fromUrlSafeBase64 } from '../utils';
 import { parseSubscriptionUserInfo } from '../utils/subscription';
 import { SubsciptionCacheItem, SubscriptionCache } from '../utils/cache';
-import { NETWORK_TIMEOUT, RELAY_SERVICE } from '../utils/constant';
+import { NETWORK_RETRY, NETWORK_TIMEOUT, RELAY_SERVICE } from '../utils/constant';
 import Provider from './Provider';
 
 const logger = createLogger({
@@ -97,6 +97,7 @@ export const getShadowsocksSubscription = async (
         async () => {
           const res = await got.get(url, {
             timeout: NETWORK_TIMEOUT,
+            retry: NETWORK_RETRY,
             responseType: 'text',
           });
           const subsciptionCacheItem: SubsciptionCacheItem = {
