@@ -67,8 +67,8 @@ module.exports = gateway.createHttpServer();
   ```json
   {
     "env": {
-      "NETWORK_RETRY": 0,
-      "NETWORK_TIMEOUT": "5000"
+      "SURGIO_NETWORK_RETRY": 0,
+      "SURGIO_NETWORK_TIMEOUT": "5000"
     }
   }
   ```
