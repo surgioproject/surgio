@@ -1,3 +1,12 @@
+## [1.23.4](https://github.com/geekdada/surgio/compare/v1.23.3...v1.23.4) (2020-05-29)
+
+
+### Features
+
+* 加入改变重试次数的环境变量 ([34ecfec](https://github.com/geekdada/surgio/commit/34ecfecd573bbe7d812821c0c60d8424035c5753))
+
+
+
 ## [1.23.3](https://github.com/geekdada/surgio/compare/v1.23.2...v1.23.3) (2020-05-17)
 
 
