@@ -1,3 +1,20 @@
+# [1.24.0](https://github.com/geekdada/surgio/compare/v1.23.4...v1.24.0) (2020-06-13)
+
+
+### Bug Fixes
+
+* surge script reformat incorrectly ([1f14408](https://github.com/geekdada/surgio/commit/1f14408f4c03e39ad18c136ef66ee445a2f6d4bf))
+
+
+### Features
+
+* add scheme check for v2rayn_subscribe ([37c820b](https://github.com/geekdada/surgio/commit/37c820ba7c254dd8b913b7ba46f61ed2734a4656))
+* add tls13 config support to clash provider ([481c7e7](https://github.com/geekdada/surgio/commit/481c7e70125e2b4f31a753a636cc3091a1762153))
+* add tls13 config support to v2rayn_subscribe provider ([233876e](https://github.com/geekdada/surgio/commit/233876e4b6f94237748345a09445cb766765b684))
+* new protocol filters ([212892d](https://github.com/geekdada/surgio/commit/212892d0d14a361e69157918f9e784abf1312eb0))
+
+
+
 ## [1.23.4](https://github.com/geekdada/surgio/compare/v1.23.3...v1.23.4) (2020-05-29)
 
 
