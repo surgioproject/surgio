@@ -32,18 +32,24 @@ proxies: []
 });
 
 test('ClashProvider.getSubscriptionUserInfo', async t => {
-  const provider = new ClashProvider('test', {
+  let provider = new ClashProvider('test', {
     type: SupportProviderEnum.Clash,
     url: 'http://example.com/clash-sample-with-user-info.yaml',
   });
-  const userInfo = await provider.getSubscriptionUserInfo();
-
+  let userInfo = await provider.getSubscriptionUserInfo();
   t.deepEqual(userInfo, {
     upload: 891332010,
     download: 29921186546,
     total: 322122547200,
     expire: 1586330887,
   });
+
+  provider = new ClashProvider('test', {
+    type: SupportProviderEnum.Clash,
+    url: 'http://example.com/clash-sample.yaml',
+  });
+  userInfo = await provider.getSubscriptionUserInfo();
+  t.is(userInfo, void 0);
 });
 
 test('getClashSubscription', async t => {
@@ -109,6 +115,7 @@ test('getClashSubscription', async t => {
     network: 'ws',
     udp: false,
     tls: true,
+    tls13: false,
     skipCertVerify: false,
     wsHeaders: {
       edge: 'www.baidu.com',
@@ -122,6 +129,7 @@ test('getClashSubscription', async t => {
     username: 'username',
     password: 'password',
     skipCertVerify: false,
+    tls13: false,
   });
   t.deepEqual(config.shift(), {
     type: NodeTypeEnum.HTTP,
@@ -162,6 +170,7 @@ test('getClashSubscription', async t => {
     'obfs-host': 'cloudflare.com',
     'obfs-uri': '/ws',
     skipCertVerify: false,
+    tls13: false,
     wsHeaders: {},
   });
 });
@@ -280,6 +289,8 @@ test('trojan configurations', t => {
       hostname: 'example.com',
       port: 443,
       password: 'password1',
+      tls13: false,
+      'udp-relay': false,
     }]
   );
   t.deepEqual(
@@ -304,6 +315,32 @@ test('trojan configurations', t => {
       alpn: ['http/1.1'],
       sni: 'sni.example.com',
       'udp-relay': true,
+      tls13: false,
+    }]
+  );
+  t.deepEqual(
+    parseClashConfig([{
+      type: 'trojan',
+      name: 'trojan',
+      server: 'example.com',
+      port: 443,
+      password: 'password1',
+      'skip-cert-verify': true,
+      alpn: ['http/1.1'],
+      sni: 'sni.example.com',
+      udp: false,
+    }], true, true),
+    [{
+      type: NodeTypeEnum.Trojan,
+      nodeName: 'trojan',
+      hostname: 'example.com',
+      port: 443,
+      password: 'password1',
+      skipCertVerify: true,
+      alpn: ['http/1.1'],
+      sni: 'sni.example.com',
+      'udp-relay': true,
+      tls13: true,
     }]
   );
 });
@@ -341,6 +378,7 @@ test('shadowsocks v2ray mux', async t => {
       mux: true,
       'udp-relay': false,
       skipCertVerify: true,
+      tls13: false,
       wsHeaders: {
         custom: 'value',
       },

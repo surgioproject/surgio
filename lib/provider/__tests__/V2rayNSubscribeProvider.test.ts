@@ -80,7 +80,6 @@ test('getV2rayNSubscription udpRelay skipCertVerify', async t => {
     tls: false,
     type: NodeTypeEnum.Vmess,
     uuid: '1386f85e-657b-4d6e-9d56-78badb75e1fd',
-    skipCertVerify: true,
     udp: true,
   });
 });

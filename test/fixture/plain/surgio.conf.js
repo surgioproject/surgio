@@ -41,6 +41,11 @@ module.exports = {
       provider: 'clash',
     },
     {
+      name: 'clash_mod.conf',
+      template: 'template-functions',
+      provider: 'clash_mod',
+    },
+    {
       name: 'template-functions.conf',
       template: 'template-functions',
       provider: 'ss',

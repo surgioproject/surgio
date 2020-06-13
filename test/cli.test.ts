@@ -42,6 +42,9 @@ test.serial('cli works', async t => {
   const confString3 = fs.readFileSync(resolve('plain/dist/template-functions.conf'), {
     encoding: 'utf8',
   });
+  const confString4 = fs.readFileSync(resolve('plain/dist/clash_mod.conf'), {
+    encoding: 'utf8',
+  });
   const conf = ini.decode(confString1);
 
   t.truthy(fs.existsSync(resolve('plain/dist/new_path.conf')));
@@ -53,6 +56,7 @@ test.serial('cli works', async t => {
   t.true(confString2.includes('select, 🇺🇲 US'));
   t.is(Object.keys(conf.Proxy).length, 4);
   t.snapshot(confString3);
+  t.snapshot(confString4);
 });
 
 test.serial('--skip-fail should work', async t => {

@@ -205,6 +205,10 @@ test('convertNewSurgeScriptRuleToQuantumultXRewriteRule', t => {
     'https://api.zhihu.com/people/ url script-request-header https://raw.githubusercontent.com/onewayticket255/Surge-Script/master/surge%20zhihu%20people.js'
   );
   t.is(
+    convertNewSurgeScriptRuleToQuantumultXRewriteRule('JD = requires-body=1,max-size=0,script-path= https://raw.githubusercontent.com/NobyDa/Script/master/JD-DailyBonus/JD_DailyBonus.js,type=http-response,pattern=^https?://api\.m\.jd\.com/client\.action\?functionId=(start|signBean)'),
+    '^https?://api\.m\.jd\.com/client\.action\?functionId=(start|signBean) url script-response-body https://raw.githubusercontent.com/NobyDa/Script/master/JD-DailyBonus/JD_DailyBonus.js'
+  );
+  t.is(
     convertNewSurgeScriptRuleToQuantumultXRewriteRule('zhihu people = type=unknown-type'),
     ''
   );

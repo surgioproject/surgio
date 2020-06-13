@@ -128,11 +128,13 @@ export interface V2rayNSubscribeProviderConfig extends ProviderConfig {
   readonly compatibleMode?: boolean;
   readonly skipCertVerify?: boolean;
   readonly udpRelay?: boolean;
+  readonly tls13?: boolean;
 }
 
 export interface ClashProviderConfig extends ProviderConfig {
   readonly url: string;
   readonly udpRelay?: boolean;
+  readonly tls13?: boolean;
 }
 
 export interface CustomProviderConfig extends ProviderConfig {

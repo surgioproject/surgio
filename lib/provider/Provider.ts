@@ -19,7 +19,9 @@ export default class Provider {
   public readonly mptcp?: boolean;
   public readonly renameNode?: ProviderConfig['renameNode'];
   public readonly relayUrl?: boolean;
+  // 是否支持在订阅中获取用户流量信息
   public supportGetSubscriptionUserInfo: boolean;
+  // External Provider 的起始端口，Surge 配置中使用
   private startPort?: number;
 
   constructor(public name: string, config: ProviderConfig) {

@@ -32,6 +32,7 @@ const logger = createLogger({
 export default class ClashProvider extends Provider {
   public readonly _url: string;
   public readonly udpRelay?: boolean;
+  public readonly tls13?: boolean;
 
   constructor(name: string, config: ClashProviderConfig) {
     super(name, config);
@@ -45,17 +46,21 @@ export default class ClashProvider extends Provider {
           ],
         })
         .required(),
+      udpRelay: Joi.bool(),
+      tls13: Joi.bool(),
     })
       .unknown();
 
     const { error } = schema.validate(config);
 
+    // istanbul ignore next
     if (error) {
       throw error;
     }
 
     this._url = config.url;
     this.udpRelay = config.udpRelay;
+    this.tls13 = config.tls13;
     this.supportGetSubscriptionUserInfo = true;
   }
 
@@ -67,7 +72,7 @@ export default class ClashProvider extends Provider {
   }
 
   public async getSubscriptionUserInfo(): Promise<SubscriptionUserinfo|undefined> {
-    const { subscriptionUserinfo } = await getClashSubscription(this.url, this.udpRelay);
+    const { subscriptionUserinfo } = await getClashSubscription(this.url, this.udpRelay, this.tls13);
 
     if (subscriptionUserinfo) {
       return subscriptionUserinfo;
@@ -76,7 +81,7 @@ export default class ClashProvider extends Provider {
   }
 
   public async getNodeList(): Promise<ReadonlyArray<SupportConfigTypes>> {
-    const { nodeList } = await getClashSubscription(this.url, this.udpRelay);
+    const { nodeList } = await getClashSubscription(this.url, this.udpRelay, this.tls13);
 
     return nodeList;
   }
@@ -85,6 +90,7 @@ export default class ClashProvider extends Provider {
 export const getClashSubscription = async (
   url: string,
   udpRelay?: boolean,
+  tls13?: boolean,
 ): Promise<{
   readonly nodeList: ReadonlyArray<SupportConfigTypes>;
   readonly subscriptionUserinfo?: SubscriptionUserinfo;
@@ -145,12 +151,16 @@ export const getClashSubscription = async (
   }
 
   return {
-    nodeList: parseClashConfig(proxyList, udpRelay),
+    nodeList: parseClashConfig(proxyList, udpRelay, tls13),
     subscriptionUserinfo: response.subscriptionUserinfo,
   };
 };
 
-export const parseClashConfig = (proxyList: ReadonlyArray<any>, udpRelay?: boolean): ReadonlyArray<SupportConfigTypes> => {
+export const parseClashConfig = (
+  proxyList: ReadonlyArray<any>,
+  udpRelay?: boolean,
+  tls13?: boolean
+): ReadonlyArray<SupportConfigTypes> => {
   const nodeList: ReadonlyArray<SupportConfigTypes|undefined> = proxyList
     .map(item => {
       switch (item.type) {
@@ -176,14 +186,20 @@ export const parseClashConfig = (proxyList: ReadonlyArray<any>, udpRelay?: boole
             method: item.cipher,
             password: item.password,
             'udp-relay': resolveUdpRelay(item.udp, udpRelay),
+
+            // obfs-local 新格式
             ...(item.plugin && item.plugin === 'obfs' ? {
               obfs: item['plugin-opts'].mode,
               'obfs-host': item['plugin-opts'].host || 'www.bing.com',
             } : null),
+
+            // obfs-local 旧格式
             ...(item.obfs ? {
               obfs: item.obfs,
               'obfs-host': item['obfs-host'] || 'www.bing.com',
             } : null),
+
+            // v2ray-plugin
             ...(item.plugin && item.plugin === 'v2ray-plugin' && item['plugin-opts'].mode === 'websocket' ? {
               obfs: item['plugin-opts'].tls === true ? 'wss' : 'ws',
               'obfs-host': item['plugin-opts'].host || item.server,
@@ -191,6 +207,7 @@ export const parseClashConfig = (proxyList: ReadonlyArray<any>, udpRelay?: boole
               wsHeaders,
               ...(item['plugin-opts'].tls === true ? {
                 skipCertVerify: item['plugin-opts']['skip-cert-verify'] === true,
+                tls13: tls13 ?? false,
               } : null),
               ...(typeof item['plugin-opts'].mux === 'boolean' ? {
                 mux: item['plugin-opts'].mux,
@@ -226,6 +243,7 @@ export const parseClashConfig = (proxyList: ReadonlyArray<any>, udpRelay?: boole
             } : null),
             ...(item.tls ? {
               skipCertVerify: item['skip-cert-verify'] === true,
+              tls13: tls13 ?? false,
             } : null),
           } as VmessNodeConfig;
         }
@@ -249,6 +267,7 @@ export const parseClashConfig = (proxyList: ReadonlyArray<any>, udpRelay?: boole
             port: item.port,
             username: item.username || '',
             password: item.password || '',
+            tls13: tls13 ?? false,
             skipCertVerify: item['skip-cert-verify'] === true,
           } as HttpsNodeConfig;
 
@@ -289,7 +308,8 @@ export const parseClashConfig = (proxyList: ReadonlyArray<any>, udpRelay?: boole
             ...('skip-cert-verify' in item ? { skipCertVerify: item['skip-cert-verify'] === true } : null),
             ...('alpn' in item ? { alpn: item.alpn } : null),
             ...('sni' in item ? { sni: item.sni } : null),
-            ...('udp' in item ? { 'udp-relay': item.udp } : null),
+            'udp-relay': udpRelay ?? item.udp ?? false,
+            tls13: tls13 ?? false,
           } as TrojanNodeConfig;
 
         default:

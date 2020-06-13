@@ -3,7 +3,7 @@ import { deprecate } from 'util';
 
 import { DEP003, DEP004 } from '../misc/deprecation';
 import flag, { TAIWAN } from '../misc/flag_cn';
-import { NodeNameFilterType, SimpleNodeConfig, SortedNodeNameFilterType } from '../types';
+import { NodeNameFilterType, NodeTypeEnum, SimpleNodeConfig, SortedNodeNameFilterType } from '../types';
 
 const showDEP003 = deprecate(_.noop, DEP003, 'DEP003');
 const showDEP004 = deprecate(_.noop, DEP004, 'DEP004');
@@ -214,3 +214,22 @@ export const chinaBackFilter: NodeNameFilterType = item => {
 };
 
 export const youtubePremiumFilter: NodeNameFilterType = mergeFilters([usFilter, japanFilter, koreaFilter, hkFilter, singaporeFilter]);
+
+// istanbul ignore next
+export const shadowsocksFilter: NodeNameFilterType = item => item.type === NodeTypeEnum.Shadowsocks;
+// istanbul ignore next
+export const shadowsocksrFilter: NodeNameFilterType = item => item.type === NodeTypeEnum.Shadowsocksr;
+// istanbul ignore next
+export const VmessFilter: NodeNameFilterType = item => item.type === NodeTypeEnum.Vmess;
+// istanbul ignore next
+export const V2rayFilter: NodeNameFilterType = item => item.type === NodeTypeEnum.Vmess;
+// istanbul ignore next
+export const SnellFilter: NodeNameFilterType = item => item.type === NodeTypeEnum.Snell;
+// istanbul ignore next
+export const HttpFilter: NodeNameFilterType = item => item.type === NodeTypeEnum.HTTP;
+// istanbul ignore next
+export const HttpsFilter: NodeNameFilterType = item => item.type === NodeTypeEnum.HTTPS;
+// istanbul ignore next
+export const TrojanFilter: NodeNameFilterType = item => item.type === NodeTypeEnum.Trojan;
+// istanbul ignore next
+export const Socks5Filter: NodeNameFilterType = item => item.type === NodeTypeEnum.Socks5;
