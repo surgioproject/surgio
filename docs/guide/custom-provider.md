@@ -138,6 +138,13 @@ module.exports = {
 
 由于这种订阅协议不支持定义跳过证书验证，所以单独出来进行配置。
 
+### tls13 <Badge text="v1.24.0" vertical="middle" />
+
+- 类型: `boolean`
+- 默认值: `false`
+
+强制开启节点的 TLS 1.3。
+
 ## clash <Badge text="推荐" vertical="middle" />
 
 :::warning 注意
@@ -157,6 +164,13 @@ module.exports = {
 - 默认值: `false`
 
 我们发现部分机场的 Clash 订阅并没有设定 `udp`，所以你可以通过配置这个属性来强制设定节点的 UDP 转发支持情况。如果订阅节点中包含 `udp` 字段，则该配置无效。
+
+### tls13 <Badge text="v1.24.0" vertical="middle" />
+
+- 类型: `boolean`
+- 默认值: `false`
+
+强制开启节点的 TLS 1.3。
 
 ## custom <Badge text="推荐" vertical="middle" />
 

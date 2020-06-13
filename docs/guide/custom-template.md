@@ -155,6 +155,20 @@ Surgio 内置多个节点名国别/地区过滤器。除非是火星文，Surgio
 - taiwanFilter
 - chinaBackFilter（回国节点过滤）<Badge text="v1.12.3" vertical="middle" />
 
+### 协议过滤器 <Badge text="v1.24.0" vertical="middle" />
+
+某些订阅中会混合多种不同的协议，你可以用以下这些过滤器过滤出想要的节点类型。它们是：
+
+- shadowsocksFilter
+- shadowsocksrFilter
+- VmessFilter
+- V2rayFilter
+- SnellFilter
+- HttpFilter
+- HttpsFilter
+- TrojanFilter
+- Socks5Filter
+
 ### netflixFilter
 
 Netflix 节点过滤器。Surgio 默认会将名称中包含 *netflix*, *hkbn*, *hkt*, *hgc*（不分大小写）的节点过滤出来。如果在 Provider 中进行了覆盖则会运行新的方法。
