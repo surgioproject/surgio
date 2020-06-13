@@ -200,3 +200,20 @@ module.exports = {
 1. 该过滤器不保证顺序；
 2. 在后面的版本中会默认开启严格模式；
 :::
+
+## 如何在自定义过滤器时引用内置的过滤器
+
+你可能需要在自定义过滤器时引用内置的过滤器（你可以在 [这里](/guide/custom-template.md#过滤器) 找到所有内置的过滤器）。
+
+假设我需要增强内置的 `netflixFilter`，使得所有满足内置 `netflixFilter` 的节点或者名称包含「流媒体」的节点，作为新的 `netflixFilter`。
+
+```js
+const { utils } = require('surgio');
+const myNetflixFilter = utils.useKeywords(['流媒体']);
+
+module.exports = {
+  type: 'clash',
+  url: '',
+  netflixFilter: utils.mergeFilters([utils.netflixFilter, myNetflixFilter]), // 记得这里应该是松散模式
+};
+```

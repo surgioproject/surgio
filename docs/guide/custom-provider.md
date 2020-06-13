@@ -113,8 +113,8 @@ module.exports = {
 - <Badge text="必须" vertical="middle" />
 
 :::warning 注意
-- Quantumult 的订阅格式和 V2rayN 的订阅格式有差异，不可以混用
-- 如果你正在使用 [DlerCloud](https://dlercloud.com/auth/register?affid=45071)，可以使用「通用」类型的订阅地址
+- Quantumult 的订阅格式和 V2rayN 的订阅格式有差异，不可以混用；
+- 如果你正在使用 [DlerCloud](https://dlercloud.com/auth/register?affid=45071)，可以使用「通用」类型的订阅地址；
 :::
 
 ### compatibleMode <Badge text="v1.18.1" vertical="middle" />
