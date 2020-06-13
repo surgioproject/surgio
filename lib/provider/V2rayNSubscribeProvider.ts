@@ -13,6 +13,7 @@ export default class V2rayNSubscribeProvider extends Provider {
   public readonly compatibleMode?: boolean;
   public readonly skipCertVerify?: boolean;
   public readonly udpRelay?: boolean;
+  public readonly tls13?: boolean;
 
   private readonly _url: string;
 
@@ -28,6 +29,8 @@ export default class V2rayNSubscribeProvider extends Provider {
           ],
         })
         .required(),
+      udpRelay: Joi.bool(),
+      tls13: Joi.bool(),
     })
       .unknown();
 
@@ -53,7 +56,7 @@ export default class V2rayNSubscribeProvider extends Provider {
   }
 
   public getNodeList(): ReturnType<typeof getV2rayNSubscription> {
-    return getV2rayNSubscription(this.url, this.compatibleMode, this.skipCertVerify, this.udpRelay);
+    return getV2rayNSubscription(this.url, this.compatibleMode, this.skipCertVerify, this.udpRelay, this.tls13);
   }
 }
 
@@ -65,6 +68,7 @@ export const getV2rayNSubscription = async (
   isCompatibleMode?: boolean|undefined,
   skipCertVerify?: boolean|undefined,
   udpRelay?: boolean|undefined,
+  tls13?: boolean|undefined,
 ): Promise<ReadonlyArray<VmessNodeConfig>> => {
   assert(url, '未指定订阅地址 url');
 
@@ -115,9 +119,10 @@ export const getV2rayNSubscription = async (
           ...(udpRelay ? {
             udp: udpRelay,
           } : null),
-          ...(skipCertVerify ? {
-            skipCertVerify,
-          } : null),
+          ...(json.tls === 'tls' ? {
+            skipCertVerify: skipCertVerify ?? false,
+            tls13: tls13 ?? false,
+          } : null)
         };
       })
       .filter((item): item is VmessNodeConfig => !!item);
