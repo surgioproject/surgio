@@ -53,6 +53,7 @@ export default class ClashProvider extends Provider {
 
     const { error } = schema.validate(config);
 
+    // istanbul ignore next
     if (error) {
       throw error;
     }
@@ -71,7 +72,7 @@ export default class ClashProvider extends Provider {
   }
 
   public async getSubscriptionUserInfo(): Promise<SubscriptionUserinfo|undefined> {
-    const { subscriptionUserinfo } = await getClashSubscription(this.url, this.udpRelay);
+    const { subscriptionUserinfo } = await getClashSubscription(this.url, this.udpRelay, this.tls13);
 
     if (subscriptionUserinfo) {
       return subscriptionUserinfo;
@@ -80,7 +81,7 @@ export default class ClashProvider extends Provider {
   }
 
   public async getNodeList(): Promise<ReadonlyArray<SupportConfigTypes>> {
-    const { nodeList } = await getClashSubscription(this.url, this.udpRelay);
+    const { nodeList } = await getClashSubscription(this.url, this.udpRelay, this.tls13);
 
     return nodeList;
   }
@@ -307,7 +308,7 @@ export const parseClashConfig = (
             ...('skip-cert-verify' in item ? { skipCertVerify: item['skip-cert-verify'] === true } : null),
             ...('alpn' in item ? { alpn: item.alpn } : null),
             ...('sni' in item ? { sni: item.sni } : null),
-            ...('udp' in item ? { 'udp-relay': item.udp } : null),
+            'udp-relay': udpRelay ?? item.udp ?? false,
             tls13: tls13 ?? false,
           } as TrojanNodeConfig;
 
