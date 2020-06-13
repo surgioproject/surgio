@@ -164,7 +164,7 @@ export const convertSurgeScriptRuleToQuantumultXRewriteRule = (str: string): str
 };
 
 export const convertNewSurgeScriptRuleToQuantumultXRewriteRule = (str: string): string => {
-  const matched = str.match(/([\w\s]+)=(.+)/);
+  const matched = str.match(/^(.+?)=(.+?)$/);
   const result: string[] = [];
 
   if (!matched) {
@@ -178,7 +178,6 @@ export const convertNewSurgeScriptRuleToQuantumultXRewriteRule = (str: string): 
       const isRequireBody = 'requires-body' in params;
 
       if (isRequireBody) {
-        // parts[1] => Effective URL Rule
         result.push(params.pattern as string, 'url', 'script-response-body', params['script-path'] as string);
       } else {
         result.push(params.pattern as string, 'url', 'script-response-header', params['script-path'] as string);
@@ -190,7 +189,6 @@ export const convertNewSurgeScriptRuleToQuantumultXRewriteRule = (str: string): 
       const isRequireBody = 'requires-body' in params;
 
       if (isRequireBody) {
-        // parts[1] => Effective URL Rule
         result.push(params.pattern as string, 'url', 'script-request-body', params['script-path'] as string);
       } else {
         result.push(params.pattern as string, 'url', 'script-request-header', params['script-path'] as string);

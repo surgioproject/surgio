@@ -1208,8 +1208,14 @@ export const pickAndFormatStringList = (obj: object, keyList: readonly string[])
 export const decodeStringList = <T = Record<string, string|boolean>>(stringList: ReadonlyArray<string>): T => {
   const result = {};
   stringList.forEach(item => {
-    const pair = item.split('=');
-    result[pair[0]] = pair[1] || true;
+    if (item.includes('=')) {
+      const match = item.match(/^(.*?)=(.*?)$/);
+      if (match) {
+        result[match[1].trim()] = match[2].trim() || true;
+      }
+    } else {
+      result[item.trim()] = true;
+    }
   });
   return result as T;
 };
