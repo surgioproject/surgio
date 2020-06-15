@@ -209,7 +209,7 @@ https://example.com/export-providers?providers=maying,dlercloud&format=surge-pol
 ### 7. 直接渲染模板
 
 ```
-/render?template=
+/render?template=[template name]
 ```
 
 有时候我们并不需要将节点和规则完整的渲染出来，而是渲染某个模板。通过这个接口我们可以方便地渲染某个 Template，例如：
@@ -225,3 +225,22 @@ https://example.com/render?template=static
 2. 你不可以在这里的模板中引用 `nodeList` 之类的变量，因为根本不会解析节点；
 3. 子目录下的模板也是可以直接渲染的；
 :::
+
+### 8. 正向代理
+
+```
+/proxy/[url]
+```
+
+这个正向代理可以让我们方便在没有梯子的情况下获取到一些下载困难的文件，同时也可以为远程片段加速。需要注意的是，正向代理不同于你常用的梯子。
+
+这个功能依赖 [Rob--W/cors-anywhere](https://github.com/Rob--W/cors-anywhere)。你可以通过设置以下两个环境变量来限制请求来源。
+
+- `CORSANYWHERE_BLACKLIST`（对应 `originBlacklist`）
+- `CORSANYWHERE_WHITELIST`（对应 `originWhitelist`）
+
+使用方法：
+
+```
+/proxy/https://github.com/lhie1/Rules/raw/master/Surge/Surge%203/Provider/Media/Netflix.list
+```
