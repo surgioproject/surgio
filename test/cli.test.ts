@@ -29,7 +29,6 @@ test.serial('cli works', async t => {
     cwd: resolve('plain'),
     execArgv: ['--require', require.resolve('./stub-axios.js')],
   })
-    .debug()
     .expect('code', 0)
     .end();
 
@@ -42,7 +41,7 @@ test.serial('cli works', async t => {
   const confString3 = fs.readFileSync(resolve('plain/dist/template-functions.conf'), {
     encoding: 'utf8',
   });
-  const confString4 = fs.readFileSync(resolve('plain/dist/clash_mod.conf'), {
+  const confString5 = fs.readFileSync(resolve('plain/dist/v2rayn.conf'), {
     encoding: 'utf8',
   });
   const conf = ini.decode(confString1);
@@ -56,7 +55,7 @@ test.serial('cli works', async t => {
   t.true(confString2.includes('select, 🇺🇲 US'));
   t.is(Object.keys(conf.Proxy).length, 4);
   t.snapshot(confString3);
-  t.snapshot(confString4);
+  t.snapshot(confString5);
 });
 
 test.serial('--skip-fail should work', async t => {
@@ -185,4 +184,29 @@ test.serial('check command', async t => {
     .end();
 
   t.pass();
+});
+
+test.serial('v2ray tls options', async t => {
+  process.env.TEST_TLS13_ENABLE = 'true';
+  process.env.TEST_SKIP_CERT_VERIFY_ENABLE = 'true';
+
+  await coffee.fork(cli, ['generate'], {
+    cwd: resolve('plain'),
+    execArgv: ['--require', require.resolve('./stub-axios.js')],
+  })
+    .expect('code', 0)
+    .end();
+
+  const confString1 = fs.readFileSync(resolve('plain/dist/v2rayn.conf'), {
+    encoding: 'utf8',
+  });
+  const confString2 = fs.readFileSync(resolve('plain/dist/clash_mod.conf'), {
+    encoding: 'utf8',
+  });
+
+  t.snapshot(confString1);
+  t.snapshot(confString2);
+
+  process.env.TEST_TLS13_ENABLE = undefined;
+  process.env.TEST_SKIP_CERT_VERIFY_ENABLE = undefined;
 });

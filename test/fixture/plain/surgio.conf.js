@@ -27,7 +27,7 @@ module.exports = {
     },
     {
       name: 'v2rayn.conf',
-      template: 'test',
+      template: 'template-functions',
       provider: 'v2rayn',
     },
     {

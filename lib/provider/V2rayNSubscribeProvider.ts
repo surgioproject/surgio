@@ -46,6 +46,7 @@ export default class V2rayNSubscribeProvider extends Provider {
     this._url = config.url;
     this.compatibleMode = config.compatibleMode;
     this.skipCertVerify = config.skipCertVerify;
+    this.tls13 = config.tls13;
     this.udpRelay = config.udpRelay;
   }
 
