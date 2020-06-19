@@ -1179,6 +1179,7 @@ test('getQuantumultXNodes', t => {
       port: 8080,
       tls: false,
       host: '',
+      udp: true,
       uuid: '1386f85e-657b-4d6e-9d56-78badb75e1fd',
     },
     {
@@ -1227,13 +1228,13 @@ test('getQuantumultXNodes', t => {
   ])
     .split('\n');
 
-  t.is(schemeList[0], 'vmess=1.1.1.1:8080, method=chacha20-ietf-poly1305, password=1386f85e-657b-4d6e-9d56-78badb75e1fd, udp-relay=true, obfs=ws, obfs-uri=/, obfs-host=example.com, tag=测试 1');
-  t.is(schemeList[1], 'vmess=1.1.1.1:8080, method=chacha20-ietf-poly1305, password=1386f85e-657b-4d6e-9d56-78badb75e1fd, udp-relay=true, tag=测试 2');
+  t.is(schemeList[0], 'vmess=1.1.1.1:8080, method=chacha20-ietf-poly1305, password=1386f85e-657b-4d6e-9d56-78badb75e1fd, obfs=ws, obfs-uri=/, obfs-host=example.com, tag=测试 1');
+  t.is(schemeList[1], 'vmess=1.1.1.1:8080, method=chacha20-ietf-poly1305, password=1386f85e-657b-4d6e-9d56-78badb75e1fd, tag=测试 2');
   t.is(schemeList[2], 'vmess=1.1.1.1:8080, method=chacha20-ietf-poly1305, password=1386f85e-657b-4d6e-9d56-78badb75e1fd, udp-relay=true, obfs=ws, obfs-uri=/, obfs-host=1.1.1.1, tag=测试 3');
   t.is(schemeList[3], 'shadowsocks=hk.example.com:10000, method=chacha20-ietf, password=password, ssr-protocol=auth_aes128_md5, ssr-protocol-param=, obfs=tls1.2_ticket_auth, obfs-host=music.163.com, tag=🇭🇰HK');
   t.is(schemeList[4], 'http=a.com:443, username=snsms, password=nndndnd, over-tls=true, tls-verification=true, tag=test');
   t.is(schemeList[5], 'shadowsocks=us.example.com:443, method=chacha20-ietf-poly1305, password=password, obfs=tls, obfs-host=gateway-carry.icloud.com, udp-relay=true, fast-open=true, tag=🇺🇸US 1');
-  t.is(schemeList[6], 'vmess=1.1.1.1:443, method=chacha20-ietf-poly1305, password=1386f85e-657b-4d6e-9d56-78badb75e1fd, udp-relay=true, obfs=over-tls, tag=测试 4');
+  t.is(schemeList[6], 'vmess=1.1.1.1:443, method=chacha20-ietf-poly1305, password=1386f85e-657b-4d6e-9d56-78badb75e1fd, obfs=over-tls, tag=测试 4');
 
   t.is(
     utils.getQuantumultXNodes([{
@@ -1246,6 +1247,7 @@ test('getQuantumultXNodes', t => {
       port: 443,
       tls: true,
       tls13: true,
+      udp: true,
       uuid: '1386f85e-657b-4d6e-9d56-78badb75e1fd',
     }]),
     'vmess=1.1.1.1:443, method=chacha20-ietf-poly1305, password=1386f85e-657b-4d6e-9d56-78badb75e1fd, udp-relay=true, obfs=over-tls, tag=测试'
