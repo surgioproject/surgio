@@ -1075,6 +1075,22 @@
   dependencies:
     "@types/node" "*"
 
+"@royli/hygen@^5.0.4":
+  version "5.0.4"
+  resolved "https://registry.yarnpkg.com/@royli/hygen/-/hygen-5.0.4.tgz#43e6f05e9c783ec3cd80f25792b036210fa540fc"
+  integrity sha512-UD4V8xWdepHWelVPx3O9+0uQ0xhb8NJFKj383IA0IeFq523OYymc/gR4BfNpQ75tSjDe6/EIimzHPjbSIcsAuQ==
+  dependencies:
+    chalk "^2.4.2"
+    change-case "^3.1.0"
+    ejs "^2.6.1"
+    enquirer "^2.3.0"
+    execa "^1.0.0"
+    front-matter "^2.3.0"
+    fs-extra "^7.0.1"
+    ignore-walk "^3.0.2"
+    inflection "^1.12.0"
+    yargs-parser "^13.0.0"
+
 "@samverschueren/stream-to-observable@^0.3.0":
   version "0.3.0"
   resolved "https://registry.yarnpkg.com/@samverschueren/stream-to-observable/-/stream-to-observable-0.3.0.tgz#ecdf48d532c58ea477acfcab80348424f8d0662f"

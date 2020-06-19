@@ -1,8 +1,8 @@
 // istanbul ignore file
 import { createLogger } from '@surgio/logger';
 import { join } from 'path';
-import { runner } from 'hygen';
-import Logger from 'hygen/lib/logger';
+import { runner } from '@royli/hygen';
+import Logger from '@royli/hygen/lib/logger';
 import Command, { Context } from 'common-bin';
 
 const defaultTemplates = join(__dirname, '../../hygen-template');

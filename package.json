@@ -84,6 +84,7 @@
   },
   "dependencies": {
     "@hapi/joi": "^16.1.8",
+    "@royli/hygen": "^5.0.4",
     "@surgio/eslint-config-surgio": "^1.0.3",
     "@surgio/logger": "^1.1.0",
     "agentkeepalive": "^4.1.0",
@@ -107,7 +108,6 @@
     "global-agent": "^2.1.7",
     "got": "^11.0.2",
     "http-errors": "^1.7.3",
-    "hygen": "^5.0.3",
     "inquirer": "^7.1.0",
     "koa": "^2.11.0",
     "koa-router": "^7.4.0",
