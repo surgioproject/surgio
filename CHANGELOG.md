@@ -1,3 +1,13 @@
+## [1.24.2](https://github.com/geekdada/surgio/compare/v1.24.1...v1.24.2) (2020-06-19)
+
+
+### Bug Fixes
+
+* quantumultx should respect vmessConfig.udp ([73381f9](https://github.com/geekdada/surgio/commit/73381f915f8202cec5211ce608c7f8ec161f147f))
+* v2rayn provider tls13 not effective ([50d60fb](https://github.com/geekdada/surgio/commit/50d60fb4bee4e835cec2c120c7d1344525099d7a))
+
+
+
 ## [1.24.1](https://github.com/geekdada/surgio/compare/v1.24.0...v1.24.1) (2020-06-19)
 
 
