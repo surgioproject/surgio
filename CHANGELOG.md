@@ -1,3 +1,12 @@
+## [1.24.3](https://github.com/geekdada/surgio/compare/v1.24.2...v1.24.3) (2020-06-21)
+
+
+### Bug Fixes
+
+* raw tcp over tls doesn't support tls13 in quantumultx format ([cb21447](https://github.com/geekdada/surgio/commit/cb21447f76583f79eb7c7c6b34fbb56efb00fbff))
+
+
+
 ## [1.24.2](https://github.com/geekdada/surgio/compare/v1.24.1...v1.24.2) (2020-06-19)
 
 
