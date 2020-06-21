@@ -950,6 +950,10 @@ export const getQuantumultXNodes = function(
               if (nodeConfig.tls) {
                 config.push(`obfs=over-tls`);
               }
+              // istanbul ignore next
+              if (nodeConfig.tls13) {
+                config.push(`tls13=true`);
+              }
 
               break;
             default:
