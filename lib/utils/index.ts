@@ -654,7 +654,7 @@ export const getMellowNodes = function(
     .map(nodeConfig => {
       switch (nodeConfig.type) {
         case NodeTypeEnum.Vmess: {
-          const uri = formatVmessUri(nodeConfig);
+          const uri = formatVmessUri(nodeConfig, { isMellow: true });
           return [nodeConfig.nodeName, 'vmess1', uri.trim().replace('vmess://', 'vmess1://')].join(', ');
         }
 
