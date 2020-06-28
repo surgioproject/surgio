@@ -2,7 +2,7 @@ import { VmessNodeConfig } from "../types";
 import queryString from 'query-string';
 
 // https://github.com/v2ray/v2ray-core/issues/1569
-export const formatVmessUri = (nodeConfig: VmessNodeConfig): string => {
+export const formatVmessUri = (nodeConfig: VmessNodeConfig, options?: { readonly isMellow: boolean }): string => {
   const uri: string[] = [
     nodeConfig.uuid,
     '@',
@@ -27,7 +27,11 @@ export const formatVmessUri = (nodeConfig: VmessNodeConfig): string => {
       });
     }
     if (nodeConfig.host) {
-      queries[`ws.headers.host`] = nodeConfig.host;
+      if (options?.isMellow) {
+        queries[`ws.host`] = nodeConfig.host;
+      } else {
+        queries[`ws.headers.host`] = nodeConfig.host;
+      }
     }
   }
 
