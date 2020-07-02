@@ -279,6 +279,43 @@ export const getSurgeNodes = function(
         case NodeTypeEnum.Shadowsocksr: {
           const config = nodeConfig as ShadowsocksrNodeConfig;
 
+          // SS/SSR General
+          if (config.protocol === 'origin' && config.obfs === 'plain') {
+            // Native support for Shadowsocks
+            if (nodeConfig?.surgeConfig?.shadowsocksFormat === 'ss') {
+              return ([
+                config.nodeName,
+                [
+                  'ss',
+                  config.hostname,
+                  config.port,
+                  'encrypt-method=' + config.method,
+                  ...pickAndFormatStringList(config, ['password', 'udp-relay', 'tfo']),
+                  ...(typeof config.mptcp === 'boolean' ? [
+                    `mptcp=${config.mptcp}`,
+                  ] : []),
+                ].join(', ')
+              ].join(' = '));
+            } else {
+              // Using external provider
+              return ([
+                config.nodeName,
+                [
+                  'custom',
+                  config.hostname,
+                  config.port,
+                  config.method,
+                  config.password,
+                  'https://raw.githubusercontent.com/ConnersHua/SSEncrypt/master/SSEncrypt.module',
+                  ...pickAndFormatStringList(config, ['udp-relay', 'tfo']),
+                  ...(typeof config.mptcp === 'boolean' ? [
+                    `mptcp=${config.mptcp}`,
+                  ] : []),
+                ].join(', ')
+              ].join(' = '));
+            }
+          }
+
           // istanbul ignore next
           if (!config.binPath) {
             throw new Error('请按照文档 https://bit.ly/2WnHB3p 添加 Shadowsocksr 二进制文件路径');

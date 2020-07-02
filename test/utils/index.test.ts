@@ -306,6 +306,39 @@ test('getSurgeNodes', async t => {
     }]) , 'socks node 3 = socks5, 1.1.1.1, 80, username=auto, password=auto, tfo=true'
   )
 
+  t.is(
+    utils.getSurgeNodes([{
+      nodeName: 'SS/SSR可连接',
+      type: NodeTypeEnum.Shadowsocksr,
+      hostname: '127.0.0.1',
+      port: '1234',
+      method: 'aes-128-cfb',
+      password: 'aaabbb',
+      obfs: 'plain',
+      obfsparam: '',
+      protocol: 'origin',
+      protoparam: '',
+    }]) , 'SS/SSR可连接 = custom, 127.0.0.1, 1234, aes-128-cfb, aaabbb, https://raw.githubusercontent.com/ConnersHua/SSEncrypt/master/SSEncrypt.module'
+  )
+
+  t.is(
+    utils.getSurgeNodes([{
+      nodeName: 'SS/SSR可连接',
+      type: NodeTypeEnum.Shadowsocksr,
+      hostname: '127.0.0.1',
+      port: '1234',
+      method: 'aes-128-cfb',
+      password: 'aaabbb',
+      obfs: 'plain',
+      obfsparam: '',
+      protocol: 'origin',
+      protoparam: '',
+      surgeConfig: {
+        shadowsocksFormat: 'ss',
+      }
+    }]) , 'SS/SSR可连接 = ss, 127.0.0.1, 1234, encrypt-method=aes-128-cfb, password=aaabbb'
+  )
+
 });
 
 test('getNodeNames', async t => {
