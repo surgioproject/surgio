@@ -9,8 +9,6 @@ const defaultTemplates = join(__dirname, '../../hygen-template');
 const logger = createLogger({ service: 'surgio:NewCommand' })
 
 class NewCommand extends Command {
-  private options: object;
-
   constructor(rawArgv) {
     super(rawArgv);
     this.usage = '使用方法: surgio new [provider|template|artifact]';

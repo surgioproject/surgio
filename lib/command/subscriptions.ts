@@ -23,7 +23,6 @@ const logger = createLogger({
 type PossibleProviderType = BlackSSLProvider|ShadowsocksJsonSubscribeProvider|ShadowsocksSubscribeProvider|CustomProvider|V2rayNSubscribeProvider|ShadowsocksrSubscribeProvider|ClashProvider;
 
 class SubscriptionsCommand extends Command {
-  private options: object;
   private config: CommandConfig;
 
   constructor(rawArgv) {

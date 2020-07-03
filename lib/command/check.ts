@@ -12,8 +12,6 @@ import { getProvider } from '../provider';
 import { errorHandler } from '../utils/error-helper';
 
 class CheckCommand extends Command {
-  private options: object;
-
   constructor(rawArgv) {
     super(rawArgv);
     this.usage = '使用方法: surgio check [provider]';

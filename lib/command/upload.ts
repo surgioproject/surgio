@@ -11,7 +11,6 @@ import { errorHandler } from '../utils/error-helper';
 
 class GenerateCommand extends Command {
   private readonly spinner: Ora;
-  private options: object;
 
   constructor(rawArgv) {
     super(rawArgv);
