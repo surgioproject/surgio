@@ -38,7 +38,7 @@ export default class ShadowsocksSubscribeProvider extends Provider {
           ],
         })
         .required(),
-      udpRelay: Joi.boolean(),
+      udpRelay: Joi.boolean().strict(),
     })
       .unknown();
 

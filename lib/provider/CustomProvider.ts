@@ -15,9 +15,9 @@ export default class CustomProvider extends Provider {
         .valid(...Object.values<string>(NodeTypeEnum))
         .required(),
       nodeName: Joi.string().required(),
-      enable: Joi.boolean(),
-      tfo: Joi.boolean(),
-      mptcp: Joi.boolean(),
+      enable: Joi.boolean().strict(),
+      tfo: Joi.boolean().strict(),
+      mptcp: Joi.boolean().strict(),
       binPath: Joi.string(),
       localPort: Joi.number(),
     })

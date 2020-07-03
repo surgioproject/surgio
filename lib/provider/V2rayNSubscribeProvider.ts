@@ -29,10 +29,10 @@ export default class V2rayNSubscribeProvider extends Provider {
           ],
         })
         .required(),
-      udpRelay: Joi.bool(),
-      tls13: Joi.bool(),
-      compatibleMode: Joi.bool(),
-      skipCertVerify: Joi.bool(),
+      udpRelay: Joi.bool().strict(),
+      tls13: Joi.bool().strict(),
+      compatibleMode: Joi.bool().strict(),
+      skipCertVerify: Joi.bool().strict(),
     })
       .unknown();
 

@@ -110,15 +110,15 @@ export const validateConfig = (userConfig: Partial<CommandConfig>): void => {
     surgeConfig: Joi.object({
       shadowsocksFormat: Joi.string().valid('ss', 'custom'),
       v2ray: Joi.string().valid('native', 'external'),
-      resolveHostname: Joi.boolean(),
+      resolveHostname: Joi.boolean().strict(),
     }),
     quantumultXConfig: Joi.object({
       deviceIds: Joi.array().items(Joi.string()),
     }),
-    analytics: Joi.boolean(),
+    analytics: Joi.boolean().strict(),
     gateway: Joi.object({
       accessToken: Joi.string(),
-      auth: Joi.boolean(),
+      auth: Joi.boolean().strict(),
       cookieMaxAge: Joi.number(),
     })
       .unknown(),
@@ -131,7 +131,7 @@ export const validateConfig = (userConfig: Partial<CommandConfig>): void => {
     customFilters: Joi.object()
       .pattern(
         Joi.string(),
-        Joi.any().allow(Joi.function(), Joi.object({ filter: Joi.function(), supportSort: Joi.boolean() }))
+        Joi.any().allow(Joi.function(), Joi.object({ filter: Joi.function(), supportSort: Joi.boolean().strict() }))
       ),
     customParams: Joi.object(),
   })

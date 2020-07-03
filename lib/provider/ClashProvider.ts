@@ -46,8 +46,8 @@ export default class ClashProvider extends Provider {
           ],
         })
         .required(),
-      udpRelay: Joi.bool(),
-      tls13: Joi.bool(),
+      udpRelay: Joi.bool().strict(),
+      tls13: Joi.bool().strict(),
     })
       .unknown();
 

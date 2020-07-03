@@ -29,19 +29,19 @@ export default class Provider {
       type: Joi.string()
         .valid(...Object.values<string>(SupportProviderEnum))
         .required(),
-      nodeFilter: Joi.any().allow(Joi.function(), Joi.object({ filter: Joi.function(), supportSort: Joi.boolean() })),
-      netflixFilter: Joi.any().allow(Joi.function(), Joi.object({ filter: Joi.function(), supportSort: Joi.boolean() })),
-      youtubePremiumFilter: Joi.any().allow(Joi.function(), Joi.object({ filter: Joi.function(), supportSort: Joi.boolean() })),
+      nodeFilter: Joi.any().allow(Joi.function(), Joi.object({ filter: Joi.function(), supportSort: Joi.boolean().strict() })),
+      netflixFilter: Joi.any().allow(Joi.function(), Joi.object({ filter: Joi.function(), supportSort: Joi.boolean().strict() })),
+      youtubePremiumFilter: Joi.any().allow(Joi.function(), Joi.object({ filter: Joi.function(), supportSort: Joi.boolean().strict() })),
       customFilters: Joi.object()
         .pattern(
           Joi.string(),
-          Joi.any().allow(Joi.function(), Joi.object({ filter: Joi.function(), supportSort: Joi.boolean() }))
+          Joi.any().allow(Joi.function(), Joi.object({ filter: Joi.function(), supportSort: Joi.boolean().strict() }))
         ),
-      addFlag: Joi.boolean(),
-      mptcp: Joi.boolean(),
-      tfo: Joi.boolean(),
+      addFlag: Joi.boolean().strict(),
+      mptcp: Joi.boolean().strict(),
+      tfo: Joi.boolean().strict(),
       startPort: Joi.number().integer().min(1024).max(65535),
-      relayUrl: Joi.boolean(),
+      relayUrl: Joi.boolean().strict(),
       renameNode: Joi.function(),
     })
       .unknown();
