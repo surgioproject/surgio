@@ -1,3 +1,18 @@
+## [1.24.4](https://github.com/geekdada/surgio/compare/v1.24.3...v1.24.4) (2020-07-03)
+
+
+### Bug Fixes
+
+* 配置 boolean 进行严格类型检查 ([1a42306](https://github.com/geekdada/surgio/commit/1a42306e5387b52b4a7f976b53b352c556607512))
+* **utils:v2ray:** lack of transport settings ([4491e60](https://github.com/geekdada/surgio/commit/4491e60cb5e0709056d93c82d314d23ec482745a)), closes [#91](https://github.com/geekdada/surgio/issues/91)
+
+
+### Features
+
+* change mellow format ([20f7faf](https://github.com/geekdada/surgio/commit/20f7faf5294e1a932c2bb6e947ad735dcc1669af)), closes [#91](https://github.com/geekdada/surgio/issues/91)
+
+
+
 ## [1.24.3](https://github.com/geekdada/surgio/compare/v1.24.2...v1.24.3) (2020-06-21)
 
 
