@@ -42,7 +42,7 @@ import { formatVmessUri } from './v2ray';
 
 const logger = createLogger({ service: 'surgio:utils' });
 
-export const getDownloadUrl = (baseUrl: string = '/', artifactName: string, inline: boolean = true, accessToken?: string): string => {
+export const getDownloadUrl = (baseUrl = '/', artifactName: string, inline = true, accessToken?: string): string => {
   const urlObject = parse(`${baseUrl}${artifactName}`, true);
   if (accessToken) {
     urlObject.query.access_token = accessToken;
@@ -50,13 +50,13 @@ export const getDownloadUrl = (baseUrl: string = '/', artifactName: string, inli
   if (!inline) {
     urlObject.query.dl = '1';
   }
-  // tslint:disable-next-line:no-delete
+
   delete urlObject.search;
   return format(urlObject);
 };
 
 export const getUrl = (baseUrl: string, path: string, accessToken?: string): string => {
-  // tslint:disable-next-line:no-parameter-reassignment
+
   path = path.replace(/^\//, '');
   const url = new URL(path, baseUrl);
   if (accessToken) {
@@ -696,7 +696,7 @@ export const fromBase64 = (str: string): string => Buffer.from(str, 'base64').to
  */
 export const getShadowsocksNodes = (
   list: ReadonlyArray<ShadowsocksNodeConfig>,
-  groupName: string = 'Surgio'
+  groupName = 'Surgio'
 ): string => {
   const result: ReadonlyArray<any> = list
     .map(nodeConfig => {
@@ -824,7 +824,7 @@ export const getV2rayNNodes = (list: ReadonlyArray<VmessNodeConfig>): string => 
 
 export const getQuantumultNodes = function(
   list: ReadonlyArray<ShadowsocksNodeConfig|VmessNodeConfig|ShadowsocksrNodeConfig|HttpsNodeConfig>,
-  groupName: string = 'Surgio',
+  groupName = 'Surgio',
   filter?: NodeNameFilterType|SortedNodeNameFilterType,
 ): string {
   if (arguments.length === 3 && typeof filter === 'undefined') {
@@ -1093,7 +1093,7 @@ export const getShadowsocksNodesJSON = (list: ReadonlyArray<ShadowsocksNodeConfi
 
       switch (nodeConfig.type) {
         case NodeTypeEnum.Shadowsocks: {
-          const useObfs: boolean = Boolean(nodeConfig.obfs && nodeConfig['obfs-host']);
+          const useObfs = Boolean(nodeConfig.obfs && nodeConfig['obfs-host']);
           return {
             remarks: nodeConfig.nodeName,
             server: nodeConfig.hostname,
@@ -1201,7 +1201,7 @@ export const generateClashProxyGroup = (
 
 export const toYaml = (obj: JsonObject): string => YAML.stringify(obj);
 
-export const pickAndFormatStringList = (obj: object, keyList: readonly string[]): readonly string[] => {
+export const pickAndFormatStringList = (obj: any, keyList: readonly string[]): readonly string[] => {
   const result: string[] = [];
   keyList.forEach(key => {
     if (obj.hasOwnProperty(key)) {

@@ -2,7 +2,7 @@ import EmojiRegex from 'emoji-regex'
 import flag from '../misc/flag_cn';
 
 const flagMap: {
-  [name: string]: string; // tslint:disable-line
+  [name: string]: string;
 } = {};
 
 Object.keys(flag).forEach(emoji => {

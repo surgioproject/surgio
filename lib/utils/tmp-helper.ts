@@ -61,7 +61,7 @@ export class TmpFile {
 export interface TmpContent { readonly content: string, readonly lastEditTime: number, readonly maxAge?: number }
 
 export const createTmpFactory = (baseDir: string): ((filePath: string, maxAge?: number) => TmpFile) => {
-  // tslint:disable-next-line:no-parameter-reassignment
+
   baseDir = path.join(tmpDir, baseDir);
 
   if (!fs.existsSync(baseDir)) {

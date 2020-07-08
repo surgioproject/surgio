@@ -35,7 +35,11 @@ class GenerateCommand extends Command {
 
   public async run(ctx): Promise<void> {
     if (!ctx.argv.skipLint) {
-      checkAndFix(ctx.cwd);
+      const result = await checkAndFix(ctx.cwd);
+
+      if (!result) {
+        throw new Error('ESLint 测试不通过');
+      }
     }
 
     const config = loadConfig(ctx.cwd, ctx.argv.config, {

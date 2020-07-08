@@ -56,16 +56,16 @@ export interface ArtifactOptions {
 }
 
 export interface ExtendableRenderContext {
-  readonly urlParams?: object;
+  readonly urlParams?: Record<string, string>;
 }
 
 export class Artifact extends EventEmitter {
-  public initProgress: number = 0;
+  public initProgress = 0;
   public providerNameList: ReadonlyArray<string>;
   public nodeConfigListMap: Map<string, ReadonlyArray<PossibleNodeConfigType>> = new Map();
   public providerMap: Map<string, ReturnType<typeof getProvider>> = new Map();
-  public nodeList: PossibleNodeConfigType[] = []; // tslint:disable-line:readonly-array
-  public nodeNameList: SimpleNodeConfig[] = []; // tslint:disable-line:readonly-array
+  public nodeList: PossibleNodeConfigType[] = [];
+  public nodeNameList: SimpleNodeConfig[] = [];
 
   private customFilters: NonNullable<ProviderConfig['customFilters']>;
   private netflixFilter: NonNullable<ProviderConfig['netflixFilter']>;
@@ -82,7 +82,6 @@ export class Artifact extends EventEmitter {
       name: artifactName,
       template,
       templateString,
-      downloadUrl,
     } = artifact;
 
     assert(artifactName, '必须指定 artifact 的 name 属性');
@@ -110,7 +109,7 @@ export class Artifact extends EventEmitter {
       customParams,
       downloadUrl,
     } = this.artifact;
-    // tslint:disable-next-line:no-this-assignment
+
     const {
       nodeList,
       nodeNameList,
@@ -386,5 +385,5 @@ export class Artifact extends EventEmitter {
       providerName,
       provider,
     });
-  };
+  }
 }

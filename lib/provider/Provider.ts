@@ -6,7 +6,7 @@ import {
   PossibleNodeConfigType, SubscriptionUserinfo,
 } from '../types';
 
-let globalPort: number = 61100;
+let globalPort = 61100;
 
 export default class Provider {
   public readonly type: SupportProviderEnum;
@@ -82,5 +82,5 @@ export default class Provider {
   // istanbul ignore next
   public getNodeList(): Promise<ReadonlyArray<PossibleNodeConfigType>> {
     return Promise.resolve([]);
-  };
+  }
 }

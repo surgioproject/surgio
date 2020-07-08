@@ -1,16 +1,23 @@
 module.exports = {
-  extends: ['eslint:recommended'],
-  parserOptions: {
-    ecmaVersion: 8,
+  "env": {
+    "es6": true,
+    "node": true
   },
-  env: {
-    es6: true,
-    node: true
+  "extends": [
+    "prettier",
+    "prettier/@typescript-eslint",
+    "plugin:@typescript-eslint/recommended"
+  ],
+  "parser": "@typescript-eslint/parser",
+  "parserOptions": {
+    "project": "tsconfig.eslint.json",
+    "sourceType": "module"
   },
-  rules: {
-    "array-bracket-spacing": 0,
-    "comma-dangle": 0,
-    "dot-notation": 0,
-    "valid-jsdoc": 0
+  "plugins": [
+    "@typescript-eslint",
+  ],
+  "rules": {
+    "@typescript-eslint/ban-ts-comment": 0,
+    "@typescript-eslint/no-var-requires": 0
   }
 };
