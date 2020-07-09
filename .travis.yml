@@ -10,7 +10,7 @@ install:
 jobs:
   include:
     - name: deploy docs
-      node_js: "10"
+      node_js: "12"
       script: yarn docs:build
       deploy:
         provider: pages
