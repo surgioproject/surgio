@@ -49,7 +49,7 @@ export interface CommandConfig {
     readonly resolveHostname?: boolean;
   };
   readonly quantumultXConfig?: {
-    readonly deviceIds?: ReadonlyArray<string>;
+
   };
   readonly gateway?: {
     readonly accessToken?: string;
