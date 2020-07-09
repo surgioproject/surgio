@@ -3,10 +3,15 @@ import fs from 'fs-extra';
 import _ from 'lodash';
 import path from 'path';
 import { URL } from 'url';
+import { deprecate } from "util";
+import { DEP005, DEP006 } from '../misc/deprecation';
 
 import { CommandConfig } from '../types';
 import { PROXY_TEST_INTERVAL, PROXY_TEST_URL } from './constant';
 import { ensureConfigFolder } from './index';
+
+const showDEP005 = deprecate(_.noop, DEP005, 'DEP005');
+const showDEP006 = deprecate(_.noop, DEP006, 'DEP006');
 
 export const loadConfig = (cwd: string, configPath: string, override?: Partial<CommandConfig>): CommandConfig => {
   const absPath = path.resolve(cwd, configPath);
@@ -38,8 +43,8 @@ export const normalizeConfig = (cwd: string, userConfig: Partial<CommandConfig>)
     providerDir: path.join(cwd, './provider'),
     configDir: ensureConfigFolder(),
     surgeConfig: {
-      shadowsocksFormat: 'custom',
-      v2ray: 'external',
+      shadowsocksFormat: 'ss',
+      v2ray: 'native',
       resolveHostname: false,
     },
     proxyTestUrl: PROXY_TEST_URL,
@@ -65,6 +70,16 @@ export const normalizeConfig = (cwd: string, userConfig: Partial<CommandConfig>)
 
   if (config.binPath && config.binPath.v2ray) {
     config.binPath.vmess = config.binPath.v2ray;
+  }
+
+  // istanbul ignore next
+  if (config.surgeConfig?.shadowsocksFormat === 'custom') {
+    showDEP005();
+  }
+
+  // istanbul ignore next
+  if (config.surgeConfig?.v2ray === 'external') {
+    showDEP006();
   }
 
   return config;
