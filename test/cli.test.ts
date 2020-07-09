@@ -125,16 +125,10 @@ test.serial('assign local port', async t => {
   const confString1 = fs.readFileSync(resolve('assign-local-port/dist/ssr.conf'), {
     encoding: 'utf8',
   });
-  const confString2 = fs.readFileSync(resolve('assign-local-port/dist/v2rayn.conf'), {
-    encoding: 'utf8',
-  });
   const conf1 = ini.decode(confString1);
-  const conf2 = ini.decode(confString2);
 
   t.is(code, 0);
   t.truthy(conf1.Proxy.测试中文.includes('local-port = 5000'));
-  t.truthy(conf2.Proxy['测试 1'].includes('local-port = 4000'));
-  t.truthy(conf2.Proxy['测试 2'].includes('local-port = 4001'));
 });
 
 test.serial('custom filter', async t => {
