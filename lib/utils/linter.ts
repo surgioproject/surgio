@@ -5,7 +5,9 @@ import _ from 'lodash';
 
 export const createCli = (cliConfig?: ESLint.Options): ESLint => {
   const linterConfig = {
-    useEslintrc: true,
+    // 在测试情况下 fixture 目录不包含 eslintrc，避免 eslint 读取根目录的 eslintrc
+    useEslintrc: process.env.NODE_ENV !== 'test',
+    extensions: ['.js'],
     baseConfig: {
       extends: [
         '@surgio/eslint-config-surgio',
