@@ -39,18 +39,18 @@ export default class CustomProvider extends Provider {
   }
 
   public async getNodeList(): Promise<ReadonlyArray<PossibleNodeConfigType>> {
-    const shadowsocksSchema = Joi.object({
+    const checkSchema = Joi.object({
       'udp-relay': Joi.bool().strict(),
     }).unknown();
 
     return this.nodeList.map(item => {
-      if (item.type === NodeTypeEnum.Shadowsocks) {
-        const { error } = shadowsocksSchema.validate(item);
-        // istanbul ignore next
-        if (error) {
-          throw error;
-        }
+      const { error } = checkSchema.validate(item);
+
+      // istanbul ignore next
+      if (error) {
+        throw error;
       }
+
       return item;
     });
   }
