@@ -93,6 +93,7 @@ module.exports = {
             'api',
             'cli',
             'faq',
+            'upgrade-guide-v2',
             'learning-resources',
           ]
         },

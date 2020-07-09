@@ -65,13 +65,23 @@ $ npx surgio new provider|artifact|template
 
 ```bash
 $ npx surgio doctor
-@surgio/gateway: 0.12.2
-surgio: 1.20.2
-node: 12.16.2 (/usr/local/Cellar/node@12/12.16.2_1/bin/node)
-npx: 6.14.4
-yarn: 1.22.4
-npm: 6.14.4
+# @surgio/gateway: 0.12.2
+# surgio: 1.20.2
+# node: 12.16.2 (/usr/local/Cellar/node@12/12.16.2_1/bin/node)
+# npx: 6.14.4
+# yarn: 1.22.4
+# npm: 6.14.4
 ```
+
+## `lint`
+
+> 检查代码格式 <Badge text="v2.0.0" vertical="middle" />
+
+### 可选参数
+
+#### `--fix`
+
+自动修复部分格式错误。
 
 ## 全局参数
 
