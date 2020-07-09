@@ -1,6 +1,4 @@
 import Joi from '@hapi/joi';
-import * as util from 'util';
-import { DEP002 } from '../misc/deprecation';
 import { CustomProviderConfig, NodeTypeEnum, PossibleNodeConfigType } from '../types';
 import Provider from './Provider';
 
@@ -41,19 +39,19 @@ export default class CustomProvider extends Provider {
   }
 
   public async getNodeList(): Promise<ReadonlyArray<PossibleNodeConfigType>> {
+    const shadowsocksSchema = Joi.object({
+      'udp-relay': Joi.bool().strict(),
+    }).unknown();
+
     return this.nodeList.map(item => {
       if (item.type === NodeTypeEnum.Shadowsocks) {
-        // 兼容字符串 true 和 false 的写法，会弃用
-        if (typeof item['udp-relay'] === 'string') {
-          notifyDepUdpRelay();
-          item['udp-relay'] = item['udp-relay'] === 'true';
+        const { error } = shadowsocksSchema.validate(item);
+        // istanbul ignore next
+        if (error) {
+          throw error;
         }
       }
       return item;
     });
   }
 }
-
-const notifyDepUdpRelay = util.deprecate(() => {
-  // do nothing
-}, DEP002, 'DEP002');
