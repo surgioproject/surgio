@@ -923,7 +923,7 @@ export const getQuantumultXNodes = function(
               `method=chacha20-ietf-poly1305` :
               `method=${nodeConfig.method}`),
             `password=${nodeConfig.uuid}`,
-            ...(nodeConfig.udp ? [
+            ...(nodeConfig['udp-relay'] ? [
               'udp-relay=true',
             ] : []),
             ...(nodeConfig.tfo ? [

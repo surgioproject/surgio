@@ -29,6 +29,7 @@ test('getV2rayNSubscription', async t => {
     tls: false,
     type: NodeTypeEnum.Vmess,
     uuid: '1386f85e-657b-4d6e-9d56-78badb75e1fd',
+    'udp-relay': false,
   });
   t.deepEqual(configList[1], {
     alterId: '64',
@@ -42,6 +43,7 @@ test('getV2rayNSubscription', async t => {
     tls: false,
     type: NodeTypeEnum.Vmess,
     uuid: '1386f85e-657b-4d6e-9d56-78badb75e1fd',
+    'udp-relay': false,
   });
 });
 
@@ -61,6 +63,7 @@ test('getV2rayNSubscription compatible mode', async t => {
     tls: false,
     type: NodeTypeEnum.Vmess,
     uuid: '1386f85e-657b-4d6e-9d56-78badb75e1fd',
+    'udp-relay': false,
   });
 });
 
@@ -80,6 +83,6 @@ test('getV2rayNSubscription udpRelay skipCertVerify', async t => {
     tls: false,
     type: NodeTypeEnum.Vmess,
     uuid: '1386f85e-657b-4d6e-9d56-78badb75e1fd',
-    udp: true,
+    'udp-relay': true,
   });
 });

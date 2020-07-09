@@ -210,7 +210,7 @@ export interface VmessNodeConfig extends SimpleNodeConfig {
   readonly tls: boolean;
   readonly host?: string;
   readonly path?: string;
-  readonly udp?: boolean; // TODO: 统一为 udp-relay
+  readonly 'udp-relay'?: boolean;
   readonly tls13?: boolean;
   readonly skipCertVerify?: boolean;
   readonly wsHeaders?: Record<string, string>;
