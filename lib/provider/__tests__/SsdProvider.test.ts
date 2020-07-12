@@ -4,10 +4,20 @@ import nock from 'nock';
 import { SupportProviderEnum } from '../../types';
 import SsdProvider from '../SsdProvider';
 
-test('SsdProvider', async t => {
+test('SsdProvider 1', async t => {
   const provider = new SsdProvider('test', {
     type: SupportProviderEnum.Ssd,
     url: 'http://example.com/ssd-sample.txt',
+  });
+  const nodeList = await provider.getNodeList();
+
+  t.snapshot(nodeList);
+});
+
+test('SsdProvider 2', async t => {
+  const provider = new SsdProvider('test', {
+    type: SupportProviderEnum.Ssd,
+    url: 'http://example.com/ssd-sample-2.txt',
   });
   const nodeList = await provider.getNodeList();
 

@@ -96,6 +96,15 @@ const scope = nock('http://example.com')
       })
     )}`,
   )
+  .get(/\/ssd-sample-2\.txt/)
+  .reply(
+    200,
+    `ssd://${toBase64(
+      fs.readFileSync(path.join(__dirname, 'asset/ssd-sample-2.json'), {
+        encoding: 'utf8',
+      })
+    )}`,
+  )
   .get(/\/error/)
   .reply(
     500,

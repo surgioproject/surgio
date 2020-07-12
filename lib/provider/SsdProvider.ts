@@ -112,6 +112,7 @@ export const getSsdSubscription = async (
       }
     )();
 
+  // istanbul ignore next
   if (!response.body.startsWith('ssd://')) {
     throw new Error(`暂仅支持 ssd:// 开头的订阅地址，${url} 无法处理`);
   }
@@ -173,7 +174,7 @@ export const parseSsdConfig = (
 
   return {
     type: NodeTypeEnum.Shadowsocks,
-    nodeName: server.remarks ?? `${airport} ${server.server}:${server.port}`,
+    nodeName: server.remarks ?? `${airport} ${server.server}:${server.port ?? port}`,
     hostname: server.server,
     port: server.port ?? port,
     method: server.encryption ?? encryption,
