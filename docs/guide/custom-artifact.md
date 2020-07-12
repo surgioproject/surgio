@@ -105,7 +105,7 @@ Surgio 会根据 Artifact 的值来生成配置文件。你可以一次性配置
 2. 你可以[定义全局的自定义模板变量了](/guide/custom-config.md#customparams)；
 :::
 
-### destDir <Badge text="v1.4.0" vertical="middle" />
+### destDir
 
 - 类型: `string`
 - 默认值: `undefined`

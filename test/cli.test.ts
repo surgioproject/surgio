@@ -51,6 +51,7 @@ test.serial('cli works', async t => {
   t.truthy(fs.existsSync(resolve('plain/dist/ssr.conf')));
   t.truthy(fs.existsSync(resolve('plain/dist/v2rayn.conf')));
   t.truthy(fs.existsSync(resolve('plain/dist/custom.conf')));
+  t.truthy(fs.existsSync(resolve('plain/dist/ssd.conf')));
   t.is(confString1.split('\n')[0], '#!MANAGED-CONFIG https://example.com/ss_json.conf?access_token=abcd interval=43200 strict=false');
   t.true(confString2.includes('select, 🇺🇲 US'));
   t.is(Object.keys(conf.Proxy).length, 4);

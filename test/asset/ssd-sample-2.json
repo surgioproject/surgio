@@ -1,0 +1,21 @@
+{
+  "airport": "Test Airport",
+  "port": 555,
+  "encryption": "aes-128-gcm",
+  "password": "password",
+  "traffic_used": 30,
+  "traffic_total": 400,
+  "expiry": "2099-10-06 15:28:07",
+  "plugin": "simple-obfs",
+  "plugin_options": "obfs=tls;obfs-host=www.taobao.com",
+  "servers": [
+    {
+      "id": 1,
+      "server": "45.45.45.45"
+    },
+    {
+      "id": 2,
+      "server": "55.55.55.55"
+    }
+  ]
+}

@@ -40,13 +40,13 @@ import {
   youtubePremiumFilter as defaultYoutubePremiumFilter,
   shadowsocksFilter,
   shadowsocksrFilter,
-  VmessFilter,
-  V2rayFilter,
-  SnellFilter,
-  HttpFilter,
-  HttpsFilter,
-  TrojanFilter,
-  Socks5Filter,
+  vmessFilter,
+  v2rayFilter,
+  snellFilter,
+  httpFilter,
+  httpsFilter,
+  trojanFilter,
+  socks5Filter,
 } from '../utils/filter';
 import { prependFlag } from '../utils/flag';
 
@@ -153,13 +153,13 @@ export class Artifact extends EventEmitter {
       chinaBackFilter,
       shadowsocksFilter,
       shadowsocksrFilter,
-      VmessFilter,
-      V2rayFilter,
-      SnellFilter,
-      HttpFilter,
-      HttpsFilter,
-      TrojanFilter,
-      Socks5Filter,
+      vmessFilter,
+      v2rayFilter,
+      snellFilter,
+      httpFilter,
+      httpsFilter,
+      trojanFilter,
+      socks5Filter,
       toUrlSafeBase64,
       toBase64,
       encodeURIComponent,
@@ -169,8 +169,8 @@ export class Artifact extends EventEmitter {
       customParams: mergedCustomParams,
       ...(this.artifact.proxyGroupModifier ? {
         clashProxyConfig: {
-          Proxy: getClashNodes(nodeList),
-          'Proxy Group': normalizeClashProxyGroupConfig(
+          proxies: getClashNodes(nodeList),
+          'proxy-groups': normalizeClashProxyGroupConfig(
             nodeList,
             {
               usFilter,

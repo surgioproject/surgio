@@ -102,14 +102,14 @@ GET /get-artifact/<artifactName>
 
 | 参数       | 可选值                         | 备注 |
 | -------- | --------------------------- | -- |
-| `format` | `surge-policy`, `qx-server`, `clash-provider` | <Badge text="v1.6.0" vertical="middle" /> |
-| `filter` | 内置的过滤器或自定义过滤器               |  <Badge text="v1.6.0" vertical="middle" />  |
+| `format` | `surge-policy`, `qx-server`, `clash-provider` |  |
+| `filter` | 内置的过滤器或自定义过滤器               |    |
 
 定义：
 
 - `surge-policy` Surge 远程节点 Policy
 - `qx-server` QuantumultX 远程节点
-- `clash-provider` <Badge text="v1.11.0" vertical="middle" /> [Clash Provider](https://www.notion.so/New-Feature-Clash-Proxy-Provider-ff8d1955f6234ad3a779fecd3b3ea007)
+- `clash-provider` [Clash Provider](https://www.notion.so/New-Feature-Clash-Proxy-Provider-ff8d1955f6234ad3a779fecd3b3ea007)
 
 :::tip 提示
 1. `format` 使用的是内置的模板，所以你不需要额外定义模板格式，不过仍然需要定义一个完整的 Artifact。我的建议是定义一个有完整节点的 Artifact，然后根据需要过滤出节点。

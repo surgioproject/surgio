@@ -5,9 +5,13 @@ import CustomProvider from './CustomProvider';
 import ShadowsocksJsonSubscribeProvider from './ShadowsocksJsonSubscribeProvider';
 import ShadowsocksrSubscribeProvider from './ShadowsocksrSubscribeProvider';
 import ShadowsocksSubscribeProvider from './ShadowsocksSubscribeProvider';
+import SsdProvider from './SsdProvider';
 import V2rayNSubscribeProvider from './V2rayNSubscribeProvider';
 
-export function getProvider(name: string, config: any): BlackSSLProvider|ShadowsocksJsonSubscribeProvider|ShadowsocksSubscribeProvider|CustomProvider|V2rayNSubscribeProvider|ShadowsocksrSubscribeProvider|ClashProvider {
+export function getProvider(
+  name: string,
+  config: any
+): BlackSSLProvider|ShadowsocksJsonSubscribeProvider|ShadowsocksSubscribeProvider|CustomProvider|V2rayNSubscribeProvider|ShadowsocksrSubscribeProvider|ClashProvider|SsdProvider {
   switch (config.type) {
     case SupportProviderEnum.BlackSSL:
       return new BlackSSLProvider(name, config);
@@ -30,6 +34,9 @@ export function getProvider(name: string, config: any): BlackSSLProvider|Shadows
 
     case SupportProviderEnum.Clash:
       return new ClashProvider(name, config);
+
+    case SupportProviderEnum.Ssd:
+      return new SsdProvider(name, config);
 
     default:
       throw new Error(`Unsupported provider type: ${config.type}`);

@@ -24,6 +24,12 @@
 
 由于 Surge 新版已经发布了一段时间，故不再默认使用 `custom` 的方式输出 Shadowsocks 节点。
 
+## 内置过滤器
+
+#### 协议过滤器名称修改
+
+由于疏忽，有一些 [协议过滤器](/guide/custom-template.md#协议过滤器) 命名未符合规范，已修改。
+
 ## 自定义过滤器
 
 #### useProviders, discardProviders 默认开启严格模式
