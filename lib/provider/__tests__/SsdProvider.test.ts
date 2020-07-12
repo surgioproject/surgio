@@ -32,10 +32,7 @@ test('SsdProvider.getSubscriptionUserInfo', async t => {
   });
   const userInfo = await provider.getSubscriptionUserInfo();
 
-  t.deepEqual(userInfo, {
-    upload: 0,
-    download: 32212254720,
-    total: 429496729600,
-    expire: 4094954887,
-  });
+  t.is(userInfo!.upload, 0);
+  t.is(userInfo!.download, 32212254720);
+  t.is(userInfo!.total, 429496729600);
 });
