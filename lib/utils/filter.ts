@@ -207,16 +207,16 @@ export const shadowsocksFilter: NodeNameFilterType = item => item.type === NodeT
 // istanbul ignore next
 export const shadowsocksrFilter: NodeNameFilterType = item => item.type === NodeTypeEnum.Shadowsocksr;
 // istanbul ignore next
-export const VmessFilter: NodeNameFilterType = item => item.type === NodeTypeEnum.Vmess;
+export const vmessFilter: NodeNameFilterType = item => item.type === NodeTypeEnum.Vmess;
 // istanbul ignore next
-export const V2rayFilter: NodeNameFilterType = item => item.type === NodeTypeEnum.Vmess;
+export const v2rayFilter: NodeNameFilterType = item => item.type === NodeTypeEnum.Vmess;
 // istanbul ignore next
-export const SnellFilter: NodeNameFilterType = item => item.type === NodeTypeEnum.Snell;
+export const snellFilter: NodeNameFilterType = item => item.type === NodeTypeEnum.Snell;
 // istanbul ignore next
-export const HttpFilter: NodeNameFilterType = item => item.type === NodeTypeEnum.HTTP;
+export const httpFilter: NodeNameFilterType = item => item.type === NodeTypeEnum.HTTP;
 // istanbul ignore next
-export const HttpsFilter: NodeNameFilterType = item => item.type === NodeTypeEnum.HTTPS;
+export const httpsFilter: NodeNameFilterType = item => item.type === NodeTypeEnum.HTTPS;
 // istanbul ignore next
-export const TrojanFilter: NodeNameFilterType = item => item.type === NodeTypeEnum.Trojan;
+export const trojanFilter: NodeNameFilterType = item => item.type === NodeTypeEnum.Trojan;
 // istanbul ignore next
-export const Socks5Filter: NodeNameFilterType = item => item.type === NodeTypeEnum.Socks5;
+export const socks5Filter: NodeNameFilterType = item => item.type === NodeTypeEnum.Socks5;

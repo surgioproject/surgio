@@ -1,7 +1,6 @@
 import nunjucks from 'nunjucks';
 import { JsonObject } from 'type-fest';
 import YAML from 'yaml';
-import { URL } from 'url';
 
 import { decodeStringList, toBase64 } from '../utils';
 import {
