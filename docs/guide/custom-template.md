@@ -49,7 +49,7 @@ Surgio 为了能够灵活地定义模板而引入了 [Nunjucks](https://nunjucks
 
 当前文件对应的订阅地址。
 
-### proxyTestUrl <Badge text="v1.6.0" vertical="middle" />
+### proxyTestUrl
 
 - 类型: `string`
 - 默认值: `http://cp.cloudflare.com/generate_204`
@@ -153,21 +153,21 @@ Surgio 内置多个节点名国别/地区过滤器。除非是火星文，Surgio
 - singaporeFilter
 - koreaFilter
 - taiwanFilter
-- chinaBackFilter（回国节点过滤）<Badge text="v1.12.3" vertical="middle" />
+- chinaBackFilter（回国节点过滤）
 
-### 协议过滤器 <Badge text="v1.24.0" vertical="middle" />
+### 协议过滤器
 
 某些订阅中会混合多种不同的协议，你可以用以下这些过滤器过滤出想要的节点类型。它们是：
 
 - shadowsocksFilter
 - shadowsocksrFilter
-- VmessFilter
-- V2rayFilter
-- SnellFilter
-- HttpFilter
-- HttpsFilter
-- TrojanFilter
-- Socks5Filter
+- vmessFilter
+- v2rayFilter
+- snellFilter
+- httpFilter
+- httpsFilter
+- trojanFilter
+- socks5Filter
 
 ### netflixFilter
 
@@ -264,7 +264,7 @@ vmess://5rWL6K+VIDIgPSB2bWVzcywxLjEuMS4xLDgwODAsY2hhY2hhMjAtaWV0Zi1wb2x5MTMwNSwi
 {{ getQuantumultNodes(nodeList, providerName) | base64 }}
 ```
 
-### getQuantumultXNodes <Badge text="v1.3.0" vertical="middle" />
+### getQuantumultXNodes
 
 `getQuantumultXNodes(nodeList, filter?)`
 
@@ -276,7 +276,7 @@ vmess://5rWL6K+VIDIgPSB2bWVzcywxLjEuMS4xLDgwODAsY2hhY2hhMjAtaWV0Zi1wb2x5MTMwNSwi
 
 生成 QuantumulX 的节点配置。该配置能用于 [`server_local`](https://github.com/crossutility/Quantumult-X/blob/master/sample.conf#L88) 或者 [`server_remote`](https://github.com/crossutility/Quantumult-X/blob/master/server-complete.txt)。
 
-### getMellowNodes <Badge text="v1.4.0" vertical="middle" />
+### getMellowNodes
 
 `getMellowNodes(nodeList, filter?)`
 
@@ -294,7 +294,7 @@ Proxy-2, vmess1, vmess1://75da2e14-4d08-480b-b3cb-0079a0c51275@example.com:10025
 
 使用时请参考 [官方文档](https://github.com/mellow-io/mellow#%E6%9B%B4%E5%A4%9A%E9%85%8D%E7%BD%AE)。
 
-### getClashNodes <Badge text="v1.11.0" vertical="middle" />
+### getClashNodes
 
 `getClashNodes(nodeList, filter?)`
 
@@ -335,7 +335,7 @@ getNodeNames(nodeList, netflixFilter);
 getNodeNames(nodeList, undefined, ':');
 ```
 
-### getClashNodeNames <Badge text="v1.11.0" vertical="middle" />
+### getClashNodeNames
 
 `getClashNodeNames(nodeList, filter?, prependNodeNames?)`
 
@@ -379,7 +379,7 @@ getDownloadUrl('example.conf?foo=bar'); // https://example.com/example.conf?foo=
 请不用担心参数中的 `access_token`，如果需要会自动加上的 👌。
 :::
 
-### getUrl <Badge text="v1.19.0" vertical="middle" />
+### getUrl
 
 `getUrl(path)`
 
@@ -473,7 +473,7 @@ DOMAIN-SUFFIX,ytimg.com,🚀 Proxy
 
 除此之外，规则处理模块还支持以下功能。
 
-#### 转换 Surge Script 规则 <Badge text="v1.7.1" vertical="top" />
+#### 转换 Surge Script 规则
 
 规则处理模块能够识别以下类型的 Surge Script 规则，转换成 Quantumult X 的 Rewrite 规则。需要注意的是，为了能够正常使用这些规则，你需要部署 Surgio 托管 API。
 

@@ -19,6 +19,7 @@ sidebarDepth: 2
 |  `v2rayn_subscribe`  |  V2rayN 订阅地址  |  [协议](https://github.com/2dust/v2rayN/wiki/%E8%AE%A2%E9%98%85%E5%8A%9F%E8%83%BD%E8%AF%B4%E6%98%8E)  |
 |  `custom` <Badge text="推荐" vertical="middle" /> |  自己维护的节点  |  支持 Shadowsocks, Shadowsocksr, Snell, HTTPS, HTTP, Vmess, Socks5  |
 |  `clash` <Badge text="推荐" vertical="middle" /> |  Clash 配置  |  支持 Shadowsocks, Shadowsocksr, Snell, HTTPS, HTTP, Vmess  |
+|  `ssd` |  SSD 订阅  |  支持 Shadowsocks  |
 
 ## shadowsocks_json_subscribe
 
@@ -117,28 +118,28 @@ module.exports = {
 - 如果你正在使用 [DlerCloud](https://dlercloud.com/auth/register?affid=45071)，可以使用「通用」类型的订阅地址；
 :::
 
-### compatibleMode <Badge text="v1.18.1" vertical="middle" />
+### compatibleMode
 
 - 类型: `boolean`
 - 默认值: `false`
 
 部分机场提供的订阅地址不符合标准，提供一个兼容模式进行解析。
 
-### udpRelay <Badge text="v1.18.3" vertical="middle" />
+### udpRelay
 
 - 类型: `boolean`
 - 默认值: `false`
 
 由于这种订阅协议不支持定义 UDP 转发的支持情况，所以单独出来进行配置。
 
-### skipCertVerify <Badge text="v1.18.3" vertical="middle" />
+### skipCertVerify
 
 - 类型: `boolean`
 - 默认值: `false`
 
 由于这种订阅协议不支持定义跳过证书验证，所以单独出来进行配置。
 
-### tls13 <Badge text="v1.24.0" vertical="middle" />
+### tls13
 
 - 类型: `boolean`
 - 默认值: `false`
@@ -165,12 +166,32 @@ module.exports = {
 
 我们发现部分机场的 Clash 订阅并没有设定 `udp`，所以你可以通过配置这个属性来强制设定节点的 UDP 转发支持情况。如果订阅节点中包含 `udp` 字段，则该配置无效。
 
-### tls13 <Badge text="v1.24.0" vertical="middle" />
+### tls13
 
 - 类型: `boolean`
 - 默认值: `false`
 
 强制开启节点的 TLS 1.3。
+
+## ssd <Badge text="v2.0.0" vertical="middle" />
+
+:::warning 注意
+1. Surgio 支持读取 `simple-obfs` 和 `v2ray-plugin` 两种 SIP003 插件配置；
+2. 仅支持 `v2ray-plugin` 的 WebSocket 模式；
+:::
+
+### url
+
+- 类型: `string`
+- 默认值: `undefined`
+- <Badge text="必须" vertical="middle" />
+
+### udpRelay
+
+- 类型: `boolean`
+- 默认值: `false`
+
+你可以通过配置这个属性来强制设定节点的 UDP 转发支持情况。
 
 ## custom <Badge text="推荐" vertical="middle" />
 
@@ -298,7 +319,7 @@ module.exports = {
 }
 ```
 
-*Trojan* <Badge text="v1.14.0" vertical="middle" />
+*Trojan*
 
 ```json5
 {
@@ -315,7 +336,7 @@ module.exports = {
 }
 ```
 
-*Socks5* <Badge text="v1.18.0" vertical="middle" />
+*Socks5*
 
 ```json5
 {
@@ -366,14 +387,14 @@ module.exports = {
 
 是否为该节点开启 TFO（TCP Fast Open）。
 
-### nodeConfig.mptcp <Badge text="v1.10.0" vertical="middle" />
+### nodeConfig.mptcp
 
 - 类型: `Boolean`
 - 默认值: `false`
 
 是否为该节点开启 Multipath TCP。目前仅 Surge 支持这一特性。
 
-### nodeConfig.tls13 <Badge text="v1.10.0" vertical="middle" />
+### nodeConfig.tls13
 
 - 类型: `Boolean`
 - 默认值: `false`
@@ -386,7 +407,7 @@ module.exports = {
 3. 如果你使用 Surge，
 :::
 
-### nodeConfig.skipCertVerify <Badge text="v1.10.0" vertical="middle" />
+### nodeConfig.skipCertVerify
 
 - 类型: `Boolean`
 - 默认值: `false`
@@ -478,14 +499,14 @@ module.exports = {
 
 是否为该订阅强制开启 TFO（TCP Fast Open）。部分机场虽然支持 TFO 但是没有在订阅中开启，你可以通过这个配置强制打开。
 
-### provider.mptcp <Badge text="v1.10.0" vertical="middle" />
+### provider.mptcp
 
 - 类型: `Boolean`
 - 默认值: `false`
 
 是否为该订阅强制开启 Multipath TCP。目前仅 Surge 支持这一特性。
 
-### provider.renameNode <Badge text="v1.8.5" vertical="middle" />
+### provider.renameNode
 
 - 类型: `Function`
 - 默认值: `undefined`
@@ -510,7 +531,7 @@ module.exports = {
 4. 这个方法不一定要在末尾 `return` 内容，如果没有返回内容则保留原名称；
 :::
 
-### provider.relayUrl <Badge text="v1.18.0" vertical="middle" />
+### provider.relayUrl
 
 - 类型: `Boolean`
 - 默认值: `undefined`

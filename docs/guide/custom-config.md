@@ -151,7 +151,7 @@ module.exports = {
 };
 ```
 
-#### surgeConfig.shadowsocksFormat <Badge text="v1.10.0" vertical="middle" />
+#### surgeConfig.shadowsocksFormat
 
 - 类型: `string`
 - 默认值: `ss`
@@ -171,7 +171,7 @@ module.exports = {
 
 定义生成 Vmess 节点配置的类型，默认使用 `native` 的方式。旧版本 Surge for Mac 需要使用 External Provider 的形式
 
-#### surgeConfig.resolveHostname <Badge text="v1.5.0" vertical="middle" />
+#### surgeConfig.resolveHostname
 
 - 类型: `boolean`
 - 默认值: `false`
@@ -192,7 +192,7 @@ module.exports = {
 };
 ```
 
-### gateway <Badge text="v1.1.0" vertical="middle" />
+### gateway
 
 - 类型: `object`
 - 默认值: `undefined`
@@ -213,7 +213,7 @@ module.exports = {
 
 鉴权码。
 
-### customFilters <Badge text="v1.4.0" vertical="middle" />
+### customFilters
 
 - 类型: `object`
 - 默认值: `undefined`
@@ -224,21 +224,21 @@ module.exports = {
 全局的过滤器优先级没有 Provider 中定义的过滤器高，如果遇到同名的过滤器则这里定义的值会被覆盖。
 :::
 
-### proxyTestUrl <Badge text="v1.4.0" vertical="middle" />
+### proxyTestUrl
 
 - 类型: `string`
 - 默认值: `http://cp.cloudflare.com/generate_204`
 
 Clash 规则中的 `url`。
 
-### proxyTestInterval <Badge text="v1.4.0" vertical="middle" />
+### proxyTestInterval
 
 - 类型: `number`
 - 默认值: `1200`
 
 Clash 规则中的 `interval`。
 
-### customParams <Badge text="v1.19.0" vertical="middle" />
+### customParams
 
 - 类型: `object`
 - 默认值: `{}`

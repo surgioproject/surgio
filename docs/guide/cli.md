@@ -49,7 +49,7 @@ $ npx surgio subscriptions
 
 ## `new`
 
-> 新建助手 <Badge text="v1.16.0" vertical="middle" />
+> 新建助手
 
 ```bash
 $ npx surgio new provider|artifact|template
@@ -61,7 +61,7 @@ $ npx surgio new provider|artifact|template
 
 ## `doctor`
 
-> 检查运行环境 <Badge text="v1.21.0" vertical="middle" />
+> 检查运行环境
 
 ```bash
 $ npx surgio doctor

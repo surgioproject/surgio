@@ -89,8 +89,6 @@ module.exports = {
 
 ### discardKeywords
 
-> <Badge text="v1.1.1" vertical="middle" />
-
 生成一个反向关键词过滤器。第二个入参是开启严格模式。
 
 :::warning 注意
@@ -119,8 +117,6 @@ module.exports = {
 
 ### useSortedKeywords
 
-> <Badge text="v1.5.0" vertical="middle" />
-
 生成一个排序型关键词过滤器。
 
 假设某机场在输出节点列表时按照编码正序排列，你可以采用该过滤器将某几个节点过滤并排序输出。
@@ -138,8 +134,6 @@ module.exports = {
 ```
 
 ### mergeSortedFilters
-
-> <Badge text="v1.5.0" vertical="middle" />
 
 合并多个过滤器，生成一个新的排序型过滤器。
 
@@ -165,8 +159,6 @@ module.exports = {
 
 ### useProviders
 
-> <Badge text="v1.11.0" vertical="middle" />
-
 合并 Provider 之后若是想快速地过滤出某几个 Provider 中的节点作为一个策略组，可以使用该过滤器。
 
 第二个入参是开启严格模式。严格模式下会严格匹配 Provider 名称（注意和 `useKeywords` 的严格模式不同）。
@@ -189,8 +181,6 @@ module.exports = {
 :::
 
 ### discardProviders
-
-> <Badge text="v1.11.0" vertical="middle" />
 
 合并 Provider 之后若是想快速地舍弃某几个 Provider 中的节点作为一个策略组，可以使用该过滤器。
 
