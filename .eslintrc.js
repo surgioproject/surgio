@@ -1,16 +1,23 @@
+const { join } = require('path');
+
 module.exports = {
-  extends: ['eslint:recommended'],
-  parserOptions: {
-    ecmaVersion: 8,
-  },
   env: {
     es6: true,
-    node: true
+    node: true,
   },
+  extends: [
+    'prettier',
+    'prettier/@typescript-eslint',
+    'plugin:@typescript-eslint/recommended',
+  ],
+  parser: '@typescript-eslint/parser',
+  parserOptions: {
+    project: join(__dirname, 'tsconfig.eslint.json'),
+    sourceType: 'module',
+  },
+  plugins: ['@typescript-eslint'],
   rules: {
-    "array-bracket-spacing": 0,
-    "comma-dangle": 0,
-    "dot-notation": 0,
-    "valid-jsdoc": 0
-  }
+    '@typescript-eslint/ban-ts-comment': 0,
+    '@typescript-eslint/no-var-requires': 0,
+  },
 };

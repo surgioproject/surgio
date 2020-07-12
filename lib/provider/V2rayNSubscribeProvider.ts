@@ -94,7 +94,7 @@ export const getV2rayNSubscription = async (
       .filter(item => item.startsWith("vmess://"));
 
     return configList
-      .map<VmessNodeConfig|undefined>(item => {
+      .map<VmessNodeConfig|undefined>((item): VmessNodeConfig|undefined => {
         const json = JSON.parse(fromBase64(item.replace('vmess://', '')));
 
         // istanbul ignore next
@@ -119,9 +119,7 @@ export const getV2rayNSubscription = async (
           tls: json.tls === 'tls',
           host: json.host || '',
           path: json.path || '/',
-          ...(udpRelay ? {
-            udp: udpRelay,
-          } : null),
+          'udp-relay': udpRelay === true,
           ...(json.tls === 'tls' ? {
             skipCertVerify: skipCertVerify ?? false,
             tls13: tls13 ?? false,

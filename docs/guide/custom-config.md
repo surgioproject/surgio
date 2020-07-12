@@ -154,22 +154,22 @@ module.exports = {
 #### surgeConfig.shadowsocksFormat <Badge text="v1.10.0" vertical="middle" />
 
 - 类型: `string`
-- 默认值: `custom`
+- 默认值: `ss`
 - 可选值: `custom|ss`
 
-定义生成 Shadowsocks 节点配置的类型，默认使用 `custom` 的形式，兼容旧版本。也可以选择使用 `ss` 的方式。
+定义生成 Shadowsocks 节点配置的类型，默认使用 `ss` 的形式，旧版本 Surge 需手动设置为 `custom`。
 
 #### surgeConfig.v2ray
 
 - 类型: `string`
-- 默认值: `external`
+- 默认值: `native`
 - 可选值: `external|native`
 
 :::warning 注意
 仅 Surge 4 for iOS 和 Surge 3.3.1 (894) for macOS 之后的版本支持 `native` 方式。
 :::
 
-定义生成 Vmess 节点配置的类型，默认使用 External Provider 的形式，兼容性更好。也可以选择使用 `native` 的方式。
+定义生成 Vmess 节点配置的类型，默认使用 `native` 的方式。旧版本 Surge for Mac 需要使用 External Provider 的形式
 
 #### surgeConfig.resolveHostname <Badge text="v1.5.0" vertical="middle" />
 
@@ -188,24 +188,9 @@ module.exports = {
 ```js
 // surgio.conf.js
 module.exports = {
-  quantumultXConfig: {
-    deviceIds: ['ABCDE12345'],
-  },
+  quantumultXConfig: {},
 };
 ```
-
-#### quantumultXConfig.deviceIds <Badge text="v1.7.0" vertical="middle" />
-
-- 类型: `string[]`
-- 默认值: `undefined`
-
-为了能简便使用 Quantumult X 的第三方远程脚本，你可以在这里设置自己的客户端设备 ID。
-
-:::tip Quantumult X 设备 ID 的获取方法
-点击主页右下角「三角」按钮，再点击右上角「三点」按钮，滚动至页面下方可以看到
-
-<img width="350px" src="./images/qx-device-id.png" alt="">
-:::
 
 ### gateway <Badge text="v1.1.0" vertical="middle" />
 

@@ -87,7 +87,9 @@ module.exports = {
 该过滤器不保证顺序。
 :::
 
-### discardKeywords <Badge text="v1.1.1" vertical="middle" />
+### discardKeywords
+
+> <Badge text="v1.1.1" vertical="middle" />
 
 生成一个反向关键词过滤器。第二个入参是开启严格模式。
 
@@ -115,7 +117,9 @@ module.exports = {
 };
 ```
 
-### useSortedKeywords <Badge text="v1.5.0" vertical="middle" />
+### useSortedKeywords
+
+> <Badge text="v1.5.0" vertical="middle" />
 
 生成一个排序型关键词过滤器。
 
@@ -133,7 +137,9 @@ module.exports = {
 };
 ```
 
-### mergeSortedFilters <Badge text="v1.5.0" vertical="middle" />
+### mergeSortedFilters
+
+> <Badge text="v1.5.0" vertical="middle" />
 
 合并多个过滤器，生成一个新的排序型过滤器。
 
@@ -157,7 +163,9 @@ module.exports = {
 3. Provider 的配置项 `nodeFilter` 也支持排序类型的过滤器，但我们并不建议您这么用，因为 Provider 的 `nodeFilter` 配置项仅针对当前 Provider 而非合并进来的所有的节点，再者如果你同时在 `nodeFilter` 和 `getNodeNames`（包括但不限于）中使用排序过滤器，会进行多次排序，很难避免不出错。所以请尽可能在 `nodeFilter` 中使用普通的过滤器；
 :::
 
-### useProviders <Badge text="v1.11.0" vertical="middle" />
+### useProviders
+
+> <Badge text="v1.11.0" vertical="middle" />
 
 合并 Provider 之后若是想快速地过滤出某几个 Provider 中的节点作为一个策略组，可以使用该过滤器。
 
@@ -170,16 +178,19 @@ const { utils } = require('surgio');
 module.exports = {
   customFilters: {
     providerFilter: utils.useProviders(['dlercloud', 'maying']),
+    looseProviderFilter: utils.useProviders(['dlercloud', 'maying'], false), // 松散模式
   },
 };
 ```
 
 :::warning 注意
 1. 该过滤器不保证顺序；
-2. 在后面的版本中会默认开启严格模式；
+2. 默认开启严格模式；
 :::
 
-### discardProviders <Badge text="v1.11.0" vertical="middle" />
+### discardProviders
+
+> <Badge text="v1.11.0" vertical="middle" />
 
 合并 Provider 之后若是想快速地舍弃某几个 Provider 中的节点作为一个策略组，可以使用该过滤器。
 
@@ -192,13 +203,14 @@ const { utils } = require('surgio');
 module.exports = {
   customFilters: {
     providerFilter: utils.discardProviders(['dlercloud', 'maying']),
+    looseProviderFilter: utils.discardProviders(['dlercloud', 'maying'], false), // 松散模式
   },
 };
 ```
 
 :::warning 注意
 1. 该过滤器不保证顺序；
-2. 在后面的版本中会默认开启严格模式；
+2. 默认开启严格模式；
 :::
 
 ## 如何在自定义过滤器时引用内置的过滤器

@@ -1,12 +1,7 @@
 import _ from 'lodash';
-import { deprecate } from 'util';
 
-import { DEP003, DEP004 } from '../misc/deprecation';
 import flag, { TAIWAN } from '../misc/flag_cn';
 import { NodeNameFilterType, NodeTypeEnum, SimpleNodeConfig, SortedNodeNameFilterType } from '../types';
-
-const showDEP003 = deprecate(_.noop, DEP003, 'DEP003');
-const showDEP004 = deprecate(_.noop, DEP004, 'DEP004');
 
 // tslint:disable-next-line:max-classes-per-file
 export class SortFilterWithSortedFilters implements SortedNodeNameFilterType {
@@ -100,27 +95,19 @@ export const useRegexp = (regexp: RegExp): NodeNameFilterType => {
   return item => regexp.test(item.nodeName);
 };
 
-export const useProviders = (keywords: ReadonlyArray<string>, isStrict?: boolean): NodeNameFilterType => {
+export const useProviders = (keywords: ReadonlyArray<string>, isStrict = true): NodeNameFilterType => {
   // istanbul ignore next
   if (!Array.isArray(keywords)) {
     throw new Error('keywords 请使用数组');
-  }
-
-  if (!isStrict) {
-    showDEP003();
   }
 
   return item => keywords.some(keyword => isStrict ? item?.provider?.name === keyword : item?.provider?.name.includes(keyword));
 };
 
-export const discardProviders = (keywords: ReadonlyArray<string>, isStrict?: boolean): NodeNameFilterType => {
+export const discardProviders = (keywords: ReadonlyArray<string>, isStrict = true): NodeNameFilterType => {
   // istanbul ignore next
   if (!Array.isArray(keywords)) {
     throw new Error('keywords 请使用数组');
-  }
-
-  if (!isStrict) {
-    showDEP004();
   }
 
   return item => !keywords.some(keyword => isStrict ? item?.provider?.name === keyword : item?.provider?.name.includes(keyword));

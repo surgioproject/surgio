@@ -11,7 +11,7 @@ module.exports = {
       port: '443',
       method: 'chacha20-ietf-poly1305',
       password: 'password',
-      'udp-relay': 'true',
+      'udp-relay': true,
       obfs: 'tls',
       'obfs-host': 'gateway-carry.icloud.com',
       tfo: true,

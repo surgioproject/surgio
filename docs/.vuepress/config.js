@@ -93,6 +93,7 @@ module.exports = {
             'api',
             'cli',
             'faq',
+            'upgrade-guide-v2',
             'learning-resources',
           ]
         },
@@ -104,7 +105,6 @@ module.exports = {
             'advance/custom-filter',
             'advance/automation',
             'advance/api-gateway',
-            'advance/api-gateway-beta',
             ['https://blog.dada.li/2019/better-proxy-rules-for-apple-services', '苹果服务的连接策略推荐']
           ]
         },

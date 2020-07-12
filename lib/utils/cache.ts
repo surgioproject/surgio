@@ -5,7 +5,7 @@ import { PROVIDER_CACHE_MAXAGE } from './constant';
 
 export interface SubsciptionCacheItem {
   readonly body: string;
-  subscriptionUserinfo?: SubscriptionUserinfo, // tslint:disable-line:readonly-keyword
+  subscriptionUserinfo?: SubscriptionUserinfo,
 }
 
 export const ConfigCache = new LRU<string, string>({

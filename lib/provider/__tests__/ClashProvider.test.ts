@@ -100,7 +100,7 @@ test('getClashSubscription', async t => {
     method: 'auto',
     tls: false,
     network: 'tcp',
-    udp: false,
+    'udp-relay': false,
   });
   t.deepEqual(config.shift(), {
     type: NodeTypeEnum.Vmess,
@@ -113,7 +113,7 @@ test('getClashSubscription', async t => {
     alterId: '32',
     method: 'auto',
     network: 'ws',
-    udp: false,
+    'udp-relay': false,
     tls: true,
     tls13: false,
     skipCertVerify: false,
@@ -221,7 +221,7 @@ test('getClashSubscription udpRelay', async t => {
     method: 'auto',
     tls: false,
     network: 'tcp',
-    udp: true,
+    'udp-relay': true,
   });
 });
 

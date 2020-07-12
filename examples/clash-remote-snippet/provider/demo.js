@@ -12,7 +12,7 @@ module.exports = {
       password: 'surgio',
       obfs: 'tls',
       'obfs-host': 'world.taobao.com',
-      'udp-relay': 'true',
+      'udp-relay': true,
     },
     {
       nodeName: '🇭🇰HK Netflix',
@@ -23,7 +23,7 @@ module.exports = {
       password: 'surgio',
       obfs: 'tls',
       'obfs-host': 'world.taobao.com',
-      'udp-relay': 'true',
+      'udp-relay': true,
     },
   ],
 };

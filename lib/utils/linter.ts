@@ -1,10 +1,13 @@
 // istanbul ignore file
 
-import { CLIEngine } from 'eslint';
+import { ESLint } from 'eslint';
+import _ from 'lodash';
 
-export const createCli = (cliConfig?: object) => {
+export const createCli = (cliConfig?: ESLint.Options): ESLint => {
   const linterConfig = {
-    useEslintrc: true,
+    // 在测试情况下 fixture 目录不包含 eslintrc，避免 eslint 读取根目录的 eslintrc
+    useEslintrc: process.env.NODE_ENV !== 'test',
+    extensions: ['.js'],
     baseConfig: {
       extends: [
         '@surgio/eslint-config-surgio',
@@ -15,36 +18,36 @@ export const createCli = (cliConfig?: object) => {
     },
   };
 
-  return new CLIEngine({
+  return new ESLint({
     ...linterConfig,
     ...cliConfig,
   });
 };
 
-export const checkAndFix = (cwd: string): boolean => {
-  const cli = createCli({ fix: true, cwd, });
-  const report = cli.executeOnFiles(['.']);
-  const formatter = cli.getFormatter();
-  const { errorCount } = report;
+export const checkAndFix = async (cwd: string): Promise<boolean> => {
+  const cli = createCli({ fix: true, cwd });
+  const results = await cli.lintFiles(['.']);
+  const errorCount = _.sumBy(results, curr => curr.errorCount);
+  const fixableErrorCount = _.sumBy(results, curr => curr.fixableErrorCount);
 
-  console.log(formatter(report.results));
+  await ESLint.outputFixes(results);
 
-  CLIEngine.outputFixes(report);
+  const formatter = await cli.loadFormatter("stylish");
+  const resultText = formatter.format(results);
 
-  if (errorCount > 0) {
-    throw new Error('ESLint 测试不通过');
-  }
+  console.log(resultText);
 
-  return true;
+  return errorCount - fixableErrorCount === 0;
 };
 
-export const check = (cwd: string): boolean => {
-  const cli = createCli({ cwd, });
-  const report = cli.executeOnFiles(['.']);
-  const formatter = cli.getFormatter();
-  const { errorCount } = report;
+export const check = async (cwd: string): Promise<boolean> => {
+  const cli = createCli({ cwd });
+  const results = await cli.lintFiles(['.']);
+  const errorCount = _.sumBy(results, curr => curr.errorCount);
+  const formatter = await cli.loadFormatter("stylish");
+  const resultText = formatter.format(results);
 
-  console.log(formatter(report.results));
+  console.log(resultText);
 
   return errorCount === 0;
 };

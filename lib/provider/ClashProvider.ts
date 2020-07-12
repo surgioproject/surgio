@@ -233,7 +233,7 @@ export const parseClashConfig = (
             uuid: item.uuid,
             alterId: item.alterId ? `${item.alterId}` : '0',
             method: item.cipher || 'auto',
-            udp: resolveUdpRelay(item.udp, udpRelay),
+            'udp-relay': resolveUdpRelay(item.udp, udpRelay),
             tls: item.tls ?? false,
             network: item.network || 'tcp',
             ...(item.network === 'ws' ? {

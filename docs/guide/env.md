@@ -11,13 +11,14 @@ sidebarDepth: 2
 
 ### `SURGIO_NETWORK_TIMEOUT`
 
-- 默认值: `20000`
+- 默认值: `5000`
+- 单位: 秒
 
 ### `SURGIO_NETWORK_RETRY`
 
-- 默认值: `2`
+- 默认值: `0`
 
-最大重试次数为 2 时，加上原始的请求最多会请求 3 次。
+举例，当最大重试次数为 2 时，加上原始的请求最多会请求 3 次。
 
 ### `SURGIO_NETWORK_CONCURRENCY`
 

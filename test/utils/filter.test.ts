@@ -316,8 +316,8 @@ test('complicated mergeFilters', t => {
 });
 
 test('useProviders', t => {
-  const fn = filter.useProviders(['测试', 'test']);
-  const fn2 = filter.useProviders(['测试', 'test'], true);
+  const fn = filter.useProviders(['测试', 'test'], false);
+  const fn2 = filter.useProviders(['测试', 'test']);
 
   t.is(fn({
     ...generateVmessNode('test'),
@@ -347,8 +347,8 @@ test('useProviders', t => {
 });
 
 test('discardProviders', t => {
-  const fn = filter.discardProviders(['测试', 'test']);
-  const fn2 = filter.discardProviders(['测试', 'test'], true);
+  const fn = filter.discardProviders(['测试', 'test'], false);
+  const fn2 = filter.discardProviders(['测试', 'test']);
 
   t.is(fn({
     ...generateVmessNode('test'),

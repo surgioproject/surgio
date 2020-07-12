@@ -5,44 +5,17 @@ sidebarDepth: 1
 
 # 快速搭建托管 API
 
-:::tip 提示
-本文亦发布于我的个人博客 [blog.dada.li](https://blog.dada.li/2019/surgio-api-gateway)
-:::
-
 [[toc]]
 
 ## 前言
 
 相信很多人都用过网络上处理规则的 API 接口，也有人在使用过 Surgio 后觉得更新规则不太灵活。虽然我们已经能够通过自动化的方法每隔一段时间更新一次规则，但还是无法做到实时更新。这篇文章就是想教大家，利用现成的 SAAS(Software as a Service) 服务，来实现一个 Surgio 规则仓库的 API。
 
-## 简述实现
+目前 Surgio 支持两个部署平台，Vercel（推荐）和 Heroku。你也可以部署在自己的主机上，不过没有技术支持。
 
-目前 Surgio 支持两个部署平台，阿里云函数服务和 Vercel。他们各自有各自的优缺点，由各位定夺使用谁（无法同时使用）。
+需要保证 Surgio 版本号大于 v1.20.0。
 
-### Vercel <Badge text="推荐" vertical="middle" />
-
-优点：
-
-- 管理简单
-- 有免费额度（几乎不可能用完）
-- 有香港边缘服务器节点（源站位于美国）
-
-缺点：
-
-- 英文界面、文档
-
-### 阿里云函数
-
-优点：
-
-- 有免费额度
-- 有香港机房
-
-缺点：
-
-- 管理复杂（文档很多很杂）
-
-## 部署 - Vercel <Badge text="推荐" vertical="middle" />
+## 部署 - Vercel
 
 ### 准备
 
@@ -54,16 +27,22 @@ sidebarDepth: 1
 首先，安装工具链。
 
 ```bash
-$ npm i -g now
+$ npm i -g vercel
+```
+
+在项目中安装 `@surgio/gateway`。
+
+```bash
+$ npm i @surgio/gateway --save
 ```
 
 登录账号。
 
 ```bash
-$ now login
+$ vercel login
 ```
 
-新建文件 `now.json`，注意修改代码中 `<...>` 部分。
+新建文件 `vercel.json`。
 
 ```json
 {
@@ -72,7 +51,7 @@ $ now login
   "builds": [
     { 
       "src": "/gateway.js",
-      "use": "@now/node",
+      "use": "@vercel/node",
       "config": {
         "includeFiles": [
           "provider/**",
@@ -97,7 +76,7 @@ $ now login
 ```json
 {
   "engines": {
-    "node": "10.x"
+    "node": ">=12"
   }
 }
 ```
@@ -109,7 +88,7 @@ $ now login
 ```js
 'use strict';
 
-const gateway = require('surgio/build/gateway');
+const gateway = require('@surgio/gateway');
 
 module.exports = gateway.createHttpServer();
 ```
@@ -119,7 +98,7 @@ module.exports = gateway.createHttpServer();
 #### 接口鉴权
 
 :::warning 注意
-接口鉴权依赖使用新版的部署方法，旧的 `nowHandler` 不支持。
+不建议关闭鉴权！
 :::
 
 在 `surgio.conf.js` 中增加如下字段：
@@ -140,7 +119,7 @@ module.exports = gateway.createHttpServer();
 ### 部署
 
 ```bash
-$ now --prod
+$ vercel --prod
 ```
 
 如果不出意外你会看到如图的信息，高亮的 URL 即为云函数服务的访问地址。
@@ -150,13 +129,13 @@ $ now --prod
 为了让托管地址保持一致，你需要到 `surgio.conf.js` 把 `urlBase` 更新为：
 
 ```
-https://xxxxxx.xxx.now.sh/get-artifact/
+https://xxxxxx.xxx.vercel.app/get-artifact/
 ```
 
 最后，再运行一次
 
 ```bash
-$ now --prod
+$ vercel --prod
 ```
 
 更新服务。
@@ -171,127 +150,61 @@ $ now --prod
 
 有几点需要大家注意的：
 
-1. 每一次更新本地的代码，都需要执行一次 `now`，保证远端和本地代码一致；
+1. 每一次更新本地的代码，都需要执行一次 `vercel`，保证远端和本地代码一致；
 2. 访问日志、监控、域名绑定等复杂功能恕不提供教程；
 3. 如果访问地址泄漏，请立即删除云函数然后修改机场密码；
-4. 由于免费用户单次请求的超时时间为 10s，所以不建议使用过多的远程片段、较高的超时时间和重试机制。你可以在 `now.json` 中加入以下的环境变量缓解遇到 Vercel 超时报错的概率：
+4. 由于免费用户单次请求的超时时间为 10s，所以不建议使用过多的远程片段、较高的超时时间和重试机制。若你为付费用户，可以在 `vercel.json` 中加入以下的环境变量增加网络重试次数和超时时间。
 
    ```json
    {
      "env": {
-       "SURGIO_NETWORK_RETRY": 0,
-       "SURGIO_NETWORK_TIMEOUT": "5000"
+       "SURGIO_NETWORK_RETRY": 2,
+       "SURGIO_NETWORK_TIMEOUT": "10000"
      }
    }
    ```
 
-## 部署 - 阿里云函数 <Badge text="即将废弃" vertical="middle" type="error" />
+## 部署 - Heroku
 
-首先需要确保本地 Surgio 版本已经更新到 v0.12.4 或更新。
+你可以在 [这里](https://github.com/surgioproject/heroku_demo) 找到完整的运行 Demo。
 
-### 准备
+把你的规则仓库同步至 GitHub 后，到 Heroku 关联该项目。
 
-1. 注册一个阿里云账号，最好是国内的因为我不清楚国际版有什么差异
-2. 开启 [云函数功能](https://fc.console.aliyun.com)
+![](../images/heroku_1.png)
 
-### 配置
+关联项目后，开启 `master` 分支自动部署。你可以不开启这一项，后续如果需要更新服务代码则进行手动更新。
 
-首先，安装[云函数工具链](https://github.com/alibaba/funcraft)。
+![](../images/heroku_2.png)
 
-```bash
-$ npm install @alicloud/fun -g
-```
+最后，手动触发一次部署。
 
-在使用工具链之前，需要做一些基本的配置。在控制台中输入：
+![](../images/heroku_3.png)
 
-```bash
-$ fun config
-```
-
-然后按照提示，依次配置 `Account ID`, `Access Key Id`, `Secret Access Key`, `Default Region Name`。关于服务区的选择，我建议避免使用大陆服务区。
-
-在仓库中新建文件 `template.yml`，注意修改代码中 `<...>` 部分。
-
-```yaml
-ROSTemplateFormatVersion: '2015-09-01'
-Transform: 'Aliyun::Serverless-2018-04-03'
-Resources:
-  <输入服务名 (例如 surgio-api)>:
-    Type: 'Aliyun::Serverless::Service'
-    Properties:
-      Description: 'Surgio API service'
-    get-artifact:
-      Type: 'Aliyun::Serverless::Function'
-      Properties:
-        Handler: gateway.handler
-        Initializer: gateway.initializer
-        CodeUri: './'
-        Runtime: nodejs10
-      Events:
-        http-service:
-          Type: HTTP
-          Properties:
-            AuthType: ANONYMOUS
-            Methods: ['GET', 'HEAD']
-```
-
-新建文件 `.funignore`。
+你可能还需要更新 _surgio.conf.js_ 内 `urlBase` 的值。以这个 Demo 为例，它应该是：
 
 ```
-# Logs
-logs/
-*.log
-
-# Dependency directories
-!/node_modules/
+https://surgio-demo.herokuapp.com/get-artifact/
 ```
 
-### 编写云函数
-
-新建文件 `gateway.js`。
+## 自有服务器部署
 
 ```js
+// gateway.js
+
 'use strict';
 
-const gateway = require('surgio/build/gateway');
+const gateway = require('@surgio/gateway');
 
-exports.initializer = gateway.initializer
-exports.handler = gateway.handler;
+(async () => {
+  const app = await gateway.bootstrapServer();
+  await app.listen(3000, '0.0.0.0');
+  console.log('> Your app is ready at http://0.0.0.0:3000');
+})();
 ```
-
-### 部署
 
 ```bash
-$ fun deploy
+node gateway.js
 ```
-
-如果不出意外你会看到如图的信息，高亮的 URL 即为云函数服务的访问地址。
-
-![carbon.png](https://i.typcdn.com/geekdada/8428849460_548622.png) 
-
-### 使用
-
-如果你已经配置好了一个 Artifact 名为 `surge.conf`，那该文件的访问地址就是：
-
-```
-https://1234567890.cn-hongkong.fc.aliyuncs.com/2016-08-15/proxy/surgio-api/get-artifact/surge.conf
-```
-
-为了让托管地址保持一致，你需要到 `surgio.conf.js` 把 `urlBase` 更新为：
-
-```
-https://1234567890.cn-hongkong.fc.aliyuncs.com/2016-08-15/proxy/surgio-api/get-artifact/
-```
-
-最后，再运行一次 `fun deploy` 更新服务。
-
-### 最后
-
-有几点需要大家注意的：
-
-1. 每一次更新本地的代码，都需要执行一次 `fun deploy`，保证远端和本地代码一致
-2. 访问日志、监控、域名绑定等复杂功能恕不提供教程
-3. 如果访问地址泄漏，请立即删除云函数然后修改机场密码
 
 ## 最后的最后
 

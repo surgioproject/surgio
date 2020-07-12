@@ -123,7 +123,7 @@ export function getEngine(templateDir: string): nunjucks.Environment {
   engine.addFilter('json', (obj: JsonObject) => JSON.stringify(obj));
 
   return engine;
-};
+}
 
 export const convertSurgeScriptRuleToQuantumultXRewriteRule = (str: string): string => {
   const parts = str.split(' ');

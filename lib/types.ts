@@ -26,7 +26,7 @@ export interface CommandConfig {
   readonly artifacts: ReadonlyArray<ArtifactConfig>;
   readonly remoteSnippets?: ReadonlyArray<RemoteSnippetConfig>;
   readonly urlBase: string;
-  publicUrl: string; // tslint:disable-line:readonly-keyword
+  publicUrl: string;
   readonly providerDir: string;
   readonly templateDir: string;
   readonly configDir: string;
@@ -41,7 +41,7 @@ export interface CommandConfig {
   readonly binPath?: {
     readonly shadowsocksr?: string;
     readonly v2ray?: string;
-    vmess?: string; // tslint:disable-line:readonly-keyword
+    vmess?: string;
   };
   readonly surgeConfig?: {
     readonly shadowsocksFormat?: 'ss'|'custom';
@@ -49,11 +49,11 @@ export interface CommandConfig {
     readonly resolveHostname?: boolean;
   };
   readonly quantumultXConfig?: {
-    readonly deviceIds?: ReadonlyArray<string>;
+
   };
   readonly gateway?: {
     readonly accessToken?: string;
-    readonly auth?: boolean; // tslint:disable-line:readonly-keyword
+    readonly auth?: boolean;
     readonly cookieMaxAge?: number;
   },
   readonly proxyTestUrl?: string;
@@ -210,7 +210,7 @@ export interface VmessNodeConfig extends SimpleNodeConfig {
   readonly tls: boolean;
   readonly host?: string;
   readonly path?: string;
-  readonly udp?: boolean; // TODO: 统一为 udp-relay
+  readonly 'udp-relay'?: boolean;
   readonly tls13?: boolean;
   readonly skipCertVerify?: boolean;
   readonly wsHeaders?: Record<string, string>;
@@ -243,17 +243,17 @@ export interface Socks5NodeConfig extends SimpleNodeConfig {
 
 export interface SimpleNodeConfig {
   readonly type: NodeTypeEnum;
-  nodeName: string; // tslint:disable-line
+  nodeName: string;
   readonly enable?: boolean;
-  // tslint:disable-next-line
+
   tfo?: boolean; // TCP Fast Open
-  // tslint:disable-next-line
+
   mptcp?: boolean; // Multi-Path TCP
-  binPath?: string; // tslint:disable-line
-  localPort?: number; // tslint:disable-line
-  surgeConfig?: CommandConfig['surgeConfig']; // tslint:disable-line
-  hostnameIp?: ReadonlyArray<string>; // tslint:disable-line
-  provider?: Provider; // tslint:disable-line
+  binPath?: string;
+  localPort?: number;
+  surgeConfig?: CommandConfig['surgeConfig'];
+  hostnameIp?: ReadonlyArray<string>;
+  provider?: Provider;
 }
 
 export interface PlainObject { readonly [name: string]: any }

@@ -42,11 +42,7 @@ module.exports = {
   surgeConfig: {
     v2ray: 'native',
   },
-  quantumultXConfig: {
-    deviceIds: [
-      '55BE3B10F8A1',
-    ],
-  },
+  quantumultXConfig: {},
   customFilters: {
     globalFilter: node => node.nodeName === '🇺🇲 US',
   },

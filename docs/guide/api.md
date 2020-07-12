@@ -42,23 +42,53 @@ https://xxxxxx.xxx.now.sh/list-artifact
 https://xxxxxx.xxx.now.sh/list-artifact?access_token=YOUR_PASSWORD
 ```
 
+## 面板
+
+直接打开 Vercel 分配的域名就可以看到新版的面板。如果开启了鉴权则需登录。
+
+### Artifact 分类
+
+Artifact 配置新增分类，方便在面板中找到想要的 Artifact。Surgio 内置了一些常用的类型，并且还为内置分类增加了个性化的功能。
+
+`categories` 接受一个数组，数组内容可以自定也可以使用内置字段。
+
+```js
+const { categories } = require('surgio');
+
+module.exports = {
+  artifacts: [
+    {
+      name: 'SurgeV3.conf',
+      template: 'surge_v3',
+      provider: 'demo',
+      categories: [
+        'Maying',
+        categories.SURGE,
+      ],
+    },
+    {
+      name: 'Surge.conf',
+      template: 'surge',
+      provider: 'demo',
+      categories: [
+        categories.SURGE,
+      ],
+    }
+  ],
+};
+```
+
+以下是所有的内置分类字段：
+
+- `categories.SNIPPET` - 片段
+- `categories.SURGE` - Surge
+- `categories.QUANTUMULT_X` - Quantumult X 完整配置
+- `categories.QUANTUMULT_X_SERVER` - Remote Server 片段
+- `categories.QUANTUMULT_X_FILTER` - Remote Filter 片段
+- `categories.QUANTUMULT_X_REWRITE` - Remote Rewrite 片段
+- `categories.CLASH` - 完整 Clash 配置
+
 ## 接口
-
-### 展示所有 Artifact
-
-```
-GET /list-artifact
-```
-
-<Badge text="需要鉴权" vertical="middle" />
-
-![](./images/api-gateway-preview.png)
-
-特性：
-
-- 若名称中包含 `surge`（大小写不敏感），则会出现添加到 Surge 的按钮。
-- 若名称中包含 `clash`（大小写不敏感），则会出现添加到 ClashX/CFW 的按钮。
-- 若项目下的 `package.json` 有 `repository` 字段，则支持直接跳转到 GitLab 或 GitHub 编辑对应文件。
 
 ### 下载 Artifact
 
@@ -68,7 +98,7 @@ GET /get-artifact/<artifactName>
 
 <Badge text="需要鉴权" vertical="middle" />
 
-可选参数：
+#### 可选参数
 
 | 参数       | 可选值                         | 备注 |
 | -------- | --------------------------- | -- |
@@ -86,58 +116,85 @@ GET /get-artifact/<artifactName>
 2. `filter` 的值为过滤器的名称。你可以直接使用内置的过滤器，例如 `hkFilter`，也可以使用自定义的过滤器。
 :::
 
-### 转换 Quantumult X 远程脚本
+#### 自定义参数
+
+URL 中的 Query 参数能够传入到模板变量 `customParams` 中，方便用户拓展模板。
+
+比如：
 
 ```
-GET /qx-script?url=<远程脚本地址>
+https://example.now.sh/get-artifact/Surge.conf?access_token=token&foo=bar
 ```
 
-<Badge text="即将废弃" vertical="middle" type="error" />
+那模板变量 `customParams.foo` 值为 `bar`。如果已经在 Artifact 中定义了这个 Key，那预先定义的值将被覆盖。
 
-可选参数：
+:::warning 注意
+1. URL 参数中的值的类型都是字符串，形如 `true`、`1` 这样的值在模板中是 `"true"` 和 `"1"`；
+2. `access_token`, `format`, `filter`, `dl` 为保留 Key 无法被定义；
+:::
 
-| 参数       | 值                         | 备注 |
-| -------- | --------------------------- | -- |
-| `id` | 设备 ID |  多个值以半角 `,` 分隔  |
-
-会在脚本内容中注入设备 ID。
-
-使用时，将规则放入 `rewrite_local` 即可。
+### 直接导出 Provider
 
 ```
-[rewrite_local]
-^http://example\.com/resource/ url script-echo-response https://xxx.xx.now.sh/qx-script?url=https://raw.githubusercontent.com/crossutility/Quantumult-X/master/sample-rewrite-with-script.js
+GET /export-providers
+```
+
+<Badge text="需要鉴权" vertical="middle" />
+
+有时候你只想将 Provider 导出成类似 Surge Policy 或者其它格式的配置，那么可以借助这个功能快速达到目的，免去了新建一个 Artifact 的麻烦。即使这个 Provider 没有被任何一个 Artifact 使用，它也是能够被直接导出的！
+
+#### 使用内置 `format` 导出
+
+你可以在面板的 Provider 页面找到复制链接按钮。目前面板还不支持复制组装多个 Provider 的 URL。如果你想组装多个 Provider，可以修改 URL 中的 `providers` 参数，多个 Provider 名称以逗号分隔，例如：
+
+```
+https://example.com/export-providers?providers=maying,dlercloud&format=surge-policy
 ```
 
 :::tip 提示
-1. 若 URL 中有参数 `id` 则只会添加参数中的值而忽略配置中的值。
-2. 你可以在全局配置中添加 [固定的设备 ID](/guide/custom-config.md#quantumultxconfig-deviceids)。
+合并多个 Provider 时，第一个 Provider 为主 Provider，遵循过滤器的合并规则。
 :::
 
-### 转换 Quantumult X rewrite_remote
+#### 指定 Template 导出
+
+你可以通过增加 URL 参数 `template` 来制定使用某个 Template 来导出 Provider。值得一提的是，这种方法不需要新定义 Artifact。
+
+### 直接渲染模板
 
 ```
-GET /qx-rewrite-remote?url=<远程脚本地址>
+GET /render?template=[template name]
 ```
 
-<Badge text="即将废弃" vertical="middle" type="error" />
-
-可选参数：
-
-| 参数       | 值                         | 备注 |
-| -------- | --------------------------- | -- |
-| `id` | 设备 ID |  多个值以半角 `,` 分隔  |
-
-以 [这个脚本](https://github.com/NobyDa/Script/blob/master/QuantumultX/Js.conf) 为例，API 会将内容里的 `script-response-body` 条目的脚本地址替换成注入设备 ID API 的地址。
-
-使用时，将规则放入 `rewrite_remote` 即可。
+有时候我们并不需要将节点和规则完整的渲染出来，而是渲染某个模板。通过这个接口我们可以方便地渲染某个 Template，例如：
 
 ```
-[rewrite_remote]
-https://xxx.xx.now.sh/qx-rewrite-remote?url=https://raw.githubusercontent.com/NobyDa/Script/master/QuantumultX/Js.conf, tag=NobyDa, enabled=true
+https://example.com/render?template=static
 ```
+
+这样 Surgio 就会渲染仓库目录下 _./template/static.tpl_ 的内容。
 
 :::tip 提示
-1. 若 URL 中有参数 `id` 则只会添加参数中的值而忽略配置中的值。
-2. 你可以在全局配置中添加 [固定的设备 ID](/guide/custom-config.md#quantumultxconfig-deviceids)。
+1. 只有 `downloadUrl` 和 `getUrl` 这两个模板变量（方法）有效；
+2. 你不可以在这里的模板中引用 `nodeList` 之类的变量，因为根本不会解析节点；
+3. 子目录下的模板也是可以直接渲染的；
 :::
+
+### 正向代理
+
+```
+/proxy/[url]
+```
+
+这个正向代理可以让我们方便在没有梯子的情况下获取到一些下载困难的文件，同时也可以为远程片段加速。需要注意的是，正向代理不同于你常用的梯子。
+
+这个功能依赖 [Rob--W/cors-anywhere](https://github.com/Rob--W/cors-anywhere)。你可以通过设置以下两个环境变量来限制请求来源。
+
+- `CORSANYWHERE_BLACKLIST`（对应 `originBlacklist`）
+- `CORSANYWHERE_WHITELIST`（对应 `originWhitelist`）
+
+使用方法：
+
+```
+/proxy/https://github.com/lhie1/Rules/raw/master/Surge/Surge%203/Provider/Media/Netflix.list
+```
+

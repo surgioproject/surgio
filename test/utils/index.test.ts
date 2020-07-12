@@ -1196,7 +1196,7 @@ test('getQuantumultXNodes', t => {
       port: 8080,
       tls: false,
       host: '',
-      udp: true,
+      'udp-relay': true,
       uuid: '1386f85e-657b-4d6e-9d56-78badb75e1fd',
     },
     {
@@ -1264,7 +1264,7 @@ test('getQuantumultXNodes', t => {
       port: 443,
       tls: true,
       tls13: true,
-      udp: true,
+      'udp-relay': true,
       uuid: '1386f85e-657b-4d6e-9d56-78badb75e1fd',
     }]),
     'vmess=1.1.1.1:443, method=chacha20-ietf-poly1305, password=1386f85e-657b-4d6e-9d56-78badb75e1fd, udp-relay=true, obfs=over-tls, tls13=true, tag=测试'
