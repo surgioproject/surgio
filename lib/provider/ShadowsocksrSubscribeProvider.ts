@@ -78,71 +78,69 @@ export const getShadowsocksrSubscription = async (
 }> => {
   assert(url, '未指定订阅地址 url');
 
-  async function requestConfigFromRemote(): ReturnType<typeof getShadowsocksrSubscription> {
-    const response = SubscriptionCache.has(url)
-      ? SubscriptionCache.get(url) as SubsciptionCacheItem
-      : await (
-        async () => {
-          const res = await got.get(url, {
-            timeout: NETWORK_TIMEOUT,
-            retry: NETWORK_RETRY,
-            responseType: 'text',
-          });
-          const subsciptionCacheItem: SubsciptionCacheItem = {
-            body: res.body,
-          };
+  const response = SubscriptionCache.has(url)
+    ? SubscriptionCache.get(url) as SubsciptionCacheItem
+    : await (
+      async () => {
+        const res = await got.get(url, {
+          timeout: NETWORK_TIMEOUT,
+          retry: NETWORK_RETRY,
+          responseType: 'text',
+        });
+        const subsciptionCacheItem: SubsciptionCacheItem = {
+          body: res.body,
+        };
 
-          if (res.headers['subscription-userinfo']) {
-            subsciptionCacheItem.subscriptionUserinfo = parseSubscriptionUserInfo(res.headers['subscription-userinfo'] as string);
-            logger.debug(
-              '%s received subscription userinfo - raw: %s | parsed: %j',
-              url,
-              res.headers['subscription-userinfo'],
-              subsciptionCacheItem.subscriptionUserinfo
-            );
-          }
-
-          SubscriptionCache.set(url, subsciptionCacheItem);
-
-          return subsciptionCacheItem;
-        }
-      )();
-
-    const nodeList = fromBase64(response.body)
-      .split('\n')
-      .filter(item => !!item && item.startsWith('ssr://'))
-      .map<ShadowsocksrNodeConfig>(str => {
-        const nodeConfig = parseSSRUri(str);
-
-        if (udpRelay !== void 0) {
-          (nodeConfig['udp-relay'] as boolean) = udpRelay;
+        if (res.headers['subscription-userinfo']) {
+          subsciptionCacheItem.subscriptionUserinfo = parseSubscriptionUserInfo(
+            res.headers['subscription-userinfo'] as string
+          );
+          logger.debug(
+            '%s received subscription userinfo - raw: %s | parsed: %j',
+            url,
+            res.headers['subscription-userinfo'],
+            subsciptionCacheItem.subscriptionUserinfo
+          );
         }
 
-        return nodeConfig;
-      });
+        SubscriptionCache.set(url, subsciptionCacheItem);
 
-    if (
-      !response.subscriptionUserinfo &&
-      nodeList[0].nodeName.includes('剩余流量')
-    ) {
-      const dataNode = nodeList[0];
-      const expireNode = nodeList[1];
-      response.subscriptionUserinfo = parseSubscriptionNode(dataNode.nodeName, expireNode.nodeName);
-      logger.debug(
-        '%s received subscription node - raw: %s %s | parsed: %j',
-        url,
-        dataNode.nodeName,
-        expireNode.nodeName,
-        response.subscriptionUserinfo
-      );
-    }
+        return subsciptionCacheItem;
+      }
+    )();
 
-    return {
-      nodeList,
-      subscriptionUserinfo: response.subscriptionUserinfo,
-    };
+  const nodeList = fromBase64(response.body)
+    .split('\n')
+    .filter(item => !!item && item.startsWith('ssr://'))
+    .map<ShadowsocksrNodeConfig>(str => {
+      const nodeConfig = parseSSRUri(str);
+
+      if (udpRelay !== void 0) {
+        (nodeConfig['udp-relay'] as boolean) = udpRelay;
+      }
+
+      return nodeConfig;
+    });
+
+  if (
+    !response.subscriptionUserinfo &&
+    nodeList[0].nodeName.includes('剩余流量')
+  ) {
+    const dataNode = nodeList[0];
+    const expireNode = nodeList[1];
+    response.subscriptionUserinfo = parseSubscriptionNode(dataNode.nodeName, expireNode.nodeName);
+    logger.debug(
+      '%s received subscription node - raw: %s %s | parsed: %j',
+      url,
+      dataNode.nodeName,
+      expireNode.nodeName,
+      response.subscriptionUserinfo
+    );
   }
 
-  return await requestConfigFromRemote();
+  return {
+    nodeList,
+    subscriptionUserinfo: response.subscriptionUserinfo,
+  };
 };
 

@@ -4,6 +4,8 @@ const nock = require('nock');
 const fs = require('fs');
 const path = require('path');
 
+const toBase64 = str => Buffer.from(str, 'utf8').toString('base64');
+
 const scope = nock('http://example.com')
   .get(/\/gui-config\.json/)
   .reply(
@@ -84,6 +86,15 @@ const scope = nock('http://example.com')
     fs.readFileSync(path.join(__dirname, 'asset/ForeignMedia.list'), {
       encoding: 'utf8',
     })
+  )
+  .get(/\/ssd-sample\.txt/)
+  .reply(
+    200,
+    `ssd://${toBase64(
+      fs.readFileSync(path.join(__dirname, 'asset/ssd-sample.json'), {
+        encoding: 'utf8',
+      })
+    )}`,
   )
   .get(/\/error/)
   .reply(

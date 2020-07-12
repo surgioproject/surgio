@@ -169,8 +169,8 @@ export class Artifact extends EventEmitter {
       customParams: mergedCustomParams,
       ...(this.artifact.proxyGroupModifier ? {
         clashProxyConfig: {
-          Proxy: getClashNodes(nodeList),
-          'Proxy Group': normalizeClashProxyGroupConfig(
+          proxies: getClashNodes(nodeList),
+          'proxy-groups': normalizeClashProxyGroupConfig(
             nodeList,
             {
               usFilter,

@@ -1,5 +1,5 @@
 import Joi from '@hapi/joi';
-import { ShadowsocksJsonSubscribeProviderConfig, SupportProviderEnum } from '../types';
+import { ShadowsocksJsonSubscribeProviderConfig } from '../types';
 import { getShadowsocksJSONConfig } from '../utils';
 import { RELAY_SERVICE } from '../utils/constant';
 import Provider from './Provider';

@@ -90,71 +90,69 @@ export const getShadowsocksSubscription = async (
 }> => {
   assert(url, '未指定订阅地址 url');
 
-  async function requestConfigFromRemote(): ReturnType<typeof getShadowsocksSubscription> {
-    const response = SubscriptionCache.has(url)
-      ? SubscriptionCache.get(url) as SubsciptionCacheItem
-      : await (
-        async () => {
-          const res = await got.get(url, {
-            timeout: NETWORK_TIMEOUT,
-            retry: NETWORK_RETRY,
-            responseType: 'text',
-          });
-          const subsciptionCacheItem: SubsciptionCacheItem = {
-            body: res.body,
-          };
-
-          if (res.headers['subscription-userinfo']) {
-            subsciptionCacheItem.subscriptionUserinfo = parseSubscriptionUserInfo(res.headers['subscription-userinfo'] as string);
-            logger.debug(
-              '%s received subscription userinfo - raw: %s | parsed: %j',
-              url,
-              res.headers['subscription-userinfo'],
-              subsciptionCacheItem.subscriptionUserinfo
-            );
-          }
-
-          SubscriptionCache.set(url, subsciptionCacheItem);
-
-          return subsciptionCacheItem;
-        }
-      )();
-
-    const nodeList = fromBase64(response.body)
-      .split('\n')
-      .filter(item => !!item && item.startsWith('ss://'))
-      .map<any>(item => {
-        debug('Parsing Shadowsocks URI', item);
-        const scheme = legacyUrl.parse(item, true);
-        const userInfo = fromUrlSafeBase64(scheme.auth as string).split(':');
-        const pluginInfo = typeof scheme.query.plugin === 'string' ? decodeStringList(scheme.query.plugin.split(';')) : {};
-
-        return {
-          type: NodeTypeEnum.Shadowsocks,
-          nodeName: decodeURIComponent((scheme.hash as string).replace('#', '')),
-          hostname: scheme.hostname,
-          port: scheme.port,
-          method: userInfo[0],
-          password: userInfo[1],
-          ...(typeof udpRelay === 'boolean' ? {
-            'udp-relay': udpRelay,
-          } : null),
-          ...(pluginInfo['obfs-local'] ? {
-            obfs: pluginInfo.obfs,
-            'obfs-host': pluginInfo['obfs-host'],
-          } : null),
-          ...(pluginInfo['v2ray-plugin'] ? {
-            obfs: pluginInfo.tls ? 'wss' : 'ws',
-            'obfs-host': pluginInfo.host,
-          } : null),
+  const response = SubscriptionCache.has(url)
+    ? SubscriptionCache.get(url) as SubsciptionCacheItem
+    : await (
+      async () => {
+        const res = await got.get(url, {
+          retry: NETWORK_RETRY,
+          responseType: 'text',
+          timeout: NETWORK_TIMEOUT,
+        });
+        const subsciptionCacheItem: SubsciptionCacheItem = {
+          body: res.body,
         };
-      });
 
-    return {
-      nodeList,
-      subscriptionUserinfo: response.subscriptionUserinfo,
-    };
-  }
+        if (res.headers['subscription-userinfo']) {
+          subsciptionCacheItem.subscriptionUserinfo = parseSubscriptionUserInfo(
+            res.headers['subscription-userinfo'] as string
+          );
+          logger.debug(
+            '%s received subscription userinfo - raw: %s | parsed: %j',
+            url,
+            res.headers['subscription-userinfo'],
+            subsciptionCacheItem.subscriptionUserinfo
+          );
+        }
 
-  return await requestConfigFromRemote();
+        SubscriptionCache.set(url, subsciptionCacheItem);
+
+        return subsciptionCacheItem;
+      }
+    )();
+
+  const nodeList = fromBase64(response.body)
+    .split('\n')
+    .filter(item => !!item && item.startsWith('ss://'))
+    .map<any>(item => {
+      debug('Parsing Shadowsocks URI', item);
+      const scheme = legacyUrl.parse(item, true);
+      const userInfo = fromUrlSafeBase64(scheme.auth as string).split(':');
+      const pluginInfo = typeof scheme.query.plugin === 'string' ? decodeStringList(scheme.query.plugin.split(';')) : {};
+
+      return {
+        type: NodeTypeEnum.Shadowsocks,
+        nodeName: decodeURIComponent((scheme.hash as string).replace('#', '')),
+        hostname: scheme.hostname,
+        port: scheme.port,
+        method: userInfo[0],
+        password: userInfo[1],
+        ...(typeof udpRelay === 'boolean' ? {
+          'udp-relay': udpRelay,
+        } : null),
+        ...(pluginInfo['obfs-local'] ? {
+          obfs: pluginInfo.obfs,
+          'obfs-host': pluginInfo['obfs-host'],
+        } : null),
+        ...(pluginInfo['v2ray-plugin'] ? {
+          obfs: pluginInfo.tls ? 'wss' : 'ws',
+          'obfs-host': pluginInfo.host,
+        } : null),
+      };
+    });
+
+  return {
+    nodeList,
+    subscriptionUserinfo: response.subscriptionUserinfo,
+  };
 };

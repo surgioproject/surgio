@@ -19,6 +19,7 @@ export enum SupportProviderEnum {
   ShadowsocksJsonSubscribe = 'shadowsocks_json_subscribe',
   V2rayNSubscribe = 'v2rayn_subscribe',
   BlackSSL = 'blackssl',
+  Ssd = 'ssd',
 }
 
 export interface CommandConfig {
@@ -135,6 +136,11 @@ export interface ClashProviderConfig extends ProviderConfig {
   readonly url: string;
   readonly udpRelay?: boolean;
   readonly tls13?: boolean;
+}
+
+export interface SsdProviderConfig extends ProviderConfig {
+  readonly url: string;
+  readonly udpRelay?: boolean;
 }
 
 export interface CustomProviderConfig extends ProviderConfig {
