@@ -1,3 +1,34 @@
+# [2.0.0](https://github.com/geekdada/surgio/compare/v1.24.4...v2.0.0) (2020-07-12)
+
+
+### chore
+
+* remove gateway ([5cbbbba](https://github.com/geekdada/surgio/commit/5cbbbba7ce7c84087fdccf23d957d97c5346754f))
+* upgrade deps and node version ([e3fc02b](https://github.com/geekdada/surgio/commit/e3fc02b83ec2627029b49d22e4d90451dc14e245))
+
+
+### Features
+
+* 内置协议过滤器更名 ([6aa6531](https://github.com/geekdada/surgio/commit/6aa653174fd856c1ccc69ba10f5b995391ef9c82))
+* 修改默认网络请求超时时间和重试次数 ([7753d20](https://github.com/geekdada/surgio/commit/7753d20611be1a4066747b3281d1ceb99a687ec1))
+* add support for ssd subscription ([46e5d2d](https://github.com/geekdada/surgio/commit/46e5d2d129b9b5470471594c432e8b5e2fc012ca))
+* filter 行为修改 ([9e0ddf7](https://github.com/geekdada/surgio/commit/9e0ddf7118931009951dc1f21943d3340256885d))
+* surgeconfig 默认值修改 ([7b004bd](https://github.com/geekdada/surgio/commit/7b004bd1cac6c490bd0dbb0c086f33ff85ac194e))
+* udp-relay 改为强制布尔值 ([86a5dfc](https://github.com/geekdada/surgio/commit/86a5dfcb2343bff5dbfafd6cefe2057b2141c66e))
+* Vmess 配置的 udp 改为 udp-relay ([9460bc8](https://github.com/geekdada/surgio/commit/9460bc8c1713a96fc61e4db271e599046d467830))
+
+
+### BREAKING CHANGES
+
+* 原有命名已不做支持
+* useProviders, discardProviders 默认为严格模式
+* 原有的字符串型 udp-relay 已不兼容
+* Custom Provider 如果有使用到 Vmess，需要将 udp 改为 udp-relay，于其他类型节点统一
+* Builtin gateway has been removed, please use @surgio/gateway
+* Drop Node v10 support
+
+
+
 ## [1.24.4](https://github.com/geekdada/surgio/compare/v1.24.3...v1.24.4) (2020-07-03)
 
 
