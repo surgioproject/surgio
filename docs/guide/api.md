@@ -7,8 +7,7 @@ sidebarDepth: 2
 [[toc]]
 
 :::tip 提示
-1. 请先参考 [文档](/guide/advance/api-gateway.md) 搭建托管 API
-2. 该文档仅针对 now.sh 类型的部署
+请先参考 [文档](/guide/advance/api-gateway.md) 搭建托管 API
 :::
 
 ## 接口鉴权
@@ -98,7 +97,7 @@ GET /get-artifact/<artifactName>
 
 <Badge text="需要鉴权" vertical="middle" />
 
-#### 可选参数
+#### 可选 URL 参数
 
 | 参数       | 可选值                         | 备注 |
 | -------- | --------------------------- | -- |
@@ -112,8 +111,8 @@ GET /get-artifact/<artifactName>
 - `clash-provider` [Clash Provider](https://www.notion.so/New-Feature-Clash-Proxy-Provider-ff8d1955f6234ad3a779fecd3b3ea007)
 
 :::tip 提示
-1. `format` 使用的是内置的模板，所以你不需要额外定义模板格式，不过仍然需要定义一个完整的 Artifact。我的建议是定义一个有完整节点的 Artifact，然后根据需要过滤出节点。
-2. `filter` 的值为过滤器的名称。你可以直接使用内置的过滤器，例如 `hkFilter`，也可以使用自定义的过滤器。
+1. `format` 使用的是内置的模板，所以你不需要额外定义模板格式，不过仍然需要定义一个完整的 Artifact。我的建议是定义一个有完整节点的 Artifact，然后根据需要过滤出节点；
+2. `filter` 的值为过滤器的名称。你可以直接使用内置的过滤器，例如 `hkFilter`；也可以使用自定义的过滤器，例如 `customFilters.myFilter`；
 :::
 
 #### 自定义参数
@@ -143,6 +142,14 @@ GET /export-providers
 
 有时候你只想将 Provider 导出成类似 Surge Policy 或者其它格式的配置，那么可以借助这个功能快速达到目的，免去了新建一个 Artifact 的麻烦。即使这个 Provider 没有被任何一个 Artifact 使用，它也是能够被直接导出的！
 
+#### 可选 URL 参数
+
+| 参数       | 可选值                         | 备注 |
+| -------- | --------------------------- | -- |
+| `format` | `surge-policy`, `qx-server`, `clash-provider` |  |
+| `template` |  任意一个 `.tpl` 文件   |  |
+| `filter` | 内置的过滤器或自定义过滤器               |    |
+
 #### 使用内置 `format` 导出
 
 你可以在面板的 Provider 页面找到复制链接按钮。目前面板还不支持复制组装多个 Provider 的 URL。如果你想组装多个 Provider，可以修改 URL 中的 `providers` 参数，多个 Provider 名称以逗号分隔，例如：
@@ -158,6 +165,11 @@ https://example.com/export-providers?providers=maying,dlercloud&format=surge-pol
 #### 指定 Template 导出
 
 你可以通过增加 URL 参数 `template` 来制定使用某个 Template 来导出 Provider。值得一提的是，这种方法不需要新定义 Artifact。
+
+:::warning 注意
+1. 参数 `template` 和 `format` 不能同时出现；
+2. `filter` 的值为过滤器的名称。你可以直接使用内置的过滤器，例如 `hkFilter`；也可以使用自定义的过滤器，例如 `customFilters.myFilter`；
+:::
 
 ### 直接渲染模板
 
