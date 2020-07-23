@@ -37,7 +37,12 @@ const head = [
   ['meta', {property: 'og:url', content: meta.url}],
 ];
 
-module.exports = {
+module.exports = ctx => ({
+  configureWebpack: (config) => {
+    // if (ctx.isProd) {
+    //   config.devtool = 'source-map';
+    // }
+  },
   locales: {
     '/': {
       lang: 'zh-CN',
@@ -46,19 +51,20 @@ module.exports = {
     }
   },
   head,
+  markdown: {
+    lineNumbers: true
+  },
   themeConfig: {
     repo: 'geekdada/surgio',
     repoLabel: 'GitHub',
     editLinks: true,
     editLinkText: '帮助我们改善此页面！',
     docsDir: 'docs',
-    algolia: {
+    algolia: ctx.isProd ? ({
       apiKey: '6e7242cfd891a169eb12749ab473ba8f',
       indexName: 'surgio',
-    },
-    markdown: {
-      lineNumbers: true
-    },
+    }) : null,
+    smoothScroll: true,
     nav: [
       {
         text: 'Changelog',
@@ -112,6 +118,10 @@ module.exports = {
     },
   },
   plugins: [
+    ['@vuepress/pwa', {
+      serviceWorker: true,
+      updatePopup: true
+    }],
     [
       '@vuepress/google-analytics',
       {
@@ -125,4 +135,4 @@ module.exports = {
       },
     ],
   ]
-};
+});
