@@ -8,7 +8,6 @@
 [![TAONPM version][taonpm-image]][taonpm-url]
 ![Nodejs][nodejs-version]
 ![Github Actions][github-actions-image]
-[![build status][travis-image]][travis-url]
 [![Test coverage][codecov-image]][codecov-url]
 [![David deps][david-image]][david-url]
 [![Known Vulnerabilities][snyk-image]][snyk-url]
@@ -17,8 +16,6 @@
 
 [npm-image]: https://img.shields.io/npm/v/surgio.svg?style=flat-square
 [npm-url]: https://npmjs.org/package/surgio
-[travis-image]: https://travis-ci.com/geekdada/surgio.svg?branch=master
-[travis-url]: https://travis-ci.com/geekdada/surgio
 [codecov-image]: https://codecov.io/gh/geekdada/surgio/branch/master/graph/badge.svg
 [codecov-url]: https://codecov.io/gh/geekdada/surgio
 [david-image]: https://img.shields.io/david/geekdada/surgio.svg?style=flat-square
