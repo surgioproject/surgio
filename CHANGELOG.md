@@ -1,3 +1,18 @@
+# [2.1.0](https://github.com/geekdada/surgio/compare/v2.0.0...v2.1.0) (2020-07-24)
+
+
+### Bug Fixes
+
+* crash when unwanted input ([3edfa1e](https://github.com/geekdada/surgio/commit/3edfa1e085bddb3065fc451c6390c4fc2b970243))
+
+
+### Features
+
+* support clash ssr native format ([47f6a1e](https://github.com/geekdada/surgio/commit/47f6a1e3285fbfd7e57ba2d0564f6feaf372d0ea))
+* template function `snippet` ([602685e](https://github.com/geekdada/surgio/commit/602685e42a40125293343c53102a9866f2d30ed2))
+
+
+
 # [2.0.0](https://github.com/geekdada/surgio/compare/v1.24.4...v2.0.0) (2020-07-12)
 
 
