@@ -552,7 +552,9 @@ export const getClashNodes = function(
             } : null),
           };
 
-        case NodeTypeEnum.Shadowsocksr:
+        case NodeTypeEnum.Shadowsocksr: {
+          const ssrFormat = nodeConfig?.clashConfig?.ssrFormat;
+
           return {
             type: 'ssr',
             name: nodeConfig.nodeName,
@@ -560,11 +562,18 @@ export const getClashNodes = function(
             port: nodeConfig.port,
             password: nodeConfig.password,
             obfs: nodeConfig.obfs,
-            obfsparam: nodeConfig.obfsparam,
             protocol: nodeConfig.protocol,
-            protocolparam: nodeConfig.protoparam,
             cipher: nodeConfig.method,
+            ...(ssrFormat === 'native' ? {
+              'obfs-param': nodeConfig.obfsparam ?? '',
+              'protocol-param': nodeConfig.protoparam ?? '',
+            } : {
+              obfsparam: nodeConfig.obfsparam ?? '',
+              protocolparam: nodeConfig.protoparam ?? '',
+            }),
+            udp: nodeConfig['udp-relay'],
           };
+        }
 
         case NodeTypeEnum.Snell:
           return {

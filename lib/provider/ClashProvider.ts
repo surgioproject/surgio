@@ -292,10 +292,11 @@ export const parseClashConfig = (
             port: item.port,
             password: item.password,
             obfs: item.obfs,
-            obfsparam: item.obfsparam,
+            obfsparam: item['obfs-param'] ?? item.obfsparam,
             protocol: item.protocol,
-            protoparam: item.protocolparam,
+            protoparam: item['protocol-param'] ?? item.protocolparam,
             method: item.cipher,
+            'udp-relay': resolveUdpRelay(item.udp, udpRelay),
           } as ShadowsocksrNodeConfig;
 
         case 'trojan':
@@ -308,7 +309,7 @@ export const parseClashConfig = (
             ...('skip-cert-verify' in item ? { skipCertVerify: item['skip-cert-verify'] === true } : null),
             ...('alpn' in item ? { alpn: item.alpn } : null),
             ...('sni' in item ? { sni: item.sni } : null),
-            'udp-relay': udpRelay ?? item.udp ?? false,
+            'udp-relay': resolveUdpRelay(item.udp, udpRelay),
             tls13: tls13 ?? false,
           } as TrojanNodeConfig;
 

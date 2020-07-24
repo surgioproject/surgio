@@ -1,20 +1,29 @@
+import fs from 'fs-extra';
 import nunjucks from 'nunjucks';
+import path from "path";
 import { JsonObject } from 'type-fest';
 import YAML from 'yaml';
 
+import { RemoteSnippet } from '../types';
 import { decodeStringList, toBase64 } from '../utils';
 import {
   MELLOW_UNSUPPORTED_RULE,
   QUANTUMULT_X_SUPPORTED_RULE,
   CLASH_SUPPORTED_RULE,
 } from '../utils/constant';
+import { addProxyToSurgeRuleSet } from '../utils/remote-snippet';
 
 export function getEngine(templateDir: string): nunjucks.Environment {
   const engine = nunjucks.configure(templateDir, {
     autoescape: false,
   });
 
-  const clashFilter = (str: string): string => {
+  const clashFilter = (str?: string): string => {
+    // istanbul ignore next
+    if (!str) {
+      return '';
+    }
+
     const array = str.split('\n');
 
     return array
@@ -46,7 +55,12 @@ export function getEngine(templateDir: string): nunjucks.Environment {
   engine.addFilter('patchYamlArray', clashFilter);
   engine.addFilter('clash', clashFilter);
 
-  engine.addFilter('quantumultx', (str: string) => {
+  engine.addFilter('quantumultx', (str?: string): string => {
+    // istanbul ignore next
+    if (!str) {
+      return '';
+    }
+
     const array = str.split('\n');
 
     return array
@@ -91,7 +105,12 @@ export function getEngine(templateDir: string): nunjucks.Environment {
       .join('\n');
   });
 
-  engine.addFilter('mellow', (str: string) => {
+  engine.addFilter('mellow', (str?: string): string => {
+    // istanbul ignore next
+    if (!str) {
+      return '';
+    }
+
     const array = str.split('\n');
 
     return array
@@ -199,3 +218,19 @@ export const convertNewSurgeScriptRuleToQuantumultXRewriteRule = (str: string): 
       return '';
   }
 };
+
+export const loadLocalSnippet = (cwd: string, relativeFilePath?: string): RemoteSnippet => {
+  if (!relativeFilePath) {
+    throw new Error('必须指定一个文件');
+  }
+
+  const absFilePath = path.join(cwd, relativeFilePath);
+  const file = fs.readFileSync(absFilePath, { encoding: 'utf-8' });
+
+  return {
+    url: absFilePath,
+    name: '',
+    main: (rule: string) => addProxyToSurgeRuleSet(file, rule),
+    text: file,
+  };
+}

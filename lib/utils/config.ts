@@ -47,6 +47,9 @@ export const normalizeConfig = (cwd: string, userConfig: Partial<CommandConfig>)
       v2ray: 'native',
       resolveHostname: false,
     },
+    clashConfig: {
+      ssrFormat: 'native',
+    },
     proxyTestUrl: PROXY_TEST_URL,
     proxyTestInterval: PROXY_TEST_INTERVAL,
   };
@@ -126,8 +129,11 @@ export const validateConfig = (userConfig: Partial<CommandConfig>): void => {
       shadowsocksFormat: Joi.string().valid('ss', 'custom'),
       v2ray: Joi.string().valid('native', 'external'),
       resolveHostname: Joi.boolean().strict(),
-    }),
+    }).unknown(),
     quantumultXConfig: Joi.object({}).unknown(),
+    clashConfig: Joi.object({
+      ssrFormat: Joi.string().valid('native', 'legacy'),
+    }).unknown(),
     analytics: Joi.boolean().strict(),
     gateway: Joi.object({
       accessToken: Joi.string(),

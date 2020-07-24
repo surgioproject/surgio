@@ -192,6 +192,28 @@ module.exports = {
 };
 ```
 
+### clashConfig
+
+- 类型: `object`
+- 默认值: `undefined`
+
+```js
+// surgio.conf.js
+module.exports = {
+  clashConfig: {
+    ssrFormat: 'native', // or 'legacy'
+  },
+};
+```
+
+#### clashConfig.ssrFormat
+
+- 类型: `string`
+- 默认值: `native`
+- 可选值: `native|legacy`
+
+如果你还在使用 ClashR，则需要使用 legacy 的方式输出 Clash 配置。
+
 ### gateway
 
 - 类型: `object`

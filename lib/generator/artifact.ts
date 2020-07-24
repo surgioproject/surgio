@@ -49,6 +49,7 @@ import {
   socks5Filter,
 } from '../utils/filter';
 import { prependFlag } from '../utils/flag';
+import { loadLocalSnippet } from './template';
 
 export interface ArtifactOptions {
   readonly remoteSnippetList?: ReadonlyArray<RemoteSnippet>;
@@ -123,7 +124,15 @@ export class Artifact extends EventEmitter {
 
     return {
       proxyTestUrl: config.proxyTestUrl,
-      downloadUrl: downloadUrl ? downloadUrl : getDownloadUrl(config.urlBase, artifactName, true, gatewayHasToken ? gatewayConfig?.accessToken : undefined),
+      downloadUrl: downloadUrl
+        ? downloadUrl
+        : getDownloadUrl(config.urlBase, artifactName, true, gatewayHasToken
+          ? gatewayConfig?.accessToken
+          : undefined
+        ),
+      snippet: (filePath: string): RemoteSnippet => {
+        return loadLocalSnippet(config.templateDir, filePath);
+      },
       nodes: nodeList,
       names: nodeNameList,
       remoteSnippets,
@@ -247,8 +256,14 @@ export class Artifact extends EventEmitter {
       template,
     } = this.artifact;
     const result = templateString
-    ? targetTemplateEngine.renderString(templateString, renderContext)
-    : targetTemplateEngine.render(`${template}.tpl`, renderContext);
+    ? targetTemplateEngine.renderString(templateString, {
+        templateEngine: targetTemplateEngine,
+        ...renderContext,
+      })
+    : targetTemplateEngine.render(`${template}.tpl`, {
+        templateEngine: targetTemplateEngine,
+        ...renderContext,
+      });
 
     this.emit('renderArtifact', { artifact: this.artifact, result });
 
@@ -334,6 +349,7 @@ export class Artifact extends EventEmitter {
 
         nodeConfig.provider = provider;
         nodeConfig.surgeConfig = config.surgeConfig;
+        nodeConfig.clashConfig = config.clashConfig;
 
         if (provider.renameNode) {
           const newName = provider.renameNode(nodeConfig.nodeName);

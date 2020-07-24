@@ -389,6 +389,36 @@ getDownloadUrl('example.conf?foo=bar'); // https://example.com/example.conf?foo=
 getUrl('/export-provider?format=surge-policy');
 ```
 
+### snippet <Badge text="v2.1.0" vertical="middle" />
+
+`snippet(path)`
+
+方便将本地的 Surge 规则片段转换为类似远程片段用法，免去人工创建特定的片段格式（即后面提到的宏）。
+
+:::tip 提示
+- 文件路径均相对于 template 目录进行提取，这和 Nunjucks 的路径写法有所不同；
+- 通过这个方法获取的片段只能有一种策略，相对于正规片段有所限制；
+:::
+
+假设存在一个片段 __template/snippet/rule.tpl__，内容为：
+
+```
+USER-AGENT,com.google.ios.youtube*
+USER-AGENT,YouTube*
+DOMAIN-SUFFIX,googlevideo.com
+DOMAIN-SUFFIX,youtube.com
+DOMAIN,youtubei.googleapis.com
+PROCESS-NAME,YT Music
+```
+
+你则可以在模板中这样使用：
+
+```
+{{ snippet("snippet/rule.tpl").main("Proxy") }}
+```
+
+和远程片段一样，`.text` 可以获取到原始的字符串内容。
+
 ## 片段 (Snippet)
 
 ### 如何使用片段？

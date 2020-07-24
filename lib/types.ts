@@ -52,6 +52,9 @@ export interface CommandConfig {
   readonly quantumultXConfig?: {
 
   };
+  readonly clashConfig?: {
+    readonly ssrFormat: 'native'|'legacy',
+  },
   readonly gateway?: {
     readonly accessToken?: string;
     readonly auth?: boolean;
@@ -258,6 +261,7 @@ export interface SimpleNodeConfig {
   binPath?: string;
   localPort?: number;
   surgeConfig?: CommandConfig['surgeConfig'];
+  clashConfig?: CommandConfig['clashConfig'];
   hostnameIp?: ReadonlyArray<string>;
   provider?: Provider;
 }
