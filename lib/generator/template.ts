@@ -14,7 +14,12 @@ export function getEngine(templateDir: string): nunjucks.Environment {
     autoescape: false,
   });
 
-  const clashFilter = (str: string): string => {
+  const clashFilter = (str?: string): string => {
+    // istanbul ignore next
+    if (!str) {
+      return '';
+    }
+
     const array = str.split('\n');
 
     return array
@@ -46,7 +51,12 @@ export function getEngine(templateDir: string): nunjucks.Environment {
   engine.addFilter('patchYamlArray', clashFilter);
   engine.addFilter('clash', clashFilter);
 
-  engine.addFilter('quantumultx', (str: string) => {
+  engine.addFilter('quantumultx', (str?: string): string => {
+    // istanbul ignore next
+    if (!str) {
+      return '';
+    }
+
     const array = str.split('\n');
 
     return array
@@ -91,7 +101,12 @@ export function getEngine(templateDir: string): nunjucks.Environment {
       .join('\n');
   });
 
-  engine.addFilter('mellow', (str: string) => {
+  engine.addFilter('mellow', (str?: string): string => {
+    // istanbul ignore next
+    if (!str) {
+      return '';
+    }
+
     const array = str.split('\n');
 
     return array
