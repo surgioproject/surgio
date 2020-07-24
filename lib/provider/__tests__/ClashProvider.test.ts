@@ -1,9 +1,9 @@
 import test from 'ava';
 import nock from 'nock';
+import { NodeTypeEnum, SupportProviderEnum } from '../../types';
 
 import { RELAY_SERVICE } from '../../utils/constant';
 import ClashProvider, { getClashSubscription, parseClashConfig } from '../ClashProvider';
-import { NodeTypeEnum, SupportProviderEnum } from '../../types';
 
 test('ClashProvider', async t => {
   const provider = new ClashProvider('test', {
@@ -339,8 +339,67 @@ test('trojan configurations', t => {
       skipCertVerify: true,
       alpn: ['http/1.1'],
       sni: 'sni.example.com',
-      'udp-relay': true,
+      'udp-relay': false,
       tls13: true,
+    }]
+  );
+});
+
+test('ssr', async t => {
+  t.deepEqual(
+    parseClashConfig([{
+      name: 'ssr',
+      type: 'ssr',
+      server: 'server',
+      port: 443,
+      cipher: 'chacha20-ietf',
+      password: 'password',
+      obfs: 'tls1.2_ticket_auth',
+      protocol: 'auth_sha1_v4',
+      'obfs-param': 'domain.tld',
+      'protocol-param': '#',
+      udp: false,
+    }]),
+    [{
+      nodeName: 'ssr',
+      hostname: 'server',
+      method: 'chacha20-ietf',
+      obfs: 'tls1.2_ticket_auth',
+      obfsparam: 'domain.tld',
+      password: 'password',
+      port: 443,
+      protocol: 'auth_sha1_v4',
+      protoparam: '#',
+      type: NodeTypeEnum.Shadowsocksr,
+      'udp-relay': false,
+    }]
+  );
+  t.deepEqual(
+    parseClashConfig([{
+      name: 'ssr',
+      type: 'ssr',
+      server: 'server',
+      port: 443,
+      cipher: 'chacha20-ietf',
+      password: 'password',
+      obfs: 'tls1.2_ticket_auth',
+      protocol: 'auth_sha1_v4',
+      'obfsparam': 'domain.tld',
+      'protocolparam': '#',
+      udp: true,
+    }]),
+    [{
+      nodeName: 'ssr',
+      hostname: 'server',
+      method: 'chacha20-ietf',
+      obfs: 'tls1.2_ticket_auth',
+      obfsparam: 'domain.tld',
+      password: 'password',
+      port: 443,
+      protocol: 'auth_sha1_v4',
+      protoparam: '#',
+      type: NodeTypeEnum.Shadowsocksr,
+      'udp-relay': true,
     }]
   );
 });

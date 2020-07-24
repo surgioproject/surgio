@@ -334,6 +334,7 @@ export class Artifact extends EventEmitter {
 
         nodeConfig.provider = provider;
         nodeConfig.surgeConfig = config.surgeConfig;
+        nodeConfig.clashConfig = config.clashConfig;
 
         if (provider.renameNode) {
           const newName = provider.renameNode(nodeConfig.nodeName);
