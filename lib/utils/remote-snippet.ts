@@ -5,7 +5,7 @@ import { logger } from '@surgio/logger';
 import detectNewline from 'detect-newline';
 
 import { RemoteSnippet, RemoteSnippetConfig } from '../types';
-import { NETWORK_CONCURRENCY, NETWORK_TIMEOUT, REMOTE_SNIPPET_CACHE_MAXAGE } from './constant';
+import { NETWORK_CONCURRENCY, REMOTE_SNIPPET_CACHE_MAXAGE } from './constant';
 import { ConfigCache } from './cache';
 import httpClient from './http-client';
 import { isNow } from './index';

@@ -1,11 +1,12 @@
 // tslint:disable:no-expression-statement
 import test from 'ava';
 import fs from 'fs-extra';
+import { renderString } from 'nunjucks';
 import { join } from 'path';
 import {
   convertNewSurgeScriptRuleToQuantumultXRewriteRule,
   convertSurgeScriptRuleToQuantumultXRewriteRule,
-  getEngine,
+  getEngine, loadLocalSnippet,
 } from '../template';
 
 const templateEngine = getEngine(process.cwd());
@@ -212,4 +213,8 @@ test('convertNewSurgeScriptRuleToQuantumultXRewriteRule', t => {
     convertNewSurgeScriptRuleToQuantumultXRewriteRule('zhihu people = type=unknown-type'),
     ''
   );
+});
+
+test('loadLocalSnippet', async t => {
+  t.snapshot(loadLocalSnippet(__dirname, './snippet.tpl').main('Proxy'));
 });

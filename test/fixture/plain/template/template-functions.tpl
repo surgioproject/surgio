@@ -27,3 +27,7 @@ downloadUrl
 {{ customParams.globalVariableWillBeRewritten }}
 ---
 {{ customParams.subLevel.anotherVariableWillBeRewritten }}
+---
+{{ snippet("snippet/snippet.tpl").main("Proxy") }}
+---
+{{ snippet("./snippet/snippet.tpl").main("Proxy") }}
