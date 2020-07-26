@@ -193,7 +193,7 @@ export const getSurgeNodes = function(
             ].join(' = '));
           }
 
-          // Using external provider
+          // Using custom format
           return ([
             config.nodeName,
             [
