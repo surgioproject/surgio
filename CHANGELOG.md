@@ -1,3 +1,12 @@
+## [2.2.1](https://github.com/geekdada/surgio/compare/v2.2.0...v2.2.1) (2020-07-26)
+
+
+### Features
+
+* change config key ([c904ec7](https://github.com/geekdada/surgio/commit/c904ec7380656a247954aa118d33694b1a0bf044))
+
+
+
 # [2.2.0](https://github.com/geekdada/surgio/compare/v2.1.0...v2.2.0) (2020-07-26)
 
 
