@@ -39,7 +39,7 @@ test('clash #3', t => {
     str,
   });
 
-  t.is(result, '');
+  t.is(result, '- PROCESS-NAME,Telegram,Proxy,no-resolve');
 });
 
 test('clash #4', t => {
