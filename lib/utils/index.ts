@@ -203,7 +203,7 @@ export const getSurgeNodes = function(
               config.method,
               config.password,
               'https://raw.githubusercontent.com/ConnersHua/SSEncrypt/master/SSEncrypt.module',
-              ...pickAndFormatStringList(config, ['udp-relay', 'obfs', 'obfs-host', 'tfo']),
+              ...pickAndFormatStringList(config, ['udp-relay', 'obfs', 'obfs-host', 'tfo', 'underlying-proxy']),
               ...(typeof config.mptcp === 'boolean' ? [
                 `mptcp=${config.mptcp}`,
               ] : []),
