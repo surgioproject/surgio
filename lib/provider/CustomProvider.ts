@@ -18,7 +18,7 @@ export default class CustomProvider extends Provider {
       mptcp: Joi.boolean().strict(),
       binPath: Joi.string(),
       localPort: Joi.number(),
-      'underlying-proxy': Joi.string(),
+      underlyingProxy: Joi.string(),
     })
       .unknown();
     const schema = Joi.object({

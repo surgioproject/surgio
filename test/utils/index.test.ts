@@ -188,7 +188,7 @@ test('getSurgeNodes', async t => {
     },
     tfo: true,
     mptcp: true,
-    'underlying-proxy': 'another-proxy',
+    underlyingProxy: 'another-proxy',
   }];
   const txt1 = utils.getSurgeNodes(nodeList).split('\n');
   const txt2 = utils.getSurgeNodes(nodeList, nodeConfig => nodeConfig.nodeName === 'Test Node 1');
