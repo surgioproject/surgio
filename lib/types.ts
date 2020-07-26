@@ -264,6 +264,7 @@ export interface SimpleNodeConfig {
   clashConfig?: CommandConfig['clashConfig'];
   hostnameIp?: ReadonlyArray<string>;
   provider?: Provider;
+  'underlying-proxy'?: string;
 }
 
 export interface PlainObject { readonly [name: string]: any }

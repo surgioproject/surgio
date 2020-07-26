@@ -419,6 +419,17 @@ module.exports = {
 2. 请不要随意将证书检查关闭；
 :::
 
+### nodeConfig['underlying-proxy'] <Badge text="v2.2.0" vertical="middle" />
+
+- 类型: `String`
+- 默认值: `undefined`
+
+可以通过一个代理跳板使用另一个代理，可以无限嵌套使用。目前仅 Surge 支持该特性。
+
+:::warning 注意
+Surgio 不会验证名称是否有效
+:::
+
 ### provider.nodeFilter
 
 - 类型: `Function`

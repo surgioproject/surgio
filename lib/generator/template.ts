@@ -220,6 +220,7 @@ export const convertNewSurgeScriptRuleToQuantumultXRewriteRule = (str: string): 
 };
 
 export const loadLocalSnippet = (cwd: string, relativeFilePath?: string): RemoteSnippet => {
+  // istanbul ignore next
   if (!relativeFilePath) {
     throw new Error('必须指定一个文件');
   }
