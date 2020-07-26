@@ -23,6 +23,7 @@ export const CLASH_SUPPORTED_RULE: ReadonlyArray<string> = [
   'SRC-PORT',
   'MATCH',
   'FINAL',
+  'PROCESS-NAME',
 ];
 
 export const QUANTUMULT_X_SUPPORTED_RULE: ReadonlyArray<string> = [
