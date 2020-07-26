@@ -1,3 +1,19 @@
+# [2.2.0](https://github.com/geekdada/surgio/compare/v2.1.0...v2.2.0) (2020-07-26)
+
+
+### Bug Fixes
+
+* underlying-proxy in custom format ([938a550](https://github.com/geekdada/surgio/commit/938a5504cfc529a684b02ce52c66caff8ef97386))
+
+
+### Features
+
+* add process-name rule for clash config ([f518957](https://github.com/geekdada/surgio/commit/f518957086891eb908dc83e36ee3291bd0a3a994))
+* add support surge underlying-proxy ([1a094fb](https://github.com/geekdada/surgio/commit/1a094fb925a072675da82eaa2fe5fe58f16e2fe4))
+* add type checking ([ebafa30](https://github.com/geekdada/surgio/commit/ebafa30a4bc13d6a30b7dd55c60a1fb14b746ca8))
+
+
+
 # [2.1.0](https://github.com/geekdada/surgio/compare/v2.0.0...v2.1.0) (2020-07-24)
 
 
