@@ -36,6 +36,14 @@ $ npm i -g vercel
 $ npm i @surgio/gateway --save
 ```
 
+:::tip 提示
+之前已经使用了测试版的朋友请使用下面的命令升级到正式版。
+
+```bash
+$ npm i @surgio/gateway@latest --save
+```
+:::
+
 登录账号。
 
 ```bash

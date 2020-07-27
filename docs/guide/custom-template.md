@@ -107,11 +107,10 @@ DOMAIN-KEYWORD,baidu,DIRECT
 - 类型: `string`
 
 :::tip 提示
-- 支持输出 Shadowsocks, Shadowsocksr, Snell, Vmess 节点
-- Shadowsocksr 是通过 Clashr 项目支持的，你需要在 [这里](https://t.me/clashr4ssr) 下载可执行文件。项目地址在 [这里](https://github.com/sun8911879/shadowsocksR)。
+- 支持输出 Shadowsocks, Shadowsocksr, Snell, Vmess 节点；
 :::
 
-Clash 的 `Proxy` 和 `Proxy Group` 配置对象。`clashProxyConfig` 的内容依赖 Artifact 的 [`proxyGroupModifier` 函数](/guide/custom-artifact.md#proxygroupmodifier-nodelist-filters)。
+Clash 的 `proxies` 和 `proxy-groups` 配置对象。`clashProxyConfig` 的内容依赖 Artifact 的 [`proxyGroupModifier` 函数](/guide/custom-artifact.md#proxygroupmodifier-nodelist-filters)。
 
 由于很难在模板中直接书写 Yaml 格式的文本，所以引入了一个特殊的变量用来存储 Clash 的节点配置，然后利用 Nunjucks 的 [filter](https://nunjucks.bootcss.com/templating.html#part-cda1d805a3577fa5) 来输出 Yaml 格式文本。
 

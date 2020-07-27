@@ -42,7 +42,7 @@ module.exports = {
 - 类型: `RemoteSnippet[]`
 - 默认值: `undefined`
 
-:::tip
+:::tip 提示
 这个功能和 Surge 本身的 `RULE-SET` 功能无关，所以生成出来的规则可以在老版本的 Surge 和其它客户端中使用。
 :::
 

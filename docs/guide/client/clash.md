@@ -22,11 +22,11 @@ external-controller: 127.0.0.1:7892
 port: 7890
 socks-port: 7891
 
-Proxy:
+proxies:
 
-Proxy Group:
+proxy-groups:
 
-Rule:
+rules:
 ```
 
 ### 编写 Proxy
@@ -40,11 +40,11 @@ external-controller: 127.0.0.1:7892
 port: 7890
 socks-port: 7891
 
-Proxy: {{ getClashNodes(nodeList) | json }}
+proxies: {{ getClashNodes(nodeList) | json }}
 
-Proxy Group:
+proxy-groups:
 
-Rule:
+rules:
 ```
 
 ### 编写 Proxy Group
@@ -62,9 +62,9 @@ external-controller: 127.0.0.1:7892
 port: 7890
 socks-port: 7891
 
-Proxy: {{ getClashNodes(nodeList) | json }}
+proxies: {{ getClashNodes(nodeList) | json }}
 
-Proxy Group:
+proxy-groups:
 - type: select
   name: 🚀 Proxy
   proxies: {{ getClashNodeNames(nodeList) | json }} # 完整的节点列表
@@ -80,7 +80,7 @@ Proxy Group:
   name: 📺 Youtube
   proxies: {{ getClashNodeNames(nodeList, youtubeFilter, ['US']) | json }} # 自定义组合节点
 
-Rule:
+rules:
 ```
 
 ### 编写规则
@@ -96,9 +96,9 @@ external-controller: 127.0.0.1:7892
 port: 7890
 socks-port: 7891
 
-Proxy: {{ getClashNodes(nodeList) | json }}
+proxies: {{ getClashNodes(nodeList) | json }}
 
-Proxy Group:
+proxy-groups:
 - type: select
   name: 🚀 Proxy
   proxies: {{ getClashNodeNames(nodeList) | json }} # 完整的节点列表
@@ -114,7 +114,7 @@ Proxy Group:
   name: 📺 Youtube
   proxies: {{ getClashNodeNames(nodeList, youtubeFilter, ['US']) | json }} # 自定义组合节点
 
-Rule:
+rules:
 {{ remoteSnippets.netflix.main('🎬 Netflix') | clash }}
 {{ blocked_rules.main('🚀 Proxy') | clash }}
 
@@ -159,7 +159,7 @@ socks-port: 7891
 
 {{ clashProxyConfig | yaml }}
 
-Rule:
+rules:
 {{ remoteSnippets.netflix.main('🎬 Netflix') | clash }}
 {{ blocked_rules.main('🚀 Proxy') | clash }}
 

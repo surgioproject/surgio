@@ -99,7 +99,7 @@ npm run update
 Surgio 提供了一个新建组件的助手命令，你可以通过它来初始化想要的组件。
 
 ```bash
-npx surgio new artifact|provider|template
+npx surgio new [artifact|provider|template]
 ```
 
 ## 样例
@@ -111,7 +111,13 @@ npx surgio new artifact|provider|template
 确保你当前的版本和新版没有兼容性问题后，运行下面命令即可。
 
 ```bash
-npm install surgio@latest
+$ npm install surgio@latest
+```
+
+升级 API 网关
+
+```bash
+$ npm install @surgio/gateway@latest
 ```
 
 ## 配置文件
