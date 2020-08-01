@@ -374,6 +374,19 @@ export class Artifact extends EventEmitter {
           nodeConfig.mptcp = provider.mptcp;
         }
 
+        // check whether the hostname resolves in case of blocking clash's node heurestic
+        if (
+          config?.checkHostname &&
+          !isIp(nodeConfig.hostname)
+        ) {
+          try {
+            await resolveDomain(nodeConfig.hostname);
+          } catch (err) /* istanbul ignore next */ {
+            logger.warn(`${nodeConfig.hostname} 无法解析，将忽略该节点`);
+            return undefined;
+          }
+        }
+
         if (
           config?.surgeConfig?.resolveHostname &&
           !isIp(nodeConfig.hostname) &&
