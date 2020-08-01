@@ -10,7 +10,8 @@ sidebarDepth: 2
 ## 下载
 
 [点我下载](https://github.com/tindy2013/shadowsocks-static-binaries/raw/master/shadowsocksr-libev/macos/ssr-local)
-MD5: `c9a1535f2ffd82100631d333efa40963`
+
+> MD5: `24184a0a50ce679ff8a6024ce72b2c16`
 
 :::tip 提示
 建议放置在 `/usr/local/bin/ssr-local`
