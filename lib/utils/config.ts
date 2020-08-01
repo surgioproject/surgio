@@ -52,6 +52,7 @@ export const normalizeConfig = (cwd: string, userConfig: Partial<CommandConfig>)
     },
     proxyTestUrl: PROXY_TEST_URL,
     proxyTestInterval: PROXY_TEST_INTERVAL,
+    checkHostname: false,
   };
   const config: CommandConfig = _.defaultsDeep(userConfig, defaultConfig);
 

@@ -32,6 +32,7 @@ export interface CommandConfig {
   readonly templateDir: string;
   readonly configDir: string;
   readonly analytics?: boolean;
+  readonly checkHostname?: boolean;
   readonly upload?: {
     readonly prefix: string;
     readonly region: string;

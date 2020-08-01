@@ -271,3 +271,10 @@ Clash 规则中的 `interval`。
 1. 全局模板变量的用法和 Artifact 中定义的模板变量相同，相关文档请查阅 [这里](/guide/custom-artifact.md#customparams)；
 2. 在合并全局、局部模板变量和面板 URL 参数时的优先级为：URL 参数 > 局部 > 全局；
 :::
+
+### checkHostname
+
+- 类型: `boolean`
+- 默认值: `false`
+
+是否丢弃无法解析出域名 IP 地址的节点。无法解析出域名的节点有可能会导致 Clash 的 `url-test` 模式抛出异常而中止，丢弃这些节点可以避免这个问题。如果不是用公共 DNS 解析节点域名，或者有其它机制，可以关闭此项检测。
