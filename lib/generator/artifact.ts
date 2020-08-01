@@ -380,7 +380,11 @@ export class Artifact extends EventEmitter {
           !isIp(nodeConfig.hostname)
         ) {
           try {
-            await resolveDomain(nodeConfig.hostname);
+            const domains = await resolveDomain(nodeConfig.hostname);
+            if (domains.length < 1) {
+              logger.warn(`DNS 解析结果中 ${nodeConfig.hostname} 未有对应 IP 地址，将忽略该节点`);
+              return undefined;
+            }
           } catch (err) /* istanbul ignore next */ {
             logger.warn(`${nodeConfig.hostname} 无法解析，将忽略该节点`);
             return undefined;
