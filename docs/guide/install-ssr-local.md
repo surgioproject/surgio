@@ -9,7 +9,7 @@ sidebarDepth: 2
 
 ## 下载
 
-[点我下载](https://raw.githubusercontent.com/geekdada/surgio/gh-pages/ssr-local)  
+[点我下载](https://github.com/tindy2013/shadowsocks-static-binaries/raw/master/shadowsocksr-libev/macos/ssr-local)
 MD5: `c9a1535f2ffd82100631d333efa40963`
 
 :::tip 提示
@@ -19,5 +19,5 @@ MD5: `c9a1535f2ffd82100631d333efa40963`
 **你也可以直接运行命令**
 
 ```bash
-curl https://raw.githubusercontent.com/geekdada/surgio/gh-pages/ssr-local -o /usr/local/bin/ssr-local && chmod +x /usr/local/bin/ssr-local
+curl -L https://github.com/tindy2013/shadowsocks-static-binaries/raw/master/shadowsocksr-libev/macos/ssr-local -o /usr/local/bin/ssr-local && chmod +x /usr/local/bin/ssr-local
 ```
