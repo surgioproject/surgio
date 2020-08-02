@@ -1,3 +1,14 @@
+# [2.3.0](https://github.com/geekdada/surgio/compare/v2.2.1...v2.3.0) (2020-08-02)
+
+
+### Features
+
+* discard domains not resolvable ([71a26a8](https://github.com/geekdada/surgio/commit/71a26a820ad8cd9159b72668cc8a3b1e7a727616))
+* ignore hostnames without corresponding ip ([ebe5a7d](https://github.com/geekdada/surgio/commit/ebe5a7d715b21f5a12bfbfcef00fdc06ebde9bf1))
+* using global dns on github actions and gitlab ci ([042bbd1](https://github.com/geekdada/surgio/commit/042bbd1d7096f13fa9b60d1ba0068585b1648543))
+
+
+
 ## [2.2.1](https://github.com/geekdada/surgio/compare/v2.2.0...v2.2.1) (2020-07-26)
 
 
