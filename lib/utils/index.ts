@@ -1385,7 +1385,7 @@ export const applyFilter = <T extends SimpleNodeConfig>(
   return nodes;
 };
 
-export const lowercaseHeaderKeys = (headers: Record<string, string>) => {
+export const lowercaseHeaderKeys = (headers: Record<string, string>): Record<string, string> => {
   const wsHeaders = {};
 
   Object.keys(headers)
@@ -1400,9 +1400,16 @@ export const lowercaseHeaderKeys = (headers: Record<string, string>) => {
 export const isIp = (str: string): boolean => net.isIPv4(str) || net.isIPv6(str);
 
 // istanbul ignore next
-export const isNow = () => typeof process.env.NOW_REGION !== 'undefined';
+export const isNow = (): boolean => typeof process.env.NOW_REGION !== 'undefined';
 
 // istanbul ignore next
-export const isHeroku = () => typeof process.env.DYNO !== 'undefined';
+export const isHeroku = (): boolean => typeof process.env.DYNO !== 'undefined';
 
-export const isPkgBundle = () => __dirname.startsWith('/snapshot');
+// istanbul ignore next
+export const isGitHubActions = (): boolean => typeof process.env.GITHUB_ACTIONS !== 'undefined';
+
+// istanbul ignore next
+export const isGitLabCI = (): boolean => typeof process.env.GITLAB_CI !== 'undefined';
+
+// istanbul ignore next
+export const isPkgBundle = (): boolean => __dirname.startsWith('/snapshot');

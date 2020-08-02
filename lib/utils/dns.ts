@@ -1,7 +1,7 @@
 import { promises as dns, RecordWithTtl } from 'dns';
 import LRU from 'lru-cache';
 import { createLogger } from '@surgio/logger';
-import { isHeroku, isNow } from './';
+import { isGitHubActions, isGitLabCI, isHeroku, isNow } from './';
 
 const Resolver = dns.Resolver;
 const resolver = new Resolver();
@@ -11,7 +11,7 @@ const DomainCache = new LRU<string, ReadonlyArray<string>>({
 const logger = createLogger({ service: 'surgio:utils:dns' });
 
 // istanbul ignore next
-if (isNow() || isHeroku()) {
+if (isNow() || isHeroku() || isGitHubActions() || isGitLabCI()) {
   resolver.setServers(['1.1.1.1', '8.8.8.8']);
 } else {
   resolver.setServers(['223.5.5.5', '114.114.114.114']);
