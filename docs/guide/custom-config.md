@@ -272,7 +272,7 @@ Clash 规则中的 `interval`。
 2. 在合并全局、局部模板变量和面板 URL 参数时的优先级为：URL 参数 > 局部 > 全局；
 :::
 
-### checkHostname
+### checkHostname <Badge text="v2.3.0" vertical="middle" />
 
 - 类型: `boolean`
 - 默认值: `false`
