@@ -1,3 +1,12 @@
+## [2.3.1](https://github.com/geekdada/surgio/compare/v2.3.0...v2.3.1) (2020-08-02)
+
+
+### Bug Fixes
+
+* 请求 clash 订阅时增加 ua header ([54b29ae](https://github.com/geekdada/surgio/commit/54b29aedbeb8904afe3da5329c7f2f4e1aeb8a64))
+
+
+
 # [2.3.0](https://github.com/geekdada/surgio/compare/v2.2.1...v2.3.0) (2020-08-02)
 
 
