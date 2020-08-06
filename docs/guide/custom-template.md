@@ -152,7 +152,8 @@ Surgio 内置多个节点名国别/地区过滤器。除非是火星文，Surgio
 - singaporeFilter
 - koreaFilter
 - taiwanFilter
-- chinaBackFilter（回国节点过滤）
+- chinaBackFilter（得到回国节点）
+- chinaOutFilter（得到出国节点）
 
 ### 协议过滤器
 

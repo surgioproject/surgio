@@ -200,6 +200,10 @@ export const chinaBackFilter: NodeNameFilterType = item => {
   ].some(key => item.nodeName.includes(key));
 };
 
+export const chinaOutFilter: NodeNameFilterType = item => {
+  return !chinaBackFilter(item);
+}
+
 export const youtubePremiumFilter: NodeNameFilterType = mergeFilters([usFilter, japanFilter, koreaFilter, hkFilter, singaporeFilter]);
 
 // istanbul ignore next
