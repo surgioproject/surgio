@@ -1,3 +1,17 @@
+## [2.3.2](https://github.com/geekdada/surgio/compare/v2.3.1...v2.3.2) (2020-08-08)
+
+
+### Bug Fixes
+
+* Taiwan should be enabled for youtube premium filter ([aa8ef4d](https://github.com/geekdada/surgio/commit/aa8ef4d4f60077d20dc6a6be0fd4f815429c04a5))
+
+
+### Features
+
+* Add chinaOutFilter ([b026b0d](https://github.com/geekdada/surgio/commit/b026b0d40abf6dbe79fe00ebc0803ad10d094b2c))
+
+
+
 ## [2.3.1](https://github.com/geekdada/surgio/compare/v2.3.0...v2.3.1) (2020-08-02)
 
 
