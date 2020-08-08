@@ -204,7 +204,7 @@ export const chinaOutFilter: NodeNameFilterType = item => {
   return !chinaBackFilter(item);
 }
 
-export const youtubePremiumFilter: NodeNameFilterType = mergeFilters([usFilter, japanFilter, koreaFilter, hkFilter, singaporeFilter]);
+export const youtubePremiumFilter: NodeNameFilterType = mergeFilters([usFilter, japanFilter, koreaFilter, hkFilter, singaporeFilter, taiwanFilter]);
 
 // istanbul ignore next
 export const shadowsocksFilter: NodeNameFilterType = item => item.type === NodeTypeEnum.Shadowsocks;
