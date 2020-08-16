@@ -117,6 +117,7 @@ export const validateConfig = (userConfig: Partial<CommandConfig>): void => {
     upload: Joi.object({
       prefix: Joi.string(),
       region: Joi.string(),
+      endpoint: Joi.string(),
       bucket: Joi.string().required(),
       accessKeyId: Joi.string().required(),
       accessKeySecret: Joi.string().required(),

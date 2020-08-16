@@ -40,8 +40,9 @@ class GenerateCommand extends Command {
     });
 
     const ossConfig = {
-      region: config?.upload?.region || 'oss-cn-hangzhou',
+      region: config?.upload?.region,
       bucket: config?.upload?.bucket,
+      endpoint: config?.upload?.endpoint,
       accessKeyId: ctx.env.OSS_ACCESS_KEY_ID || config?.upload?.accessKeyId,
       accessKeySecret: ctx.env.OSS_ACCESS_KEY_SECRET || config?.upload?.accessKeySecret,
     };

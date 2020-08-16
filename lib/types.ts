@@ -34,8 +34,9 @@ export interface CommandConfig {
   readonly analytics?: boolean;
   readonly checkHostname?: boolean;
   readonly upload?: {
-    readonly prefix: string;
-    readonly region: string;
+    readonly prefix?: string;
+    readonly region?: string;
+    readonly endpoint?: string;
     readonly bucket: string;
     readonly accessKeyId: string;
     readonly accessKeySecret: string;
