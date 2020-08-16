@@ -3,8 +3,8 @@ import Command from 'common-bin';
 import check from 'check-node-version';
 import { promisify } from 'util';
 import { join } from 'path';
-import { isPkgBundle } from '../utils';
 
+import { isPkgBundle } from '../utils';
 import { errorHandler } from '../utils/error-helper';
 
 type OnComplete = Parameters<typeof check>[1];
