@@ -12,7 +12,7 @@ import { errorHandler } from '../utils/error-helper';
 class GenerateCommand extends Command {
   private readonly spinner: Ora;
 
-  constructor(rawArgv) {
+  constructor(rawArgv?: string[]) {
     super(rawArgv);
     this.usage = '使用方法: surgio upload';
     this.spinner = ora();

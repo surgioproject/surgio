@@ -12,7 +12,7 @@ import { getProvider } from '../provider';
 import { errorHandler } from '../utils/error-helper';
 
 class CheckCommand extends Command {
-  constructor(rawArgv) {
+  constructor(rawArgv?: string[]) {
     super(rawArgv);
     this.usage = '使用方法: surgio check [provider]';
     this.options = {

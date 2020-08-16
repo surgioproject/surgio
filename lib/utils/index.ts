@@ -1,7 +1,6 @@
 import { createLogger } from '@surgio/logger';
 import assert from 'assert';
 import fs from 'fs-extra';
-import got from 'got';
 import _ from 'lodash';
 import os from 'os';
 import { join } from 'path';
@@ -31,13 +30,12 @@ import {
 import { ConfigCache } from './cache';
 import {
   ERR_INVALID_FILTER,
-  NETWORK_RETRY,
-  NETWORK_TIMEOUT,
   OBFS_UA,
   PROXY_TEST_INTERVAL,
   PROXY_TEST_URL,
 } from './constant';
 import { validateFilter } from './filter';
+import httpClient from './http-client';
 import { formatVmessUri } from './v2ray';
 
 const logger = createLogger({ service: 'surgio:utils' });
@@ -65,47 +63,6 @@ export const getUrl = (baseUrl: string, path: string, accessToken?: string): str
   return url.toString();
 };
 
-// istanbul ignore next
-export const getBlackSSLConfig = async (username: string, password: string): Promise<ReadonlyArray<HttpsNodeConfig>> => {
-  assert(username, 'Lack of BlackSSL username.');
-  assert(password, 'Lack of BlackSSL password.');
-
-  const key = `blackssl_${username}`;
-
-  async function requestConfigFromBlackSSL(): Promise<ReadonlyArray<HttpsNodeConfig>> {
-    const response = ConfigCache.has(key) ? JSON.parse(ConfigCache.get(key) as string) : await (async () => {
-      const res = await got
-        .get('https://api.darkssl.com/v1/service/ssl_info', {
-          responseType: 'text',
-          searchParams: {
-            username,
-            password,
-          },
-          timeout: NETWORK_TIMEOUT,
-          retry: NETWORK_RETRY,
-          headers: {
-            'User-Agent': 'GoAgentX/774 CFNetwork/901.1 Darwin/17.6.0 (x86_64)',
-          },
-        });
-
-      ConfigCache.set(key, res.body);
-
-      return JSON.parse(res.body);
-    })();
-
-    return (response.ssl_nodes as readonly any[]).map<HttpsNodeConfig>(item => ({
-      nodeName: item.name,
-      type: NodeTypeEnum.HTTPS,
-      hostname: item.server,
-      port: item.port,
-      username,
-      password,
-    }));
-  }
-
-  return await requestConfigFromBlackSSL();
-};
-
 export const getShadowsocksJSONConfig = async (
   url: string,
   udpRelay?: boolean,
@@ -114,10 +71,7 @@ export const getShadowsocksJSONConfig = async (
 
   async function requestConfigFromRemote(): Promise<ReadonlyArray<ShadowsocksNodeConfig>> {
     const response = ConfigCache.has(url) ? JSON.parse(ConfigCache.get(url) as string) : await (async () => {
-      const res = await got.get(url, {
-        timeout: NETWORK_TIMEOUT,
-        retry: NETWORK_RETRY,
-      });
+      const res = await httpClient.get(url);
 
       ConfigCache.set(url, res.body);
 

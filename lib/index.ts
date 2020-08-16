@@ -8,13 +8,13 @@ import path from 'path';
 import updateNotifier from 'update-notifier';
 import { transports } from '@surgio/logger';
 
-import { isHeroku, isNow } from './utils';
+import { isGitHubActions, isGitLabCI, isHeroku, isNow } from './utils';
 import * as filter from './utils/filter';
 import { errorHandler } from './utils/error-helper';
 import { CATEGORIES } from './utils/constant';
 
 // istanbul ignore next
-if (!isNow() && !isHeroku()) {
+if (!isNow() && !isHeroku() && !isGitHubActions() && !isGitLabCI()) {
   // Global proxy
   bootstrap();
 }
@@ -22,7 +22,7 @@ if (!isNow() && !isHeroku()) {
 const envPath = path.resolve(process.cwd(), './.env');
 
 export class SurgioCommand extends Command {
-  constructor(rawArgv) {
+  constructor(rawArgv?: string[]) {
     super(rawArgv);
 
     // istanbul ignore next

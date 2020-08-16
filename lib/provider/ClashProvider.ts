@@ -1,6 +1,5 @@
 import Joi from '@hapi/joi';
 import assert from 'assert';
-import got from 'got';
 import yaml from 'yaml';
 import _ from 'lodash';
 import { createLogger } from '@surgio/logger';
@@ -18,9 +17,10 @@ import {
   VmessNodeConfig,
 } from '../types';
 import { lowercaseHeaderKeys } from '../utils';
+import httpClient, { getUserAgent } from '../utils/http-client';
 import { parseSubscriptionUserInfo } from '../utils/subscription';
 import { SubsciptionCacheItem, SubscriptionCache } from '../utils/cache';
-import { NETWORK_CLASH_UA, NETWORK_RETRY, NETWORK_TIMEOUT, RELAY_SERVICE } from '../utils/constant';
+import { NETWORK_CLASH_UA, RELAY_SERVICE } from '../utils/constant';
 import Provider from './Provider';
 
 type SupportConfigTypes = ShadowsocksNodeConfig|VmessNodeConfig|HttpsNodeConfig|HttpNodeConfig|ShadowsocksrNodeConfig|SnellNodeConfig|TrojanNodeConfig;
@@ -101,12 +101,10 @@ export const getClashSubscription = async (
     ? SubscriptionCache.get(url) as SubsciptionCacheItem
     : await (
       async () => {
-        const res = await got.get(url, {
-          timeout: NETWORK_TIMEOUT,
-          retry: NETWORK_RETRY,
+        const res = await httpClient.get(url, {
           responseType: 'text',
           headers: {
-            'User-Agent': NETWORK_CLASH_UA,
+            'user-agent': getUserAgent(NETWORK_CLASH_UA),
           },
         });
         const subsciptionCacheItem: SubsciptionCacheItem = {

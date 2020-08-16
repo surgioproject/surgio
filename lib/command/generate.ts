@@ -7,7 +7,7 @@ import { errorHandler } from '../utils/error-helper';
 import { checkAndFix } from '../utils/linter';
 
 class GenerateCommand extends Command {
-  constructor(rawArgv) {
+  constructor(rawArgv?: string[]) {
     super(rawArgv);
     this.usage = '使用方法: surgio generate';
     this.options = {

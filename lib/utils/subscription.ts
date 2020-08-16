@@ -1,6 +1,6 @@
 import filesize from 'filesize';
 import bytes from 'bytes';
-import { format, formatDistanceToNow, getSeconds } from 'date-fns';
+import { format, formatDistanceToNow } from 'date-fns';
 
 import { SubscriptionUserinfo } from '../types';
 

@@ -14,8 +14,6 @@ test('parseSubscriptionNode', t => {
 });
 
 test('formatSubscriptionUserInfo', t => {
-  const result = parseSubscriptionUserInfo('upload=0; download=42211676245; total=216256217222; expire=1584563470;');
-
   t.deepEqual(
     parseSubscriptionUserInfo('upload=0; download=42211676245; total=216256217222; expire=1584563470;'),
     {

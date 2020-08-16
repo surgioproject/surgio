@@ -1,12 +1,12 @@
 import Joi from '@hapi/joi';
 import { logger } from '@surgio/logger';
 import assert from "assert";
-import got from 'got';
 
 import { NodeTypeEnum, V2rayNSubscribeProviderConfig, VmessNodeConfig } from '../types';
 import { fromBase64 } from '../utils';
 import { ConfigCache } from '../utils/cache';
-import { NETWORK_RETRY, NETWORK_TIMEOUT, RELAY_SERVICE } from '../utils/constant';
+import { RELAY_SERVICE } from '../utils/constant';
+import httpClient from '../utils/http-client';
 import Provider from './Provider';
 
 export default class V2rayNSubscribeProvider extends Provider {
@@ -79,10 +79,7 @@ export const getV2rayNSubscription = async (
 
   async function requestConfigFromRemote(): Promise<ReadonlyArray<VmessNodeConfig>> {
     const response = ConfigCache.has(url) ? ConfigCache.get(url) as string : await (async () => {
-      const res = await got.get(url, {
-        timeout: NETWORK_TIMEOUT,
-        retry: NETWORK_RETRY,
-      });
+      const res = await httpClient.get(url);
 
       ConfigCache.set(url, res.body);
 

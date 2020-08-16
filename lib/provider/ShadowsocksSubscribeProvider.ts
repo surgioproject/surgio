@@ -1,6 +1,5 @@
 import Joi from '@hapi/joi';
 import assert from 'assert';
-import got from 'got';
 import { default as legacyUrl } from 'url';
 import Debug from 'debug';
 import { createLogger } from '@surgio/logger';
@@ -12,9 +11,10 @@ import {
   SubscriptionUserinfo,
 } from '../types';
 import { decodeStringList, fromBase64, fromUrlSafeBase64 } from '../utils';
+import httpClient from '../utils/http-client';
 import { parseSubscriptionUserInfo } from '../utils/subscription';
 import { SubsciptionCacheItem, SubscriptionCache } from '../utils/cache';
-import { NETWORK_RETRY, NETWORK_TIMEOUT, RELAY_SERVICE } from '../utils/constant';
+import { RELAY_SERVICE } from '../utils/constant';
 import Provider from './Provider';
 
 const logger = createLogger({
@@ -94,11 +94,7 @@ export const getShadowsocksSubscription = async (
     ? SubscriptionCache.get(url) as SubsciptionCacheItem
     : await (
       async () => {
-        const res = await got.get(url, {
-          retry: NETWORK_RETRY,
-          responseType: 'text',
-          timeout: NETWORK_TIMEOUT,
-        });
+        const res = await httpClient.get(url);
         const subsciptionCacheItem: SubsciptionCacheItem = {
           body: res.body,
         };

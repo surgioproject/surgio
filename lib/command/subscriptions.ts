@@ -25,7 +25,7 @@ type PossibleProviderType = BlackSSLProvider|ShadowsocksJsonSubscribeProvider|Sh
 class SubscriptionsCommand extends Command {
   private config: CommandConfig;
 
-  constructor(rawArgv) {
+  constructor(rawArgv?: string[]) {
     super(rawArgv);
     this.usage = '使用方法: surgio subscriptions';
     this.options = {

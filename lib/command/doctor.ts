@@ -11,7 +11,7 @@ type OnComplete = Parameters<typeof check>[1];
 type CheckInfo = Parameters<OnComplete>[1];
 
 class DoctorCommand extends Command {ssss
-  constructor(rawArgv) {
+  constructor(rawArgv?: string[]) {
     super(rawArgv);
     this.usage = '使用方法: surgio doctor';
     this.options = {
