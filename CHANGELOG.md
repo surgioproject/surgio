@@ -1,3 +1,12 @@
+## [2.3.4](https://github.com/geekdada/surgio/compare/v2.3.3...v2.3.4) (2020-08-16)
+
+
+### Features
+
+* 支持指定阿里云 OSS endpoint ([1b796a5](https://github.com/geekdada/surgio/commit/1b796a5710de77194ea3c7b9de3ce74e147a1103))
+
+
+
 ## [2.3.3](https://github.com/geekdada/surgio/compare/v2.3.2...v2.3.3) (2020-08-16)
 
 
