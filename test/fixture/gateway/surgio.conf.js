@@ -44,6 +44,6 @@ module.exports = {
   },
   quantumultXConfig: {},
   customFilters: {
-    globalFilter: node => node.nodeName === '🇺🇲 US',
+    globalFilter: node => node.nodeName === '🇺🇸 US',
   },
 };

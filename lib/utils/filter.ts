@@ -150,7 +150,7 @@ export const netflixFilter: NodeNameFilterType = item => {
 
 export const usFilter: NodeNameFilterType = item => {
   return [
-    '🇺🇸', ...flag['🇺🇲']
+    '🇺🇸', ...flag['🇺🇸']
   ].some(key => item.nodeName.toUpperCase().includes(key));
 };
 
