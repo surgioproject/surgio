@@ -1,3 +1,12 @@
+## [2.3.5](https://github.com/geekdada/surgio/compare/v2.3.4...v2.3.5) (2020-08-28)
+
+
+### Bug Fixes
+
+* the wrong US flag ([0bb6a60](https://github.com/geekdada/surgio/commit/0bb6a60b156a5fb967fdba058b88d879c2bff2a2)), closes [#115](https://github.com/geekdada/surgio/issues/115)
+
+
+
 ## [2.3.4](https://github.com/geekdada/surgio/compare/v2.3.3...v2.3.4) (2020-08-16)
 
 
