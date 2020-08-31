@@ -65,7 +65,7 @@ test.serial('--skip-fail should work', async t => {
       cwd: resolve('plain'),
       execArgv: ['--require', require.resolve('./stub-axios.js')],
     })
-      .debug()
+      // .debug()
       .expect('code', 0)
       .end();
   });
@@ -137,7 +137,7 @@ test.serial('custom filter', async t => {
     cwd: resolve('custom-filter'),
     execArgv: ['--require', require.resolve('./stub-axios.js')],
   })
-    .debug()
+    // .debug()
     .end();
   const confString1 = fs.readFileSync(resolve('custom-filter/dist/ss.conf'), {
     encoding: 'utf8',
@@ -175,7 +175,7 @@ test.serial('check command', async t => {
     cwd: resolve('plain'),
   })
     .expect('code', 0)
-    .debug()
+    // .debug()
     .end();
 
   t.pass();

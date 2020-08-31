@@ -460,7 +460,7 @@ export const getClashNodes = function(
             password: nodeConfig.password,
             port: nodeConfig.port,
             server: nodeConfig.hostname,
-            udp: nodeConfig['udp-relay'] || false,
+            udp: nodeConfig['udp-relay'] === true,
             ...(nodeConfig.obfs && ['tls', 'http'].includes(nodeConfig.obfs) ? {
               plugin: 'obfs',
               'plugin-opts': {
@@ -491,6 +491,7 @@ export const getClashNodes = function(
             name: nodeConfig.nodeName,
             server: nodeConfig.hostname,
             port: nodeConfig.port,
+            udp: nodeConfig['udp-relay'] === true,
             uuid: nodeConfig.uuid,
             alterId: nodeConfig.alterId,
             ...(nodeConfig.network === 'tcp' ? null : {
@@ -528,7 +529,7 @@ export const getClashNodes = function(
               obfsparam: nodeConfig.obfsparam ?? '',
               protocolparam: nodeConfig.protoparam ?? '',
             }),
-            udp: nodeConfig['udp-relay'],
+            udp: nodeConfig['udp-relay'] === true,
           };
         }
 
@@ -950,7 +951,7 @@ export const getQuantumultXNodes = function(
               `obfs-uri=${nodeConfig['obfs-uri'] || '/'}`,
             ] : []),
             ...(nodeConfig['udp-relay'] ? [
-              `udp-relay=${nodeConfig['udp-relay']}`,
+              `udp-relay=true`,
             ] : []),
             ...(nodeConfig.tfo ? [
               `fast-open=${nodeConfig.tfo}`,
@@ -979,7 +980,7 @@ export const getQuantumultXNodes = function(
             `obfs=${nodeConfig.obfs}`,
             `obfs-host=${nodeConfig.obfsparam}`,
             ...(nodeConfig['udp-relay'] ? [
-              `udp-relay=${nodeConfig['udp-relay']}`,
+              `udp-relay=true`,
             ] : []),
             ...(nodeConfig.tfo ? [
               `fast-open=${nodeConfig.tfo}`,
@@ -1029,7 +1030,7 @@ export const getQuantumultXNodes = function(
               `fast-open=${nodeConfig.tfo}`,
             ] : []),
             ...(nodeConfig['udp-relay'] ? [
-              `udp-relay=${nodeConfig['udp-relay']}`,
+              `udp-relay=true`,
             ] : []),
             ...(nodeConfig.tls13 ? [
               `tls13=${nodeConfig.tls13}`,
