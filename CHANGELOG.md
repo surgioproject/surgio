@@ -1,3 +1,12 @@
+## [2.3.6](https://github.com/geekdada/surgio/compare/v2.3.5...v2.3.6) (2020-08-31)
+
+
+### Bug Fixes
+
+* clash vmess 配置中输出 udp ([d77f75c](https://github.com/geekdada/surgio/commit/d77f75c1650edfcad9f4ed6eb733b742d4d19cb9))
+
+
+
 ## [2.3.5](https://github.com/geekdada/surgio/compare/v2.3.4...v2.3.5) (2020-08-28)
 
 
