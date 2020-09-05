@@ -6,7 +6,7 @@ import os from 'os';
 import { join } from 'path';
 import queryString from 'query-string';
 import { JsonObject } from 'type-fest';
-import { parse, format, URL } from 'url';
+import { parse, format, URL, URLSearchParams } from 'url';
 import URLSafeBase64 from 'urlsafe-base64';
 import YAML from 'yaml';
 import net from 'net';
@@ -40,21 +40,36 @@ import { formatVmessUri } from './v2ray';
 
 const logger = createLogger({ service: 'surgio:utils' });
 
-export const getDownloadUrl = (baseUrl = '/', artifactName: string, inline = true, accessToken?: string): string => {
-  const urlObject = parse(`${baseUrl}${artifactName}`, true);
-  if (accessToken) {
-    urlObject.query.access_token = accessToken;
-  }
-  if (!inline) {
-    urlObject.query.dl = '1';
+export const getDownloadUrl = (
+  baseUrl = '/',
+  artifactName: string,
+  inline = true,
+  accessToken?: string
+): string => {
+  let urlSearchParams: URLSearchParams;
+  let name: string;
+
+  if (artifactName.includes('?')) {
+    urlSearchParams = new URLSearchParams(artifactName.split('?')[1]);
+    name = artifactName.split('?')[0];
+  } else {
+    urlSearchParams = new URLSearchParams();
+    name = artifactName;
   }
 
-  delete urlObject.search;
-  return format(urlObject);
+  if (accessToken) {
+    urlSearchParams.set('access_token', accessToken);
+  }
+  if (!inline) {
+    urlSearchParams.set('dl', '1');
+  }
+
+  const query = urlSearchParams.toString();
+
+  return `${baseUrl}${name}${query ? '?' + query : ''}`;
 };
 
 export const getUrl = (baseUrl: string, path: string, accessToken?: string): string => {
-
   path = path.replace(/^\//, '');
   const url = new URL(path, baseUrl);
   if (accessToken) {
