@@ -46,7 +46,7 @@ export const addProxyToSurgeRuleSet = (str: string, proxyName: string): string =
     .join('\n');
 };
 
-export const loadRemoteSnippetList = (remoteSnippetList: ReadonlyArray<RemoteSnippetConfig>, snippetCache = true): Promise<ReadonlyArray<RemoteSnippet>> => {
+export const loadRemoteSnippetList = (remoteSnippetList: ReadonlyArray<RemoteSnippetConfig>, cacheSnippet = true): Promise<ReadonlyArray<RemoteSnippet>> => {
   const tmpFactory = createTmpFactory('remote-snippets');
 
   function load(url: string): Promise<string> {
@@ -67,7 +67,7 @@ export const loadRemoteSnippetList = (remoteSnippetList: ReadonlyArray<RemoteSni
     const fileMd5 = crypto.createHash('md5').update(item.url).digest('hex');
 
     return (async () => {
-      if (snippetCache || isNow()) {
+      if (cacheSnippet || isNow()) {
         const tmp = tmpFactory(fileMd5, REMOTE_SNIPPET_CACHE_MAXAGE);
         const tmpContent = await tmp.getContent();
         let snippet: string;

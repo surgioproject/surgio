@@ -14,6 +14,10 @@ $ npx surgio generate
 
 ### 可选参数
 
+#### `--cache-snippet`
+
+
+
 #### `--skip-fail`
 
 略过 Artifact 生成过程中的错误。

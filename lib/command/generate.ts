@@ -20,7 +20,7 @@ class GenerateCommand extends Command {
         alias: 'config',
         default: './surgio.conf.js',
       },
-      'snippet-cache': {
+      'cache-snippet': {
         type: 'boolean',
         default: false,
         description: '缓存远程片段',
@@ -53,7 +53,7 @@ class GenerateCommand extends Command {
         output: path.resolve(ctx.cwd, ctx.argv.output),
       } : null)
     });
-    await generate(config, ctx.argv.skipFail, ctx.argv.snippetCache);
+    await generate(config, ctx.argv.skipFail, ctx.argv.cacheSnippet);
   }
 
   // istanbul ignore next
