@@ -16,11 +16,11 @@ import { loadRemoteSnippetList } from './utils/remote-snippet';
 
 const spinner = ora();
 
-async function run(config: CommandConfig, skipFail?: boolean): Promise<void> {
+async function run(config: CommandConfig, skipFail?: boolean, snippetCache?: boolean): Promise<void> {
   const artifactList: ReadonlyArray<ArtifactConfig> = config.artifacts;
   const distPath = config.output;
   const remoteSnippetsConfig = config.remoteSnippets || [];
-  const remoteSnippetList = await loadRemoteSnippetList(remoteSnippetsConfig);
+  const remoteSnippetList = await loadRemoteSnippetList(remoteSnippetsConfig, snippetCache);
   const templateEngine = getEngine(config.templateDir);
 
   await fs.remove(distPath);
@@ -79,9 +79,9 @@ export async function generate(
   return artifactInstance.render(templateEngine);
 }
 
-export default async function(config: CommandConfig, skipFail?: boolean): Promise<void> {
+export default async function(config: CommandConfig, skipFail?: boolean, snippetCache?: boolean): Promise<void> {
   logger.info('开始生成规则');
-  await run(config, skipFail)
+  await run(config, skipFail, snippetCache)
     .catch(err => {
       // istanbul ignore next
       if (spinner.isSpinning) {

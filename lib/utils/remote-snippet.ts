@@ -47,7 +47,9 @@ export const addProxyToSurgeRuleSet = (str: string, proxyName: string): string =
     .join('\n');
 };
 
-export const loadRemoteSnippetList = (remoteSnippetList: ReadonlyArray<RemoteSnippetConfig>): Promise<ReadonlyArray<RemoteSnippet>> => {
+export const loadRemoteSnippetList = (remoteSnippetList: ReadonlyArray<RemoteSnippetConfig>, snippetCache = true): Promise<ReadonlyArray<RemoteSnippet>> => {
+  const tmpFactory = createTmpFactory('remote-snippets');
+
   function load(url: string): Promise<string> {
     // logger.info(`正在下载远程片段: ${url}`);
 
@@ -63,11 +65,10 @@ export const loadRemoteSnippetList = (remoteSnippetList: ReadonlyArray<RemoteSni
   }
 
   return Bluebird.map(remoteSnippetList, item => {
-    const tmpFactory = createTmpFactory('remote-snippets');
     const fileMd5 = crypto.createHash('md5').update(item.url).digest('hex');
 
     return (async () => {
-      if (isNow()) {
+      if (snippetCache || isNow()) {
         const tmp = tmpFactory(fileMd5, REMOTE_SNIPPET_CACHE_MAXAGE);
         const tmpContent = await tmp.getContent();
         let snippet: string;

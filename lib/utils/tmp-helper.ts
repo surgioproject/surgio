@@ -6,8 +6,6 @@ import fs from 'fs-extra';
 const logger = createLogger({ service: 'surgio:utils:tmp-helper' });
 const tmpDir = path.join(os.tmpdir(), 'surgio-config');
 
-logger.debug('tmpDir: %s', tmpDir);
-
 export class TmpFile {
   public filename: string;
   public extname: string;
@@ -61,8 +59,9 @@ export class TmpFile {
 export interface TmpContent { readonly content: string, readonly lastEditTime: number, readonly maxAge?: number }
 
 export const createTmpFactory = (baseDir: string): ((filePath: string, maxAge?: number) => TmpFile) => {
-
   baseDir = path.join(tmpDir, baseDir);
+
+  logger.debug('tmpDir: %s', baseDir);
 
   if (!fs.existsSync(baseDir)) {
     fs.mkdirpSync(baseDir);
