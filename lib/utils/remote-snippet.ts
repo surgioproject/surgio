@@ -1,4 +1,3 @@
-import got from 'got';
 import Bluebird from 'bluebird';
 import crypto from 'crypto';
 import { logger } from '@surgio/logger';

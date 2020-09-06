@@ -102,10 +102,12 @@ class GenerateCommand extends Command {
     this.spinner.succeed();
   }
 
+  // istanbul ignore next
   public get description(): string {
     return '上传规则到阿里云 OSS';
   }
 
+  // istanbul ignore next
   public errorHandler(err): void {
     this.spinner.fail();
 

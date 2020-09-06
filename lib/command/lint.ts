@@ -15,6 +15,11 @@ class LintCommand extends Command {
     };
   }
 
+  // istanbul ignore next
+  public get description(): string {
+    return '运行 ESLint 检查';
+  }
+
   public async run(ctx): Promise<void> {
     let result;
 

@@ -60,10 +60,12 @@ class SubscriptionsCommand extends Command {
     }
   }
 
+  // istanbul ignore next
   public get description(): string {
     return '查询订阅流量';
   }
 
+  // istanbul ignore next
   public errorHandler(err): void {
     errorHandler.call(this, err);
   }

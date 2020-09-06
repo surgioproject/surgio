@@ -23,6 +23,11 @@ class NewCommand extends Command {
     };
   }
 
+  // istanbul ignore next
+  public get description(): string {
+    return '新建文件助手';
+  }
+
   public async run(ctx: Context): Promise<void> {
     if (!ctx.rawArgv.length) {
       logger.error('请指定新建类型\n');

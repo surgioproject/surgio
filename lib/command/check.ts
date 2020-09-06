@@ -57,6 +57,7 @@ class CheckCommand extends Command {
     return '查询 Provider';
   }
 
+  // istanbul ignore next
   public errorHandler(err): void {
     errorHandler.call(this, err);
   }

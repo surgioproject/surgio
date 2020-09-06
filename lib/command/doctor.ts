@@ -33,10 +33,12 @@ class DoctorCommand extends Command {
     });
   }
 
+  // istanbul ignore next
   public get description(): string {
     return '检查运行环境';
   }
 
+  // istanbul ignore next
   public errorHandler(err): void {
     errorHandler.call(this, err);
   }
