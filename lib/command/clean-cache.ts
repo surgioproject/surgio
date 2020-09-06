@@ -5,6 +5,7 @@ import path from 'path';
 import fs from 'fs-extra';
 import { logger } from '@surgio/logger';
 
+import { TMP_FOLDER_NAME } from '../utils/constant';
 import { errorHandler } from '../utils/error-helper';
 
 class CleanCacheCommand extends Command {
@@ -19,7 +20,7 @@ class CleanCacheCommand extends Command {
   }
 
   public async run(): Promise<void> {
-    const tmpDir = path.join(os.tmpdir(), 'surgio-config');
+    const tmpDir = path.join(os.tmpdir(), TMP_FOLDER_NAME);
 
     if (fs.existsSync(tmpDir)) {
       await fs.remove(tmpDir);

@@ -3,10 +3,12 @@ import fs from 'fs-extra';
 import path from 'path';
 import os from 'os';
 import Bluebird from 'bluebird';
+
+import { TMP_FOLDER_NAME } from '../../lib/utils/constant';
 import { createTmpFactory, TmpFile } from '../../lib/utils/tmp-helper';
 
 test.after.always(async () => {
-  const dir = path.join(os.tmpdir(), 'surgio-config', 'tmp-helper-test-folder' + `_nodejs_${process.version}`);
+  const dir = path.join(os.tmpdir(), TMP_FOLDER_NAME, 'tmp-helper-test-folder' + `_nodejs_${process.version}`);
   if (fs.existsSync(dir)) {
     await fs.remove(dir);
   }

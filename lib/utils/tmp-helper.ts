@@ -3,8 +3,10 @@ import os from 'os';
 import path from 'path';
 import fs from 'fs-extra';
 
+import { TMP_FOLDER_NAME } from './constant';
+
 const logger = createLogger({ service: 'surgio:utils:tmp-helper' });
-const tmpDir = path.join(os.tmpdir(), 'surgio-config');
+const tmpDir = path.join(os.tmpdir(), TMP_FOLDER_NAME);
 
 export class TmpFile {
   public filename: string;
