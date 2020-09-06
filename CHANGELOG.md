@@ -1,3 +1,19 @@
+# [2.4.0](https://github.com/geekdada/surgio/compare/v2.3.6...v2.4.0) (2020-09-06)
+
+
+### Bug Fixes
+
+* typo ([a13a571](https://github.com/geekdada/surgio/commit/a13a5710bf23814e640937fac1602465153dfe67))
+
+
+### Features
+
+* 清除缓存命令 ([4daaf1c](https://github.com/geekdada/surgio/commit/4daaf1cbd678ba65907e16dbfeb7c0aacf2d5cc2))
+* 允许通过命令行开启远程片段缓存 ([128c9c5](https://github.com/geekdada/surgio/commit/128c9c5998dcc8db9d4c9472ce451ff40f4732ee))
+* 支持自定义订阅请求转发的地址 ([3f4fb3b](https://github.com/geekdada/surgio/commit/3f4fb3b7450e3e63d89d26b4dfcba7dffd1e683e))
+
+
+
 ## [2.3.6](https://github.com/geekdada/surgio/compare/v2.3.5...v2.3.6) (2020-08-31)
 
 
