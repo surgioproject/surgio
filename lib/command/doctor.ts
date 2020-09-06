@@ -10,7 +10,7 @@ import { errorHandler } from '../utils/error-helper';
 type OnComplete = Parameters<typeof check>[1];
 type CheckInfo = Parameters<OnComplete>[1];
 
-class DoctorCommand extends Command {ssss
+class DoctorCommand extends Command {
   constructor(rawArgv?: string[]) {
     super(rawArgv);
     this.usage = '使用方法: surgio doctor';
