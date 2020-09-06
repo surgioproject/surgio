@@ -544,7 +544,27 @@ module.exports = {
 
 ### provider.relayUrl
 
-- 类型: `Boolean`
+- 类型: `Boolean|String`
 - 默认值: `undefined`
 
-开启订阅地址转发。由于部分机场禁止 AWS 等共有云服务器访问，所以面板无法获取订阅内容。开启后会使用一个免费并且安全的转发服务进行获取。
+开启订阅地址转发。由于部分机场禁止 AWS 等公有云服务器访问，所以面板无法获取订阅内容。开启后会使用一个免费并且安全的转发服务进行获取。
+
+从 v2.4.0 开始，你可以指定一个字符串来自定义转发服务。设置的方法如下：
+
+1. URL 中插入原始的订阅连接：
+
+```js
+module.exports = {
+  relayUrl: 'https://proxy.example.com/%URL%',
+};
+```
+
+2. URL 中插入 URL encoded 后的订阅连接：
+
+```js
+module.exports = {
+  relayUrl: 'https://proxy.example.com/?url=%%URL%%',
+};
+```
+
+如果 `relayUrl` 是一个布尔值，则使用内置的服务进行转发。

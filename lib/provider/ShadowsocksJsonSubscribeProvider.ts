@@ -1,7 +1,7 @@
 import Joi from '@hapi/joi';
 import { ShadowsocksJsonSubscribeProviderConfig } from '../types';
 import { getShadowsocksJSONConfig } from '../utils';
-import { RELAY_SERVICE } from '../utils/constant';
+import relayableUrl from '../utils/relayable-url';
 import Provider from './Provider';
 
 export default class ShadowsocksJsonSubscribeProvider extends Provider {
@@ -37,10 +37,7 @@ export default class ShadowsocksJsonSubscribeProvider extends Provider {
 
   // istanbul ignore next
   public get url(): string {
-    if (this.relayUrl) {
-      return `${RELAY_SERVICE}${this._url}`;
-    }
-    return this._url;
+    return relayableUrl(this._url, this.relayUrl);
   }
 
   public getNodeList(): ReturnType<typeof getShadowsocksJSONConfig> {

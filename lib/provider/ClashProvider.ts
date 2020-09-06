@@ -18,9 +18,10 @@ import {
 } from '../types';
 import { lowercaseHeaderKeys } from '../utils';
 import httpClient, { getUserAgent } from '../utils/http-client';
+import relayableUrl from '../utils/relayable-url';
 import { parseSubscriptionUserInfo } from '../utils/subscription';
 import { SubsciptionCacheItem, SubscriptionCache } from '../utils/cache';
-import { NETWORK_CLASH_UA, RELAY_SERVICE } from '../utils/constant';
+import { NETWORK_CLASH_UA } from '../utils/constant';
 import Provider from './Provider';
 
 type SupportConfigTypes = ShadowsocksNodeConfig|VmessNodeConfig|HttpsNodeConfig|HttpNodeConfig|ShadowsocksrNodeConfig|SnellNodeConfig|TrojanNodeConfig;
@@ -64,11 +65,9 @@ export default class ClashProvider extends Provider {
     this.supportGetSubscriptionUserInfo = true;
   }
 
+  // istanbul ignore next
   public get url(): string {
-    if (this.relayUrl) {
-      return `${RELAY_SERVICE}${this._url}`;
-    }
-    return this._url;
+    return relayableUrl(this._url, this.relayUrl);
   }
 
   public async getSubscriptionUserInfo(): Promise<SubscriptionUserinfo|undefined> {

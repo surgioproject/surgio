@@ -5,8 +5,8 @@ import assert from "assert";
 import { NodeTypeEnum, V2rayNSubscribeProviderConfig, VmessNodeConfig } from '../types';
 import { fromBase64 } from '../utils';
 import { ConfigCache } from '../utils/cache';
-import { RELAY_SERVICE } from '../utils/constant';
 import httpClient from '../utils/http-client';
+import relayableUrl from '../utils/relayable-url';
 import Provider from './Provider';
 
 export default class V2rayNSubscribeProvider extends Provider {
@@ -52,10 +52,7 @@ export default class V2rayNSubscribeProvider extends Provider {
 
   // istanbul ignore next
   public get url(): string {
-    if (this.relayUrl) {
-      return `${RELAY_SERVICE}${this._url}`;
-    }
-    return this._url;
+    return relayableUrl(this._url, this.relayUrl);
   }
 
   public getNodeList(): ReturnType<typeof getV2rayNSubscription> {

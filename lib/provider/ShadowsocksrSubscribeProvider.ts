@@ -5,9 +5,9 @@ import assert from 'assert';
 import { ShadowsocksrNodeConfig, ShadowsocksrSubscribeProviderConfig, SubscriptionUserinfo } from '../types';
 import { fromBase64 } from '../utils';
 import httpClient from '../utils/http-client';
+import relayableUrl from '../utils/relayable-url';
 import { parseSubscriptionNode, parseSubscriptionUserInfo } from '../utils/subscription';
 import { SubsciptionCacheItem, SubscriptionCache } from '../utils/cache';
-import { RELAY_SERVICE } from '../utils/constant';
 import { parseSSRUri } from '../utils/ssr';
 import Provider from './Provider';
 
@@ -47,10 +47,7 @@ export default class ShadowsocksrSubscribeProvider extends Provider {
 
   // istanbul ignore next
   public get url(): string {
-    if (this.relayUrl) {
-      return `${RELAY_SERVICE}${this._url}`;
-    }
-    return this._url;
+    return relayableUrl(this._url, this.relayUrl);
   }
 
   public async getSubscriptionUserInfo(): Promise<SubscriptionUserinfo|undefined> {

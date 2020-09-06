@@ -18,9 +18,10 @@ export default class Provider {
   public readonly tfo?: boolean;
   public readonly mptcp?: boolean;
   public readonly renameNode?: ProviderConfig['renameNode'];
-  public readonly relayUrl?: boolean;
+  public readonly relayUrl?: boolean|string;
   // 是否支持在订阅中获取用户流量信息
   public supportGetSubscriptionUserInfo: boolean;
+
   // External Provider 的起始端口，Surge 配置中使用
   private startPort?: number;
 
@@ -41,7 +42,10 @@ export default class Provider {
       mptcp: Joi.boolean().strict(),
       tfo: Joi.boolean().strict(),
       startPort: Joi.number().integer().min(1024).max(65535),
-      relayUrl: Joi.boolean().strict(),
+      relayUrl: [
+        Joi.boolean().strict(),
+        Joi.string(),
+      ],
       renameNode: Joi.function(),
     })
       .unknown();

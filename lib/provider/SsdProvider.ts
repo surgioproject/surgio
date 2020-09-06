@@ -6,8 +6,8 @@ import bytes from 'bytes';
 import { NodeTypeEnum, ShadowsocksNodeConfig, SsdProviderConfig, SubscriptionUserinfo } from '../types';
 import { decodeStringList, fromBase64 } from '../utils';
 import { SubsciptionCacheItem, SubscriptionCache } from '../utils/cache';
-import { RELAY_SERVICE } from '../utils/constant';
 import httpClient from '../utils/http-client';
+import relayableUrl from '../utils/relayable-url';
 import { parseSubscriptionUserInfo } from '../utils/subscription';
 import Provider from './Provider';
 
@@ -49,10 +49,7 @@ export default class SsdProvider extends Provider {
 
   // istanbul ignore next
   public get url(): string {
-    if (this.relayUrl) {
-      return `${RELAY_SERVICE}${this._url}`;
-    }
-    return this._url;
+    return relayableUrl(this._url, this.relayUrl);
   }
 
   public async getSubscriptionUserInfo(): Promise<SubscriptionUserinfo|undefined> {
