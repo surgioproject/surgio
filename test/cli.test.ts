@@ -28,7 +28,7 @@ test.serial('help command', async t => {
   });
 });
 
-test.serial.only('cli works', async t => {
+test.serial('cli works', async t => {
   await coffee.fork(cli, ['generate'], {
     cwd: resolve('plain'),
     execArgv: ['--require', require.resolve('./stub-axios.js')],
