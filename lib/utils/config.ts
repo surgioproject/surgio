@@ -8,6 +8,7 @@ import { DEP005, DEP006 } from '../misc/deprecation';
 
 import { CommandConfig } from '../types';
 import { PROXY_TEST_INTERVAL, PROXY_TEST_URL } from './constant';
+import { addFlagMap } from './flag';
 import { ensureConfigFolder } from './index';
 
 const showDEP005 = deprecate(_.noop, DEP005, 'DEP005');
@@ -23,6 +24,22 @@ export const loadConfig = (cwd: string, configPath: string, override?: Partial<C
   const userConfig = _.cloneDeep(require(absPath));
 
   validateConfig(userConfig);
+
+  if (userConfig.flags) {
+    Object.keys(userConfig.flags).forEach(emoji => {
+      if (userConfig.flags) {
+        if (typeof userConfig.flags[emoji] === 'string') {
+          addFlagMap(userConfig.flags[emoji] as string, emoji);
+        } else if (_.isRegExp(userConfig.flags[emoji])) {
+          addFlagMap(userConfig.flags[emoji] as RegExp, emoji);
+        } else {
+          (userConfig.flags[emoji] as ReadonlyArray<string|RegExp>).forEach(name => {
+            addFlagMap(name, emoji);
+          });
+        }
+      }
+    });
+  }
 
   if (override) {
     return {
@@ -127,6 +144,19 @@ export const validateConfig = (userConfig: Partial<CommandConfig>): void => {
       v2ray: Joi.string().pattern(/^\//),
       vmess: Joi.string().pattern(/^\//),
     }),
+    flags: Joi
+      .object()
+      .pattern(
+        Joi.string(),
+        [
+          Joi.string(),
+          Joi.object().regex(),
+          Joi.array().items(
+            Joi.string(),
+            Joi.object().regex(),
+          )
+        ]
+      ),
     surgeConfig: Joi.object({
       shadowsocksFormat: Joi.string().valid('ss', 'custom'),
       v2ray: Joi.string().valid('native', 'external'),

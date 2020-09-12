@@ -46,6 +46,9 @@ export interface CommandConfig {
     readonly v2ray?: string;
     vmess?: string;
   };
+  readonly flags?: {
+    [name: string]: ReadonlyArray<string|RegExp>|string|RegExp;
+  },
   readonly surgeConfig?: {
     readonly shadowsocksFormat?: 'ss'|'custom';
     readonly v2ray?: 'native'|'external';

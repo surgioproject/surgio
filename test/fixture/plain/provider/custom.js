@@ -41,7 +41,21 @@ module.exports = {
       hostname: 'trojan.example.com',
       port: '443',
       password: 'password',
-    }
+    },
+    {
+      type: 'trojan',
+      nodeName: '火箭 trojan node',
+      hostname: 'trojan.example.com',
+      port: '443',
+      password: 'password',
+    },
+    {
+      type: 'trojan',
+      nodeName: 'foobar trojan node',
+      hostname: 'trojan.example.com',
+      port: '443',
+      password: 'password',
+    },
   ],
   renameNode: name => {
     if (name === 'rename to HTTPS') {

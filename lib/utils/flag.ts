@@ -1,4 +1,6 @@
-import EmojiRegex from 'emoji-regex'
+import EmojiRegex from 'emoji-regex';
+import _ from 'lodash';
+
 import flag from '../misc/flag_cn';
 
 const flagMap: Map<string|RegExp, string> = new Map();
@@ -28,12 +30,12 @@ export const prependFlag = (str: string, removeExistingEmoji = false): string =>
   }
 
   for (const [key, value] of flagMap.entries()) {
-    if (typeof key === 'string') {
-      if (str.toUpperCase().includes(key)) {
+    if (_.isRegExp(key)) {
+      if (key.test(str)) {
         return `${value} ${str}`;
       }
     } else {
-      if (key.test(str)) {
+      if (str.toUpperCase().includes(key)) {
         return `${value} ${str}`;
       }
     }

@@ -18,13 +18,17 @@ test.serial('doctor command', async t => {
   });
 });
 
-test.serial('cli works', async t => {
-  await coffee.fork(cli, ['generate', '-h'], {
-    cwd: resolve('plain'),
-  })
-    .expect('code', 0)
-    .end();
+test.serial('help command', async t => {
+  await t.notThrowsAsync(async () => {
+    await coffee.fork(cli, ['generate', '-h'], {
+      cwd: resolve('plain'),
+    })
+      .expect('code', 0)
+      .end();
+  });
+});
 
+test.serial.only('cli works', async t => {
   await coffee.fork(cli, ['generate'], {
     cwd: resolve('plain'),
     execArgv: ['--require', require.resolve('./stub-axios.js')],

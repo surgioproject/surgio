@@ -80,6 +80,10 @@ module.exports = {
     shadowsocksr: '/usr/local/bin/ssr-local',
     v2ray: '/usr/local/bin/v2ray',
   },
+  flags: {
+    '🚀': '火箭',
+    '🎉': [/foobar/i],
+  },
   gateway: {
     accessToken: 'abcd',
   },

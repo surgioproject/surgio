@@ -1,5 +1,9 @@
 import test from 'ava';
-import { prependFlag, removeFlag } from '../../lib/utils/flag';
+import { addFlagMap, prependFlag, removeFlag } from '../../lib/utils/flag';
+
+test.before(() => {
+  addFlagMap(/foobar/i, '🚀');
+});
 
 test('addFlag', t => {
   t.is(prependFlag('美国'), '🇺🇸 美国');
@@ -13,6 +17,7 @@ test('addFlag', t => {
   t.is(prependFlag('🇺🇸 jp', true), '🇯🇵 jp');
   t.is(prependFlag('🇯🇵 🇺🇸 jp', true), '🇯🇵 jp');
   t.is(prependFlag('🇺🇸 🇯🇵 US', true), '🇺🇸 US');
+  t.is(prependFlag('foobar 节点'), '🚀 foobar 节点');
 });
 
 test('removeFlag', t => {
