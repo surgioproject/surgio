@@ -1,3 +1,13 @@
+# [2.5.0](https://github.com/geekdada/surgio/compare/v2.4.0...v2.5.0) (2020-09-12)
+
+
+### Features
+
+* 支持去掉节点名称中的国旗 emoji ([7b363d6](https://github.com/geekdada/surgio/commit/7b363d6e0bf976ba8b70c803626d04db34592f5e))
+* 支持用户自定义 emoji 替换规则 ([bce9ec5](https://github.com/geekdada/surgio/commit/bce9ec5b4df3ab88cbdf14d2197e0ec079dfb1c5))
+
+
+
 # [2.4.0](https://github.com/geekdada/surgio/compare/v2.3.6...v2.4.0) (2020-09-06)
 
 
