@@ -103,6 +103,7 @@ export interface ProviderConfig {
     readonly [name: string]: NodeNameFilterType|SortedNodeNameFilterType;
   };
   readonly addFlag?: boolean;
+  readonly removeExistingFlag?: boolean;
   readonly tfo?: boolean;
   readonly mptcp?: boolean;
   readonly renameNode?: (name: string) => string;

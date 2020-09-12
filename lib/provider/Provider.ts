@@ -15,6 +15,7 @@ export default class Provider {
   public readonly youtubePremiumFilter?: ProviderConfig['youtubePremiumFilter'];
   public readonly customFilters?: ProviderConfig['customFilters'];
   public readonly addFlag?: boolean;
+  public readonly removeExistingFlag?: boolean;
   public readonly tfo?: boolean;
   public readonly mptcp?: boolean;
   public readonly renameNode?: ProviderConfig['renameNode'];
@@ -39,6 +40,7 @@ export default class Provider {
           Joi.any().allow(Joi.function(), Joi.object({ filter: Joi.function(), supportSort: Joi.boolean().strict() }))
         ),
       addFlag: Joi.boolean().strict(),
+      removeExistingFlag: Joi.boolean().strict(),
       mptcp: Joi.boolean().strict(),
       tfo: Joi.boolean().strict(),
       startPort: Joi.number().integer().min(1024).max(65535),
@@ -57,18 +59,24 @@ export default class Provider {
       throw error;
     }
 
-    this.type = config.type;
-    this.nodeFilter = config.nodeFilter;
-    this.netflixFilter = config.netflixFilter;
-    this.youtubePremiumFilter = config.youtubePremiumFilter;
-    this.customFilters = config.customFilters;
-    this.addFlag = config.addFlag;
-    this.tfo = config.tfo;
-    this.mptcp = config.mptcp;
-    this.startPort = config.startPort;
-    this.renameNode = config.renameNode;
-    this.relayUrl = config.relayUrl;
     this.supportGetSubscriptionUserInfo = false;
+
+    [
+      'type',
+      'nodeFilter',
+      'netflixFilter',
+      'youtubePremiumFilter',
+      'customFilters',
+      'addFlag',
+      'removeExistingFlag',
+      'tfo',
+      'mptcp',
+      'startPort',
+      'renameNode',
+      'relayUrl',
+    ].forEach(key => {
+      this[key] = config[key];
+    });
   }
 
   public get nextPort(): number {

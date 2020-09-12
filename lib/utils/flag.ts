@@ -1,29 +1,48 @@
 import EmojiRegex from 'emoji-regex'
 import flag from '../misc/flag_cn';
 
-const flagMap: {
-  [name: string]: string;
-} = {};
+const flagMap: Map<string|RegExp, string> = new Map();
 
 Object.keys(flag).forEach(emoji => {
   flag[emoji].forEach((name: string) => {
-    flagMap[name] = emoji;
+    flagMap.set(name, emoji);
   });
 });
 
-export const prependFlag = (str: string): string => {
+export const addFlagMap = (name: string|RegExp, emoji: string): void => {
+  flagMap.set(name, emoji);
+};
+
+export const prependFlag = (str: string, removeExistingEmoji = false): string => {
   const emojiRegex = EmojiRegex();
   const existingEmoji = emojiRegex.exec(str);
 
-  // 如果已经存在 emoji 则不作处理
   if (existingEmoji) {
-    return str;
-  }
-
-  for (const key in flagMap) {
-    if (flagMap.hasOwnProperty(key) && str.toUpperCase().includes(key)) {
-      return `${flagMap[key]} ${str}`;
+    if (removeExistingEmoji) {
+      // 去除已有的 emoji
+      str = removeFlag(str);
+    } else {
+      // 不作处理
+      return str;
     }
   }
+
+  for (const [key, value] of flagMap.entries()) {
+    if (typeof key === 'string') {
+      if (str.toUpperCase().includes(key)) {
+        return `${value} ${str}`;
+      }
+    } else {
+      if (key.test(str)) {
+        return `${value} ${str}`;
+      }
+    }
+  }
+
   return str;
+};
+
+export const removeFlag = (str: string): string => {
+  const emojiRegex = EmojiRegex();
+  return str.replace(emojiRegex, '').trim();
 };

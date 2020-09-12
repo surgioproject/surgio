@@ -49,7 +49,7 @@ import {
   trojanFilter,
   socks5Filter,
 } from '../utils/filter';
-import { prependFlag } from '../utils/flag';
+import { prependFlag, removeFlag } from '../utils/flag';
 import { loadLocalSnippet } from './template';
 
 export interface ArtifactOptions {
@@ -362,9 +362,12 @@ export class Artifact extends EventEmitter {
           }
         }
 
-        // 给节点名加国旗
         if (provider.addFlag) {
-          nodeConfig.nodeName = prependFlag(nodeConfig.nodeName);
+          // 给节点名加国旗
+          nodeConfig.nodeName = prependFlag(nodeConfig.nodeName, provider.removeExistingFlag);
+        } else if (provider.removeExistingFlag) {
+          // 去掉名称中的国旗
+          nodeConfig.nodeName = removeFlag(nodeConfig.nodeName);
         }
 
         // TCP Fast Open
