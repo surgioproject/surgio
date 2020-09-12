@@ -503,6 +503,13 @@ module.exports = {
 
 在节点名称前加国旗 Emoji。需要注意的是，Surgio 是根据有限的节点名关键词判断位置的，如果无法匹配则会保留原节点名。你可以在所有的过滤器中检索国旗 Emoji。
 
+### provider.removeExistingFlag <Badge text="v2.5.0" vertical="middle" />
+
+- 类型: `Boolean`
+- 默认值: `false`
+
+去除订阅中的国旗 Emoji。可以在不开启 `addFlag` 时使用，这时会输出没有 Emoji 的节点名称。
+
 ### provider.tfo
 
 - 类型: `Boolean`
