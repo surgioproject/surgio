@@ -6,7 +6,6 @@ actionText: 快速上手 →
 actionLink: /guide/
 footer: MIT Licensed | Copyright © 2019-present
 ---
-
 <p style="text-align: center">
   <script async defer src="https://buttons.github.io/buttons.js"></script>
   <a class="github-button" href="https://github.com/geekdada/surgio" data-icon="octicon-star" data-size="large" data-show-count="true" aria-label="Star geekdada/surgio on GitHub">Star</a>
@@ -32,4 +31,8 @@ npx surgio generate
 
 ### 交流
 
-[<img width="207" src="https://raw.githubusercontent.com/geekdada/surgio/master/docs/.vuepress/public/join-telegram.png">](https://t.me/surgiotg)
+[<img width="207" src="https://surgio.royli.dev/join-telegram.png">](https://t.me/surgiotg)
+
+<div style="margin-bottom: 2rem">
+  <Sponsor />
+</div>

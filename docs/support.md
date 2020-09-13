@@ -11,5 +11,5 @@
 </p>
 
 <div style="text-align:center; padding-top: 20px;">
-<img src="/support.jpg" width=300>
+  <img src="/support.jpg" width=300>
 </div>

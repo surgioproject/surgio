@@ -35,7 +35,13 @@
 
 ## 交流
 
-[<img width="207" src="https://raw.githubusercontent.com/geekdada/surgio/master/docs/.vuepress/public/join-telegram.png">](https://t.me/surgiotg)
+[<img width="200px" src="https://surgio.royli.dev//join-telegram.png" />](https://t.me/surgiotg)
+
+## Sponsor
+
+Our website is hosted on
+
+[<img width="200px" src="https://surgio.royli.dev/vercel-logo.svg" />](https://vercel.com/?utm_source=surgio&utm_campaign=oss)
 
 ## Contributors
 
