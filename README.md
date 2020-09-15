@@ -39,9 +39,9 @@
 
 ## Sponsor
 
-Our website is hosted on
+Our website is powered by [Vercel](https://vercel.com/?utm_source=surgio&utm_campaign=oss)!
 
-[<img width="200px" src="https://surgio.royli.dev/vercel-logo.svg" />](https://vercel.com/?utm_source=surgio&utm_campaign=oss)
+[<img width="200px" src="https://surgio.royli.dev/powered-by-vercel.svg" />](https://vercel.com/?utm_source=surgio&utm_campaign=oss)
 
 ## Contributors
 
