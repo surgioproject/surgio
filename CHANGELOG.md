@@ -1,3 +1,12 @@
+## [2.5.1](https://github.com/geekdada/surgio/compare/v2.5.0...v2.5.1) (2020-09-27)
+
+
+### Bug Fixes
+
+* Russia may be interpreted as the USA ([70db06d](https://github.com/geekdada/surgio/commit/70db06debdea3b4a33ee0c22a6cfac70ff6e31e3))
+
+
+
 # [2.5.0](https://github.com/geekdada/surgio/compare/v2.4.0...v2.5.0) (2020-09-12)
 
 
