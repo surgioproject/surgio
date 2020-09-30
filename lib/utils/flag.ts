@@ -4,6 +4,7 @@ import _ from 'lodash';
 import flag from '../misc/flag_cn';
 
 const flagMap: Map<string|RegExp, string> = new Map();
+const customFlagMap: Map<string|RegExp, string> = new Map();
 
 Object.keys(flag).forEach(emoji => {
   flag[emoji].forEach((name: string) => {
@@ -12,7 +13,10 @@ Object.keys(flag).forEach(emoji => {
 });
 
 export const addFlagMap = (name: string|RegExp, emoji: string): void => {
-  flagMap.set(name, emoji);
+  if (flagMap.has(name)) {
+    flagMap.delete(name)
+  }
+  customFlagMap.set(name, emoji);
 };
 
 export const prependFlag = (str: string, removeExistingEmoji = false): string => {
@@ -26,6 +30,18 @@ export const prependFlag = (str: string, removeExistingEmoji = false): string =>
     } else {
       // 不作处理
       return str;
+    }
+  }
+
+  for (const [key, value] of customFlagMap.entries()) {
+    if (_.isRegExp(key)) {
+      if (key.test(str)) {
+        return `${value} ${str}`;
+      }
+    } else {
+      if (str.toUpperCase().includes(key)) {
+        return `${value} ${str}`;
+      }
     }
   }
 

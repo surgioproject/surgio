@@ -3,9 +3,13 @@ import { addFlagMap, prependFlag, removeFlag } from '../../lib/utils/flag';
 
 test.before(() => {
   addFlagMap(/foobar/i, '🚀');
+  addFlagMap('多伦多', '🇨🇦');
+  addFlagMap( /sri\slanka/i, '🇱🇰');
+  addFlagMap( /sri\slanka/i, '🇱🇰');
+  addFlagMap( '镇江', '🏁');
 });
 
-test('addFlag', t => {
+test('prependFlag', t => {
   t.is(prependFlag('美国'), '🇺🇸 美国');
   t.is(prependFlag('上海美国'), '🇺🇸 上海美国');
   t.is(prependFlag('美国上海'), '🇺🇸 美国上海');
@@ -18,6 +22,10 @@ test('addFlag', t => {
   t.is(prependFlag('🇯🇵 🇺🇸 jp', true), '🇯🇵 jp');
   t.is(prependFlag('🇺🇸 🇯🇵 US', true), '🇺🇸 US');
   t.is(prependFlag('foobar 节点'), '🚀 foobar 节点');
+  t.is(prependFlag('上海 - 多伦多'), '🇨🇦 上海 - 多伦多');
+  t.is(prependFlag('上海 - Sri Lanka'), '🇱🇰 上海 - Sri Lanka');
+  t.is(prependFlag('镇江 - Sri Lanka'), '🇱🇰 镇江 - Sri Lanka');
+  t.is(prependFlag('镇江'), '🏁 镇江');
 });
 
 test('removeFlag', t => {
