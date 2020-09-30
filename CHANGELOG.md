@@ -1,3 +1,12 @@
+## [2.5.2](https://github.com/geekdada/surgio/compare/v2.5.1...v2.5.2) (2020-09-30)
+
+
+### Bug Fixes
+
+* 覆盖内部国旗映射时顺序没有重置 ([0443bed](https://github.com/geekdada/surgio/commit/0443bede89a7bd3d209cc8b457152fd9428c02d3))
+
+
+
 ## [2.5.1](https://github.com/geekdada/surgio/compare/v2.5.0...v2.5.1) (2020-09-27)
 
 
