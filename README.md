@@ -1,6 +1,6 @@
 <p align="center">
   <a href="https://surgio.royli.dev/" target="_blank">
-    <img width="180" src="https://raw.githubusercontent.com/geekdada/surgio/master/docs/.vuepress/public/surgio-icon.png" alt="logo">
+    <img width="180" src="https://raw.githubusercontent.com/surgioproject/surgio/master/docs/.vuepress/public/surgio-icon.png" alt="logo">
   </a>
 </p>
 
@@ -16,15 +16,15 @@
 
 [npm-image]: https://img.shields.io/npm/v/surgio.svg?style=flat-square
 [npm-url]: https://npmjs.org/package/surgio
-[codecov-image]: https://codecov.io/gh/geekdada/surgio/branch/master/graph/badge.svg
-[codecov-url]: https://codecov.io/gh/geekdada/surgio
-[david-image]: https://img.shields.io/david/geekdada/surgio.svg?style=flat-square
-[david-url]: https://david-dm.org/geekdada/surgio
+[codecov-image]: https://codecov.io/gh/surgioproject/surgio/branch/master/graph/badge.svg
+[codecov-url]: https://codecov.io/gh/surgioproject/surgio
+[david-image]: https://img.shields.io/david/surgioproject/surgio.svg?style=flat-square
+[david-url]: https://david-dm.org/surgioproject/surgio
 [snyk-image]: https://snyk.io/test/npm/surgio/badge.svg?style=flat-square
 [snyk-url]: https://snyk.io/test/npm/surgio
 [download-image]: https://img.shields.io/npm/dm/surgio.svg?style=flat-square
 [download-url]: https://npmjs.org/package/surgio
-[github-actions-image]: https://github.com/geekdada/surgio/workflows/Node%20CI/badge.svg
+[github-actions-image]: https://github.com/surgioproject/surgio/workflows/Node%20CI/badge.svg
 [taonpm-image]: https://npm.taobao.org/badge/v/surgio.svg
 [taonpm-url]: https://npm.taobao.org/package/surgio
 [nodejs-version]: https://img.shields.io/node/v/surgio
@@ -48,7 +48,7 @@ Our website is powered by [Vercel](https://vercel.com/?utm_source=surgio&utm_cam
 ### Code Contributors
 
 This project exists thanks to all the people who contribute. [[Contribute](CONTRIBUTING.md)].
-<a href="https://github.com/geekdada/surgio/graphs/contributors"><img src="https://opencollective.com/surgio/contributors.svg?width=890&button=false" /></a>
+<a href="https://github.com/surgioproject/surgio/graphs/contributors"><img src="https://opencollective.com/surgio/contributors.svg?width=890&button=false" /></a>
 
 ### Financial Contributors
 
@@ -75,4 +75,4 @@ Support this project with your organization. Your logo will show up here with a 
 
 ## License
 
-[MIT](https://github.com/geekdada/surgio/blob/master/LICENSE)
+[MIT](https://github.com/surgioproject/surgio/blob/master/LICENSE)
