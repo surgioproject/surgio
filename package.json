@@ -20,8 +20,8 @@
   },
   "homepage": "https://surgio.royli.dev",
   "devDependencies": {
-    "@commitlint/cli": "^9.0.1",
-    "@commitlint/config-angular": "^9.0.1",
+    "@commitlint/cli": "^11.0.0",
+    "@commitlint/config-angular": "^11.0.0",
     "@istanbuljs/nyc-config-typescript": "^1.0.1",
     "@types/bluebird": "^3.5.30",
     "@types/bytes": "^3.1.0",
@@ -60,7 +60,7 @@
     "sinon": "^9.0.2",
     "source-map-support": "^0.5.18",
     "ts-node": "^9.0.0",
-    "type-fest": "^0.16.0",
+    "type-fest": "^0.18.0",
     "typescript": "^4.0.2",
     "vuepress": "^1.5.2",
     "vuepress-plugin-sitemap": "^2.3.1"
@@ -116,7 +116,7 @@
     "query-string": "^6.12.1",
     "rimraf": "^3.0.0",
     "shelljs": "^0.8.3",
-    "update-notifier": "^4.1.0",
+    "update-notifier": "^5.0.0",
     "urlsafe-base64": "^1.0.0",
     "winston": "^3.2.1",
     "yaml": "^1.9.2"
