@@ -214,6 +214,13 @@ Youtube Premium 节点过滤器。Surgio 默认会将名称中包含 *日*, *美
 生成 Surge 规范的节点列表，例如：
 
 ```
+[Proxy]
+{{ getSurgeNodes(nodeList) }}
+```
+
+结果：
+
+```
 🇺🇸US = custom, us.example.com, 10000, chacha20-ietf-poly1305, password, https://raw.githubusercontent.com/ConnersHua/SSEncrypt/master/SSEncrypt.module, udp-relay=true, obfs=tls, obfs-host=gateway-carry.icloud.com
 🇭🇰HK(Netflix) = custom, hk.example.com, 10000, chacha20-ietf-poly1305, password, https://raw.githubusercontent.com/ConnersHua/SSEncrypt/master/SSEncrypt.module, udp-relay=true
 ```
@@ -298,15 +305,32 @@ Proxy-2, vmess1, vmess1://75da2e14-4d08-480b-b3cb-0079a0c51275@example.com:10025
 
 `getClashNodes(nodeList, filter?)`
 
-:::tip 提示
-- 支持输出 Shadowsocks, Shadowsocksr, HTTPS, Snell, Vmess 节点
-:::
-
 该方法会返回一个包含有节点信息的数组，用于编写 Clash 规则。
 
 :::tip 提示
-[Clash 规则维护指南](/guide/client/clash.md)
+- [Clash 规则维护指南](/guide/client/clash.md)
+- 支持输出 Shadowsocks, Shadowsocksr, HTTPS, Snell, Vmess 节点
 :::
+
+### getLoonNodes
+
+> <Badge text="v2.6.0" vertical="middle" />
+
+`getLoonNodes(nodeList, filter?)`
+
+:::tip 提示
+- 第二个参数可选，可传入标准的过滤器或自定义的过滤器
+- 支持输出 Shadowsocks, Shadowsocksr, HTTPS, HTTP, Vmess 节点
+:::
+
+生成符合 `[Proxy]` 规范的节点信息，使用时请参考 [文档](https://www.notion.so/1-9809ce5acf524d868affee8dd5fc0a6e)。
+
+示例：
+
+```
+[Proxy]
+{{ getLoonNodes(nodeList) }}
+```
 
 ### getNodeNames
 
@@ -553,4 +577,17 @@ Surgio 不会处理类似 `[rewrite_local]` 这样的标题，所以请 **不要
 {% import './snippet/blocked_rules.tpl' as blocked_rules %}
 
 {{ blocked_rules.main('🚀 Proxy') | mellow }}
+```
+
+### Loon 规则处理
+
+> <Badge text="v2.6.0" vertical="middle" />
+
+处理后的规则仅包含 [这里](https://www.notion.so/2-967c1a07462c43ab88906162bec475a4) 列出的几种规则类型。
+
+```html
+<!-- .tpl 文件 -->
+{% import './snippet/blocked_rules.tpl' as blocked_rules %}
+
+{{ blocked_rules.main('🚀 Proxy') | loon }}
 ```
