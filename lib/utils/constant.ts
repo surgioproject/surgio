@@ -31,7 +31,6 @@ export const CLASH_SUPPORTED_RULE: ReadonlyArray<string> = [
 ];
 
 export const QUANTUMULT_X_SUPPORTED_RULE: ReadonlyArray<string> = [
-  // 原生支持
   'USER-AGENT',
   'HOST',
   'HOST-KEYWORD',
@@ -44,6 +43,18 @@ export const QUANTUMULT_X_SUPPORTED_RULE: ReadonlyArray<string> = [
   'GEOIP',
   'FINAL',
 ];
+
+// @see https://www.notion.so/2-967c1a07462c43ab88906162bec475a4
+export const LOON_SUPPORTED_RULE: ReadonlyArray<string> = [
+  'DOMAIN-SUFFIX',
+  'DOMAIN',
+  'DOMAIN-KEYWORD',
+  'USER-AGENT',
+  'URL-REGEX',
+  'IP-CIDR',
+  'GEOIP',
+  'FINAL',
+]
 
 export const MELLOW_UNSUPPORTED_RULE: ReadonlyArray<string> = [
   'URL-REGEX', 'USER-AGENT', 'AND', 'OR', 'NOT', 'DEST-PORT', 'IN-PORT', 'SRC-IP', 'RULE-SET'
@@ -65,6 +76,7 @@ export const CATEGORIES = {
   QUANTUMULT_X_FILTER: 'Quantumult X Filter',
   QUANTUMULT_X_REWRITE: 'Quantumult X Rewrite',
   CLASH: 'Clash',
+  LOON: 'Loon',
 };
 
 export const RELAY_SERVICE = 'https://surgio-cors.herokuapp.com/';
