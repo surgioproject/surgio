@@ -13,6 +13,9 @@ getSurgeNodes
 getMellowNodes
 {{ getMellowNodes(nodeList) }}
 ----
+getLoonNodes
+{{ getLoonNodes(nodeList) }}
+----
 clashProxyConfig
 {{ clashProxyConfig | yaml }}
 ----
