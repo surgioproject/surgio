@@ -1,3 +1,14 @@
+# [2.6.0](https://github.com/geekdada/surgio/compare/v2.5.2...v2.6.0) (2020-10-14)
+
+
+### Features
+
+* addLoonNodes ([6a5f0e3](https://github.com/geekdada/surgio/commit/6a5f0e379f17fd4bd4e5fa0dfafee738b07b7443)), closes [#123](https://github.com/geekdada/surgio/issues/123)
+* dns resolve should have a timeout ([8ee0f4d](https://github.com/geekdada/surgio/commit/8ee0f4d7cd1138abef53433ee37e43c7ad4d1840))
+* support loon rule format ([a0afec6](https://github.com/geekdada/surgio/commit/a0afec6e853f300bb37df38d629e55fccc3c5505))
+
+
+
 ## [2.5.2](https://github.com/geekdada/surgio/compare/v2.5.1...v2.5.2) (2020-09-30)
 
 
