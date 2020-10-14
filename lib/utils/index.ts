@@ -140,6 +140,7 @@ export const getSurgeNodes = function (
   list: ReadonlyArray<PossibleNodeConfigType>,
   filter?: NodeFilterType | SortedNodeNameFilterType
 ): string {
+  // istanbul ignore next
   if (arguments.length === 2 && typeof filter === 'undefined') {
     throw new Error(ERR_INVALID_FILTER);
   }
@@ -513,12 +514,14 @@ export const getClashNodes = function (
   list: ReadonlyArray<PossibleNodeConfigType>,
   filter?: NodeFilterType | SortedNodeNameFilterType
 ): ReadonlyArray<any> {
+  // istanbul ignore next
   if (arguments.length === 2 && typeof filter === 'undefined') {
     throw new Error(ERR_INVALID_FILTER);
   }
 
   return applyFilter(list, filter)
     .map((nodeConfig) => {
+      // istanbul ignore next
       if (nodeConfig.enable === false) {
         return null;
       }
@@ -719,6 +722,7 @@ export const getMellowNodes = function (
   list: ReadonlyArray<VmessNodeConfig | ShadowsocksNodeConfig>,
   filter?: NodeFilterType | SortedNodeNameFilterType
 ): string {
+  // istanbul ignore next
   if (arguments.length === 2 && typeof filter === 'undefined') {
     throw new Error(ERR_INVALID_FILTER);
   }
@@ -784,6 +788,7 @@ export const getShadowsocksNodes = (
 ): string => {
   const result: ReadonlyArray<any> = list
     .map((nodeConfig) => {
+      // istanbul ignore next
       if (nodeConfig.enable === false) {
         return null;
       }
@@ -841,6 +846,7 @@ export const getShadowsocksrNodes = (
 ): string => {
   const result: ReadonlyArray<string | undefined> = list
     .map((nodeConfig) => {
+      // istanbul ignore next
       if (nodeConfig.enable === false) {
         return void 0;
       }
@@ -896,6 +902,7 @@ export const getV2rayNNodes = (
 ): string => {
   const result: ReadonlyArray<string> = list
     .map((nodeConfig): string | undefined => {
+      // istanbul ignore next
       if (nodeConfig.enable === false) {
         return void 0;
       }
@@ -942,6 +949,7 @@ export const getQuantumultNodes = function (
   groupName = 'Surgio',
   filter?: NodeNameFilterType | SortedNodeNameFilterType
 ): string {
+  // istanbul ignore next
   if (arguments.length === 3 && typeof filter === 'undefined') {
     throw new Error(ERR_INVALID_FILTER);
   }
@@ -1033,6 +1041,7 @@ export const getQuantumultXNodes = function (
   list: ReadonlyArray<PossibleNodeConfigType>,
   filter?: NodeNameFilterType | SortedNodeNameFilterType
 ): string {
+  // istanbul ignore next
   if (arguments.length === 2 && typeof filter === 'undefined') {
     throw new Error(ERR_INVALID_FILTER);
   }
@@ -1208,6 +1217,7 @@ export const getShadowsocksNodesJSON = (
 ): string => {
   const nodes: ReadonlyArray<any> = list
     .map((nodeConfig) => {
+      // istanbul ignore next
       if (nodeConfig.enable === false) {
         return null;
       }
@@ -1252,6 +1262,7 @@ export const getNodeNames = function (
   filter?: NodeNameFilterType | SortedNodeNameFilterType,
   separator?: string
 ): string {
+  // istanbul ignore next
   if (arguments.length === 2 && typeof filter === 'undefined') {
     throw new Error(ERR_INVALID_FILTER);
   }
@@ -1266,6 +1277,7 @@ export const getClashNodeNames = function (
   filter?: NodeNameFilterType | SortedNodeNameFilterType,
   existingProxies?: ReadonlyArray<string>
 ): ReadonlyArray<string> {
+  // istanbul ignore next
   if (arguments.length === 2 && typeof filter === 'undefined') {
     throw new Error(ERR_INVALID_FILTER);
   }
@@ -1292,9 +1304,6 @@ export const generateClashProxyGroup = (
     readonly existingProxies?: ReadonlyArray<string>;
     readonly proxyTestUrl?: string;
     readonly proxyTestInterval?: number;
-  } = {
-    proxyTestUrl: PROXY_TEST_URL,
-    proxyTestInterval: PROXY_TEST_INTERVAL,
   }
 ): {
   readonly type: string;

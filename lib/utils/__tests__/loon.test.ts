@@ -1,6 +1,7 @@
 import test from 'ava';
 
 import { NodeTypeEnum } from '../../types';
+import { ERR_INVALID_FILTER } from '../constant';
 import { getLoonNodes } from '../loon';
 
 test('getLoonNodes', (t) => {
@@ -96,5 +97,31 @@ test('getLoonNodes', (t) => {
       },
     ]),
     'trojan = trojan,example.com,443,"password1",tls-name:sni.example.com,skip-cert-verify:true'
+  );
+});
+
+test('getLoonNodes error', (t) => {
+  t.throws(
+    () => {
+      getLoonNodes(
+        [
+          {
+            type: NodeTypeEnum.Trojan,
+            nodeName: 'trojan',
+            hostname: 'example.com',
+            port: 443,
+            password: 'password1',
+            sni: 'sni.example.com',
+            'udp-relay': true,
+            skipCertVerify: true,
+            tfo: true,
+            tls13: true,
+          },
+        ],
+        undefined
+      );
+    },
+    undefined,
+    ERR_INVALID_FILTER
   );
 });
