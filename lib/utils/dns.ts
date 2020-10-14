@@ -1,7 +1,10 @@
 import { promises as dns, RecordWithTtl } from 'dns';
 import LRU from 'lru-cache';
 import { createLogger } from '@surgio/logger';
+import Bluebird from 'bluebird';
+
 import { isGitHubActions, isGitLabCI, isHeroku, isNow } from './';
+import { NETWORK_RESOLVE_TIMEOUT } from './constant';
 
 const Resolver = dns.Resolver;
 const resolver = new Resolver();
@@ -17,17 +20,23 @@ if (isNow() || isHeroku() || isGitHubActions() || isGitLabCI()) {
   resolver.setServers(['223.5.5.5', '114.114.114.114']);
 }
 
-export const resolveDomain = async (domain: string): Promise<ReadonlyArray<string>> => {
+export const resolveDomain = async (
+  domain: string,
+  timeout: number = NETWORK_RESOLVE_TIMEOUT
+): Promise<ReadonlyArray<string>> => {
   if (DomainCache.has(domain)) {
     return DomainCache.get(domain) as ReadonlyArray<string>;
   }
 
   logger.debug(`try to resolve domain ${domain}`);
-  const records = await resolve4And6(domain);
+  const records = await Bluebird.race<ReadonlyArray<RecordWithTtl>>([
+    resolve4And6(domain),
+    Bluebird.delay(timeout).then(() => []),
+  ]);
   logger.debug(`resolved domain ${domain}: ${JSON.stringify(records)}`);
 
   if (records.length) {
-    const address = records.map(item => item.address);
+    const address = records.map((item) => item.address);
     DomainCache.set(domain, address, records[0].ttl * 1000);
     return address;
   }
@@ -36,7 +45,9 @@ export const resolveDomain = async (domain: string): Promise<ReadonlyArray<strin
   return [];
 };
 
-export const resolve4And6 = async (domain: string): Promise<ReadonlyArray<RecordWithTtl>> => {
+export const resolve4And6 = async (
+  domain: string
+): Promise<ReadonlyArray<RecordWithTtl>> => {
   // istanbul ignore next
   function onErr(): ReadonlyArray<never> {
     return [];

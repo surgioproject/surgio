@@ -6,7 +6,7 @@ import os from 'os';
 import { join } from 'path';
 import queryString from 'query-string';
 import { JsonObject } from 'type-fest';
-import { parse, format, URL, URLSearchParams } from 'url';
+import { URL, URLSearchParams } from 'url';
 import URLSafeBase64 from 'urlsafe-base64';
 import YAML from 'yaml';
 import net from 'net';
@@ -69,7 +69,11 @@ export const getDownloadUrl = (
   return `${baseUrl}${name}${query ? '?' + query : ''}`;
 };
 
-export const getUrl = (baseUrl: string, path: string, accessToken?: string): string => {
+export const getUrl = (
+  baseUrl: string,
+  path: string,
+  accessToken?: string
+): string => {
   path = path.replace(/^\//, '');
   const url = new URL(path, baseUrl);
   if (accessToken) {
@@ -80,44 +84,50 @@ export const getUrl = (baseUrl: string, path: string, accessToken?: string): str
 
 export const getShadowsocksJSONConfig = async (
   url: string,
-  udpRelay?: boolean,
+  udpRelay?: boolean
 ): Promise<ReadonlyArray<ShadowsocksNodeConfig>> => {
   assert(url, '未指定订阅地址 url');
 
-  async function requestConfigFromRemote(): Promise<ReadonlyArray<ShadowsocksNodeConfig>> {
-    const response = ConfigCache.has(url) ? JSON.parse(ConfigCache.get(url) as string) : await (async () => {
-      const res = await httpClient.get(url);
+  async function requestConfigFromRemote(): Promise<
+    ReadonlyArray<ShadowsocksNodeConfig>
+  > {
+    const response = ConfigCache.has(url)
+      ? JSON.parse(ConfigCache.get(url) as string)
+      : await (async () => {
+          const res = await httpClient.get(url);
 
-      ConfigCache.set(url, res.body);
+          ConfigCache.set(url, res.body);
 
-      return JSON.parse(res.body);
-    })();
+          return JSON.parse(res.body);
+        })();
 
-    return (response.configs as readonly any[]).map<ShadowsocksNodeConfig>(item => {
-      const nodeConfig: any = {
-        nodeName: item.remarks as string,
-        type: NodeTypeEnum.Shadowsocks,
-        hostname: item.server as string,
-        port: item.server_port as string,
-        method: item.method as string,
-        password: item.password as string,
-      };
+    return (response.configs as ReadonlyArray<any>).map(
+      (item): ShadowsocksNodeConfig => {
+        const nodeConfig: any = {
+          nodeName: item.remarks as string,
+          type: NodeTypeEnum.Shadowsocks,
+          hostname: item.server as string,
+          port: item.server_port as string,
+          method: item.method as string,
+          password: item.password as string,
+        };
 
-      if (typeof udpRelay === 'boolean') {
-        nodeConfig['udp-relay'] = udpRelay;
-      }
-      if (item.plugin === 'obfs-local') {
-        const obfs = item.plugin_opts.match(/obfs=(\w+)/);
-        const obfsHost = item.plugin_opts.match(/obfs-host=(.+)$/);
-
-        if (obfs) {
-          nodeConfig.obfs = obfs[1];
-          nodeConfig['obfs-host'] = obfsHost ? obfsHost[1] : 'www.bing.com';
+        if (typeof udpRelay === 'boolean') {
+          nodeConfig['udp-relay'] = udpRelay;
         }
-      }
+        if (item.plugin === 'obfs-local') {
+          const obfs = item.plugin_opts.match(/obfs=(\w+)/);
+          const obfsHost = item.plugin_opts.match(/obfs-host=(.+)$/);
 
-      return nodeConfig;
-    });
+          if (obfs) {
+            nodeConfig.obfs = obfs[1];
+            nodeConfig['obfs-host'] = obfsHost ? obfsHost[1] : 'www.bing.com';
+          }
+        }
+
+        return nodeConfig;
+      }
+    );
   }
 
   return await requestConfigFromRemote();
@@ -126,44 +136,56 @@ export const getShadowsocksJSONConfig = async (
 /**
  * @see https://manual.nssurge.com/policy/proxy.html
  */
-export const getSurgeNodes = function(
+export const getSurgeNodes = function (
   list: ReadonlyArray<PossibleNodeConfigType>,
-  filter?: NodeFilterType|SortedNodeNameFilterType,
+  filter?: NodeFilterType | SortedNodeNameFilterType
 ): string {
+  // istanbul ignore next
   if (arguments.length === 2 && typeof filter === 'undefined') {
     throw new Error(ERR_INVALID_FILTER);
   }
 
   const result: string[] = applyFilter(list, filter)
-    .map<string|undefined>(nodeConfig => {
+    .map((nodeConfig): string | undefined => {
       switch (nodeConfig.type) {
         case NodeTypeEnum.Shadowsocks: {
           const config = nodeConfig as ShadowsocksNodeConfig;
 
           if (config.obfs && ['ws', 'wss'].includes(config.obfs)) {
-            logger.warn(`不支持为 Surge 生成 v2ray-plugin 的 Shadowsocks 节点，节点 ${nodeConfig!.nodeName} 会被省略`);
+            logger.warn(
+              `不支持为 Surge 生成 v2ray-plugin 的 Shadowsocks 节点，节点 ${
+                nodeConfig!.nodeName
+              } 会被省略`
+            );
             return void 0;
           }
 
           // Native support for Shadowsocks
           if (nodeConfig?.surgeConfig?.shadowsocksFormat === 'ss') {
-            return ([
+            return [
               config.nodeName,
               [
                 'ss',
                 config.hostname,
                 config.port,
                 'encrypt-method=' + config.method,
-                ...pickAndFormatStringList(config, ['password', 'udp-relay', 'obfs', 'obfs-host', 'tfo', 'mptcp']),
-                ...(typeof config.underlyingProxy === 'string' ? [
-                  `underlying-proxy=${config.underlyingProxy}`,
-                ] : []),
-              ].join(', ')
-            ].join(' = '));
+                ...pickAndFormatStringList(config, [
+                  'password',
+                  'udp-relay',
+                  'obfs',
+                  'obfs-host',
+                  'tfo',
+                  'mptcp',
+                ]),
+                ...(typeof config.underlyingProxy === 'string'
+                  ? [`underlying-proxy=${config.underlyingProxy}`]
+                  : []),
+              ].join(', '),
+            ].join(' = ');
           }
 
           // Using custom format
-          return ([
+          return [
             config.nodeName,
             [
               'custom',
@@ -172,18 +194,24 @@ export const getSurgeNodes = function(
               config.method,
               config.password,
               'https://raw.githubusercontent.com/ConnersHua/SSEncrypt/master/SSEncrypt.module',
-              ...pickAndFormatStringList(config, ['udp-relay', 'obfs', 'obfs-host', 'tfo', 'mptcp']),
-              ...(typeof config.underlyingProxy === 'string' ? [
-                `underlying-proxy=${config.underlyingProxy}`,
-              ] : []),
-            ].join(', ')
-          ].join(' = '));
+              ...pickAndFormatStringList(config, [
+                'udp-relay',
+                'obfs',
+                'obfs-host',
+                'tfo',
+                'mptcp',
+              ]),
+              ...(typeof config.underlyingProxy === 'string'
+                ? [`underlying-proxy=${config.underlyingProxy}`]
+                : []),
+            ].join(', '),
+          ].join(' = ');
         }
 
         case NodeTypeEnum.HTTPS: {
           const config = nodeConfig as HttpsNodeConfig;
 
-          return ([
+          return [
             config.nodeName,
             [
               'https',
@@ -191,21 +219,26 @@ export const getSurgeNodes = function(
               config.port,
               config.username,
               config.password,
-              ...(typeof config.skipCertVerify === 'boolean' ? [
-                `skip-cert-verify=${config.skipCertVerify}`,
-              ] : []),
-              ...(typeof config.underlyingProxy === 'string' ? [
-                `underlying-proxy=${config.underlyingProxy}`,
-              ] : []),
-              ...pickAndFormatStringList(config, ['sni', 'tfo', 'mptcp', 'tls13']),
-            ].join(', ')
-          ].join(' = '));
+              ...(typeof config.skipCertVerify === 'boolean'
+                ? [`skip-cert-verify=${config.skipCertVerify}`]
+                : []),
+              ...(typeof config.underlyingProxy === 'string'
+                ? [`underlying-proxy=${config.underlyingProxy}`]
+                : []),
+              ...pickAndFormatStringList(config, [
+                'sni',
+                'tfo',
+                'mptcp',
+                'tls13',
+              ]),
+            ].join(', '),
+          ].join(' = ');
         }
 
         case NodeTypeEnum.HTTP: {
           const config = nodeConfig as HttpNodeConfig;
 
-          return ([
+          return [
             config.nodeName,
             [
               'http',
@@ -213,29 +246,36 @@ export const getSurgeNodes = function(
               config.port,
               config.username,
               config.password,
-              ...(typeof config.underlyingProxy === 'string' ? [
-                `underlying-proxy=${config.underlyingProxy}`,
-              ] : []),
+              ...(typeof config.underlyingProxy === 'string'
+                ? [`underlying-proxy=${config.underlyingProxy}`]
+                : []),
               ...pickAndFormatStringList(config, ['tfo', 'mptcp']),
-            ].join(', ')
-          ].join(' = '));
+            ].join(', '),
+          ].join(' = ');
         }
 
         case NodeTypeEnum.Snell: {
           const config = nodeConfig as SnellNodeConfig;
 
-          return ([
+          return [
             config.nodeName,
             [
               'snell',
               config.hostname,
               config.port,
-              ...(typeof config.underlyingProxy === 'string' ? [
-                `underlying-proxy=${config.underlyingProxy}`,
-              ] : []),
-              ...pickAndFormatStringList(config, ['psk', 'obfs', 'obfs-host', 'version', 'tfo', 'mptcp']),
+              ...(typeof config.underlyingProxy === 'string'
+                ? [`underlying-proxy=${config.underlyingProxy}`]
+                : []),
+              ...pickAndFormatStringList(config, [
+                'psk',
+                'obfs',
+                'obfs-host',
+                'version',
+                'tfo',
+                'mptcp',
+              ]),
             ].join(', '),
-          ].join(' = '));
+          ].join(' = ');
         }
 
         case NodeTypeEnum.Shadowsocksr: {
@@ -243,18 +283,28 @@ export const getSurgeNodes = function(
 
           // istanbul ignore next
           if (!config.binPath) {
-            throw new Error('请按照文档 https://bit.ly/2WnHB3p 添加 Shadowsocksr 二进制文件路径');
+            throw new Error(
+              '请按照文档 https://bit.ly/2WnHB3p 添加 Shadowsocksr 二进制文件路径'
+            );
           }
 
           const args = [
-            '-s', config.hostname,
-            '-p', `${config.port}`,
-            '-m', config.method,
-            '-o', config.obfs,
-            '-O', config.protocol,
-            '-k', config.password,
-            '-l', `${config.localPort}`,
-            '-b', '127.0.0.1',
+            '-s',
+            config.hostname,
+            '-p',
+            `${config.port}`,
+            '-m',
+            config.method,
+            '-o',
+            config.obfs,
+            '-O',
+            config.protocol,
+            '-k',
+            config.password,
+            '-l',
+            `${config.localPort}`,
+            '-b',
+            '127.0.0.1',
           ];
 
           if (config.protoparam) {
@@ -267,22 +317,21 @@ export const getSurgeNodes = function(
           const configString = [
             'external',
             `exec = ${JSON.stringify(config.binPath)}`,
-            ...(args.map(arg => `args = ${JSON.stringify(arg)}`)),
+            ...args.map((arg) => `args = ${JSON.stringify(arg)}`),
             `local-port = ${config.localPort}`,
           ];
 
           if (config.hostnameIp && config.hostnameIp.length) {
-            configString.push(...config.hostnameIp.map(item => `addresses = ${item}`));
+            configString.push(
+              ...config.hostnameIp.map((item) => `addresses = ${item}`)
+            );
           }
 
           if (isIp(config.hostname)) {
             configString.push(`addresses = ${config.hostname}`);
           }
 
-          return ([
-            config.nodeName,
-            configString.join(', '),
-          ].join(' = '));
+          return [config.nodeName, configString.join(', ')].join(' = ');
         }
 
         case NodeTypeEnum.Vmess: {
@@ -298,11 +347,9 @@ export const getSurgeNodes = function(
               `username=${config.uuid}`,
             ];
 
-            function getHeader(
-              wsHeaders: Record<string, string>,
-            ): string {
+            function getHeader(wsHeaders: Record<string, string>): string {
               return Object.keys(wsHeaders)
-                .map(headerKey => `${headerKey}:${wsHeaders[headerKey]}`)
+                .map((headerKey) => `${headerKey}:${wsHeaders[headerKey]}`)
                 .join('|');
             }
 
@@ -310,28 +357,27 @@ export const getSurgeNodes = function(
               configList.push('ws=true');
               configList.push(`ws-path=${config.path}`);
               configList.push(
-                'ws-headers=' + JSON.stringify(
-                  getHeader({
-                    host: config.host || config.hostname,
-                    'user-agent': OBFS_UA,
-                    ..._.omit(config.wsHeaders, ['host']), // host 本质上是一个头信息，所以可能存在冲突的情况。以 host 属性为准。
-                  })
-                )
+                'ws-headers=' +
+                  JSON.stringify(
+                    getHeader({
+                      host: config.host || config.hostname,
+                      'user-agent': OBFS_UA,
+                      ..._.omit(config.wsHeaders, ['host']), // host 本质上是一个头信息，所以可能存在冲突的情况。以 host 属性为准。
+                    })
+                  )
               );
             }
 
             if (config.tls) {
               configList.push(
                 'tls=true',
-                ...(typeof config.tls13 === 'boolean' ? [
-                  `tls13=${config.tls13}`,
-                ] : []),
-                ...(typeof config.skipCertVerify === 'boolean' ? [
-                  `skip-cert-verify=${config.skipCertVerify}`,
-                ] : []),
-                ...(config.host ? [
-                  `sni=${config.host}`,
-                ] : []),
+                ...(typeof config.tls13 === 'boolean'
+                  ? [`tls13=${config.tls13}`]
+                  : []),
+                ...(typeof config.skipCertVerify === 'boolean'
+                  ? [`skip-cert-verify=${config.skipCertVerify}`]
+                  : []),
+                ...(config.host ? [`sni=${config.host}`] : [])
               );
             }
 
@@ -347,33 +393,38 @@ export const getSurgeNodes = function(
               configList.push(`underlying-proxy=${config['underlyingProxy']}`);
             }
 
-            return ([
-              config.nodeName,
-              configList.join(', '),
-            ].join(' = '));
+            return [config.nodeName, configList.join(', ')].join(' = ');
           } else {
             // Using external provider
 
             // istanbul ignore next
             if (!config.binPath) {
-              throw new Error('请按照文档 https://bit.ly/2WnHB3p 添加 V2Ray 二进制文件路径');
+              throw new Error(
+                '请按照文档 https://bit.ly/2WnHB3p 添加 V2Ray 二进制文件路径'
+              );
             }
 
             const jsonFileName = `v2ray_${config.localPort}_${config.hostname}_${config.port}.json`;
             const jsonFilePath = join(ensureConfigFolder(), jsonFileName);
-            const jsonFile = formatV2rayConfig(config.localPort as number, nodeConfig);
+            const jsonFile = formatV2rayConfig(
+              config.localPort as number,
+              nodeConfig
+            );
             const args = [
-              '--config', jsonFilePath.replace(os.homedir(), '$HOME'),
+              '--config',
+              jsonFilePath.replace(os.homedir(), '$HOME'),
             ];
             const configString = [
               'external',
               `exec = ${JSON.stringify(config.binPath)}`,
-              ...(args.map(arg => `args = ${JSON.stringify(arg)}`)),
+              ...args.map((arg) => `args = ${JSON.stringify(arg)}`),
               `local-port = ${config.localPort}`,
             ];
 
             if (config.hostnameIp && config.hostnameIp.length) {
-              configString.push(...config.hostnameIp.map(item => `addresses = ${item}`));
+              configString.push(
+                ...config.hostnameIp.map((item) => `addresses = ${item}`)
+              );
             }
 
             if (isIp(config.hostname)) {
@@ -385,10 +436,7 @@ export const getSurgeNodes = function(
               fs.writeJSONSync(jsonFilePath, jsonFile);
             }
 
-            return ([
-              config.nodeName,
-              configString.join(', '),
-            ].join(' = '));
+            return [config.nodeName, configString.join(', ')].join(' = ');
           }
         }
 
@@ -398,54 +446,62 @@ export const getSurgeNodes = function(
             nodeConfig.hostname,
             `${nodeConfig.port}`,
             `password=${nodeConfig.password}`,
-            ...pickAndFormatStringList(nodeConfig, ['tfo', 'mptcp', 'sni', 'tls13']),
-            ...(typeof nodeConfig.underlyingProxy === 'string' ? [
-              `underlying-proxy=${nodeConfig.underlyingProxy}`,
-            ] : []),
-            ...(typeof nodeConfig.skipCertVerify === 'boolean' ? [
-              `skip-cert-verify=${nodeConfig.skipCertVerify}`,
-            ] : []),
+            ...pickAndFormatStringList(nodeConfig, [
+              'tfo',
+              'mptcp',
+              'sni',
+              'tls13',
+            ]),
+            ...(typeof nodeConfig.underlyingProxy === 'string'
+              ? [`underlying-proxy=${nodeConfig.underlyingProxy}`]
+              : []),
+            ...(typeof nodeConfig.skipCertVerify === 'boolean'
+              ? [`skip-cert-verify=${nodeConfig.skipCertVerify}`]
+              : []),
           ];
 
-          return (
-            [
-              nodeConfig.nodeName,
-              configList.join(', ')
-            ]
-          ).join(' = ');
+          return [nodeConfig.nodeName, configList.join(', ')].join(' = ');
         }
 
         case NodeTypeEnum.Socks5: {
           const config = [
-            nodeConfig.tls === true ? "socks5-tls": "socks5",
+            nodeConfig.tls === true ? 'socks5-tls' : 'socks5',
             nodeConfig.hostname,
             nodeConfig.port,
-            ...(typeof nodeConfig.underlyingProxy === 'string' ? [
-              `underlying-proxy=${nodeConfig.underlyingProxy}`,
-            ] : []),
-            ...pickAndFormatStringList(nodeConfig, ['username', 'password', 'sni', 'tfo', 'mptcp', 'tls13']),
-          ]
+            ...(typeof nodeConfig.underlyingProxy === 'string'
+              ? [`underlying-proxy=${nodeConfig.underlyingProxy}`]
+              : []),
+            ...pickAndFormatStringList(nodeConfig, [
+              'username',
+              'password',
+              'sni',
+              'tfo',
+              'mptcp',
+              'tls13',
+            ]),
+          ];
 
           if (nodeConfig.tls === true) {
             config.push(
-              ...(typeof nodeConfig.skipCertVerify === 'boolean' ? [
-                `skip-cert-verify=${nodeConfig.skipCertVerify}`
-              ]: []),
-              ...(typeof nodeConfig.clientCert === 'string' ? [
-                `client-cert=${nodeConfig.clientCert}`
-              ]: []),
-            )
+              ...(typeof nodeConfig.skipCertVerify === 'boolean'
+                ? [`skip-cert-verify=${nodeConfig.skipCertVerify}`]
+                : []),
+              ...(typeof nodeConfig.clientCert === 'string'
+                ? [`client-cert=${nodeConfig.clientCert}`]
+                : [])
+            );
           }
 
-          return ([
-            nodeConfig.nodeName,
-            config.join(', '),
-          ].join(' = '));
+          return [nodeConfig.nodeName, config.join(', ')].join(' = ');
         }
 
         // istanbul ignore next
         default:
-          logger.warn(`不支持为 Surge 生成 ${nodeConfig!.type} 的节点，节点 ${nodeConfig!.nodeName} 会被省略`);
+          logger.warn(
+            `不支持为 Surge 生成 ${nodeConfig!.type} 的节点，节点 ${
+              nodeConfig!.nodeName
+            } 会被省略`
+          );
           return void 0;
       }
     })
@@ -454,17 +510,21 @@ export const getSurgeNodes = function(
   return result.join('\n');
 };
 
-export const getClashNodes = function(
+export const getClashNodes = function (
   list: ReadonlyArray<PossibleNodeConfigType>,
-  filter?: NodeFilterType|SortedNodeNameFilterType,
+  filter?: NodeFilterType | SortedNodeNameFilterType
 ): ReadonlyArray<any> {
+  // istanbul ignore next
   if (arguments.length === 2 && typeof filter === 'undefined') {
     throw new Error(ERR_INVALID_FILTER);
   }
 
   return applyFilter(list, filter)
-    .map(nodeConfig => {
-      if (nodeConfig.enable === false) { return null; }
+    .map((nodeConfig) => {
+      // istanbul ignore next
+      if (nodeConfig.enable === false) {
+        return null;
+      }
 
       switch (nodeConfig.type) {
         case NodeTypeEnum.Shadowsocks:
@@ -476,27 +536,37 @@ export const getClashNodes = function(
             port: nodeConfig.port,
             server: nodeConfig.hostname,
             udp: nodeConfig['udp-relay'] === true,
-            ...(nodeConfig.obfs && ['tls', 'http'].includes(nodeConfig.obfs) ? {
-              plugin: 'obfs',
-              'plugin-opts': {
-                mode: nodeConfig.obfs,
-                host: nodeConfig['obfs-host'],
-              },
-            } : null),
-            ...(nodeConfig.obfs && ['ws', 'wss'].includes(nodeConfig.obfs) ? {
-              plugin: 'v2ray-plugin',
-              'plugin-opts': {
-                mode: 'websocket',
-                tls: nodeConfig.obfs === 'wss',
-                ...(typeof nodeConfig.skipCertVerify === 'boolean' && nodeConfig.obfs === 'wss' ? {
-                  'skip-cert-verify': nodeConfig.skipCertVerify,
-                } : null),
-                host: nodeConfig['obfs-host'],
-                path: nodeConfig['obfs-uri'] || '/',
-                mux: typeof nodeConfig.mux === 'boolean' ? nodeConfig.mux : false,
-                headers: nodeConfig.wsHeaders || {},
-              },
-            } : null),
+            ...(nodeConfig.obfs && ['tls', 'http'].includes(nodeConfig.obfs)
+              ? {
+                  plugin: 'obfs',
+                  'plugin-opts': {
+                    mode: nodeConfig.obfs,
+                    host: nodeConfig['obfs-host'],
+                  },
+                }
+              : null),
+            ...(nodeConfig.obfs && ['ws', 'wss'].includes(nodeConfig.obfs)
+              ? {
+                  plugin: 'v2ray-plugin',
+                  'plugin-opts': {
+                    mode: 'websocket',
+                    tls: nodeConfig.obfs === 'wss',
+                    ...(typeof nodeConfig.skipCertVerify === 'boolean' &&
+                    nodeConfig.obfs === 'wss'
+                      ? {
+                          'skip-cert-verify': nodeConfig.skipCertVerify,
+                        }
+                      : null),
+                    host: nodeConfig['obfs-host'],
+                    path: nodeConfig['obfs-uri'] || '/',
+                    mux:
+                      typeof nodeConfig.mux === 'boolean'
+                        ? nodeConfig.mux
+                        : false,
+                    headers: nodeConfig.wsHeaders || {},
+                  },
+                }
+              : null),
           };
 
         case NodeTypeEnum.Vmess:
@@ -509,20 +579,26 @@ export const getClashNodes = function(
             udp: nodeConfig['udp-relay'] === true,
             uuid: nodeConfig.uuid,
             alterId: nodeConfig.alterId,
-            ...(nodeConfig.network === 'tcp' ? null : {
-              network: nodeConfig.network,
-            }),
+            ...(nodeConfig.network === 'tcp'
+              ? null
+              : {
+                  network: nodeConfig.network,
+                }),
             tls: nodeConfig.tls,
-            ...(typeof nodeConfig.skipCertVerify === 'boolean' && nodeConfig.tls ? {
-              'skip-cert-verify': nodeConfig.skipCertVerify,
-            } : null),
-            ...(nodeConfig.network === 'ws' ? {
-              'ws-path': nodeConfig.path,
-              'ws-headers': {
-                ...(nodeConfig.host ? { host: nodeConfig.host } : null),
-                ...nodeConfig.wsHeaders,
-              },
-            } : null),
+            ...(typeof nodeConfig.skipCertVerify === 'boolean' && nodeConfig.tls
+              ? {
+                  'skip-cert-verify': nodeConfig.skipCertVerify,
+                }
+              : null),
+            ...(nodeConfig.network === 'ws'
+              ? {
+                  'ws-path': nodeConfig.path,
+                  'ws-headers': {
+                    ...(nodeConfig.host ? { host: nodeConfig.host } : null),
+                    ...nodeConfig.wsHeaders,
+                  },
+                }
+              : null),
           };
 
         case NodeTypeEnum.Shadowsocksr: {
@@ -537,13 +613,15 @@ export const getClashNodes = function(
             obfs: nodeConfig.obfs,
             protocol: nodeConfig.protocol,
             cipher: nodeConfig.method,
-            ...(ssrFormat === 'native' ? {
-              'obfs-param': nodeConfig.obfsparam ?? '',
-              'protocol-param': nodeConfig.protoparam ?? '',
-            } : {
-              obfsparam: nodeConfig.obfsparam ?? '',
-              protocolparam: nodeConfig.protoparam ?? '',
-            }),
+            ...(ssrFormat === 'native'
+              ? {
+                  'obfs-param': nodeConfig.obfsparam ?? '',
+                  'protocol-param': nodeConfig.protoparam ?? '',
+                }
+              : {
+                  obfsparam: nodeConfig.obfsparam ?? '',
+                  protocolparam: nodeConfig.protoparam ?? '',
+                }),
             udp: nodeConfig['udp-relay'] === true,
           };
         }
@@ -557,13 +635,17 @@ export const getClashNodes = function(
             psk: nodeConfig.psk,
             'obfs-opts': {
               mode: nodeConfig.obfs,
-              ...(nodeConfig['obfs-host'] ? {
-                host: nodeConfig['obfs-host'],
-              } : null),
+              ...(nodeConfig['obfs-host']
+                ? {
+                    host: nodeConfig['obfs-host'],
+                  }
+                : null),
             },
-            ...(nodeConfig.version ? {
-              version: nodeConfig.version,
-            } : null),
+            ...(nodeConfig.version
+              ? {
+                  version: nodeConfig.version,
+                }
+              : null),
           };
 
         case NodeTypeEnum.HTTPS:
@@ -595,7 +677,9 @@ export const getClashNodes = function(
             server: nodeConfig.hostname,
             port: nodeConfig.port,
             password: nodeConfig.password,
-            ...(nodeConfig['udp-relay'] ? { udp: nodeConfig['udp-relay'] } : null),
+            ...(nodeConfig['udp-relay']
+              ? { udp: nodeConfig['udp-relay'] }
+              : null),
             ...(nodeConfig.alpn ? { alpn: nodeConfig.alpn } : null),
             ...(nodeConfig.sni ? { sni: nodeConfig.sni } : null),
             'skip-cert-verify': nodeConfig.skipCertVerify === true,
@@ -607,37 +691,52 @@ export const getClashNodes = function(
             name: nodeConfig.nodeName,
             server: nodeConfig.hostname,
             port: nodeConfig.port,
-            ...(nodeConfig.username ? {username: nodeConfig.username} : null),
-            ...(nodeConfig.password ? {password: nodeConfig.password} : null),
-            ...(typeof nodeConfig.tls === 'boolean' ? {tls: nodeConfig.tls} : null),
-            ...(typeof nodeConfig.skipCertVerify === 'boolean' ? {'skip-cert-verify': nodeConfig.skipCertVerify} : null),
-            ...(typeof nodeConfig.udpRelay === 'boolean' ? {udp: nodeConfig.udpRelay} : null),
+            ...(nodeConfig.username ? { username: nodeConfig.username } : null),
+            ...(nodeConfig.password ? { password: nodeConfig.password } : null),
+            ...(typeof nodeConfig.tls === 'boolean'
+              ? { tls: nodeConfig.tls }
+              : null),
+            ...(typeof nodeConfig.skipCertVerify === 'boolean'
+              ? { 'skip-cert-verify': nodeConfig.skipCertVerify }
+              : null),
+            ...(typeof nodeConfig.udpRelay === 'boolean'
+              ? { udp: nodeConfig.udpRelay }
+              : null),
           };
         }
 
         // istanbul ignore next
         default:
-          logger.warn(`不支持为 Clash 生成 ${nodeConfig!.type} 的节点，节点 ${nodeConfig!.nodeName} 会被省略`);
+          logger.warn(
+            `不支持为 Clash 生成 ${nodeConfig!.type} 的节点，节点 ${
+              nodeConfig!.nodeName
+            } 会被省略`
+          );
           return null;
       }
     })
-    .filter(item => item !== null);
+    .filter((item) => item !== null);
 };
 
-export const getMellowNodes = function(
-  list: ReadonlyArray<VmessNodeConfig|ShadowsocksNodeConfig>,
-  filter?: NodeFilterType|SortedNodeNameFilterType
+export const getMellowNodes = function (
+  list: ReadonlyArray<VmessNodeConfig | ShadowsocksNodeConfig>,
+  filter?: NodeFilterType | SortedNodeNameFilterType
 ): string {
+  // istanbul ignore next
   if (arguments.length === 2 && typeof filter === 'undefined') {
     throw new Error(ERR_INVALID_FILTER);
   }
 
   const result = applyFilter(list, filter)
-    .map(nodeConfig => {
+    .map((nodeConfig) => {
       switch (nodeConfig.type) {
         case NodeTypeEnum.Vmess: {
           const uri = formatVmessUri(nodeConfig, { isMellow: true });
-          return [nodeConfig.nodeName, 'vmess1', uri.trim().replace('vmess://', 'vmess1://')].join(', ');
+          return [
+            nodeConfig.nodeName,
+            'vmess1',
+            uri.trim().replace('vmess://', 'vmess1://'),
+          ].join(', ');
         }
 
         case NodeTypeEnum.Shadowsocks: {
@@ -647,17 +746,22 @@ export const getMellowNodes = function(
 
         // istanbul ignore next
         default:
-            logger.warn(`不支持为 Mellow 生成 ${nodeConfig!.type} 的节点，节点 ${nodeConfig!.nodeName} 会被省略`);
+          logger.warn(
+            `不支持为 Mellow 生成 ${nodeConfig!.type} 的节点，节点 ${
+              nodeConfig!.nodeName
+            } 会被省略`
+          );
           return null;
       }
     })
-    .filter(item => !!item);
+    .filter((item) => !!item);
 
   return result.join('\n');
 };
 
 // istanbul ignore next
-export const toUrlSafeBase64 = (str: string): string => URLSafeBase64.encode(Buffer.from(str, 'utf8'));
+export const toUrlSafeBase64 = (str: string): string =>
+  URLSafeBase64.encode(Buffer.from(str, 'utf8'));
 
 // istanbul ignore next
 export const fromUrlSafeBase64 = (str: string): string => {
@@ -668,10 +772,12 @@ export const fromUrlSafeBase64 = (str: string): string => {
 };
 
 // istanbul ignore next
-export const toBase64 = (str: string): string => Buffer.from(str, 'utf8').toString('base64');
+export const toBase64 = (str: string): string =>
+  Buffer.from(str, 'utf8').toString('base64');
 
 // istanbul ignore next
-export const fromBase64 = (str: string): string => Buffer.from(str, 'base64').toString('utf8');
+export const fromBase64 = (str: string): string =>
+  Buffer.from(str, 'base64').toString('utf8');
 
 /**
  * @see https://github.com/shadowsocks/shadowsocks-org/wiki/SIP002-URI-Scheme
@@ -681,8 +787,11 @@ export const getShadowsocksNodes = (
   groupName = 'Surgio'
 ): string => {
   const result: ReadonlyArray<any> = list
-    .map(nodeConfig => {
-      if (nodeConfig.enable === false) { return null; }
+    .map((nodeConfig) => {
+      // istanbul ignore next
+      if (nodeConfig.enable === false) {
+        return null;
+      }
 
       switch (nodeConfig.type) {
         case NodeTypeEnum.Shadowsocks: {
@@ -691,9 +800,13 @@ export const getShadowsocksNodes = (
             readonly plugin?: string;
             readonly group?: string;
           } = {
-            ...(config.obfs ? {
-              plugin: `${encodeURIComponent(`obfs-local;obfs=${config.obfs};obfs-host=${config['obfs-host']}`)}`,
-            } : null),
+            ...(config.obfs
+              ? {
+                  plugin: `${encodeURIComponent(
+                    `obfs-local;obfs=${config.obfs};obfs-host=${config['obfs-host']}`
+                  )}`,
+                }
+              : null),
             ...(groupName ? { group: encodeURIComponent(groupName) } : null),
           };
 
@@ -716,19 +829,27 @@ export const getShadowsocksNodes = (
 
         // istanbul ignore next
         default:
-          logger.warn(`在生成 Shadowsocks 节点时出现了 ${nodeConfig.type} 节点，节点 ${nodeConfig.nodeName} 会被省略`);
+          logger.warn(
+            `在生成 Shadowsocks 节点时出现了 ${nodeConfig.type} 节点，节点 ${nodeConfig.nodeName} 会被省略`
+          );
           return null;
       }
     })
-    .filter(item => !!item);
+    .filter((item) => !!item);
 
   return result.join('\n');
 };
 
-export const getShadowsocksrNodes = (list: ReadonlyArray<ShadowsocksrNodeConfig>, groupName: string): string => {
-  const result: ReadonlyArray<string|undefined> = list
-    .map(nodeConfig => {
-      if (nodeConfig.enable === false) { return void 0; }
+export const getShadowsocksrNodes = (
+  list: ReadonlyArray<ShadowsocksrNodeConfig>,
+  groupName: string
+): string => {
+  const result: ReadonlyArray<string | undefined> = list
+    .map((nodeConfig) => {
+      // istanbul ignore next
+      if (nodeConfig.enable === false) {
+        return void 0;
+      }
 
       switch (nodeConfig.type) {
         case NodeTypeEnum.Shadowsocksr: {
@@ -749,30 +870,42 @@ export const getShadowsocksrNodes = (list: ReadonlyArray<ShadowsocksrNodeConfig>
             uot: 0,
           };
 
-          return 'ssr://' + toUrlSafeBase64([
-            baseUri,
-            '/?',
-            queryString.stringify(query, {
-              encode: false,
-            }),
-          ].join(''));
+          return (
+            'ssr://' +
+            toUrlSafeBase64(
+              [
+                baseUri,
+                '/?',
+                queryString.stringify(query, {
+                  encode: false,
+                }),
+              ].join('')
+            )
+          );
         }
 
         // istanbul ignore next
         default:
-          logger.warn(`在生成 Shadowsocksr 节点时出现了 ${nodeConfig.type} 节点，节点 ${nodeConfig.nodeName} 会被省略`);
+          logger.warn(
+            `在生成 Shadowsocksr 节点时出现了 ${nodeConfig.type} 节点，节点 ${nodeConfig.nodeName} 会被省略`
+          );
           return void 0;
       }
     })
-    .filter(item => item !== undefined);
+    .filter((item) => item !== undefined);
 
   return result.join('\n');
 };
 
-export const getV2rayNNodes = (list: ReadonlyArray<VmessNodeConfig>): string => {
+export const getV2rayNNodes = (
+  list: ReadonlyArray<VmessNodeConfig>
+): string => {
   const result: ReadonlyArray<string> = list
-    .map<string|undefined>(nodeConfig => {
-      if (nodeConfig.enable === false) { return void 0; }
+    .map((nodeConfig): string | undefined => {
+      // istanbul ignore next
+      if (nodeConfig.enable === false) {
+        return void 0;
+      }
 
       switch (nodeConfig.type) {
         case NodeTypeEnum.Vmess: {
@@ -795,7 +928,9 @@ export const getV2rayNNodes = (list: ReadonlyArray<VmessNodeConfig>): string => 
 
         // istanbul ignore next
         default:
-          logger.warn(`在生成 V2Ray 节点时出现了 ${nodeConfig.type} 节点，节点 ${nodeConfig.nodeName} 会被省略`);
+          logger.warn(
+            `在生成 V2Ray 节点时出现了 ${nodeConfig.type} 节点，节点 ${nodeConfig.nodeName} 会被省略`
+          );
           return void 0;
       }
     })
@@ -804,47 +939,59 @@ export const getV2rayNNodes = (list: ReadonlyArray<VmessNodeConfig>): string => 
   return result.join('\n');
 };
 
-export const getQuantumultNodes = function(
-  list: ReadonlyArray<ShadowsocksNodeConfig|VmessNodeConfig|ShadowsocksrNodeConfig|HttpsNodeConfig>,
+export const getQuantumultNodes = function (
+  list: ReadonlyArray<
+    | ShadowsocksNodeConfig
+    | VmessNodeConfig
+    | ShadowsocksrNodeConfig
+    | HttpsNodeConfig
+  >,
   groupName = 'Surgio',
-  filter?: NodeNameFilterType|SortedNodeNameFilterType,
+  filter?: NodeNameFilterType | SortedNodeNameFilterType
 ): string {
+  // istanbul ignore next
   if (arguments.length === 3 && typeof filter === 'undefined') {
     throw new Error(ERR_INVALID_FILTER);
   }
 
-  function getHeader(
-    wsHeaders: Record<string, string>
-  ): string {
+  function getHeader(wsHeaders: Record<string, string>): string {
     return Object.keys(wsHeaders)
-      .map(headerKey => `${headerKey}:${wsHeaders[headerKey]}`)
+      .map((headerKey) => `${headerKey}:${wsHeaders[headerKey]}`)
       .join('[Rr][Nn]');
   }
 
   const result: ReadonlyArray<string> = applyFilter(list, filter)
-    .map<string|undefined>(nodeConfig => {
+    .map((nodeConfig): string | undefined => {
       switch (nodeConfig.type) {
         case NodeTypeEnum.Vmess: {
           const config = [
-            'vmess', nodeConfig.hostname, nodeConfig.port,
-            (nodeConfig.method === 'auto' ? 'chacha20-ietf-poly1305' : nodeConfig.method),
-            JSON.stringify(nodeConfig.uuid), nodeConfig.alterId,
+            'vmess',
+            nodeConfig.hostname,
+            nodeConfig.port,
+            nodeConfig.method === 'auto'
+              ? 'chacha20-ietf-poly1305'
+              : nodeConfig.method,
+            JSON.stringify(nodeConfig.uuid),
+            nodeConfig.alterId,
             `group=${groupName}`,
             `over-tls=${nodeConfig.tls === true ? 'true' : 'false'}`,
             `certificate=1`,
             `obfs=${nodeConfig.network}`,
             `obfs-path=${JSON.stringify(nodeConfig.path || '/')}`,
-            `obfs-header=${JSON.stringify(getHeader({
-              host: nodeConfig.host || nodeConfig.hostname,
-              'user-agent': OBFS_UA, // 需要用 "" 包裹否则 Surge 会无法解析
-              ..._.omit(nodeConfig.wsHeaders, ['host'])
-            }))}`,
-          ].filter(value => !!value).join(',');
+            `obfs-header=${JSON.stringify(
+              getHeader({
+                host: nodeConfig.host || nodeConfig.hostname,
+                'user-agent': OBFS_UA, // 需要用 "" 包裹否则 Surge 会无法解析
+                ..._.omit(nodeConfig.wsHeaders, ['host']),
+              })
+            )}`,
+          ]
+            .filter((value) => !!value)
+            .join(',');
 
-          return 'vmess://' + toBase64([
-            nodeConfig.nodeName,
-            config,
-          ].join(' = '));
+          return (
+            'vmess://' + toBase64([nodeConfig.nodeName, config].join(' = '))
+          );
         }
 
         case NodeTypeEnum.Shadowsocks: {
@@ -865,8 +1012,8 @@ export const getQuantumultNodes = function(
               `upstream-proxy-username=${nodeConfig.username}`,
               `upstream-proxy-password=${nodeConfig.password}`,
               'over-tls=true',
-              'certificate=1'
-            ].join(', ')
+              'certificate=1',
+            ].join(', '),
           ].join(' = ');
 
           return 'http://' + toBase64(config);
@@ -874,7 +1021,11 @@ export const getQuantumultNodes = function(
 
         // istanbul ignore next
         default:
-          logger.warn(`不支持为 Quantumult 生成 ${nodeConfig!.type} 的节点，节点 ${nodeConfig!.nodeName} 会被省略`);
+          logger.warn(
+            `不支持为 Quantumult 生成 ${nodeConfig!.type} 的节点，节点 ${
+              nodeConfig!.nodeName
+            } 会被省略`
+          );
           return void 0;
       }
     })
@@ -886,31 +1037,28 @@ export const getQuantumultNodes = function(
 /**
  * @see https://github.com/crossutility/Quantumult-X/blob/master/sample.conf
  */
-export const getQuantumultXNodes = function(
+export const getQuantumultXNodes = function (
   list: ReadonlyArray<PossibleNodeConfigType>,
-  filter?: NodeNameFilterType|SortedNodeNameFilterType,
+  filter?: NodeNameFilterType | SortedNodeNameFilterType
 ): string {
+  // istanbul ignore next
   if (arguments.length === 2 && typeof filter === 'undefined') {
     throw new Error(ERR_INVALID_FILTER);
   }
 
   const result: ReadonlyArray<string> = applyFilter(list, filter)
-    .map<string|undefined>(nodeConfig => {
+    .map((nodeConfig): string | undefined => {
       switch (nodeConfig.type) {
         case NodeTypeEnum.Vmess: {
           const config = [
             `${nodeConfig.hostname}:${nodeConfig.port}`,
             // method 为 auto 时 qx 会无法识别
-            (nodeConfig.method === 'auto' ?
-              `method=chacha20-ietf-poly1305` :
-              `method=${nodeConfig.method}`),
+            nodeConfig.method === 'auto'
+              ? `method=chacha20-ietf-poly1305`
+              : `method=${nodeConfig.method}`,
             `password=${nodeConfig.uuid}`,
-            ...(nodeConfig['udp-relay'] ? [
-              'udp-relay=true',
-            ] : []),
-            ...(nodeConfig.tfo ? [
-              'fast-open=true',
-            ] : []),
+            ...(nodeConfig['udp-relay'] ? ['udp-relay=true'] : []),
+            ...(nodeConfig.tfo ? ['fast-open=true'] : []),
           ];
 
           switch (nodeConfig.network) {
@@ -921,7 +1069,9 @@ export const getQuantumultXNodes = function(
                 config.push(`obfs=ws`);
               }
               config.push(`obfs-uri=${nodeConfig.path || '/'}`);
-              config.push(`obfs-host=${nodeConfig.host || nodeConfig.hostname}`);
+              config.push(
+                `obfs-host=${nodeConfig.host || nodeConfig.hostname}`
+              );
               // istanbul ignore next
               if (nodeConfig.tls13) {
                 config.push(`tls13=true`);
@@ -939,14 +1089,19 @@ export const getQuantumultXNodes = function(
 
               break;
             default:
-              // do nothing
+            // do nothing
           }
 
           config.push(`tag=${nodeConfig.nodeName}`);
 
           // istanbul ignore next
-          if (nodeConfig.wsHeaders && Object.keys(nodeConfig.wsHeaders).length > 1) {
-            logger.warn(`Quantumult X 不支持自定义额外的 Header 字段，节点 ${nodeConfig.nodeName} 可能不可用`);
+          if (
+            nodeConfig.wsHeaders &&
+            Object.keys(nodeConfig.wsHeaders).length > 1
+          ) {
+            logger.warn(
+              `Quantumult X 不支持自定义额外的 Header 字段，节点 ${nodeConfig.nodeName} 可能不可用`
+            );
           }
 
           return `vmess=${config.join(', ')}`;
@@ -956,31 +1111,33 @@ export const getQuantumultXNodes = function(
           const config = [
             `${nodeConfig.hostname}:${nodeConfig.port}`,
             ...pickAndFormatStringList(nodeConfig, ['method', 'password']),
-            ...(nodeConfig.obfs && ['http', 'tls'].includes(nodeConfig.obfs) ? [
-              `obfs=${nodeConfig.obfs}`,
-              `obfs-host=${nodeConfig['obfs-host']}`,
-            ] : []),
-            ...(nodeConfig.obfs && ['ws', 'wss'].includes(nodeConfig.obfs) ? [
-              `obfs=${nodeConfig.obfs}`,
-              `obfs-host=${nodeConfig['obfs-host'] || nodeConfig.hostname}`,
-              `obfs-uri=${nodeConfig['obfs-uri'] || '/'}`,
-            ] : []),
-            ...(nodeConfig['udp-relay'] ? [
-              `udp-relay=true`,
-            ] : []),
-            ...(nodeConfig.tfo ? [
-              `fast-open=${nodeConfig.tfo}`,
-            ] : []),
-            ...(nodeConfig.tls13 ? [
-              `tls13=${nodeConfig.tls13}`,
-            ] : []),
+            ...(nodeConfig.obfs && ['http', 'tls'].includes(nodeConfig.obfs)
+              ? [
+                  `obfs=${nodeConfig.obfs}`,
+                  `obfs-host=${nodeConfig['obfs-host']}`,
+                ]
+              : []),
+            ...(nodeConfig.obfs && ['ws', 'wss'].includes(nodeConfig.obfs)
+              ? [
+                  `obfs=${nodeConfig.obfs}`,
+                  `obfs-host=${nodeConfig['obfs-host'] || nodeConfig.hostname}`,
+                  `obfs-uri=${nodeConfig['obfs-uri'] || '/'}`,
+                ]
+              : []),
+            ...(nodeConfig['udp-relay'] ? [`udp-relay=true`] : []),
+            ...(nodeConfig.tfo ? [`fast-open=${nodeConfig.tfo}`] : []),
+            ...(nodeConfig.tls13 ? [`tls13=${nodeConfig.tls13}`] : []),
             `tag=${nodeConfig.nodeName}`,
-          ]
-            .join(', ');
+          ].join(', ');
 
           // istanbul ignore next
-          if (nodeConfig.wsHeaders && Object.keys(nodeConfig.wsHeaders).length > 1) {
-            logger.warn(`Quantumult X 不支持自定义额外的 Header 字段，节点 ${nodeConfig.nodeName} 可能不可用`);
+          if (
+            nodeConfig.wsHeaders &&
+            Object.keys(nodeConfig.wsHeaders).length > 1
+          ) {
+            logger.warn(
+              `Quantumult X 不支持自定义额外的 Header 字段，节点 ${nodeConfig.nodeName} 可能不可用`
+            );
           }
 
           return `shadowsocks=${config}`;
@@ -994,15 +1151,10 @@ export const getQuantumultXNodes = function(
             `ssr-protocol-param=${nodeConfig.protoparam}`,
             `obfs=${nodeConfig.obfs}`,
             `obfs-host=${nodeConfig.obfsparam}`,
-            ...(nodeConfig['udp-relay'] ? [
-              `udp-relay=true`,
-            ] : []),
-            ...(nodeConfig.tfo ? [
-              `fast-open=${nodeConfig.tfo}`,
-            ] : []),
+            ...(nodeConfig['udp-relay'] ? [`udp-relay=true`] : []),
+            ...(nodeConfig.tfo ? [`fast-open=${nodeConfig.tfo}`] : []),
             `tag=${nodeConfig.nodeName}`,
-          ]
-            .join(', ');
+          ].join(', ');
 
           return `shadowsocks=${config}`;
         }
@@ -1012,18 +1164,14 @@ export const getQuantumultXNodes = function(
           const config = [
             `${nodeConfig.hostname}:${nodeConfig.port}`,
             ...pickAndFormatStringList(nodeConfig, ['username', 'password']),
-            ...(nodeConfig.tfo ? [
-              `fast-open=${nodeConfig.tfo}`,
-            ] : []),
+            ...(nodeConfig.tfo ? [`fast-open=${nodeConfig.tfo}`] : []),
           ];
 
           if (nodeConfig.type === NodeTypeEnum.HTTPS) {
             config.push(
               'over-tls=true',
               `tls-verification=${nodeConfig.skipCertVerify !== true}`,
-              ...(nodeConfig.tls13 ? [
-                `tls13=${nodeConfig.tls13}`,
-              ] : []),
+              ...(nodeConfig.tls13 ? [`tls13=${nodeConfig.tls13}`] : [])
             );
           }
 
@@ -1038,18 +1186,10 @@ export const getQuantumultXNodes = function(
             ...pickAndFormatStringList(nodeConfig, ['password']),
             'over-tls=true',
             `tls-verification=${nodeConfig.skipCertVerify !== true}`,
-            ...(nodeConfig.sni ? [
-              `tls-host=${nodeConfig.sni}`,
-            ] : []),
-            ...(nodeConfig.tfo ? [
-              `fast-open=${nodeConfig.tfo}`,
-            ] : []),
-            ...(nodeConfig['udp-relay'] ? [
-              `udp-relay=true`,
-            ] : []),
-            ...(nodeConfig.tls13 ? [
-              `tls13=${nodeConfig.tls13}`,
-            ] : []),
+            ...(nodeConfig.sni ? [`tls-host=${nodeConfig.sni}`] : []),
+            ...(nodeConfig.tfo ? [`fast-open=${nodeConfig.tfo}`] : []),
+            ...(nodeConfig['udp-relay'] ? [`udp-relay=true`] : []),
+            ...(nodeConfig.tls13 ? [`tls13=${nodeConfig.tls13}`] : []),
             `tag=${nodeConfig.nodeName}`,
           ];
 
@@ -1058,7 +1198,11 @@ export const getQuantumultXNodes = function(
 
         // istanbul ignore next
         default:
-          logger.warn(`不支持为 QuantumultX 生成 ${nodeConfig!.type} 的节点，节点 ${nodeConfig!.nodeName} 会被省略`);
+          logger.warn(
+            `不支持为 QuantumultX 生成 ${nodeConfig!.type} 的节点，节点 ${
+              nodeConfig!.nodeName
+            } 会被省略`
+          );
           return void 0;
       }
     })
@@ -1068,10 +1212,15 @@ export const getQuantumultXNodes = function(
 };
 
 // istanbul ignore next
-export const getShadowsocksNodesJSON = (list: ReadonlyArray<ShadowsocksNodeConfig>): string => {
+export const getShadowsocksNodesJSON = (
+  list: ReadonlyArray<ShadowsocksNodeConfig>
+): string => {
   const nodes: ReadonlyArray<any> = list
-    .map(nodeConfig => {
-      if (nodeConfig.enable === false) { return null; }
+    .map((nodeConfig) => {
+      // istanbul ignore next
+      if (nodeConfig.enable === false) {
+        return null;
+      }
 
       switch (nodeConfig.type) {
         case NodeTypeEnum.Shadowsocks: {
@@ -1086,41 +1235,49 @@ export const getShadowsocksNodesJSON = (list: ReadonlyArray<ShadowsocksNodeConfi
             tcp_over_udp: false,
             udp_over_tcp: false,
             enable: true,
-            ...(useObfs ? {
-              plugin: 'obfs-local',
-              'plugin-opts': `obfs=${nodeConfig.obfs};obfs-host=${nodeConfig['obfs-host']}`
-            } : null)
+            ...(useObfs
+              ? {
+                  plugin: 'obfs-local',
+                  'plugin-opts': `obfs=${nodeConfig.obfs};obfs-host=${nodeConfig['obfs-host']}`,
+                }
+              : null),
           };
         }
 
         // istanbul ignore next
         default:
-          logger.warn(`在生成 Shadowsocks 节点时出现了 ${nodeConfig.type} 节点，节点 ${nodeConfig.nodeName} 会被省略`);
+          logger.warn(
+            `在生成 Shadowsocks 节点时出现了 ${nodeConfig.type} 节点，节点 ${nodeConfig.nodeName} 会被省略`
+          );
           return undefined;
       }
     })
-    .filter(item => item !== undefined);
+    .filter((item) => item !== undefined);
 
   return JSON.stringify(nodes, null, 2);
 };
 
-export const getNodeNames = function(
+export const getNodeNames = function (
   list: ReadonlyArray<SimpleNodeConfig>,
-  filter?: NodeNameFilterType|SortedNodeNameFilterType,
-  separator?: string,
+  filter?: NodeNameFilterType | SortedNodeNameFilterType,
+  separator?: string
 ): string {
+  // istanbul ignore next
   if (arguments.length === 2 && typeof filter === 'undefined') {
     throw new Error(ERR_INVALID_FILTER);
   }
 
-  return applyFilter(list, filter).map(item => item.nodeName).join(separator || ', ');
+  return applyFilter(list, filter)
+    .map((item) => item.nodeName)
+    .join(separator || ', ');
 };
 
-export const getClashNodeNames = function(
+export const getClashNodeNames = function (
   list: ReadonlyArray<SimpleNodeConfig>,
-  filter?: NodeNameFilterType|SortedNodeNameFilterType,
-  existingProxies?: ReadonlyArray<string>,
+  filter?: NodeNameFilterType | SortedNodeNameFilterType,
+  existingProxies?: ReadonlyArray<string>
 ): ReadonlyArray<string> {
+  // istanbul ignore next
   if (arguments.length === 2 && typeof filter === 'undefined') {
     throw new Error(ERR_INVALID_FILTER);
   }
@@ -1131,24 +1288,23 @@ export const getClashNodeNames = function(
     result = result.concat(existingProxies);
   }
 
-  result = result.concat(applyFilter(list, filter).map(item => item.nodeName));
+  result = result.concat(
+    applyFilter(list, filter).map((item) => item.nodeName)
+  );
 
   return result;
 };
 
 export const generateClashProxyGroup = (
   ruleName: string,
-  ruleType: 'select'|'url-test'|'fallback'|'load-balance',
+  ruleType: 'select' | 'url-test' | 'fallback' | 'load-balance',
   nodeNameList: ReadonlyArray<SimpleNodeConfig>,
   options: {
-    readonly filter?: NodeNameFilterType|SortedNodeNameFilterType,
-    readonly existingProxies?: ReadonlyArray<string>,
-    readonly proxyTestUrl?: string,
-    readonly proxyTestInterval?: number,
-  } = {
-    proxyTestUrl: PROXY_TEST_URL,
-    proxyTestInterval: PROXY_TEST_INTERVAL,
-  },
+    readonly filter?: NodeNameFilterType | SortedNodeNameFilterType;
+    readonly existingProxies?: ReadonlyArray<string>;
+    readonly proxyTestUrl?: string;
+    readonly proxyTestInterval?: number;
+  }
 ): {
   readonly type: string;
   readonly name: string;
@@ -1161,31 +1317,39 @@ export const generateClashProxyGroup = (
   if (options.existingProxies) {
     if (options.filter) {
       const nodes = applyFilter(nodeNameList, options.filter);
-      proxies = ([] as string[]).concat(options.existingProxies, nodes.map(item => item.nodeName));
+      proxies = ([] as string[]).concat(
+        options.existingProxies,
+        nodes.map((item) => item.nodeName)
+      );
     } else {
       proxies = options.existingProxies;
     }
   } else {
     const nodes = applyFilter(nodeNameList, options.filter);
-    proxies = nodes.map(item => item.nodeName);
+    proxies = nodes.map((item) => item.nodeName);
   }
 
   return {
     type: ruleType,
     name: ruleName,
     proxies,
-    ...(['url-test', 'fallback', 'load-balance'].includes(ruleType) ? {
-      url: options.proxyTestUrl,
-      interval: options.proxyTestInterval,
-    } : null),
+    ...(['url-test', 'fallback', 'load-balance'].includes(ruleType)
+      ? {
+          url: options.proxyTestUrl,
+          interval: options.proxyTestInterval,
+        }
+      : null),
   };
 };
 
 export const toYaml = (obj: JsonObject): string => YAML.stringify(obj);
 
-export const pickAndFormatStringList = (obj: any, keyList: readonly string[]): readonly string[] => {
+export const pickAndFormatStringList = (
+  obj: any,
+  keyList: readonly string[]
+): readonly string[] => {
   const result: string[] = [];
-  keyList.forEach(key => {
+  keyList.forEach((key) => {
     if (obj.hasOwnProperty(key)) {
       result.push(`${key}=${obj[key]}`);
     }
@@ -1193,9 +1357,11 @@ export const pickAndFormatStringList = (obj: any, keyList: readonly string[]): r
   return result;
 };
 
-export const decodeStringList = <T = Record<string, string|boolean>>(stringList: ReadonlyArray<string>): T => {
+export const decodeStringList = <T = Record<string, string | boolean>>(
+  stringList: ReadonlyArray<string>
+): T => {
   const result = {};
-  stringList.forEach(item => {
+  stringList.forEach((item) => {
     if (item.includes('=')) {
       const match = item.match(/^(.*?)=(.*?)$/);
       if (match) {
@@ -1210,20 +1376,22 @@ export const decodeStringList = <T = Record<string, string|boolean>>(stringList:
 
 export const normalizeClashProxyGroupConfig = (
   nodeList: ReadonlyArray<PossibleNodeConfigType>,
-  customFilters: PlainObjectOf<NodeNameFilterType|SortedNodeNameFilterType>,
+  customFilters: PlainObjectOf<NodeNameFilterType | SortedNodeNameFilterType>,
   proxyGroupModifier: ProxyGroupModifier,
   options: {
-    readonly proxyTestUrl?: string,
-    readonly proxyTestInterval?: number,
-  } = {},
+    readonly proxyTestUrl?: string;
+    readonly proxyTestInterval?: number;
+  } = {}
 ): ReadonlyArray<any> => {
   const proxyGroup = proxyGroupModifier(nodeList, customFilters);
 
-  return proxyGroup.map<any>(item => {
+  return proxyGroup.map((item) => {
     if (item.hasOwnProperty('filter')) {
       // istanbul ignore next
       if (!item.filter || !validateFilter(item.filter)) {
-        throw new Error(`过滤器 ${item.filter} 无效，请检查 proxyGroupModifier`);
+        throw new Error(
+          `过滤器 ${item.filter} 无效，请检查 proxyGroupModifier`
+        );
       }
 
       return generateClashProxyGroup(item.name, item.type, nodeList, {
@@ -1259,10 +1427,13 @@ export const ensureConfigFolder = (dir: string = os.homedir()): string => {
   return configDir;
 };
 
-export const formatV2rayConfig = (localPort: number, nodeConfig: VmessNodeConfig): JsonObject => {
+export const formatV2rayConfig = (
+  localPort: number,
+  nodeConfig: VmessNodeConfig
+): JsonObject => {
   const config: any = {
     log: {
-      loglevel: 'warning'
+      loglevel: 'warning',
     },
     inbound: {
       port: Number(localPort),
@@ -1270,7 +1441,7 @@ export const formatV2rayConfig = (localPort: number, nodeConfig: VmessNodeConfig
       protocol: 'socks',
       settings: {
         auth: 'noauth',
-      }
+      },
     },
     outbound: {
       protocol: 'vmess',
@@ -1285,15 +1456,15 @@ export const formatV2rayConfig = (localPort: number, nodeConfig: VmessNodeConfig
                 alterId: Number(nodeConfig.alterId),
                 security: nodeConfig.method,
                 level: 0,
-              }
-            ]
-          }
-        ]
+              },
+            ],
+          },
+        ],
       },
       streamSettings: {
         security: 'none',
       },
-    }
+    },
   };
 
   if (nodeConfig.tls) {
@@ -1302,12 +1473,16 @@ export const formatV2rayConfig = (localPort: number, nodeConfig: VmessNodeConfig
       security: 'tls',
       tlsSettings: {
         serverName: nodeConfig.host || nodeConfig.hostname,
-        ...(typeof nodeConfig.skipCertVerify === 'boolean' ? {
-          allowInsecure: nodeConfig.skipCertVerify,
-        } : null),
-        ...(typeof nodeConfig.tls13 === 'boolean' ? {
-          allowInsecureCiphers: !nodeConfig.tls13,
-        } : null),
+        ...(typeof nodeConfig.skipCertVerify === 'boolean'
+          ? {
+              allowInsecure: nodeConfig.skipCertVerify,
+            }
+          : null),
+        ...(typeof nodeConfig.tls13 === 'boolean'
+          ? {
+              allowInsecureCiphers: !nodeConfig.tls13,
+            }
+          : null),
       },
     };
   }
@@ -1331,14 +1506,14 @@ export const formatV2rayConfig = (localPort: number, nodeConfig: VmessNodeConfig
 
 export const applyFilter = <T extends SimpleNodeConfig>(
   nodeList: ReadonlyArray<T>,
-  filter?: NodeNameFilterType|SortedNodeNameFilterType
+  filter?: NodeNameFilterType | SortedNodeNameFilterType
 ): ReadonlyArray<T> => {
   // istanbul ignore next
   if (filter && !validateFilter(filter)) {
     throw new Error(`使用了无效的过滤器 ${filter}`);
   }
 
-  let nodes: ReadonlyArray<T> = nodeList.filter(item => {
+  let nodes: ReadonlyArray<T> = nodeList.filter((item) => {
     const result = item.enable !== false;
 
     if (filter && typeof filter === 'function') {
@@ -1348,38 +1523,47 @@ export const applyFilter = <T extends SimpleNodeConfig>(
     return result;
   });
 
-  if (filter && typeof filter === 'object' && typeof filter.filter === 'function') {
+  if (
+    filter &&
+    typeof filter === 'object' &&
+    typeof filter.filter === 'function'
+  ) {
     nodes = filter.filter(nodes);
   }
 
   return nodes;
 };
 
-export const lowercaseHeaderKeys = (headers: Record<string, string>): Record<string, string> => {
+export const lowercaseHeaderKeys = (
+  headers: Record<string, string>
+): Record<string, string> => {
   const wsHeaders = {};
 
-  Object.keys(headers)
-    .forEach(key => {
-      wsHeaders[key.toLowerCase()] = headers[key];
-    });
+  Object.keys(headers).forEach((key) => {
+    wsHeaders[key.toLowerCase()] = headers[key];
+  });
 
   return wsHeaders;
 };
 
 // istanbul ignore next
-export const isIp = (str: string): boolean => net.isIPv4(str) || net.isIPv6(str);
+export const isIp = (str: string): boolean =>
+  net.isIPv4(str) || net.isIPv6(str);
 
 // istanbul ignore next
-export const isNow = (): boolean => typeof process.env.NOW_REGION !== 'undefined';
+export const isNow = (): boolean =>
+  typeof process.env.NOW_REGION !== 'undefined';
 
 // istanbul ignore next
 export const isHeroku = (): boolean => typeof process.env.DYNO !== 'undefined';
 
 // istanbul ignore next
-export const isGitHubActions = (): boolean => typeof process.env.GITHUB_ACTIONS !== 'undefined';
+export const isGitHubActions = (): boolean =>
+  typeof process.env.GITHUB_ACTIONS !== 'undefined';
 
 // istanbul ignore next
-export const isGitLabCI = (): boolean => typeof process.env.GITLAB_CI !== 'undefined';
+export const isGitLabCI = (): boolean =>
+  typeof process.env.GITLAB_CI !== 'undefined';
 
 // istanbul ignore next
 export const isPkgBundle = (): boolean => __dirname.startsWith('/snapshot');

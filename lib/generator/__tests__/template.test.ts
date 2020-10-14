@@ -147,6 +147,45 @@ test('mellow filter 3', t => {
   t.is(result, '# Comment');
 });
 
+test('loon filter 1', t => {
+  const body = `{{ str | loon }}`;
+  const str = `# Comment`;
+  const result = templateEngine.renderString(body, {
+    str,
+  });
+
+  t.is(result, '# Comment');
+})
+
+test('loon filter 2', t => {
+  const body = `{{ str | loon }}`;
+  const str = [
+    'IP-CIDR,67.198.55.0/24,Proxy,no-resolve // test rule',
+    'DOMAIN,example.com,Proxy,force-remote-dns'
+  ].join('\n');
+  const result = templateEngine.renderString(body, {
+    str,
+  });
+
+  t.is(
+    result,
+    [
+      'IP-CIDR,67.198.55.0/24,Proxy,no-resolve',
+      'DOMAIN,example.com,Proxy,force-remote-dns',
+    ].join('\n')
+  );
+});
+
+test('loon filter 3', t => {
+  const body = `{{ str | loon }}`;
+  const str = `IP-CIDR6,xxxxxxxxxxxx`;
+  const result = templateEngine.renderString(body, {
+    str,
+  });
+
+  t.is(result, '');
+});
+
 test('spaces in string', t => {
   const str = `    `;
 

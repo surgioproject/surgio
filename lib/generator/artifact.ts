@@ -20,10 +20,21 @@ import {
 import {
   getClashNodeNames,
   getClashNodes,
-  getDownloadUrl, getMellowNodes,
-  getNodeNames, getQuantumultNodes, getQuantumultXNodes,
-  getShadowsocksNodes, getShadowsocksNodesJSON, getShadowsocksrNodes,
-  getSurgeNodes, getUrl, getV2rayNNodes, isIp, normalizeClashProxyGroupConfig, toBase64, toUrlSafeBase64,
+  getDownloadUrl,
+  getMellowNodes,
+  getNodeNames,
+  getQuantumultNodes,
+  getQuantumultXNodes,
+  getShadowsocksNodes,
+  getShadowsocksNodesJSON,
+  getShadowsocksrNodes,
+  getSurgeNodes,
+  getUrl,
+  getV2rayNNodes,
+  isIp,
+  normalizeClashProxyGroupConfig,
+  toBase64,
+  toUrlSafeBase64,
 } from '../utils';
 import { NETWORK_CONCURRENCY } from '../utils/constant';
 import { resolveDomain } from '../utils/dns';
@@ -50,6 +61,7 @@ import {
   socks5Filter,
 } from '../utils/filter';
 import { prependFlag, removeFlag } from '../utils/flag';
+import { getLoonNodes } from '../utils/loon';
 import { loadLocalSnippet } from './template';
 
 export interface ArtifactOptions {
@@ -64,14 +76,19 @@ export interface ExtendableRenderContext {
 export class Artifact extends EventEmitter {
   public initProgress = 0;
   public providerNameList: ReadonlyArray<string>;
-  public nodeConfigListMap: Map<string, ReadonlyArray<PossibleNodeConfigType>> = new Map();
+  public nodeConfigListMap: Map<
+    string,
+    ReadonlyArray<PossibleNodeConfigType>
+  > = new Map();
   public providerMap: Map<string, ReturnType<typeof getProvider>> = new Map();
   public nodeList: PossibleNodeConfigType[] = [];
   public nodeNameList: SimpleNodeConfig[] = [];
 
   private customFilters: NonNullable<ProviderConfig['customFilters']>;
   private netflixFilter: NonNullable<ProviderConfig['netflixFilter']>;
-  private youtubePremiumFilter: NonNullable<ProviderConfig['youtubePremiumFilter']>;
+  private youtubePremiumFilter: NonNullable<
+    ProviderConfig['youtubePremiumFilter']
+  >;
 
   constructor(
     public surgioConfig: CommandConfig,
@@ -80,11 +97,7 @@ export class Artifact extends EventEmitter {
   ) {
     super();
 
-    const {
-      name: artifactName,
-      template,
-      templateString,
-    } = artifact;
+    const { name: artifactName, template, templateString } = artifact;
 
     assert(artifactName, '必须指定 artifact 的 name 属性');
     assert(artifact.provider, '必须指定 artifact 的 provider 属性');
@@ -102,15 +115,13 @@ export class Artifact extends EventEmitter {
     return this.initProgress === this.providerNameList.length;
   }
 
-  public getRenderContext(extendRenderContext: ExtendableRenderContext = {}): any {
+  public getRenderContext(
+    extendRenderContext: ExtendableRenderContext = {}
+  ): any {
     const config = this.surgioConfig;
     const gatewayConfig = config.gateway;
-    const gatewayHasToken = !!(gatewayConfig?.accessToken);
-    const {
-      name: artifactName,
-      customParams,
-      downloadUrl,
-    } = this.artifact;
+    const gatewayHasToken = !!gatewayConfig?.accessToken;
+    const { name: artifactName, customParams, downloadUrl } = this.artifact;
 
     const {
       nodeList,
@@ -119,18 +130,28 @@ export class Artifact extends EventEmitter {
       youtubePremiumFilter,
       customFilters,
     } = this;
-    const remoteSnippets = _.keyBy(this.options.remoteSnippetList || [], item => item.name);
+    const remoteSnippets = _.keyBy(
+      this.options.remoteSnippetList || [],
+      (item) => item.name
+    );
     const globalCustomParams = config.customParams;
-    const mergedCustomParams = _.merge({}, globalCustomParams, customParams, extendRenderContext?.urlParams);
+    const mergedCustomParams = _.merge(
+      {},
+      globalCustomParams,
+      customParams,
+      extendRenderContext?.urlParams
+    );
 
     return {
       proxyTestUrl: config.proxyTestUrl,
       downloadUrl: downloadUrl
         ? downloadUrl
-        : getDownloadUrl(config.urlBase, artifactName, true, gatewayHasToken
-          ? gatewayConfig?.accessToken
-          : undefined
-        ),
+        : getDownloadUrl(
+            config.urlBase,
+            artifactName,
+            true,
+            gatewayHasToken ? gatewayConfig?.accessToken : undefined
+          ),
       snippet: (filePath: string): RemoteSnippet => {
         return loadLocalSnippet(config.templateDir, filePath);
       },
@@ -141,8 +162,19 @@ export class Artifact extends EventEmitter {
       provider: this.artifact.provider,
       providerName: this.artifact.provider,
       artifactName,
-      getDownloadUrl: (name: string) => getDownloadUrl(config.urlBase, name, true, gatewayHasToken ? gatewayConfig?.accessToken : undefined),
-      getUrl: (p: string) => getUrl(config.publicUrl, p, gatewayHasToken ? gatewayConfig?.accessToken : undefined),
+      getDownloadUrl: (name: string) =>
+        getDownloadUrl(
+          config.urlBase,
+          name,
+          true,
+          gatewayHasToken ? gatewayConfig?.accessToken : undefined
+        ),
+      getUrl: (p: string) =>
+        getUrl(
+          config.publicUrl,
+          p,
+          gatewayHasToken ? gatewayConfig?.accessToken : undefined
+        ),
       getNodeNames,
       getClashNodeNames,
       getClashNodes,
@@ -154,6 +186,7 @@ export class Artifact extends EventEmitter {
       getV2rayNNodes,
       getQuantumultXNodes,
       getMellowNodes,
+      getLoonNodes,
       usFilter,
       hkFilter,
       japanFilter,
@@ -178,32 +211,34 @@ export class Artifact extends EventEmitter {
       youtubePremiumFilter,
       customFilters,
       customParams: mergedCustomParams,
-      ...(this.artifact.proxyGroupModifier ? {
-        clashProxyConfig: {
-          proxies: getClashNodes(nodeList),
-          'proxy-groups': normalizeClashProxyGroupConfig(
-            nodeList,
-            {
-              usFilter,
-              hkFilter,
-              japanFilter,
-              koreaFilter,
-              singaporeFilter,
-              taiwanFilter,
-              chinaBackFilter,
-              chinaOutFilter,
-              netflixFilter,
-              youtubePremiumFilter,
-              ...customFilters,
+      ...(this.artifact.proxyGroupModifier
+        ? {
+            clashProxyConfig: {
+              proxies: getClashNodes(nodeList),
+              'proxy-groups': normalizeClashProxyGroupConfig(
+                nodeList,
+                {
+                  usFilter,
+                  hkFilter,
+                  japanFilter,
+                  koreaFilter,
+                  singaporeFilter,
+                  taiwanFilter,
+                  chinaBackFilter,
+                  chinaOutFilter,
+                  netflixFilter,
+                  youtubePremiumFilter,
+                  ...customFilters,
+                },
+                this.artifact.proxyGroupModifier,
+                {
+                  proxyTestUrl: config.proxyTestUrl,
+                  proxyTestInterval: config.proxyTestInterval,
+                }
+              ),
             },
-            this.artifact.proxyGroupModifier,
-            {
-              proxyTestUrl: config.proxyTestUrl,
-              proxyTestInterval: config.proxyTestInterval,
-            },
-          ),
-        },
-      } : {}),
+          }
+        : {}),
     };
   }
 
@@ -214,16 +249,15 @@ export class Artifact extends EventEmitter {
 
     this.emit('initArtifact:start', { artifact: this.artifact });
 
-    await Bluebird.map(
-      this.providerNameList,
-      this.providerMapper.bind(this),
-      { concurrency: NETWORK_CONCURRENCY });
+    await Bluebird.map(this.providerNameList, this.providerMapper.bind(this), {
+      concurrency: NETWORK_CONCURRENCY,
+    });
 
-    this.providerNameList.forEach(providerName => {
+    this.providerNameList.forEach((providerName) => {
       const nodeConfigList = this.nodeConfigListMap.get(providerName);
 
       if (nodeConfigList) {
-        nodeConfigList.forEach(nodeConfig => {
+        nodeConfigList.forEach((nodeConfig) => {
           if (nodeConfig) {
             this.nodeNameList.push({
               type: nodeConfig.type,
@@ -242,7 +276,10 @@ export class Artifact extends EventEmitter {
     return this;
   }
 
-  public render(templateEngine?: Environment, extendRenderContext?: ExtendableRenderContext): string {
+  public render(
+    templateEngine?: Environment,
+    extendRenderContext?: ExtendableRenderContext
+  ): string {
     if (!this.isReady) {
       throw new Error('Artifact 还未初始化');
     }
@@ -254,19 +291,16 @@ export class Artifact extends EventEmitter {
     }
 
     const renderContext = this.getRenderContext(extendRenderContext);
-    const {
-      templateString,
-      template,
-    } = this.artifact;
+    const { templateString, template } = this.artifact;
     const result = templateString
-    ? targetTemplateEngine.renderString(templateString, {
-        templateEngine: targetTemplateEngine,
-        ...renderContext,
-      })
-    : targetTemplateEngine.render(`${template}.tpl`, {
-        templateEngine: targetTemplateEngine,
-        ...renderContext,
-      });
+      ? targetTemplateEngine.renderString(templateString, {
+          templateEngine: targetTemplateEngine,
+          ...renderContext,
+        })
+      : targetTemplateEngine.render(`${template}.tpl`, {
+          templateEngine: targetTemplateEngine,
+          ...renderContext,
+        });
 
     this.emit('renderArtifact', { artifact: this.artifact, result });
 
@@ -311,7 +345,8 @@ export class Artifact extends EventEmitter {
         this.netflixFilter = provider.netflixFilter || defaultNetflixFilter;
       }
       if (!this.youtubePremiumFilter) {
-        this.youtubePremiumFilter = provider.youtubePremiumFilter || defaultYoutubePremiumFilter;
+        this.youtubePremiumFilter =
+          provider.youtubePremiumFilter || defaultYoutubePremiumFilter;
       }
       if (!this.customFilters) {
         this.customFilters = {
@@ -329,92 +364,100 @@ export class Artifact extends EventEmitter {
       nodeConfigList = provider.nodeFilter.filter(nodeConfigList);
     }
 
-    nodeConfigList = (await Bluebird.map(nodeConfigList, async nodeConfig => {
-      let isValid = false;
+    nodeConfigList = (
+      await Bluebird.map(nodeConfigList, async (nodeConfig) => {
+        let isValid = false;
 
-      if (nodeConfig.enable === false) {
-        return undefined;
-      }
-
-      if (!provider.nodeFilter) {
-        isValid = true;
-      } else if (validateFilter(provider.nodeFilter)) {
-        isValid = typeof provider.nodeFilter === 'function' ?
-          provider.nodeFilter(nodeConfig) :
-          true;
-      }
-
-      if (isValid) {
-        if (config.binPath && config.binPath[nodeConfig.type]) {
-          nodeConfig.binPath = config.binPath[nodeConfig.type];
-          nodeConfig.localPort = provider.nextPort;
+        if (nodeConfig.enable === false) {
+          return undefined;
         }
 
-        nodeConfig.provider = provider;
-        nodeConfig.surgeConfig = config.surgeConfig;
-        nodeConfig.clashConfig = config.clashConfig;
+        if (!provider.nodeFilter) {
+          isValid = true;
+        } else if (validateFilter(provider.nodeFilter)) {
+          isValid =
+            typeof provider.nodeFilter === 'function'
+              ? provider.nodeFilter(nodeConfig)
+              : true;
+        }
 
-        if (provider.renameNode) {
-          const newName = provider.renameNode(nodeConfig.nodeName);
-
-          if (newName) {
-            nodeConfig.nodeName = newName;
+        if (isValid) {
+          if (config.binPath && config.binPath[nodeConfig.type]) {
+            nodeConfig.binPath = config.binPath[nodeConfig.type];
+            nodeConfig.localPort = provider.nextPort;
           }
-        }
 
-        if (provider.addFlag) {
-          // 给节点名加国旗
-          nodeConfig.nodeName = prependFlag(nodeConfig.nodeName, provider.removeExistingFlag);
-        } else if (provider.removeExistingFlag) {
-          // 去掉名称中的国旗
-          nodeConfig.nodeName = removeFlag(nodeConfig.nodeName);
-        }
+          nodeConfig.provider = provider;
+          nodeConfig.surgeConfig = config.surgeConfig;
+          nodeConfig.clashConfig = config.clashConfig;
 
-        // TCP Fast Open
-        if (provider.tfo) {
-          nodeConfig.tfo = provider.tfo;
-        }
+          if (provider.renameNode) {
+            const newName = provider.renameNode(nodeConfig.nodeName);
 
-        // MPTCP
-        if (provider.mptcp) {
-          nodeConfig.mptcp = provider.mptcp;
-        }
+            if (newName) {
+              nodeConfig.nodeName = newName;
+            }
+          }
 
-        // check whether the hostname resolves in case of blocking clash's node heurestic
-        if (
-          config?.checkHostname &&
-          !isIp(nodeConfig.hostname)
-        ) {
-          try {
-            const domains = await resolveDomain(nodeConfig.hostname);
-            if (domains.length < 1) {
-              logger.warn(`DNS 解析结果中 ${nodeConfig.hostname} 未有对应 IP 地址，将忽略该节点`);
+          if (provider.addFlag) {
+            // 给节点名加国旗
+            nodeConfig.nodeName = prependFlag(
+              nodeConfig.nodeName,
+              provider.removeExistingFlag
+            );
+          } else if (provider.removeExistingFlag) {
+            // 去掉名称中的国旗
+            nodeConfig.nodeName = removeFlag(nodeConfig.nodeName);
+          }
+
+          // TCP Fast Open
+          if (provider.tfo) {
+            nodeConfig.tfo = provider.tfo;
+          }
+
+          // MPTCP
+          if (provider.mptcp) {
+            nodeConfig.mptcp = provider.mptcp;
+          }
+
+          // check whether the hostname resolves in case of blocking clash's node heurestic
+          if (config?.checkHostname && !isIp(nodeConfig.hostname)) {
+            try {
+              const domains = await resolveDomain(nodeConfig.hostname);
+              if (domains.length < 1) {
+                logger.warn(
+                  `DNS 解析结果中 ${nodeConfig.hostname} 未有对应 IP 地址，将忽略该节点`
+                );
+                return undefined;
+              }
+            } catch (err) /* istanbul ignore next */ {
+              logger.warn(`${nodeConfig.hostname} 无法解析，将忽略该节点`);
               return undefined;
             }
-          } catch (err) /* istanbul ignore next */ {
-            logger.warn(`${nodeConfig.hostname} 无法解析，将忽略该节点`);
-            return undefined;
           }
+
+          if (
+            config?.surgeConfig?.resolveHostname &&
+            !isIp(nodeConfig.hostname) &&
+            [NodeTypeEnum.Vmess, NodeTypeEnum.Shadowsocksr].includes(
+              nodeConfig.type
+            )
+          ) {
+            try {
+              nodeConfig.hostnameIp = await resolveDomain(nodeConfig.hostname);
+            } catch (err) /* istanbul ignore next */ {
+              logger.warn(
+                `${nodeConfig.hostname} 无法解析，将忽略该域名的解析结果`
+              );
+            }
+          }
+
+          return nodeConfig;
         }
 
-        if (
-          config?.surgeConfig?.resolveHostname &&
-          !isIp(nodeConfig.hostname) &&
-          [NodeTypeEnum.Vmess, NodeTypeEnum.Shadowsocksr].includes(nodeConfig.type)
-        ) {
-          try {
-            nodeConfig.hostnameIp = await resolveDomain(nodeConfig.hostname);
-          } catch (err) /* istanbul ignore next */ {
-            logger.warn(`${nodeConfig.hostname} 无法解析，将忽略该域名的解析结果`);
-          }
-        }
-
-        return nodeConfig;
-      }
-
-      return undefined;
-    }))
-      .filter((item): item is PossibleNodeConfigType => item !== undefined);
+        return undefined;
+      })
+    ).filter((item): item is PossibleNodeConfigType => item !== undefined);
 
     this.nodeConfigListMap.set(providerName, nodeConfigList);
     this.initProgress++;
