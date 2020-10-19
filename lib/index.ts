@@ -33,14 +33,19 @@ export class SurgioCommand extends Command {
     updateNotifier({ pkg: require('../package.json') }).notify();
 
     this.usage = '使用方法: surgio <command> [options]';
-    this.yargs.option('V', {
-      alias: 'verbose',
-      demandOption: false,
-      describe: '打印调试日志',
-      type: 'boolean',
-    });
 
     this.load(path.join(__dirname, './command'));
+
+    this.options = {
+      V: {
+        alias: 'verbose',
+        demandOption: false,
+        describe: '打印调试日志',
+        type: 'boolean',
+      },
+    };
+    // 禁用 yargs 内部生成的 help 信息，似乎和 common-bin 的 load 有冲突
+    this.yargs.help(false);
 
     // istanbul ignore next
     if (this.yargs.argv.verbose) {
