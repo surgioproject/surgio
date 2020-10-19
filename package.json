@@ -66,6 +66,7 @@
     "vuepress-plugin-sitemap": "^2.3.1"
   },
   "scripts": {
+    "dev": "tsc -p tsconfig.json --watch",
     "test": "run-s test:*",
     "test:lint": "eslint -c .eslintrc.js --ext .js,.ts .",
     "test:unit": "run-s build && ava",
