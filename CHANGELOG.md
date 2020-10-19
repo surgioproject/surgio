@@ -1,3 +1,13 @@
+## [2.6.1](https://github.com/geekdada/surgio/compare/v2.6.0...v2.6.1) (2020-10-19)
+
+
+### Bug Fixes
+
+* dns test may failed on github ([36fe961](https://github.com/geekdada/surgio/commit/36fe9614216e82855dc8b6554f8a387c67ab6912))
+* help option conflict with common-bin and yargs ([1f401c0](https://github.com/geekdada/surgio/commit/1f401c0934cf52e27ae7a09a40bbdc35ff24515b))
+
+
+
 # [2.6.0](https://github.com/geekdada/surgio/compare/v2.5.2...v2.6.0) (2020-10-14)
 
 
