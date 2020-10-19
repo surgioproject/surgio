@@ -13,6 +13,6 @@ test('resolveDomain ipv6', async (t) => {
 });
 
 test('resolveDomain timeout', async (t) => {
-  const ips = await dns.resolveDomain('www.gstatic.com', 1);
+  const ips = await dns.resolveDomain('www.gstatic.com', 0);
   t.is(ips.length, 0);
 });
