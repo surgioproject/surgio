@@ -1,6 +1,6 @@
 <p align="center">
-  <a href="https://surgio.royli.dev/" target="_blank">
-    <img width="180" src="https://raw.githubusercontent.com/surgioproject/surgio/master/docs/.vuepress/public/surgio-icon.png" alt="logo">
+  <a href="https://surgio.js.org/" target="_blank">
+    <img width="180" src="docs/.vuepress/public/surgio-icon.png" alt="logo">
   </a>
 </p>
 
@@ -31,17 +31,23 @@
 
 ## 文档
 
-查看完整使用文档，前往 [surgio.royli.dev](https://surgio.royli.dev)。
+查看完整使用文档，前往 [surgio.js.org](https://surgio.js.org)。
 
 ## 交流
 
-[<img width="200px" src="https://surgio.royli.dev//join-telegram.png" />](https://t.me/surgiotg)
+[<img width="200px" src="docs/.vuepress/public/join-telegram.png" />](https://t.me/surgiotg)
 
-## Sponsor
+## Sponsors
 
 Our website is powered by [Vercel](https://vercel.com/?utm_source=surgio&utm_campaign=oss)!
 
-[<img width="200px" src="https://surgio.royli.dev/powered-by-vercel.svg" />](https://vercel.com/?utm_source=surgio&utm_campaign=oss)
+[<img width="200px" src="https://surgio.js.org/powered-by-vercel.svg" />](https://vercel.com/?utm_source=surgio&utm_campaign=oss)
+
+---
+
+<img width="180" src="docs/.vuepress/public/vxtrans.png" alt="vxtrans">
+
+[vxTrans - 网络优化工具，有效地降低延迟，改善传输性能](https://vx.link/?rel=geekdada)
 
 ## Contributors
 
