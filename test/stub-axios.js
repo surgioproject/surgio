@@ -4,7 +4,7 @@ const nock = require('nock');
 const fs = require('fs');
 const path = require('path');
 
-const toBase64 = str => Buffer.from(str, 'utf8').toString('base64');
+const toBase64 = (str) => Buffer.from(str, 'utf8').toString('base64');
 
 const scope = nock('http://example.com')
   .get(/\/gui-config\.json/)
@@ -38,9 +38,12 @@ const scope = nock('http://example.com')
   .get(/\/test-v2rayn-sub-compatible\.txt/)
   .reply(
     200,
-    fs.readFileSync(path.join(__dirname, 'asset/test-v2rayn-sub-compatible.txt'), {
-      encoding: 'utf8',
-    })
+    fs.readFileSync(
+      path.join(__dirname, 'asset/test-v2rayn-sub-compatible.txt'),
+      {
+        encoding: 'utf8',
+      }
+    )
   )
   .get(/\/netflix\.list/)
   .reply(
@@ -70,7 +73,8 @@ const scope = nock('http://example.com')
       encoding: 'utf8',
     }),
     {
-      'subscription-userinfo': 'upload=891332010; download=29921186546; total=322122547200; expire=1586330887',
+      'subscription-userinfo':
+        'upload=891332010; download=29921186546; total=322122547200; expire=1586330887',
     }
   )
   .get(/\/test-ruleset\.list/)
@@ -87,6 +91,13 @@ const scope = nock('http://example.com')
       encoding: 'utf8',
     })
   )
+  .get(/\/surgio-snippet\.tpl/)
+  .reply(
+    200,
+    fs.readFileSync(path.join(__dirname, 'asset/surgio-snippet.tpl'), {
+      encoding: 'utf8',
+    })
+  )
   .get(/\/ssd-sample\.txt/)
   .reply(
     200,
@@ -94,7 +105,7 @@ const scope = nock('http://example.com')
       fs.readFileSync(path.join(__dirname, 'asset/ssd-sample.json'), {
         encoding: 'utf8',
       })
-    )}`,
+    )}`
   )
   .get(/\/ssd-sample-2\.txt/)
   .reply(
@@ -103,12 +114,9 @@ const scope = nock('http://example.com')
       fs.readFileSync(path.join(__dirname, 'asset/ssd-sample-2.json'), {
         encoding: 'utf8',
       })
-    )}`,
+    )}`
   )
   .get(/\/error/)
-  .reply(
-    500,
-    ''
-  );
+  .reply(500, '');
 
 scope.persist();
