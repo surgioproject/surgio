@@ -1,3 +1,18 @@
+# [2.7.0](https://github.com/geekdada/surgio/compare/v2.6.1...v2.7.0) (2020-10-31)
+
+
+### Bug Fixes
+
+* config validationg ([b78f994](https://github.com/geekdada/surgio/commit/b78f9943a80d53f2b3ddd829b0c5b95d35cc02e3))
+* lint ([2929deb](https://github.com/geekdada/surgio/commit/2929debeb30753eebcc8aa93f91b15f4c261ac51))
+
+
+### Features
+
+* load surgio remote snippets ([591cae2](https://github.com/geekdada/surgio/commit/591cae297f7442008b64ad1d8e695f304490bc98))
+
+
+
 ## [2.6.1](https://github.com/geekdada/surgio/compare/v2.6.0...v2.6.1) (2020-10-19)
 
 
