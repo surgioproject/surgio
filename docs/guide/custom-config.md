@@ -66,6 +66,30 @@ module.exports = {
 - [Hackl0us/SS-Rule-Snippet](https://github.com/Hackl0us/SS-Rule-Snippet/tree/master/Rulesets)
 - [lhie1/Rules](https://github.com/lhie1/Rules/tree/master/Surge3)
 
+从 v2.7.0 开始，你可以在这里配置符合 [Surgio 片段](/guide/custom-template.md#片段-snippet) 格式的文件。我们以 Surgio 推荐的 [苹果服务规则](https://github.com/geekdada/surge-list/blob/master/surgio-snippet/apple.tpl) 为例。
+
+```js{6}
+module.exports = {
+  remoteSnippets: [
+    {
+      url: 'https://raw.githubusercontent.com/geekdada/surge-list/master/surgio-snippet/apple.tpl',
+      name: 'apple', // 模板中对应 remoteSnippets.apple
+      surgioSnippet: true
+    },
+  ],
+};
+```
+
+使用：
+
+```html
+{{ remoteSnippets.apple.main('🚀 Proxy', '🍎 Apple', '🍎 Apple CDN', 'DIRECT', '🚀 Proxy') }}
+```
+
+:::warning 注意
+片段中宏的入参需要和 `main` 方法调用时的入参 **一一对应**，一个都不能少。
+:::
+
 ### upload
 
 - 类型: `object`

@@ -96,6 +96,11 @@ DOMAIN-KEYWORD,baidu,DIRECT
 {{ remoteSnippets.cn.text }}
 ```
 
+其他变量
+
+- remoteSnippets.cn.url - 下载地址
+- remoteSnippets.cn.name - 片段名
+
 ### customParams
 
 - 类型: `object`
