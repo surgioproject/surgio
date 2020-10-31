@@ -54,7 +54,7 @@ export interface CommandConfig {
     readonly v2ray?: 'native' | 'external';
     readonly resolveHostname?: boolean;
   };
-  readonly quantumultXConfig?: {};
+  readonly quantumultXConfig?: any;
   readonly clashConfig?: {
     readonly ssrFormat: 'native' | 'legacy';
   };
