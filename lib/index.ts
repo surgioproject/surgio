@@ -1,3 +1,4 @@
+import 'source-map-support/register';
 import './utils/patch-proxy';
 
 import { bootstrap } from 'global-agent';

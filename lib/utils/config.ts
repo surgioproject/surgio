@@ -3,7 +3,7 @@ import fs from 'fs-extra';
 import _ from 'lodash';
 import path from 'path';
 import { URL } from 'url';
-import { deprecate } from "util";
+import { deprecate } from 'util';
 import { DEP005, DEP006 } from '../misc/deprecation';
 
 import { CommandConfig } from '../types';
@@ -14,7 +14,11 @@ import { ensureConfigFolder } from './index';
 const showDEP005 = deprecate(_.noop, DEP005, 'DEP005');
 const showDEP006 = deprecate(_.noop, DEP006, 'DEP006');
 
-export const loadConfig = (cwd: string, configPath: string, override?: Partial<CommandConfig>): CommandConfig => {
+export const loadConfig = (
+  cwd: string,
+  configPath: string,
+  override?: Partial<CommandConfig>
+): CommandConfig => {
   const absPath = path.resolve(cwd, configPath);
 
   if (!fs.existsSync(absPath)) {
@@ -26,16 +30,18 @@ export const loadConfig = (cwd: string, configPath: string, override?: Partial<C
   validateConfig(userConfig);
 
   if (userConfig.flags) {
-    Object.keys(userConfig.flags).forEach(emoji => {
+    Object.keys(userConfig.flags).forEach((emoji) => {
       if (userConfig.flags) {
         if (typeof userConfig.flags[emoji] === 'string') {
           addFlagMap(userConfig.flags[emoji] as string, emoji);
         } else if (_.isRegExp(userConfig.flags[emoji])) {
           addFlagMap(userConfig.flags[emoji] as RegExp, emoji);
         } else {
-          (userConfig.flags[emoji] as ReadonlyArray<string|RegExp>).forEach(name => {
-            addFlagMap(name, emoji);
-          });
+          (userConfig.flags[emoji] as ReadonlyArray<string | RegExp>).forEach(
+            (name) => {
+              addFlagMap(name, emoji);
+            }
+          );
         }
       }
     });
@@ -51,7 +57,10 @@ export const loadConfig = (cwd: string, configPath: string, override?: Partial<C
   return normalizeConfig(cwd, userConfig);
 };
 
-export const normalizeConfig = (cwd: string, userConfig: Partial<CommandConfig>): CommandConfig => {
+export const normalizeConfig = (
+  cwd: string,
+  userConfig: Partial<CommandConfig>
+): CommandConfig => {
   const defaultConfig: Partial<CommandConfig> = {
     artifacts: [],
     urlBase: '/',
@@ -117,15 +126,15 @@ export const validateConfig = (userConfig: Partial<CommandConfig>): void => {
     proxyGroupModifier: Joi.function(),
     destDir: Joi.string(),
     downloadUrl: Joi.string(),
-  })
-    .unknown();
+  }).unknown();
   const remoteSnippetSchema = Joi.object({
-    url: Joi.string().uri({
-      scheme: [
-        /https?/,
-      ],
-    }).required(),
+    url: Joi.string()
+      .uri({
+        scheme: [/https?/],
+      })
+      .required(),
     name: Joi.string().required(),
+    surgioSnippet: Joi.boolean().strict(),
   });
   const schema = Joi.object({
     artifacts: Joi.array().items(artifactSchema).required(),
@@ -144,19 +153,11 @@ export const validateConfig = (userConfig: Partial<CommandConfig>): void => {
       v2ray: Joi.string().pattern(/^\//),
       vmess: Joi.string().pattern(/^\//),
     }),
-    flags: Joi
-      .object()
-      .pattern(
-        Joi.string(),
-        [
-          Joi.string(),
-          Joi.object().regex(),
-          Joi.array().items(
-            Joi.string(),
-            Joi.object().regex(),
-          )
-        ]
-      ),
+    flags: Joi.object().pattern(Joi.string(), [
+      Joi.string(),
+      Joi.object().regex(),
+      Joi.array().items(Joi.string(), Joi.object().regex()),
+    ]),
     surgeConfig: Joi.object({
       shadowsocksFormat: Joi.string().valid('ss', 'custom'),
       v2ray: Joi.string().valid('native', 'external'),
@@ -171,22 +172,23 @@ export const validateConfig = (userConfig: Partial<CommandConfig>): void => {
       accessToken: Joi.string(),
       auth: Joi.boolean().strict(),
       cookieMaxAge: Joi.number(),
-    })
-      .unknown(),
+    }).unknown(),
     proxyTestUrl: Joi.string().uri({
-      scheme: [
-        /https?/,
-      ],
+      scheme: [/https?/],
     }),
     proxyTestInterval: Joi.number(),
-    customFilters: Joi.object()
-      .pattern(
-        Joi.string(),
-        Joi.any().allow(Joi.function(), Joi.object({ filter: Joi.function(), supportSort: Joi.boolean().strict() }))
-      ),
+    customFilters: Joi.object().pattern(
+      Joi.string(),
+      Joi.any().allow(
+        Joi.function(),
+        Joi.object({
+          filter: Joi.function(),
+          supportSort: Joi.boolean().strict(),
+        })
+      )
+    ),
     customParams: Joi.object(),
-  })
-    .unknown();
+  }).unknown();
 
   const { error } = schema.validate(userConfig);
 
