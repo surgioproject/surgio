@@ -1,5 +1,5 @@
 import test from 'ava';
-import { isIp } from '../../lib/utils';
+import { isGitHubActions, isIp } from '../../lib/utils';
 import * as dns from '../../lib/utils/dns';
 
 test('resolveDomain ipv4', async (t) => {
@@ -12,7 +12,9 @@ test('resolveDomain ipv6', async (t) => {
   t.true(isIp(ips[0]));
 });
 
-test('resolveDomain timeout', async (t) => {
-  const ips = await dns.resolveDomain('www.gstatic.com', 0);
-  t.is(ips.length, 0);
-});
+if (!isGitHubActions()) {
+  test('resolveDomain timeout', async (t) => {
+    const ips = await dns.resolveDomain('www.gstatic.com', 0);
+    t.is(ips.length, 0);
+  });
+}

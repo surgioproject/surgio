@@ -20,17 +20,16 @@ export class TmpFile {
   }
 
   public async setContent(content: string): Promise<this> {
-    const lastEditTime = new Date();
     await fs.writeJson(this.filePath, {
       content,
       maxAge: this.maxAge,
-      lastEditTime: lastEditTime.getTime(),
+      lastEditTime: new Date().getTime(),
     });
 
     return this;
   }
 
-  public async getContent(): Promise<string|undefined> {
+  public async getContent(): Promise<string | undefined> {
     const tmpContent = await this.validateContent();
     if (tmpContent) {
       return tmpContent.content;
@@ -38,7 +37,7 @@ export class TmpFile {
     return undefined;
   }
 
-  private async validateContent(): Promise<TmpContent|undefined> {
+  private async validateContent(): Promise<TmpContent | undefined> {
     if (!fs.existsSync(this.filePath)) {
       return undefined;
     }
@@ -58,9 +57,15 @@ export class TmpFile {
   }
 }
 
-export interface TmpContent { readonly content: string, readonly lastEditTime: number, readonly maxAge?: number }
+export interface TmpContent {
+  readonly content: string;
+  readonly lastEditTime: number;
+  readonly maxAge?: number;
+}
 
-export const createTmpFactory = (baseDir: string): ((filePath: string, maxAge?: number) => TmpFile) => {
+export const createTmpFactory = (
+  baseDir: string
+): ((filePath: string, maxAge?: number) => TmpFile) => {
   baseDir = path.join(tmpDir, baseDir);
 
   logger.debug('tmpDir: %s', baseDir);
@@ -69,5 +74,6 @@ export const createTmpFactory = (baseDir: string): ((filePath: string, maxAge?: 
     fs.mkdirpSync(baseDir);
   }
 
-  return (filePath: string, maxAge?: number) => new TmpFile(path.join(baseDir, filePath), maxAge);
+  return (filePath: string, maxAge?: number) =>
+    new TmpFile(path.join(baseDir, filePath), maxAge);
 };
