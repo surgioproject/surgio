@@ -1,3 +1,12 @@
+## [2.7.1](https://github.com/geekdada/surgio/compare/v2.7.0...v2.7.1) (2020-11-06)
+
+
+### Bug Fixes
+
+* dep source-map-support ([0700389](https://github.com/geekdada/surgio/commit/070038979c80e1e2c5c0a35af725685202a71ed4))
+
+
+
 # [2.7.0](https://github.com/geekdada/surgio/compare/v2.6.1...v2.7.0) (2020-10-31)
 
 
