@@ -1,3 +1,0 @@
-{{ getSurgeNodes(nodeList) }}
-----
-{{ getNodeNames(nodeList) }}

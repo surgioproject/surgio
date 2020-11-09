@@ -49,10 +49,13 @@ class GenerateCommand extends Command {
 
     const config = loadConfig(ctx.cwd, ctx.argv.config, {
       // istanbul ignore next
-      ...(ctx.argv.output ? {
-        output: path.resolve(ctx.cwd, ctx.argv.output),
-      } : null)
+      ...(ctx.argv.output
+        ? {
+            output: path.resolve(ctx.cwd, ctx.argv.output),
+          }
+        : null),
     });
+
     await generate(config, ctx.argv.skipFail, ctx.argv.cacheSnippet);
   }
 

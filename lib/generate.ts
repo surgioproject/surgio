@@ -8,23 +8,26 @@ import { logger } from '@surgio/logger';
 import { Artifact } from './generator/artifact';
 
 import { getEngine } from './generator/template';
-import {
-  ArtifactConfig,
-  CommandConfig, RemoteSnippet,
-} from './types';
+import { ArtifactConfig, CommandConfig, RemoteSnippet } from './types';
 import { loadRemoteSnippetList } from './utils/remote-snippet';
 
 const spinner = ora();
 
-async function run(config: CommandConfig, skipFail?: boolean, cacheSnippet?: boolean): Promise<void> {
+async function run(
+  config: CommandConfig,
+  skipFail?: boolean,
+  cacheSnippet?: boolean
+): Promise<void> {
   const artifactList: ReadonlyArray<ArtifactConfig> = config.artifacts;
   const distPath = config.output;
   const remoteSnippetsConfig = config.remoteSnippets || [];
-  const remoteSnippetList = await loadRemoteSnippetList(remoteSnippetsConfig, cacheSnippet);
+  const remoteSnippetList = await loadRemoteSnippetList(
+    remoteSnippetsConfig,
+    cacheSnippet
+  );
   const templateEngine = getEngine(config.templateDir);
 
-  await fs.remove(distPath);
-  await fs.mkdir(distPath);
+  await fs.mkdirp(distPath);
 
   for (const artifact of artifactList) {
     spinner.start(`正在生成规则 ${artifact.name}`);
@@ -34,7 +37,7 @@ async function run(config: CommandConfig, skipFail?: boolean, cacheSnippet?: boo
         remoteSnippetList,
       });
 
-      artifactInstance.on('initProvider:end', () => {
+      artifactInstance.once('initProvider:end', () => {
         spinner.text = `已处理 Provider ${artifactInstance.initProgress}/${artifactInstance.providerNameList.length}...`;
       });
 
@@ -68,7 +71,7 @@ export async function generate(
   config: CommandConfig,
   artifact: ArtifactConfig,
   remoteSnippetList: ReadonlyArray<RemoteSnippet>,
-  templateEngine: Environment,
+  templateEngine: Environment
 ): Promise<string> {
   const artifactInstance = new Artifact(config, artifact, {
     remoteSnippetList,
@@ -79,15 +82,18 @@ export async function generate(
   return artifactInstance.render(templateEngine);
 }
 
-export default async function(config: CommandConfig, skipFail?: boolean, cacheSnippet?: boolean): Promise<void> {
+export default async function (
+  config: CommandConfig,
+  skipFail?: boolean,
+  cacheSnippet?: boolean
+): Promise<void> {
   logger.info('开始生成规则');
-  await run(config, skipFail, cacheSnippet)
-    .catch(err => {
-      // istanbul ignore next
-      if (spinner.isSpinning) {
-        spinner.fail();
-      }
-      throw err;
-    });
+  await run(config, skipFail, cacheSnippet).catch((err) => {
+    // istanbul ignore next
+    if (spinner.isSpinning) {
+      spinner.fail();
+    }
+    throw err;
+  });
   logger.info('规则生成成功');
 }
