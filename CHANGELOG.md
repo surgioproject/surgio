@@ -1,3 +1,12 @@
+## [2.7.2](https://github.com/geekdada/surgio/compare/v2.7.1...v2.7.2) (2020-11-09)
+
+
+### Features
+
+* will not remove dist folder before generating ([bb495ef](https://github.com/geekdada/surgio/commit/bb495efef42bb33242e7d16b6c087e0dedf75db2))
+
+
+
 ## [2.7.1](https://github.com/geekdada/surgio/compare/v2.7.0...v2.7.1) (2020-11-06)
 
 
