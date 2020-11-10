@@ -172,6 +172,7 @@ export const validateConfig = (userConfig: Partial<CommandConfig>): void => {
       accessToken: Joi.string(),
       auth: Joi.boolean().strict(),
       cookieMaxAge: Joi.number(),
+      useCacheOnError: Joi.boolean().strict(),
     }).unknown(),
     proxyTestUrl: Joi.string().uri({
       scheme: [/https?/],

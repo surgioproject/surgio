@@ -259,6 +259,22 @@ module.exports = {
 
 鉴权码。
 
+#### gateway.useCacheOnError
+
+> <Badge text="Gateway: v1.2.0" vertical="middle" />
+
+- 类型: `boolean`
+- 默认值: `undefined`
+
+是否在 Artifact 生成错误时使用缓存（上一次正确请求的结果）。
+
+如果 Artifact 中的某个 Provider 经常请求错误则建议开启这个选项，可以避免 Clash 等客户端在配置文件请求报错的时候崩溃。
+
+:::warning 注意
+1. 应用重启后缓存会失效。
+2. 适用缓存的接口有 `/get-artifact` 和 `/export-providers`。
+:::
+
 ### customFilters
 
 - 类型: `object`

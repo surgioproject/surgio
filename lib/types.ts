@@ -62,6 +62,7 @@ export interface CommandConfig {
     readonly accessToken?: string;
     readonly auth?: boolean;
     readonly cookieMaxAge?: number;
+    readonly useCacheOnError?: boolean;
   };
   readonly proxyTestUrl?: string;
   readonly proxyTestInterval?: number;

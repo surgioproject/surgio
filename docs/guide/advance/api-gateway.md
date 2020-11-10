@@ -112,7 +112,7 @@ module.exports = gateway.createHttpServer();
 在 `surgio.conf.js` 中增加如下字段：
 
 ```js
-{
+module.exports = {
   gateway: {
     auth: true,
     accessToken: 'YOUR_PASSWORD',
@@ -121,7 +121,8 @@ module.exports = gateway.createHttpServer();
 ```
 
 :::tip 提示
-对于已经部署了托管接口的用户，推荐不要第一时间打开鉴权功能，而是配置 `accessToken` 一段时间后再将 `auth` 改为 `true`。这样可以让已经下载过旧托管文件的客户端更新到新的包含有 `access_token` 参数的托管文件。
+1. 完整的 gateway 配置可以在 [这里](/guide/custom-config.md#gateway) 查看。
+2. 对于已经部署了托管接口的用户，推荐不要第一时间打开鉴权功能，而是配置 `accessToken` 一段时间后再将 `auth` 改为 `true`。这样可以让已经下载过旧托管文件的客户端更新到新的包含有 `access_token` 参数的托管文件。
 :::
 
 ### 部署

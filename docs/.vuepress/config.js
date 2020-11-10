@@ -73,7 +73,7 @@ module.exports = (ctx) => ({
     nav: [
       {
         text: 'Changelog',
-        link: 'https://github.com/geekdada/surgio/blob/master/CHANGELOG.md',
+        link: 'https://github.com/surgioproject/surgio/releases',
       },
     ],
     sidebar: {

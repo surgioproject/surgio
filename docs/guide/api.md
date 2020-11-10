@@ -17,13 +17,17 @@ sidebarDepth: 2
 在 `surgio.conf.js` 中增加如下字段：
 
 ```js
-{
+module.exports = {
   gateway: {
     auth: true,
     accessToken: 'YOUR_PASSWORD',
   },
 }
 ```
+
+:::tip 提示
+完整的 gateway 配置可以在 [这里](/guide/custom-config.md#gateway) 查看。
+:::
 
 ### 请求需要鉴权的接口
 
