@@ -1,3 +1,12 @@
+## [2.7.3](https://github.com/geekdada/surgio/compare/v2.7.2...v2.7.3) (2020-11-10)
+
+
+### Features
+
+* support gateway new config ([2e34d4b](https://github.com/geekdada/surgio/commit/2e34d4bff14c5aa0da8a5375da42869b36390a60))
+
+
+
 ## [2.7.2](https://github.com/geekdada/surgio/compare/v2.7.1...v2.7.2) (2020-11-09)
 
 
