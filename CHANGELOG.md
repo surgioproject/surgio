@@ -1,3 +1,12 @@
+## [2.7.4](https://github.com/geekdada/surgio/compare/v2.7.3...v2.7.4) (2020-12-10)
+
+
+### Bug Fixes
+
+* simple-obfs in ss subscribe should be treated as obfs-local ([368c422](https://github.com/geekdada/surgio/commit/368c422360d28e06c10af03dddb56abdb7d5fbd0))
+
+
+
 ## [2.7.3](https://github.com/geekdada/surgio/compare/v2.7.2...v2.7.3) (2020-11-10)
 
 
