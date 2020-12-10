@@ -1,6 +1,7 @@
+import Debug from 'debug';
+
 import { NodeTypeEnum, ShadowsocksrNodeConfig } from '../types';
 import { fromUrlSafeBase64 } from './index';
-import Debug from 'debug';
 
 const debug = Debug('surgio:utils:ssr');
 
@@ -13,6 +14,7 @@ export const parseSSRUri = (str: string): ShadowsocksrNodeConfig => {
   const scheme = fromUrlSafeBase64(str.replace('ssr://', ''));
   const configArray = scheme.split('/');
   const basicInfo = configArray[0].split(':');
+
   debug('SSR URI', scheme);
 
   // 去除首部分
@@ -26,9 +28,9 @@ export const parseSSRUri = (str: string): ShadowsocksrNodeConfig => {
   const protocol = basicInfo.pop() as string;
   const port = basicInfo.pop() as string;
   const hostname = basicInfo.join(':');
-  const nodeName = extras.remarks ?
-    fromUrlSafeBase64(extras.remarks) :
-    `${hostname}:${port}`;
+  const nodeName = extras.remarks
+    ? fromUrlSafeBase64(extras.remarks)
+    : `${hostname}:${port}`;
 
   return {
     type: NodeTypeEnum.Shadowsocksr,
