@@ -1,13 +1,15 @@
 // istanbul ignore file
 
+import ms from 'ms';
+
 export const NETWORK_TIMEOUT = process.env.SURGIO_NETWORK_TIMEOUT
   ? Number(process.env.SURGIO_NETWORK_TIMEOUT)
-  : 5000;
+  : ms('5s');
 
 export const NETWORK_RESOLVE_TIMEOUT = process.env
   .SURGIO_NETWORK_RESOLVE_TIMEOUT
   ? Number(process.env.SURGIO_NETWORK_RESOLVE_TIMEOUT)
-  : 3000;
+  : ms('10s');
 
 export const NETWORK_CONCURRENCY = process.env.SURGIO_NETWORK_CONCURRENCY
   ? Number(process.env.SURGIO_NETWORK_CONCURRENCY)
@@ -26,7 +28,7 @@ export const OBFS_UA =
 
 export const PROXY_TEST_URL = 'http://cp.cloudflare.com/generate_204';
 
-export const PROXY_TEST_INTERVAL = 1200;
+export const PROXY_TEST_INTERVAL = 1200; // 1200s
 
 export const CLASH_SUPPORTED_RULE: ReadonlyArray<string> = [
   'DOMAIN-SUFFIX',
@@ -83,12 +85,12 @@ export const MELLOW_UNSUPPORTED_RULE: ReadonlyArray<string> = [
 export const REMOTE_SNIPPET_CACHE_MAXAGE: number = process.env
   .SURGIO_REMOTE_SNIPPET_CACHE_MAXAGE
   ? Number(process.env.SURGIO_REMOTE_SNIPPET_CACHE_MAXAGE)
-  : 1000 * 60 * 60 * 12; // 12h
+  : ms('12h');
 
 export const PROVIDER_CACHE_MAXAGE: number = process.env
   .SURGIO_PROVIDER_CACHE_MAXAGE
   ? Number(process.env.SURGIO_PROVIDER_CACHE_MAXAGE)
-  : 10 * 60 * 1000; // 10min
+  : ms('10m');
 
 export const CATEGORIES = {
   SNIPPET: 'Snippet',

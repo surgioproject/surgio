@@ -9,7 +9,7 @@ import { NETWORK_RESOLVE_TIMEOUT } from './constant';
 const Resolver = dns.Resolver;
 const resolver = new Resolver();
 const DomainCache = new LRU<string, ReadonlyArray<string>>({
-  max: 1000,
+  max: 5000,
 });
 const logger = createLogger({ service: 'surgio:utils:dns' });
 
@@ -29,11 +29,16 @@ export const resolveDomain = async (
   }
 
   logger.debug(`try to resolve domain ${domain}`);
+  const now = Date.now();
   const records = await Bluebird.race<ReadonlyArray<RecordWithTtl>>([
     resolve4And6(domain),
     Bluebird.delay(timeout).then(() => []),
   ]);
-  logger.debug(`resolved domain ${domain}: ${JSON.stringify(records)}`);
+  logger.debug(
+    `resolved domain ${domain}: ${JSON.stringify(records)} ${
+      Date.now() - now
+    }ms`
+  );
 
   if (records.length) {
     const address = records.map((item) => item.address);
