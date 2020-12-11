@@ -1,3 +1,13 @@
+## [2.7.5](https://github.com/geekdada/surgio/compare/v2.7.4...v2.7.5) (2020-12-11)
+
+
+### Features
+
+* 调整了 dns 解析的参数 ([b7aa7eb](https://github.com/geekdada/surgio/commit/b7aa7ebf7b0bd71c85395fea0fc4c1295bbd84bc))
+* 在生成 surge 的 ssr 订阅时强制校验 startPort ([879080b](https://github.com/geekdada/surgio/commit/879080b333d89aa7d37ebe6e646d78f71aa69af7))
+
+
+
 ## [2.7.4](https://github.com/geekdada/surgio/compare/v2.7.3...v2.7.4) (2020-12-10)
 
 
