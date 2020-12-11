@@ -3,10 +3,9 @@ import Joi from '@hapi/joi';
 import {
   ProviderConfig,
   SupportProviderEnum,
-  PossibleNodeConfigType, SubscriptionUserinfo,
+  PossibleNodeConfigType,
+  SubscriptionUserinfo,
 } from '../types';
-
-let globalPort = 61100;
 
 export default class Provider {
   public readonly type: SupportProviderEnum;
@@ -19,38 +18,56 @@ export default class Provider {
   public readonly tfo?: boolean;
   public readonly mptcp?: boolean;
   public readonly renameNode?: ProviderConfig['renameNode'];
-  public readonly relayUrl?: boolean|string;
+  public readonly relayUrl?: boolean | string;
   // 是否支持在订阅中获取用户流量信息
   public supportGetSubscriptionUserInfo: boolean;
-
   // External Provider 的起始端口，Surge 配置中使用
-  private startPort?: number;
+  public startPort?: number;
 
   constructor(public name: string, config: ProviderConfig) {
     const schema = Joi.object({
       type: Joi.string()
         .valid(...Object.values<string>(SupportProviderEnum))
         .required(),
-      nodeFilter: Joi.any().allow(Joi.function(), Joi.object({ filter: Joi.function(), supportSort: Joi.boolean().strict() })),
-      netflixFilter: Joi.any().allow(Joi.function(), Joi.object({ filter: Joi.function(), supportSort: Joi.boolean().strict() })),
-      youtubePremiumFilter: Joi.any().allow(Joi.function(), Joi.object({ filter: Joi.function(), supportSort: Joi.boolean().strict() })),
-      customFilters: Joi.object()
-        .pattern(
-          Joi.string(),
-          Joi.any().allow(Joi.function(), Joi.object({ filter: Joi.function(), supportSort: Joi.boolean().strict() }))
-        ),
+      nodeFilter: Joi.any().allow(
+        Joi.function(),
+        Joi.object({
+          filter: Joi.function(),
+          supportSort: Joi.boolean().strict(),
+        })
+      ),
+      netflixFilter: Joi.any().allow(
+        Joi.function(),
+        Joi.object({
+          filter: Joi.function(),
+          supportSort: Joi.boolean().strict(),
+        })
+      ),
+      youtubePremiumFilter: Joi.any().allow(
+        Joi.function(),
+        Joi.object({
+          filter: Joi.function(),
+          supportSort: Joi.boolean().strict(),
+        })
+      ),
+      customFilters: Joi.object().pattern(
+        Joi.string(),
+        Joi.any().allow(
+          Joi.function(),
+          Joi.object({
+            filter: Joi.function(),
+            supportSort: Joi.boolean().strict(),
+          })
+        )
+      ),
       addFlag: Joi.boolean().strict(),
       removeExistingFlag: Joi.boolean().strict(),
       mptcp: Joi.boolean().strict(),
       tfo: Joi.boolean().strict(),
       startPort: Joi.number().integer().min(1024).max(65535),
-      relayUrl: [
-        Joi.boolean().strict(),
-        Joi.string(),
-      ],
+      relayUrl: [Joi.boolean().strict(), Joi.string()],
       renameNode: Joi.function(),
-    })
-      .unknown();
+    }).unknown();
 
     const { error } = schema.validate(config);
 
@@ -74,7 +91,7 @@ export default class Provider {
       'startPort',
       'renameNode',
       'relayUrl',
-    ].forEach(key => {
+    ].forEach((key) => {
       this[key] = config[key];
     });
   }
@@ -83,11 +100,13 @@ export default class Provider {
     if (this.startPort) {
       return this.startPort++;
     }
-    return globalPort++;
+    return 0;
   }
 
   // istanbul ignore next
-  public async getSubscriptionUserInfo(): Promise<SubscriptionUserinfo|undefined> {
+  public async getSubscriptionUserInfo(): Promise<
+    SubscriptionUserinfo | undefined
+  > {
     throw new Error('此 Provider 不支持该功能');
   }
 

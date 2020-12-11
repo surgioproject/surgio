@@ -351,7 +351,7 @@ module.exports = {
   'udp-relay': false, // 可选, 仅 Clash 支持
   sni: 'example.com', // 可选, 仅 Surge 支持
   tfo: true, // 可选, 仅 Surge 支持
-  clientCert: 'item' // 可选, 仅 Surge 支持, 参考 https://github.com/Blankwonder/Surge-Manual/blob/master/release-note/surge-mac.md#version-250 
+  clientCert: 'item' // 可选, 仅 Surge 支持, 参考 https://github.com/Blankwonder/Surge-Manual/blob/master/release-note/surge-mac.md#version-250
 }
 ```
 
@@ -492,7 +492,8 @@ module.exports = {
 ### provider.startPort
 
 - 类型: `Number`
-- 默认值: `61100`
+
+在调用 `getSurgeNodes` 时会强制要求设置该值。建议大于 10000。
 
 在生成 Surge 的 Shadowsocksr 和 Vmess 配置文件时，本地监听端口会根据此配置递增。这样做的好处是切换配置文件时不会遇到端口冲突。同一个 Provider 被用在不同的 Artifact 中也会进行递增。
 

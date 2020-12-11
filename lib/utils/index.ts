@@ -321,6 +321,12 @@ export const getSurgeNodes = function (
             `local-port = ${config.localPort}`,
           ];
 
+          if (typeof config.provider?.startPort === 'undefined') {
+            throw new Error(
+              `为 Surge 生成 SSR 配置时必须为 Provider ${config.provider?.name} 设置 startPort`
+            );
+          }
+
           if (config.hostnameIp && config.hostnameIp.length) {
             configString.push(
               ...config.hostnameIp.map((item) => `addresses = ${item}`)
@@ -401,6 +407,12 @@ export const getSurgeNodes = function (
             if (!config.binPath) {
               throw new Error(
                 '请按照文档 https://bit.ly/2WnHB3p 添加 V2Ray 二进制文件路径'
+              );
+            }
+
+            if (typeof config.provider?.startPort === 'undefined') {
+              throw new Error(
+                `为 Surge 生成 Vmess 配置时必须为 Provider ${config.provider?.name} 设置 startPort`
               );
             }
 
