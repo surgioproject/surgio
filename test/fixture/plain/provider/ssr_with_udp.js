@@ -5,4 +5,5 @@ module.exports = {
   type: 'shadowsocksr_subscribe',
   udpRelay: true,
   tfo: true,
+  startPort: 61100,
 };

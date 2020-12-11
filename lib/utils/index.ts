@@ -321,7 +321,7 @@ export const getSurgeNodes = function (
             `local-port = ${config.localPort}`,
           ];
 
-          if (typeof config.provider?.startPort === 'undefined') {
+          if (config.localPort === 0) {
             throw new Error(
               `为 Surge 生成 SSR 配置时必须为 Provider ${config.provider?.name} 设置 startPort`
             );
@@ -410,7 +410,7 @@ export const getSurgeNodes = function (
               );
             }
 
-            if (typeof config.provider?.startPort === 'undefined') {
+            if (config.localPort === 0) {
               throw new Error(
                 `为 Surge 生成 Vmess 配置时必须为 Provider ${config.provider?.name} 设置 startPort`
               );
