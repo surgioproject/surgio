@@ -17,7 +17,7 @@ class LintCommand extends Command {
 
   // istanbul ignore next
   public get description(): string {
-    return '运行 ESLint 检查';
+    return '运行 JS 语法检查';
   }
 
   public async run(ctx): Promise<void> {
@@ -30,10 +30,10 @@ class LintCommand extends Command {
     }
 
     if (!result) {
-      console.log('⚠️  ESLint 测试不通过');
+      console.log('⚠️  JS 语法检查不通过，请根据提示修改文件');
       process.exit(1);
     } else {
-      console.log('✅  ESLint 检查通过');
+      console.log('✅  JS 语法检查通过');
     }
   }
 }

@@ -94,12 +94,12 @@ export const getShadowsocksJSONConfig = async (
     const response = ConfigCache.has(url)
       ? JSON.parse(ConfigCache.get(url) as string)
       : await (async () => {
-          const res = await httpClient.get(url);
+        const res = await httpClient.get(url);
 
-          ConfigCache.set(url, res.body);
+        ConfigCache.set(url, res.body);
 
-          return JSON.parse(res.body);
-        })();
+        return JSON.parse(res.body);
+      })();
 
     return (response.configs as ReadonlyArray<any>).map(
       (item): ShadowsocksNodeConfig => {
@@ -153,8 +153,7 @@ export const getSurgeNodes = function (
 
           if (config.obfs && ['ws', 'wss'].includes(config.obfs)) {
             logger.warn(
-              `不支持为 Surge 生成 v2ray-plugin 的 Shadowsocks 节点，节点 ${
-                nodeConfig!.nodeName
+              `不支持为 Surge 生成 v2ray-plugin 的 Shadowsocks 节点，节点 ${nodeConfig!.nodeName
               } 会被省略`
             );
             return void 0;
@@ -323,7 +322,7 @@ export const getSurgeNodes = function (
 
           if (config.localPort === 0) {
             throw new Error(
-              `为 Surge 生成 SSR 配置时必须为 Provider ${config.provider?.name} 设置 startPort`
+              `为 Surge 生成 SSR 配置时必须为 Provider ${config.provider?.name} 设置 startPort，参考 http://bit.ly/2LfIrNW`
             );
           }
 
@@ -364,13 +363,13 @@ export const getSurgeNodes = function (
               configList.push(`ws-path=${config.path}`);
               configList.push(
                 'ws-headers=' +
-                  JSON.stringify(
-                    getHeader({
-                      host: config.host || config.hostname,
-                      'user-agent': OBFS_UA,
-                      ..._.omit(config.wsHeaders, ['host']), // host 本质上是一个头信息，所以可能存在冲突的情况。以 host 属性为准。
-                    })
-                  )
+                JSON.stringify(
+                  getHeader({
+                    host: config.host || config.hostname,
+                    'user-agent': OBFS_UA,
+                    ..._.omit(config.wsHeaders, ['host']), // host 本质上是一个头信息，所以可能存在冲突的情况。以 host 属性为准。
+                  })
+                )
               );
             }
 
@@ -412,7 +411,7 @@ export const getSurgeNodes = function (
 
             if (config.localPort === 0) {
               throw new Error(
-                `为 Surge 生成 Vmess 配置时必须为 Provider ${config.provider?.name} 设置 startPort`
+                `为 Surge 生成 Vmess 配置时必须为 Provider ${config.provider?.name} 设置 startPort，参考 http://bit.ly/2LfIrNW`
               );
             }
 
@@ -510,8 +509,7 @@ export const getSurgeNodes = function (
         // istanbul ignore next
         default:
           logger.warn(
-            `不支持为 Surge 生成 ${nodeConfig!.type} 的节点，节点 ${
-              nodeConfig!.nodeName
+            `不支持为 Surge 生成 ${nodeConfig!.type} 的节点，节点 ${nodeConfig!.nodeName
             } 会被省略`
           );
           return void 0;
@@ -550,34 +548,34 @@ export const getClashNodes = function (
             udp: nodeConfig['udp-relay'] === true,
             ...(nodeConfig.obfs && ['tls', 'http'].includes(nodeConfig.obfs)
               ? {
-                  plugin: 'obfs',
-                  'plugin-opts': {
-                    mode: nodeConfig.obfs,
-                    host: nodeConfig['obfs-host'],
-                  },
-                }
+                plugin: 'obfs',
+                'plugin-opts': {
+                  mode: nodeConfig.obfs,
+                  host: nodeConfig['obfs-host'],
+                },
+              }
               : null),
             ...(nodeConfig.obfs && ['ws', 'wss'].includes(nodeConfig.obfs)
               ? {
-                  plugin: 'v2ray-plugin',
-                  'plugin-opts': {
-                    mode: 'websocket',
-                    tls: nodeConfig.obfs === 'wss',
-                    ...(typeof nodeConfig.skipCertVerify === 'boolean' &&
+                plugin: 'v2ray-plugin',
+                'plugin-opts': {
+                  mode: 'websocket',
+                  tls: nodeConfig.obfs === 'wss',
+                  ...(typeof nodeConfig.skipCertVerify === 'boolean' &&
                     nodeConfig.obfs === 'wss'
-                      ? {
-                          'skip-cert-verify': nodeConfig.skipCertVerify,
-                        }
-                      : null),
-                    host: nodeConfig['obfs-host'],
-                    path: nodeConfig['obfs-uri'] || '/',
-                    mux:
-                      typeof nodeConfig.mux === 'boolean'
-                        ? nodeConfig.mux
-                        : false,
-                    headers: nodeConfig.wsHeaders || {},
-                  },
-                }
+                    ? {
+                      'skip-cert-verify': nodeConfig.skipCertVerify,
+                    }
+                    : null),
+                  host: nodeConfig['obfs-host'],
+                  path: nodeConfig['obfs-uri'] || '/',
+                  mux:
+                    typeof nodeConfig.mux === 'boolean'
+                      ? nodeConfig.mux
+                      : false,
+                  headers: nodeConfig.wsHeaders || {},
+                },
+              }
               : null),
           };
 
@@ -594,22 +592,22 @@ export const getClashNodes = function (
             ...(nodeConfig.network === 'tcp'
               ? null
               : {
-                  network: nodeConfig.network,
-                }),
+                network: nodeConfig.network,
+              }),
             tls: nodeConfig.tls,
             ...(typeof nodeConfig.skipCertVerify === 'boolean' && nodeConfig.tls
               ? {
-                  'skip-cert-verify': nodeConfig.skipCertVerify,
-                }
+                'skip-cert-verify': nodeConfig.skipCertVerify,
+              }
               : null),
             ...(nodeConfig.network === 'ws'
               ? {
-                  'ws-path': nodeConfig.path,
-                  'ws-headers': {
-                    ...(nodeConfig.host ? { host: nodeConfig.host } : null),
-                    ...nodeConfig.wsHeaders,
-                  },
-                }
+                'ws-path': nodeConfig.path,
+                'ws-headers': {
+                  ...(nodeConfig.host ? { host: nodeConfig.host } : null),
+                  ...nodeConfig.wsHeaders,
+                },
+              }
               : null),
           };
 
@@ -627,13 +625,13 @@ export const getClashNodes = function (
             cipher: nodeConfig.method,
             ...(ssrFormat === 'native'
               ? {
-                  'obfs-param': nodeConfig.obfsparam ?? '',
-                  'protocol-param': nodeConfig.protoparam ?? '',
-                }
+                'obfs-param': nodeConfig.obfsparam ?? '',
+                'protocol-param': nodeConfig.protoparam ?? '',
+              }
               : {
-                  obfsparam: nodeConfig.obfsparam ?? '',
-                  protocolparam: nodeConfig.protoparam ?? '',
-                }),
+                obfsparam: nodeConfig.obfsparam ?? '',
+                protocolparam: nodeConfig.protoparam ?? '',
+              }),
             udp: nodeConfig['udp-relay'] === true,
           };
         }
@@ -649,14 +647,14 @@ export const getClashNodes = function (
               mode: nodeConfig.obfs,
               ...(nodeConfig['obfs-host']
                 ? {
-                    host: nodeConfig['obfs-host'],
-                  }
+                  host: nodeConfig['obfs-host'],
+                }
                 : null),
             },
             ...(nodeConfig.version
               ? {
-                  version: nodeConfig.version,
-                }
+                version: nodeConfig.version,
+              }
               : null),
           };
 
@@ -720,8 +718,7 @@ export const getClashNodes = function (
         // istanbul ignore next
         default:
           logger.warn(
-            `不支持为 Clash 生成 ${nodeConfig!.type} 的节点，节点 ${
-              nodeConfig!.nodeName
+            `不支持为 Clash 生成 ${nodeConfig!.type} 的节点，节点 ${nodeConfig!.nodeName
             } 会被省略`
           );
           return null;
@@ -759,8 +756,7 @@ export const getMellowNodes = function (
         // istanbul ignore next
         default:
           logger.warn(
-            `不支持为 Mellow 生成 ${nodeConfig!.type} 的节点，节点 ${
-              nodeConfig!.nodeName
+            `不支持为 Mellow 生成 ${nodeConfig!.type} 的节点，节点 ${nodeConfig!.nodeName
             } 会被省略`
           );
           return null;
@@ -814,10 +810,10 @@ export const getShadowsocksNodes = (
           } = {
             ...(config.obfs
               ? {
-                  plugin: `${encodeURIComponent(
-                    `obfs-local;obfs=${config.obfs};obfs-host=${config['obfs-host']}`
-                  )}`,
-                }
+                plugin: `${encodeURIComponent(
+                  `obfs-local;obfs=${config.obfs};obfs-host=${config['obfs-host']}`
+                )}`,
+              }
               : null),
             ...(groupName ? { group: encodeURIComponent(groupName) } : null),
           };
@@ -1034,8 +1030,7 @@ export const getQuantumultNodes = function (
         // istanbul ignore next
         default:
           logger.warn(
-            `不支持为 Quantumult 生成 ${nodeConfig!.type} 的节点，节点 ${
-              nodeConfig!.nodeName
+            `不支持为 Quantumult 生成 ${nodeConfig!.type} 的节点，节点 ${nodeConfig!.nodeName
             } 会被省略`
           );
           return void 0;
@@ -1125,16 +1120,16 @@ export const getQuantumultXNodes = function (
             ...pickAndFormatStringList(nodeConfig, ['method', 'password']),
             ...(nodeConfig.obfs && ['http', 'tls'].includes(nodeConfig.obfs)
               ? [
-                  `obfs=${nodeConfig.obfs}`,
-                  `obfs-host=${nodeConfig['obfs-host']}`,
-                ]
+                `obfs=${nodeConfig.obfs}`,
+                `obfs-host=${nodeConfig['obfs-host']}`,
+              ]
               : []),
             ...(nodeConfig.obfs && ['ws', 'wss'].includes(nodeConfig.obfs)
               ? [
-                  `obfs=${nodeConfig.obfs}`,
-                  `obfs-host=${nodeConfig['obfs-host'] || nodeConfig.hostname}`,
-                  `obfs-uri=${nodeConfig['obfs-uri'] || '/'}`,
-                ]
+                `obfs=${nodeConfig.obfs}`,
+                `obfs-host=${nodeConfig['obfs-host'] || nodeConfig.hostname}`,
+                `obfs-uri=${nodeConfig['obfs-uri'] || '/'}`,
+              ]
               : []),
             ...(nodeConfig['udp-relay'] ? [`udp-relay=true`] : []),
             ...(nodeConfig.tfo ? [`fast-open=${nodeConfig.tfo}`] : []),
@@ -1211,8 +1206,7 @@ export const getQuantumultXNodes = function (
         // istanbul ignore next
         default:
           logger.warn(
-            `不支持为 QuantumultX 生成 ${nodeConfig!.type} 的节点，节点 ${
-              nodeConfig!.nodeName
+            `不支持为 QuantumultX 生成 ${nodeConfig!.type} 的节点，节点 ${nodeConfig!.nodeName
             } 会被省略`
           );
           return void 0;
@@ -1249,9 +1243,9 @@ export const getShadowsocksNodesJSON = (
             enable: true,
             ...(useObfs
               ? {
-                  plugin: 'obfs-local',
-                  'plugin-opts': `obfs=${nodeConfig.obfs};obfs-host=${nodeConfig['obfs-host']}`,
-                }
+                plugin: 'obfs-local',
+                'plugin-opts': `obfs=${nodeConfig.obfs};obfs-host=${nodeConfig['obfs-host']}`,
+              }
               : null),
           };
         }
@@ -1347,9 +1341,9 @@ export const generateClashProxyGroup = (
     proxies,
     ...(['url-test', 'fallback', 'load-balance'].includes(ruleType)
       ? {
-          url: options.proxyTestUrl,
-          interval: options.proxyTestInterval,
-        }
+        url: options.proxyTestUrl,
+        interval: options.proxyTestInterval,
+      }
       : null),
   };
 };
@@ -1487,13 +1481,13 @@ export const formatV2rayConfig = (
         serverName: nodeConfig.host || nodeConfig.hostname,
         ...(typeof nodeConfig.skipCertVerify === 'boolean'
           ? {
-              allowInsecure: nodeConfig.skipCertVerify,
-            }
+            allowInsecure: nodeConfig.skipCertVerify,
+          }
           : null),
         ...(typeof nodeConfig.tls13 === 'boolean'
           ? {
-              allowInsecureCiphers: !nodeConfig.tls13,
-            }
+            allowInsecureCiphers: !nodeConfig.tls13,
+          }
           : null),
       },
     };
