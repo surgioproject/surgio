@@ -30,7 +30,7 @@ class LintCommand extends Command {
     }
 
     if (!result) {
-      console.log('⚠️  JS 语法检查不通过，请根据提示修改文件');
+      console.warn('⚠️  JS 语法检查不通过，请根据提示修改文件');
       process.exit(1);
     } else {
       console.log('✅  JS 语法检查通过');

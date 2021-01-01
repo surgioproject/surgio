@@ -43,7 +43,7 @@ class GenerateCommand extends Command {
       const result = await checkAndFix(ctx.cwd);
 
       if (!result) {
-        throw new Error('ESLint 测试不通过');
+        throw new Error('JS 语法检查不通过，请根据提示修改文件');
       }
     }
 
@@ -51,8 +51,8 @@ class GenerateCommand extends Command {
       // istanbul ignore next
       ...(ctx.argv.output
         ? {
-            output: path.resolve(ctx.cwd, ctx.argv.output),
-          }
+          output: path.resolve(ctx.cwd, ctx.argv.output),
+        }
         : null),
     });
 
