@@ -1,3 +1,18 @@
+## [2.7.6](https://github.com/geekdada/surgio/compare/v2.7.5...v2.7.6) (2021-01-01)
+
+
+### Bug Fixes
+
+* fix [#135](https://github.com/geekdada/surgio/issues/135) ([f86af92](https://github.com/geekdada/surgio/commit/f86af925e160b49325f4595be0b40b5a39d1c1a4))
+
+
+### Features
+
+* 优化错误提示 ([6e882a4](https://github.com/geekdada/surgio/commit/6e882a454e8646db4b55b0a7399eb4cc0873d558))
+* 优化错误提示 ([6690cd9](https://github.com/geekdada/surgio/commit/6690cd9257f943555fbe5c17b09af4168f6f4091))
+
+
+
 ## [2.7.5](https://github.com/geekdada/surgio/compare/v2.7.4...v2.7.5) (2020-12-11)
 
 
