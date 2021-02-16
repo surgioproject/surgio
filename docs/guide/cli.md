@@ -87,6 +87,12 @@ $ npx surgio doctor
 
 > 检查代码格式 <Badge text="v2.0.0" vertical="middle" />
 
+假设代码格式检查不通过，则 JS 极有可能无法正常运行，请耐心检查，也可以使用下面的命令自动修复一部分错误。
+
+```bash
+$ npx surgio lint --fix
+```
+
 ### 可选参数
 
 #### `--fix`

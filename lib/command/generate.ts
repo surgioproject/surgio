@@ -43,7 +43,7 @@ class GenerateCommand extends Command {
       const result = await checkAndFix(ctx.cwd);
 
       if (!result) {
-        throw new Error('JS 语法检查不通过，请根据提示修改文件');
+        throw new Error('JS 语法检查不通过，请根据提示修改文件（参考 http://url.royli.dev/SeB6m）');
       }
     }
 
