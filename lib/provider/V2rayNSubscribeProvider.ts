@@ -65,10 +65,10 @@ export default class V2rayNSubscribeProvider extends Provider {
  */
 export const getV2rayNSubscription = async (
   url: string,
-  isCompatibleMode?: boolean|undefined,
-  skipCertVerify?: boolean|undefined,
-  udpRelay?: boolean|undefined,
-  tls13?: boolean|undefined,
+  isCompatibleMode?: boolean | undefined,
+  skipCertVerify?: boolean | undefined,
+  udpRelay?: boolean | undefined,
+  tls13?: boolean | undefined,
 ): Promise<ReadonlyArray<VmessNodeConfig>> => {
   assert(url, '未指定订阅地址 url');
 
@@ -88,12 +88,12 @@ export const getV2rayNSubscription = async (
       .filter(item => item.startsWith("vmess://"));
 
     return configList
-      .map<VmessNodeConfig|undefined>((item): VmessNodeConfig|undefined => {
+      .map<VmessNodeConfig | undefined>((item): VmessNodeConfig | undefined => {
         const json = JSON.parse(fromBase64(item.replace('vmess://', '')));
 
         // istanbul ignore next
         if (!isCompatibleMode && (!json.v || Number(json.v) !== 2)) {
-            throw new Error(`该订阅 ${url} 可能不是一个有效的 V2rayN 订阅。请参考 http://bit.ly/2N4lZ8X 进行排查, 或者将解析模式改为兼容模式`);
+          throw new Error(`该订阅 ${url} 可能不是一个有效的 V2rayN 订阅。请参考 http://url.royli.dev/Qtrci 进行排查, 或者将解析模式改为兼容模式`);
         }
         // istanbul ignore next
         if (['kcp', 'http'].indexOf(json.net) > -1) {

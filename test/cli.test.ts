@@ -116,7 +116,7 @@ test.serial('not specify binPath', async (t) => {
   t.is(code, 1);
   t.truthy(
     stderr.includes(
-      '请按照文档 https://bit.ly/2WnHB3p 添加 Shadowsocksr 二进制文件路径'
+      '请按照文档 http://url.royli.dev/vdGh2 添加 Shadowsocksr 二进制文件路径'
     )
   );
 });

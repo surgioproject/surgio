@@ -51,11 +51,11 @@ class DoctorCommand extends Command {
     try {
       const gatewayPkg = require(join(cwd, 'node_modules/@surgio/gateway/package.json'));
       doctorInfo.push(`@surgio/gateway: ${gatewayPkg.version}`);
-    } catch(_) {
+    } catch (_) {
       // no catch
     }
 
-    doctorInfo.push(`surgio: ${pkg.version}`);
+    doctorInfo.push(`surgio: ${pkg.version} (${join(__dirname, '../..')})`);
 
     if (checkInfo) {
       Object.keys(checkInfo.versions).forEach(key => {
