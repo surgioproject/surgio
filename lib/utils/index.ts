@@ -1583,7 +1583,10 @@ export const isIp = (str: string): boolean =>
 
 // istanbul ignore next
 export const isNow = (): boolean =>
-  typeof process.env.NOW_REGION !== 'undefined';
+  typeof process.env.NOW_REGION !== 'undefined' || typeof process.env.VERCEL_REGION !== 'undefined';
+
+// istanbul ignore next
+export const isVercel = (): boolean => isNow()
 
 // istanbul ignore next
 export const isHeroku = (): boolean => typeof process.env.DYNO !== 'undefined';
