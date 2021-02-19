@@ -176,6 +176,9 @@ export const getSurgeNodes = function (
                   'tfo',
                   'mptcp',
                 ]),
+                ...(typeof config.testUrl === 'string'
+                  ? [`test-url=${config.testUrl}`]
+                  : []),
                 ...(typeof config.underlyingProxy === 'string'
                   ? [`underlying-proxy=${config.underlyingProxy}`]
                   : []),
@@ -200,6 +203,9 @@ export const getSurgeNodes = function (
                 'tfo',
                 'mptcp',
               ]),
+              ...(typeof config.testUrl === 'string'
+                ? [`test-url=${config.testUrl}`]
+                : []),
               ...(typeof config.underlyingProxy === 'string'
                 ? [`underlying-proxy=${config.underlyingProxy}`]
                 : []),
@@ -223,6 +229,9 @@ export const getSurgeNodes = function (
                 : []),
               ...(typeof config.underlyingProxy === 'string'
                 ? [`underlying-proxy=${config.underlyingProxy}`]
+                : []),
+              ...(typeof config.testUrl === 'string'
+                ? [`test-url=${config.testUrl}`]
                 : []),
               ...pickAndFormatStringList(config, [
                 'sni',
@@ -248,6 +257,9 @@ export const getSurgeNodes = function (
               ...(typeof config.underlyingProxy === 'string'
                 ? [`underlying-proxy=${config.underlyingProxy}`]
                 : []),
+              ...(typeof config.testUrl === 'string'
+                ? [`test-url=${config.testUrl}`]
+                : []),
               ...pickAndFormatStringList(config, ['tfo', 'mptcp']),
             ].join(', '),
           ].join(' = ');
@@ -264,6 +276,9 @@ export const getSurgeNodes = function (
               config.port,
               ...(typeof config.underlyingProxy === 'string'
                 ? [`underlying-proxy=${config.underlyingProxy}`]
+                : []),
+              ...(typeof config.testUrl === 'string'
+                ? [`test-url=${config.testUrl}`]
                 : []),
               ...pickAndFormatStringList(config, [
                 'psk',
@@ -398,6 +413,10 @@ export const getSurgeNodes = function (
               configList.push(`underlying-proxy=${config['underlyingProxy']}`);
             }
 
+            if (config['testUrl']) {
+              configList.push(`test-url=${config['testUrl']}`);
+            }
+
             return [config.nodeName, configList.join(', ')].join(' = ');
           } else {
             // Using external provider
@@ -463,6 +482,9 @@ export const getSurgeNodes = function (
               'sni',
               'tls13',
             ]),
+            ...(typeof nodeConfig.testUrl === 'string'
+                ? [`test-url=${nodeConfig.testUrl}`]
+                : []),
             ...(typeof nodeConfig.underlyingProxy === 'string'
               ? [`underlying-proxy=${nodeConfig.underlyingProxy}`]
               : []),
@@ -482,6 +504,9 @@ export const getSurgeNodes = function (
             ...(typeof nodeConfig.underlyingProxy === 'string'
               ? [`underlying-proxy=${nodeConfig.underlyingProxy}`]
               : []),
+            ...(typeof nodeConfig.testUrl === 'string'
+              ? [`test-url=${nodeConfig.testUrl}`]
+                : []),
             ...pickAndFormatStringList(nodeConfig, [
               'username',
               'password',

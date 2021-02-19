@@ -271,6 +271,7 @@ export interface SimpleNodeConfig {
   hostnameIp?: ReadonlyArray<string>;
   provider?: Provider;
   underlyingProxy?: string;
+  testUrl?: string;
 }
 
 export interface PlainObject {
