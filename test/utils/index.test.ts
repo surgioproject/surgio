@@ -416,6 +416,35 @@ test('getSurgeNodes', async (t) => {
     ]),
     'socks node 3 = socks5, 1.1.1.1, 80, username=auto, password=auto, tfo=true'
   );
+
+  t.is(
+      utils.getSurgeNodes([
+        {
+          type: NodeTypeEnum.Vmess,
+          alterId: '64',
+          hostname: '1.1.1.1',
+          method: 'auto',
+          network: 'ws',
+          nodeName: '测试 6',
+          path: '/',
+          port: 8080,
+          tls: true,
+          tls13: true,
+          skipCertVerify: true,
+          host: '',
+          uuid: '1386f85e-657b-4d6e-9d56-78badb75e1fd',
+          binPath: '/usr/local/bin/v2ray',
+          localPort: 61101,
+          surgeConfig: {
+            v2ray: 'native',
+          },
+          tfo: true,
+          mptcp: true,
+          testUrl: 'http://www.google.com',
+        },
+      ]),
+      '测试 6 = vmess, 1.1.1.1, 8080, username=1386f85e-657b-4d6e-9d56-78badb75e1fd, ws=true, ws-path=/, ws-headers="host:1.1.1.1|user-agent:Mozilla/5.0 (iPhone; CPU iPhone OS 13_5 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/13.1.1 Mobile/15E148 Safari/604.1", tls=true, tls13=true, skip-cert-verify=true, tfo=true, mptcp=true, test-url=http://www.google.com'
+  );
 });
 
 test('getNodeNames', async (t) => {
