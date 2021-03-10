@@ -430,6 +430,18 @@ module.exports = {
 Surgio 不会验证名称是否有效
 :::
 
+### nodeConfig.testUrl <Badge text="v2.8.0" vertical="middle" />
+
+- 类型: `String`
+- 默认值: `undefined`
+
+在新版的 Surge 中支持针对某个 Proxy 设置测试的地址。你可以通过这个参数来设置改地址。
+
+:::warning 注意
+1. Surgio 不会验证名称是否有效；
+2. 目前仅 Surge 支持该特性；
+:::
+
 ### provider.nodeFilter
 
 - 类型: `Function`
