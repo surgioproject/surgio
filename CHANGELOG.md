@@ -1,3 +1,13 @@
+# [2.8.0](https://github.com/geekdada/surgio/compare/v2.7.7...v2.8.0) (2021-03-10)
+
+
+### Features
+
+* add new util ([5d07aae](https://github.com/geekdada/surgio/commit/5d07aae9fa4c5e24e3c46b005fd0f6642aff31a9))
+* support `test-url` for `getSurgeNodes` ([bd72082](https://github.com/geekdada/surgio/commit/bd72082471a5147627a17c8496bdb2b0d0ccedab))
+
+
+
 ## [2.7.7](https://github.com/geekdada/surgio/compare/v2.7.6...v2.7.7) (2021-02-16)
 
 
