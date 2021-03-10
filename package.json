@@ -12,8 +12,7 @@
   "files": [
     "bin",
     "build",
-    "hygen-template",
-    "yarn.lock"
+    "hygen-template"
   ],
   "bugs": {
     "url": "https://github.com/geekdada/surgio/issues"
