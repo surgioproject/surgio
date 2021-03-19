@@ -70,6 +70,9 @@ export interface CommandConfig {
     readonly [name: string]: NodeNameFilterType | SortedNodeNameFilterType;
   };
   readonly customParams?: PlainObjectOf<string | boolean | number>;
+  readonly customNunjucksFilters?: {
+    readonly [name: string]: (...args: any[]) => any;
+  };
 }
 
 export interface RemoteSnippetConfig {

@@ -27,6 +27,12 @@ async function run(
   );
   const templateEngine = getEngine(config.templateDir);
 
+  if (config.customNunjucksFilters) {
+    for (const customNunjucksFilterKey in config.customNunjucksFilters) {
+      templateEngine.addFilter(customNunjucksFilterKey, config.customNunjucksFilters[customNunjucksFilterKey]);
+    }
+  }
+
   await fs.mkdirp(distPath);
 
   for (const artifact of artifactList) {
