@@ -22,6 +22,7 @@ export const getLoonNodes = function (
 
   const result: ReadonlyArray<string> = applyFilter(list, filter)
     .map((nodeConfig): string | undefined => {
+     
       switch (nodeConfig.type) {
         case NodeTypeEnum.Shadowsocks: {
           const config: Array<string | number> = [
@@ -31,7 +32,9 @@ export const getLoonNodes = function (
             nodeConfig.method,
             JSON.stringify(nodeConfig.password),
           ];
-
+          if (nodeConfig.tfo) {
+            config.push(`fast-open=${nodeConfig.tfo}`)
+          }
           if (nodeConfig.obfs) {
             if (['http', 'tls'].includes(nodeConfig.obfs)) {
               config.push(
@@ -45,7 +48,9 @@ export const getLoonNodes = function (
               return void 0;
             }
           }
-
+          if (nodeConfig.tfo) {
+            config.push(`fast-open=${nodeConfig.tfo}`)
+          }
           return config.join(',');
         }
 
@@ -61,7 +66,9 @@ export const getLoonNodes = function (
             nodeConfig.obfs,
             `{${nodeConfig.obfsparam}}`,
           ];
-
+          if (nodeConfig.tfo) {
+            config.push(`fast-open=${nodeConfig.tfo}`)
+          }
           return config.join(',');
         }
 
@@ -115,7 +122,7 @@ export const getLoonNodes = function (
             nodeConfig.port,
             nodeConfig.username /* istanbul ignore next */ || '',
             JSON.stringify(nodeConfig.password) /* istanbul ignore next */ ||
-              '""',
+            '""',
           ].join(',');
 
         case NodeTypeEnum.HTTP:
@@ -125,7 +132,7 @@ export const getLoonNodes = function (
             nodeConfig.port,
             nodeConfig.username /* istanbul ignore next */ || '',
             JSON.stringify(nodeConfig.password) /* istanbul ignore next */ ||
-              '""',
+            '""',
           ].join(',');
 
         // istanbul ignore next
