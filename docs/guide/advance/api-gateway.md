@@ -59,7 +59,7 @@ $ vercel login
   "builds": [
     { 
       "src": "/gateway.js",
-      "use": "@vercel/node",
+      "use": "@vercel/node@1.9.0",
       "config": {
         "includeFiles": [
           "provider/**",
@@ -84,7 +84,7 @@ $ vercel login
 ```json
 {
   "engines": {
-    "node": ">=12"
+    "node": ">=14"
   }
 }
 ```
