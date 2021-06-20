@@ -1,3 +1,17 @@
+# [2.9.0](https://github.com/geekdada/surgio/compare/v2.8.0...v2.9.0) (2021-06-20)
+
+
+### Bug Fixes
+
+* eslint auto fix ([8b72414](https://github.com/geekdada/surgio/commit/8b724140f37467d8557195c7228079f152fe93b5))
+
+
+### Features
+
+* add new clash directives ([5a9f4dd](https://github.com/geekdada/surgio/commit/5a9f4dd6ad162eabe6e76b63588047ffb02a2d4c)), closes [#148](https://github.com/geekdada/surgio/issues/148)
+
+
+
 # [2.8.0](https://github.com/geekdada/surgio/compare/v2.7.7...v2.8.0) (2021-03-10)
 
 
