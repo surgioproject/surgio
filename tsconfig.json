@@ -47,7 +47,7 @@
     ],
     "typeRoots": ["node_modules/@types", "lib/typing"]
   },
-  "include": ["lib/**/*.ts", "test/**/*.ts"],
+  "include": ["lib/**/*.ts", "test/**/*.ts", "./.*.js"],
   "exclude": ["node_modules/**", "**/*.test.ts"],
   "compileOnSave": false
 }
