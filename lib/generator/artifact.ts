@@ -93,7 +93,7 @@ export class Artifact extends EventEmitter {
   constructor(
     public surgioConfig: CommandConfig,
     public artifact: ArtifactConfig,
-    private options: ArtifactOptions = {}
+    private options: ArtifactOptions = {},
   ) {
     super();
 
@@ -116,7 +116,7 @@ export class Artifact extends EventEmitter {
   }
 
   public getRenderContext(
-    extendRenderContext: ExtendableRenderContext = {}
+    extendRenderContext: ExtendableRenderContext = {},
   ): any {
     const config = this.surgioConfig;
     const gatewayConfig = config.gateway;
@@ -132,14 +132,14 @@ export class Artifact extends EventEmitter {
     } = this;
     const remoteSnippets = _.keyBy(
       this.options.remoteSnippetList || [],
-      (item) => item.name
+      (item) => item.name,
     );
     const globalCustomParams = config.customParams;
     const mergedCustomParams = _.merge(
       {},
       globalCustomParams,
       customParams,
-      extendRenderContext?.urlParams
+      extendRenderContext?.urlParams,
     );
 
     return {
@@ -150,7 +150,7 @@ export class Artifact extends EventEmitter {
             config.urlBase,
             artifactName,
             true,
-            gatewayHasToken ? gatewayConfig?.accessToken : undefined
+            gatewayHasToken ? gatewayConfig?.accessToken : undefined,
           ),
       snippet: (filePath: string): RemoteSnippet => {
         return loadLocalSnippet(config.templateDir, filePath);
@@ -167,13 +167,13 @@ export class Artifact extends EventEmitter {
           config.urlBase,
           name,
           true,
-          gatewayHasToken ? gatewayConfig?.accessToken : undefined
+          gatewayHasToken ? gatewayConfig?.accessToken : undefined,
         ),
       getUrl: (p: string) =>
         getUrl(
           config.publicUrl,
           p,
-          gatewayHasToken ? gatewayConfig?.accessToken : undefined
+          gatewayHasToken ? gatewayConfig?.accessToken : undefined,
         ),
       getNodeNames,
       getClashNodeNames,
@@ -234,7 +234,7 @@ export class Artifact extends EventEmitter {
                 {
                   proxyTestUrl: config.proxyTestUrl,
                   proxyTestInterval: config.proxyTestInterval,
-                }
+                },
               ),
             },
           }
@@ -278,7 +278,7 @@ export class Artifact extends EventEmitter {
 
   public render(
     templateEngine?: Environment,
-    extendRenderContext?: ExtendableRenderContext
+    extendRenderContext?: ExtendableRenderContext,
   ): string {
     if (!this.isReady) {
       throw new Error('Artifact 还未初始化');
@@ -403,7 +403,7 @@ export class Artifact extends EventEmitter {
             // 给节点名加国旗
             nodeConfig.nodeName = prependFlag(
               nodeConfig.nodeName,
-              provider.removeExistingFlag
+              provider.removeExistingFlag,
             );
           } else if (provider.removeExistingFlag) {
             // 去掉名称中的国旗
@@ -426,7 +426,7 @@ export class Artifact extends EventEmitter {
               const domains = await resolveDomain(nodeConfig.hostname);
               if (domains.length < 1) {
                 logger.warn(
-                  `DNS 解析结果中 ${nodeConfig.hostname} 未有对应 IP 地址，将忽略该节点`
+                  `DNS 解析结果中 ${nodeConfig.hostname} 未有对应 IP 地址，将忽略该节点`,
                 );
                 return undefined;
               }
@@ -440,14 +440,14 @@ export class Artifact extends EventEmitter {
             config?.surgeConfig?.resolveHostname &&
             !isIp(nodeConfig.hostname) &&
             [NodeTypeEnum.Vmess, NodeTypeEnum.Shadowsocksr].includes(
-              nodeConfig.type
+              nodeConfig.type,
             )
           ) {
             try {
               nodeConfig.hostnameIp = await resolveDomain(nodeConfig.hostname);
             } catch (err) /* istanbul ignore next */ {
               logger.warn(
-                `${nodeConfig.hostname} 无法解析，将忽略该域名的解析结果`
+                `${nodeConfig.hostname} 无法解析，将忽略该域名的解析结果`,
               );
             }
           }

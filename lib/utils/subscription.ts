@@ -4,7 +4,9 @@ import { format, formatDistanceToNow } from 'date-fns';
 
 import { SubscriptionUserinfo } from '../types';
 
-export const parseSubscriptionUserInfo = (str: string): SubscriptionUserinfo => {
+export const parseSubscriptionUserInfo = (
+  str: string,
+): SubscriptionUserinfo => {
   const res = {
     upload: 0,
     download: 0,
@@ -12,7 +14,7 @@ export const parseSubscriptionUserInfo = (str: string): SubscriptionUserinfo => 
     expire: 0,
   };
 
-  str.split(';').forEach(item => {
+  str.split(';').forEach((item) => {
     if (!item) {
       return;
     }
@@ -20,14 +22,17 @@ export const parseSubscriptionUserInfo = (str: string): SubscriptionUserinfo => 
     const value = Number(pair[1].trim());
 
     if (!Number.isNaN(value)) {
-      res[pair[0].trim()] = Number(pair[1].trim())
+      res[pair[0].trim()] = Number(pair[1].trim());
     }
   });
 
   return res;
 };
 
-export const parseSubscriptionNode = (dataString: string, expireString: string): SubscriptionUserinfo|undefined => {
+export const parseSubscriptionNode = (
+  dataString: string,
+  expireString: string,
+): SubscriptionUserinfo | undefined => {
   // dataString => 剩余流量：57.37% 1.01TB
   // expireString => 过期时间：2020-04-21 22:27:38
 
@@ -51,7 +56,9 @@ export const parseSubscriptionNode = (dataString: string, expireString: string):
   }
 };
 
-export const formatSubscriptionUserInfo = (userInfo: SubscriptionUserinfo): {
+export const formatSubscriptionUserInfo = (
+  userInfo: SubscriptionUserinfo,
+): {
   readonly upload: string;
   readonly download: string;
   readonly used: string;
@@ -66,7 +73,10 @@ export const formatSubscriptionUserInfo = (userInfo: SubscriptionUserinfo): {
     left: filesize(userInfo.total - userInfo.upload - userInfo.download),
     total: filesize(userInfo.total),
     expire: userInfo.expire
-      ? `${format(new Date(userInfo.expire * 1000), 'yyyy-MM-dd')} (${formatDistanceToNow(new Date(userInfo.expire * 1000))})`
+      ? `${format(
+          new Date(userInfo.expire * 1000),
+          'yyyy-MM-dd',
+        )} (${formatDistanceToNow(new Date(userInfo.expire * 1000))})`
       : '无数据',
   };
 };

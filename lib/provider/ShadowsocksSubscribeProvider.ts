@@ -57,7 +57,7 @@ export default class ShadowsocksSubscribeProvider extends Provider {
   > {
     const { subscriptionUserinfo } = await getShadowsocksSubscription(
       this.url,
-      this.udpRelay
+      this.udpRelay,
     );
 
     if (subscriptionUserinfo) {
@@ -69,7 +69,7 @@ export default class ShadowsocksSubscribeProvider extends Provider {
   public async getNodeList(): Promise<ReadonlyArray<ShadowsocksNodeConfig>> {
     const { nodeList } = await getShadowsocksSubscription(
       this.url,
-      this.udpRelay
+      this.udpRelay,
     );
 
     return nodeList;
@@ -81,7 +81,7 @@ export default class ShadowsocksSubscribeProvider extends Provider {
  */
 export const getShadowsocksSubscription = async (
   url: string,
-  udpRelay?: boolean
+  udpRelay?: boolean,
 ): Promise<{
   readonly nodeList: ReadonlyArray<ShadowsocksNodeConfig>;
   readonly subscriptionUserinfo?: SubscriptionUserinfo;
@@ -98,13 +98,13 @@ export const getShadowsocksSubscription = async (
 
         if (res.headers['subscription-userinfo']) {
           subsciptionCacheItem.subscriptionUserinfo = parseSubscriptionUserInfo(
-            res.headers['subscription-userinfo'] as string
+            res.headers['subscription-userinfo'] as string,
           );
           logger.debug(
             '%s received subscription userinfo - raw: %s | parsed: %j',
             url,
             res.headers['subscription-userinfo'],
-            subsciptionCacheItem.subscriptionUserinfo
+            subsciptionCacheItem.subscriptionUserinfo,
           );
         }
 
@@ -125,7 +125,7 @@ export const getShadowsocksSubscription = async (
         }
 
         return nodeConfig;
-      }
+      },
     );
 
   return {

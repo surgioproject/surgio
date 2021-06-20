@@ -12,9 +12,9 @@ import { applyFilter } from './index';
 const logger = createLogger({ service: 'surgio:utils' });
 
 // @see https://www.notion.so/1-9809ce5acf524d868affee8dd5fc0a6e
-export const getLoonNodes = function (
+export const getLoonNodes = function(
   list: ReadonlyArray<PossibleNodeConfigType>,
-  filter?: NodeNameFilterType | SortedNodeNameFilterType
+  filter?: NodeNameFilterType | SortedNodeNameFilterType,
 ): string {
   if (arguments.length === 2 && typeof filter === 'undefined') {
     throw new Error(ERR_INVALID_FILTER);
@@ -36,11 +36,11 @@ export const getLoonNodes = function (
             if (['http', 'tls'].includes(nodeConfig.obfs)) {
               config.push(
                 nodeConfig.obfs,
-                nodeConfig['obfs-host'] || nodeConfig.hostname
+                nodeConfig['obfs-host'] || nodeConfig.hostname,
               );
             } else {
               logger.warn(
-                `不支持为 Loon 生成混淆为 ${nodeConfig.obfs} 的节点，节点 ${nodeConfig.nodeName} 会被省略`
+                `不支持为 Loon 生成混淆为 ${nodeConfig.obfs} 的节点，节点 ${nodeConfig.nodeName} 会被省略`,
               );
               return void 0;
             }
@@ -80,7 +80,7 @@ export const getLoonNodes = function (
           if (nodeConfig.network === 'ws') {
             config.push(
               `path:${nodeConfig.path || '/'}`,
-              `host:${nodeConfig.host || nodeConfig.hostname}`
+              `host:${nodeConfig.host || nodeConfig.hostname}`,
             );
           }
 
@@ -88,7 +88,7 @@ export const getLoonNodes = function (
             config.push(
               `over-tls:${nodeConfig.tls}`,
               `tls-name:${nodeConfig.host || nodeConfig.hostname}`,
-              `skip-cert-verify:${nodeConfig.skipCertVerify === true}`
+              `skip-cert-verify:${nodeConfig.skipCertVerify === true}`,
             );
           }
 
@@ -131,7 +131,7 @@ export const getLoonNodes = function (
         // istanbul ignore next
         default:
           logger.warn(
-            `不支持为 Loon 生成 ${nodeConfig.type} 的节点，节点 ${nodeConfig.nodeName} 会被省略`
+            `不支持为 Loon 生成 ${nodeConfig.type} 的节点，节点 ${nodeConfig.nodeName} 会被省略`,
           );
           return void 0;
       }

@@ -20,7 +20,14 @@ import { formatSubscriptionUserInfo } from '../utils/subscription';
 const logger = createLogger({
   service: 'surgio:SubscriptionsCommand',
 });
-type PossibleProviderType = BlackSSLProvider|ShadowsocksJsonSubscribeProvider|ShadowsocksSubscribeProvider|CustomProvider|V2rayNSubscribeProvider|ShadowsocksrSubscribeProvider|ClashProvider;
+type PossibleProviderType =
+  | BlackSSLProvider
+  | ShadowsocksJsonSubscribeProvider
+  | ShadowsocksSubscribeProvider
+  | CustomProvider
+  | V2rayNSubscribeProvider
+  | ShadowsocksrSubscribeProvider
+  | ClashProvider;
 
 class SubscriptionsCommand extends Command {
   private config: CommandConfig;
@@ -50,7 +57,13 @@ class SubscriptionsCommand extends Command {
 
         if (userInfo) {
           const format = formatSubscriptionUserInfo(userInfo);
-          console.log('🤟 %s 已用流量：%s 剩余流量：%s 有效期至：%s', provider.name, format.used, format.left, format.expire);
+          console.log(
+            '🤟 %s 已用流量：%s 剩余流量：%s 有效期至：%s',
+            provider.name,
+            format.used,
+            format.left,
+            format.expire,
+          );
         } else {
           console.log('⚠️  无法查询 %s 的流量信息', provider.name);
         }
@@ -76,7 +89,9 @@ class SubscriptionsCommand extends Command {
     });
     const providerList: PossibleProviderType[] = [];
 
-    async function readProvider(path): Promise<PossibleProviderType|undefined> {
+    async function readProvider(
+      path,
+    ): Promise<PossibleProviderType | undefined> {
       let provider;
 
       try {

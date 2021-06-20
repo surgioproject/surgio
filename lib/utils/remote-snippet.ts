@@ -14,7 +14,7 @@ import { isNow } from './index';
 import { createTmpFactory } from './tmp-helper';
 
 export const parseMacro = (
-  snippet: string
+  snippet: string,
 ): {
   functionName: string;
   arguments: string[];
@@ -52,7 +52,7 @@ export const parseMacro = (
 
 export const addProxyToSurgeRuleSet = (
   str: string,
-  proxyName?: string
+  proxyName?: string,
 ): string => {
   if (!proxyName) {
     throw new Error('必须为片段指定一个策略');
@@ -115,7 +115,7 @@ export const renderSurgioSnippet = (str: string, args: string[]): string => {
 
 export const loadRemoteSnippetList = (
   remoteSnippetList: ReadonlyArray<RemoteSnippetConfig>,
-  cacheSnippet = true
+  cacheSnippet = true,
 ): Promise<ReadonlyArray<RemoteSnippet>> => {
   const tmpFactory = createTmpFactory('remote-snippets');
 
@@ -135,7 +135,10 @@ export const loadRemoteSnippetList = (
   return Bluebird.map(
     remoteSnippetList,
     (item) => {
-      const fileMd5 = crypto.createHash('md5').update(item.url).digest('hex');
+      const fileMd5 = crypto
+        .createHash('md5')
+        .update(item.url)
+        .digest('hex');
       const isSurgioSnippet = item.surgioSnippet;
 
       return (async () => {
@@ -182,6 +185,6 @@ export const loadRemoteSnippetList = (
     },
     {
       concurrency: NETWORK_CONCURRENCY,
-    }
+    },
   );
 };

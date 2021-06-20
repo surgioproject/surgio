@@ -1,6 +1,9 @@
 import { RELAY_SERVICE } from './constant';
 
-export default function relayableUrl(url: string, relayUrl?: boolean|string): string {
+export default function relayableUrl(
+  url: string,
+  relayUrl?: boolean | string,
+): string {
   if (typeof relayUrl === 'boolean') {
     return `${RELAY_SERVICE}${url}`;
   } else if (typeof relayUrl === 'string') {

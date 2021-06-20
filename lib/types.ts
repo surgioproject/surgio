@@ -295,12 +295,12 @@ export interface SubscriptionUserinfo {
 export type NodeFilterType = (nodeConfig: PossibleNodeConfigType) => boolean;
 
 export type NodeNameFilterType = (
-  simpleNodeConfig: SimpleNodeConfig
+  simpleNodeConfig: SimpleNodeConfig,
 ) => boolean;
 
 export interface SortedNodeNameFilterType {
   readonly filter: <T>(
-    nodeList: ReadonlyArray<T & SimpleNodeConfig>
+    nodeList: ReadonlyArray<T & SimpleNodeConfig>,
   ) => ReadonlyArray<T & SimpleNodeConfig>;
   readonly supportSort?: boolean;
 }
@@ -317,7 +317,7 @@ export type PossibleNodeConfigType =
 
 export type ProxyGroupModifier = (
   nodeList: ReadonlyArray<PossibleNodeConfigType>,
-  filters: PlainObjectOf<NodeNameFilterType | SortedNodeNameFilterType>
+  filters: PlainObjectOf<NodeNameFilterType | SortedNodeNameFilterType>,
 ) => ReadonlyArray<{
   readonly name: string;
   readonly type: 'select' | 'url-test' | 'fallback' | 'load-balance';

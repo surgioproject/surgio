@@ -7,7 +7,7 @@ import {
   BlackSSLProviderConfig,
   HttpsNodeConfig,
   NodeTypeEnum,
-  SubscriptionUserinfo
+  SubscriptionUserinfo,
 } from '../types';
 import { ConfigCache } from '../utils/cache';
 import httpClient from '../utils/http-client';
@@ -21,14 +21,9 @@ export default class BlackSSLProvider extends Provider {
     super(name, config);
 
     const schema = Joi.object({
-      username: Joi
-        .string()
-        .required(),
-      password: Joi
-        .string()
-        .required(),
-    })
-      .unknown();
+      username: Joi.string().required(),
+      password: Joi.string().required(),
+    }).unknown();
 
     const { error } = schema.validate(config);
 
@@ -42,8 +37,13 @@ export default class BlackSSLProvider extends Provider {
     this.supportGetSubscriptionUserInfo = true;
   }
 
-  public async getSubscriptionUserInfo(): Promise<SubscriptionUserinfo|undefined> {
-    const { subscriptionUserinfo } = await this.getBlackSSLConfig(this.username, this.password);
+  public async getSubscriptionUserInfo(): Promise<
+    SubscriptionUserinfo | undefined
+  > {
+    const { subscriptionUserinfo } = await this.getBlackSSLConfig(
+      this.username,
+      this.password,
+    );
 
     if (subscriptionUserinfo) {
       return subscriptionUserinfo;
@@ -52,12 +52,18 @@ export default class BlackSSLProvider extends Provider {
   }
 
   public async getNodeList(): Promise<ReadonlyArray<HttpsNodeConfig>> {
-    const { nodeList } = await this.getBlackSSLConfig(this.username, this.password);
+    const { nodeList } = await this.getBlackSSLConfig(
+      this.username,
+      this.password,
+    );
     return nodeList;
   }
 
   // istanbul ignore next
-  private async getBlackSSLConfig(username: string, password: string): Promise<{
+  private async getBlackSSLConfig(
+    username: string,
+    password: string,
+  ): Promise<{
     readonly nodeList: ReadonlyArray<HttpsNodeConfig>;
     readonly subscriptionUserinfo?: SubscriptionUserinfo;
   }> {
@@ -66,32 +72,39 @@ export default class BlackSSLProvider extends Provider {
 
     const key = `blackssl_${username}`;
 
-    const response = ConfigCache.has(key) ? JSON.parse(ConfigCache.get(key) as string) : await (async () => {
-      const res = await httpClient
-        .get('https://api.darkssl.com/v1/service/ssl_info', {
-          searchParams: {
-            username,
-            password,
-          },
-          headers: {
-            'user-agent': 'GoAgentX/774 CFNetwork/901.1 Darwin/17.6.0 (x86_64)',
-          },
-        });
+    const response = ConfigCache.has(key)
+      ? JSON.parse(ConfigCache.get(key) as string)
+      : await (async () => {
+          const res = await httpClient.get(
+            'https://api.darkssl.com/v1/service/ssl_info',
+            {
+              searchParams: {
+                username,
+                password,
+              },
+              headers: {
+                'user-agent':
+                  'GoAgentX/774 CFNetwork/901.1 Darwin/17.6.0 (x86_64)',
+              },
+            },
+          );
 
-      ConfigCache.set(key, res.body);
+          ConfigCache.set(key, res.body);
 
-      return JSON.parse(res.body);
-    })();
+          return JSON.parse(res.body);
+        })();
 
     return {
-      nodeList: (response.ssl_nodes as readonly any[]).map<HttpsNodeConfig>(item => ({
-        nodeName: item.name,
-        type: NodeTypeEnum.HTTPS,
-        hostname: item.server,
-        port: item.port,
-        username,
-        password,
-      })),
+      nodeList: (response.ssl_nodes as readonly any[]).map<HttpsNodeConfig>(
+        (item) => ({
+          nodeName: item.name,
+          type: NodeTypeEnum.HTTPS,
+          hostname: item.server,
+          port: item.port,
+          username,
+          password,
+        }),
+      ),
       subscriptionUserinfo: {
         upload: 0,
         download: response.transfer_used,

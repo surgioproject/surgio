@@ -57,7 +57,7 @@ module.exports = {
       password: 'password',
     },
   ],
-  renameNode: name => {
+  renameNode: (name) => {
     if (name === 'rename to HTTPS') {
       return 'HTTPS';
     }

@@ -10,8 +10,16 @@ import V2rayNSubscribeProvider from './V2rayNSubscribeProvider';
 
 export function getProvider(
   name: string,
-  config: any
-): BlackSSLProvider|ShadowsocksJsonSubscribeProvider|ShadowsocksSubscribeProvider|CustomProvider|V2rayNSubscribeProvider|ShadowsocksrSubscribeProvider|ClashProvider|SsdProvider {
+  config: any,
+):
+  | BlackSSLProvider
+  | ShadowsocksJsonSubscribeProvider
+  | ShadowsocksSubscribeProvider
+  | CustomProvider
+  | V2rayNSubscribeProvider
+  | ShadowsocksrSubscribeProvider
+  | ClashProvider
+  | SsdProvider {
   switch (config.type) {
     case SupportProviderEnum.BlackSSL:
       return new BlackSSLProvider(name, config);

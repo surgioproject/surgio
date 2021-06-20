@@ -11,7 +11,7 @@ test.after.always(async () => {
   const dir = path.join(
     os.tmpdir(),
     TMP_FOLDER_NAME,
-    'tmp-helper-test-folder' + `_nodejs_${process.version}`
+    'tmp-helper-test-folder' + `_nodejs_${process.version}`,
   );
   if (fs.existsSync(dir)) {
     await fs.remove(dir);
@@ -26,7 +26,7 @@ test.serial('no permission', (t) => {
 
 test.serial('should work', async (t) => {
   const factory = createTmpFactory(
-    'tmp-helper-test-folder' + `_nodejs_${process.version}`
+    'tmp-helper-test-folder' + `_nodejs_${process.version}`,
   );
   const tmp = factory('tmp1.txt');
 
@@ -38,7 +38,7 @@ test.serial('should work', async (t) => {
 
 test.serial('should work with maxAge 1', async (t) => {
   const factory = createTmpFactory(
-    'tmp-helper-test-folder' + `_nodejs_${process.version}`
+    'tmp-helper-test-folder' + `_nodejs_${process.version}`,
   );
   const tmp = factory('tmp2.txt', 500);
 
@@ -56,7 +56,7 @@ test.serial('should work with maxAge 1', async (t) => {
 
 test.serial('should work with maxAge 2', async (t) => {
   const factory = createTmpFactory(
-    'tmp-helper-test-folder' + `_nodejs_${process.version}`
+    'tmp-helper-test-folder' + `_nodejs_${process.version}`,
   );
   const tmp = factory('tmp3.txt', 1000);
 

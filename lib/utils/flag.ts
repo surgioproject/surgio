@@ -3,23 +3,26 @@ import _ from 'lodash';
 
 import flag from '../misc/flag_cn';
 
-const flagMap: Map<string|RegExp, string> = new Map();
-const customFlagMap: Map<string|RegExp, string> = new Map();
+const flagMap: Map<string | RegExp, string> = new Map();
+const customFlagMap: Map<string | RegExp, string> = new Map();
 
-Object.keys(flag).forEach(emoji => {
+Object.keys(flag).forEach((emoji) => {
   flag[emoji].forEach((name: string) => {
     flagMap.set(name, emoji);
   });
 });
 
-export const addFlagMap = (name: string|RegExp, emoji: string): void => {
+export const addFlagMap = (name: string | RegExp, emoji: string): void => {
   if (flagMap.has(name)) {
-    flagMap.delete(name)
+    flagMap.delete(name);
   }
   customFlagMap.set(name, emoji);
 };
 
-export const prependFlag = (str: string, removeExistingEmoji = false): string => {
+export const prependFlag = (
+  str: string,
+  removeExistingEmoji = false,
+): string => {
   const emojiRegex = EmojiRegex();
   const existingEmoji = emojiRegex.exec(str);
 

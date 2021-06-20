@@ -58,7 +58,7 @@ test.serial('cli works', async (t) => {
     resolve('plain/dist/template-functions.conf'),
     {
       encoding: 'utf8',
-    }
+    },
   );
   const confString5 = fs.readFileSync(resolve('plain/dist/v2rayn.conf'), {
     encoding: 'utf8',
@@ -73,7 +73,7 @@ test.serial('cli works', async (t) => {
   t.truthy(fs.existsSync(resolve('plain/dist/ssd.conf')));
   t.is(
     confString1.split('\n')[0],
-    '#!MANAGED-CONFIG https://example.com/ss_json.conf?access_token=abcd interval=43200 strict=false'
+    '#!MANAGED-CONFIG https://example.com/ss_json.conf?access_token=abcd interval=43200 strict=false',
   );
   t.true(confString2.includes('select, 🇺🇸 US'));
   t.is(Object.keys(conf.Proxy).length, 4);
@@ -116,8 +116,8 @@ test.serial('not specify binPath', async (t) => {
   t.is(code, 1);
   t.truthy(
     stderr.includes(
-      '请按照文档 http://url.royli.dev/vdGh2 添加 Shadowsocksr 二进制文件路径'
-    )
+      '请按照文档 http://url.royli.dev/vdGh2 添加 Shadowsocksr 二进制文件路径',
+    ),
   );
 });
 
@@ -132,7 +132,7 @@ test.serial('template variables and functions', async (t) => {
     resolve('template-variables-functions/dist/ss.conf'),
     {
       encoding: 'utf8',
-    }
+    },
   );
   const result =
     '# Netflix\n' +
@@ -162,7 +162,7 @@ test.serial('assign local port', async (t) => {
     resolve('assign-local-port/dist/ssr.conf'),
     {
       encoding: 'utf8',
-    }
+    },
   );
   const conf1 = ini.decode(confString1);
 
@@ -185,7 +185,7 @@ test.serial('custom filter', async (t) => {
     resolve('custom-filter/dist/test_sorted_filter.conf'),
     {
       encoding: 'utf8',
-    }
+    },
   );
 
   t.snapshot(confString1);

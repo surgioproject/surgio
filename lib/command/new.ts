@@ -6,7 +6,7 @@ import Logger from '@royli/hygen/lib/logger';
 import Command, { Context } from 'common-bin';
 
 const defaultTemplates = join(__dirname, '../../hygen-template');
-const logger = createLogger({ service: 'surgio:NewCommand' })
+const logger = createLogger({ service: 'surgio:NewCommand' });
 
 class NewCommand extends Command {
   constructor(rawArgv?: string[]) {
@@ -46,7 +46,7 @@ class NewCommand extends Command {
         const opts = body && body.length > 0 ? { input: body } : {};
         return require('execa').shell(action, opts);
       },
-      debug: !!process.env.DEBUG
+      debug: !!process.env.DEBUG,
     });
   }
 }

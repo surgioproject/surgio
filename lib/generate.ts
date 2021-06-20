@@ -16,14 +16,14 @@ const spinner = ora();
 async function run(
   config: CommandConfig,
   skipFail?: boolean,
-  cacheSnippet?: boolean
+  cacheSnippet?: boolean,
 ): Promise<void> {
   const artifactList: ReadonlyArray<ArtifactConfig> = config.artifacts;
   const distPath = config.output;
   const remoteSnippetsConfig = config.remoteSnippets || [];
   const remoteSnippetList = await loadRemoteSnippetList(
     remoteSnippetsConfig,
-    cacheSnippet
+    cacheSnippet,
   );
   const templateEngine = getEngine(config.templateDir);
 
@@ -71,7 +71,7 @@ export async function generate(
   config: CommandConfig,
   artifact: ArtifactConfig,
   remoteSnippetList: ReadonlyArray<RemoteSnippet>,
-  templateEngine: Environment
+  templateEngine: Environment,
 ): Promise<string> {
   const artifactInstance = new Artifact(config, artifact, {
     remoteSnippetList,
@@ -82,10 +82,10 @@ export async function generate(
   return artifactInstance.render(templateEngine);
 }
 
-export default async function (
+export default async function(
   config: CommandConfig,
   skipFail?: boolean,
-  cacheSnippet?: boolean
+  cacheSnippet?: boolean,
 ): Promise<void> {
   logger.info('开始生成规则');
   await run(config, skipFail, cacheSnippet).catch((err) => {

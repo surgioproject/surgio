@@ -3,9 +3,15 @@ import test from 'ava';
 import { NodeTypeEnum } from '../../types';
 import { getShadowsocksrSubscription } from '../ShadowsocksrSubscribeProvider';
 
-test('getShadowsocksrSubscription', async t => {
-  const { nodeList } = await getShadowsocksrSubscription('http://example.com/test-ssr-sub.txt?v=1', false);
-  const { nodeList: nodeList2 } = await getShadowsocksrSubscription('http://example.com/test-ssr-sub.txt?v=2', true);
+test('getShadowsocksrSubscription', async (t) => {
+  const { nodeList } = await getShadowsocksrSubscription(
+    'http://example.com/test-ssr-sub.txt?v=1',
+    false,
+  );
+  const { nodeList: nodeList2 } = await getShadowsocksrSubscription(
+    'http://example.com/test-ssr-sub.txt?v=2',
+    true,
+  );
 
   t.deepEqual(nodeList[0], {
     nodeName: '测试中文',

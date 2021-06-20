@@ -54,7 +54,14 @@ module.exports = {
       name: 'template-functions.conf',
       template: 'template-functions',
       provider: 'ss',
-      combineProviders: ['custom', 'ss_json', 'v2rayn', 'clash', 'ssr_with_udp', 'ssd'],
+      combineProviders: [
+        'custom',
+        'ss_json',
+        'v2rayn',
+        'clash',
+        'ssr_with_udp',
+        'ssd',
+      ],
       customParams: {
         globalVariableWillBeRewritten: 'barbar',
         subLevel: {
@@ -91,7 +98,7 @@ module.exports = {
     v2ray: 'native',
   },
   customFilters: {
-    globalFilter: node => node.nodeName === '测试中文',
+    globalFilter: (node) => node.nodeName === '测试中文',
     unused: () => true,
   },
   customParams: {

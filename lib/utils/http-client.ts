@@ -5,7 +5,8 @@ import { NETWORK_TIMEOUT, NETWORK_SURGIO_UA, NETWORK_RETRY } from './constant';
 
 const pkg = require('../../package.json');
 
-export const getUserAgent = (str?: string): string => `${str ? str + ' ' : ''}${NETWORK_SURGIO_UA}/${pkg.version}`;
+export const getUserAgent = (str?: string): string =>
+  `${str ? str + ' ' : ''}${NETWORK_SURGIO_UA}/${pkg.version}`;
 
 const httpClient = got.extend({
   timeout: NETWORK_TIMEOUT,
@@ -15,7 +16,7 @@ const httpClient = got.extend({
   },
   agent: {
     http: new HttpAgent(),
-    https: new HttpsAgent()
+    https: new HttpsAgent(),
   },
 });
 

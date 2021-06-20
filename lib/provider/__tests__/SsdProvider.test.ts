@@ -4,7 +4,7 @@ import nock from 'nock';
 import { SupportProviderEnum } from '../../types';
 import SsdProvider from '../SsdProvider';
 
-test('SsdProvider 1', async t => {
+test('SsdProvider 1', async (t) => {
   const provider = new SsdProvider('test', {
     type: SupportProviderEnum.Ssd,
     url: 'http://example.com/ssd-sample.txt',
@@ -14,7 +14,7 @@ test('SsdProvider 1', async t => {
   t.snapshot(nodeList);
 });
 
-test('SsdProvider 2', async t => {
+test('SsdProvider 2', async (t) => {
   const provider = new SsdProvider('test', {
     type: SupportProviderEnum.Ssd,
     url: 'http://example.com/ssd-sample-2.txt',
@@ -24,7 +24,7 @@ test('SsdProvider 2', async t => {
   t.snapshot(nodeList);
 });
 
-test('SsdProvider udpRelay', async t => {
+test('SsdProvider udpRelay', async (t) => {
   const provider = new SsdProvider('test', {
     type: SupportProviderEnum.Ssd,
     url: 'http://example.com/ssd-sample.txt',
@@ -35,7 +35,7 @@ test('SsdProvider udpRelay', async t => {
   t.snapshot(nodeList);
 });
 
-test('SsdProvider.getSubscriptionUserInfo', async t => {
+test('SsdProvider.getSubscriptionUserInfo', async (t) => {
   const provider = new SsdProvider('test', {
     type: SupportProviderEnum.Ssd,
     url: 'http://example.com/ssd-sample.txt',

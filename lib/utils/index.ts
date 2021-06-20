@@ -332,7 +332,7 @@ export const getSurgeNodes = function(
           const configString = [
             'external',
             `exec = ${JSON.stringify(config.binPath)}`,
-            ...args.map(arg => `args = ${JSON.stringify(arg)}`),
+            ...args.map((arg) => `args = ${JSON.stringify(arg)}`),
             `local-port = ${config.localPort}`,
           ];
 
@@ -344,7 +344,7 @@ export const getSurgeNodes = function(
 
           if (config.hostnameIp && config.hostnameIp.length) {
             configString.push(
-              ...config.hostnameIp.map(item => `addresses = ${item}`),
+              ...config.hostnameIp.map((item) => `addresses = ${item}`),
             );
           }
 
@@ -370,7 +370,7 @@ export const getSurgeNodes = function(
 
             function getHeader(wsHeaders: Record<string, string>): string {
               return Object.keys(wsHeaders)
-                .map(headerKey => `${headerKey}:${wsHeaders[headerKey]}`)
+                .map((headerKey) => `${headerKey}:${wsHeaders[headerKey]}`)
                 .join('|');
             }
 
@@ -448,13 +448,13 @@ export const getSurgeNodes = function(
             const configString = [
               'external',
               `exec = ${JSON.stringify(config.binPath)}`,
-              ...args.map(arg => `args = ${JSON.stringify(arg)}`),
+              ...args.map((arg) => `args = ${JSON.stringify(arg)}`),
               `local-port = ${config.localPort}`,
             ];
 
             if (config.hostnameIp && config.hostnameIp.length) {
               configString.push(
-                ...config.hostnameIp.map(item => `addresses = ${item}`),
+                ...config.hostnameIp.map((item) => `addresses = ${item}`),
               );
             }
 
@@ -557,7 +557,7 @@ export const getClashNodes = function(
   }
 
   return applyFilter(list, filter)
-    .map(nodeConfig => {
+    .map((nodeConfig) => {
       // istanbul ignore next
       if (nodeConfig.enable === false) {
         return null;
@@ -752,7 +752,7 @@ export const getClashNodes = function(
           return null;
       }
     })
-    .filter(item => item !== null);
+    .filter((item) => item !== null);
 };
 
 export const getMellowNodes = function(
@@ -765,7 +765,7 @@ export const getMellowNodes = function(
   }
 
   const result = applyFilter(list, filter)
-    .map(nodeConfig => {
+    .map((nodeConfig) => {
       switch (nodeConfig.type) {
         case NodeTypeEnum.Vmess: {
           const uri = formatVmessUri(nodeConfig, { isMellow: true });
@@ -791,7 +791,7 @@ export const getMellowNodes = function(
           return null;
       }
     })
-    .filter(item => !!item);
+    .filter((item) => !!item);
 
   return result.join('\n');
 };
@@ -824,7 +824,7 @@ export const getShadowsocksNodes = (
   groupName = 'Surgio',
 ): string => {
   const result: ReadonlyArray<any> = list
-    .map(nodeConfig => {
+    .map((nodeConfig) => {
       // istanbul ignore next
       if (nodeConfig.enable === false) {
         return null;
@@ -872,7 +872,7 @@ export const getShadowsocksNodes = (
           return null;
       }
     })
-    .filter(item => !!item);
+    .filter((item) => !!item);
 
   return result.join('\n');
 };
@@ -882,7 +882,7 @@ export const getShadowsocksrNodes = (
   groupName: string,
 ): string => {
   const result: ReadonlyArray<string | undefined> = list
-    .map(nodeConfig => {
+    .map((nodeConfig) => {
       // istanbul ignore next
       if (nodeConfig.enable === false) {
         return void 0;
@@ -929,7 +929,7 @@ export const getShadowsocksrNodes = (
           return void 0;
       }
     })
-    .filter(item => item !== undefined);
+    .filter((item) => item !== undefined);
 
   return result.join('\n');
 };
@@ -993,7 +993,7 @@ export const getQuantumultNodes = function(
 
   function getHeader(wsHeaders: Record<string, string>): string {
     return Object.keys(wsHeaders)
-      .map(headerKey => `${headerKey}:${wsHeaders[headerKey]}`)
+      .map((headerKey) => `${headerKey}:${wsHeaders[headerKey]}`)
       .join('[Rr][Nn]');
   }
 
@@ -1023,7 +1023,7 @@ export const getQuantumultNodes = function(
               }),
             )}`,
           ]
-            .filter(value => !!value)
+            .filter((value) => !!value)
             .join(',');
 
           return (
@@ -1253,7 +1253,7 @@ export const getShadowsocksNodesJSON = (
   list: ReadonlyArray<ShadowsocksNodeConfig>,
 ): string => {
   const nodes: ReadonlyArray<any> = list
-    .map(nodeConfig => {
+    .map((nodeConfig) => {
       // istanbul ignore next
       if (nodeConfig.enable === false) {
         return null;
@@ -1289,7 +1289,7 @@ export const getShadowsocksNodesJSON = (
           return undefined;
       }
     })
-    .filter(item => item !== undefined);
+    .filter((item) => item !== undefined);
 
   return JSON.stringify(nodes, null, 2);
 };
@@ -1305,7 +1305,7 @@ export const getNodeNames = function(
   }
 
   return applyFilter(list, filter)
-    .map(item => item.nodeName)
+    .map((item) => item.nodeName)
     .join(separator || ', ');
 };
 
@@ -1325,7 +1325,9 @@ export const getClashNodeNames = function(
     result = result.concat(existingProxies);
   }
 
-  result = result.concat(applyFilter(list, filter).map(item => item.nodeName));
+  result = result.concat(
+    applyFilter(list, filter).map((item) => item.nodeName),
+  );
 
   return result;
 };
@@ -1354,14 +1356,14 @@ export const generateClashProxyGroup = (
       const nodes = applyFilter(nodeNameList, options.filter);
       proxies = ([] as string[]).concat(
         options.existingProxies,
-        nodes.map(item => item.nodeName),
+        nodes.map((item) => item.nodeName),
       );
     } else {
       proxies = options.existingProxies;
     }
   } else {
     const nodes = applyFilter(nodeNameList, options.filter);
-    proxies = nodes.map(item => item.nodeName);
+    proxies = nodes.map((item) => item.nodeName);
   }
 
   return {
@@ -1384,7 +1386,7 @@ export const pickAndFormatStringList = (
   keyList: readonly string[],
 ): readonly string[] => {
   const result: string[] = [];
-  keyList.forEach(key => {
+  keyList.forEach((key) => {
     if (obj.hasOwnProperty(key)) {
       result.push(`${key}=${obj[key]}`);
     }
@@ -1396,7 +1398,7 @@ export const decodeStringList = <T = Record<string, string | boolean>>(
   stringList: ReadonlyArray<string>,
 ): T => {
   const result = {};
-  stringList.forEach(item => {
+  stringList.forEach((item) => {
     if (item.includes('=')) {
       const match = item.match(/^(.*?)=(.*?)$/);
       if (match) {
@@ -1420,7 +1422,7 @@ export const normalizeClashProxyGroupConfig = (
 ): ReadonlyArray<any> => {
   const proxyGroup = proxyGroupModifier(nodeList, customFilters);
 
-  return proxyGroup.map(item => {
+  return proxyGroup.map((item) => {
     if (item.hasOwnProperty('filter')) {
       // istanbul ignore next
       if (!item.filter || !validateFilter(item.filter)) {
@@ -1548,7 +1550,7 @@ export const applyFilter = <T extends SimpleNodeConfig>(
     throw new Error(`使用了无效的过滤器 ${filter}`);
   }
 
-  let nodes: ReadonlyArray<T> = nodeList.filter(item => {
+  let nodes: ReadonlyArray<T> = nodeList.filter((item) => {
     const result = item.enable !== false;
 
     if (filter && typeof filter === 'function') {
@@ -1574,7 +1576,7 @@ export const lowercaseHeaderKeys = (
 ): Record<string, string> => {
   const wsHeaders = {};
 
-  Object.keys(headers).forEach(key => {
+  Object.keys(headers).forEach((key) => {
     wsHeaders[key.toLowerCase()] = headers[key];
   });
 

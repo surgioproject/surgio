@@ -1,7 +1,12 @@
 import _ from 'lodash';
 
 import flag, { TAIWAN } from '../misc/flag_cn';
-import { NodeNameFilterType, NodeTypeEnum, SimpleNodeConfig, SortedNodeNameFilterType } from '../types';
+import {
+  NodeNameFilterType,
+  NodeTypeEnum,
+  SimpleNodeConfig,
+  SortedNodeNameFilterType,
+} from '../types';
 
 // tslint:disable-next-line:max-classes-per-file
 export class SortFilterWithSortedFilters implements SortedNodeNameFilterType {
@@ -11,14 +16,16 @@ export class SortFilterWithSortedFilters implements SortedNodeNameFilterType {
     this.filter.bind(this);
   }
 
-  public filter<T>(nodeList: ReadonlyArray<T & SimpleNodeConfig>): ReadonlyArray<T & SimpleNodeConfig> {
+  public filter<T>(
+    nodeList: ReadonlyArray<T & SimpleNodeConfig>,
+  ): ReadonlyArray<T & SimpleNodeConfig> {
     const result: (T & SimpleNodeConfig)[] = [];
 
-    this._filters.forEach(filter => {
+    this._filters.forEach((filter) => {
       result.push(...nodeList.filter(filter));
     });
 
-    return _.uniqBy(result, node => node.nodeName);
+    return _.uniqBy(result, (node) => node.nodeName);
   }
 }
 
@@ -30,14 +37,18 @@ export class SortFilterWithSortedKeywords implements SortedNodeNameFilterType {
     this.filter.bind(this);
   }
 
-  public filter<T>(nodeList: ReadonlyArray<T & SimpleNodeConfig>): ReadonlyArray<T & SimpleNodeConfig> {
+  public filter<T>(
+    nodeList: ReadonlyArray<T & SimpleNodeConfig>,
+  ): ReadonlyArray<T & SimpleNodeConfig> {
     const result: (T & SimpleNodeConfig)[] = [];
 
-    this._keywords.forEach(keyword => {
-      result.push(...nodeList.filter(node => node.nodeName.includes(keyword)));
+    this._keywords.forEach((keyword) => {
+      result.push(
+        ...nodeList.filter((node) => node.nodeName.includes(keyword)),
+      );
     });
 
-    return _.uniqBy(result, node => node.nodeName);
+    return _.uniqBy(result, (node) => node.nodeName);
   }
 }
 
@@ -48,11 +59,18 @@ export const validateFilter = (filter: any): boolean => {
   if (typeof filter === 'function') {
     return true;
   }
-  return typeof filter === 'object' && filter.supportSort && typeof filter.filter === 'function';
+  return (
+    typeof filter === 'object' &&
+    filter.supportSort &&
+    typeof filter.filter === 'function'
+  );
 };
 
-export const mergeFilters = (filters: ReadonlyArray<NodeNameFilterType>, isStrict?: boolean): NodeNameFilterType => {
-  filters.forEach(filter => {
+export const mergeFilters = (
+  filters: ReadonlyArray<NodeNameFilterType>,
+  isStrict?: boolean,
+): NodeNameFilterType => {
+  filters.forEach((filter) => {
     if (filter.hasOwnProperty('supportSort') && (filter as any).supportSort) {
       throw new Error('mergeFilters 不支持包含排序功能的过滤器');
     }
@@ -64,26 +82,38 @@ export const mergeFilters = (filters: ReadonlyArray<NodeNameFilterType>, isStric
   });
 
   return (item: SimpleNodeConfig) => {
-    return filters[isStrict ? 'every' : 'some'](filter => filter(item));
+    return filters[isStrict ? 'every' : 'some']((filter) => filter(item));
   };
 };
 
-export const useKeywords = (keywords: ReadonlyArray<string>, isStrict?: boolean): NodeNameFilterType => {
+export const useKeywords = (
+  keywords: ReadonlyArray<string>,
+  isStrict?: boolean,
+): NodeNameFilterType => {
   // istanbul ignore next
   if (!Array.isArray(keywords)) {
     throw new Error('keywords 请使用数组');
   }
 
-  return item => keywords[isStrict ? 'every' : 'some'](keyword => item.nodeName.includes(keyword));
+  return (item) =>
+    keywords[isStrict ? 'every' : 'some']((keyword) =>
+      item.nodeName.includes(keyword),
+    );
 };
 
-export const discardKeywords = (keywords: ReadonlyArray<string>, isStrict?: boolean): NodeNameFilterType => {
+export const discardKeywords = (
+  keywords: ReadonlyArray<string>,
+  isStrict?: boolean,
+): NodeNameFilterType => {
   // istanbul ignore next
   if (!Array.isArray(keywords)) {
     throw new Error('keywords 请使用数组');
   }
 
-  return item => !keywords[isStrict ? 'every' : 'some'](keyword => item.nodeName.includes(keyword));
+  return (item) =>
+    !keywords[isStrict ? 'every' : 'some']((keyword) =>
+      item.nodeName.includes(keyword),
+    );
 };
 
 export const useRegexp = (regexp: RegExp): NodeNameFilterType => {
@@ -92,28 +122,46 @@ export const useRegexp = (regexp: RegExp): NodeNameFilterType => {
     throw new Error('入参不是一个合法的正则表达式');
   }
 
-  return item => regexp.test(item.nodeName);
+  return (item) => regexp.test(item.nodeName);
 };
 
-export const useProviders = (keywords: ReadonlyArray<string>, isStrict = true): NodeNameFilterType => {
+export const useProviders = (
+  keywords: ReadonlyArray<string>,
+  isStrict = true,
+): NodeNameFilterType => {
   // istanbul ignore next
   if (!Array.isArray(keywords)) {
     throw new Error('keywords 请使用数组');
   }
 
-  return item => keywords.some(keyword => isStrict ? item?.provider?.name === keyword : item?.provider?.name.includes(keyword));
+  return (item) =>
+    keywords.some((keyword) =>
+      isStrict
+        ? item?.provider?.name === keyword
+        : item?.provider?.name.includes(keyword),
+    );
 };
 
-export const discardProviders = (keywords: ReadonlyArray<string>, isStrict = true): NodeNameFilterType => {
+export const discardProviders = (
+  keywords: ReadonlyArray<string>,
+  isStrict = true,
+): NodeNameFilterType => {
   // istanbul ignore next
   if (!Array.isArray(keywords)) {
     throw new Error('keywords 请使用数组');
   }
 
-  return item => !keywords.some(keyword => isStrict ? item?.provider?.name === keyword : item?.provider?.name.includes(keyword));
+  return (item) =>
+    !keywords.some((keyword) =>
+      isStrict
+        ? item?.provider?.name === keyword
+        : item?.provider?.name.includes(keyword),
+    );
 };
 
-export const useSortedKeywords = (keywords: ReadonlyArray<string>): SortedNodeNameFilterType => {
+export const useSortedKeywords = (
+  keywords: ReadonlyArray<string>,
+): SortedNodeNameFilterType => {
   // istanbul ignore next
   if (!Array.isArray(keywords)) {
     throw new Error('keywords 请使用数组');
@@ -122,8 +170,10 @@ export const useSortedKeywords = (keywords: ReadonlyArray<string>): SortedNodeNa
   return new SortFilterWithSortedKeywords(keywords);
 };
 
-export const mergeSortedFilters = (filters: ReadonlyArray<NodeNameFilterType>): SortedNodeNameFilterType => {
-  filters.forEach(filter => {
+export const mergeSortedFilters = (
+  filters: ReadonlyArray<NodeNameFilterType>,
+): SortedNodeNameFilterType => {
+  filters.forEach((filter) => {
     if (filter.hasOwnProperty('supportSort') && (filter as any).supportSort) {
       throw new Error('mergeSortedFilters 不支持包含排序功能的过滤器');
     }
@@ -137,54 +187,49 @@ export const mergeSortedFilters = (filters: ReadonlyArray<NodeNameFilterType>): 
   return new SortFilterWithSortedFilters(filters);
 };
 
-export const netflixFilter: NodeNameFilterType = item => {
-  return [
-    'netflix',
-    'nf',
-    'hkbn',
-    'hkt',
-    'hgc',
-    'nbu',
-  ].some(key => item.nodeName.toLowerCase().includes(key));
+export const netflixFilter: NodeNameFilterType = (item) => {
+  return ['netflix', 'nf', 'hkbn', 'hkt', 'hgc', 'nbu'].some((key) =>
+    item.nodeName.toLowerCase().includes(key),
+  );
 };
 
-export const usFilter: NodeNameFilterType = item => {
-  return [
-    '🇺🇸', ...flag['🇺🇸']
-  ].some(key => item.nodeName.toUpperCase().includes(key));
+export const usFilter: NodeNameFilterType = (item) => {
+  return ['🇺🇸', ...flag['🇺🇸']].some((key) =>
+    item.nodeName.toUpperCase().includes(key),
+  );
 };
 
-export const hkFilter: NodeNameFilterType = item => {
-  return [
-    '🇭🇰', ...flag['🇭🇰']
-  ].some(key => item.nodeName.toUpperCase().includes(key));
+export const hkFilter: NodeNameFilterType = (item) => {
+  return ['🇭🇰', ...flag['🇭🇰']].some((key) =>
+    item.nodeName.toUpperCase().includes(key),
+  );
 };
 
-export const japanFilter: NodeNameFilterType = item => {
-  return [
-    '🇯🇵', ...flag['🇯🇵'],
-  ].some(key => item.nodeName.toUpperCase().includes(key));
+export const japanFilter: NodeNameFilterType = (item) => {
+  return ['🇯🇵', ...flag['🇯🇵']].some((key) =>
+    item.nodeName.toUpperCase().includes(key),
+  );
 };
 
-export const koreaFilter: NodeNameFilterType = item => {
-  return [
-    '🇰🇷', ...flag['🇰🇷']
-  ].some(key => item.nodeName.toUpperCase().includes(key));
+export const koreaFilter: NodeNameFilterType = (item) => {
+  return ['🇰🇷', ...flag['🇰🇷']].some((key) =>
+    item.nodeName.toUpperCase().includes(key),
+  );
 };
 
-export const singaporeFilter: NodeNameFilterType = item => {
-  return [
-    '🇸🇬', ...flag['🇸🇬']
-  ].some(key => item.nodeName.toUpperCase().includes(key));
+export const singaporeFilter: NodeNameFilterType = (item) => {
+  return ['🇸🇬', ...flag['🇸🇬']].some((key) =>
+    item.nodeName.toUpperCase().includes(key),
+  );
 };
 
-export const taiwanFilter: NodeNameFilterType = item => {
-  return [
-    '🇹🇼', ...TAIWAN
-  ].some(key => item.nodeName.toUpperCase().includes(key));
+export const taiwanFilter: NodeNameFilterType = (item) => {
+  return ['🇹🇼', ...TAIWAN].some((key) =>
+    item.nodeName.toUpperCase().includes(key),
+  );
 };
 
-export const chinaBackFilter: NodeNameFilterType = item => {
+export const chinaBackFilter: NodeNameFilterType = (item) => {
   return [
     '回国',
     'Back',
@@ -197,30 +242,46 @@ export const chinaBackFilter: NodeNameFilterType = item => {
     '硅谷上海',
     '东京上海',
     'GCX',
-  ].some(key => item.nodeName.includes(key));
+  ].some((key) => item.nodeName.includes(key));
 };
 
-export const chinaOutFilter: NodeNameFilterType = item => {
+export const chinaOutFilter: NodeNameFilterType = (item) => {
   return !chinaBackFilter(item);
-}
+};
 
-export const youtubePremiumFilter: NodeNameFilterType = mergeFilters([usFilter, japanFilter, koreaFilter, hkFilter, singaporeFilter, taiwanFilter]);
+export const youtubePremiumFilter: NodeNameFilterType = mergeFilters([
+  usFilter,
+  japanFilter,
+  koreaFilter,
+  hkFilter,
+  singaporeFilter,
+  taiwanFilter,
+]);
 
 // istanbul ignore next
-export const shadowsocksFilter: NodeNameFilterType = item => item.type === NodeTypeEnum.Shadowsocks;
+export const shadowsocksFilter: NodeNameFilterType = (item) =>
+  item.type === NodeTypeEnum.Shadowsocks;
 // istanbul ignore next
-export const shadowsocksrFilter: NodeNameFilterType = item => item.type === NodeTypeEnum.Shadowsocksr;
+export const shadowsocksrFilter: NodeNameFilterType = (item) =>
+  item.type === NodeTypeEnum.Shadowsocksr;
 // istanbul ignore next
-export const vmessFilter: NodeNameFilterType = item => item.type === NodeTypeEnum.Vmess;
+export const vmessFilter: NodeNameFilterType = (item) =>
+  item.type === NodeTypeEnum.Vmess;
 // istanbul ignore next
-export const v2rayFilter: NodeNameFilterType = item => item.type === NodeTypeEnum.Vmess;
+export const v2rayFilter: NodeNameFilterType = (item) =>
+  item.type === NodeTypeEnum.Vmess;
 // istanbul ignore next
-export const snellFilter: NodeNameFilterType = item => item.type === NodeTypeEnum.Snell;
+export const snellFilter: NodeNameFilterType = (item) =>
+  item.type === NodeTypeEnum.Snell;
 // istanbul ignore next
-export const httpFilter: NodeNameFilterType = item => item.type === NodeTypeEnum.HTTP;
+export const httpFilter: NodeNameFilterType = (item) =>
+  item.type === NodeTypeEnum.HTTP;
 // istanbul ignore next
-export const httpsFilter: NodeNameFilterType = item => item.type === NodeTypeEnum.HTTPS;
+export const httpsFilter: NodeNameFilterType = (item) =>
+  item.type === NodeTypeEnum.HTTPS;
 // istanbul ignore next
-export const trojanFilter: NodeNameFilterType = item => item.type === NodeTypeEnum.Trojan;
+export const trojanFilter: NodeNameFilterType = (item) =>
+  item.type === NodeTypeEnum.Trojan;
 // istanbul ignore next
-export const socks5Filter: NodeNameFilterType = item => item.type === NodeTypeEnum.Socks5;
+export const socks5Filter: NodeNameFilterType = (item) =>
+  item.type === NodeTypeEnum.Socks5;

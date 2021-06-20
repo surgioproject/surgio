@@ -2,16 +2,25 @@ import Joi from '@hapi/joi';
 import { createLogger } from '@surgio/logger';
 import assert from 'assert';
 
-import { ShadowsocksrNodeConfig, ShadowsocksrSubscribeProviderConfig, SubscriptionUserinfo } from '../types';
+import {
+  ShadowsocksrNodeConfig,
+  ShadowsocksrSubscribeProviderConfig,
+  SubscriptionUserinfo,
+} from '../types';
 import { fromBase64 } from '../utils';
 import httpClient from '../utils/http-client';
 import relayableUrl from '../utils/relayable-url';
-import { parseSubscriptionNode, parseSubscriptionUserInfo } from '../utils/subscription';
+import {
+  parseSubscriptionNode,
+  parseSubscriptionUserInfo,
+} from '../utils/subscription';
 import { SubsciptionCacheItem, SubscriptionCache } from '../utils/cache';
 import { parseSSRUri } from '../utils/ssr';
 import Provider from './Provider';
 
-const logger = createLogger({ service: 'surgio:ShadowsocksrSubscribeProvider' });
+const logger = createLogger({
+  service: 'surgio:ShadowsocksrSubscribeProvider',
+});
 
 export default class ShadowsocksrSubscribeProvider extends Provider {
   public readonly udpRelay?: boolean;
@@ -21,17 +30,13 @@ export default class ShadowsocksrSubscribeProvider extends Provider {
     super(name, config);
 
     const schema = Joi.object({
-      url: Joi
-        .string()
+      url: Joi.string()
         .uri({
-          scheme: [
-            /https?/,
-          ],
+          scheme: [/https?/],
         })
         .required(),
       udpRelay: Joi.boolean().strict(),
-    })
-      .unknown();
+    }).unknown();
 
     const { error } = schema.validate(config);
 
@@ -50,8 +55,13 @@ export default class ShadowsocksrSubscribeProvider extends Provider {
     return relayableUrl(this._url, this.relayUrl);
   }
 
-  public async getSubscriptionUserInfo(): Promise<SubscriptionUserinfo|undefined> {
-    const { subscriptionUserinfo } = await getShadowsocksrSubscription(this.url, this.udpRelay);
+  public async getSubscriptionUserInfo(): Promise<
+    SubscriptionUserinfo | undefined
+  > {
+    const { subscriptionUserinfo } = await getShadowsocksrSubscription(
+      this.url,
+      this.udpRelay,
+    );
 
     if (subscriptionUserinfo) {
       return subscriptionUserinfo;
@@ -60,7 +70,10 @@ export default class ShadowsocksrSubscribeProvider extends Provider {
   }
 
   public async getNodeList(): Promise<ReadonlyArray<ShadowsocksrNodeConfig>> {
-    const { nodeList } = await getShadowsocksrSubscription(this.url, this.udpRelay);
+    const { nodeList } = await getShadowsocksrSubscription(
+      this.url,
+      this.udpRelay,
+    );
 
     return nodeList;
   }
@@ -76,9 +89,8 @@ export const getShadowsocksrSubscription = async (
   assert(url, '未指定订阅地址 url');
 
   const response = SubscriptionCache.has(url)
-    ? SubscriptionCache.get(url) as SubsciptionCacheItem
-    : await (
-      async () => {
+    ? (SubscriptionCache.get(url) as SubsciptionCacheItem)
+    : await (async () => {
         const res = await httpClient.get(url);
         const subsciptionCacheItem: SubsciptionCacheItem = {
           body: res.body,
@@ -86,26 +98,25 @@ export const getShadowsocksrSubscription = async (
 
         if (res.headers['subscription-userinfo']) {
           subsciptionCacheItem.subscriptionUserinfo = parseSubscriptionUserInfo(
-            res.headers['subscription-userinfo'] as string
+            res.headers['subscription-userinfo'] as string,
           );
           logger.debug(
             '%s received subscription userinfo - raw: %s | parsed: %j',
             url,
             res.headers['subscription-userinfo'],
-            subsciptionCacheItem.subscriptionUserinfo
+            subsciptionCacheItem.subscriptionUserinfo,
           );
         }
 
         SubscriptionCache.set(url, subsciptionCacheItem);
 
         return subsciptionCacheItem;
-      }
-    )();
+      })();
 
   const nodeList = fromBase64(response.body)
     .split('\n')
-    .filter(item => !!item && item.startsWith('ssr://'))
-    .map<ShadowsocksrNodeConfig>(str => {
+    .filter((item) => !!item && item.startsWith('ssr://'))
+    .map<ShadowsocksrNodeConfig>((str) => {
       const nodeConfig = parseSSRUri(str);
 
       if (udpRelay !== void 0) {
@@ -121,13 +132,16 @@ export const getShadowsocksrSubscription = async (
   ) {
     const dataNode = nodeList[0];
     const expireNode = nodeList[1];
-    response.subscriptionUserinfo = parseSubscriptionNode(dataNode.nodeName, expireNode.nodeName);
+    response.subscriptionUserinfo = parseSubscriptionNode(
+      dataNode.nodeName,
+      expireNode.nodeName,
+    );
     logger.debug(
       '%s received subscription node - raw: %s %s | parsed: %j',
       url,
       dataNode.nodeName,
       expireNode.nodeName,
-      response.subscriptionUserinfo
+      response.subscriptionUserinfo,
     );
   }
 
@@ -136,4 +150,3 @@ export const getShadowsocksrSubscription = async (
     subscriptionUserinfo: response.subscriptionUserinfo,
   };
 };
-

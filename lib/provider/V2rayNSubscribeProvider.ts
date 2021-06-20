@@ -1,8 +1,12 @@
 import Joi from '@hapi/joi';
 import { logger } from '@surgio/logger';
-import assert from "assert";
+import assert from 'assert';
 
-import { NodeTypeEnum, V2rayNSubscribeProviderConfig, VmessNodeConfig } from '../types';
+import {
+  NodeTypeEnum,
+  V2rayNSubscribeProviderConfig,
+  VmessNodeConfig,
+} from '../types';
 import { fromBase64 } from '../utils';
 import { ConfigCache } from '../utils/cache';
 import httpClient from '../utils/http-client';
@@ -21,20 +25,16 @@ export default class V2rayNSubscribeProvider extends Provider {
     super(name, config);
 
     const schema = Joi.object({
-      url: Joi
-        .string()
+      url: Joi.string()
         .uri({
-          scheme: [
-            /https?/,
-          ],
+          scheme: [/https?/],
         })
         .required(),
       udpRelay: Joi.bool().strict(),
       tls13: Joi.bool().strict(),
       compatibleMode: Joi.bool().strict(),
       skipCertVerify: Joi.bool().strict(),
-    })
-      .unknown();
+    }).unknown();
 
     const { error } = schema.validate(config);
 
@@ -56,7 +56,13 @@ export default class V2rayNSubscribeProvider extends Provider {
   }
 
   public getNodeList(): ReturnType<typeof getV2rayNSubscription> {
-    return getV2rayNSubscription(this.url, this.compatibleMode, this.skipCertVerify, this.udpRelay, this.tls13);
+    return getV2rayNSubscription(
+      this.url,
+      this.compatibleMode,
+      this.skipCertVerify,
+      this.udpRelay,
+      this.tls13,
+    );
   }
 }
 
@@ -72,20 +78,27 @@ export const getV2rayNSubscription = async (
 ): Promise<ReadonlyArray<VmessNodeConfig>> => {
   assert(url, '未指定订阅地址 url');
 
-  if (isCompatibleMode) { logger.warn('运行在兼容模式，请注意生成的节点是否正确。'); }
+  if (isCompatibleMode) {
+    logger.warn('运行在兼容模式，请注意生成的节点是否正确。');
+  }
 
-  async function requestConfigFromRemote(): Promise<ReadonlyArray<VmessNodeConfig>> {
-    const response = ConfigCache.has(url) ? ConfigCache.get(url) as string : await (async () => {
-      const res = await httpClient.get(url);
+  async function requestConfigFromRemote(): Promise<
+    ReadonlyArray<VmessNodeConfig>
+  > {
+    const response = ConfigCache.has(url)
+      ? (ConfigCache.get(url) as string)
+      : await (async () => {
+          const res = await httpClient.get(url);
 
-      ConfigCache.set(url, res.body);
+          ConfigCache.set(url, res.body);
 
-      return res.body;
-    })();
+          return res.body;
+        })();
 
-    const configList = fromBase64(response).split('\n')
-      .filter(item => !!item)
-      .filter(item => item.startsWith("vmess://"));
+    const configList = fromBase64(response)
+      .split('\n')
+      .filter((item) => !!item)
+      .filter((item) => item.startsWith('vmess://'));
 
     return configList
       .map<VmessNodeConfig | undefined>((item): VmessNodeConfig | undefined => {
@@ -93,11 +106,15 @@ export const getV2rayNSubscription = async (
 
         // istanbul ignore next
         if (!isCompatibleMode && (!json.v || Number(json.v) !== 2)) {
-          throw new Error(`该订阅 ${url} 可能不是一个有效的 V2rayN 订阅。请参考 http://url.royli.dev/Qtrci 进行排查, 或者将解析模式改为兼容模式`);
+          throw new Error(
+            `该订阅 ${url} 可能不是一个有效的 V2rayN 订阅。请参考 http://url.royli.dev/Qtrci 进行排查, 或者将解析模式改为兼容模式`,
+          );
         }
         // istanbul ignore next
         if (['kcp', 'http'].indexOf(json.net) > -1) {
-          logger.warn(`不支持读取 network 类型为 ${json.net} 的 Vmess 节点，节点 ${json.ps} 会被省略`);
+          logger.warn(
+            `不支持读取 network 类型为 ${json.net} 的 Vmess 节点，节点 ${json.ps} 会被省略`,
+          );
           return undefined;
         }
 
@@ -114,10 +131,12 @@ export const getV2rayNSubscription = async (
           host: json.host || '',
           path: json.path || '/',
           'udp-relay': udpRelay === true,
-          ...(json.tls === 'tls' ? {
-            skipCertVerify: skipCertVerify ?? false,
-            tls13: tls13 ?? false,
-          } : null)
+          ...(json.tls === 'tls'
+            ? {
+                skipCertVerify: skipCertVerify ?? false,
+                tls13: tls13 ?? false,
+              }
+            : null),
         };
       })
       .filter((item): item is VmessNodeConfig => !!item);

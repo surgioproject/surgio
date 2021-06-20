@@ -1,5 +1,9 @@
 import Joi from '@hapi/joi';
-import { CustomProviderConfig, NodeTypeEnum, PossibleNodeConfigType } from '../types';
+import {
+  CustomProviderConfig,
+  NodeTypeEnum,
+  PossibleNodeConfigType,
+} from '../types';
 import Provider from './Provider';
 
 export default class CustomProvider extends Provider {
@@ -19,15 +23,12 @@ export default class CustomProvider extends Provider {
       binPath: Joi.string(),
       localPort: Joi.number(),
       underlyingProxy: Joi.string(),
-    })
-      .unknown();
+    }).unknown();
     const schema = Joi.object({
-      nodeList: Joi
-        .array()
+      nodeList: Joi.array()
         .items(nodeSchema)
         .required(),
-    })
-      .unknown();
+    }).unknown();
 
     const { error } = schema.validate(config);
 
@@ -44,7 +45,7 @@ export default class CustomProvider extends Provider {
       'udp-relay': Joi.bool().strict(),
     }).unknown();
 
-    return this.nodeList.map(item => {
+    return this.nodeList.map((item) => {
       const { error } = checkSchema.validate(item);
 
       // istanbul ignore next

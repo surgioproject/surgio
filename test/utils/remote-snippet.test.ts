@@ -41,7 +41,7 @@ test.serial('loadRemoteSnippetList', async (t) => {
       remoteSnippetList[0].main();
     },
     null,
-    '必须为片段指定一个策略'
+    '必须为片段指定一个策略',
   );
 
   t.throws(
@@ -49,7 +49,7 @@ test.serial('loadRemoteSnippetList', async (t) => {
       remoteSnippetList[4].main('PROXY');
     },
     null,
-    'Surgio 片段参数不足，缺少 rule2'
+    'Surgio 片段参数不足，缺少 rule2',
   );
 
   t.throws(
@@ -58,7 +58,7 @@ test.serial('loadRemoteSnippetList', async (t) => {
       remoteSnippetList[4].main(true, false);
     },
     null,
-    'Surgio 片段参数 rule1 不为字符串'
+    'Surgio 片段参数 rule1 不为字符串',
   );
 });
 
@@ -110,46 +110,46 @@ test('addProxyToSurgeRuleSet', (t) => {
   t.is(
     utils.addProxyToSurgeRuleSet(
       'AND,((SRC-IP,192.168.1.110), (DOMAIN, example.com))',
-      'Proxy'
+      'Proxy',
     ),
-    'AND,((SRC-IP,192.168.1.110), (DOMAIN, example.com)),Proxy'
+    'AND,((SRC-IP,192.168.1.110), (DOMAIN, example.com)),Proxy',
   );
   t.is(
     utils.addProxyToSurgeRuleSet('IP-CIDR,192.168.0.0/16,no-resolve', 'Proxy'),
-    'IP-CIDR,192.168.0.0/16,Proxy,no-resolve'
+    'IP-CIDR,192.168.0.0/16,Proxy,no-resolve',
   );
   t.is(
     utils.addProxyToSurgeRuleSet(
       'IP-CIDR6,2a03:2880:f200:c3:face:b00c::177/128,no-resolve',
-      'Proxy'
+      'Proxy',
     ),
-    'IP-CIDR6,2a03:2880:f200:c3:face:b00c::177/128,Proxy,no-resolve'
+    'IP-CIDR6,2a03:2880:f200:c3:face:b00c::177/128,Proxy,no-resolve',
   );
   t.is(
     utils.addProxyToSurgeRuleSet('IP-CIDR,192.168.0.0/16', 'Proxy'),
-    'IP-CIDR,192.168.0.0/16,Proxy'
+    'IP-CIDR,192.168.0.0/16,Proxy',
   );
   t.is(
     utils.addProxyToSurgeRuleSet(
       'IP-CIDR6,2a03:2880:f200:c3:face:b00c::177/128',
-      'Proxy'
+      'Proxy',
     ),
-    'IP-CIDR6,2a03:2880:f200:c3:face:b00c::177/128,Proxy'
+    'IP-CIDR6,2a03:2880:f200:c3:face:b00c::177/128,Proxy',
   );
   t.is(
     utils.addProxyToSurgeRuleSet('GEOIP,US,no-resolve', 'Proxy'),
-    'GEOIP,US,Proxy,no-resolve'
+    'GEOIP,US,Proxy,no-resolve',
   );
   t.is(
     utils.addProxyToSurgeRuleSet('URL-REGEX,^http://google.com', 'Proxy'),
-    'URL-REGEX,^http://google.com,Proxy'
+    'URL-REGEX,^http://google.com,Proxy',
   );
   t.is(
     utils.addProxyToSurgeRuleSet(
       'DOMAIN,www.apple.com # comment comment',
-      'Proxy'
+      'Proxy',
     ),
-    'DOMAIN,www.apple.com,Proxy'
+    'DOMAIN,www.apple.com,Proxy',
   );
 });
 
@@ -161,7 +161,7 @@ test('parseMacro', (t) => {
     `);
     },
     null,
-    '该片段不包含可用的宏'
+    '该片段不包含可用的宏',
   );
   t.throws(
     () => {
@@ -170,7 +170,7 @@ test('parseMacro', (t) => {
     `);
     },
     null,
-    '该片段不包含可用的宏'
+    '该片段不包含可用的宏',
   );
 
   t.throws(
@@ -178,6 +178,6 @@ test('parseMacro', (t) => {
       utils.parseMacro('');
     },
     null,
-    '该片段不包含可用的宏'
+    '该片段不包含可用的宏',
   );
 });

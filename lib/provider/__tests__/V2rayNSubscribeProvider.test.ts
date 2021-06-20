@@ -1,8 +1,10 @@
 import test from 'ava';
 import { NodeTypeEnum, SupportProviderEnum } from '../../types';
-import V2rayNSubscribeProvider, { getV2rayNSubscription } from '../V2rayNSubscribeProvider';
+import V2rayNSubscribeProvider, {
+  getV2rayNSubscription,
+} from '../V2rayNSubscribeProvider';
 
-test('V2rayNSubscribeProvider', async t => {
+test('V2rayNSubscribeProvider', async (t) => {
   const provider = new V2rayNSubscribeProvider('test', {
     type: SupportProviderEnum.V2rayNSubscribe,
     url: 'http://example.com/test-v2rayn-sub.txt',
@@ -13,7 +15,7 @@ test('V2rayNSubscribeProvider', async t => {
   });
 });
 
-test('getV2rayNSubscription', async t => {
+test('getV2rayNSubscription', async (t) => {
   const url = 'http://example.com/test-v2rayn-sub.txt';
   const configList = await getV2rayNSubscription(url, false);
 
@@ -47,7 +49,7 @@ test('getV2rayNSubscription', async t => {
   });
 });
 
-test('getV2rayNSubscription compatible mode', async t => {
+test('getV2rayNSubscription compatible mode', async (t) => {
   const url = 'http://example.com/test-v2rayn-sub-compatible.txt';
   const configList = await getV2rayNSubscription(url, true);
 
@@ -67,7 +69,7 @@ test('getV2rayNSubscription compatible mode', async t => {
   });
 });
 
-test('getV2rayNSubscription udpRelay skipCertVerify', async t => {
+test('getV2rayNSubscription udpRelay skipCertVerify', async (t) => {
   const url = 'http://example.com/test-v2rayn-sub-compatible.txt';
   const configList = await getV2rayNSubscription(url, true, true, true);
 

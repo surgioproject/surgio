@@ -1,9 +1,14 @@
 import Joi from '@hapi/joi';
 import { createLogger } from '@surgio/logger';
-import assert from "assert";
+import assert from 'assert';
 import bytes from 'bytes';
 
-import { NodeTypeEnum, ShadowsocksNodeConfig, SsdProviderConfig, SubscriptionUserinfo } from '../types';
+import {
+  NodeTypeEnum,
+  ShadowsocksNodeConfig,
+  SsdProviderConfig,
+  SubscriptionUserinfo,
+} from '../types';
 import { decodeStringList, fromBase64 } from '../utils';
 import { SubsciptionCacheItem, SubscriptionCache } from '../utils/cache';
 import httpClient from '../utils/http-client';
@@ -23,17 +28,13 @@ export default class SsdProvider extends Provider {
     super(name, config);
 
     const schema = Joi.object({
-      url: Joi
-        .string()
+      url: Joi.string()
         .uri({
-          scheme: [
-            /https?/,
-          ],
+          scheme: [/https?/],
         })
         .required(),
       udpRelay: Joi.boolean().strict(),
-    })
-      .unknown();
+    }).unknown();
 
     const { error } = schema.validate(config);
 
@@ -52,8 +53,13 @@ export default class SsdProvider extends Provider {
     return relayableUrl(this._url, this.relayUrl);
   }
 
-  public async getSubscriptionUserInfo(): Promise<SubscriptionUserinfo|undefined> {
-    const { subscriptionUserinfo } = await getSsdSubscription(this.url, this.udpRelay);
+  public async getSubscriptionUserInfo(): Promise<
+    SubscriptionUserinfo | undefined
+  > {
+    const { subscriptionUserinfo } = await getSsdSubscription(
+      this.url,
+      this.udpRelay,
+    );
 
     if (subscriptionUserinfo) {
       return subscriptionUserinfo;
@@ -79,9 +85,8 @@ export const getSsdSubscription = async (
   assert(url, '未指定订阅地址 url');
 
   const response = SubscriptionCache.has(url)
-    ? SubscriptionCache.get(url) as SubsciptionCacheItem
-    : await (
-      async () => {
+    ? (SubscriptionCache.get(url) as SubsciptionCacheItem)
+    : await (async () => {
         const res = await httpClient.get(url);
         const subsciptionCacheItem: SubsciptionCacheItem = {
           body: res.body,
@@ -89,21 +94,20 @@ export const getSsdSubscription = async (
 
         if (res.headers['subscription-userinfo']) {
           subsciptionCacheItem.subscriptionUserinfo = parseSubscriptionUserInfo(
-            res.headers['subscription-userinfo'] as string
+            res.headers['subscription-userinfo'] as string,
           );
           logger.debug(
             '%s received subscription userinfo - raw: %s | parsed: %j',
             url,
             res.headers['subscription-userinfo'],
-            subsciptionCacheItem.subscriptionUserinfo
+            subsciptionCacheItem.subscriptionUserinfo,
           );
         }
 
         SubscriptionCache.set(url, subsciptionCacheItem);
 
         return subsciptionCacheItem;
-      }
-    )();
+      })();
 
   // istanbul ignore next
   if (!response.body.startsWith('ssd://')) {
@@ -112,18 +116,18 @@ export const getSsdSubscription = async (
 
   const base64 = response.body.replace('ssd://', '');
   const data = JSON.parse(fromBase64(base64)) as SsdSubscription;
-  const {
-    servers,
-    traffic_used,
-    traffic_total,
-    expiry,
-  } = data;
-  const nodeList: ReadonlyArray<ShadowsocksNodeConfig|undefined> = servers
-    .map((server): ShadowsocksNodeConfig|undefined => parseSsdConfig(data, server, udpRelay));
+  const { servers, traffic_used, traffic_total, expiry } = data;
+  const nodeList: ReadonlyArray<
+    ShadowsocksNodeConfig | undefined
+  > = servers.map((server): ShadowsocksNodeConfig | undefined =>
+    parseSsdConfig(data, server, udpRelay),
+  );
 
   if (
     !response.subscriptionUserinfo &&
-    traffic_used && traffic_total && expiry
+    traffic_used &&
+    traffic_total &&
+    expiry
   ) {
     response.subscriptionUserinfo = {
       upload: 0,
@@ -134,7 +138,9 @@ export const getSsdSubscription = async (
   }
 
   return {
-    nodeList: nodeList.filter((item): item is ShadowsocksNodeConfig => item !== undefined),
+    nodeList: nodeList.filter(
+      (item): item is ShadowsocksNodeConfig => item !== undefined,
+    ),
     subscriptionUserinfo: response.subscriptionUserinfo,
   };
 };
@@ -143,31 +149,36 @@ export const parseSsdConfig = (
   globalConfig: SsdSubscription,
   server: SsdServer,
   udpRelay?: boolean,
-): ShadowsocksNodeConfig|undefined => {
-  const {
-    airport,
-    port,
-    encryption,
-    password,
-  } = globalConfig;
+): ShadowsocksNodeConfig | undefined => {
+  const { airport, port, encryption, password } = globalConfig;
   const plugin = server.plugin ?? globalConfig.plugin;
   const pluginOptsString = server.plugin_options ?? globalConfig.plugin_options;
-  const pluginOpts = pluginOptsString ? decodeStringList(pluginOptsString.split(';')) : {}
+  const pluginOpts = pluginOptsString
+    ? decodeStringList(pluginOptsString.split(';'))
+    : {};
 
   // istanbul ignore next
   if (plugin && !['simple-obfs', 'v2ray-plugin'].includes(plugin)) {
-    logger.warn(`不支持从 SSD 订阅中读取 ${plugin} 类型的 Shadowsocks 节点，节点 ${server.remarks} 会被省略`);
+    logger.warn(
+      `不支持从 SSD 订阅中读取 ${plugin} 类型的 Shadowsocks 节点，节点 ${server.remarks} 会被省略`,
+    );
     return void 0;
   }
   // istanbul ignore next
-  if (plugin === 'v2ray-plugin' && (pluginOpts.mode as string).toLowerCase() === 'quic') {
-    logger.warn(`不支持从 SSD 订阅中读取 QUIC 模式的 Shadowsocks 节点，节点 ${server.remarks} 会被省略`);
+  if (
+    plugin === 'v2ray-plugin' &&
+    (pluginOpts.mode as string).toLowerCase() === 'quic'
+  ) {
+    logger.warn(
+      `不支持从 SSD 订阅中读取 QUIC 模式的 Shadowsocks 节点，节点 ${server.remarks} 会被省略`,
+    );
     return void 0;
   }
 
   return {
     type: NodeTypeEnum.Shadowsocks,
-    nodeName: server.remarks ?? `${airport} ${server.server}:${server.port ?? port}`,
+    nodeName:
+      server.remarks ?? `${airport} ${server.server}:${server.port ?? port}`,
     hostname: server.server,
     port: server.port ?? port,
     method: server.encryption ?? encryption,
@@ -175,16 +186,20 @@ export const parseSsdConfig = (
     'udp-relay': udpRelay === true,
 
     // obfs-local
-    ...(plugin && plugin === 'simple-obfs' ? {
-      obfs: pluginOpts.obfs as ShadowsocksNodeConfig['obfs'],
-      'obfs-host': pluginOpts['obfs-host'] as string || 'www.bing.com',
-    } : null),
+    ...(plugin && plugin === 'simple-obfs'
+      ? {
+          obfs: pluginOpts.obfs as ShadowsocksNodeConfig['obfs'],
+          'obfs-host': (pluginOpts['obfs-host'] as string) || 'www.bing.com',
+        }
+      : null),
 
     // v2ray-plugin
-    ...(plugin && plugin === 'v2ray-plugin' ? {
-      obfs: pluginOpts.tls as boolean ? 'wss' : 'ws',
-      'obfs-host': pluginOpts.host as string,
-    } : null),
+    ...(plugin && plugin === 'v2ray-plugin'
+      ? {
+          obfs: (pluginOpts.tls as boolean) ? 'wss' : 'ws',
+          'obfs-host': pluginOpts.host as string,
+        }
+      : null),
   };
 };
 

@@ -13,7 +13,7 @@ import {
 const templateEngine = getEngine(process.cwd());
 const assetDir = join(__dirname, '../../../test/asset/');
 
-test('clash #1', t => {
+test('clash #1', (t) => {
   const body = `{{ str | clash }}`;
   const str = `IP-CIDR,67.198.55.0/24,Proxy,no-resolve`;
   const result = templateEngine.renderString(body, {
@@ -23,7 +23,7 @@ test('clash #1', t => {
   t.is(result, `- IP-CIDR,67.198.55.0/24,Proxy,no-resolve`);
 });
 
-test('clash #2', t => {
+test('clash #2', (t) => {
   const body = `{{ str | clash }}`;
   const str = `IP-CIDR,67.198.55.0/24,Proxy,no-resolve // test rule`;
   const result = templateEngine.renderString(body, {
@@ -33,7 +33,7 @@ test('clash #2', t => {
   t.is(result, `- IP-CIDR,67.198.55.0/24,Proxy,no-resolve`);
 });
 
-test('clash #3', t => {
+test('clash #3', (t) => {
   const body = `{{ str | clash }}`;
   const str = `PROCESS-NAME,Telegram,Proxy,no-resolve // test rule`;
   const result = templateEngine.renderString(body, {
@@ -43,7 +43,7 @@ test('clash #3', t => {
   t.is(result, '- PROCESS-NAME,Telegram,Proxy,no-resolve');
 });
 
-test('clash #4', t => {
+test('clash #4', (t) => {
   const body = `{{ str | clash }}`;
   const str = `# Comment`;
   const result = templateEngine.renderString(body, {
@@ -53,7 +53,7 @@ test('clash #4', t => {
   t.is(result, '# Comment');
 });
 
-test('clash #5', t => {
+test('clash #5', (t) => {
   const body = `{{ str | clash }}`;
   const str = `# Comment`;
   const result = templateEngine.renderString(body, {
@@ -63,7 +63,7 @@ test('clash #5', t => {
   t.is(result, '# Comment');
 });
 
-test('clash #6', t => {
+test('clash #6', (t) => {
   const body = `{{ str | clash }}`;
   const str = `URL-REGEX,xxxxxxxxxxxx`;
   const result = templateEngine.renderString(body, {
@@ -73,14 +73,14 @@ test('clash #6', t => {
   t.is(result, '');
 });
 
-test('clash #7', t => {
+test('clash #7', (t) => {
   const body = `{{ str | clash }}`;
 
   t.is(templateEngine.renderString(body, { str: '# test' }), '# test');
   t.is(templateEngine.renderString(body, { str: '  ' }), '  ');
 });
 
-test('clash #8', t => {
+test('clash #8', (t) => {
   const body = `{{ str | clash }}`;
 
   t.is(
@@ -97,7 +97,7 @@ test('clash #8', t => {
   );
 });
 
-test('clash #9', t => {
+test('clash #9', (t) => {
   const body = `{{ str | clash }}`;
 
   t.is(
@@ -108,7 +108,7 @@ test('clash #9', t => {
   );
 });
 
-test('base64', t => {
+test('base64', (t) => {
   const body = `{{ str | base64 }}`;
   const str = `testtesttesttest`;
 
@@ -119,7 +119,7 @@ test('base64', t => {
   t.is(result, 'dGVzdHRlc3R0ZXN0dGVzdA==');
 });
 
-test('quantumultx filter 1', t => {
+test('quantumultx filter 1', (t) => {
   const body = `{{ str | quantumultx }}`;
 
   t.is(
@@ -136,7 +136,7 @@ test('quantumultx filter 1', t => {
   );
 });
 
-test('quantumultx filter 2', t => {
+test('quantumultx filter 2', (t) => {
   const body = `{{ str | quantumultx }}`;
   const str = fs.readFileSync(join(assetDir, 'surge-script-list.txt'), {
     encoding: 'utf8',
@@ -148,7 +148,7 @@ test('quantumultx filter 2', t => {
   t.snapshot(result);
 });
 
-test('mellow filter 1', t => {
+test('mellow filter 1', (t) => {
   const body = `{{ str | mellow }}`;
   const str = `IP-CIDR,67.198.55.0/24,Proxy,no-resolve // test rule`;
   const result = templateEngine.renderString(body, {
@@ -158,7 +158,7 @@ test('mellow filter 1', t => {
   t.is(result, 'IP-CIDR,67.198.55.0/24,Proxy');
 });
 
-test('mellow filter 2', t => {
+test('mellow filter 2', (t) => {
   const body = `{{ str | mellow }}`;
   const str = `URL-REGEX,xxxxxxxxxxxx`;
   const result = templateEngine.renderString(body, {
@@ -168,7 +168,7 @@ test('mellow filter 2', t => {
   t.is(result, '');
 });
 
-test('mellow filter 3', t => {
+test('mellow filter 3', (t) => {
   const body = `{{ str | mellow }}`;
   const str = `# Comment`;
   const result = templateEngine.renderString(body, {
@@ -178,7 +178,7 @@ test('mellow filter 3', t => {
   t.is(result, '# Comment');
 });
 
-test('loon filter 1', t => {
+test('loon filter 1', (t) => {
   const body = `{{ str | loon }}`;
   const str = `# Comment`;
   const result = templateEngine.renderString(body, {
@@ -188,7 +188,7 @@ test('loon filter 1', t => {
   t.is(result, '# Comment');
 });
 
-test('loon filter 2', t => {
+test('loon filter 2', (t) => {
   const body = `{{ str | loon }}`;
   const str = [
     'IP-CIDR,67.198.55.0/24,Proxy,no-resolve // test rule',
@@ -207,7 +207,7 @@ test('loon filter 2', t => {
   );
 });
 
-test('loon filter 3', t => {
+test('loon filter 3', (t) => {
   const body = `{{ str | loon }}`;
   const str = `IP-CIDR6,xxxxxxxxxxxx`;
   const result = templateEngine.renderString(body, {
@@ -217,7 +217,7 @@ test('loon filter 3', t => {
   t.is(result, '');
 });
 
-test('spaces in string', t => {
+test('spaces in string', (t) => {
   const str = `    `;
 
   t.is(templateEngine.renderString(`{{ str | mellow }}`, { str }), '    ');
@@ -225,7 +225,7 @@ test('spaces in string', t => {
   t.is(templateEngine.renderString(`{{ str | clash }}`, { str }), '    ');
 });
 
-test('ForeignMedia', t => {
+test('ForeignMedia', (t) => {
   const str = fs.readFileSync(join(assetDir, 'ForeignMedia.list'), {
     encoding: 'utf8',
   });
@@ -247,7 +247,7 @@ test('ForeignMedia', t => {
   );
 });
 
-test('stringify', t => {
+test('stringify', (t) => {
   const obj = {
     foo: 'bar',
   };
@@ -264,7 +264,7 @@ test('stringify', t => {
   );
 });
 
-test('convertSurgeScriptRuleToQuantumultXRewriteRule', t => {
+test('convertSurgeScriptRuleToQuantumultXRewriteRule', (t) => {
   t.is(convertSurgeScriptRuleToQuantumultXRewriteRule(''), '');
   t.is(
     convertSurgeScriptRuleToQuantumultXRewriteRule(
@@ -274,7 +274,7 @@ test('convertSurgeScriptRuleToQuantumultXRewriteRule', t => {
   );
 });
 
-test('convertNewSurgeScriptRuleToQuantumultXRewriteRule', t => {
+test('convertNewSurgeScriptRuleToQuantumultXRewriteRule', (t) => {
   t.is(convertNewSurgeScriptRuleToQuantumultXRewriteRule(''), '');
   t.is(
     convertNewSurgeScriptRuleToQuantumultXRewriteRule(
@@ -314,6 +314,6 @@ test('convertNewSurgeScriptRuleToQuantumultXRewriteRule', t => {
   );
 });
 
-test('loadLocalSnippet', async t => {
+test('loadLocalSnippet', async (t) => {
   t.snapshot(loadLocalSnippet(__dirname, './snippet.tpl').main('Proxy'));
 });

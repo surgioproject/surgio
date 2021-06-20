@@ -30,7 +30,7 @@ export function getEngine(templateDir: string): nunjucks.Environment {
     const array = str.split('\n');
 
     return array
-      .map(item => {
+      .map((item) => {
         const testString: string =
           !!item && item.trim() !== '' ? item.toUpperCase() : '';
 
@@ -40,14 +40,14 @@ export function getEngine(templateDir: string): nunjucks.Environment {
 
         const matched = testString.match(/^([\w-]+),/);
 
-        if (matched && CLASH_SUPPORTED_RULE.some(s => matched[1] === s)) {
+        if (matched && CLASH_SUPPORTED_RULE.some((s) => matched[1] === s)) {
           // 过滤出支持的规则类型
           return `- ${item}`.replace(/\/\/.*$/, '').trim();
         }
 
         return null;
       })
-      .filter(item => !!item)
+      .filter((item) => !!item)
       .join('\n');
   };
 
@@ -63,7 +63,7 @@ export function getEngine(templateDir: string): nunjucks.Environment {
     const array = str.split('\n');
 
     return array
-      .map(item => {
+      .map((item) => {
         const testString: string =
           !!item && item.trim() !== '' ? item.toUpperCase() : '';
 
@@ -89,7 +89,7 @@ export function getEngine(templateDir: string): nunjucks.Environment {
 
         if (
           matched &&
-          QUANTUMULT_X_SUPPORTED_RULE.some(s => matched[1] === s)
+          QUANTUMULT_X_SUPPORTED_RULE.some((s) => matched[1] === s)
         ) {
           if (matched[1] === 'IP-CIDR6') {
             return item.replace(/IP-CIDR6/i, 'IP6-CIDR');
@@ -101,7 +101,7 @@ export function getEngine(templateDir: string): nunjucks.Environment {
 
         return null;
       })
-      .filter(item => !!item)
+      .filter((item) => !!item)
       .join('\n');
   });
 
@@ -114,11 +114,11 @@ export function getEngine(templateDir: string): nunjucks.Environment {
     const array = str.split('\n');
 
     return array
-      .filter(item => {
+      .filter((item) => {
         const testString: string =
           !!item && item.trim() !== '' ? item.toUpperCase() : '';
 
-        return MELLOW_UNSUPPORTED_RULE.every(s => !testString.startsWith(s));
+        return MELLOW_UNSUPPORTED_RULE.every((s) => !testString.startsWith(s));
       })
       .map((item: string) => {
         if (item.startsWith('#') || str.trim() === '') {
@@ -141,7 +141,7 @@ export function getEngine(templateDir: string): nunjucks.Environment {
     const array = str.split('\n');
 
     return array
-      .map(item => {
+      .map((item) => {
         const testString: string =
           !!item && item.trim() !== '' ? item.toUpperCase() : '';
 
@@ -151,14 +151,14 @@ export function getEngine(templateDir: string): nunjucks.Environment {
 
         const matched = testString.match(/^([\w-]+),/);
 
-        if (matched && LOON_SUPPORTED_RULE.some(s => matched[1] === s)) {
+        if (matched && LOON_SUPPORTED_RULE.some((s) => matched[1] === s)) {
           // 过滤出支持的规则类型
           return `${item}`.replace(/\/\/.*$/, '').trim();
         }
 
         return null;
       })
-      .filter(item => !!item)
+      .filter((item) => !!item)
       .join('\n');
   });
 

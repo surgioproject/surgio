@@ -12,17 +12,13 @@ export default class ShadowsocksJsonSubscribeProvider extends Provider {
     super(name, config);
 
     const schema = Joi.object({
-      url: Joi
-        .string()
+      url: Joi.string()
         .uri({
-          scheme: [
-            /https?/,
-          ],
+          scheme: [/https?/],
         })
         .required(),
       udpRelay: Joi.boolean().strict(),
-    })
-      .unknown();
+    }).unknown();
 
     const { error } = schema.validate(config);
 

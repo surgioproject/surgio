@@ -43,11 +43,11 @@ class CheckCommand extends Command {
         type: 'list',
         name: 'node',
         message: '请选择节点',
-        choices: nodeList.map(node => ({
+        choices: nodeList.map((node) => ({
           name: `${node.nodeName} - ${node.hostname}:${node.port}`,
           value: node,
         })),
-      }
+      },
     ]);
 
     console.log(JSON.stringify(answers.node, null, 2));
@@ -69,15 +69,20 @@ class CheckCommand extends Command {
     }>([
       {
         title: '获取 Provider 信息',
-        task: async ctx => {
+        task: async (ctx) => {
           const { cmdCtx } = ctx;
 
           assert(cmdCtx.argv._[0], '没有指定 Provider');
 
           const providerName = cmdCtx.argv._[0];
           const config = loadConfig(cmdCtx.cwd, cmdCtx.argv.config);
-          const filePath = path.resolve(config.providerDir, `./${providerName}.js`);
-          const file: any|Error = fs.existsSync(filePath) ? require(filePath) : new Error('找不到该 Provider');
+          const filePath = path.resolve(
+            config.providerDir,
+            `./${providerName}.js`,
+          );
+          const file: any | Error = fs.existsSync(filePath)
+            ? require(filePath)
+            : new Error('找不到该 Provider');
 
           if (file instanceof Error) {
             throw file;

@@ -34,9 +34,11 @@ class GenerateCommand extends Command {
 
   public async run(ctx): Promise<void> {
     const config = loadConfig(ctx.cwd, ctx.argv.config, {
-      ...(ctx.argv.output ? {
-        output: path.resolve(ctx.cwd, ctx.argv.output),
-      } : null)
+      ...(ctx.argv.output
+        ? {
+            output: path.resolve(ctx.cwd, ctx.argv.output),
+          }
+        : null),
     });
 
     const ossConfig = {
@@ -44,7 +46,8 @@ class GenerateCommand extends Command {
       bucket: config?.upload?.bucket,
       endpoint: config?.upload?.endpoint,
       accessKeyId: ctx.env.OSS_ACCESS_KEY_ID || config?.upload?.accessKeyId,
-      accessKeySecret: ctx.env.OSS_ACCESS_KEY_SECRET || config?.upload?.accessKeySecret,
+      accessKeySecret:
+        ctx.env.OSS_ACCESS_KEY_SECRET || config?.upload?.accessKeySecret,
     };
     const client = new OSS({
       secure: true,
@@ -52,25 +55,27 @@ class GenerateCommand extends Command {
     });
     const prefix = config?.upload?.prefix || '/';
     const fileList = await dir.promiseFiles(config.output);
-    const files = fileList.map(filePath => ({
+    const files = fileList.map((filePath) => ({
       fileName: path.basename(filePath),
       filePath,
     }));
-    const fileNameList = files.map(file => file.fileName);
+    const fileNameList = files.map((file) => file.fileName);
 
     const upload = () => {
-      return Promise.all(files.map(file => {
-        const { fileName, filePath } = file;
-        const objectName = `${prefix}${fileName}`;
-        const readStream = fs.createReadStream(filePath);
+      return Promise.all(
+        files.map((file) => {
+          const { fileName, filePath } = file;
+          const objectName = `${prefix}${fileName}`;
+          const readStream = fs.createReadStream(filePath);
 
-        return client.put(objectName, readStream, {
-          mime: 'text/plain; charset=utf-8',
-          headers: {
-            'Cache-Control': 'private, no-cache, no-store',
-          },
-        });
-      }));
+          return client.put(objectName, readStream, {
+            mime: 'text/plain; charset=utf-8',
+            headers: {
+              'Cache-Control': 'private, no-cache, no-store',
+            },
+          });
+        }),
+      );
     };
     const deleteUnwanted = async () => {
       const list = await client.list({

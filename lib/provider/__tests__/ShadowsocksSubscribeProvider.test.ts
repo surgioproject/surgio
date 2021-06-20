@@ -3,8 +3,11 @@ import test from 'ava';
 import { getShadowsocksSubscription } from '../ShadowsocksSubscribeProvider';
 import { NodeTypeEnum } from '../../types';
 
-test('getShadowsocksSubscription with udp', async t => {
-  const { nodeList } = await getShadowsocksSubscription('http://example.com/test-ss-sub.txt', true);
+test('getShadowsocksSubscription with udp', async (t) => {
+  const { nodeList } = await getShadowsocksSubscription(
+    'http://example.com/test-ss-sub.txt',
+    true,
+  );
 
   t.deepEqual(nodeList[0], {
     type: NodeTypeEnum.Shadowsocks,
@@ -39,8 +42,10 @@ test('getShadowsocksSubscription with udp', async t => {
   });
 });
 
-test('getShadowsocksSubscription without udp', async t => {
-  const { nodeList } = await getShadowsocksSubscription('http://example.com/test-ss-sub.txt');
+test('getShadowsocksSubscription without udp', async (t) => {
+  const { nodeList } = await getShadowsocksSubscription(
+    'http://example.com/test-ss-sub.txt',
+  );
 
   t.deepEqual(nodeList[0], {
     type: NodeTypeEnum.Shadowsocks,

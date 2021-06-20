@@ -64,7 +64,7 @@ export interface TmpContent {
 }
 
 export const createTmpFactory = (
-  baseDir: string
+  baseDir: string,
 ): ((filePath: string, maxAge?: number) => TmpFile) => {
   baseDir = path.join(tmpDir, baseDir);
 

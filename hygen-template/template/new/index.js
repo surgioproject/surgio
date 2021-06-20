@@ -2,13 +2,12 @@
 
 module.exports = {
   prompt: ({ prompter: inquirer }) => {
-    return inquirer
-      .prompt([
-        {
-          type: 'input',
-          name: 'name',
-          message: 'Template 名称',
-        },
-      ]);
-  }
+    return inquirer.prompt([
+      {
+        type: 'input',
+        name: 'name',
+        message: 'Template 名称',
+      },
+    ]);
+  },
 };

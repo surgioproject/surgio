@@ -22,7 +22,7 @@ if (isNow() || isHeroku() || isGitHubActions() || isGitLabCI()) {
 
 export const resolveDomain = async (
   domain: string,
-  timeout: number = NETWORK_RESOLVE_TIMEOUT
+  timeout: number = NETWORK_RESOLVE_TIMEOUT,
 ): Promise<ReadonlyArray<string>> => {
   if (DomainCache.has(domain)) {
     return DomainCache.get(domain) as ReadonlyArray<string>;
@@ -35,9 +35,8 @@ export const resolveDomain = async (
     Bluebird.delay(timeout).then(() => []),
   ]);
   logger.debug(
-    `resolved domain ${domain}: ${JSON.stringify(records)} ${
-      Date.now() - now
-    }ms`
+    `resolved domain ${domain}: ${JSON.stringify(records)} ${Date.now() -
+      now}ms`,
   );
 
   if (records.length) {
@@ -51,7 +50,7 @@ export const resolveDomain = async (
 };
 
 export const resolve4And6 = async (
-  domain: string
+  domain: string,
 ): Promise<ReadonlyArray<RecordWithTtl>> => {
   // istanbul ignore next
   function onErr(): ReadonlyArray<never> {

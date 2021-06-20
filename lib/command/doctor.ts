@@ -28,7 +28,7 @@ class DoctorCommand extends Command {
   public async run(ctx): Promise<void> {
     const doctorInfo = await DoctorCommand.generateDoctorInfo(ctx.cwd);
 
-    doctorInfo.forEach(item => {
+    doctorInfo.forEach((item) => {
       console.log(item);
     });
   }
@@ -43,13 +43,20 @@ class DoctorCommand extends Command {
     errorHandler.call(this, err);
   }
 
-  public static async generateDoctorInfo(cwd: string): Promise<ReadonlyArray<string>> {
+  public static async generateDoctorInfo(
+    cwd: string,
+  ): Promise<ReadonlyArray<string>> {
     const doctorInfo: string[] = [];
     const pkg = require('../../package.json');
-    const checkInfo = isPkgBundle() ? null : await promisify<CheckInfo>(check)();
+    const checkInfo = isPkgBundle()
+      ? null
+      : await promisify<CheckInfo>(check)();
 
     try {
-      const gatewayPkg = require(join(cwd, 'node_modules/@surgio/gateway/package.json'));
+      const gatewayPkg = require(join(
+        cwd,
+        'node_modules/@surgio/gateway/package.json',
+      ));
       doctorInfo.push(`@surgio/gateway: ${gatewayPkg.version}`);
     } catch (_) {
       // no catch
@@ -58,7 +65,7 @@ class DoctorCommand extends Command {
     doctorInfo.push(`surgio: ${pkg.version} (${join(__dirname, '../..')})`);
 
     if (checkInfo) {
-      Object.keys(checkInfo.versions).forEach(key => {
+      Object.keys(checkInfo.versions).forEach((key) => {
         const version = checkInfo.versions[key].version;
         if (version) {
           if (key === 'node') {

@@ -34,21 +34,21 @@ export default class Provider {
         Joi.object({
           filter: Joi.function(),
           supportSort: Joi.boolean().strict(),
-        })
+        }),
       ),
       netflixFilter: Joi.any().allow(
         Joi.function(),
         Joi.object({
           filter: Joi.function(),
           supportSort: Joi.boolean().strict(),
-        })
+        }),
       ),
       youtubePremiumFilter: Joi.any().allow(
         Joi.function(),
         Joi.object({
           filter: Joi.function(),
           supportSort: Joi.boolean().strict(),
-        })
+        }),
       ),
       customFilters: Joi.object().pattern(
         Joi.string(),
@@ -57,14 +57,17 @@ export default class Provider {
           Joi.object({
             filter: Joi.function(),
             supportSort: Joi.boolean().strict(),
-          })
-        )
+          }),
+        ),
       ),
       addFlag: Joi.boolean().strict(),
       removeExistingFlag: Joi.boolean().strict(),
       mptcp: Joi.boolean().strict(),
       tfo: Joi.boolean().strict(),
-      startPort: Joi.number().integer().min(1024).max(65535),
+      startPort: Joi.number()
+        .integer()
+        .min(1024)
+        .max(65535),
       relayUrl: [Joi.boolean().strict(), Joi.string()],
       renameNode: Joi.function(),
     }).unknown();

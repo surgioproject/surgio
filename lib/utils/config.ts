@@ -17,7 +17,7 @@ const showDEP006 = deprecate(_.noop, DEP006, 'DEP006');
 export const loadConfig = (
   cwd: string,
   configPath: string,
-  override?: Partial<CommandConfig>
+  override?: Partial<CommandConfig>,
 ): CommandConfig => {
   const absPath = path.resolve(cwd, configPath);
 
@@ -40,7 +40,7 @@ export const loadConfig = (
           (userConfig.flags[emoji] as ReadonlyArray<string | RegExp>).forEach(
             (name) => {
               addFlagMap(name, emoji);
-            }
+            },
           );
         }
       }
@@ -59,7 +59,7 @@ export const loadConfig = (
 
 export const normalizeConfig = (
   cwd: string,
-  userConfig: Partial<CommandConfig>
+  userConfig: Partial<CommandConfig>,
 ): CommandConfig => {
   const defaultConfig: Partial<CommandConfig> = {
     artifacts: [],
@@ -137,7 +137,9 @@ export const validateConfig = (userConfig: Partial<CommandConfig>): void => {
     surgioSnippet: Joi.boolean().strict(),
   });
   const schema = Joi.object({
-    artifacts: Joi.array().items(artifactSchema).required(),
+    artifacts: Joi.array()
+      .items(artifactSchema)
+      .required(),
     remoteSnippets: Joi.array().items(remoteSnippetSchema),
     urlBase: Joi.string(),
     upload: Joi.object({
@@ -185,8 +187,8 @@ export const validateConfig = (userConfig: Partial<CommandConfig>): void => {
         Joi.object({
           filter: Joi.function(),
           supportSort: Joi.boolean().strict(),
-        })
-      )
+        }),
+      ),
     ),
     customParams: Joi.object(),
   }).unknown();

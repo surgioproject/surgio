@@ -11,8 +11,8 @@ module.exports = {
   remoteSnippets: [
     {
       name: 'netflix',
-      url: 'http://example.com/netflix.list'
-    }
+      url: 'http://example.com/netflix.list',
+    },
   ],
   urlBase: 'http://example.com/',
 };
