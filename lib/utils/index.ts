@@ -44,7 +44,7 @@ export const getDownloadUrl = (
   baseUrl = '/',
   artifactName: string,
   inline = true,
-  accessToken?: string
+  accessToken?: string,
 ): string => {
   let urlSearchParams: URLSearchParams;
   let name: string;
@@ -72,7 +72,7 @@ export const getDownloadUrl = (
 export const getUrl = (
   baseUrl: string,
   path: string,
-  accessToken?: string
+  accessToken?: string,
 ): string => {
   path = path.replace(/^\//, '');
   const url = new URL(path, baseUrl);
@@ -84,7 +84,7 @@ export const getUrl = (
 
 export const getShadowsocksJSONConfig = async (
   url: string,
-  udpRelay?: boolean
+  udpRelay?: boolean,
 ): Promise<ReadonlyArray<ShadowsocksNodeConfig>> => {
   assert(url, '未指定订阅地址 url');
 
@@ -94,12 +94,12 @@ export const getShadowsocksJSONConfig = async (
     const response = ConfigCache.has(url)
       ? JSON.parse(ConfigCache.get(url) as string)
       : await (async () => {
-        const res = await httpClient.get(url);
+          const res = await httpClient.get(url);
 
-        ConfigCache.set(url, res.body);
+          ConfigCache.set(url, res.body);
 
-        return JSON.parse(res.body);
-      })();
+          return JSON.parse(res.body);
+        })();
 
     return (response.configs as ReadonlyArray<any>).map(
       (item): ShadowsocksNodeConfig => {
@@ -126,7 +126,7 @@ export const getShadowsocksJSONConfig = async (
         }
 
         return nodeConfig;
-      }
+      },
     );
   }
 
@@ -136,9 +136,9 @@ export const getShadowsocksJSONConfig = async (
 /**
  * @see https://manual.nssurge.com/policy/proxy.html
  */
-export const getSurgeNodes = function (
+export const getSurgeNodes = function(
   list: ReadonlyArray<PossibleNodeConfigType>,
-  filter?: NodeFilterType | SortedNodeNameFilterType
+  filter?: NodeFilterType | SortedNodeNameFilterType,
 ): string {
   // istanbul ignore next
   if (arguments.length === 2 && typeof filter === 'undefined') {
@@ -153,8 +153,9 @@ export const getSurgeNodes = function (
 
           if (config.obfs && ['ws', 'wss'].includes(config.obfs)) {
             logger.warn(
-              `不支持为 Surge 生成 v2ray-plugin 的 Shadowsocks 节点，节点 ${nodeConfig!.nodeName
-              } 会被省略`
+              `不支持为 Surge 生成 v2ray-plugin 的 Shadowsocks 节点，节点 ${
+                nodeConfig!.nodeName
+              } 会被省略`,
             );
             return void 0;
           }
@@ -298,7 +299,7 @@ export const getSurgeNodes = function (
           // istanbul ignore next
           if (!config.binPath) {
             throw new Error(
-              '请按照文档 http://url.royli.dev/vdGh2 添加 Shadowsocksr 二进制文件路径'
+              '请按照文档 http://url.royli.dev/vdGh2 添加 Shadowsocksr 二进制文件路径',
             );
           }
 
@@ -331,19 +332,19 @@ export const getSurgeNodes = function (
           const configString = [
             'external',
             `exec = ${JSON.stringify(config.binPath)}`,
-            ...args.map((arg) => `args = ${JSON.stringify(arg)}`),
+            ...args.map(arg => `args = ${JSON.stringify(arg)}`),
             `local-port = ${config.localPort}`,
           ];
 
           if (config.localPort === 0) {
             throw new Error(
-              `为 Surge 生成 SSR 配置时必须为 Provider ${config.provider?.name} 设置 startPort，参考 http://url.royli.dev/bWcpe`
+              `为 Surge 生成 SSR 配置时必须为 Provider ${config.provider?.name} 设置 startPort，参考 http://url.royli.dev/bWcpe`,
             );
           }
 
           if (config.hostnameIp && config.hostnameIp.length) {
             configString.push(
-              ...config.hostnameIp.map((item) => `addresses = ${item}`)
+              ...config.hostnameIp.map(item => `addresses = ${item}`),
             );
           }
 
@@ -369,7 +370,7 @@ export const getSurgeNodes = function (
 
             function getHeader(wsHeaders: Record<string, string>): string {
               return Object.keys(wsHeaders)
-                .map((headerKey) => `${headerKey}:${wsHeaders[headerKey]}`)
+                .map(headerKey => `${headerKey}:${wsHeaders[headerKey]}`)
                 .join('|');
             }
 
@@ -378,13 +379,13 @@ export const getSurgeNodes = function (
               configList.push(`ws-path=${config.path}`);
               configList.push(
                 'ws-headers=' +
-                JSON.stringify(
-                  getHeader({
-                    host: config.host || config.hostname,
-                    'user-agent': OBFS_UA,
-                    ..._.omit(config.wsHeaders, ['host']), // host 本质上是一个头信息，所以可能存在冲突的情况。以 host 属性为准。
-                  })
-                )
+                  JSON.stringify(
+                    getHeader({
+                      host: config.host || config.hostname,
+                      'user-agent': OBFS_UA,
+                      ..._.omit(config.wsHeaders, ['host']), // host 本质上是一个头信息，所以可能存在冲突的情况。以 host 属性为准。
+                    }),
+                  ),
               );
             }
 
@@ -397,7 +398,7 @@ export const getSurgeNodes = function (
                 ...(typeof config.skipCertVerify === 'boolean'
                   ? [`skip-cert-verify=${config.skipCertVerify}`]
                   : []),
-                ...(config.host ? [`sni=${config.host}`] : [])
+                ...(config.host ? [`sni=${config.host}`] : []),
               );
             }
 
@@ -424,13 +425,13 @@ export const getSurgeNodes = function (
             // istanbul ignore next
             if (!config.binPath) {
               throw new Error(
-                '请按照文档 http://url.royli.dev/vdGh2 添加 V2Ray 二进制文件路径'
+                '请按照文档 http://url.royli.dev/vdGh2 添加 V2Ray 二进制文件路径',
               );
             }
 
             if (config.localPort === 0) {
               throw new Error(
-                `为 Surge 生成 Vmess 配置时必须为 Provider ${config.provider?.name} 设置 startPort，参考 http://url.royli.dev/bWcpe`
+                `为 Surge 生成 Vmess 配置时必须为 Provider ${config.provider?.name} 设置 startPort，参考 http://url.royli.dev/bWcpe`,
               );
             }
 
@@ -438,7 +439,7 @@ export const getSurgeNodes = function (
             const jsonFilePath = join(ensureConfigFolder(), jsonFileName);
             const jsonFile = formatV2rayConfig(
               config.localPort as number,
-              nodeConfig
+              nodeConfig,
             );
             const args = [
               '--config',
@@ -447,13 +448,13 @@ export const getSurgeNodes = function (
             const configString = [
               'external',
               `exec = ${JSON.stringify(config.binPath)}`,
-              ...args.map((arg) => `args = ${JSON.stringify(arg)}`),
+              ...args.map(arg => `args = ${JSON.stringify(arg)}`),
               `local-port = ${config.localPort}`,
             ];
 
             if (config.hostnameIp && config.hostnameIp.length) {
               configString.push(
-                ...config.hostnameIp.map((item) => `addresses = ${item}`)
+                ...config.hostnameIp.map(item => `addresses = ${item}`),
               );
             }
 
@@ -483,8 +484,8 @@ export const getSurgeNodes = function (
               'tls13',
             ]),
             ...(typeof nodeConfig.testUrl === 'string'
-                ? [`test-url=${nodeConfig.testUrl}`]
-                : []),
+              ? [`test-url=${nodeConfig.testUrl}`]
+              : []),
             ...(typeof nodeConfig.underlyingProxy === 'string'
               ? [`underlying-proxy=${nodeConfig.underlyingProxy}`]
               : []),
@@ -506,7 +507,7 @@ export const getSurgeNodes = function (
               : []),
             ...(typeof nodeConfig.testUrl === 'string'
               ? [`test-url=${nodeConfig.testUrl}`]
-                : []),
+              : []),
             ...pickAndFormatStringList(nodeConfig, [
               'username',
               'password',
@@ -524,7 +525,7 @@ export const getSurgeNodes = function (
                 : []),
               ...(typeof nodeConfig.clientCert === 'string'
                 ? [`client-cert=${nodeConfig.clientCert}`]
-                : [])
+                : []),
             );
           }
 
@@ -534,8 +535,9 @@ export const getSurgeNodes = function (
         // istanbul ignore next
         default:
           logger.warn(
-            `不支持为 Surge 生成 ${nodeConfig!.type} 的节点，节点 ${nodeConfig!.nodeName
-            } 会被省略`
+            `不支持为 Surge 生成 ${(nodeConfig as any).type} 的节点，节点 ${
+              (nodeConfig as any).nodeName
+            } 会被省略`,
           );
           return void 0;
       }
@@ -545,9 +547,9 @@ export const getSurgeNodes = function (
   return result.join('\n');
 };
 
-export const getClashNodes = function (
+export const getClashNodes = function(
   list: ReadonlyArray<PossibleNodeConfigType>,
-  filter?: NodeFilterType | SortedNodeNameFilterType
+  filter?: NodeFilterType | SortedNodeNameFilterType,
 ): ReadonlyArray<any> {
   // istanbul ignore next
   if (arguments.length === 2 && typeof filter === 'undefined') {
@@ -555,7 +557,7 @@ export const getClashNodes = function (
   }
 
   return applyFilter(list, filter)
-    .map((nodeConfig) => {
+    .map(nodeConfig => {
       // istanbul ignore next
       if (nodeConfig.enable === false) {
         return null;
@@ -573,34 +575,34 @@ export const getClashNodes = function (
             udp: nodeConfig['udp-relay'] === true,
             ...(nodeConfig.obfs && ['tls', 'http'].includes(nodeConfig.obfs)
               ? {
-                plugin: 'obfs',
-                'plugin-opts': {
-                  mode: nodeConfig.obfs,
-                  host: nodeConfig['obfs-host'],
-                },
-              }
+                  plugin: 'obfs',
+                  'plugin-opts': {
+                    mode: nodeConfig.obfs,
+                    host: nodeConfig['obfs-host'],
+                  },
+                }
               : null),
             ...(nodeConfig.obfs && ['ws', 'wss'].includes(nodeConfig.obfs)
               ? {
-                plugin: 'v2ray-plugin',
-                'plugin-opts': {
-                  mode: 'websocket',
-                  tls: nodeConfig.obfs === 'wss',
-                  ...(typeof nodeConfig.skipCertVerify === 'boolean' &&
+                  plugin: 'v2ray-plugin',
+                  'plugin-opts': {
+                    mode: 'websocket',
+                    tls: nodeConfig.obfs === 'wss',
+                    ...(typeof nodeConfig.skipCertVerify === 'boolean' &&
                     nodeConfig.obfs === 'wss'
-                    ? {
-                      'skip-cert-verify': nodeConfig.skipCertVerify,
-                    }
-                    : null),
-                  host: nodeConfig['obfs-host'],
-                  path: nodeConfig['obfs-uri'] || '/',
-                  mux:
-                    typeof nodeConfig.mux === 'boolean'
-                      ? nodeConfig.mux
-                      : false,
-                  headers: nodeConfig.wsHeaders || {},
-                },
-              }
+                      ? {
+                          'skip-cert-verify': nodeConfig.skipCertVerify,
+                        }
+                      : null),
+                    host: nodeConfig['obfs-host'],
+                    path: nodeConfig['obfs-uri'] || '/',
+                    mux:
+                      typeof nodeConfig.mux === 'boolean'
+                        ? nodeConfig.mux
+                        : false,
+                    headers: nodeConfig.wsHeaders || {},
+                  },
+                }
               : null),
           };
 
@@ -617,22 +619,22 @@ export const getClashNodes = function (
             ...(nodeConfig.network === 'tcp'
               ? null
               : {
-                network: nodeConfig.network,
-              }),
+                  network: nodeConfig.network,
+                }),
             tls: nodeConfig.tls,
             ...(typeof nodeConfig.skipCertVerify === 'boolean' && nodeConfig.tls
               ? {
-                'skip-cert-verify': nodeConfig.skipCertVerify,
-              }
+                  'skip-cert-verify': nodeConfig.skipCertVerify,
+                }
               : null),
             ...(nodeConfig.network === 'ws'
               ? {
-                'ws-path': nodeConfig.path,
-                'ws-headers': {
-                  ...(nodeConfig.host ? { host: nodeConfig.host } : null),
-                  ...nodeConfig.wsHeaders,
-                },
-              }
+                  'ws-path': nodeConfig.path,
+                  'ws-headers': {
+                    ...(nodeConfig.host ? { host: nodeConfig.host } : null),
+                    ...nodeConfig.wsHeaders,
+                  },
+                }
               : null),
           };
 
@@ -650,13 +652,13 @@ export const getClashNodes = function (
             cipher: nodeConfig.method,
             ...(ssrFormat === 'native'
               ? {
-                'obfs-param': nodeConfig.obfsparam ?? '',
-                'protocol-param': nodeConfig.protoparam ?? '',
-              }
+                  'obfs-param': nodeConfig.obfsparam ?? '',
+                  'protocol-param': nodeConfig.protoparam ?? '',
+                }
               : {
-                obfsparam: nodeConfig.obfsparam ?? '',
-                protocolparam: nodeConfig.protoparam ?? '',
-              }),
+                  obfsparam: nodeConfig.obfsparam ?? '',
+                  protocolparam: nodeConfig.protoparam ?? '',
+                }),
             udp: nodeConfig['udp-relay'] === true,
           };
         }
@@ -672,14 +674,14 @@ export const getClashNodes = function (
               mode: nodeConfig.obfs,
               ...(nodeConfig['obfs-host']
                 ? {
-                  host: nodeConfig['obfs-host'],
-                }
+                    host: nodeConfig['obfs-host'],
+                  }
                 : null),
             },
             ...(nodeConfig.version
               ? {
-                version: nodeConfig.version,
-              }
+                  version: nodeConfig.version,
+                }
               : null),
           };
 
@@ -743,18 +745,19 @@ export const getClashNodes = function (
         // istanbul ignore next
         default:
           logger.warn(
-            `不支持为 Clash 生成 ${nodeConfig!.type} 的节点，节点 ${nodeConfig!.nodeName
-            } 会被省略`
+            `不支持为 Clash 生成 ${(nodeConfig as any).type} 的节点，节点 ${
+              (nodeConfig as any).nodeName
+            } 会被省略`,
           );
           return null;
       }
     })
-    .filter((item) => item !== null);
+    .filter(item => item !== null);
 };
 
-export const getMellowNodes = function (
+export const getMellowNodes = function(
   list: ReadonlyArray<VmessNodeConfig | ShadowsocksNodeConfig>,
-  filter?: NodeFilterType | SortedNodeNameFilterType
+  filter?: NodeFilterType | SortedNodeNameFilterType,
 ): string {
   // istanbul ignore next
   if (arguments.length === 2 && typeof filter === 'undefined') {
@@ -762,7 +765,7 @@ export const getMellowNodes = function (
   }
 
   const result = applyFilter(list, filter)
-    .map((nodeConfig) => {
+    .map(nodeConfig => {
       switch (nodeConfig.type) {
         case NodeTypeEnum.Vmess: {
           const uri = formatVmessUri(nodeConfig, { isMellow: true });
@@ -781,13 +784,14 @@ export const getMellowNodes = function (
         // istanbul ignore next
         default:
           logger.warn(
-            `不支持为 Mellow 生成 ${nodeConfig!.type} 的节点，节点 ${nodeConfig!.nodeName
-            } 会被省略`
+            `不支持为 Mellow 生成 ${(nodeConfig as any).type} 的节点，节点 ${
+              (nodeConfig as any).nodeName
+            } 会被省略`,
           );
           return null;
       }
     })
-    .filter((item) => !!item);
+    .filter(item => !!item);
 
   return result.join('\n');
 };
@@ -817,10 +821,10 @@ export const fromBase64 = (str: string): string =>
  */
 export const getShadowsocksNodes = (
   list: ReadonlyArray<ShadowsocksNodeConfig>,
-  groupName = 'Surgio'
+  groupName = 'Surgio',
 ): string => {
   const result: ReadonlyArray<any> = list
-    .map((nodeConfig) => {
+    .map(nodeConfig => {
       // istanbul ignore next
       if (nodeConfig.enable === false) {
         return null;
@@ -835,10 +839,10 @@ export const getShadowsocksNodes = (
           } = {
             ...(config.obfs
               ? {
-                plugin: `${encodeURIComponent(
-                  `obfs-local;obfs=${config.obfs};obfs-host=${config['obfs-host']}`
-                )}`,
-              }
+                  plugin: `${encodeURIComponent(
+                    `obfs-local;obfs=${config.obfs};obfs-host=${config['obfs-host']}`,
+                  )}`,
+                }
               : null),
             ...(groupName ? { group: encodeURIComponent(groupName) } : null),
           };
@@ -863,22 +867,22 @@ export const getShadowsocksNodes = (
         // istanbul ignore next
         default:
           logger.warn(
-            `在生成 Shadowsocks 节点时出现了 ${nodeConfig.type} 节点，节点 ${nodeConfig.nodeName} 会被省略`
+            `在生成 Shadowsocks 节点时出现了 ${nodeConfig.type} 节点，节点 ${nodeConfig.nodeName} 会被省略`,
           );
           return null;
       }
     })
-    .filter((item) => !!item);
+    .filter(item => !!item);
 
   return result.join('\n');
 };
 
 export const getShadowsocksrNodes = (
   list: ReadonlyArray<ShadowsocksrNodeConfig>,
-  groupName: string
+  groupName: string,
 ): string => {
   const result: ReadonlyArray<string | undefined> = list
-    .map((nodeConfig) => {
+    .map(nodeConfig => {
       // istanbul ignore next
       if (nodeConfig.enable === false) {
         return void 0;
@@ -912,7 +916,7 @@ export const getShadowsocksrNodes = (
                 queryString.stringify(query, {
                   encode: false,
                 }),
-              ].join('')
+              ].join(''),
             )
           );
         }
@@ -920,18 +924,18 @@ export const getShadowsocksrNodes = (
         // istanbul ignore next
         default:
           logger.warn(
-            `在生成 Shadowsocksr 节点时出现了 ${nodeConfig.type} 节点，节点 ${nodeConfig.nodeName} 会被省略`
+            `在生成 Shadowsocksr 节点时出现了 ${nodeConfig.type} 节点，节点 ${nodeConfig.nodeName} 会被省略`,
           );
           return void 0;
       }
     })
-    .filter((item) => item !== undefined);
+    .filter(item => item !== undefined);
 
   return result.join('\n');
 };
 
 export const getV2rayNNodes = (
-  list: ReadonlyArray<VmessNodeConfig>
+  list: ReadonlyArray<VmessNodeConfig>,
 ): string => {
   const result: ReadonlyArray<string> = list
     .map((nodeConfig): string | undefined => {
@@ -962,7 +966,7 @@ export const getV2rayNNodes = (
         // istanbul ignore next
         default:
           logger.warn(
-            `在生成 V2Ray 节点时出现了 ${nodeConfig.type} 节点，节点 ${nodeConfig.nodeName} 会被省略`
+            `在生成 V2Ray 节点时出现了 ${nodeConfig.type} 节点，节点 ${nodeConfig.nodeName} 会被省略`,
           );
           return void 0;
       }
@@ -972,7 +976,7 @@ export const getV2rayNNodes = (
   return result.join('\n');
 };
 
-export const getQuantumultNodes = function (
+export const getQuantumultNodes = function(
   list: ReadonlyArray<
     | ShadowsocksNodeConfig
     | VmessNodeConfig
@@ -980,7 +984,7 @@ export const getQuantumultNodes = function (
     | HttpsNodeConfig
   >,
   groupName = 'Surgio',
-  filter?: NodeNameFilterType | SortedNodeNameFilterType
+  filter?: NodeNameFilterType | SortedNodeNameFilterType,
 ): string {
   // istanbul ignore next
   if (arguments.length === 3 && typeof filter === 'undefined') {
@@ -989,7 +993,7 @@ export const getQuantumultNodes = function (
 
   function getHeader(wsHeaders: Record<string, string>): string {
     return Object.keys(wsHeaders)
-      .map((headerKey) => `${headerKey}:${wsHeaders[headerKey]}`)
+      .map(headerKey => `${headerKey}:${wsHeaders[headerKey]}`)
       .join('[Rr][Nn]');
   }
 
@@ -1016,10 +1020,10 @@ export const getQuantumultNodes = function (
                 host: nodeConfig.host || nodeConfig.hostname,
                 'user-agent': OBFS_UA, // 需要用 "" 包裹否则 Surge 会无法解析
                 ..._.omit(nodeConfig.wsHeaders, ['host']),
-              })
+              }),
             )}`,
           ]
-            .filter((value) => !!value)
+            .filter(value => !!value)
             .join(',');
 
           return (
@@ -1055,8 +1059,9 @@ export const getQuantumultNodes = function (
         // istanbul ignore next
         default:
           logger.warn(
-            `不支持为 Quantumult 生成 ${nodeConfig!.type} 的节点，节点 ${nodeConfig!.nodeName
-            } 会被省略`
+            `不支持为 Quantumult 生成 ${
+              (nodeConfig as any).type
+            } 的节点，节点 ${(nodeConfig as any).nodeName} 会被省略`,
           );
           return void 0;
       }
@@ -1069,9 +1074,9 @@ export const getQuantumultNodes = function (
 /**
  * @see https://github.com/crossutility/Quantumult-X/blob/master/sample.conf
  */
-export const getQuantumultXNodes = function (
+export const getQuantumultXNodes = function(
   list: ReadonlyArray<PossibleNodeConfigType>,
-  filter?: NodeNameFilterType | SortedNodeNameFilterType
+  filter?: NodeNameFilterType | SortedNodeNameFilterType,
 ): string {
   // istanbul ignore next
   if (arguments.length === 2 && typeof filter === 'undefined') {
@@ -1102,7 +1107,7 @@ export const getQuantumultXNodes = function (
               }
               config.push(`obfs-uri=${nodeConfig.path || '/'}`);
               config.push(
-                `obfs-host=${nodeConfig.host || nodeConfig.hostname}`
+                `obfs-host=${nodeConfig.host || nodeConfig.hostname}`,
               );
               // istanbul ignore next
               if (nodeConfig.tls13) {
@@ -1132,7 +1137,7 @@ export const getQuantumultXNodes = function (
             Object.keys(nodeConfig.wsHeaders).length > 1
           ) {
             logger.warn(
-              `Quantumult X 不支持自定义额外的 Header 字段，节点 ${nodeConfig.nodeName} 可能不可用`
+              `Quantumult X 不支持自定义额外的 Header 字段，节点 ${nodeConfig.nodeName} 可能不可用`,
             );
           }
 
@@ -1145,16 +1150,16 @@ export const getQuantumultXNodes = function (
             ...pickAndFormatStringList(nodeConfig, ['method', 'password']),
             ...(nodeConfig.obfs && ['http', 'tls'].includes(nodeConfig.obfs)
               ? [
-                `obfs=${nodeConfig.obfs}`,
-                `obfs-host=${nodeConfig['obfs-host']}`,
-              ]
+                  `obfs=${nodeConfig.obfs}`,
+                  `obfs-host=${nodeConfig['obfs-host']}`,
+                ]
               : []),
             ...(nodeConfig.obfs && ['ws', 'wss'].includes(nodeConfig.obfs)
               ? [
-                `obfs=${nodeConfig.obfs}`,
-                `obfs-host=${nodeConfig['obfs-host'] || nodeConfig.hostname}`,
-                `obfs-uri=${nodeConfig['obfs-uri'] || '/'}`,
-              ]
+                  `obfs=${nodeConfig.obfs}`,
+                  `obfs-host=${nodeConfig['obfs-host'] || nodeConfig.hostname}`,
+                  `obfs-uri=${nodeConfig['obfs-uri'] || '/'}`,
+                ]
               : []),
             ...(nodeConfig['udp-relay'] ? [`udp-relay=true`] : []),
             ...(nodeConfig.tfo ? [`fast-open=${nodeConfig.tfo}`] : []),
@@ -1168,7 +1173,7 @@ export const getQuantumultXNodes = function (
             Object.keys(nodeConfig.wsHeaders).length > 1
           ) {
             logger.warn(
-              `Quantumult X 不支持自定义额外的 Header 字段，节点 ${nodeConfig.nodeName} 可能不可用`
+              `Quantumult X 不支持自定义额外的 Header 字段，节点 ${nodeConfig.nodeName} 可能不可用`,
             );
           }
 
@@ -1203,7 +1208,7 @@ export const getQuantumultXNodes = function (
             config.push(
               'over-tls=true',
               `tls-verification=${nodeConfig.skipCertVerify !== true}`,
-              ...(nodeConfig.tls13 ? [`tls13=${nodeConfig.tls13}`] : [])
+              ...(nodeConfig.tls13 ? [`tls13=${nodeConfig.tls13}`] : []),
             );
           }
 
@@ -1231,8 +1236,9 @@ export const getQuantumultXNodes = function (
         // istanbul ignore next
         default:
           logger.warn(
-            `不支持为 QuantumultX 生成 ${nodeConfig!.type} 的节点，节点 ${nodeConfig!.nodeName
-            } 会被省略`
+            `不支持为 QuantumultX 生成 ${
+              (nodeConfig as any).type
+            } 的节点，节点 ${(nodeConfig as any).nodeName} 会被省略`,
           );
           return void 0;
       }
@@ -1244,10 +1250,10 @@ export const getQuantumultXNodes = function (
 
 // istanbul ignore next
 export const getShadowsocksNodesJSON = (
-  list: ReadonlyArray<ShadowsocksNodeConfig>
+  list: ReadonlyArray<ShadowsocksNodeConfig>,
 ): string => {
   const nodes: ReadonlyArray<any> = list
-    .map((nodeConfig) => {
+    .map(nodeConfig => {
       // istanbul ignore next
       if (nodeConfig.enable === false) {
         return null;
@@ -1268,9 +1274,9 @@ export const getShadowsocksNodesJSON = (
             enable: true,
             ...(useObfs
               ? {
-                plugin: 'obfs-local',
-                'plugin-opts': `obfs=${nodeConfig.obfs};obfs-host=${nodeConfig['obfs-host']}`,
-              }
+                  plugin: 'obfs-local',
+                  'plugin-opts': `obfs=${nodeConfig.obfs};obfs-host=${nodeConfig['obfs-host']}`,
+                }
               : null),
           };
         }
@@ -1278,20 +1284,20 @@ export const getShadowsocksNodesJSON = (
         // istanbul ignore next
         default:
           logger.warn(
-            `在生成 Shadowsocks 节点时出现了 ${nodeConfig.type} 节点，节点 ${nodeConfig.nodeName} 会被省略`
+            `在生成 Shadowsocks 节点时出现了 ${nodeConfig.type} 节点，节点 ${nodeConfig.nodeName} 会被省略`,
           );
           return undefined;
       }
     })
-    .filter((item) => item !== undefined);
+    .filter(item => item !== undefined);
 
   return JSON.stringify(nodes, null, 2);
 };
 
-export const getNodeNames = function (
+export const getNodeNames = function(
   list: ReadonlyArray<SimpleNodeConfig>,
   filter?: NodeNameFilterType | SortedNodeNameFilterType,
-  separator?: string
+  separator?: string,
 ): string {
   // istanbul ignore next
   if (arguments.length === 2 && typeof filter === 'undefined') {
@@ -1299,14 +1305,14 @@ export const getNodeNames = function (
   }
 
   return applyFilter(list, filter)
-    .map((item) => item.nodeName)
+    .map(item => item.nodeName)
     .join(separator || ', ');
 };
 
-export const getClashNodeNames = function (
+export const getClashNodeNames = function(
   list: ReadonlyArray<SimpleNodeConfig>,
   filter?: NodeNameFilterType | SortedNodeNameFilterType,
-  existingProxies?: ReadonlyArray<string>
+  existingProxies?: ReadonlyArray<string>,
 ): ReadonlyArray<string> {
   // istanbul ignore next
   if (arguments.length === 2 && typeof filter === 'undefined') {
@@ -1319,9 +1325,7 @@ export const getClashNodeNames = function (
     result = result.concat(existingProxies);
   }
 
-  result = result.concat(
-    applyFilter(list, filter).map((item) => item.nodeName)
-  );
+  result = result.concat(applyFilter(list, filter).map(item => item.nodeName));
 
   return result;
 };
@@ -1335,7 +1339,7 @@ export const generateClashProxyGroup = (
     readonly existingProxies?: ReadonlyArray<string>;
     readonly proxyTestUrl?: string;
     readonly proxyTestInterval?: number;
-  }
+  },
 ): {
   readonly type: string;
   readonly name: string;
@@ -1350,14 +1354,14 @@ export const generateClashProxyGroup = (
       const nodes = applyFilter(nodeNameList, options.filter);
       proxies = ([] as string[]).concat(
         options.existingProxies,
-        nodes.map((item) => item.nodeName)
+        nodes.map(item => item.nodeName),
       );
     } else {
       proxies = options.existingProxies;
     }
   } else {
     const nodes = applyFilter(nodeNameList, options.filter);
-    proxies = nodes.map((item) => item.nodeName);
+    proxies = nodes.map(item => item.nodeName);
   }
 
   return {
@@ -1366,9 +1370,9 @@ export const generateClashProxyGroup = (
     proxies,
     ...(['url-test', 'fallback', 'load-balance'].includes(ruleType)
       ? {
-        url: options.proxyTestUrl,
-        interval: options.proxyTestInterval,
-      }
+          url: options.proxyTestUrl,
+          interval: options.proxyTestInterval,
+        }
       : null),
   };
 };
@@ -1377,10 +1381,10 @@ export const toYaml = (obj: JsonObject): string => YAML.stringify(obj);
 
 export const pickAndFormatStringList = (
   obj: any,
-  keyList: readonly string[]
+  keyList: readonly string[],
 ): readonly string[] => {
   const result: string[] = [];
-  keyList.forEach((key) => {
+  keyList.forEach(key => {
     if (obj.hasOwnProperty(key)) {
       result.push(`${key}=${obj[key]}`);
     }
@@ -1389,10 +1393,10 @@ export const pickAndFormatStringList = (
 };
 
 export const decodeStringList = <T = Record<string, string | boolean>>(
-  stringList: ReadonlyArray<string>
+  stringList: ReadonlyArray<string>,
 ): T => {
   const result = {};
-  stringList.forEach((item) => {
+  stringList.forEach(item => {
     if (item.includes('=')) {
       const match = item.match(/^(.*?)=(.*?)$/);
       if (match) {
@@ -1412,16 +1416,16 @@ export const normalizeClashProxyGroupConfig = (
   options: {
     readonly proxyTestUrl?: string;
     readonly proxyTestInterval?: number;
-  } = {}
+  } = {},
 ): ReadonlyArray<any> => {
   const proxyGroup = proxyGroupModifier(nodeList, customFilters);
 
-  return proxyGroup.map((item) => {
+  return proxyGroup.map(item => {
     if (item.hasOwnProperty('filter')) {
       // istanbul ignore next
       if (!item.filter || !validateFilter(item.filter)) {
         throw new Error(
-          `过滤器 ${item.filter} 无效，请检查 proxyGroupModifier`
+          `过滤器 ${item.filter} 无效，请检查 proxyGroupModifier`,
         );
       }
 
@@ -1460,7 +1464,7 @@ export const ensureConfigFolder = (dir: string = os.homedir()): string => {
 
 export const formatV2rayConfig = (
   localPort: number,
-  nodeConfig: VmessNodeConfig
+  nodeConfig: VmessNodeConfig,
 ): JsonObject => {
   const config: any = {
     log: {
@@ -1506,13 +1510,13 @@ export const formatV2rayConfig = (
         serverName: nodeConfig.host || nodeConfig.hostname,
         ...(typeof nodeConfig.skipCertVerify === 'boolean'
           ? {
-            allowInsecure: nodeConfig.skipCertVerify,
-          }
+              allowInsecure: nodeConfig.skipCertVerify,
+            }
           : null),
         ...(typeof nodeConfig.tls13 === 'boolean'
           ? {
-            allowInsecureCiphers: !nodeConfig.tls13,
-          }
+              allowInsecureCiphers: !nodeConfig.tls13,
+            }
           : null),
       },
     };
@@ -1537,14 +1541,14 @@ export const formatV2rayConfig = (
 
 export const applyFilter = <T extends SimpleNodeConfig>(
   nodeList: ReadonlyArray<T>,
-  filter?: NodeNameFilterType | SortedNodeNameFilterType
+  filter?: NodeNameFilterType | SortedNodeNameFilterType,
 ): ReadonlyArray<T> => {
   // istanbul ignore next
   if (filter && !validateFilter(filter)) {
     throw new Error(`使用了无效的过滤器 ${filter}`);
   }
 
-  let nodes: ReadonlyArray<T> = nodeList.filter((item) => {
+  let nodes: ReadonlyArray<T> = nodeList.filter(item => {
     const result = item.enable !== false;
 
     if (filter && typeof filter === 'function') {
@@ -1566,11 +1570,11 @@ export const applyFilter = <T extends SimpleNodeConfig>(
 };
 
 export const lowercaseHeaderKeys = (
-  headers: Record<string, string>
+  headers: Record<string, string>,
 ): Record<string, string> => {
   const wsHeaders = {};
 
-  Object.keys(headers).forEach((key) => {
+  Object.keys(headers).forEach(key => {
     wsHeaders[key.toLowerCase()] = headers[key];
   });
 
@@ -1583,10 +1587,11 @@ export const isIp = (str: string): boolean =>
 
 // istanbul ignore next
 export const isNow = (): boolean =>
-  typeof process.env.NOW_REGION !== 'undefined' || typeof process.env.VERCEL_REGION !== 'undefined';
+  typeof process.env.NOW_REGION !== 'undefined' ||
+  typeof process.env.VERCEL_REGION !== 'undefined';
 
 // istanbul ignore next
-export const isVercel = (): boolean => isNow()
+export const isVercel = (): boolean => isNow();
 
 // istanbul ignore next
 export const isHeroku = (): boolean => typeof process.env.DYNO !== 'undefined';

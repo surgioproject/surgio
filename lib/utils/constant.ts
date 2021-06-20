@@ -36,6 +36,7 @@ export const CLASH_SUPPORTED_RULE: ReadonlyArray<string> = [
   'DOMAIN',
   'SRC-IP-CIDR',
   'IP-CIDR',
+  'IP-CIDR6',
   'GEOIP',
   'DST-PORT',
   'SRC-PORT',

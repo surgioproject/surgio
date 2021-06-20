@@ -3,6 +3,8 @@ import nunjucks from 'nunjucks';
 import path from 'path';
 import { JsonObject } from 'type-fest';
 import YAML from 'yaml';
+import { deprecate } from 'util';
+import { DEP007 } from '../misc/deprecation';
 
 import { RemoteSnippet } from '../types';
 import { decodeStringList, toBase64 } from '../utils';
@@ -28,7 +30,7 @@ export function getEngine(templateDir: string): nunjucks.Environment {
     const array = str.split('\n');
 
     return array
-      .map((item) => {
+      .map(item => {
         const testString: string =
           !!item && item.trim() !== '' ? item.toUpperCase() : '';
 
@@ -38,18 +40,18 @@ export function getEngine(templateDir: string): nunjucks.Environment {
 
         const matched = testString.match(/^([\w-]+),/);
 
-        if (matched && CLASH_SUPPORTED_RULE.some((s) => matched[1] === s)) {
+        if (matched && CLASH_SUPPORTED_RULE.some(s => matched[1] === s)) {
           // 过滤出支持的规则类型
           return `- ${item}`.replace(/\/\/.*$/, '').trim();
         }
 
         return null;
       })
-      .filter((item) => !!item)
+      .filter(item => !!item)
       .join('\n');
   };
 
-  engine.addFilter('patchYamlArray', clashFilter);
+  engine.addFilter('patchYamlArray', deprecate(clashFilter, DEP007, 'DEP007'));
   engine.addFilter('clash', clashFilter);
 
   engine.addFilter('quantumultx', (str?: string): string => {
@@ -61,7 +63,7 @@ export function getEngine(templateDir: string): nunjucks.Environment {
     const array = str.split('\n');
 
     return array
-      .map((item) => {
+      .map(item => {
         const testString: string =
           !!item && item.trim() !== '' ? item.toUpperCase() : '';
 
@@ -87,7 +89,7 @@ export function getEngine(templateDir: string): nunjucks.Environment {
 
         if (
           matched &&
-          QUANTUMULT_X_SUPPORTED_RULE.some((s) => matched[1] === s)
+          QUANTUMULT_X_SUPPORTED_RULE.some(s => matched[1] === s)
         ) {
           if (matched[1] === 'IP-CIDR6') {
             return item.replace(/IP-CIDR6/i, 'IP6-CIDR');
@@ -99,7 +101,7 @@ export function getEngine(templateDir: string): nunjucks.Environment {
 
         return null;
       })
-      .filter((item) => !!item)
+      .filter(item => !!item)
       .join('\n');
   });
 
@@ -112,11 +114,11 @@ export function getEngine(templateDir: string): nunjucks.Environment {
     const array = str.split('\n');
 
     return array
-      .filter((item) => {
+      .filter(item => {
         const testString: string =
           !!item && item.trim() !== '' ? item.toUpperCase() : '';
 
-        return MELLOW_UNSUPPORTED_RULE.every((s) => !testString.startsWith(s));
+        return MELLOW_UNSUPPORTED_RULE.every(s => !testString.startsWith(s));
       })
       .map((item: string) => {
         if (item.startsWith('#') || str.trim() === '') {
@@ -139,7 +141,7 @@ export function getEngine(templateDir: string): nunjucks.Environment {
     const array = str.split('\n');
 
     return array
-      .map((item) => {
+      .map(item => {
         const testString: string =
           !!item && item.trim() !== '' ? item.toUpperCase() : '';
 
@@ -149,14 +151,14 @@ export function getEngine(templateDir: string): nunjucks.Environment {
 
         const matched = testString.match(/^([\w-]+),/);
 
-        if (matched && LOON_SUPPORTED_RULE.some((s) => matched[1] === s)) {
+        if (matched && LOON_SUPPORTED_RULE.some(s => matched[1] === s)) {
           // 过滤出支持的规则类型
           return `${item}`.replace(/\/\/.*$/, '').trim();
         }
 
         return null;
       })
-      .filter((item) => !!item)
+      .filter(item => !!item)
       .join('\n');
   });
 
@@ -173,14 +175,19 @@ export function getEngine(templateDir: string): nunjucks.Environment {
 }
 
 export const convertSurgeScriptRuleToQuantumultXRewriteRule = (
-  str: string
+  str: string,
 ): string => {
   const parts = str.split(' ');
   const result: string[] = [];
 
   switch (parts[0]) {
     case 'http-response': {
-      const params = decodeStringList(parts.splice(2).join('').split(','));
+      const params = decodeStringList(
+        parts
+          .splice(2)
+          .join('')
+          .split(','),
+      );
       const scriptPath = params['script-path'];
       const isRequireBody = 'requires-body' in params;
 
@@ -190,21 +197,26 @@ export const convertSurgeScriptRuleToQuantumultXRewriteRule = (
           parts[1],
           'url',
           'script-response-body',
-          scriptPath as string
+          scriptPath as string,
         );
       } else {
         result.push(
           parts[1],
           'url',
           'script-response-header',
-          scriptPath as string
+          scriptPath as string,
         );
       }
 
       return result.join(' ');
     }
     case 'http-request': {
-      const params = decodeStringList(parts.splice(2).join('').split(','));
+      const params = decodeStringList(
+        parts
+          .splice(2)
+          .join('')
+          .split(','),
+      );
       const scriptPath = params['script-path'];
       const isRequireBody = 'requires-body' in params;
 
@@ -214,14 +226,14 @@ export const convertSurgeScriptRuleToQuantumultXRewriteRule = (
           parts[1],
           'url',
           'script-request-body',
-          scriptPath as string
+          scriptPath as string,
         );
       } else {
         result.push(
           parts[1],
           'url',
           'script-request-header',
-          scriptPath as string
+          scriptPath as string,
         );
       }
 
@@ -233,7 +245,7 @@ export const convertSurgeScriptRuleToQuantumultXRewriteRule = (
 };
 
 export const convertNewSurgeScriptRuleToQuantumultXRewriteRule = (
-  str: string
+  str: string,
 ): string => {
   const matched = str.match(/^(.+?)=(.+?)$/);
   const result: string[] = [];
@@ -253,14 +265,14 @@ export const convertNewSurgeScriptRuleToQuantumultXRewriteRule = (
           params.pattern as string,
           'url',
           'script-response-body',
-          params['script-path'] as string
+          params['script-path'] as string,
         );
       } else {
         result.push(
           params.pattern as string,
           'url',
           'script-response-header',
-          params['script-path'] as string
+          params['script-path'] as string,
         );
       }
 
@@ -274,14 +286,14 @@ export const convertNewSurgeScriptRuleToQuantumultXRewriteRule = (
           params.pattern as string,
           'url',
           'script-request-body',
-          params['script-path'] as string
+          params['script-path'] as string,
         );
       } else {
         result.push(
           params.pattern as string,
           'url',
           'script-request-header',
-          params['script-path'] as string
+          params['script-path'] as string,
         );
       }
 
@@ -294,7 +306,7 @@ export const convertNewSurgeScriptRuleToQuantumultXRewriteRule = (
 
 export const loadLocalSnippet = (
   cwd: string,
-  relativeFilePath?: string
+  relativeFilePath?: string,
 ): RemoteSnippet => {
   // istanbul ignore next
   if (!relativeFilePath) {
