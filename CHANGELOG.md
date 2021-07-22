@@ -1,3 +1,12 @@
+## [2.9.1](https://github.com/geekdada/surgio/compare/v2.9.0...v2.9.1) (2021-07-22)
+
+
+### Features
+
+* add some utils ([05dae9c](https://github.com/geekdada/surgio/commit/05dae9c5664e42a95f97e9b9b232a3191491d889))
+
+
+
 # [2.9.0](https://github.com/geekdada/surgio/compare/v2.8.0...v2.9.0) (2021-06-20)
 
 
