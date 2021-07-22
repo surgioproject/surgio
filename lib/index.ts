@@ -3,9 +3,10 @@ import './utils/patch-proxy';
 
 import { bootstrap } from 'global-agent';
 import Command from 'common-bin';
-import fs from 'fs';
+import fs from 'fs-extra';
 import env2 from 'env2';
-import path from 'path';
+import { resolve, join } from 'path';
+import { PackageJson } from 'type-fest';
 import updateNotifier from 'update-notifier';
 import { transports } from '@surgio/logger';
 
@@ -20,7 +21,8 @@ if (!isNow() && !isHeroku() && !isGitHubActions() && !isGitLabCI()) {
   bootstrap();
 }
 
-const envPath = path.resolve(process.cwd(), './.env');
+const envPath = resolve(process.cwd(), './.env');
+const pkg = fs.readJSONSync(join(__dirname, '../package.json')) as PackageJson;
 
 export class SurgioCommand extends Command {
   constructor(rawArgv?: string[]) {
@@ -35,7 +37,7 @@ export class SurgioCommand extends Command {
 
     this.usage = '使用方法: surgio <command> [options]';
 
-    this.load(path.join(__dirname, './command'));
+    this.load(join(__dirname, './command'));
 
     this.options = {
       V: {
@@ -61,8 +63,14 @@ export class SurgioCommand extends Command {
 
 export const utils = {
   ...filter,
+  isHeroku,
+  isNow,
+  isGitHubActions,
+  isGitLabCI,
 };
 
 export const categories = {
   ...CATEGORIES,
 };
+
+export { pkg };

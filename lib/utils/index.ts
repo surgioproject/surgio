@@ -28,12 +28,7 @@ import {
   VmessNodeConfig,
 } from '../types';
 import { ConfigCache } from './cache';
-import {
-  ERR_INVALID_FILTER,
-  OBFS_UA,
-  PROXY_TEST_INTERVAL,
-  PROXY_TEST_URL,
-} from './constant';
+import { ERR_INVALID_FILTER, OBFS_UA } from './constant';
 import { validateFilter } from './filter';
 import httpClient from './http-client';
 import { formatVmessUri } from './v2ray';
