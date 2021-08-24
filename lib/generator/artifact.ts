@@ -325,7 +325,13 @@ export class Artifact extends EventEmitter {
     let nodeConfigList: ReadonlyArray<PossibleNodeConfigType>;
 
     try {
-      provider = getProvider(providerName, require(filePath));
+      // 支持异步函数的模式导入
+      const providerHandle = require(filePath);
+      if (typeof providerHandle === 'function') {
+        provider = getProvider(providerName, await providerHandle());
+      } else {
+        provider = getProvider(providerName, providerHandle);
+      }
       this.providerMap.set(providerName, provider);
     } catch (err) /* istanbul ignore next */ {
       err.message = `处理 ${providerName} 时出现错误，相关文件 ${filePath} ，错误原因: ${err.message}`;
