@@ -1,3 +1,12 @@
+# [2.10.0](https://github.com/geekdada/surgio/compare/v2.9.1...v2.10.0) (2021-08-25)
+
+
+### Bug Fixes
+
+* lint error ([78efe78](https://github.com/geekdada/surgio/commit/78efe78ae7ea241183f900be2dfbe242fe699c1b))
+
+
+
 ## [2.9.1](https://github.com/geekdada/surgio/compare/v2.9.0...v2.9.1) (2021-07-22)
 
 
@@ -414,8 +423,8 @@
 
 ### Bug Fixes
 
-* **command:new:** 生成 custom 类型 provider 报错 ([be83268](https://github.com/geekdada/surgio/commit/be832687b0cb1a5ceb96e6742eb451e9ed5e5903))
 * 服务器地址为 ipv6 时触发解析 ([aa79c93](https://github.com/geekdada/surgio/commit/aa79c931bac1a81b2406e4c36180c62e064e0292))
+* **command:new:** 生成 custom 类型 provider 报错 ([be83268](https://github.com/geekdada/surgio/commit/be832687b0cb1a5ceb96e6742eb451e9ed5e5903))
 * SSR URI 中包含 ipv6 地址解析错误 ([1cd8436](https://github.com/geekdada/surgio/commit/1cd8436a6335a4f018fc96532f297502cec8ce3b))
 
 
