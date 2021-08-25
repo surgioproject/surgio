@@ -63,6 +63,7 @@ import {
 import { prependFlag, removeFlag } from '../utils/flag';
 import { getLoonNodes } from '../utils/loon';
 import { loadLocalSnippet } from './template';
+import { ThenArg } from '../typing/espree';
 
 export interface ArtifactOptions {
   readonly remoteSnippetList?: ReadonlyArray<RemoteSnippet>;
@@ -76,11 +77,10 @@ export interface ExtendableRenderContext {
 export class Artifact extends EventEmitter {
   public initProgress = 0;
   public providerNameList: ReadonlyArray<string>;
-  public nodeConfigListMap: Map<
-    string,
-    ReadonlyArray<PossibleNodeConfigType>
-  > = new Map();
-  public providerMap: Map<string, ReturnType<typeof getProvider>> = new Map();
+  public nodeConfigListMap: Map<string, ReadonlyArray<PossibleNodeConfigType>> =
+    new Map();
+  public providerMap: Map<string, ThenArg<ReturnType<typeof getProvider>>> =
+    new Map();
   public nodeList: PossibleNodeConfigType[] = [];
   public nodeNameList: SimpleNodeConfig[] = [];
 
@@ -321,7 +321,7 @@ export class Artifact extends EventEmitter {
       throw new Error(`文件 ${filePath} 不存在`);
     }
 
-    let provider: ReturnType<typeof getProvider>;
+    let provider: ThenArg<ReturnType<typeof getProvider>>;
     let nodeConfigList: ReadonlyArray<PossibleNodeConfigType>;
 
     try {
