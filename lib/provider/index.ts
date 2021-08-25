@@ -8,10 +8,10 @@ import ShadowsocksSubscribeProvider from './ShadowsocksSubscribeProvider';
 import SsdProvider from './SsdProvider';
 import V2rayNSubscribeProvider from './V2rayNSubscribeProvider';
 
-export function getProvider(
+export async function getProvider(
   name: string,
   config: any,
-):
+): Promise<
   | BlackSSLProvider
   | ShadowsocksJsonSubscribeProvider
   | ShadowsocksSubscribeProvider
@@ -19,7 +19,13 @@ export function getProvider(
   | V2rayNSubscribeProvider
   | ShadowsocksrSubscribeProvider
   | ClashProvider
-  | SsdProvider {
+  | SsdProvider
+> {
+  // 函数形式，需要先获取到返回值
+  if (typeof config === 'function') {
+    config = await config();
+  }
+
   switch (config.type) {
     case SupportProviderEnum.BlackSSL:
       return new BlackSSLProvider(name, config);

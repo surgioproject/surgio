@@ -98,7 +98,7 @@ class SubscriptionsCommand extends Command {
         const providerName = basename(path, '.js');
 
         logger.debug('read %s %s', providerName, path);
-        provider = getProvider(providerName, require(path));
+        provider = await getProvider(providerName, require(path));
       } catch (err) {
         logger.debug(`${path} 不是一个合法的模块`);
         return undefined;

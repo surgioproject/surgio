@@ -88,7 +88,7 @@ class CheckCommand extends Command {
             throw file;
           }
 
-          const provider = getProvider(providerName, file);
+          const provider = await getProvider(providerName, file);
 
           ctx.nodeList = await provider.getNodeList();
         },

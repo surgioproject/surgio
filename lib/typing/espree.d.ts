@@ -37,3 +37,5 @@ declare namespace espree {
 declare module 'espree' {
   export = espree;
 }
+
+export type ThenArg<T> = T extends PromiseLike<infer U> ? U : T;

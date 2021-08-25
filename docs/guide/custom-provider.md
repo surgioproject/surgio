@@ -9,6 +9,25 @@ sidebarDepth: 2
 
 需要注意的是文件名即为该 Provider 的名称，后面在定义 Artifact 时会用到。
 
+## 支持写异步函数 <Badge text="新特性" vertical="middle" />
+
+为了满足更多定制化的场景，支持通过异步函数的模式挂载 `Provider`
+
+```js
+async function getProvider() {
+  const myNodeList = await someAsyncFunction();
+  return {
+    type: 'custom',
+    nodeList: myNodeList,
+  };
+}
+
+module.exports = getProvider;
+
+```
+
+---
+
 目前 Surgio 支持两种 Provider 类型：
 
 |  类型  |  描述  |  备注  |
