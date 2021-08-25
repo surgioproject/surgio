@@ -39,13 +39,7 @@
 
 ## Sponsors
 
-Our website is powered by [Vercel](https://vercel.com/?utm_source=surgio&utm_campaign=oss)!
-
-[<img width="200px" src="https://surgio.js.org/powered-by-vercel.svg" />](https://vercel.com/?utm_source=surgio&utm_campaign=oss)
-
----
-
-<img width="180" src="docs/.vuepress/public/vxtrans.png" alt="vxtrans">
+[<img width="180" src="docs/.vuepress/public/vxtrans.png" alt="vxtrans">](https://vx.link/?rel=geekdada)
 
 [vxTrans - 网络优化工具，有效地降低延迟，改善传输性能](https://vx.link/?rel=geekdada)
 

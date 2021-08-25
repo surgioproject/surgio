@@ -1,7 +1,8 @@
 <template>
     <div class="sponsor">
-        <a href="https://vercel.com/?utm_source=surgio&utm_campaign=oss" target="_blank" rel="noopener">
-            <img src="/powered-by-vercel.svg" alt="powered by vercel">
+        <a href="https://vx.link/?rel=geekdada" target="_blank" rel="noopener">
+            <div><img src="/vxtrans.png" alt="vxtrans"></div>
+            <div class="text">有效地降低延迟，改善传输性能</div>
         </a>
     </div>
 </template>
@@ -15,10 +16,17 @@ export default {
 <style lang="css">
     .sponsor {
         display: flex;
-        width: 11rem;
-        margin: 2rem auto 0;
+        justify-content: center;
+        width: auto;
+        margin: 2rem 0 0;
     }
     .sponsor img {
-        width: 100%;
+        width: 180px;
+    }
+    .sponsor .text {
+      font-size: 0.8em;
+      color: #2c3e50;
+      text-align: center;
+      margin-top: 0.5em;
     }
 </style>
