@@ -42,9 +42,9 @@ const head = [
 
 module.exports = (ctx) => ({
   configureWebpack: (config) => {
-    if (ctx.isProd) {
-      config.devtool = 'source-map';
-    }
+    // if (ctx.isProd) {
+    //   config.devtool = 'source-map';
+    // }
   },
   locales: {
     '/': {
