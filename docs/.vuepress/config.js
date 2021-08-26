@@ -124,13 +124,13 @@ module.exports = (ctx) => ({
     },
   },
   plugins: [
-    [
-      '@vuepress/pwa',
-      {
-        serviceWorker: true,
-        updatePopup: true,
-      },
-    ],
+    // [
+    //   '@vuepress/pwa',
+    //   {
+    //     serviceWorker: true,
+    //     updatePopup: true,
+    //   },
+    // ],
     [
       '@vuepress/google-analytics',
       {
