@@ -6,21 +6,15 @@ import ShadowsocksJsonSubscribeProvider from './ShadowsocksJsonSubscribeProvider
 import ShadowsocksrSubscribeProvider from './ShadowsocksrSubscribeProvider';
 import ShadowsocksSubscribeProvider from './ShadowsocksSubscribeProvider';
 import SsdProvider from './SsdProvider';
+import { PossibleProviderType } from './types';
 import V2rayNSubscribeProvider from './V2rayNSubscribeProvider';
+
+export { PossibleProviderType };
 
 export async function getProvider(
   name: string,
   config: any,
-): Promise<
-  | BlackSSLProvider
-  | ShadowsocksJsonSubscribeProvider
-  | ShadowsocksSubscribeProvider
-  | CustomProvider
-  | V2rayNSubscribeProvider
-  | ShadowsocksrSubscribeProvider
-  | ClashProvider
-  | SsdProvider
-> {
+): Promise<PossibleProviderType> {
   // 函数形式，需要先获取到返回值
   if (typeof config === 'function') {
     config = await config();
