@@ -1,3 +1,12 @@
+## [2.10.1](https://github.com/geekdada/surgio/compare/v2.10.0...v2.10.1) (2021-08-27)
+
+
+### Bug Fixes
+
+* export necessary type ([21c717f](https://github.com/geekdada/surgio/commit/21c717f4b93a5b8d54cc61180f2771c590b4882c))
+
+
+
 # [2.10.0](https://github.com/geekdada/surgio/compare/v2.9.1...v2.10.0) (2021-08-25)
 
 
