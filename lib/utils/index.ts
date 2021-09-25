@@ -131,7 +131,7 @@ export const getShadowsocksJSONConfig = async (
 /**
  * @see https://manual.nssurge.com/policy/proxy.html
  */
-export const getSurgeNodes = function(
+export const getSurgeNodes = function (
   list: ReadonlyArray<PossibleNodeConfigType>,
   filter?: NodeFilterType | SortedNodeNameFilterType,
 ): string {
@@ -542,7 +542,7 @@ export const getSurgeNodes = function(
   return result.join('\n');
 };
 
-export const getClashNodes = function(
+export const getClashNodes = function (
   list: ReadonlyArray<PossibleNodeConfigType>,
   filter?: NodeFilterType | SortedNodeNameFilterType,
 ): ReadonlyArray<any> {
@@ -750,7 +750,7 @@ export const getClashNodes = function(
     .filter((item) => item !== null);
 };
 
-export const getMellowNodes = function(
+export const getMellowNodes = function (
   list: ReadonlyArray<VmessNodeConfig | ShadowsocksNodeConfig>,
   filter?: NodeFilterType | SortedNodeNameFilterType,
 ): string {
@@ -971,7 +971,7 @@ export const getV2rayNNodes = (
   return result.join('\n');
 };
 
-export const getQuantumultNodes = function(
+export const getQuantumultNodes = function (
   list: ReadonlyArray<
     | ShadowsocksNodeConfig
     | VmessNodeConfig
@@ -1069,7 +1069,7 @@ export const getQuantumultNodes = function(
 /**
  * @see https://github.com/crossutility/Quantumult-X/blob/master/sample.conf
  */
-export const getQuantumultXNodes = function(
+export const getQuantumultXNodes = function (
   list: ReadonlyArray<PossibleNodeConfigType>,
   filter?: NodeNameFilterType | SortedNodeNameFilterType,
 ): string {
@@ -1289,7 +1289,7 @@ export const getShadowsocksNodesJSON = (
   return JSON.stringify(nodes, null, 2);
 };
 
-export const getNodeNames = function(
+export const getNodeNames = function (
   list: ReadonlyArray<SimpleNodeConfig>,
   filter?: NodeNameFilterType | SortedNodeNameFilterType,
   separator?: string,
@@ -1304,7 +1304,7 @@ export const getNodeNames = function(
     .join(separator || ', ');
 };
 
-export const getClashNodeNames = function(
+export const getClashNodeNames = function (
   list: ReadonlyArray<SimpleNodeConfig>,
   filter?: NodeNameFilterType | SortedNodeNameFilterType,
   existingProxies?: ReadonlyArray<string>,

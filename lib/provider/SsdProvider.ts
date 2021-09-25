@@ -117,11 +117,10 @@ export const getSsdSubscription = async (
   const base64 = response.body.replace('ssd://', '');
   const data = JSON.parse(fromBase64(base64)) as SsdSubscription;
   const { servers, traffic_used, traffic_total, expiry } = data;
-  const nodeList: ReadonlyArray<
-    ShadowsocksNodeConfig | undefined
-  > = servers.map((server): ShadowsocksNodeConfig | undefined =>
-    parseSsdConfig(data, server, udpRelay),
-  );
+  const nodeList: ReadonlyArray<ShadowsocksNodeConfig | undefined> =
+    servers.map((server): ShadowsocksNodeConfig | undefined =>
+      parseSsdConfig(data, server, udpRelay),
+    );
 
   if (
     !response.subscriptionUserinfo &&

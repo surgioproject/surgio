@@ -116,17 +116,15 @@ export const getShadowsocksSubscription = async (
   const nodeList = fromBase64(response.body)
     .split('\n')
     .filter((item) => !!item && item.startsWith('ss://'))
-    .map(
-      (item): ShadowsocksNodeConfig => {
-        const nodeConfig = parseSSUri(item);
+    .map((item): ShadowsocksNodeConfig => {
+      const nodeConfig = parseSSUri(item);
 
-        if (udpRelay !== void 0) {
-          (nodeConfig['udp-relay'] as boolean) = udpRelay;
-        }
+      if (udpRelay !== void 0) {
+        (nodeConfig['udp-relay'] as boolean) = udpRelay;
+      }
 
-        return nodeConfig;
-      },
-    );
+      return nodeConfig;
+    });
 
   return {
     nodeList,

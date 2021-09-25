@@ -4,8 +4,7 @@ const suite = new Benchmark.Suite();
 
 loadRemoteSnippetList([
   {
-    url:
-      'https://raw.githubusercontent.com/DivineEngine/Profiles/master/Surge/Ruleset/Extra/ChinaIP.list',
+    url: 'https://raw.githubusercontent.com/DivineEngine/Profiles/master/Surge/Ruleset/Extra/ChinaIP.list',
     name: 'chinaip',
   },
 ]).then((res) => {
@@ -17,10 +16,10 @@ loadRemoteSnippetList([
       snippet.main('PROXY');
     })
     // add listeners
-    .on('cycle', function(event) {
+    .on('cycle', function (event) {
       console.log(String(event.target));
     })
-    .on('complete', function() {
+    .on('complete', function () {
       console.log('Fastest is ' + this.filter('fastest').map('name'));
     })
     // run async

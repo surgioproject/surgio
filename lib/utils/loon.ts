@@ -12,7 +12,7 @@ import { applyFilter } from './index';
 const logger = createLogger({ service: 'surgio:utils' });
 
 // @see https://www.notion.so/1-9809ce5acf524d868affee8dd5fc0a6e
-export const getLoonNodes = function(
+export const getLoonNodes = function (
   list: ReadonlyArray<PossibleNodeConfigType>,
   filter?: NodeNameFilterType | SortedNodeNameFilterType,
 ): string {

@@ -82,7 +82,7 @@ export async function generate(
   return artifactInstance.render(templateEngine);
 }
 
-export default async function(
+export default async function (
   config: CommandConfig,
   skipFail?: boolean,
   cacheSnippet?: boolean,

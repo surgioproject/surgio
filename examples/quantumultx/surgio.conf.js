@@ -6,18 +6,15 @@ module.exports = {
   remoteSnippets: [
     {
       name: 'youtube',
-      url:
-        'https://raw.githubusercontent.com/ConnersHua/Profiles/master/Surge/Ruleset/Media/YouTube.list',
+      url: 'https://raw.githubusercontent.com/ConnersHua/Profiles/master/Surge/Ruleset/Media/YouTube.list',
     },
     {
       name: 'global',
-      url:
-        'https://raw.githubusercontent.com/ConnersHua/Profiles/master/Surge/Ruleset/Global.list',
+      url: 'https://raw.githubusercontent.com/ConnersHua/Profiles/master/Surge/Ruleset/Global.list',
     },
     {
       name: 'netflix',
-      url:
-        'https://raw.githubusercontent.com/ConnersHua/Profiles/master/Surge/Ruleset/Media/Netflix.list',
+      url: 'https://raw.githubusercontent.com/ConnersHua/Profiles/master/Surge/Ruleset/Media/Netflix.list',
     },
   ],
   artifacts: [

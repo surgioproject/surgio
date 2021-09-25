@@ -11,6 +11,7 @@ module.exports = {
   ],
   parser: '@typescript-eslint/parser',
   parserOptions: {
+    ecmaVersion: 'esnext',
     project: join(__dirname, 'tsconfig.eslint.json'),
     sourceType: 'module',
   },

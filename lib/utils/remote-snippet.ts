@@ -135,10 +135,7 @@ export const loadRemoteSnippetList = (
   return Bluebird.map(
     remoteSnippetList,
     (item) => {
-      const fileMd5 = crypto
-        .createHash('md5')
-        .update(item.url)
-        .digest('hex');
+      const fileMd5 = crypto.createHash('md5').update(item.url).digest('hex');
       const isSurgioSnippet = item.surgioSnippet;
 
       return (async () => {

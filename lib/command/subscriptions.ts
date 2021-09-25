@@ -98,6 +98,7 @@ class SubscriptionsCommand extends Command {
         const providerName = basename(path, '.js');
 
         logger.debug('read %s %s', providerName, path);
+        // eslint-disable-next-line prefer-const
         provider = await getProvider(providerName, require(path));
       } catch (err) {
         logger.debug(`${path} 不是一个合法的模块`);

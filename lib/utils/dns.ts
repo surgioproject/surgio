@@ -35,8 +35,9 @@ export const resolveDomain = async (
     Bluebird.delay(timeout).then(() => []),
   ]);
   logger.debug(
-    `resolved domain ${domain}: ${JSON.stringify(records)} ${Date.now() -
-      now}ms`,
+    `resolved domain ${domain}: ${JSON.stringify(records)} ${
+      Date.now() - now
+    }ms`,
   );
 
   if (records.length) {

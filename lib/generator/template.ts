@@ -182,12 +182,7 @@ export const convertSurgeScriptRuleToQuantumultXRewriteRule = (
 
   switch (parts[0]) {
     case 'http-response': {
-      const params = decodeStringList(
-        parts
-          .splice(2)
-          .join('')
-          .split(','),
-      );
+      const params = decodeStringList(parts.splice(2).join('').split(','));
       const scriptPath = params['script-path'];
       const isRequireBody = 'requires-body' in params;
 
@@ -211,12 +206,7 @@ export const convertSurgeScriptRuleToQuantumultXRewriteRule = (
       return result.join(' ');
     }
     case 'http-request': {
-      const params = decodeStringList(
-        parts
-          .splice(2)
-          .join('')
-          .split(','),
-      );
+      const params = decodeStringList(parts.splice(2).join('').split(','));
       const scriptPath = params['script-path'];
       const isRequireBody = 'requires-body' in params;
 

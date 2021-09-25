@@ -137,9 +137,7 @@ export const validateConfig = (userConfig: Partial<CommandConfig>): void => {
     surgioSnippet: Joi.boolean().strict(),
   });
   const schema = Joi.object({
-    artifacts: Joi.array()
-      .items(artifactSchema)
-      .required(),
+    artifacts: Joi.array().items(artifactSchema).required(),
     remoteSnippets: Joi.array().items(remoteSnippetSchema),
     urlBase: Joi.string(),
     upload: Joi.object({

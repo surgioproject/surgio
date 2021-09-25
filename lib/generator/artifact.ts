@@ -78,14 +78,10 @@ export class Artifact extends EventEmitter {
   public initProgress = 0;
 
   public providerNameList: ReadonlyArray<string>;
-  public nodeConfigListMap: Map<
-    string,
-    ReadonlyArray<PossibleNodeConfigType>
-  > = new Map();
-  public providerMap: Map<
-    string,
-    ThenArg<ReturnType<typeof getProvider>>
-  > = new Map();
+  public nodeConfigListMap: Map<string, ReadonlyArray<PossibleNodeConfigType>> =
+    new Map();
+  public providerMap: Map<string, ThenArg<ReturnType<typeof getProvider>>> =
+    new Map();
   public nodeList: PossibleNodeConfigType[] = [];
   public nodeNameList: SimpleNodeConfig[] = [];
 
@@ -330,6 +326,7 @@ export class Artifact extends EventEmitter {
     let nodeConfigList: ReadonlyArray<PossibleNodeConfigType>;
 
     try {
+      // eslint-disable-next-line prefer-const
       provider = await getProvider(providerName, require(filePath));
       this.providerMap.set(providerName, provider);
     } catch (err) /* istanbul ignore next */ {

@@ -25,9 +25,7 @@ export default class CustomProvider extends Provider {
       underlyingProxy: Joi.string(),
     }).unknown();
     const schema = Joi.object({
-      nodeList: Joi.array()
-        .items(nodeSchema)
-        .required(),
+      nodeList: Joi.array().items(nodeSchema).required(),
     }).unknown();
 
     const { error } = schema.validate(config);

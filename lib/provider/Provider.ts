@@ -64,10 +64,7 @@ export default class Provider {
       removeExistingFlag: Joi.boolean().strict(),
       mptcp: Joi.boolean().strict(),
       tfo: Joi.boolean().strict(),
-      startPort: Joi.number()
-        .integer()
-        .min(1024)
-        .max(65535),
+      startPort: Joi.number().integer().min(1024).max(65535),
       relayUrl: [Joi.boolean().strict(), Joi.string()],
       renameNode: Joi.function(),
     }).unknown();

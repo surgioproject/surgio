@@ -2,7 +2,7 @@ import Command from 'common-bin';
 import chalk from 'chalk';
 import DoctorCommand from '../command/doctor';
 
-export const errorHandler = function(this: Command, err: Error): void {
+export const errorHandler = function (this: Command, err: Error): void {
   DoctorCommand.generateDoctorInfo(this.context.cwd).then((doctorInfo) => {
     console.error(chalk.red(`⚠️  发生错误`));
     console.error(chalk.red(`⚠️  ${err.name}: ${err.message}`));
