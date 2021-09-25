@@ -62,6 +62,7 @@ export default {
   themeConfig: {
     docsRepo: 'geekdada/surgio',
     docsBranch: 'master',
+    repo: 'geekdada/surgio',
     repoLabel: 'GitHub',
     editLink: true,
     editLinkText: '帮助我们改善此页面！',
