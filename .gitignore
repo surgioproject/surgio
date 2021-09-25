@@ -13,6 +13,8 @@ coverage/
 /build/
 /binary-build/
 /docs/.vuepress/dist
+/docs/.vuepress/.cache
+/docs/.vuepress/.temp
 /test/fixture/**/dist
 /test/benchmark/playground.js
 /examples/**/dist

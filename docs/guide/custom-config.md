@@ -6,8 +6,6 @@ sidebarDepth: 2
 
 Surgio 的配置文件位于目录内的 `surgio.conf.js`。
 
-## 属性
-
 ```js
 module.exports = {
   artifacts: [],
@@ -345,3 +343,7 @@ module.exports = {
 1. 字符串的匹配方式是「包含」；
 2. 英文字母请使用大写；
 :::
+
+### 环境变量
+
+Surgio 支持使用 [环境变量](/guide/env.md) 来调整没有公开的配置，但属于高级用法，请酌情使用。

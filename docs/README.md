@@ -2,12 +2,13 @@
 home: true
 title: '一站式各类代理规则生成器'
 heroImage: /surgio-icon.png
-actionText: 快速上手 →
-actionLink: /guide/
+actions:
+- text: 快速上手 →
+  link: /guide/
+  type: primary
 footer: MIT Licensed | Copyright © 2019-present
 ---
 <p style="text-align: center">
-  <script async defer src="https://buttons.github.io/buttons.js"></script>
   <a class="github-button" href="https://github.com/geekdada/surgio" data-icon="octicon-star" data-size="large" data-show-count="true" aria-label="Star geekdada/surgio on GitHub">Star</a>
 </p>
 

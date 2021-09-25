@@ -85,9 +85,9 @@ Surgio 会根据 Artifact 的值来生成配置文件。你可以一次性配置
 
 此后即可在模板中使用 
 
-:::v-pre
+```md
 `{{ customParams.foo }}`
-:::
+```
 
 来输出 `foo` 的内容。
 
