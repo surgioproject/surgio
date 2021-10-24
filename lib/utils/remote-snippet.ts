@@ -4,7 +4,6 @@ import { logger } from '@surgio/logger';
 import detectNewline from 'detect-newline';
 import nunjucks from 'nunjucks';
 import espree, { ExpressionStatementNode } from 'espree';
-import { URL } from 'url';
 
 import { RemoteSnippet, RemoteSnippetConfig } from '../types';
 import { NETWORK_CONCURRENCY, REMOTE_SNIPPET_CACHE_MAXAGE } from './constant';

@@ -63,7 +63,8 @@ import {
 import { prependFlag, removeFlag } from '../utils/flag';
 import { getLoonNodes } from '../utils/loon';
 import { loadLocalSnippet } from './template';
-import { ThenArg } from '../typing/espree';
+
+type ThenArg<T> = T extends PromiseLike<infer U> ? U : T;
 
 export interface ArtifactOptions {
   readonly remoteSnippetList?: ReadonlyArray<RemoteSnippet>;
