@@ -52,7 +52,7 @@ test('getLoonNodes', (t) => {
         password: 'nndndnd',
       },
     ]),
-    'test = http,a.com,443,snsms,"nndndnd"',
+    'test = https,a.com,443,snsms,"nndndnd"',
   );
   t.is(
     getLoonNodes([

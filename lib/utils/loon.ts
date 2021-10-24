@@ -110,7 +110,7 @@ export const getLoonNodes = function (
 
         case NodeTypeEnum.HTTPS:
           return [
-            `${nodeConfig.nodeName} = http`,
+            `${nodeConfig.nodeName} = https`,
             nodeConfig.hostname,
             nodeConfig.port,
             nodeConfig.username /* istanbul ignore next */ || '',
@@ -120,7 +120,7 @@ export const getLoonNodes = function (
 
         case NodeTypeEnum.HTTP:
           return [
-            `${nodeConfig.nodeName} = https`,
+            `${nodeConfig.nodeName} = http`,
             nodeConfig.hostname,
             nodeConfig.port,
             nodeConfig.username /* istanbul ignore next */ || '',
