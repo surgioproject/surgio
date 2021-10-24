@@ -1,3 +1,12 @@
+## [2.10.2](https://github.com/geekdada/surgio/compare/v2.10.1...v2.10.2) (2021-10-24)
+
+
+### Bug Fixes
+
+* wrong loon config format ([340d324](https://github.com/geekdada/surgio/commit/340d32412ab3c2694b4f6780930e32a5cf0735f0)), closes [#159](https://github.com/geekdada/surgio/issues/159)
+
+
+
 ## [2.10.1](https://github.com/geekdada/surgio/compare/v2.10.0...v2.10.1) (2021-08-27)
 
 
