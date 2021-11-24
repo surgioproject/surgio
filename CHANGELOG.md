@@ -1,3 +1,7 @@
+## [2.10.3](https://github.com/geekdada/surgio/compare/v2.10.2...v2.10.3) (2021-11-24)
+
+
+
 ## [2.10.2](https://github.com/geekdada/surgio/compare/v2.10.1...v2.10.2) (2021-10-24)
 
 
