@@ -33,7 +33,10 @@ export class SortFilterWithSortedFilters implements SortedNodeNameFilterType {
 export class SortFilterWithSortedKeywords implements SortedNodeNameFilterType {
   public supportSort = true;
 
-  constructor(public _keywords: ReadonlyArray<string | string[]>, private group = false) {
+  constructor(
+    public _keywords: ReadonlyArray<string | string[]>,
+    private group = false,
+  ) {
     this.filter.bind(this);
   }
 
@@ -45,11 +48,11 @@ export class SortFilterWithSortedKeywords implements SortedNodeNameFilterType {
       ...(this._keywords as string[][]).map((keywords) => {
         return (node) => {
           const index = keywords.findIndex((item) =>
-            node.nodeName.includes(item)
+            node.nodeName.includes(item),
           );
           return index > -1 ? index : nodeList.length;
         };
-      })
+      }),
     );
   }
 
@@ -62,20 +65,20 @@ export class SortFilterWithSortedKeywords implements SortedNodeNameFilterType {
         if (node.nodeName.includes(keyword)) {
           score -= array.length - index;
         }
-      })
+      });
       return score;
-    })
+    });
   }
 
   public filter<T>(
     nodeList: ReadonlyArray<T & SimpleNodeConfig>,
   ): ReadonlyArray<T & SimpleNodeConfig> {
-    let result: ReadonlyArray<T & SimpleNodeConfig> = []
+    let result: ReadonlyArray<T & SimpleNodeConfig> = [];
 
     if (this.group) {
-      result = this.groupFilter(nodeList)
+      result = this.groupFilter(nodeList);
     } else {
-      result = this.singleFilter(nodeList)
+      result = this.singleFilter(nodeList);
     }
 
     return _.uniqBy(result, (node) => node.nodeName);
@@ -199,7 +202,7 @@ export const useSortedKeywords = (
   }
 
   if (subKeywords && Array.isArray(subKeywords)) {
-    return new SortFilterWithSortedKeywords([keywords, ...subKeywords], true)
+    return new SortFilterWithSortedKeywords([keywords, ...subKeywords], true);
   }
 
   return new SortFilterWithSortedKeywords(keywords);
