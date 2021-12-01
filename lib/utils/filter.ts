@@ -191,7 +191,7 @@ export const discardProviders = (
 
 export const useSortedKeywords = (
   keywords: ReadonlyArray<string>,
-  ...subKeywords: ReadonlyArray<string>[]
+  ...subKeywords: string[][]
 ): SortedNodeNameFilterType => {
   // istanbul ignore next
   if (!Array.isArray(keywords)) {
