@@ -40,13 +40,16 @@ export class SortFilterWithSortedKeywords implements SortedNodeNameFilterType {
   public filter<T>(
     nodeList: ReadonlyArray<T & SimpleNodeConfig>,
   ): ReadonlyArray<T & SimpleNodeConfig> {
-    const result: (T & SimpleNodeConfig)[] = [];
-
-    this._keywords.forEach((keyword) => {
-      result.push(
-        ...nodeList.filter((node) => node.nodeName.includes(keyword)),
-      );
-    });
+    const getScore = (node: SimpleNodeConfig) => {
+      let score = 0;
+      this._keywords.forEach((keyword, index, array) => {
+        if (node.nodeName.includes(keyword)) {
+          score += array.length - index;
+        }
+      })
+      return score;
+    }
+    const result = nodeList.sort((a, b) => getScore(b) - getScore(a))
 
     return _.uniqBy(result, (node) => node.nodeName);
   }
