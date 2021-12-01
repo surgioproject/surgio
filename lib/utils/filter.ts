@@ -33,7 +33,7 @@ export class SortFilterWithSortedFilters implements SortedNodeNameFilterType {
 export class SortFilterWithSortedKeywords implements SortedNodeNameFilterType {
   public supportSort = true;
 
-  constructor(public _keywords: ReadonlyArray<string>, private group = false) {
+  constructor(public _keywords: ReadonlyArray<string | string[]>, private group = false) {
     this.filter.bind(this);
   }
 
@@ -42,7 +42,7 @@ export class SortFilterWithSortedKeywords implements SortedNodeNameFilterType {
   ): ReadonlyArray<T & SimpleNodeConfig> {
     return _.sortBy(
       nodeList,
-      ...this._keywords.map((keywords) => {
+      ...(this._keywords as string[][]).map((keywords) => {
         return (node) => {
           const index = keywords.findIndex((item) =>
             node.nodeName.includes(item)
@@ -56,9 +56,9 @@ export class SortFilterWithSortedKeywords implements SortedNodeNameFilterType {
   private singleFilter<T>(
     nodeList: ReadonlyArray<T & SimpleNodeConfig>,
   ): ReadonlyArray<T & SimpleNodeConfig> {
-    return _.sortBy(nodeList, (node: SimpleNodeConfig) => {
+    return _.sortBy(nodeList, (node) => {
       let score = 0;
-      this._keywords.forEach((keyword, index, array) => {
+      (this._keywords as string[]).forEach((keyword, index, array) => {
         if (node.nodeName.includes(keyword)) {
           score += array.length - index;
         }
