@@ -60,7 +60,7 @@ export class SortFilterWithSortedKeywords implements SortedNodeNameFilterType {
       let score = 0;
       (this._keywords as string[]).forEach((keyword, index, array) => {
         if (node.nodeName.includes(keyword)) {
-          score += array.length - index;
+          score -= array.length - index;
         }
       })
       return score;
