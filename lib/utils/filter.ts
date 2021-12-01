@@ -49,7 +49,7 @@ export class SortFilterWithSortedKeywords implements SortedNodeNameFilterType {
       })
       return score;
     }
-    const result = nodeList.sort((a, b) => getScore(b) - getScore(a))
+    const result = [...nodeList].sort((a, b) => getScore(b) - getScore(a))
 
     return _.uniqBy(result, (node) => node.nodeName);
   }
