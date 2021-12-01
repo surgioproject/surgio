@@ -33,14 +33,30 @@ export class SortFilterWithSortedFilters implements SortedNodeNameFilterType {
 export class SortFilterWithSortedKeywords implements SortedNodeNameFilterType {
   public supportSort = true;
 
-  constructor(public _keywords: ReadonlyArray<string>) {
+  constructor(public _keywords: ReadonlyArray<string>, private group = false) {
     this.filter.bind(this);
   }
 
-  public filter<T>(
+  private groupFilter<T>(
     nodeList: ReadonlyArray<T & SimpleNodeConfig>,
   ): ReadonlyArray<T & SimpleNodeConfig> {
-    const getScore = (node: SimpleNodeConfig) => {
+    return _.sortBy(
+      nodeList,
+      ...this._keywords.map((keywords) => {
+        return (node) => {
+          const index = keywords.findIndex((item) =>
+            node.nodeName.includes(item)
+          );
+          return index > -1 ? index : nodeList.length;
+        };
+      })
+    );
+  }
+
+  private singleFilter<T>(
+    nodeList: ReadonlyArray<T & SimpleNodeConfig>,
+  ): ReadonlyArray<T & SimpleNodeConfig> {
+    return _.sortBy(nodeList, (node: SimpleNodeConfig) => {
       let score = 0;
       this._keywords.forEach((keyword, index, array) => {
         if (node.nodeName.includes(keyword)) {
@@ -48,8 +64,19 @@ export class SortFilterWithSortedKeywords implements SortedNodeNameFilterType {
         }
       })
       return score;
+    })
+  }
+
+  public filter<T>(
+    nodeList: ReadonlyArray<T & SimpleNodeConfig>,
+  ): ReadonlyArray<T & SimpleNodeConfig> {
+    let result: ReadonlyArray<T & SimpleNodeConfig> = []
+
+    if (this.group) {
+      result = this.groupFilter(nodeList)
+    } else {
+      result = this.singleFilter(nodeList)
     }
-    const result = [...nodeList].sort((a, b) => getScore(b) - getScore(a))
 
     return _.uniqBy(result, (node) => node.nodeName);
   }
@@ -164,10 +191,15 @@ export const discardProviders = (
 
 export const useSortedKeywords = (
   keywords: ReadonlyArray<string>,
+  ...subKeywords: ReadonlyArray<string>[]
 ): SortedNodeNameFilterType => {
   // istanbul ignore next
   if (!Array.isArray(keywords)) {
     throw new Error('keywords 请使用数组');
+  }
+
+  if (subKeywords && Array.isArray(subKeywords)) {
+    return new SortFilterWithSortedKeywords([keywords, ...subKeywords], true)
   }
 
   return new SortFilterWithSortedKeywords(keywords);
