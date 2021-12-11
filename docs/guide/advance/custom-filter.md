@@ -133,6 +133,23 @@ module.exports = {
 };
 ```
 
+> <Badge text="v2.10.4" vertical="middle" />
+
+```js
+const { utils } = require('surgio');
+
+module.exports = {
+  url: 'http://example.com/ss-sub.txt',
+  type: 'shadowsocks_subscribe',
+  customFilters: {
+    preferNodes: utils.useSortedKeywords([
+      ['HC', 'AIA', 'IEPL'],
+      ['香港', '台湾', '新加坡', '日本'],
+    ]), // 香港 HC, 台湾 HC, 日本 HC, 香港 AIA, 台湾 AIA, 新加坡 AIA, 日本 AIA ....
+  },
+};
+```
+
 ### mergeSortedFilters
 
 合并多个过滤器，生成一个新的排序型过滤器。
