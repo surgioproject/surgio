@@ -17,10 +17,8 @@ import {
   VmessNodeConfig,
 } from '../types';
 import { lowercaseHeaderKeys } from '../utils';
-import httpClient, { getUserAgent } from '../utils/http-client';
+import { getUserAgent } from '../utils/http-client';
 import relayableUrl from '../utils/relayable-url';
-import { parseSubscriptionUserInfo } from '../utils/subscription';
-import { SubsciptionCacheItem, SubscriptionCache } from '../utils/cache';
 import { NETWORK_CLASH_UA } from '../utils/constant';
 import Provider from './Provider';
 
@@ -109,35 +107,9 @@ export const getClashSubscription = async (
 }> => {
   assert(url, '未指定订阅地址 url');
 
-  const response = SubscriptionCache.has(url)
-    ? (SubscriptionCache.get(url) as SubsciptionCacheItem)
-    : await (async () => {
-        const res = await httpClient.get(url, {
-          responseType: 'text',
-          headers: {
-            'user-agent': getUserAgent(NETWORK_CLASH_UA),
-          },
-        });
-        const subsciptionCacheItem: SubsciptionCacheItem = {
-          body: res.body,
-        };
-
-        if (res.headers['subscription-userinfo']) {
-          subsciptionCacheItem.subscriptionUserinfo = parseSubscriptionUserInfo(
-            res.headers['subscription-userinfo'] as string,
-          );
-          logger.debug(
-            '%s received subscription userinfo - raw: %s | parsed: %j',
-            url,
-            res.headers['subscription-userinfo'],
-            subsciptionCacheItem.subscriptionUserinfo,
-          );
-        }
-
-        SubscriptionCache.set(url, subsciptionCacheItem);
-
-        return subsciptionCacheItem;
-      })();
+  const response = await Provider.requestCacheableResource(url, {
+    requestUserAgent: getUserAgent(NETWORK_CLASH_UA),
+  });
   let clashConfig;
 
   try {

@@ -1603,3 +1603,7 @@ export const isGitLabCI = (): boolean =>
 
 // istanbul ignore next
 export const isPkgBundle = (): boolean => __dirname.startsWith('/snapshot');
+
+// istanbul ignore next
+export const isRailway = (): boolean =>
+  typeof process.env.RAILWAY_STATIC_URL !== 'undefined';

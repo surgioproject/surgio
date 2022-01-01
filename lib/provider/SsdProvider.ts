@@ -10,10 +10,7 @@ import {
   SubscriptionUserinfo,
 } from '../types';
 import { decodeStringList, fromBase64 } from '../utils';
-import { SubsciptionCacheItem, SubscriptionCache } from '../utils/cache';
-import httpClient from '../utils/http-client';
 import relayableUrl from '../utils/relayable-url';
-import { parseSubscriptionUserInfo } from '../utils/subscription';
 import Provider from './Provider';
 
 const logger = createLogger({
@@ -84,30 +81,7 @@ export const getSsdSubscription = async (
 }> => {
   assert(url, '未指定订阅地址 url');
 
-  const response = SubscriptionCache.has(url)
-    ? (SubscriptionCache.get(url) as SubsciptionCacheItem)
-    : await (async () => {
-        const res = await httpClient.get(url);
-        const subsciptionCacheItem: SubsciptionCacheItem = {
-          body: res.body,
-        };
-
-        if (res.headers['subscription-userinfo']) {
-          subsciptionCacheItem.subscriptionUserinfo = parseSubscriptionUserInfo(
-            res.headers['subscription-userinfo'] as string,
-          );
-          logger.debug(
-            '%s received subscription userinfo - raw: %s | parsed: %j',
-            url,
-            res.headers['subscription-userinfo'],
-            subsciptionCacheItem.subscriptionUserinfo,
-          );
-        }
-
-        SubscriptionCache.set(url, subsciptionCacheItem);
-
-        return subsciptionCacheItem;
-      })();
+  const response = await Provider.requestCacheableResource(url);
 
   // istanbul ignore next
   if (!response.body.startsWith('ssd://')) {
