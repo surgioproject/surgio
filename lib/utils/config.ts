@@ -1,4 +1,4 @@
-import Joi from '@hapi/joi';
+import Joi from 'joi';
 import fs from 'fs-extra';
 import _ from 'lodash';
 import path from 'path';

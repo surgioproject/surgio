@@ -1,4 +1,4 @@
-import Joi from '@hapi/joi';
+import Joi from 'joi';
 import { createLogger } from '@surgio/logger';
 import assert from 'assert';
 
