@@ -516,8 +516,6 @@ DOMAIN-SUFFIX,ytimg.com,🚀 Proxy
 需要注意的是，`clash` 除了更改格式，还会将 Clash 不支持的规则类型省略，例如：
 
 - USER-AGENT
-- PROCESS-NAME
-- no-resolve（仅除去该字段，其它部分保留）
 
 ### Quantumult X 规则处理
 
