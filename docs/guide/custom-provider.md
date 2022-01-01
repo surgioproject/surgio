@@ -9,7 +9,7 @@ sidebarDepth: 2
 
 需要注意的是文件名即为该 Provider 的名称，后面在定义 Artifact 时会用到。
 
-## 支持写异步函数 <Badge text="新特性" vertical="middle" />
+## 支持写异步函数 <Badge text="v2.10.0" vertical="middle" />
 
 为了满足更多定制化的场景，支持通过异步函数的模式挂载 `Provider`
 
@@ -28,17 +28,20 @@ module.exports = getProvider;
 
 ---
 
+## 订阅类型
+
 目前 Surgio 支持两种 Provider 类型：
 
-|  类型  |  描述  |  备注  |
-|:---:| --- | --- |
-|  `shadowsocks_json_subscribe`  |  针对 Windows 客户端的 Shadowsocks 订阅地址  |  通常命名为 *gui-config.json*  |
-|  `shadowsocks_subscribe`  |  通用的 Shadowsocks 订阅地址  |    |
-|  `shadowsocksr_subscribe`  |  通用的 Shadowsocksr 订阅地址  |    |
-|  `v2rayn_subscribe`  |  V2rayN 订阅地址  |  [协议](https://github.com/2dust/v2rayN/wiki/%E8%AE%A2%E9%98%85%E5%8A%9F%E8%83%BD%E8%AF%B4%E6%98%8E)  |
-|  `custom` <Badge text="推荐" vertical="middle" /> |  自己维护的节点  |  支持 Shadowsocks, Shadowsocksr, Snell, HTTPS, HTTP, Vmess, Socks5  |
-|  `clash` <Badge text="推荐" vertical="middle" /> |  Clash 配置  |  支持 Shadowsocks, Shadowsocksr, Snell, HTTPS, HTTP, Vmess  |
-|  `ssd` |  SSD 订阅  |  支持 Shadowsocks  |
+|                       类型                       | 描述                               | 备注                                                                                                                       |
+|:----------------------------------------------:|----------------------------------|--------------------------------------------------------------------------------------------------------------------------|
+| `custom` <Badge text="推荐" vertical="middle" /> | 自己维护的节点                          | 支持 Shadowsocks, Shadowsocksr, Snell, HTTPS, HTTP, Vmess, Socks5                                                          |
+| `clash` <Badge text="推荐" vertical="middle" />  | Clash 配置                         | 支持 Shadowsocks, Shadowsocksr, Snell, HTTPS, HTTP, Vmess                                                                  |
+|                    `trojan`                    | Trojan 订阅                        | Shadowrocket 支持的 Trojan 订阅格式                                                                                             |
+|          `shadowsocks_json_subscribe`          | 针对 Windows 客户端的 Shadowsocks 订阅地址 | 通常命名为 *gui-config.json*                                                                                                  |
+|            `shadowsocks_subscribe`             | 通用的 Shadowsocks 订阅地址             |                                                                                                                          |
+|            `shadowsocksr_subscribe`            | 通用的 Shadowsocksr 订阅地址            |                                                                                                                          |
+|               `v2rayn_subscribe`               | V2rayN 订阅地址                      | 支持 V2Ray, Shadowsocks, [协议](https://github.com/2dust/v2rayN/wiki/%E8%AE%A2%E9%98%85%E5%8A%9F%E8%83%BD%E8%AF%B4%E6%98%8E) |
+|                     `ssd`                      | SSD 订阅                           | 支持 Shadowsocks                                                                                                           |
 
 ## shadowsocks_json_subscribe
 
@@ -135,6 +138,7 @@ module.exports = {
 :::warning 注意
 - Quantumult 的订阅格式和 V2rayN 的订阅格式有差异，不可以混用；
 - 如果你正在使用 [DlerCloud](https://dlercloud.com/auth/register?affid=45071)，可以使用「通用」类型的订阅地址；
+- 订阅中的 V2Ray 和 Shadowsocks 节点会被读取；
 :::
 
 ### compatibleMode
@@ -212,7 +216,31 @@ module.exports = {
 
 你可以通过配置这个属性来强制设定节点的 UDP 转发支持情况。
 
+## trojan <Badge text="v2.11.0" vertical="middle" />
+
+### url
+
+- 类型: `string`
+- 默认值: `undefined`
+- <Badge text="必须" vertical="middle" />
+
+### udpRelay
+
+- 类型: `boolean`
+- 默认值: `false`
+
+强制开启节点的 UDP 转发。
+
+### tls13
+
+- 类型: `boolean`
+- 默认值: `false`
+
+强制开启节点的 TLS 1.3。
+
 ## custom <Badge text="推荐" vertical="middle" />
+
+由自己维护的节点列表。
 
 ```js
 module.exports = {
@@ -377,7 +405,8 @@ module.exports = {
 ## 公共属性
 
 :::tip 提示
-公共属性可以定义在任何一种 Provider 中。
+- 公共属性可以定义在任何一种 Provider 中；
+- 请务必注意下面 `nodeConfig` 指的是 `custom` 类型内的每个节点，`provider` 指的是 Provider；
 :::
 
 ### nodeConfig.enable
@@ -423,7 +452,6 @@ module.exports = {
 :::warning 注意
 1. TLS 1.3 需要服务端支持；
 2. 支持 TLS 的节点类型有 Shadowsocks with v2ray-plugin(tls), Vmess(tls), HTTPS；
-3. 如果你使用 Surge，
 :::
 
 ### nodeConfig.skipCertVerify

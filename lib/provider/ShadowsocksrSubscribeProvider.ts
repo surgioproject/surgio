@@ -1,4 +1,4 @@
-import Joi from '@hapi/joi';
+import Joi from 'joi';
 import { createLogger } from '@surgio/logger';
 import assert from 'assert';
 
@@ -8,13 +8,8 @@ import {
   SubscriptionUserinfo,
 } from '../types';
 import { fromBase64 } from '../utils';
-import httpClient from '../utils/http-client';
 import relayableUrl from '../utils/relayable-url';
-import {
-  parseSubscriptionNode,
-  parseSubscriptionUserInfo,
-} from '../utils/subscription';
-import { SubsciptionCacheItem, SubscriptionCache } from '../utils/cache';
+import { parseSubscriptionNode } from '../utils/subscription';
 import { parseSSRUri } from '../utils/ssr';
 import Provider from './Provider';
 
@@ -88,31 +83,7 @@ export const getShadowsocksrSubscription = async (
 }> => {
   assert(url, '未指定订阅地址 url');
 
-  const response = SubscriptionCache.has(url)
-    ? (SubscriptionCache.get(url) as SubsciptionCacheItem)
-    : await (async () => {
-        const res = await httpClient.get(url);
-        const subsciptionCacheItem: SubsciptionCacheItem = {
-          body: res.body,
-        };
-
-        if (res.headers['subscription-userinfo']) {
-          subsciptionCacheItem.subscriptionUserinfo = parseSubscriptionUserInfo(
-            res.headers['subscription-userinfo'] as string,
-          );
-          logger.debug(
-            '%s received subscription userinfo - raw: %s | parsed: %j',
-            url,
-            res.headers['subscription-userinfo'],
-            subsciptionCacheItem.subscriptionUserinfo,
-          );
-        }
-
-        SubscriptionCache.set(url, subsciptionCacheItem);
-
-        return subsciptionCacheItem;
-      })();
-
+  const response = await Provider.requestCacheableResource(url);
   const nodeList = fromBase64(response.body)
     .split('\n')
     .filter((item) => !!item && item.startsWith('ssr://'))

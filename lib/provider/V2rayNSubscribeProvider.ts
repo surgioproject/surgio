@@ -1,9 +1,10 @@
-import Joi from '@hapi/joi';
+import Joi from 'joi';
 import { logger } from '@surgio/logger';
 import assert from 'assert';
 
 import {
   NodeTypeEnum,
+  ShadowsocksNodeConfig,
   V2rayNSubscribeProviderConfig,
   VmessNodeConfig,
 } from '../types';
@@ -11,6 +12,7 @@ import { fromBase64 } from '../utils';
 import { ConfigCache } from '../utils/cache';
 import httpClient from '../utils/http-client';
 import relayableUrl from '../utils/relayable-url';
+import { parseSSUri } from '../utils/ss';
 import Provider from './Provider';
 
 export default class V2rayNSubscribeProvider extends Provider {
@@ -75,7 +77,7 @@ export const getV2rayNSubscription = async (
   skipCertVerify?: boolean | undefined,
   udpRelay?: boolean | undefined,
   tls13?: boolean | undefined,
-): Promise<ReadonlyArray<VmessNodeConfig>> => {
+): Promise<ReadonlyArray<VmessNodeConfig | ShadowsocksNodeConfig>> => {
   assert(url, '未指定订阅地址 url');
 
   if (isCompatibleMode) {
@@ -83,7 +85,7 @@ export const getV2rayNSubscription = async (
   }
 
   async function requestConfigFromRemote(): Promise<
-    ReadonlyArray<VmessNodeConfig>
+    ReadonlyArray<VmessNodeConfig | ShadowsocksNodeConfig>
   > {
     const response = ConfigCache.has(url)
       ? (ConfigCache.get(url) as string)
@@ -98,49 +100,90 @@ export const getV2rayNSubscription = async (
     const configList = fromBase64(response)
       .split('\n')
       .filter((item) => !!item)
-      .filter((item) => item.startsWith('vmess://'));
+      .filter((item) => {
+        const pick = item.startsWith('vmess://') || item.startsWith('ss://');
+
+        if (!pick) {
+          logger.warn(
+            `不支持读取 V2rayN 订阅中的节点 ${item}，该节点会被省略。`,
+          );
+        }
+
+        return pick;
+      });
 
     return configList
-      .map<VmessNodeConfig | undefined>((item): VmessNodeConfig | undefined => {
-        const json = JSON.parse(fromBase64(item.replace('vmess://', '')));
-
-        // istanbul ignore next
-        if (!isCompatibleMode && (!json.v || Number(json.v) !== 2)) {
-          throw new Error(
-            `该订阅 ${url} 可能不是一个有效的 V2rayN 订阅。请参考 http://url.royli.dev/Qtrci 进行排查, 或者将解析模式改为兼容模式`,
+      .map((item): VmessNodeConfig | ShadowsocksNodeConfig | undefined => {
+        if (item.startsWith('vmess://')) {
+          return parseJSONConfig(
+            fromBase64(item.replace('vmess://', '')),
+            isCompatibleMode,
+            skipCertVerify,
+            udpRelay,
+            tls13,
           );
         }
-        // istanbul ignore next
-        if (['kcp', 'http'].indexOf(json.net) > -1) {
-          logger.warn(
-            `不支持读取 network 类型为 ${json.net} 的 Vmess 节点，节点 ${json.ps} 会被省略`,
-          );
-          return undefined;
+
+        if (item.startsWith('ss://')) {
+          return {
+            ...parseSSUri(item),
+            'udp-relay': udpRelay,
+            skipCertVerify: skipCertVerify,
+            tls13: tls13,
+          };
         }
 
-        return {
-          nodeName: json.ps,
-          type: NodeTypeEnum.Vmess,
-          hostname: json.add,
-          port: json.port,
-          method: 'auto',
-          uuid: json.id,
-          alterId: json.aid || '0',
-          network: json.net,
-          tls: json.tls === 'tls',
-          host: json.host || '',
-          path: json.path || '/',
-          'udp-relay': udpRelay === true,
-          ...(json.tls === 'tls'
-            ? {
-                skipCertVerify: skipCertVerify ?? false,
-                tls13: tls13 ?? false,
-              }
-            : null),
-        };
+        return undefined;
       })
-      .filter((item): item is VmessNodeConfig => !!item);
+      .filter(
+        (item): item is VmessNodeConfig | ShadowsocksNodeConfig => !!item,
+      );
   }
 
   return await requestConfigFromRemote();
+};
+
+export const parseJSONConfig = (
+  json: string,
+  isCompatibleMode: boolean | undefined,
+  skipCertVerify?: boolean | undefined,
+  udpRelay?: boolean | undefined,
+  tls13?: boolean | undefined,
+): VmessNodeConfig | undefined => {
+  const config = JSON.parse(json);
+
+  // istanbul ignore next
+  if (!isCompatibleMode && (!config.v || Number(config.v) !== 2)) {
+    throw new Error(
+      `该节点 ${config.ps} 可能不是一个有效的 V2rayN 节点。请参考 http://url.royli.dev/Qtrci 进行排查, 或者将解析模式改为兼容模式`,
+    );
+  }
+  // istanbul ignore next
+  if (['kcp', 'http'].indexOf(config.net) > -1) {
+    logger.warn(
+      `不支持读取 network 类型为 ${config.net} 的 Vmess 节点，节点 ${config.ps} 会被省略。`,
+    );
+    return undefined;
+  }
+
+  return {
+    nodeName: config.ps,
+    type: NodeTypeEnum.Vmess,
+    hostname: config.add,
+    port: config.port,
+    method: 'auto',
+    uuid: config.id,
+    alterId: config.aid || '0',
+    network: config.net,
+    tls: config.tls === 'tls',
+    host: config.host || '',
+    path: config.path || '/',
+    'udp-relay': udpRelay === true,
+    ...(config.tls === 'tls'
+      ? {
+          skipCertVerify: skipCertVerify ?? false,
+          tls13: tls13 ?? false,
+        }
+      : null),
+  };
 };

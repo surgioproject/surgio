@@ -3,24 +3,25 @@ import assert from 'assert';
 import { createLogger } from '@surgio/logger';
 
 import {
-  ShadowsocksNodeConfig,
-  ShadowsocksSubscribeProviderConfig,
   SubscriptionUserinfo,
+  TrojanNodeConfig,
+  TrojanProviderConfig,
 } from '../types';
 import { fromBase64 } from '../utils';
 import relayableUrl from '../utils/relayable-url';
-import { parseSSUri } from '../utils/ss';
+import { parseTrojanUri } from '../utils/trojan';
 import Provider from './Provider';
 
 const logger = createLogger({
-  service: 'surgio:ShadowsocksSubscribeProvider',
+  service: 'surgio:TrojanProvider',
 });
 
-export default class ShadowsocksSubscribeProvider extends Provider {
+export default class TrojanProvider extends Provider {
+  public readonly _url: string;
   public readonly udpRelay?: boolean;
-  private readonly _url: string;
+  public readonly tls13?: boolean;
 
-  constructor(name: string, config: ShadowsocksSubscribeProviderConfig) {
+  constructor(name: string, config: TrojanProviderConfig) {
     super(name, config);
 
     const schema = Joi.object({
@@ -29,7 +30,8 @@ export default class ShadowsocksSubscribeProvider extends Provider {
           scheme: [/https?/],
         })
         .required(),
-      udpRelay: Joi.boolean().strict(),
+      udpRelay: Joi.bool().strict(),
+      tls13: Joi.bool().strict(),
     }).unknown();
 
     const { error } = schema.validate(config);
@@ -41,6 +43,7 @@ export default class ShadowsocksSubscribeProvider extends Provider {
 
     this._url = config.url;
     this.udpRelay = config.udpRelay;
+    this.tls13 = config.tls13;
     this.supportGetSubscriptionUserInfo = true;
   }
 
@@ -52,21 +55,23 @@ export default class ShadowsocksSubscribeProvider extends Provider {
   public async getSubscriptionUserInfo(): Promise<
     SubscriptionUserinfo | undefined
   > {
-    const { subscriptionUserinfo } = await getShadowsocksSubscription(
+    const { subscriptionUserinfo } = await getTrojanSubscription(
       this.url,
       this.udpRelay,
+      this.tls13,
     );
 
     if (subscriptionUserinfo) {
       return subscriptionUserinfo;
     }
-    return undefined;
+    return void 0;
   }
 
-  public async getNodeList(): Promise<ReadonlyArray<ShadowsocksNodeConfig>> {
-    const { nodeList } = await getShadowsocksSubscription(
+  public async getNodeList(): Promise<ReadonlyArray<TrojanNodeConfig>> {
+    const { nodeList } = await getTrojanSubscription(
       this.url,
       this.udpRelay,
+      this.tls13,
     );
 
     return nodeList;
@@ -74,29 +79,33 @@ export default class ShadowsocksSubscribeProvider extends Provider {
 }
 
 /**
- * @see https://shadowsocks.org/en/spec/SIP002-URI-Scheme.html
+ * @see https://github.com/trojan-gfw/trojan-url/blob/master/trojan-url.py
  */
-export const getShadowsocksSubscription = async (
+export const getTrojanSubscription = async (
   url: string,
   udpRelay?: boolean,
+  tls13?: boolean,
 ): Promise<{
-  readonly nodeList: ReadonlyArray<ShadowsocksNodeConfig>;
+  readonly nodeList: ReadonlyArray<TrojanNodeConfig>;
   readonly subscriptionUserinfo?: SubscriptionUserinfo;
 }> => {
   assert(url, '未指定订阅地址 url');
 
-  const response = await Provider.requestCacheableResource(url);
-  const nodeList = fromBase64(response.body)
+  const response = await Provider.requestCacheableResource(url, {
+    requestUserAgent: 'shadowrocket',
+  });
+  const config = fromBase64(response.body);
+  const nodeList = config
     .split('\n')
-    .filter((item) => !!item && item.startsWith('ss://'))
-    .map((item): ShadowsocksNodeConfig => {
-      const nodeConfig = parseSSUri(item);
+    .filter((item) => !!item && item.startsWith('trojan://'))
+    .map((item): TrojanNodeConfig => {
+      const nodeConfig = parseTrojanUri(item);
 
-      if (udpRelay !== void 0) {
-        (nodeConfig['udp-relay'] as boolean) = udpRelay;
-      }
-
-      return nodeConfig;
+      return {
+        ...nodeConfig,
+        'udp-relay': udpRelay,
+        tls13,
+      };
     });
 
   return {

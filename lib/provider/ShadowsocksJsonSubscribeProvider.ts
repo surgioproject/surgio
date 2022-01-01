@@ -1,4 +1,4 @@
-import Joi from '@hapi/joi';
+import Joi from 'joi';
 import { ShadowsocksJsonSubscribeProviderConfig } from '../types';
 import { getShadowsocksJSONConfig } from '../utils';
 import relayableUrl from '../utils/relayable-url';

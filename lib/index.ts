@@ -10,13 +10,25 @@ import { PackageJson } from 'type-fest';
 import updateNotifier from 'update-notifier';
 import { transports } from '@surgio/logger';
 
-import { isGitHubActions, isGitLabCI, isHeroku, isNow } from './utils';
+import {
+  isGitHubActions,
+  isGitLabCI,
+  isHeroku,
+  isNow,
+  isRailway,
+} from './utils';
 import * as filter from './utils/filter';
 import { errorHandler } from './utils/error-helper';
 import { CATEGORIES } from './utils/constant';
 
 // istanbul ignore next
-if (!isNow() && !isHeroku() && !isGitHubActions() && !isGitLabCI()) {
+if (
+  !isNow() &&
+  !isHeroku() &&
+  !isGitHubActions() &&
+  !isGitLabCI() &&
+  !isRailway()
+) {
   // Global proxy
   bootstrap();
 }

@@ -1,4 +1,5 @@
-import Joi from '@hapi/joi';
+import { createLogger } from '@surgio/logger';
+import Joi from 'joi';
 
 import {
   ProviderConfig,
@@ -6,6 +7,13 @@ import {
   PossibleNodeConfigType,
   SubscriptionUserinfo,
 } from '../types';
+import { SubsciptionCacheItem, SubscriptionCache } from '../utils/cache';
+import httpClient from '../utils/http-client';
+import { parseSubscriptionUserInfo } from '../utils/subscription';
+
+const logger = createLogger({
+  service: 'surgio:Provider',
+});
 
 export default class Provider {
   public readonly type: SupportProviderEnum;
@@ -94,6 +102,48 @@ export default class Provider {
     ].forEach((key) => {
       this[key] = config[key];
     });
+  }
+
+  static async requestCacheableResource(
+    url: string,
+    options: {
+      requestUserAgent?: string;
+    } = {},
+  ): Promise<SubsciptionCacheItem> {
+    return SubscriptionCache.has(url)
+      ? (SubscriptionCache.get(url) as SubsciptionCacheItem)
+      : await (async () => {
+          const headers = {};
+
+          if (options.requestUserAgent) {
+            headers['user-agent'] = options.requestUserAgent;
+          }
+
+          const res = await httpClient.get(url, {
+            responseType: 'text',
+            headers,
+          });
+          const subsciptionCacheItem: SubsciptionCacheItem = {
+            body: res.body,
+          };
+
+          if (res.headers['subscription-userinfo']) {
+            subsciptionCacheItem.subscriptionUserinfo =
+              parseSubscriptionUserInfo(
+                res.headers['subscription-userinfo'] as string,
+              );
+            logger.debug(
+              '%s received subscription userinfo - raw: %s | parsed: %j',
+              url,
+              res.headers['subscription-userinfo'],
+              subsciptionCacheItem.subscriptionUserinfo,
+            );
+          }
+
+          SubscriptionCache.set(url, subsciptionCacheItem);
+
+          return subsciptionCacheItem;
+        })();
   }
 
   public get nextPort(): number {

@@ -29,6 +29,7 @@ module.exports = {
             SupportProviderEnum.ShadowsocksJsonSubscribe,
             SupportProviderEnum.ShadowsocksrSubscribe,
             SupportProviderEnum.ShadowsocksSubscribe,
+            SupportProviderEnum.Trojan,
           ].includes(results.type);
         },
         validate: (str) => /^https?:\/{2}/.test(str),
@@ -49,6 +50,7 @@ module.exports = {
             SupportProviderEnum.ShadowsocksJsonSubscribe,
             SupportProviderEnum.ShadowsocksrSubscribe,
             SupportProviderEnum.ShadowsocksSubscribe,
+            SupportProviderEnum.Trojan,
           ].includes(results.type);
         },
       },
@@ -64,6 +66,7 @@ module.exports = {
             SupportProviderEnum.ShadowsocksJsonSubscribe,
             SupportProviderEnum.ShadowsocksrSubscribe,
             SupportProviderEnum.ShadowsocksSubscribe,
+            SupportProviderEnum.Trojan,
           ].includes(results.type);
         },
       },

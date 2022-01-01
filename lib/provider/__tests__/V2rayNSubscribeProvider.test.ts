@@ -1,5 +1,5 @@
 import test from 'ava';
-import { NodeTypeEnum, SupportProviderEnum } from '../../types';
+import { SupportProviderEnum } from '../../types';
 import V2rayNSubscribeProvider, {
   getV2rayNSubscription,
 } from '../V2rayNSubscribeProvider';
@@ -19,72 +19,19 @@ test('getV2rayNSubscription', async (t) => {
   const url = 'http://example.com/test-v2rayn-sub.txt';
   const configList = await getV2rayNSubscription(url, false);
 
-  t.deepEqual(configList[0], {
-    alterId: '64',
-    host: 'example.com',
-    hostname: '1.1.1.1',
-    method: 'auto',
-    network: 'ws',
-    nodeName: '测试 1',
-    path: '/',
-    port: 8080,
-    tls: false,
-    type: NodeTypeEnum.Vmess,
-    uuid: '1386f85e-657b-4d6e-9d56-78badb75e1fd',
-    'udp-relay': false,
-  });
-  t.deepEqual(configList[1], {
-    alterId: '64',
-    host: 'example.com',
-    hostname: '1.1.1.1',
-    method: 'auto',
-    network: 'tcp',
-    nodeName: '测试 2',
-    path: '/',
-    port: 8080,
-    tls: false,
-    type: NodeTypeEnum.Vmess,
-    uuid: '1386f85e-657b-4d6e-9d56-78badb75e1fd',
-    'udp-relay': false,
-  });
+  t.snapshot(configList);
 });
 
 test('getV2rayNSubscription compatible mode', async (t) => {
   const url = 'http://example.com/test-v2rayn-sub-compatible.txt';
   const configList = await getV2rayNSubscription(url, true);
 
-  t.deepEqual(configList[0], {
-    alterId: '64',
-    host: 'example.com',
-    hostname: '1.1.1.1',
-    method: 'auto',
-    network: 'ws',
-    nodeName: '测试 1',
-    path: '/',
-    port: 8080,
-    tls: false,
-    type: NodeTypeEnum.Vmess,
-    uuid: '1386f85e-657b-4d6e-9d56-78badb75e1fd',
-    'udp-relay': false,
-  });
+  t.snapshot(configList);
 });
 
 test('getV2rayNSubscription udpRelay skipCertVerify', async (t) => {
   const url = 'http://example.com/test-v2rayn-sub-compatible.txt';
   const configList = await getV2rayNSubscription(url, true, true, true);
 
-  t.deepEqual(configList[0], {
-    alterId: '64',
-    host: 'example.com',
-    hostname: '1.1.1.1',
-    method: 'auto',
-    network: 'ws',
-    nodeName: '测试 1',
-    path: '/',
-    port: 8080,
-    tls: false,
-    type: NodeTypeEnum.Vmess,
-    uuid: '1386f85e-657b-4d6e-9d56-78badb75e1fd',
-    'udp-relay': true,
-  });
+  t.snapshot(configList);
 });
