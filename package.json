@@ -34,6 +34,7 @@
     "@types/lru-cache": "^5.1.0",
     "@types/node": "^12",
     "@types/nunjucks": "^3.2.0",
+    "@types/sinon": "^10.0.6",
     "@types/urlsafe-base64": "^1.0.28",
     "@typescript-eslint/eslint-plugin": "^4.31.2",
     "@typescript-eslint/parser": "^4.31.2",

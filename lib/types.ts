@@ -20,6 +20,7 @@ export enum SupportProviderEnum {
   V2rayNSubscribe = 'v2rayn_subscribe',
   BlackSSL = 'blackssl',
   Ssd = 'ssd',
+  Trojan = 'trojan',
 }
 
 export interface CommandConfig {
@@ -154,6 +155,12 @@ export interface SsdProviderConfig extends ProviderConfig {
 
 export interface CustomProviderConfig extends ProviderConfig {
   readonly nodeList: ReadonlyArray<any>;
+}
+
+export interface TrojanProviderConfig extends ProviderConfig {
+  readonly url: string;
+  readonly udpRelay?: boolean;
+  readonly tls13?: boolean;
 }
 
 export interface HttpNodeConfig extends SimpleNodeConfig {

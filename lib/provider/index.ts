@@ -6,6 +6,7 @@ import ShadowsocksJsonSubscribeProvider from './ShadowsocksJsonSubscribeProvider
 import ShadowsocksrSubscribeProvider from './ShadowsocksrSubscribeProvider';
 import ShadowsocksSubscribeProvider from './ShadowsocksSubscribeProvider';
 import SsdProvider from './SsdProvider';
+import TrojanProvider from './TrojanProvider';
 import { PossibleProviderType } from './types';
 import V2rayNSubscribeProvider from './V2rayNSubscribeProvider';
 
@@ -45,6 +46,9 @@ export async function getProvider(
 
     case SupportProviderEnum.Ssd:
       return new SsdProvider(name, config);
+
+    case SupportProviderEnum.Trojan:
+      return new TrojanProvider(name, config);
 
     default:
       throw new Error(`Unsupported provider type: ${config.type}`);
