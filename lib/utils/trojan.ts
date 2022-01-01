@@ -3,7 +3,7 @@ import { URL } from 'url';
 
 import { NodeTypeEnum, TrojanNodeConfig } from '../types';
 
-const debug = Debug('surgio:utils:ss');
+const debug = Debug('surgio:utils:trojan');
 
 export const parseTrojanUri = (str: string): TrojanNodeConfig => {
   debug('Trojan URI', str);

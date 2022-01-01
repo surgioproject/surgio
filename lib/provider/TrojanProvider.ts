@@ -91,7 +91,9 @@ export const getTrojanSubscription = async (
 }> => {
   assert(url, '未指定订阅地址 url');
 
-  const response = await Provider.requestCacheableResource(url);
+  const response = await Provider.requestCacheableResource(url, {
+    requestUserAgent: 'shadowrocket',
+  });
   const config = fromBase64(response.body);
   const nodeList = config
     .split('\n')

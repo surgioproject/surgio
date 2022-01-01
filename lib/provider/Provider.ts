@@ -8,8 +8,7 @@ import {
   SubscriptionUserinfo,
 } from '../types';
 import { SubsciptionCacheItem, SubscriptionCache } from '../utils/cache';
-import { NETWORK_CLASH_UA } from '../utils/constant';
-import httpClient, { getUserAgent } from '../utils/http-client';
+import httpClient from '../utils/http-client';
 import { parseSubscriptionUserInfo } from '../utils/subscription';
 
 const logger = createLogger({
