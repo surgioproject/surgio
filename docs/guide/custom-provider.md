@@ -423,7 +423,6 @@ module.exports = {
 :::warning 注意
 1. TLS 1.3 需要服务端支持；
 2. 支持 TLS 的节点类型有 Shadowsocks with v2ray-plugin(tls), Vmess(tls), HTTPS；
-3. 如果你使用 Surge，
 :::
 
 ### nodeConfig.skipCertVerify
