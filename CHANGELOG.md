@@ -1,3 +1,12 @@
+# [2.12.0](https://github.com/geekdada/surgio/compare/v2.11.0...v2.12.0) (2022-01-09)
+
+
+### Features
+
+* support new clash config format for vmess ([a3502bb](https://github.com/geekdada/surgio/commit/a3502bb6be259a54684536b1d3ea9e1cde27a622))
+
+
+
 # [2.11.0](https://github.com/geekdada/surgio/compare/v2.10.3...v2.11.0) (2022-01-01)
 
 
