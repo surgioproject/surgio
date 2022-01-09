@@ -595,7 +595,7 @@ export const getClashNodes = function (
                       typeof nodeConfig.mux === 'boolean'
                         ? nodeConfig.mux
                         : false,
-                    headers: nodeConfig.wsHeaders || {},
+                    headers: _.omit(nodeConfig.wsHeaders || {}, ['host']),
                   },
                 }
               : null),
@@ -624,10 +624,12 @@ export const getClashNodes = function (
               : null),
             ...(nodeConfig.network === 'ws'
               ? {
-                  'ws-path': nodeConfig.path,
-                  'ws-headers': {
-                    ...(nodeConfig.host ? { host: nodeConfig.host } : null),
-                    ...nodeConfig.wsHeaders,
+                  'ws-opts': {
+                    path: nodeConfig.path,
+                    headers: {
+                      ...(nodeConfig.host ? { host: nodeConfig.host } : null),
+                      ..._.omit(nodeConfig.wsHeaders, ['host']),
+                    },
                   },
                 }
               : null),

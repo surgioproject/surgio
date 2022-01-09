@@ -314,7 +314,7 @@ module.exports = {
   path: '/',
   port: 8080,
   tls: false,
-  host: 'example.com',
+  host: 'example.com', // 此属性相当于 wsHeaders.host，但推荐配置在 wsHeaders.host 上
   uuid: '1386f85e-657b-4d6e-9d56-78badb75e1fd',
   tfo: false, // TCP Fast Open
   tls13: false, // TLS 1.3, TLS 开启时有效

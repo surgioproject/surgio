@@ -65,20 +65,22 @@ test('getClashSubscription', async (t) => {
   const config = [...nodeList];
 
   t.deepEqual(
-    config.map((item) => item.nodeName),
+    config.map((item) => item.nodeName).join(', '),
     [
       'ss1',
       'ss2',
       'ss3',
       'vmess',
+      'vmess new format',
       'vmess custom header',
       'http 1',
       'http 2',
       'snell',
       'ss4',
       'ss-wss',
-    ],
+    ].join(', '),
   );
+
   t.deepEqual(config.shift(), {
     type: NodeTypeEnum.Shadowsocks,
     nodeName: 'ss1',
@@ -123,6 +125,25 @@ test('getClashSubscription', async (t) => {
     tls: false,
     network: 'tcp',
     'udp-relay': false,
+  });
+  t.deepEqual(config.shift(), {
+    type: NodeTypeEnum.Vmess,
+    nodeName: 'vmess new format',
+    hostname: 'server',
+    host: 'v2ray.com',
+    path: '/path',
+    port: 443,
+    uuid: 'uuid',
+    alterId: '32',
+    method: 'auto',
+    network: 'ws',
+    'udp-relay': true,
+    tls: true,
+    tls13: false,
+    skipCertVerify: true,
+    wsHeaders: {
+      host: 'v2ray.com',
+    },
   });
   t.deepEqual(config.shift(), {
     type: NodeTypeEnum.Vmess,

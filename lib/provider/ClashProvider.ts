@@ -223,14 +223,25 @@ export const parseClashConfig = (
 
         case 'vmess': {
           // istanbul ignore next
-          if (['kcp', 'http'].indexOf(item.network) > -1) {
+          if (item.network && !['tcp', 'ws'].includes(item.network)) {
             logger.warn(
               `不支持从 Clash 订阅中读取 network 类型为 ${item.network} 的 Vmess 节点，节点 ${item.name} 会被省略`,
             );
             return void 0;
           }
 
-          const wsHeaders = lowercaseHeaderKeys(_.get(item, 'ws-headers', {}));
+          const isNewConfig = 'ws-opts' in item;
+          const wsHeaders = isNewConfig
+            ? lowercaseHeaderKeys(_.get(item, 'ws-opts.headers', {}))
+            : lowercaseHeaderKeys(_.get(item, 'ws-headers', {}));
+          const wsHost =
+            item.servername || _.get(wsHeaders, 'host', item.server);
+          const wsOpts = isNewConfig
+            ? _.get(item, 'ws-opts', {})
+            : {
+                path: _.get(item, 'ws-path', '/'),
+                headers: wsHeaders,
+              };
 
           return {
             type: NodeTypeEnum.Vmess,
@@ -245,8 +256,8 @@ export const parseClashConfig = (
             network: item.network || 'tcp',
             ...(item.network === 'ws'
               ? {
-                  path: _.get(item, 'ws-path', '/'),
-                  host: _.get(wsHeaders, 'host', item.server),
+                  host: wsHost,
+                  path: _.get(wsOpts, 'path', '/'),
                   wsHeaders,
                 }
               : null),

@@ -127,6 +127,24 @@ Proxy:
     # ws-headers:
     #   Host: v2ray.com
 
+  - name: "vmess new format"
+    type: vmess
+    server: server
+    port: 443
+    uuid: uuid
+    alterId: 32
+    cipher: auto
+    udp: true
+    tls: true
+    skip-cert-verify: true
+    network: ws
+    ws-opts:
+      path: /path
+      headers:
+        Host: v2ray.com
+      max-early-data: 2048
+      early-data-header-name: Sec-WebSocket-Protocol
+
   - name: "vmess custom header"
     type: vmess
     server: server

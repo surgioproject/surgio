@@ -176,7 +176,7 @@ export const parseJSONConfig = (
     alterId: config.aid || '0',
     network: config.net,
     tls: config.tls === 'tls',
-    host: config.host || '',
+    host: config.host,
     path: config.path || '/',
     'udp-relay': udpRelay === true,
     ...(config.tls === 'tls'

@@ -634,9 +634,11 @@ test('getClashNodes', async (t) => {
     udp: false,
     type: 'vmess',
     uuid: '1386f85e-657b-4d6e-9d56-78badb75e1fd',
-    'ws-path': '/',
-    'ws-headers': {
-      host: 'example.com',
+    'ws-opts': {
+      headers: {
+        host: 'example.com',
+      },
+      path: '/',
     },
   });
   t.deepEqual(array[3], {
