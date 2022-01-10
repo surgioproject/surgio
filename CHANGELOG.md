@@ -1,3 +1,12 @@
+# [2.13.0](https://github.com/geekdada/surgio/compare/v2.12.0...v2.13.0) (2022-01-10)
+
+
+### Features
+
+* support surge vmess aead config ([628b999](https://github.com/geekdada/surgio/commit/628b99919b695c95d2d3e455ec955166155d3d33))
+
+
+
 # [2.12.0](https://github.com/geekdada/surgio/compare/v2.11.0...v2.12.0) (2022-01-09)
 
 
