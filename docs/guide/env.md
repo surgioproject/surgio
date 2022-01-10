@@ -31,3 +31,9 @@ sidebarDepth: 2
 ### `SURGIO_PROVIDER_CACHE_MAXAGE`
 
 - 默认值: `600000`（10 分钟）
+
+### `SURGIO_DISABLE_SURGE_VMESS_AEAD`
+
+- 默认值: `false`
+
+是否关闭 Surge Vmess AEAD 加密。默认开启，如果您的服务器不支持 AEAD 加密，请关闭（`SURGIO_DISABLE_SURGE_VMESS_AEAD=true`）。

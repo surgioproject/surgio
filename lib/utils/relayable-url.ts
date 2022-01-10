@@ -1,4 +1,4 @@
-import { RELAY_SERVICE } from './constant';
+import { RELAY_SERVICE } from '../constant';
 
 export default function relayableUrl(
   url: string,

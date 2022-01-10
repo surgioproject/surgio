@@ -13,7 +13,7 @@ import {
   QUANTUMULT_X_SUPPORTED_RULE,
   CLASH_SUPPORTED_RULE,
   LOON_SUPPORTED_RULE,
-} from '../utils/constant';
+} from '../constant';
 import { addProxyToSurgeRuleSet } from '../utils/remote-snippet';
 
 export function getEngine(templateDir: string): nunjucks.Environment {

@@ -7,7 +7,7 @@ import { deprecate } from 'util';
 import { DEP005, DEP006 } from '../misc/deprecation';
 
 import { CommandConfig } from '../types';
-import { PROXY_TEST_INTERVAL, PROXY_TEST_URL } from './constant';
+import { PROXY_TEST_INTERVAL, PROXY_TEST_URL } from '../constant';
 import { addFlagMap } from './flag';
 import { ensureConfigFolder } from './index';
 

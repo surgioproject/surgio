@@ -1,7 +1,7 @@
 import LRU from 'lru-cache';
 
 import { SubscriptionUserinfo } from '../types';
-import { PROVIDER_CACHE_MAXAGE } from './constant';
+import { getProviderCacheMaxage } from './env-flag';
 
 export interface SubsciptionCacheItem {
   readonly body: string;
@@ -9,11 +9,11 @@ export interface SubsciptionCacheItem {
 }
 
 export const ConfigCache = new LRU<string, string>({
-  maxAge: PROVIDER_CACHE_MAXAGE,
+  maxAge: getProviderCacheMaxage(),
   max: 100,
 });
 
 export const SubscriptionCache = new LRU<string, SubsciptionCacheItem>({
-  maxAge: PROVIDER_CACHE_MAXAGE,
+  maxAge: getProviderCacheMaxage(),
   max: 100,
 });

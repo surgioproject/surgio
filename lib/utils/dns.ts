@@ -3,7 +3,7 @@ import LRU from 'lru-cache';
 import { createLogger } from '@surgio/logger';
 import Bluebird from 'bluebird';
 
-import { NETWORK_RESOLVE_TIMEOUT } from './constant';
+import { getNetworkResolveTimeout } from './env-flag';
 
 const DomainCache = new LRU<string, ReadonlyArray<string>>({
   max: 5000,
@@ -12,7 +12,7 @@ const logger = createLogger({ service: 'surgio:utils:dns' });
 
 export const resolveDomain = async (
   domain: string,
-  timeout: number = NETWORK_RESOLVE_TIMEOUT,
+  timeout: number = getNetworkResolveTimeout(),
 ): Promise<ReadonlyArray<string>> => {
   if (DomainCache.has(domain)) {
     return DomainCache.get(domain) as ReadonlyArray<string>;

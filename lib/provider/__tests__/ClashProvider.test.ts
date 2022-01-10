@@ -2,7 +2,7 @@ import test from 'ava';
 import nock from 'nock';
 import { NodeTypeEnum, SupportProviderEnum } from '../../types';
 
-import { RELAY_SERVICE } from '../../utils/constant';
+import { RELAY_SERVICE } from '../../constant';
 import ClashProvider, {
   getClashSubscription,
   parseClashConfig,

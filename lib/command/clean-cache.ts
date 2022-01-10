@@ -5,7 +5,7 @@ import path from 'path';
 import fs from 'fs-extra';
 import { logger } from '@surgio/logger';
 
-import { TMP_FOLDER_NAME } from '../utils/constant';
+import { TMP_FOLDER_NAME } from '../constant';
 import { errorHandler } from '../utils/error-helper';
 
 class CleanCacheCommand extends Command {

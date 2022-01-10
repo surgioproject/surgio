@@ -1,26 +1,5 @@
 // istanbul ignore file
 
-import ms from 'ms';
-
-export const NETWORK_TIMEOUT = process.env.SURGIO_NETWORK_TIMEOUT
-  ? Number(process.env.SURGIO_NETWORK_TIMEOUT)
-  : ms('5s');
-
-export const NETWORK_RESOLVE_TIMEOUT = process.env
-  .SURGIO_NETWORK_RESOLVE_TIMEOUT
-  ? Number(process.env.SURGIO_NETWORK_RESOLVE_TIMEOUT)
-  : ms('10s');
-
-export const NETWORK_CONCURRENCY = process.env.SURGIO_NETWORK_CONCURRENCY
-  ? Number(process.env.SURGIO_NETWORK_CONCURRENCY)
-  : 5;
-
-export const NETWORK_RETRY = process.env.SURGIO_NETWORK_RETRY
-  ? Number(process.env.SURGIO_NETWORK_RETRY)
-  : 1;
-
-export const NETWORK_CLASH_UA = process.env.SURGIO_NETWORK_CLASH_UA ?? 'clash';
-
 export const NETWORK_SURGIO_UA = 'surgio';
 
 export const OBFS_UA =
@@ -83,16 +62,6 @@ export const MELLOW_UNSUPPORTED_RULE: ReadonlyArray<string> = [
   'RULE-SET',
 ];
 
-export const REMOTE_SNIPPET_CACHE_MAXAGE: number = process.env
-  .SURGIO_REMOTE_SNIPPET_CACHE_MAXAGE
-  ? Number(process.env.SURGIO_REMOTE_SNIPPET_CACHE_MAXAGE)
-  : ms('12h');
-
-export const PROVIDER_CACHE_MAXAGE: number = process.env
-  .SURGIO_PROVIDER_CACHE_MAXAGE
-  ? Number(process.env.SURGIO_PROVIDER_CACHE_MAXAGE)
-  : ms('10m');
-
 export const CATEGORIES = {
   SNIPPET: 'Snippet',
   SURGE: 'Surge',
@@ -105,8 +74,5 @@ export const CATEGORIES = {
 };
 
 export const RELAY_SERVICE = 'https://surgio-cors.herokuapp.com/';
-
-export const ERR_INVALID_FILTER =
-  '传入的过滤器无效，请检查语法和变量名是否正确';
 
 export const TMP_FOLDER_NAME = 'surgio-config';

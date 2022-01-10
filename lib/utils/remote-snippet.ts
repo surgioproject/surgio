@@ -6,8 +6,8 @@ import nunjucks from 'nunjucks';
 import espree, { ExpressionStatementNode } from 'espree';
 
 import { RemoteSnippet, RemoteSnippetConfig } from '../types';
-import { NETWORK_CONCURRENCY, REMOTE_SNIPPET_CACHE_MAXAGE } from './constant';
 import { ConfigCache } from './cache';
+import { getNetworkConcurrency, getRemoteSnippetCacheMaxage } from './env-flag';
 import httpClient from './http-client';
 import { isNow } from './index';
 import { createTmpFactory } from './tmp-helper';
@@ -139,7 +139,7 @@ export const loadRemoteSnippetList = (
 
       return (async () => {
         if (cacheSnippet || isNow()) {
-          const tmp = tmpFactory(fileMd5, REMOTE_SNIPPET_CACHE_MAXAGE);
+          const tmp = tmpFactory(fileMd5, getRemoteSnippetCacheMaxage());
           const tmpContent = await tmp.getContent();
           let snippet: string;
 
@@ -163,7 +163,7 @@ export const loadRemoteSnippetList = (
           const snippet: string = ConfigCache.has(item.url)
             ? (ConfigCache.get(item.url) as string)
             : await load(item.url).then((res) => {
-                ConfigCache.set(item.url, res, REMOTE_SNIPPET_CACHE_MAXAGE);
+                ConfigCache.set(item.url, res, getRemoteSnippetCacheMaxage());
                 return res;
               });
 
@@ -180,7 +180,7 @@ export const loadRemoteSnippetList = (
       })();
     },
     {
-      concurrency: NETWORK_CONCURRENCY,
+      concurrency: getNetworkConcurrency(),
     },
   );
 };

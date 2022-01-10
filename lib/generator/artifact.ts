@@ -36,8 +36,8 @@ import {
   toBase64,
   toUrlSafeBase64,
 } from '../utils';
-import { NETWORK_CONCURRENCY } from '../utils/constant';
 import { resolveDomain } from '../utils/dns';
+import { getNetworkConcurrency } from '../utils/env-flag';
 import {
   hkFilter,
   japanFilter,
@@ -252,7 +252,7 @@ export class Artifact extends EventEmitter {
     this.emit('initArtifact:start', { artifact: this.artifact });
 
     await Bluebird.map(this.providerNameList, this.providerMapper.bind(this), {
-      concurrency: NETWORK_CONCURRENCY,
+      concurrency: getNetworkConcurrency(),
     });
 
     this.providerNameList.forEach((providerName) => {

@@ -1,7 +1,7 @@
 import test from 'ava';
 
 import { NodeTypeEnum } from '../../types';
-import { ERR_INVALID_FILTER } from '../constant';
+import { ERR_INVALID_FILTER } from '../../constant';
 import { getLoonNodes } from '../loon';
 
 test('getLoonNodes', (t) => {

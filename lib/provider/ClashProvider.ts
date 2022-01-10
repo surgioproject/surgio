@@ -17,9 +17,9 @@ import {
   VmessNodeConfig,
 } from '../types';
 import { lowercaseHeaderKeys } from '../utils';
+import { getNetworkClashUA } from '../utils/env-flag';
 import { getUserAgent } from '../utils/http-client';
 import relayableUrl from '../utils/relayable-url';
-import { NETWORK_CLASH_UA } from '../utils/constant';
 import Provider from './Provider';
 
 type SupportConfigTypes =
@@ -108,7 +108,7 @@ export const getClashSubscription = async (
   assert(url, '未指定订阅地址 url');
 
   const response = await Provider.requestCacheableResource(url, {
-    requestUserAgent: getUserAgent(NETWORK_CLASH_UA),
+    requestUserAgent: getUserAgent(getNetworkClashUA()),
   });
   let clashConfig;
 

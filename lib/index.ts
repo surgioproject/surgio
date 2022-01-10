@@ -19,7 +19,7 @@ import {
 } from './utils';
 import * as filter from './utils/filter';
 import { errorHandler } from './utils/error-helper';
-import { CATEGORIES } from './utils/constant';
+import { CATEGORIES } from './constant';
 
 // istanbul ignore next
 if (
