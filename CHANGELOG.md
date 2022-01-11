@@ -1,3 +1,12 @@
+## [2.13.1](https://github.com/geekdada/surgio/compare/v2.13.0...v2.13.1) (2022-01-11)
+
+
+### Bug Fixes
+
+* back compatibility with Gateway ([39b266e](https://github.com/geekdada/surgio/commit/39b266e264926c71fa4fc37d30bda9ffcf4fd45d))
+
+
+
 # [2.13.0](https://github.com/geekdada/surgio/compare/v2.12.0...v2.13.0) (2022-01-10)
 
 
