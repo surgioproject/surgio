@@ -29,7 +29,6 @@ import {
 } from '../types';
 import { ConfigCache } from './cache';
 import { ERR_INVALID_FILTER, OBFS_UA } from '../constant';
-import { getSurgeVmessAEADDisabled } from './env-flag';
 import { validateFilter } from './filter';
 import httpClient from './http-client';
 import { formatVmessUri } from './v2ray';
@@ -415,10 +414,10 @@ export const getSurgeNodes = function (
               configList.push(`test-url=${config['testUrl']}`);
             }
 
-            if (getSurgeVmessAEADDisabled()) {
-              configList.push('vmess-aead=false');
-            } else {
+            if (nodeConfig?.surgeConfig?.vmessAEAD) {
               configList.push('vmess-aead=true');
+            } else {
+              configList.push('vmess-aead=false');
             }
 
             return [config.nodeName, configList.join(', ')].join(' = ');
@@ -1101,6 +1100,9 @@ export const getQuantumultXNodes = function (
             `password=${nodeConfig.uuid}`,
             ...(nodeConfig['udp-relay'] ? ['udp-relay=true'] : []),
             ...(nodeConfig.tfo ? ['fast-open=true'] : []),
+            ...(nodeConfig.quantumultXConfig?.vmessAEAD
+              ? ['aead=true']
+              : ['aead=false']),
           ];
 
           switch (nodeConfig.network) {

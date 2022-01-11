@@ -214,6 +214,13 @@ module.exports = {
 };
 ```
 
+#### quantumultXConfig.vmessAEAD
+
+- 类型: `boolean`
+- 默认值: `true`
+
+默认开启 Vmess AEAD 加密，如果您的服务器不支持 AEAD 加密，请关闭。
+
 ### clashConfig
 
 - 类型: `object`

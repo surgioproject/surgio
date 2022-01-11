@@ -4,7 +4,7 @@ import _ from 'lodash';
 import path from 'path';
 import { URL } from 'url';
 import { deprecate } from 'util';
-import { DEP005, DEP006 } from '../misc/deprecation';
+import { DEP005, DEP006, DEP008 } from '../misc/deprecation';
 
 import { CommandConfig } from '../types';
 import { PROXY_TEST_INTERVAL, PROXY_TEST_URL } from '../constant';
@@ -13,6 +13,7 @@ import { ensureConfigFolder } from './index';
 
 const showDEP005 = deprecate(_.noop, DEP005, 'DEP005');
 const showDEP006 = deprecate(_.noop, DEP006, 'DEP006');
+const showDEP008 = deprecate(_.noop, DEP008, 'DEP008');
 
 export const loadConfig = (
   cwd: string,
@@ -72,9 +73,13 @@ export const normalizeConfig = (
       shadowsocksFormat: 'ss',
       v2ray: 'native',
       resolveHostname: false,
+      vmessAEAD: false,
     },
     clashConfig: {
       ssrFormat: 'native',
+    },
+    quantumultXConfig: {
+      vmessAEAD: true,
     },
     proxyTestUrl: PROXY_TEST_URL,
     proxyTestInterval: PROXY_TEST_INTERVAL,
@@ -110,6 +115,11 @@ export const normalizeConfig = (
   // istanbul ignore next
   if (config.surgeConfig?.v2ray === 'external') {
     showDEP006();
+  }
+
+  // istanbul ignore next
+  if (config.clashConfig?.ssrFormat === 'legacy') {
+    showDEP008();
   }
 
   return config;
@@ -162,8 +172,11 @@ export const validateConfig = (userConfig: Partial<CommandConfig>): void => {
       shadowsocksFormat: Joi.string().valid('ss', 'custom'),
       v2ray: Joi.string().valid('native', 'external'),
       resolveHostname: Joi.boolean().strict(),
+      vmessAEAD: Joi.boolean().strict(),
     }).unknown(),
-    quantumultXConfig: Joi.object({}).unknown(),
+    quantumultXConfig: Joi.object({
+      vmessAEAD: Joi.boolean().strict(),
+    }).unknown(),
     clashConfig: Joi.object({
       ssrFormat: Joi.string().valid('native', 'legacy'),
     }).unknown(),

@@ -54,8 +54,11 @@ export interface CommandConfig {
     readonly shadowsocksFormat?: 'ss' | 'custom';
     readonly v2ray?: 'native' | 'external';
     readonly resolveHostname?: boolean;
+    readonly vmessAEAD?: boolean;
   };
-  readonly quantumultXConfig?: any;
+  readonly quantumultXConfig?: {
+    readonly vmessAEAD?: boolean;
+  };
   readonly clashConfig?: {
     readonly ssrFormat: 'native' | 'legacy';
   };
@@ -275,6 +278,7 @@ export interface SimpleNodeConfig {
   localPort?: number;
   surgeConfig?: CommandConfig['surgeConfig'];
   clashConfig?: CommandConfig['clashConfig'];
+  quantumultXConfig?: CommandConfig['quantumultXConfig'];
   hostnameIp?: ReadonlyArray<string>;
   provider?: Provider;
   underlyingProxy?: string;
