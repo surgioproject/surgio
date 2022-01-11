@@ -1,3 +1,12 @@
+# [2.14.0](https://github.com/geekdada/surgio/compare/v2.13.1...v2.14.0) (2022-01-11)
+
+
+### Features
+
+* add support for QuantumultX vmess AEAD config ([1e02c49](https://github.com/geekdada/surgio/commit/1e02c4917f740d9691d496a66d574669533d1091))
+
+
+
 ## [2.13.1](https://github.com/geekdada/surgio/compare/v2.13.0...v2.13.1) (2022-01-11)
 
 
