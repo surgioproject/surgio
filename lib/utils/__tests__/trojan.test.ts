@@ -51,7 +51,7 @@ test('parseTrojanUri', (t) => {
     () => {
       parseTrojanUri('ss://');
     },
-    null,
+    undefined,
     'Invalid Trojan URI.',
   );
 });

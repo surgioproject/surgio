@@ -1795,49 +1795,49 @@ test('output api should fail with invalid filter', (t) => {
     () => {
       utils.getSurgeNodes([], undefined);
     },
-    null,
+    undefined,
     ERR_INVALID_FILTER,
   );
   t.throws(
     () => {
       utils.getClashNodes([], undefined);
     },
-    null,
+    undefined,
     ERR_INVALID_FILTER,
   );
   t.throws(
     () => {
       utils.getClashNodeNames([], undefined);
     },
-    null,
+    undefined,
     ERR_INVALID_FILTER,
   );
   t.throws(
     () => {
       utils.getNodeNames([], undefined);
     },
-    null,
+    undefined,
     ERR_INVALID_FILTER,
   );
   t.throws(
     () => {
       utils.getQuantumultNodes([], undefined, undefined);
     },
-    null,
+    undefined,
     ERR_INVALID_FILTER,
   );
   t.throws(
     () => {
       utils.getQuantumultXNodes([], undefined);
     },
-    null,
+    undefined,
     ERR_INVALID_FILTER,
   );
   t.throws(
     () => {
       utils.getMellowNodes([], undefined);
     },
-    null,
+    undefined,
     ERR_INVALID_FILTER,
   );
 });

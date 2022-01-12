@@ -40,7 +40,7 @@ test.serial('loadRemoteSnippetList', async (t) => {
     () => {
       remoteSnippetList[0].main();
     },
-    null,
+    undefined,
     '必须为片段指定一个策略',
   );
 
@@ -48,7 +48,7 @@ test.serial('loadRemoteSnippetList', async (t) => {
     () => {
       remoteSnippetList[4].main('PROXY');
     },
-    null,
+    undefined,
     'Surgio 片段参数不足，缺少 rule2',
   );
 
@@ -57,7 +57,7 @@ test.serial('loadRemoteSnippetList', async (t) => {
       // @ts-ignore
       remoteSnippetList[4].main(true, false);
     },
-    null,
+    undefined,
     'Surgio 片段参数 rule1 不为字符串',
   );
 });
@@ -160,7 +160,7 @@ test('parseMacro', (t) => {
 {% macro wrong(rule1, rule2) %}{% endmacro %}
     `);
     },
-    null,
+    undefined,
     '该片段不包含可用的宏',
   );
   t.throws(
@@ -169,7 +169,7 @@ test('parseMacro', (t) => {
 {% macro main %}{% endmacro %}
     `);
     },
-    null,
+    undefined,
     '该片段不包含可用的宏',
   );
 
@@ -177,7 +177,7 @@ test('parseMacro', (t) => {
     () => {
       utils.parseMacro('');
     },
-    null,
+    undefined,
     '该片段不包含可用的宏',
   );
 });
