@@ -1,3 +1,12 @@
+## [2.14.1](https://github.com/geekdada/surgio/compare/v2.14.0...v2.14.1) (2022-01-12)
+
+
+### Features
+
+* re-enable Vmess AEAD on Surge ([602d999](https://github.com/geekdada/surgio/commit/602d9997cd3548631527631d8502f16a131c40dd))
+
+
+
 # [2.14.0](https://github.com/geekdada/surgio/compare/v2.13.1...v2.14.0) (2022-01-11)
 
 
