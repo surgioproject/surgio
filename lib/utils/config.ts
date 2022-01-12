@@ -73,7 +73,7 @@ export const normalizeConfig = (
       shadowsocksFormat: 'ss',
       v2ray: 'native',
       resolveHostname: false,
-      vmessAEAD: false,
+      vmessAEAD: true,
     },
     clashConfig: {
       ssrFormat: 'native',

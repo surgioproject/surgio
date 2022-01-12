@@ -202,6 +202,13 @@ module.exports = {
 
 打开这个选项后，Surgio 会在生成配置的时候解析域名。不过，这必然会造成生成时间延长，所以请按照个人的需要进行选择。
 
+#### surgeConfig.vmessAEAD
+
+- 类型: `boolean`
+- 默认值: `true`
+
+默认开启 Vmess AEAD 加密，如果您的服务器不支持 AEAD 加密，请关闭。
+
 ### quantumultXConfig
 
 - 类型: `object`
