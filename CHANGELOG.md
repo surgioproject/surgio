@@ -1,3 +1,12 @@
+## [2.14.2](https://github.com/geekdada/surgio/compare/v2.14.1...v2.14.2) (2022-01-13)
+
+
+### Bug Fixes
+
+* encrypt-method=auto in Surge config ([4693bd4](https://github.com/geekdada/surgio/commit/4693bd4319bb6a0de172c0f9c4859f79792b915a))
+
+
+
 ## [2.14.1](https://github.com/geekdada/surgio/compare/v2.14.0...v2.14.1) (2022-01-12)
 
 
