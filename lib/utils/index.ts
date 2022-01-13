@@ -361,8 +361,13 @@ export const getSurgeNodes = function (
               config.hostname,
               config.port,
               `username=${config.uuid}`,
-              `encrypt-method=${config.method}`,
             ];
+
+            if (
+              ['chacha20-ietf-poly1305', 'aes-128-gcm'].includes(config.method)
+            ) {
+              configList.push(`encrypt-method=${config.method}`);
+            }
 
             function getHeader(wsHeaders: Record<string, string>): string {
               return Object.keys(wsHeaders)
