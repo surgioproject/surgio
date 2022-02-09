@@ -73,6 +73,8 @@ test('getClashSubscription', async (t) => {
       'vmess',
       'vmess new format',
       'vmess custom header',
+      'vmess-h2',
+      'vmess-grpc',
       'http 1',
       'http 2',
       'snell',
@@ -162,6 +164,42 @@ test('getClashSubscription', async (t) => {
     skipCertVerify: false,
     wsHeaders: {
       edge: 'www.baidu.com',
+    },
+  });
+  t.deepEqual(config.shift(), {
+    type: NodeTypeEnum.Vmess,
+    nodeName: 'vmess-h2',
+    hostname: 'server',
+    port: 443,
+    uuid: 'uuid',
+    alterId: '32',
+    method: 'auto',
+    network: 'h2',
+    'udp-relay': false,
+    tls: true,
+    tls13: false,
+    skipCertVerify: false,
+    protocolOpts: {
+      host: ['http.example.com', 'http-alt.example.com'],
+      path: '/',
+    },
+  });
+  t.deepEqual(config.shift(), {
+    type: NodeTypeEnum.Vmess,
+    nodeName: 'vmess-grpc',
+    hostname: 'server',
+    host: 'example.com',
+    port: 443,
+    uuid: 'uuid',
+    alterId: '32',
+    method: 'auto',
+    network: 'grpc',
+    'udp-relay': false,
+    tls: true,
+    tls13: false,
+    skipCertVerify: false,
+    protocolOpts: {
+      'grpc-service-name': 'example',
     },
   });
   t.deepEqual(config.shift(), {

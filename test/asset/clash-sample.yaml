@@ -158,6 +158,35 @@ Proxy:
     ws-headers:
       edge: www.baidu.com
 
+  - name: "vmess-h2"
+    type: vmess
+    server: server
+    port: 443
+    uuid: uuid
+    alterId: 32
+    cipher: auto
+    network: h2
+    tls: true
+    h2-opts:
+      host:
+        - http.example.com
+        - http-alt.example.com
+      path: /
+
+  - name: "vmess-grpc"
+    server: server
+    port: 443
+    type: vmess
+    uuid: uuid
+    alterId: 32
+    cipher: auto
+    network: grpc
+    tls: true
+    servername: example.com
+    # skip-cert-verify: true
+    grpc-opts:
+      grpc-service-name: "example"
+
   # socks5
   - name: "socks"
     type: socks5

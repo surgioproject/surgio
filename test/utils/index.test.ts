@@ -596,6 +596,60 @@ test('getClashNodes', async (t) => {
       type: NodeTypeEnum.Vmess,
       uuid: '1386f85e-657b-4d6e-9d56-78badb75e1fd',
     },
+    {
+      alterId: '32',
+      host: 'example.com',
+      hostname: '1.1.1.1',
+      method: 'auto',
+      network: 'ws',
+      nodeName: 'Test Node 8',
+      port: 443,
+      'udp-relay': true,
+      tls: true,
+      skipCertVerify: true,
+      type: NodeTypeEnum.Vmess,
+      uuid: '1386f85e-657b-4d6e-9d56-78badb75e1fd',
+      protocolOpts: {
+        path: '/path',
+        headers: {
+          Host: 'v2ray.com',
+        },
+        'max-early-data': 2048,
+        'early-data-header-name': 'Sec-WebSocket-Protocol',
+      },
+    },
+    {
+      alterId: '32',
+      host: '',
+      hostname: '1.1.1.1',
+      method: 'auto',
+      network: 'h2',
+      nodeName: 'Test Node 9',
+      port: 443,
+      tls: true,
+      type: NodeTypeEnum.Vmess,
+      uuid: '1386f85e-657b-4d6e-9d56-78badb75e1fd',
+      protocolOpts: {
+        path: '/',
+        host: ['http.example.com', 'http-alt.example.com'],
+      },
+    },
+    {
+      alterId: '32',
+      host: 'example.com',
+      hostname: '1.1.1.1',
+      method: 'auto',
+      network: 'grpc',
+      nodeName: 'Test Node 10',
+      port: 443,
+      tls: true,
+      skipCertVerify: true,
+      type: NodeTypeEnum.Vmess,
+      uuid: '1386f85e-657b-4d6e-9d56-78badb75e1fd',
+      protocolOpts: {
+        'grpc-service-name': 'example',
+      },
+    },
   ];
   const array = utils.getClashNodes(nodeList);
 
@@ -636,7 +690,7 @@ test('getClashNodes', async (t) => {
     uuid: '1386f85e-657b-4d6e-9d56-78badb75e1fd',
     'ws-opts': {
       headers: {
-        host: 'example.com',
+        Host: 'example.com',
       },
       path: '/',
     },
@@ -686,6 +740,61 @@ test('getClashNodes', async (t) => {
     'skip-cert-verify': true,
     type: 'vmess',
     uuid: '1386f85e-657b-4d6e-9d56-78badb75e1fd',
+  });
+  t.deepEqual(array[7], {
+    name: 'Test Node 8',
+    type: 'vmess',
+    server: '1.1.1.1',
+    port: 443,
+    uuid: '1386f85e-657b-4d6e-9d56-78badb75e1fd',
+    alterId: '32',
+    cipher: 'auto',
+    udp: true,
+    tls: true,
+    'skip-cert-verify': true,
+    servername: 'example.com',
+    network: 'ws',
+    'ws-opts': {
+      path: '/path',
+      headers: {
+        Host: 'v2ray.com',
+      },
+      'max-early-data': 2048,
+      'early-data-header-name': 'Sec-WebSocket-Protocol',
+    },
+  });
+  t.deepEqual(array[8], {
+    name: 'Test Node 9',
+    type: 'vmess',
+    server: '1.1.1.1',
+    port: 443,
+    uuid: '1386f85e-657b-4d6e-9d56-78badb75e1fd',
+    alterId: '32',
+    cipher: 'auto',
+    network: 'h2',
+    udp: false,
+    tls: true,
+    'h2-opts': {
+      host: ['http.example.com', 'http-alt.example.com'],
+      path: '/',
+    },
+  });
+  t.deepEqual(array[9], {
+    name: 'Test Node 10',
+    server: '1.1.1.1',
+    port: 443,
+    type: 'vmess',
+    uuid: '1386f85e-657b-4d6e-9d56-78badb75e1fd',
+    alterId: '32',
+    cipher: 'auto',
+    network: 'grpc',
+    udp: false,
+    tls: true,
+    servername: 'example.com',
+    'skip-cert-verify': true,
+    'grpc-opts': {
+      'grpc-service-name': 'example',
+    },
   });
 
   t.deepEqual(

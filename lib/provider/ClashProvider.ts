@@ -223,7 +223,10 @@ export const parseClashConfig = (
 
         case 'vmess': {
           // istanbul ignore next
-          if (item.network && !['tcp', 'ws'].includes(item.network)) {
+          if (
+            item.network &&
+            !['tcp', 'ws', 'h2', 'grpc'].includes(item.network)
+          ) {
             logger.warn(
               `不支持从 Clash 订阅中读取 network 类型为 ${item.network} 的 Vmess 节点，节点 ${item.name} 会被省略`,
             );
@@ -259,6 +262,19 @@ export const parseClashConfig = (
                   host: wsHost,
                   path: _.get(wsOpts, 'path', '/'),
                   wsHeaders,
+                }
+              : null),
+            ...(['h2', 'grpc'].includes(item.network) &&
+            [item.network, '-opts'].join('') in item
+              ? {
+                  protocolOpts: _.get(
+                    item,
+                    [item.network, '-opts'].join(''),
+                    {},
+                  ),
+                  ...(item.tls && item.servername
+                    ? { host: item.servername }
+                    : null),
                 }
               : null),
             ...(item.tls

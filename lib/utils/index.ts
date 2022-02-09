@@ -375,6 +375,15 @@ export const getSurgeNodes = function (
                 .join('|');
             }
 
+            if (config.network && ['h2', 'grpc'].includes(config.network)) {
+              logger.warn(
+                `不支持为 Surge 生成 network: ${
+                  config.network
+                } 的 Vmess 节点，节点 ${nodeConfig!.nodeName} 会被省略`,
+              );
+              return void 0;
+            }
+
             if (config.network === 'ws') {
               configList.push('ws=true');
               configList.push(`ws-path=${config.path}`);
@@ -637,12 +646,41 @@ export const getClashNodes = function (
             ...(nodeConfig.network === 'ws'
               ? {
                   'ws-opts': {
-                    path: nodeConfig.path,
+                    path: nodeConfig.protocolOpts
+                      ? _.get(nodeConfig.protocolOpts, 'path', nodeConfig.path)
+                      : nodeConfig.path,
                     headers: {
-                      ...(nodeConfig.host ? { host: nodeConfig.host } : null),
-                      ..._.omit(nodeConfig.wsHeaders, ['host']),
+                      ...(nodeConfig.protocolOpts &&
+                      'headers' in nodeConfig.protocolOpts
+                        ? {
+                            Host: _.get(
+                              nodeConfig.protocolOpts.headers,
+                              'Host',
+                              null,
+                            ),
+                          }
+                        : { Host: nodeConfig.host ? nodeConfig.host : null }),
+                      ..._.omit(nodeConfig.wsHeaders, ['Host']),
                     },
+                    ...(nodeConfig.protocolOpts
+                      ? _.pick(nodeConfig.protocolOpts, [
+                          'max-early-data',
+                          'early-data-header-name',
+                        ])
+                      : null),
                   },
+                  ...(nodeConfig.tls && nodeConfig.host
+                    ? { servername: nodeConfig.host }
+                    : null),
+                }
+              : null),
+            ...(['h2', 'grpc'].includes(nodeConfig.network)
+              ? {
+                  [[nodeConfig.network, '-opts'].join('')]:
+                    nodeConfig.protocolOpts,
+                  ...(nodeConfig.tls && nodeConfig.host
+                    ? { servername: nodeConfig.host }
+                    : null),
                 }
               : null),
           };
@@ -777,6 +815,18 @@ export const getMellowNodes = function (
     .map((nodeConfig) => {
       switch (nodeConfig.type) {
         case NodeTypeEnum.Vmess: {
+          if (
+            nodeConfig.network &&
+            ['h2', 'grpc'].includes(nodeConfig.network)
+          ) {
+            logger.warn(
+              `不支持为 Mellow 生成 network: ${
+                nodeConfig.network
+              } 的 Vmess 节点，节点 ${nodeConfig!.nodeName} 会被省略`,
+            );
+            return void 0;
+          }
+
           const uri = formatVmessUri(nodeConfig, { isMellow: true });
           return [
             nodeConfig.nodeName,
@@ -1010,6 +1060,18 @@ export const getQuantumultNodes = function (
     .map((nodeConfig): string | undefined => {
       switch (nodeConfig.type) {
         case NodeTypeEnum.Vmess: {
+          if (
+            nodeConfig.network &&
+            ['h2', 'grpc'].includes(nodeConfig.network)
+          ) {
+            logger.warn(
+              `不支持为 Quantumult 生成 network: ${
+                nodeConfig.network
+              } 的 Vmess 节点，节点 ${nodeConfig!.nodeName} 会被省略`,
+            );
+            return void 0;
+          }
+
           const config = [
             'vmess',
             nodeConfig.hostname,
@@ -1109,6 +1171,18 @@ export const getQuantumultXNodes = function (
               ? ['aead=true']
               : ['aead=false']),
           ];
+
+          if (
+            nodeConfig.network &&
+            ['h2', 'grpc'].includes(nodeConfig.network)
+          ) {
+            logger.warn(
+              `不支持为 Quantumult X 生成 network: ${
+                nodeConfig.network
+              } 的 Vmess 节点，节点 ${nodeConfig!.nodeName} 会被省略`,
+            );
+            return void 0;
+          }
 
           switch (nodeConfig.network) {
             case 'ws':

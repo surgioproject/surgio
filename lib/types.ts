@@ -224,6 +224,15 @@ export interface ShadowsocksrNodeConfig extends SimpleNodeConfig {
   readonly 'udp-relay'?: boolean;
 }
 
+export type BaseValue =
+  | string
+  | number
+  | boolean
+  | ReadonlyArray<string | number | boolean>;
+
+export type CombineValue = Record<string, BaseValue>;
+export type OptionValue = BaseValue | CombineValue;
+
 export interface VmessNodeConfig extends SimpleNodeConfig {
   readonly type: NodeTypeEnum.Vmess;
   readonly hostname: string;
@@ -231,7 +240,7 @@ export interface VmessNodeConfig extends SimpleNodeConfig {
   readonly method: 'auto' | 'aes-128-gcm' | 'chacha20-ietf-poly1305' | 'none';
   readonly uuid: string;
   readonly alterId: string;
-  readonly network: 'tcp' | 'ws';
+  readonly network: 'tcp' | 'ws' | 'h2' | 'grpc';
   readonly tls: boolean;
   readonly host?: string;
   readonly path?: string;
@@ -239,6 +248,7 @@ export interface VmessNodeConfig extends SimpleNodeConfig {
   readonly tls13?: boolean;
   readonly skipCertVerify?: boolean;
   readonly wsHeaders?: Record<string, string>;
+  readonly protocolOpts?: Record<string, OptionValue>;
 }
 
 export interface TrojanNodeConfig extends SimpleNodeConfig {

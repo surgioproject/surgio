@@ -77,6 +77,18 @@ export const getLoonNodes = function (
             `transport:${nodeConfig.network}`,
           ];
 
+          if (
+            nodeConfig.network &&
+            ['h2', 'grpc'].includes(nodeConfig.network)
+          ) {
+            logger.warn(
+              `不支持为 Loon 生成 network: ${
+                nodeConfig.network
+              } 的 Vmess 节点，节点 ${nodeConfig!.nodeName} 会被省略`,
+            );
+            return void 0;
+          }
+
           if (nodeConfig.network === 'ws') {
             config.push(
               `path:${nodeConfig.path || '/'}`,
