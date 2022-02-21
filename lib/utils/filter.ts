@@ -187,6 +187,48 @@ export const mergeSortedFilters = (
   return new SortFilterWithSortedFilters(filters);
 };
 
+export const regexFilter = (regex: string): NodeNameFilterType => {
+  const regexpGroup = {
+    /************************ Network filters ************************/
+    Private: RegExp(/IPLC|IEPL|AIA|专线/i), // 专线
+    Relay: RegExp(/中继|中转|转发|CN2|BGP/i), // 中转
+    Direct: RegExp(/直连|DIRECT/i), //直连
+    Streaming: RegExp(/流媒|解锁|Netflix|NF|原生/i), // 流媒体
+    Game: RegExp(/游戏|Game|UDP/i), // 游戏
+    SOS: RegExp(/应急|公益|失联/i), // 应急
+    /*********************** Continent filters ***********************/
+    AF: RegExp(/(埃及|EG|南非|ZA)/i),
+    AS: RegExp(
+      /(中国|CN|香港(?!转|中)|HK|澳门|MO|台湾|TW|新加坡|SG|马来|MY|泰国|TH|菲律宾|PH|日本|JP|韩国|KR|印度|IN|巴基|PK)/i,
+    ),
+    OA: RegExp(/(澳大利亚|澳洲|AU|新西兰|NZ)/i),
+    NA: RegExp(/(美国|US(?!SIA)|UNITED STATES|加拿大|CA|CANADA)/i),
+    SA: RegExp(/(墨西哥|MX|巴西|BR|智利|CL)/i),
+    EU: RegExp(
+      /(英国|UK|法国|FR|德国|DE|意大利|IT|俄罗斯|RU|荷兰|NL|波兰|PL|葡萄牙|PT|土耳其|TR)/i,
+    ),
+    /************************ Country filters ************************/
+    Greater_China: RegExp(
+      /(中国|CN|香港(?!转|中)|HK|澳门|MO|台湾|TW|新加坡|SG|马来|MY|泰国|TH|菲律宾|PH)/i,
+    ),
+    HK: RegExp(/(香港(?!转|中)|HK)/i),
+    MO: RegExp(/(澳门|MO|MACAU)/i),
+    TW: RegExp(/(台湾|TW|TAIWAN|台北|新北|彰化)/i),
+    SG: RegExp(/(新加坡|SG|SINGAPORE|SIN|狮城)/i),
+    JP: RegExp(/(日本|JP|东京|大阪|埼玉)/i),
+    US: RegExp(
+      /(美国|US(?!SIA)|UNITED STATES|洛杉矶|LAX|硅谷|达拉斯|费利蒙|凤凰城|芝加哥|圣何塞|西雅图|旧金山|SFO)/i,
+    ),
+  };
+  const regexp = regexpGroup?.[regex] ?? undefined;
+  // istanbul ignore next
+  if (!_.isRegExp(regexp)) {
+    throw new Error('入参不是一个合法的正则表达式');
+  }
+
+  return (item) => regexp.test(item.nodeName);
+};
+
 export const netflixFilter: NodeNameFilterType = (item) => {
   return ['netflix', 'nf', 'hkbn', 'hkt', 'hgc', 'nbu'].some((key) =>
     item.nodeName.toLowerCase().includes(key),
