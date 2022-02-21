@@ -181,6 +181,29 @@ export class Artifact extends EventEmitter {
           p,
           gatewayHasToken ? gatewayConfig?.accessToken : undefined,
         ),
+      getSub: (filter?: string) => {
+        const types = {
+          Surge: 'surge-policy',
+          Clash: 'clash-provider',
+          QuantumultX: 'qx-server',
+        };
+        const format = types?.[this.artifactType] ?? undefined;
+        return getUrl(
+          config.publicUrl,
+          filter
+            ? 'export-providers?providers=' +
+                this.providerNameList +
+                '&format=' +
+                format +
+                '&filter=' +
+                filter
+            : 'export-providers?providers=' +
+                this.providerNameList +
+                '&format=' +
+                format,
+          gatewayHasToken ? gatewayConfig?.accessToken : undefined,
+        );
+      },
       getNodes: (
         list: ReadonlyArray<PossibleNodeConfigType>,
         filter?: NodeFilterType | SortedNodeNameFilterType,
