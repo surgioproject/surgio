@@ -11,11 +11,13 @@ import { getProvider } from '../provider';
 import {
   ArtifactConfig,
   CommandConfig,
+  NodeFilterType,
   NodeTypeEnum,
   PossibleNodeConfigType,
   ProviderConfig,
   RemoteSnippet,
   SimpleNodeConfig,
+  SortedNodeNameFilterType,
 } from '../types';
 import {
   getClashNodeNames,
@@ -78,6 +80,7 @@ export interface ExtendableRenderContext {
 export class Artifact extends EventEmitter {
   public initProgress = 0;
 
+  public artifactType: Readonly<string>;
   public providerNameList: ReadonlyArray<string>;
   public nodeConfigListMap: Map<string, ReadonlyArray<PossibleNodeConfigType>> =
     new Map();
@@ -106,6 +109,7 @@ export class Artifact extends EventEmitter {
     if (!templateString) {
       assert(template, '必须指定 artifact 的 template 属性');
     }
+    const artifactType = artifact.type;
 
     const mainProviderName = artifact.provider;
     const combineProviders = artifact.combineProviders || [];
@@ -177,6 +181,32 @@ export class Artifact extends EventEmitter {
           p,
           gatewayHasToken ? gatewayConfig?.accessToken : undefined,
         ),
+      getNodes: (
+        list: ReadonlyArray<PossibleNodeConfigType>,
+        filter?: NodeFilterType | SortedNodeNameFilterType,
+        //options?,
+      ) => {
+        if (this.artifactType == 'Surge') return getSurgeNodes(list, filter);
+        else if (this.artifactType == 'Stash')
+          return getClashNodes(list, filter);
+        else if (this.artifactType == 'Clash')
+          return getClashNodes(list, filter);
+        else if (this.artifactType == 'QuantumultX')
+          return getQuantumultXNodes(list, filter);
+        else if (this.artifactType == 'Loon') return getLoonNodes(list, filter);
+        //else if (this.artifactType == 'Mellow') return getMellowNodes(list, filter);
+        //else if (this.artifactType == 'Shadowsocks') return getShadowsocksNodes(list, options = 'Surgio'); // groupName
+        //else if (this.artifactType == 'Shadowsocksr') return getShadowsocksrNodes(list, options = 'Surgio'); // groupName
+        //else if (this.artifactType == 'V2rayN') return getV2rayNNodes(list);
+        //else if (tythis.artifactTypepe == 'Quantumult') return getQuantumultNodes(list, options = 'Surgio', filter); // groupName
+        //else if (this.artifactType == 'ShadowsocksJSON') return getShadowsocksNodesJSON(list);
+        //else if (this.artifactType == 'Names') return getNodeNames(list, filter, options); // separator
+        //else if (this.artifactType == 'ClashNames') return getClashNodeNames(list, filter, options);  // existingProxies
+        else {
+          logger.warn(`${this.artifactType} 未知类型`);
+          return undefined;
+        }
+      },
       getNodeNames,
       getClashNodeNames,
       getClashNodes,

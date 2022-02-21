@@ -90,6 +90,7 @@ export interface RemoteSnippet extends RemoteSnippetConfig {
 export interface ArtifactConfig {
   readonly name: string;
   readonly template: string | undefined;
+  readonly type?: string; // 申明模版类型: Surge/Stash/Clash/QuantumultX/StashLoon
   readonly provider: string;
   readonly combineProviders?: ReadonlyArray<string>;
   readonly categories?: ReadonlyArray<string>;
