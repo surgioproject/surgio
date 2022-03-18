@@ -1,5 +1,6 @@
 {
   "name": "surgio",
+  "description": "Generating rules for Surge, Clash, Quantumult like a PRO",
   "version": "2.14.2",
   "main": "build/index.js",
   "typings": "build/index.d.ts",

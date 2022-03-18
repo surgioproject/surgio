@@ -9,7 +9,6 @@
 ![Nodejs][nodejs-version]
 ![Github Actions][github-actions-image]
 [![Test coverage][codecov-image]][codecov-url]
-[![David deps][david-image]][david-url]
 [![Known Vulnerabilities][snyk-image]][snyk-url]
 [![npm download][download-image]][download-url]
 [![install size](https://packagephobia.now.sh/badge?p=surgio)](https://packagephobia.now.sh/result?p=surgio)
@@ -18,15 +17,13 @@
 [npm-url]: https://npmjs.org/package/surgio
 [codecov-image]: https://codecov.io/gh/surgioproject/surgio/branch/master/graph/badge.svg
 [codecov-url]: https://codecov.io/gh/surgioproject/surgio
-[david-image]: https://img.shields.io/david/surgioproject/surgio.svg?style=flat-square
-[david-url]: https://david-dm.org/surgioproject/surgio
 [snyk-image]: https://snyk.io/test/npm/surgio/badge.svg?style=flat-square
 [snyk-url]: https://snyk.io/test/npm/surgio
 [download-image]: https://img.shields.io/npm/dm/surgio.svg?style=flat-square
 [download-url]: https://npmjs.org/package/surgio
 [github-actions-image]: https://github.com/surgioproject/surgio/workflows/Node%20CI/badge.svg
-[taonpm-image]: https://npm.taobao.org/badge/v/surgio.svg
-[taonpm-url]: https://npm.taobao.org/package/surgio
+[taonpm-image]: https://npmmirror.com/badge/v/surgio.svg
+[taonpm-url]: https://npmmirror.com/package/surgio
 [nodejs-version]: https://img.shields.io/node/v/surgio
 
 ## 文档
