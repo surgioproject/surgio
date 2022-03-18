@@ -31,7 +31,7 @@ class LintCommand extends Command {
 
     if (!result) {
       console.warn(
-        '⚠️  JS 语法检查不通过，请根据提示修改文件（可添加参数 --fix 自动修复部分错误， 参考 http://url.royli.dev/SeB6m）',
+        '⚠️  JS 语法检查不通过，请根据提示修改文件（可添加参数 --fix 自动修复部分错误， 参考 https://url.royli.dev/SeB6m）',
       );
       process.exit(1);
     } else {

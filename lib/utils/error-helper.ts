@@ -7,7 +7,10 @@ export const errorHandler = function (this: Command, err: Error): void {
     console.error(chalk.red(`⚠️  发生错误`));
     console.error(chalk.red(`⚠️  ${err.name}: ${err.message}`));
     console.error('⚠️  版本号: %s', require('../../package.json').version);
-    console.error('⚠️  常见问题: %s', chalk.cyan('http://url.royli.dev/7EMxu'));
+    console.error(
+      '⚠️  常见问题: %s',
+      chalk.cyan('https://url.royli.dev/7EMxu'),
+    );
     console.error(
       '⚠️  加入交流群汇报问题 %s',
       chalk.cyan('https://t.me/surgiotg'),

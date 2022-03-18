@@ -200,7 +200,7 @@ export const getSurgeNodes = function (
           // istanbul ignore next
           if (!config.binPath) {
             throw new Error(
-              '请按照文档 http://url.royli.dev/vdGh2 添加 Shadowsocksr 二进制文件路径',
+              '请按照文档 https://url.royli.dev/vdGh2 添加 Shadowsocksr 二进制文件路径',
             );
           }
 
@@ -239,7 +239,7 @@ export const getSurgeNodes = function (
 
           if (config.localPort === 0) {
             throw new Error(
-              `为 Surge 生成 SSR 配置时必须为 Provider ${config.provider?.name} 设置 startPort，参考 http://url.royli.dev/bWcpe`,
+              `为 Surge 生成 SSR 配置时必须为 Provider ${config.provider?.name} 设置 startPort，参考 https://url.royli.dev/bWcpe`,
             );
           }
 
@@ -332,13 +332,13 @@ export const getSurgeNodes = function (
             // istanbul ignore next
             if (!config.binPath) {
               throw new Error(
-                '请按照文档 http://url.royli.dev/vdGh2 添加 V2Ray 二进制文件路径',
+                '请按照文档 https://url.royli.dev/vdGh2 添加 V2Ray 二进制文件路径',
               );
             }
 
             if (config.localPort === 0) {
               throw new Error(
-                `为 Surge 生成 Vmess 配置时必须为 Provider ${config.provider?.name} 设置 startPort，参考 http://url.royli.dev/bWcpe`,
+                `为 Surge 生成 Vmess 配置时必须为 Provider ${config.provider?.name} 设置 startPort，参考 https://url.royli.dev/bWcpe`,
               );
             }
 

@@ -44,7 +44,7 @@ class GenerateCommand extends Command {
 
       if (!result) {
         throw new Error(
-          'JS 语法检查不通过，请根据提示修改文件（参考 http://url.royli.dev/SeB6m）',
+          'JS 语法检查不通过，请根据提示修改文件（参考 https://url.royli.dev/SeB6m）',
         );
       }
     }
