@@ -1114,6 +1114,17 @@ export const getQuantumultXNodes = function (
             case 'ws':
               if (nodeConfig.tls) {
                 config.push(`obfs=wss`);
+
+                if (nodeConfig.skipCertVerify) {
+                  config.push('tls-verification=false');
+                } else {
+                  config.push('tls-verification=true');
+                }
+
+                // istanbul ignore next
+                if (nodeConfig.tls13) {
+                  config.push(`tls13=true`);
+                }
               } else {
                 config.push(`obfs=ws`);
               }
@@ -1121,19 +1132,22 @@ export const getQuantumultXNodes = function (
               config.push(
                 `obfs-host=${nodeConfig.host || nodeConfig.hostname}`,
               );
-              // istanbul ignore next
-              if (nodeConfig.tls13) {
-                config.push(`tls13=true`);
-              }
 
               break;
             case 'tcp':
               if (nodeConfig.tls) {
                 config.push(`obfs=over-tls`);
-              }
-              // istanbul ignore next
-              if (nodeConfig.tls13) {
-                config.push(`tls13=true`);
+
+                if (nodeConfig.skipCertVerify) {
+                  config.push('tls-verification=false');
+                } else {
+                  config.push('tls-verification=true');
+                }
+
+                // istanbul ignore next
+                if (nodeConfig.tls13) {
+                  config.push(`tls13=true`);
+                }
               }
 
               break;
@@ -1175,9 +1189,19 @@ export const getQuantumultXNodes = function (
               : []),
             ...(nodeConfig['udp-relay'] ? [`udp-relay=true`] : []),
             ...(nodeConfig.tfo ? [`fast-open=${nodeConfig.tfo}`] : []),
-            ...(nodeConfig.tls13 ? [`tls13=${nodeConfig.tls13}`] : []),
-            `tag=${nodeConfig.nodeName}`,
-          ].join(', ');
+          ];
+
+          if (nodeConfig.obfs === 'wss') {
+            if (nodeConfig.skipCertVerify) {
+              config.push('tls-verification=false');
+            } else {
+              config.push('tls-verification=true');
+            }
+
+            if (nodeConfig.tls13) {
+              config.push('tls13=true');
+            }
+          }
 
           // istanbul ignore next
           if (
@@ -1189,7 +1213,9 @@ export const getQuantumultXNodes = function (
             );
           }
 
-          return `shadowsocks=${config}`;
+          config.push(`tag=${nodeConfig.nodeName}`);
+
+          return `shadowsocks=${config.join(', ')}`;
         }
 
         case NodeTypeEnum.Shadowsocksr: {

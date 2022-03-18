@@ -1562,7 +1562,7 @@ test('getQuantumultXNodes', (t) => {
   );
   t.is(
     schemeList[6],
-    'vmess=1.1.1.1:443, method=chacha20-ietf-poly1305, password=1386f85e-657b-4d6e-9d56-78badb75e1fd, aead=false, obfs=over-tls, tag=测试 4',
+    'vmess=1.1.1.1:443, method=chacha20-ietf-poly1305, password=1386f85e-657b-4d6e-9d56-78badb75e1fd, aead=false, obfs=over-tls, tls-verification=true, tag=测试 4',
   );
 
   t.is(
@@ -1581,7 +1581,7 @@ test('getQuantumultXNodes', (t) => {
         uuid: '1386f85e-657b-4d6e-9d56-78badb75e1fd',
       },
     ]),
-    'vmess=1.1.1.1:443, method=chacha20-ietf-poly1305, password=1386f85e-657b-4d6e-9d56-78badb75e1fd, udp-relay=true, aead=false, obfs=over-tls, tls13=true, tag=测试',
+    'vmess=1.1.1.1:443, method=chacha20-ietf-poly1305, password=1386f85e-657b-4d6e-9d56-78badb75e1fd, udp-relay=true, aead=false, obfs=over-tls, tls-verification=true, tls13=true, tag=测试',
   );
 
   t.is(
@@ -1603,7 +1603,7 @@ test('getQuantumultXNodes', (t) => {
         },
       },
     ]),
-    'vmess=1.1.1.1:443, method=chacha20-ietf-poly1305, password=1386f85e-657b-4d6e-9d56-78badb75e1fd, udp-relay=true, aead=true, obfs=over-tls, tls13=true, tag=测试',
+    'vmess=1.1.1.1:443, method=chacha20-ietf-poly1305, password=1386f85e-657b-4d6e-9d56-78badb75e1fd, udp-relay=true, aead=true, obfs=over-tls, tls-verification=true, tls13=true, tag=测试',
   );
   t.is(
     utils.getQuantumultXNodes([
