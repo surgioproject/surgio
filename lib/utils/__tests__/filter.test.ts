@@ -1,6 +1,6 @@
 import test from 'ava';
-import { NodeTypeEnum, VmessNodeConfig } from '../../lib/types';
-import * as filter from '../../lib/utils/filter';
+import { NodeTypeEnum, VmessNodeConfig } from '../../types';
+import * as filter from '../filter';
 
 test('validateFilter', (t) => {
   t.false(filter.validateFilter(undefined));

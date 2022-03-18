@@ -1,5 +1,5 @@
 import test from 'ava';
-import * as utils from '../../lib/utils/remote-snippet';
+import * as utils from '../remote-snippet';
 
 test.serial('loadRemoteSnippetList', async (t) => {
   const snippets = [

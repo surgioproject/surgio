@@ -3,7 +3,7 @@ import Bluebird from 'bluebird';
 import sinon, { SinonStub } from 'sinon';
 import { promises } from 'dns';
 
-import { resolveDomain } from '../../lib/utils/dns';
+import { resolveDomain } from '../dns';
 
 const sandbox = sinon.createSandbox();
 

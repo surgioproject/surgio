@@ -1,5 +1,5 @@
 import test from 'ava';
-import { addFlagMap, prependFlag, removeFlag } from '../../lib/utils/flag';
+import { addFlagMap, prependFlag, removeFlag } from '../flag';
 
 test.before(() => {
   addFlagMap(/foobar/i, '🚀');

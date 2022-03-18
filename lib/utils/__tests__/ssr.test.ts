@@ -1,6 +1,6 @@
 import test from 'ava';
-import { NodeTypeEnum } from '../../lib/types';
-import { parseSSRUri } from '../../lib/utils/ssr';
+import { NodeTypeEnum } from '../../types';
+import { parseSSRUri } from '../ssr';
 
 test('parseSSRUri 1 - standard base64', (t) => {
   // example.com:80:auth_aes128_sha1:chacha20:plain:ZXhhbXBsZQ==/?obfsparam=&protoparam=MTIzNDU2ICAgICA6MTIzNDVxd2VydHl1&remarks=8J+Hr/Cfh7UgSlA=&group=U3VyZ2lv

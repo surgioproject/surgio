@@ -7,14 +7,14 @@ import {
   SimpleNodeConfig,
   VmessNodeConfig,
   PossibleNodeConfigType,
-} from '../../lib/types';
-import * as utils from '../../lib/utils';
+} from '../../types';
+import * as utils from '../index';
 import {
   ERR_INVALID_FILTER,
   PROXY_TEST_INTERVAL,
   PROXY_TEST_URL,
-} from '../../lib/constant';
-import * as filter from '../../lib/utils/filter';
+} from '../../constant';
+import * as filter from '../filter';
 
 test('getSurgeNodes', async (t) => {
   const nodeList: ReadonlyArray<PossibleNodeConfigType> = [

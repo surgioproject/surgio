@@ -4,8 +4,8 @@ import path from 'path';
 import os from 'os';
 import Bluebird from 'bluebird';
 
-import { TMP_FOLDER_NAME } from '../../lib/constant';
-import { createTmpFactory, TmpFile } from '../../lib/utils/tmp-helper';
+import { TMP_FOLDER_NAME } from '../../constant';
+import { createTmpFactory, TmpFile } from '../tmp-helper';
 
 test.after.always(async () => {
   const dir = path.join(
