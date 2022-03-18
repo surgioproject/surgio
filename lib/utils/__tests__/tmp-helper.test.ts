@@ -40,7 +40,7 @@ test.serial('should work with maxAge 1', async (t) => {
   const factory = createTmpFactory(
     'tmp-helper-test-folder' + `_nodejs_${process.version}`,
   );
-  const tmp = factory('tmp2.txt', 500);
+  const tmp = factory('tmp2.txt', 1000);
 
   t.is(await tmp.getContent(), void 0);
   await tmp.setContent('123456abcdef');
