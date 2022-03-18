@@ -92,7 +92,7 @@
     "@types/listr": "^0.14.2",
     "@types/lodash": "^4.14.174",
     "@types/lru-cache": "^5.1.0",
-    "@types/node": "^12",
+    "@types/node": "^16",
     "@types/nunjucks": "^3.2.0",
     "@types/sinon": "^10.0.6",
     "@types/urlsafe-base64": "^1.0.28",
