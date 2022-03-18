@@ -218,6 +218,10 @@ module.exports = {
 
 ## trojan <Badge text="v2.11.0" vertical="middle" />
 
+:::warning 注意
+该订阅方式仅支持标准的 Trojan 协议，不支持 WebSocket 和 GRPC
+:::
+
 ### url
 
 - 类型: `string`
@@ -380,6 +384,9 @@ module.exports = {
   skipCertVerify: true, // 可选
   'udp-relay': true, // 可选
   tls13: false, // TLS 1.3
+  network: 'ws', // 可不填
+  wsPath: '/', // 可选
+  wsHeaders: {}, // 可选
 }
 ```
 
