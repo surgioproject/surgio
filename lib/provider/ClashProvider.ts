@@ -323,7 +323,11 @@ export const parseClashConfig = (
             'udp-relay': resolveUdpRelay(item.udp, udpRelay),
           } as ShadowsocksrNodeConfig;
 
-        case 'trojan':
+        case 'trojan': {
+          const network = item.network;
+          const wsOpts = _.get(item, 'ws-opts', {});
+          const wsHeaders = lowercaseHeaderKeys(_.get(wsOpts, 'headers', {}));
+
           return {
             type: NodeTypeEnum.Trojan,
             nodeName: item.name,
@@ -337,7 +341,11 @@ export const parseClashConfig = (
             ...('sni' in item ? { sni: item.sni } : null),
             'udp-relay': resolveUdpRelay(item.udp, udpRelay),
             tls13: tls13 ?? false,
+            ...(network === 'ws'
+              ? { network: 'ws', wsPath: _.get(wsOpts, 'path', '/'), wsHeaders }
+              : null),
           } as TrojanNodeConfig;
+        }
 
         default:
           logger.warn(

@@ -31,6 +31,7 @@ import { ConfigCache } from './cache';
 import { ERR_INVALID_FILTER, OBFS_UA } from '../constant';
 import { validateFilter } from './filter';
 import httpClient from './http-client';
+import { getSurgeExtendHeaders } from './surge';
 import { formatVmessUri } from './v2ray';
 
 const logger = createLogger({ service: 'surgio:utils' });
@@ -369,19 +370,13 @@ export const getSurgeNodes = function (
               configList.push(`encrypt-method=${config.method}`);
             }
 
-            function getHeader(wsHeaders: Record<string, string>): string {
-              return Object.keys(wsHeaders)
-                .map((headerKey) => `${headerKey}:${wsHeaders[headerKey]}`)
-                .join('|');
-            }
-
             if (config.network === 'ws') {
               configList.push('ws=true');
               configList.push(`ws-path=${config.path}`);
               configList.push(
                 'ws-headers=' +
                   JSON.stringify(
-                    getHeader({
+                    getSurgeExtendHeaders({
                       host: config.host || config.hostname,
                       'user-agent': OBFS_UA,
                       ..._.omit(config.wsHeaders, ['host']), // host 本质上是一个头信息，所以可能存在冲突的情况。以 host 属性为准。
@@ -500,6 +495,18 @@ export const getSurgeNodes = function (
               ? [`skip-cert-verify=${nodeConfig.skipCertVerify}`]
               : []),
           ];
+
+          if (nodeConfig.network === 'ws') {
+            configList.push('ws=true');
+            configList.push(`ws-path=${nodeConfig.wsPath}`);
+
+            if (nodeConfig.wsHeaders) {
+              configList.push(
+                'ws-headers=' +
+                  JSON.stringify(getSurgeExtendHeaders(nodeConfig.wsHeaders)),
+              );
+            }
+          }
 
           return [nodeConfig.nodeName, configList.join(', ')].join(' = ');
         }
@@ -729,6 +736,15 @@ export const getClashNodes = function (
             ...(nodeConfig.alpn ? { alpn: nodeConfig.alpn } : null),
             ...(nodeConfig.sni ? { sni: nodeConfig.sni } : null),
             'skip-cert-verify': nodeConfig.skipCertVerify === true,
+            ...(nodeConfig.network === 'ws'
+              ? {
+                  network: 'ws',
+                  'ws-opts': {
+                    path: nodeConfig.wsPath || '/',
+                    ...nodeConfig.wsHeaders,
+                  },
+                }
+              : null),
           };
 
         case NodeTypeEnum.Socks5: {
