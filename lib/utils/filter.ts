@@ -66,6 +66,36 @@ export const validateFilter = (filter: any): boolean => {
   );
 };
 
+export const applyFilter = <T extends SimpleNodeConfig>(
+  nodeList: ReadonlyArray<T>,
+  filter?: NodeNameFilterType | SortedNodeNameFilterType,
+): ReadonlyArray<T> => {
+  // istanbul ignore next
+  if (filter && !validateFilter(filter)) {
+    throw new Error(`使用了无效的过滤器 ${filter}`);
+  }
+
+  let nodes: ReadonlyArray<T> = nodeList.filter((item) => {
+    const result = item.enable !== false;
+
+    if (filter && typeof filter === 'function') {
+      return filter(item) && result;
+    }
+
+    return result;
+  });
+
+  if (
+    filter &&
+    typeof filter === 'object' &&
+    typeof filter.filter === 'function'
+  ) {
+    nodes = filter.filter(nodes);
+  }
+
+  return nodes;
+};
+
 export const mergeFilters = (
   filters: ReadonlyArray<NodeNameFilterType>,
   isStrict?: boolean,

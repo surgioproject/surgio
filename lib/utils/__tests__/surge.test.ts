@@ -298,6 +298,41 @@ test('getSurgeNodes', async (t) => {
   t.is(
     surge.getSurgeNodes([
       {
+        type: NodeTypeEnum.Trojan,
+        nodeName: 'trojan node 1',
+        hostname: 'example.com',
+        port: 443,
+        password: 'password1',
+        network: 'ws',
+        wsPath: '/ws',
+      },
+    ]),
+    'trojan node 1 = trojan, example.com, 443, password=password1, ws=true, ws-path=/ws',
+  );
+
+  t.is(
+    surge.getSurgeNodes([
+      {
+        type: NodeTypeEnum.Trojan,
+        nodeName: 'trojan node 1',
+        hostname: 'example.com',
+        port: 443,
+        sni: 'sni.example.com',
+        password: 'password1',
+        network: 'ws',
+        wsPath: '/ws',
+        wsHeaders: {
+          host: 'ws.example.com',
+          'test-key': 'test-value',
+        },
+      },
+    ]),
+    'trojan node 1 = trojan, example.com, 443, password=password1, sni=sni.example.com, ws=true, ws-path=/ws, ws-headers="host:ws.example.com|test-key:test-value"',
+  );
+
+  t.is(
+    surge.getSurgeNodes([
+      {
         type: NodeTypeEnum.Socks5,
         nodeName: 'socks5-tls node 1',
         hostname: '1.1.1.1',

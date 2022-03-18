@@ -17,12 +17,12 @@ import {
   VmessNodeConfig,
 } from '../types';
 import {
-  applyFilter,
   ensureConfigFolder,
   formatV2rayConfig,
   isIp,
   pickAndFormatStringList,
 } from './index';
+import { applyFilter } from './filter';
 
 const logger = createLogger({ service: 'surgio:utils:surge' });
 

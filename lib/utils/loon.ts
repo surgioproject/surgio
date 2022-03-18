@@ -7,7 +7,7 @@ import {
   SortedNodeNameFilterType,
 } from '../types';
 import { ERR_INVALID_FILTER } from '../constant';
-import { applyFilter } from './index';
+import { applyFilter } from './filter';
 
 const logger = createLogger({ service: 'surgio:utils' });
 
