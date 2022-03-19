@@ -1,3 +1,14 @@
+# [2.16.0](https://github.com/geekdada/surgio/compare/v2.15.0...v2.16.0) (2022-03-19)
+
+
+### Features
+
+* format wsHeaders keys ([5c745fe](https://github.com/geekdada/surgio/commit/5c745fe1ff143e99b2ca6559e96c8969c8aad32d))
+* support trojan websocket for loon ([63e66d6](https://github.com/geekdada/surgio/commit/63e66d612a6ce9f68bc2d0dfa6b0b616e00a548d))
+* support trojan WebSocket for quantumultx generating ([5ded7b0](https://github.com/geekdada/surgio/commit/5ded7b01a246c4c2709087ef9e2734af554a839c))
+
+
+
 # [2.15.0](https://github.com/geekdada/surgio/compare/v2.14.2...v2.15.0) (2022-03-18)
 
 
