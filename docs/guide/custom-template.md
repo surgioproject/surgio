@@ -212,7 +212,7 @@ Youtube Premium 节点过滤器。Surgio 默认会将名称中包含 *日*, *美
 
 :::tip 提示
 - `filter` 为可选参数
-- 支持输出 Shadowsocks, Shadowsocksr, HTTPS, Snell, Vmess 节点
+- 支持输出 Shadowsocks, Shadowsocksr, HTTPS, Snell, Vmess, Trojan 节点
 - 请参考 [「Surge 进阶 - 生成 SSR 和 V2Ray 订阅」](/guide/advance/surge-advance.md) 生成针对 Surge 的 SSR 订阅
 :::
 
@@ -282,7 +282,7 @@ vmess://5rWL6K+VIDIgPSB2bWVzcywxLjEuMS4xLDgwODAsY2hhY2hhMjAtaWV0Zi1wb2x5MTMwNSwi
 
 :::tip 提示
 - 第二个参数可选，可传入标准的过滤器或自定义的过滤器
-- 支持输出 Shadowsocks, Shadowsocksr, Vmess, HTTPS 节点
+- 支持输出 Shadowsocks, Shadowsocksr, Vmess, HTTPS, Trojan 节点
 - 支持添加 `udp-relay` 和 `fast-open` 配置
 :::
 
@@ -314,7 +314,7 @@ Proxy-2, vmess1, vmess1://75da2e14-4d08-480b-b3cb-0079a0c51275@example.com:10025
 
 :::tip 提示
 - [Clash 规则维护指南](/guide/client/clash.md)
-- 支持输出 Shadowsocks, Shadowsocksr, HTTPS, Snell, Vmess 节点
+- 支持输出 Shadowsocks, Shadowsocksr, HTTPS, Snell, Vmess, Trojan 节点
 :::
 
 ### getLoonNodes
@@ -325,7 +325,7 @@ Proxy-2, vmess1, vmess1://75da2e14-4d08-480b-b3cb-0079a0c51275@example.com:10025
 
 :::tip 提示
 - 第二个参数可选，可传入标准的过滤器或自定义的过滤器
-- 支持输出 Shadowsocks, Shadowsocksr, HTTPS, HTTP, Vmess 节点
+- 支持输出 Shadowsocks, Shadowsocksr, HTTPS, HTTP, Vmess, Trojan 节点
 :::
 
 生成符合 `[Proxy]` 规范的节点信息，使用时请参考 [文档](https://www.notion.so/1-9809ce5acf524d868affee8dd5fc0a6e)。
