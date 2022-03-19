@@ -1,5 +1,6 @@
 import { createLogger } from '@surgio/logger';
 import _ from 'lodash';
+
 import { ERR_INVALID_FILTER, OBFS_UA } from '../constant';
 import {
   HttpsNodeConfig,

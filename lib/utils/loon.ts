@@ -1,4 +1,5 @@
 import { createLogger } from '@surgio/logger';
+import _ from 'lodash';
 
 import {
   NodeNameFilterType,
@@ -9,7 +10,7 @@ import {
 import { ERR_INVALID_FILTER } from '../constant';
 import { applyFilter } from './filter';
 
-const logger = createLogger({ service: 'surgio:utils' });
+const logger = createLogger({ service: 'surgio:utils:loon' });
 
 // @see https://www.notion.so/1-9809ce5acf524d868affee8dd5fc0a6e
 export const getLoonNodes = function (
@@ -46,6 +47,14 @@ export const getLoonNodes = function (
             }
           }
 
+          if (nodeConfig.tfo) {
+            config.push('fast-open=true');
+          }
+
+          if (nodeConfig['udp-relay']) {
+            config.push('udp=true');
+          }
+
           return config.join(',');
         }
 
@@ -56,11 +65,19 @@ export const getLoonNodes = function (
             nodeConfig.port,
             nodeConfig.method,
             JSON.stringify(nodeConfig.password),
-            nodeConfig.protocol,
-            `{${nodeConfig.protoparam}}`,
-            nodeConfig.obfs,
-            `{${nodeConfig.obfsparam}}`,
+            `protocol=${nodeConfig.protocol}`,
+            `protocol-param=${nodeConfig.protoparam}`,
+            `obfs=${nodeConfig.obfs}`,
+            `obfs-param=${nodeConfig.obfsparam}`,
           ];
+
+          if (nodeConfig.tfo) {
+            config.push('fast-open=true');
+          }
+
+          if (nodeConfig['udp-relay']) {
+            config.push('udp=true');
+          }
 
           return config.join(',');
         }
@@ -74,21 +91,27 @@ export const getLoonNodes = function (
               ? `method=chacha20-ietf-poly1305`
               : `method=${nodeConfig.method}`,
             JSON.stringify(nodeConfig.uuid),
-            `transport:${nodeConfig.network}`,
+            `transport=${nodeConfig.network}`,
           ];
 
           if (nodeConfig.network === 'ws') {
             config.push(
-              `path:${nodeConfig.path || '/'}`,
-              `host:${nodeConfig.host || nodeConfig.hostname}`,
+              `path=${nodeConfig.path || '/'}`,
+              `host=${nodeConfig.host || nodeConfig.hostname}`,
             );
+
+            if (Object.keys(_.omit(nodeConfig.wsHeaders, 'host')).length > 0) {
+              logger.warn(
+                `Loon 不支持自定义额外的 Header 字段，节点 ${nodeConfig.nodeName} 可能不可用`,
+              );
+            }
           }
 
           if (nodeConfig.tls) {
             config.push(
-              `over-tls:${nodeConfig.tls}`,
-              `tls-name:${nodeConfig.host || nodeConfig.hostname}`,
-              `skip-cert-verify:${nodeConfig.skipCertVerify === true}`,
+              `over-tls=${nodeConfig.tls}`,
+              `tls-name=${nodeConfig.host || nodeConfig.hostname}`,
+              `skip-cert-verify=${nodeConfig.skipCertVerify === true}`,
             );
           }
 
@@ -101,22 +124,46 @@ export const getLoonNodes = function (
             nodeConfig.hostname,
             nodeConfig.port,
             JSON.stringify(nodeConfig.password),
-            `tls-name:${nodeConfig.sni || nodeConfig.hostname}`,
-            `skip-cert-verify:${nodeConfig.skipCertVerify === true}`,
+            `tls-name=${nodeConfig.sni || nodeConfig.hostname}`,
+            `skip-cert-verify=${nodeConfig.skipCertVerify === true}`,
           ];
+
+          if (nodeConfig.network === 'ws') {
+            config.push('transport=ws', `path=${nodeConfig.wsPath || '/'}`);
+
+            if (nodeConfig.wsHeaders) {
+              if (_.get(nodeConfig, 'wsHeaders.host')) {
+                config.push(`host=${nodeConfig.wsHeaders.host}`);
+              }
+
+              if (
+                Object.keys(_.omit(nodeConfig.wsHeaders, 'host')).length > 0
+              ) {
+                logger.warn(
+                  `Loon 不支持自定义额外的 Header 字段，节点 ${nodeConfig.nodeName} 可能不可用`,
+                );
+              }
+            }
+          }
 
           return config.join(',');
         }
 
-        case NodeTypeEnum.HTTPS:
-          return [
+        case NodeTypeEnum.HTTPS: {
+          const config: Array<string | number> = [
             `${nodeConfig.nodeName} = https`,
             nodeConfig.hostname,
             nodeConfig.port,
             nodeConfig.username /* istanbul ignore next */ || '',
-            JSON.stringify(nodeConfig.password) /* istanbul ignore next */ ||
-              '""',
-          ].join(',');
+            JSON.stringify(
+              nodeConfig.password /* istanbul ignore next */ || '',
+            ),
+            `tls-name=${nodeConfig.sni || nodeConfig.hostname}`,
+            `skip-cert-verify=${nodeConfig.skipCertVerify === true}`,
+          ];
+
+          return config.join(',');
+        }
 
         case NodeTypeEnum.HTTP:
           return [
@@ -124,8 +171,9 @@ export const getLoonNodes = function (
             nodeConfig.hostname,
             nodeConfig.port,
             nodeConfig.username /* istanbul ignore next */ || '',
-            JSON.stringify(nodeConfig.password) /* istanbul ignore next */ ||
-              '""',
+            JSON.stringify(
+              nodeConfig.password /* istanbul ignore next */ || '',
+            ),
           ].join(',');
 
         // istanbul ignore next

@@ -251,7 +251,7 @@ export interface TrojanNodeConfig extends SimpleNodeConfig {
   readonly sni?: string;
   readonly 'udp-relay'?: boolean;
   readonly tls13?: boolean;
-  readonly network?: 'default' | 'ws';
+  readonly network?: 'tcp' | 'ws';
   readonly wsPath?: string;
   readonly wsHeaders?: Record<string, string>;
 }
