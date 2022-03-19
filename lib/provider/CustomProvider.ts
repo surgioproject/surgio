@@ -39,17 +39,27 @@ export default class CustomProvider extends Provider {
   }
 
   public async getNodeList(): Promise<ReadonlyArray<PossibleNodeConfigType>> {
-    const checkSchema = Joi.object({
+    const udpRelayCheckSchema = Joi.object({
       'udp-relay': Joi.bool().strict(),
     }).unknown();
 
     return this.nodeList.map((item) => {
-      const { error } = checkSchema.validate(item);
+      const { error: udpRelayCheckError } = udpRelayCheckSchema.validate(item);
+      const lowercaseKeys = ['wsHeaders'];
 
       // istanbul ignore next
-      if (error) {
-        throw error;
+      if (udpRelayCheckError) {
+        throw udpRelayCheckError;
       }
+
+      lowercaseKeys.forEach((key) => {
+        if (item[key]) {
+          item[key] = Object.keys(item[key]).reduce((acc, curr) => {
+            acc[curr.toLowerCase()] = item[key][curr];
+            return acc;
+          }, {});
+        }
+      });
 
       return item;
     });
