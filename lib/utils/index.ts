@@ -12,7 +12,6 @@ import YAML from 'yaml';
 import net from 'net';
 
 import {
-  HttpsNodeConfig,
   NodeFilterType,
   NodeNameFilterType,
   NodeTypeEnum,

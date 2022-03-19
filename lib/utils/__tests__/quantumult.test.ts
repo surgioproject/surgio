@@ -2,7 +2,6 @@ import test from 'ava';
 
 import { NodeTypeEnum } from '../../types';
 import * as quantumult from '../quantumult';
-import * as utils from '../index';
 
 test('getQuantumultNodes', (t) => {
   const schemeList = quantumult
@@ -363,5 +362,28 @@ test('getQuantumultXNodes', (t) => {
       },
     ]),
     'trojan=example.com:443, password=password1, over-tls=true, tls-verification=false, tls-host=sni.example.com, fast-open=true, udp-relay=true, tls13=true, tag=trojan',
+  );
+  t.is(
+    quantumult.getQuantumultXNodes([
+      {
+        type: NodeTypeEnum.Trojan,
+        nodeName: 'trojan',
+        hostname: 'example.com',
+        port: 443,
+        password: 'password1',
+        sni: 'sni.example.com',
+        'udp-relay': true,
+        skipCertVerify: true,
+        tfo: true,
+        tls13: true,
+        network: 'ws',
+        wsPath: '/ws',
+        wsHeaders: {
+          host: 'example.com',
+          'multi words key': 'multi words value',
+        },
+      },
+    ]),
+    'trojan=example.com:443, password=password1, over-tls=true, tls-verification=false, tls-host=sni.example.com, fast-open=true, udp-relay=true, tls13=true, obfs=wss, obfs-uri=/ws, obfs-host=example.com, tag=trojan',
   );
 });

@@ -242,7 +242,7 @@ export const getQuantumultXNodes = function (
           // istanbul ignore next
           if (
             nodeConfig.wsHeaders &&
-            Object.keys(nodeConfig.wsHeaders).length > 1
+            Object.keys(_.omit(nodeConfig.wsHeaders, ['host'])).length > 0
           ) {
             logger.warn(
               `Quantumult X 不支持自定义额外的 Header 字段，节点 ${nodeConfig.nodeName} 可能不可用`,
@@ -301,8 +301,29 @@ export const getQuantumultXNodes = function (
             ...(nodeConfig.tfo ? [`fast-open=${nodeConfig.tfo}`] : []),
             ...(nodeConfig['udp-relay'] ? [`udp-relay=true`] : []),
             ...(nodeConfig.tls13 ? [`tls13=${nodeConfig.tls13}`] : []),
-            `tag=${nodeConfig.nodeName}`,
           ];
+
+          if (nodeConfig.network === 'ws') {
+            config.push('obfs=wss');
+
+            if (nodeConfig.wsPath) {
+              config.push(`obfs-uri=${nodeConfig.wsPath}`);
+            }
+            if (nodeConfig.wsHeaders && nodeConfig.wsHeaders.host) {
+              config.push(`obfs-host=${nodeConfig.wsHeaders.host}`);
+
+              // istanbul ignore next
+              if (
+                Object.keys(_.omit(nodeConfig.wsHeaders, ['host'])).length > 0
+              ) {
+                logger.warn(
+                  `Quantumult X 不支持自定义额外的 Header 字段，节点 ${nodeConfig.nodeName} 可能不可用`,
+                );
+              }
+            }
+          }
+
+          config.push(`tag=${nodeConfig.nodeName}`);
 
           return `trojan=${config.join(', ')}`;
         }
