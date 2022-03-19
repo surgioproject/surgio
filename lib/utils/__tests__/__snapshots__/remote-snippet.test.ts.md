@@ -1,4 +1,4 @@
-# Snapshot report for `test/utils/remote-snippet.test.ts`
+# Snapshot report for `lib/utils/__tests__/remote-snippet.test.ts`
 
 The actual snapshot is saved in `remote-snippet.test.ts.snap`.
 
