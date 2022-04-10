@@ -103,10 +103,10 @@ GET /get-artifact/<artifactName>
 
 #### 可选 URL 参数
 
-| 参数       | 可选值                         | 备注 |
-| -------- | --------------------------- | -- |
-| `format` | `surge-policy`, `qx-server`, `clash-provider` |  |
-| `filter` | 内置的过滤器或自定义过滤器               |    |
+| 参数       | 可选值                                           | 备注 |
+| -------- | --------------------------------------------- | -- |
+| `format` | `surge-policy`, `qx-server`, `clash-provider` |    |
+| `filter` | 内置的过滤器或自定义过滤器                                 |    |
 
 定义：
 
@@ -136,6 +136,12 @@ https://example.now.sh/get-artifact/Surge.conf?access_token=token&foo=bar
 2. `access_token`, `format`, `filter`, `dl` 为保留 Key 无法被定义；
 :::
 
+此外，API 会在 `customParams` 中注入以下变量：
+
+| 变量          | 描述                                        |
+| ----------- | ----------------------------------------- |
+| `userAgent` | 请求订阅客户端的 user agent。可用于模板中，根据不同客户端输出不同配置。 |
+
 ### 直接导出 Provider
 
 ```
@@ -148,11 +154,11 @@ GET /export-providers
 
 #### 可选 URL 参数
 
-| 参数       | 可选值                         | 备注 |
-| -------- | --------------------------- | -- |
-| `format` | `surge-policy`, `qx-server`, `clash-provider` |  |
-| `template` |  任意一个 `.tpl` 文件   |  |
-| `filter` | 内置的过滤器或自定义过滤器               |    |
+| 参数         | 可选值                                           | 备注 |
+| ---------- | --------------------------------------------- | -- |
+| `format`   | `surge-policy`, `qx-server`, `clash-provider` |    |
+| `template` | 任意一个 `.tpl` 文件                                |    |
+| `filter`   | 内置的过滤器或自定义过滤器                                 |    |
 
 #### 使用内置 `format` 导出
 

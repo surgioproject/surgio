@@ -13,7 +13,75 @@ sidebarDepth: 1
 
 目前 Surgio 支持两个部署平台，Vercel（推荐）和 Heroku。你也可以部署在自己的主机上，不过没有技术支持。
 
-需要保证 Surgio 版本号大于 v1.20.0。
+需要保证 Surgio 版本号大于 `v1.20.0`。
+
+## 部署 - Netlify Functions
+
+:::tip 提示
+1. 该方法不要求代码托管平台，可为私有仓库（文章以 GitHub 为例）
+2. 已经部署其它平台的仓库可以修改之后增加部署到 Netlify Functions，互不影响
+:::
+
+### 准备
+
+确保 `surgio` 升级至 `v2.17.0` 或以上; `@surgio/gateway` 升级至 `v1.5.0` 或以上。
+
+在代码库根目录新建文件 `netlify.toml`，内容如下：
+
+```toml
+[build]
+  command = "exit 0"
+  functions = "netlify/functions"
+  publish = "."
+
+[functions]
+  included_files = [
+    "provider/**",
+    "template/**",
+    "*.js",
+    "*.json"
+  ]
+
+[[redirects]]
+  from = "/*"
+  to = "/.netlify/functions/index"
+  status = 200
+  force = true
+```
+
+在代码库根目录新建目录 `netlify/functions` 并新建文件 `netlify/functions/index.js`，内容如下：
+
+```js
+'use strict';
+
+const gateway = require('@surgio/gateway');
+
+module.exports.handler = gateway.createLambdaHandler();
+```
+
+将修改 push 到代码库。
+
+### 部署
+
+在 Netlify 中选择新建项目，并选择代码库平台。
+
+![](../images/netlify-connect-to-git-provider.png)
+
+授权成功之后即可选择代码库，然后会看到如下的页面：
+
+![](../images/netlify-import-config.png)
+
+点击 __Deploy site__ 按钮，即可部署。
+
+### 查看用量
+
+你可以在账户的 Billing 页面查询当月的用量。
+
+### 使用
+
+:::tip 移步至
+[托管 API 的功能介绍](/guide/api.md)
+:::
 
 ## 部署 - Railway
 
