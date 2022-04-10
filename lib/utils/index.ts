@@ -579,6 +579,8 @@ export const lowercaseHeaderKeys = (
   return wsHeaders;
 };
 
+export const msToSeconds = (ms: number): number => Math.floor(ms / 1000);
+
 // istanbul ignore next
 export const isIp = (str: string): boolean =>
   net.isIPv4(str) || net.isIPv6(str);

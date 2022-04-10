@@ -1,12 +1,12 @@
 import { promises as dns, RecordWithTtl } from 'dns';
-import LRU from 'lru-cache';
 import { createLogger } from '@surgio/logger';
 import Bluebird from 'bluebird';
+import NodeCache from 'node-cache';
 
 import { getNetworkResolveTimeout } from './env-flag';
 
-const DomainCache = new LRU<string, ReadonlyArray<string>>({
-  max: 5000,
+const DomainCache = new NodeCache({
+  useClones: false,
 });
 const logger = createLogger({ service: 'surgio:utils:dns' });
 
@@ -32,7 +32,7 @@ export const resolveDomain = async (
 
   if (records.length) {
     const address = records.map((item) => item.address);
-    DomainCache.set(domain, address, records[0].ttl * 1000);
+    DomainCache.set(domain, address, records[0].ttl); // ttl is in seconds
     return address;
   }
 
