@@ -1,3 +1,12 @@
+# [2.17.0](https://github.com/geekdada/surgio/compare/v2.16.0...v2.17.0) (2022-04-10)
+
+
+### Features
+
+* add useragent support ([a7ee722](https://github.com/geekdada/surgio/commit/a7ee72290f6d55e29d3c0c269abc61acc2cb2bfc))
+
+
+
 # [2.16.0](https://github.com/geekdada/surgio/compare/v2.15.0...v2.16.0) (2022-03-19)
 
 
