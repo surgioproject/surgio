@@ -28,7 +28,7 @@ export const getNetworkConcurrency = (): number =>
 export const getNetworkRetry = (): number =>
   process.env[ENV_SURGIO_NETWORK_RETRY]
     ? Number(process.env[ENV_SURGIO_NETWORK_RETRY])
-    : 3;
+    : 0;
 
 export const getNetworkClashUA = (): string =>
   process.env[ENV_SURGIO_NETWORK_CLASH_UA] ?? 'clash';

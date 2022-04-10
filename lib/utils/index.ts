@@ -24,10 +24,8 @@ import {
   SortedNodeNameFilterType,
   VmessNodeConfig,
 } from '../types';
-import { ConfigCache } from './cache';
 import { ERR_INVALID_FILTER, OBFS_UA } from '../constant';
 import { validateFilter, applyFilter } from './filter';
-import httpClient from './http-client';
 import { formatVmessUri } from './v2ray';
 
 export * from './surge';
@@ -76,57 +74,6 @@ export const getUrl = (
     url.searchParams.set('access_token', accessToken);
   }
   return url.toString();
-};
-
-export const getShadowsocksJSONConfig = async (
-  url: string,
-  udpRelay?: boolean,
-): Promise<ReadonlyArray<ShadowsocksNodeConfig>> => {
-  assert(url, '未指定订阅地址 url');
-
-  async function requestConfigFromRemote(): Promise<
-    ReadonlyArray<ShadowsocksNodeConfig>
-  > {
-    const response = ConfigCache.has(url)
-      ? JSON.parse(ConfigCache.get(url) as string)
-      : await (async () => {
-          const res = await httpClient.get(url);
-
-          ConfigCache.set(url, res.body);
-
-          return JSON.parse(res.body);
-        })();
-
-    return (response.configs as ReadonlyArray<any>).map(
-      (item): ShadowsocksNodeConfig => {
-        const nodeConfig: any = {
-          nodeName: item.remarks as string,
-          type: NodeTypeEnum.Shadowsocks,
-          hostname: item.server as string,
-          port: item.server_port as string,
-          method: item.method as string,
-          password: item.password as string,
-        };
-
-        if (typeof udpRelay === 'boolean') {
-          nodeConfig['udp-relay'] = udpRelay;
-        }
-        if (item.plugin === 'obfs-local') {
-          const obfs = item.plugin_opts.match(/obfs=(\w+)/);
-          const obfsHost = item.plugin_opts.match(/obfs-host=(.+)$/);
-
-          if (obfs) {
-            nodeConfig.obfs = obfs[1];
-            nodeConfig['obfs-host'] = obfsHost ? obfsHost[1] : 'www.bing.com';
-          }
-        }
-
-        return nodeConfig;
-      },
-    );
-  }
-
-  return await requestConfigFromRemote();
 };
 
 export const getMellowNodes = function (
@@ -661,3 +608,7 @@ export const isPkgBundle = (): boolean => __dirname.startsWith('/snapshot');
 // istanbul ignore next
 export const isRailway = (): boolean =>
   typeof process.env.RAILWAY_STATIC_URL !== 'undefined';
+
+// istanbul ignore next
+export const isNetlify = (): boolean =>
+  typeof process.env.NETLIFY !== 'undefined';

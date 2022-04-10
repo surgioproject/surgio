@@ -17,21 +17,33 @@ test('V2rayNSubscribeProvider', async (t) => {
 
 test('getV2rayNSubscription', async (t) => {
   const url = 'http://example.com/test-v2rayn-sub.txt';
-  const configList = await getV2rayNSubscription(url, false);
+  const configList = await getV2rayNSubscription({
+    url,
+    isCompatibleMode: false,
+  });
 
   t.snapshot(configList);
 });
 
 test('getV2rayNSubscription compatible mode', async (t) => {
   const url = 'http://example.com/test-v2rayn-sub-compatible.txt';
-  const configList = await getV2rayNSubscription(url, true);
+  const configList = await getV2rayNSubscription({
+    url,
+    isCompatibleMode: true,
+  });
 
   t.snapshot(configList);
 });
 
 test('getV2rayNSubscription udpRelay skipCertVerify', async (t) => {
   const url = 'http://example.com/test-v2rayn-sub-compatible.txt';
-  const configList = await getV2rayNSubscription(url, true, true, true);
+  const configList = await getV2rayNSubscription({
+    url,
+    skipCertVerify: true,
+    tls13: true,
+    udpRelay: true,
+    isCompatibleMode: true,
+  });
 
   t.snapshot(configList);
 });

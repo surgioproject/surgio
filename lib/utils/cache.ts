@@ -17,3 +17,8 @@ export const SubscriptionCache = new LRU<string, SubsciptionCacheItem>({
   maxAge: getProviderCacheMaxage(),
   max: 100,
 });
+
+export const cleanCaches = () => {
+  ConfigCache.reset();
+  SubscriptionCache.reset();
+};

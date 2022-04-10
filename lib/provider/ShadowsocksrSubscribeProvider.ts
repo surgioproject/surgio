@@ -64,10 +64,15 @@ export default class ShadowsocksrSubscribeProvider extends Provider {
     return undefined;
   }
 
-  public async getNodeList(): Promise<ReadonlyArray<ShadowsocksrNodeConfig>> {
+  public async getNodeList({
+    requestUserAgent,
+  }: { requestUserAgent?: string } = {}): Promise<
+    ReadonlyArray<ShadowsocksrNodeConfig>
+  > {
     const { nodeList } = await getShadowsocksrSubscription(
       this.url,
       this.udpRelay,
+      requestUserAgent,
     );
 
     return nodeList;
@@ -77,13 +82,16 @@ export default class ShadowsocksrSubscribeProvider extends Provider {
 export const getShadowsocksrSubscription = async (
   url: string,
   udpRelay?: boolean,
+  requestUserAgent?: string,
 ): Promise<{
   readonly nodeList: ReadonlyArray<ShadowsocksrNodeConfig>;
   readonly subscriptionUserinfo?: SubscriptionUserinfo;
 }> => {
   assert(url, '未指定订阅地址 url');
 
-  const response = await Provider.requestCacheableResource(url);
+  const response = await Provider.requestCacheableResource(url, {
+    requestUserAgent,
+  });
   const nodeList = fromBase64(response.body)
     .split('\n')
     .filter((item) => !!item && item.startsWith('ssr://'))

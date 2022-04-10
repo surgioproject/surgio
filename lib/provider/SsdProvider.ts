@@ -64,8 +64,16 @@ export default class SsdProvider extends Provider {
     return void 0;
   }
 
-  public async getNodeList(): Promise<ReadonlyArray<ShadowsocksNodeConfig>> {
-    const { nodeList } = await getSsdSubscription(this.url, this.udpRelay);
+  public async getNodeList({
+    requestUserAgent,
+  }: { requestUserAgent?: string } = {}): Promise<
+    ReadonlyArray<ShadowsocksNodeConfig>
+  > {
+    const { nodeList } = await getSsdSubscription(
+      this.url,
+      this.udpRelay,
+      requestUserAgent,
+    );
 
     return nodeList;
   }
@@ -75,13 +83,16 @@ export default class SsdProvider extends Provider {
 export const getSsdSubscription = async (
   url: string,
   udpRelay?: boolean,
+  requestUserAgent?: string,
 ): Promise<{
   readonly nodeList: ReadonlyArray<ShadowsocksNodeConfig>;
   readonly subscriptionUserinfo?: SubscriptionUserinfo;
 }> => {
   assert(url, '未指定订阅地址 url');
 
-  const response = await Provider.requestCacheableResource(url);
+  const response = await Provider.requestCacheableResource(url, {
+    requestUserAgent,
+  });
 
   // istanbul ignore next
   if (!response.body.startsWith('ssd://')) {

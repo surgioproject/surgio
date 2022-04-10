@@ -8,8 +8,9 @@ import {
   SubscriptionUserinfo,
 } from '../types';
 import { SubsciptionCacheItem, SubscriptionCache } from '../utils/cache';
-import httpClient from '../utils/http-client';
+import httpClient, { getUserAgent } from '../utils/http-client';
 import { parseSubscriptionUserInfo } from '../utils/subscription';
+import { toBase64 } from '../utils';
 
 const logger = createLogger({
   service: 'surgio:Provider',
@@ -110,8 +111,12 @@ export default class Provider {
       requestUserAgent?: string;
     } = {},
   ): Promise<SubsciptionCacheItem> {
-    return SubscriptionCache.has(url)
-      ? (SubscriptionCache.get(url) as SubsciptionCacheItem)
+    const cacheKey = `${toBase64(
+      getUserAgent(options.requestUserAgent || ''),
+    )}:${url}`;
+
+    return SubscriptionCache.has(cacheKey)
+      ? (SubscriptionCache.get(cacheKey) as SubsciptionCacheItem)
       : await (async () => {
           const headers = {};
 
@@ -140,7 +145,7 @@ export default class Provider {
             );
           }
 
-          SubscriptionCache.set(url, subsciptionCacheItem);
+          SubscriptionCache.set(cacheKey, subsciptionCacheItem);
 
           return subsciptionCacheItem;
         })();
@@ -161,7 +166,9 @@ export default class Provider {
   }
 
   // istanbul ignore next
-  public getNodeList(): Promise<ReadonlyArray<PossibleNodeConfigType>> {
+  public getNodeList({}: { requestUserAgent?: string } = {}): Promise<
+    ReadonlyArray<PossibleNodeConfigType>
+  > {
     return Promise.resolve([]);
   }
 }

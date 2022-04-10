@@ -244,16 +244,24 @@ export class Artifact extends EventEmitter {
     };
   }
 
-  public async init(): Promise<this> {
+  public async init({
+    requestUserAgent,
+  }: { requestUserAgent?: string } = {}): Promise<this> {
     if (this.isReady) {
       throw new Error('Artifact 已经初始化完成');
     }
 
     this.emit('initArtifact:start', { artifact: this.artifact });
 
-    await Bluebird.map(this.providerNameList, this.providerMapper.bind(this), {
-      concurrency: getNetworkConcurrency(),
-    });
+    await Bluebird.map(
+      this.providerNameList,
+      async (providerName) => {
+        await this.providerMapper(providerName, { requestUserAgent });
+      },
+      {
+        concurrency: getNetworkConcurrency(),
+      },
+    );
 
     this.providerNameList.forEach((providerName) => {
       const nodeConfigList = this.nodeConfigListMap.get(providerName);
@@ -309,7 +317,10 @@ export class Artifact extends EventEmitter {
     return result;
   }
 
-  private async providerMapper(providerName: string): Promise<void> {
+  private async providerMapper(
+    providerName: string,
+    { requestUserAgent }: { requestUserAgent?: string } = {},
+  ): Promise<void> {
     const config = this.surgioConfig;
     const mainProviderName = this.artifact.provider;
     const filePath = path.resolve(config.providerDir, `${providerName}.js`);
@@ -336,7 +347,7 @@ export class Artifact extends EventEmitter {
     }
 
     try {
-      nodeConfigList = await provider.getNodeList();
+      nodeConfigList = await provider.getNodeList({ requestUserAgent });
     } catch (err) /* istanbul ignore next */ {
       err.message = `获取 ${providerName} 节点时出现错误，相关文件 ${filePath} ，错误原因: ${err.message}`;
       throw err;

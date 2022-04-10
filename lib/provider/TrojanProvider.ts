@@ -55,11 +55,11 @@ export default class TrojanProvider extends Provider {
   public async getSubscriptionUserInfo(): Promise<
     SubscriptionUserinfo | undefined
   > {
-    const { subscriptionUserinfo } = await getTrojanSubscription(
-      this.url,
-      this.udpRelay,
-      this.tls13,
-    );
+    const { subscriptionUserinfo } = await getTrojanSubscription({
+      url: this.url,
+      udpRelay: this.udpRelay,
+      tls13: this.tls13,
+    });
 
     if (subscriptionUserinfo) {
       return subscriptionUserinfo;
@@ -67,12 +67,17 @@ export default class TrojanProvider extends Provider {
     return void 0;
   }
 
-  public async getNodeList(): Promise<ReadonlyArray<TrojanNodeConfig>> {
-    const { nodeList } = await getTrojanSubscription(
-      this.url,
-      this.udpRelay,
-      this.tls13,
-    );
+  public async getNodeList({
+    requestUserAgent,
+  }: { requestUserAgent?: string } = {}): Promise<
+    ReadonlyArray<TrojanNodeConfig>
+  > {
+    const { nodeList } = await getTrojanSubscription({
+      url: this.url,
+      udpRelay: this.udpRelay,
+      tls13: this.tls13,
+      requestUserAgent,
+    });
 
     return nodeList;
   }
@@ -81,18 +86,24 @@ export default class TrojanProvider extends Provider {
 /**
  * @see https://github.com/trojan-gfw/trojan-url/blob/master/trojan-url.py
  */
-export const getTrojanSubscription = async (
-  url: string,
-  udpRelay?: boolean,
-  tls13?: boolean,
-): Promise<{
+export const getTrojanSubscription = async ({
+  url,
+  udpRelay,
+  tls13,
+  requestUserAgent,
+}: {
+  url: string;
+  udpRelay?: boolean;
+  tls13?: boolean;
+  requestUserAgent?: string;
+}): Promise<{
   readonly nodeList: ReadonlyArray<TrojanNodeConfig>;
   readonly subscriptionUserinfo?: SubscriptionUserinfo;
 }> => {
   assert(url, '未指定订阅地址 url');
 
   const response = await Provider.requestCacheableResource(url, {
-    requestUserAgent: 'shadowrocket',
+    requestUserAgent: requestUserAgent || 'shadowrocket',
   });
   const config = fromBase64(response.body);
   const nodeList = config

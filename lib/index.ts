@@ -14,10 +14,12 @@ import {
   isGitHubActions,
   isGitLabCI,
   isHeroku,
+  isNetlify,
   isNow,
   isRailway,
 } from './utils';
 import * as filter from './utils/filter';
+import * as caches from './utils/cache';
 import { errorHandler } from './utils/error-helper';
 import { CATEGORIES } from './constant';
 
@@ -27,7 +29,8 @@ if (
   !isHeroku() &&
   !isGitHubActions() &&
   !isGitLabCI() &&
-  !isRailway()
+  !isRailway() &&
+  !isNetlify()
 ) {
   // Global proxy
   bootstrap();
@@ -85,4 +88,4 @@ export const categories = {
   ...CATEGORIES,
 };
 
-export { pkg };
+export { pkg, caches };

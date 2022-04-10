@@ -59,9 +59,9 @@ test('ClashProvider.getSubscriptionUserInfo', async (t) => {
 });
 
 test('getClashSubscription', async (t) => {
-  const { nodeList } = await getClashSubscription(
-    'http://example.com/clash-sample.yaml',
-  );
+  const { nodeList } = await getClashSubscription({
+    url: 'http://example.com/clash-sample.yaml',
+  });
   const config = [...nodeList];
 
   t.deepEqual(
@@ -219,10 +219,10 @@ test('getClashSubscription', async (t) => {
 });
 
 test('getClashSubscription udpRelay', async (t) => {
-  const { nodeList: config } = await getClashSubscription(
-    'http://example.com/clash-sample.yaml',
-    true,
-  );
+  const { nodeList: config } = await getClashSubscription({
+    url: 'http://example.com/clash-sample.yaml',
+    udpRelay: true,
+  });
 
   t.deepEqual(config[0], {
     type: NodeTypeEnum.Shadowsocks,
@@ -285,7 +285,9 @@ foo: bar
 
   await t.throwsAsync(
     async () => {
-      await getClashSubscription('http://example.com/test-v2rayn-sub.txt');
+      await getClashSubscription({
+        url: 'http://example.com/test-v2rayn-sub.txt',
+      });
     },
     {
       instanceOf: Error,
@@ -296,7 +298,7 @@ foo: bar
 
   await t.throwsAsync(
     async () => {
-      await getClashSubscription('http://local/fail-1');
+      await getClashSubscription({ url: 'http://local/fail-1' });
     },
     {
       instanceOf: Error,
@@ -306,7 +308,7 @@ foo: bar
 
   await t.throwsAsync(
     async () => {
-      await getClashSubscription('http://local/fail-2');
+      await getClashSubscription({ url: 'http://local/fail-2' });
     },
     {
       instanceOf: Error,

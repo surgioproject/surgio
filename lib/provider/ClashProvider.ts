@@ -18,7 +18,6 @@ import {
 } from '../types';
 import { lowercaseHeaderKeys } from '../utils';
 import { getNetworkClashUA } from '../utils/env-flag';
-import { getUserAgent } from '../utils/http-client';
 import relayableUrl from '../utils/relayable-url';
 import Provider from './Provider';
 
@@ -74,11 +73,11 @@ export default class ClashProvider extends Provider {
   public async getSubscriptionUserInfo(): Promise<
     SubscriptionUserinfo | undefined
   > {
-    const { subscriptionUserinfo } = await getClashSubscription(
-      this.url,
-      this.udpRelay,
-      this.tls13,
-    );
+    const { subscriptionUserinfo } = await getClashSubscription({
+      url: this.url,
+      udpRelay: this.udpRelay,
+      tls13: this.tls13,
+    });
 
     if (subscriptionUserinfo) {
       return subscriptionUserinfo;
@@ -86,29 +85,40 @@ export default class ClashProvider extends Provider {
     return void 0;
   }
 
-  public async getNodeList(): Promise<ReadonlyArray<SupportConfigTypes>> {
-    const { nodeList } = await getClashSubscription(
-      this.url,
-      this.udpRelay,
-      this.tls13,
-    );
+  public async getNodeList({
+    requestUserAgent,
+  }: { requestUserAgent?: string } = {}): Promise<
+    ReadonlyArray<SupportConfigTypes>
+  > {
+    const { nodeList } = await getClashSubscription({
+      url: this.url,
+      udpRelay: this.udpRelay,
+      tls13: this.tls13,
+      requestUserAgent,
+    });
 
     return nodeList;
   }
 }
 
-export const getClashSubscription = async (
-  url: string,
-  udpRelay?: boolean,
-  tls13?: boolean,
-): Promise<{
+export const getClashSubscription = async ({
+  url,
+  udpRelay,
+  tls13,
+  requestUserAgent,
+}: {
+  url: string;
+  udpRelay?: boolean;
+  tls13?: boolean;
+  requestUserAgent?: string;
+}): Promise<{
   readonly nodeList: ReadonlyArray<SupportConfigTypes>;
   readonly subscriptionUserinfo?: SubscriptionUserinfo;
 }> => {
   assert(url, '未指定订阅地址 url');
 
   const response = await Provider.requestCacheableResource(url, {
-    requestUserAgent: getUserAgent(getNetworkClashUA()),
+    requestUserAgent: requestUserAgent || getNetworkClashUA(),
   });
   let clashConfig;
 

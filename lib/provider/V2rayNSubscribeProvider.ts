@@ -9,8 +9,6 @@ import {
   VmessNodeConfig,
 } from '../types';
 import { fromBase64 } from '../utils';
-import { ConfigCache } from '../utils/cache';
-import httpClient from '../utils/http-client';
 import relayableUrl from '../utils/relayable-url';
 import { parseSSUri } from '../utils/ss';
 import Provider from './Provider';
@@ -57,27 +55,40 @@ export default class V2rayNSubscribeProvider extends Provider {
     return relayableUrl(this._url, this.relayUrl);
   }
 
-  public getNodeList(): ReturnType<typeof getV2rayNSubscription> {
-    return getV2rayNSubscription(
-      this.url,
-      this.compatibleMode,
-      this.skipCertVerify,
-      this.udpRelay,
-      this.tls13,
-    );
+  public getNodeList({
+    requestUserAgent,
+  }: { requestUserAgent?: string } = {}): ReturnType<
+    typeof getV2rayNSubscription
+  > {
+    return getV2rayNSubscription({
+      url: this.url,
+      skipCertVerify: this.skipCertVerify,
+      tls13: this.tls13,
+      udpRelay: this.udpRelay,
+      isCompatibleMode: this.compatibleMode,
+      requestUserAgent,
+    });
   }
 }
 
 /**
  * @see https://github.com/2dust/v2rayN/wiki/%E5%88%86%E4%BA%AB%E9%93%BE%E6%8E%A5%E6%A0%BC%E5%BC%8F%E8%AF%B4%E6%98%8E(ver-2)
  */
-export const getV2rayNSubscription = async (
-  url: string,
-  isCompatibleMode?: boolean | undefined,
-  skipCertVerify?: boolean | undefined,
-  udpRelay?: boolean | undefined,
-  tls13?: boolean | undefined,
-): Promise<ReadonlyArray<VmessNodeConfig | ShadowsocksNodeConfig>> => {
+export const getV2rayNSubscription = async ({
+  url,
+  isCompatibleMode,
+  skipCertVerify,
+  tls13,
+  udpRelay,
+  requestUserAgent,
+}: {
+  url: string;
+  isCompatibleMode?: boolean;
+  skipCertVerify?: boolean;
+  udpRelay?: boolean;
+  tls13?: boolean;
+  requestUserAgent?: string;
+}): Promise<ReadonlyArray<VmessNodeConfig | ShadowsocksNodeConfig>> => {
   assert(url, '未指定订阅地址 url');
 
   if (isCompatibleMode) {
@@ -87,17 +98,12 @@ export const getV2rayNSubscription = async (
   async function requestConfigFromRemote(): Promise<
     ReadonlyArray<VmessNodeConfig | ShadowsocksNodeConfig>
   > {
-    const response = ConfigCache.has(url)
-      ? (ConfigCache.get(url) as string)
-      : await (async () => {
-          const res = await httpClient.get(url);
+    const response = await Provider.requestCacheableResource(url, {
+      requestUserAgent,
+    });
+    const configString = response.body;
 
-          ConfigCache.set(url, res.body);
-
-          return res.body;
-        })();
-
-    const configList = fromBase64(response)
+    const configList = fromBase64(configString)
       .split('\n')
       .filter((item) => !!item)
       .filter((item) => {
