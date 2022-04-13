@@ -642,3 +642,10 @@ module.exports = {
 ```
 
 如果 `relayUrl` 是一个布尔值，则使用内置的服务进行转发。
+
+### provider.requestUserAgent <Badge text="v2.18.0" vertical="middle" />
+
+- 类型: `string`
+- 默认值: undefined
+
+指定订阅请求头中的 User-Agent 字段。若不指定则使用内置的默认值 `surgio/<版本号>`。
