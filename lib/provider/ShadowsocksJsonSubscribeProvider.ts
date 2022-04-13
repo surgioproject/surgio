@@ -45,7 +45,11 @@ export default class ShadowsocksJsonSubscribeProvider extends Provider {
   }: { requestUserAgent?: string } = {}): ReturnType<
     typeof getShadowsocksJSONConfig
   > {
-    return getShadowsocksJSONConfig(this.url, this.udpRelay, requestUserAgent);
+    return getShadowsocksJSONConfig(
+      this.url,
+      this.udpRelay,
+      requestUserAgent || this.requestUserAgent,
+    );
   }
 }
 

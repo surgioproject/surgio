@@ -1,5 +1,6 @@
 import test from 'ava';
 import nock from 'nock';
+import sinon from 'sinon';
 
 import { NodeTypeEnum, SupportProviderEnum } from '../../types';
 import { RELAY_SERVICE } from '../../constant';
@@ -7,6 +8,11 @@ import ClashProvider, {
   getClashSubscription,
   parseClashConfig,
 } from '../ClashProvider';
+import Provider from '../Provider';
+
+test.beforeEach(() => {
+  sinon.restore();
+});
 
 test('ClashProvider', async (t) => {
   const provider = new ClashProvider('test', {
@@ -35,6 +41,8 @@ proxies: []
   });
 
   t.deepEqual(await provider.getNodeList(), []);
+
+  scope.done();
 });
 
 test('ClashProvider.getSubscriptionUserInfo', async (t) => {
@@ -315,6 +323,8 @@ foo: bar
       message: 'http://local/fail-2 订阅内容有误，请检查后重试',
     },
   );
+
+  scope.done();
 });
 
 test('snell Configurations', (t) => {
@@ -555,4 +565,25 @@ test('ClashProvider relayUrl', async (t) => {
   });
 
   t.is(provider.url, `${RELAY_SERVICE}http://example.com/clash-sample.yaml`);
+});
+
+test('ClashProvider requestUserAgent', async (t) => {
+  const mock = sinon.spy(Provider, 'requestCacheableResource');
+
+  const requestUserAgent = 'test useragent';
+  const provider = new ClashProvider('test', {
+    type: SupportProviderEnum.Clash,
+    url: 'http://example.com/clash-sample.yaml',
+    requestUserAgent,
+  });
+
+  t.is(provider.requestUserAgent, requestUserAgent);
+
+  await t.notThrowsAsync(async () => {
+    await provider.getNodeList();
+  });
+
+  sinon.assert.calledWithExactly(mock, 'http://example.com/clash-sample.yaml', {
+    requestUserAgent: 'test useragent',
+  });
 });

@@ -114,7 +114,8 @@ export interface ProviderConfig {
   readonly tfo?: boolean;
   readonly mptcp?: boolean;
   readonly renameNode?: (name: string) => string;
-  readonly relayUrl?: boolean;
+  readonly relayUrl?: boolean | string;
+  readonly requestUserAgent?: string;
 }
 
 export interface BlackSSLProviderConfig extends ProviderConfig {

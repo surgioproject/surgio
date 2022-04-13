@@ -28,6 +28,7 @@ export default class Provider {
   public readonly mptcp?: boolean;
   public readonly renameNode?: ProviderConfig['renameNode'];
   public readonly relayUrl?: boolean | string;
+  public readonly requestUserAgent?: string;
   // 是否支持在订阅中获取用户流量信息
   public supportGetSubscriptionUserInfo: boolean;
   // External Provider 的起始端口，Surge 配置中使用
@@ -76,9 +77,10 @@ export default class Provider {
       startPort: Joi.number().integer().min(1024).max(65535),
       relayUrl: [Joi.boolean().strict(), Joi.string()],
       renameNode: Joi.function(),
+      requestUserAgent: Joi.string(),
     }).unknown();
 
-    const { error } = schema.validate(config);
+    const { error, value } = schema.validate(config);
 
     // istanbul ignore next
     if (error) {
@@ -100,8 +102,9 @@ export default class Provider {
       'startPort',
       'renameNode',
       'relayUrl',
+      'requestUserAgent',
     ].forEach((key) => {
-      this[key] = config[key];
+      this[key] = value[key];
     });
   }
 
@@ -121,7 +124,7 @@ export default class Provider {
           const headers = {};
 
           if (options.requestUserAgent) {
-            headers['user-agent'] = options.requestUserAgent;
+            headers['user-agent'] = getUserAgent(options.requestUserAgent);
           }
 
           const res = await httpClient.get(url, {

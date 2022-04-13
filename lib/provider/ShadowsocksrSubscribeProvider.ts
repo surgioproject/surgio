@@ -72,7 +72,7 @@ export default class ShadowsocksrSubscribeProvider extends Provider {
     const { nodeList } = await getShadowsocksrSubscription(
       this.url,
       this.udpRelay,
-      requestUserAgent,
+      requestUserAgent || this.requestUserAgent,
     );
 
     return nodeList;

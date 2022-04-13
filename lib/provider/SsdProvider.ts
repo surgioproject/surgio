@@ -72,7 +72,7 @@ export default class SsdProvider extends Provider {
     const { nodeList } = await getSsdSubscription(
       this.url,
       this.udpRelay,
-      requestUserAgent,
+      requestUserAgent || this.requestUserAgent,
     );
 
     return nodeList;

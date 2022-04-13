@@ -94,7 +94,7 @@ export default class ClashProvider extends Provider {
       url: this.url,
       udpRelay: this.udpRelay,
       tls13: this.tls13,
-      requestUserAgent,
+      requestUserAgent: requestUserAgent || this.requestUserAgent,
     });
 
     return nodeList;

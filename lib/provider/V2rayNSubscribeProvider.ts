@@ -66,7 +66,7 @@ export default class V2rayNSubscribeProvider extends Provider {
       tls13: this.tls13,
       udpRelay: this.udpRelay,
       isCompatibleMode: this.compatibleMode,
-      requestUserAgent,
+      requestUserAgent: requestUserAgent || this.requestUserAgent,
     });
   }
 }
