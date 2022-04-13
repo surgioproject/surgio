@@ -1,3 +1,12 @@
+# [2.18.0](https://github.com/geekdada/surgio/compare/v2.17.0...v2.18.0) (2022-04-13)
+
+
+### Features
+
+* support assign an user agent string to providers ([22ceb5d](https://github.com/geekdada/surgio/commit/22ceb5d4eb7845044313675c54a9676cef091962))
+
+
+
 # [2.17.0](https://github.com/geekdada/surgio/compare/v2.16.0...v2.17.0) (2022-04-10)
 
 
