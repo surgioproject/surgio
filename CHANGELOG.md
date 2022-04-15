@@ -1,3 +1,12 @@
+## [2.18.1](https://github.com/geekdada/surgio/compare/v2.18.0...v2.18.1) (2022-04-15)
+
+
+### Bug Fixes
+
+* 流量查询工作不正常 ([95ea0dc](https://github.com/geekdada/surgio/commit/95ea0dc509c45bd9f5bf310795ce00cdf4942552))
+
+
+
 # [2.18.0](https://github.com/geekdada/surgio/compare/v2.17.0...v2.18.0) (2022-04-13)
 
 
