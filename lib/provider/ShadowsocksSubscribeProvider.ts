@@ -49,12 +49,15 @@ export default class ShadowsocksSubscribeProvider extends Provider {
     return relayableUrl(this._url, this.relayUrl);
   }
 
-  public async getSubscriptionUserInfo(): Promise<
+  public async getSubscriptionUserInfo({
+    requestUserAgent,
+  }: { requestUserAgent?: string } = {}): Promise<
     SubscriptionUserinfo | undefined
   > {
     const { subscriptionUserinfo } = await getShadowsocksSubscription(
       this.url,
       this.udpRelay,
+      requestUserAgent || this.requestUserAgent,
     );
 
     if (subscriptionUserinfo) {
