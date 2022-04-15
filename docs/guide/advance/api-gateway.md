@@ -260,6 +260,7 @@ $ vercel login
         "includeFiles": [
           "provider/**",
           "template/**",
+           "node_modules/@surgio/gateway-frontend/**",
           "*.js",
           "*.json"
         ]
