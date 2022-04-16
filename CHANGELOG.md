@@ -1,3 +1,12 @@
+## [2.18.2](https://github.com/geekdada/surgio/compare/v2.18.1...v2.18.2) (2022-04-16)
+
+
+### Bug Fixes
+
+* wrong Trojan WSS config format for Quantumult X ([e953288](https://github.com/geekdada/surgio/commit/e953288911b62beeb0c431b53b4b28e72ce672d0))
+
+
+
 ## [2.18.1](https://github.com/geekdada/surgio/compare/v2.18.0...v2.18.1) (2022-04-15)
 
 
