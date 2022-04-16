@@ -329,7 +329,7 @@ test('getQuantumultXNodes', (t) => {
         password: 'password1',
       },
     ]),
-    'trojan=example.com:443, password=password1, over-tls=true, tls-verification=true, tag=trojan',
+    'trojan=example.com:443, password=password1, tls-verification=true, over-tls=true, tag=trojan',
   );
   t.is(
     quantumult.getQuantumultXNodes([
@@ -344,7 +344,7 @@ test('getQuantumultXNodes', (t) => {
         tfo: true,
       },
     ]),
-    'trojan=example.com:443, password=password1, over-tls=true, tls-verification=false, fast-open=true, udp-relay=true, tag=trojan',
+    'trojan=example.com:443, password=password1, tls-verification=false, fast-open=true, udp-relay=true, over-tls=true, tag=trojan',
   );
   t.is(
     quantumult.getQuantumultXNodes([
@@ -361,7 +361,7 @@ test('getQuantumultXNodes', (t) => {
         tls13: true,
       },
     ]),
-    'trojan=example.com:443, password=password1, over-tls=true, tls-verification=false, tls-host=sni.example.com, fast-open=true, udp-relay=true, tls13=true, tag=trojan',
+    'trojan=example.com:443, password=password1, tls-verification=false, fast-open=true, udp-relay=true, tls13=true, over-tls=true, tls-host=sni.example.com, tag=trojan',
   );
   t.is(
     quantumult.getQuantumultXNodes([
@@ -384,6 +384,6 @@ test('getQuantumultXNodes', (t) => {
         },
       },
     ]),
-    'trojan=example.com:443, password=password1, over-tls=true, tls-verification=false, tls-host=sni.example.com, fast-open=true, udp-relay=true, tls13=true, obfs=wss, obfs-uri=/ws, obfs-host=example.com, tag=trojan',
+    'trojan=example.com:443, password=password1, tls-verification=false, fast-open=true, udp-relay=true, tls13=true, obfs=wss, obfs-uri=/ws, obfs-host=sni.example.com, tag=trojan',
   );
 });

@@ -296,23 +296,40 @@ export const getQuantumultXNodes = function (
           const config = [
             `${nodeConfig.hostname}:${nodeConfig.port}`,
             ...pickAndFormatStringList(nodeConfig, ['password']),
-            'over-tls=true',
             `tls-verification=${nodeConfig.skipCertVerify !== true}`,
-            ...(nodeConfig.sni ? [`tls-host=${nodeConfig.sni}`] : []),
             ...(nodeConfig.tfo ? [`fast-open=${nodeConfig.tfo}`] : []),
             ...(nodeConfig['udp-relay'] ? [`udp-relay=true`] : []),
             ...(nodeConfig.tls13 ? [`tls13=${nodeConfig.tls13}`] : []),
           ];
 
           if (nodeConfig.network === 'ws') {
+            /**
+             * The obfs field is only supported with websocket over tls for trojan. When using websocket over
+             * tls you should not set over-tls and tls-host options anymore, instead set obfs=wss and
+             * obfs-host options.
+             */
             config.push('obfs=wss');
 
             if (nodeConfig.wsPath) {
               config.push(`obfs-uri=${nodeConfig.wsPath}`);
             }
-            if (nodeConfig.wsHeaders && nodeConfig.wsHeaders.host) {
-              config.push(`obfs-host=${nodeConfig.wsHeaders.host}`);
 
+            const hostHeader = nodeConfig?.wsHeaders?.host;
+            const sni = nodeConfig.sni;
+
+            if (sni) {
+              config.push(`obfs-host=${sni}`);
+            } else if (hostHeader) {
+              config.push(`obfs-host=${hostHeader}`);
+            }
+
+            if (sni && hostHeader) {
+              logger.warn(
+                `Quantumult X 不支持同时定义 sni 和 wsHeaders.host，配置以 sni 为准，节点 ${nodeConfig.nodeName} 可能不可用`,
+              );
+            }
+
+            if (nodeConfig?.wsHeaders) {
               // istanbul ignore next
               if (
                 Object.keys(_.omit(nodeConfig.wsHeaders, ['host'])).length > 0
@@ -321,6 +338,12 @@ export const getQuantumultXNodes = function (
                   `Quantumult X 不支持自定义额外的 Header 字段，节点 ${nodeConfig.nodeName} 可能不可用`,
                 );
               }
+            }
+          } else {
+            config.push('over-tls=true');
+
+            if (nodeConfig.sni) {
+              config.push(`tls-host=${nodeConfig.sni}`);
             }
           }
 
