@@ -56,15 +56,6 @@ export default defineUserConfig<DefaultThemeOptions>({
     ['meta', { property: 'og:title', content: meta.title }],
     ['meta', { property: 'og:site_name', content: meta.title }],
     ['meta', { property: 'og:url', content: meta.url }],
-    (process.env.NODE_ENV === 'production'? [
-      'script', 
-      {
-        src: 'https://sashimi.dacdn.top/sashimi.js',
-        async: true,
-        defer: true,
-        'data-website-id': '6d1132b9-5cea-4ad5-9fbe-10395f393ef5',
-      }
-    ] : ['meta', {}])
   ],
   theme: path.resolve(__dirname, './theme'),
   themeConfig: {
@@ -138,12 +129,12 @@ export default defineUserConfig<DefaultThemeOptions>({
         },
       },
     ],
-    // [
-    //   '@vuepress/google-analytics',
-    //   {
-    //     ga: 'UA-146417304-1',
-    //   },
-    // ],
+    [
+      '@vuepress/google-analytics',
+      {
+        ga: 'UA-146417304-1',
+      },
+    ],
     [
       require('./plugin/sitemap'),
       {
