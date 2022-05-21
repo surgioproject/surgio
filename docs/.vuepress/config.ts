@@ -1,5 +1,5 @@
-'use strict';
-
+import { defineUserConfig } from 'vuepress'
+import type { DefaultThemeOptions } from 'vuepress'
 import { path } from '@vuepress/utils'
 
 const meta = {
@@ -9,45 +9,8 @@ const meta = {
   icon: 'https://surgio.js.org/surgio-square.png',
   favicon: 'https://surgio.js.org/favicon-96x96.png',
 };
-const head = [
-  [
-    'link',
-    {
-      href:
-        'https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,600|Roboto Mono',
-      rel: 'stylesheet',
-      type: 'text/css',
-    },
-  ],
-  [
-    'link',
-    {
-      href: 'https://fonts.googleapis.com/css?family=Dosis:300&amp;text=Vue Select',
-      rel: 'stylesheet',
-      type: 'text/css',
-    },
-  ],
-  [
-    'script',
-    {
-      src: 'https://buttons.github.io/buttons.js',
-      async: true,
-      defer: true
-    }
-  ],
-  ['link', { rel: 'icon', href: '/favicon-96x96.png' }],
-  ['link', { rel: 'icon', href: meta.favicon, type: 'image/png' }],
-  ['meta', { property: 'og:image', content: meta.icon }],
-  ['meta', { property: 'twitter:image', content: meta.icon }],
-  ['meta', { property: 'og:description', content: meta.description }],
-  ['meta', { property: 'twitter:description', content: meta.description }],
-  ['meta', { property: 'twitter:title', content: meta.title }],
-  ['meta', { property: 'og:title', content: meta.title }],
-  ['meta', { property: 'og:site_name', content: meta.title }],
-  ['meta', { property: 'og:url', content: meta.url }],
-];
 
-export default {
+export default defineUserConfig<DefaultThemeOptions>({
   locales: {
     '/': {
       lang: 'zh-CN',
@@ -57,7 +20,52 @@ export default {
   },
   title: meta.title,
   description: meta.description,
-  head,
+  head: [
+    [
+      'link',
+      {
+        href:
+          'https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,600|Roboto Mono',
+        rel: 'stylesheet',
+        type: 'text/css',
+      },
+    ],
+    [
+      'link',
+      {
+        href: 'https://fonts.googleapis.com/css?family=Dosis:300&amp;text=Vue Select',
+        rel: 'stylesheet',
+        type: 'text/css',
+      },
+    ],
+    [
+      'script',
+      {
+        src: 'https://buttons.github.io/buttons.js',
+        async: true,
+        defer: true,
+      }
+    ],
+    ['link', { rel: 'icon', href: '/favicon-96x96.png' }],
+    ['link', { rel: 'icon', href: meta.favicon, type: 'image/png' }],
+    ['meta', { property: 'og:image', content: meta.icon }],
+    ['meta', { property: 'twitter:image', content: meta.icon }],
+    ['meta', { property: 'og:description', content: meta.description }],
+    ['meta', { property: 'twitter:description', content: meta.description }],
+    ['meta', { property: 'twitter:title', content: meta.title }],
+    ['meta', { property: 'og:title', content: meta.title }],
+    ['meta', { property: 'og:site_name', content: meta.title }],
+    ['meta', { property: 'og:url', content: meta.url }],
+    (process.env.NODE_ENV === 'production'? [
+      'script', 
+      {
+        src: 'https://sashimi.dacdn.top/sashimi.js',
+        async: true,
+        defer: true,
+        'data-website-id': '6d1132b9-5cea-4ad5-9fbe-10395f393ef5',
+      }
+    ] : ['meta', {}])
+  ],
   theme: path.resolve(__dirname, './theme'),
   themeConfig: {
     docsRepo: 'geekdada/surgio',
@@ -130,12 +138,12 @@ export default {
         },
       },
     ],
-    [
-      '@vuepress/google-analytics',
-      {
-        ga: 'UA-146417304-1',
-      },
-    ],
+    // [
+    //   '@vuepress/google-analytics',
+    //   {
+    //     ga: 'UA-146417304-1',
+    //   },
+    // ],
     [
       require('./plugin/sitemap'),
       {
@@ -143,4 +151,4 @@ export default {
       },
     ],
   ],
-};
+})
