@@ -1,3 +1,12 @@
+## [2.18.4](https://github.com/geekdada/surgio/compare/v2.18.3...v2.18.4) (2022-05-26)
+
+
+### Bug Fixes
+
+* flag_cn.ts ([483c5b8](https://github.com/geekdada/surgio/commit/483c5b8e8134ba272597f9f1b2aa4e07783689ca))
+
+
+
 ## [2.18.3](https://github.com/geekdada/surgio/compare/v2.18.2...v2.18.3) (2022-05-21)
 
 
