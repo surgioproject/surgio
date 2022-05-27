@@ -1,5 +1,4 @@
 import { createLogger } from '@surgio/logger';
-import assert from 'assert';
 import fs from 'fs-extra';
 import _ from 'lodash';
 import os from 'os';
