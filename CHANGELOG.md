@@ -1,3 +1,12 @@
+# [2.19.0-1](https://github.com/geekdada/surgio/compare/v2.19.0-0...v2.19.0-1) (2022-05-28)
+
+
+### Bug Fixes
+
+* hygen dependency ([75a8ac4](https://github.com/geekdada/surgio/commit/75a8ac458e8547e9d8b575d5813ad796b67445ee))
+
+
+
 # [2.19.0-0](https://github.com/geekdada/surgio/compare/v2.18.4...v2.19.0-0) (2022-05-28)
 
 
