@@ -9,6 +9,7 @@ import { URL, URLSearchParams } from 'url';
 import URLSafeBase64 from 'urlsafe-base64';
 import YAML from 'yaml';
 import net from 'net';
+import crypto from 'crypto';
 
 import {
   NodeFilterType,
@@ -135,6 +136,10 @@ export const toBase64 = (str: string): string =>
 // istanbul ignore next
 export const fromBase64 = (str: string): string =>
   Buffer.from(str, 'base64').toString('utf8');
+
+// istanbul ignore next
+export const toMD5 = (str: string): string =>
+  crypto.createHash('md5').update(str).digest('hex');
 
 /**
  * @see https://github.com/shadowsocks/shadowsocks-org/wiki/SIP002-URI-Scheme
@@ -604,12 +609,28 @@ export const isGitLabCI = (): boolean =>
   typeof process.env.GITLAB_CI !== 'undefined';
 
 // istanbul ignore next
-export const isPkgBundle = (): boolean => __dirname.startsWith('/snapshot');
-
-// istanbul ignore next
 export const isRailway = (): boolean =>
   typeof process.env.RAILWAY_STATIC_URL !== 'undefined';
 
 // istanbul ignore next
 export const isNetlify = (): boolean =>
   typeof process.env.NETLIFY !== 'undefined';
+
+// istanbul ignore next
+export const isAWSLambda = (): boolean =>
+  typeof process.env.AWS_LAMBDA_FUNCTION_NAME !== 'undefined';
+
+// istanbul ignore next
+export const isAWS = (): boolean =>
+  isAWSLambda() ||
+  typeof process.env.AWS_EXECUTION_ENV !== 'undefined' ||
+  typeof process.env.AWS_REGION !== 'undefined';
+
+export const isGFWFree = (): boolean =>
+  isAWS() ||
+  isVercel() ||
+  isHeroku() ||
+  isGitHubActions() ||
+  isGitLabCI() ||
+  isRailway() ||
+  isNetlify();

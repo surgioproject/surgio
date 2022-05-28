@@ -4,6 +4,8 @@ import { join } from 'path';
 import { runner, Logger } from 'hygen';
 import Command, { Context } from 'common-bin';
 
+import { defineGlobalOptions } from '../utils/command';
+
 const defaultTemplates = join(__dirname, '../../hygen-template');
 const logger = createLogger({ service: 'surgio:NewCommand' });
 
@@ -11,15 +13,8 @@ class NewCommand extends Command {
   constructor(rawArgv?: string[]) {
     super(rawArgv);
     this.usage = '使用方法: surgio new [provider|template|artifact]';
-    this.options = {
-      c: {
-        alias: 'config',
-        demandOption: false,
-        describe: 'Surgio 配置文件',
-        default: './surgio.conf.js',
-        type: 'string',
-      },
-    };
+
+    defineGlobalOptions(this.yargs);
   }
 
   // istanbul ignore next

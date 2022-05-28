@@ -1,8 +1,17 @@
 import test from 'ava';
 import { ValidationError } from 'joi';
+import sinon from 'sinon';
 
 import { NodeTypeEnum, SupportProviderEnum } from '../../types';
+import * as config from '../../utils/config';
 import CustomProvider from '../CustomProvider';
+
+const sandbox = sinon.createSandbox();
+
+test.beforeEach(() => {
+  sandbox.restore();
+  sandbox.stub(config, 'getConfig').returns({} as any);
+});
 
 test('CustomProvider should work', async (t) => {
   const provider = new CustomProvider('test', {

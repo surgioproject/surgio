@@ -11,17 +11,22 @@ import updateNotifier from 'update-notifier';
 import { transports } from '@surgio/logger';
 
 import {
+  isAWS,
+  isAWSLambda,
   isGitHubActions,
   isGitLabCI,
   isHeroku,
   isNetlify,
   isNow,
   isRailway,
+  isVercel,
 } from './utils';
+import { defineGlobalOptions } from './utils/command';
 import * as filter from './utils/filter';
 import * as caches from './utils/cache';
 import { errorHandler } from './utils/error-helper';
 import { CATEGORIES } from './constant';
+import redis from './redis';
 
 // istanbul ignore next
 if (
@@ -54,16 +59,7 @@ export class SurgioCommand extends Command {
 
     this.load(join(__dirname, './command'));
 
-    this.options = {
-      V: {
-        alias: 'verbose',
-        demandOption: false,
-        describe: '打印调试日志',
-        type: 'boolean',
-      },
-    };
-    // 禁用 yargs 内部生成的 help 信息，似乎和 common-bin 的 load 有冲突
-    this.yargs.help(false);
+    defineGlobalOptions(this.yargs);
 
     // istanbul ignore next
     if (this.yargs.argv.verbose) {
@@ -80,12 +76,17 @@ export const utils = {
   ...filter,
   isHeroku,
   isNow,
+  isVercel,
   isGitHubActions,
   isGitLabCI,
+  isRailway,
+  isNetlify,
+  isAWS,
+  isAWSLambda,
 };
 
 export const categories = {
   ...CATEGORIES,
 };
 
-export { pkg, caches };
+export { pkg, caches, redis };

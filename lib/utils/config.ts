@@ -4,8 +4,9 @@ import _ from 'lodash';
 import path from 'path';
 import { URL } from 'url';
 import { deprecate } from 'util';
-import { DEP005, DEP006, DEP008 } from '../misc/deprecation';
 
+import { DEP005, DEP006, DEP008 } from '../misc/deprecation';
+import redis from '../redis';
 import { CommandConfig } from '../types';
 import { PROXY_TEST_INTERVAL, PROXY_TEST_URL } from '../constant';
 import { addFlagMap } from './flag';
@@ -14,6 +15,8 @@ import { ensureConfigFolder } from './index';
 const showDEP005 = deprecate(_.noop, DEP005, 'DEP005');
 const showDEP006 = deprecate(_.noop, DEP006, 'DEP006');
 const showDEP008 = deprecate(_.noop, DEP008, 'DEP008');
+
+let finalConfig: CommandConfig | null = null;
 
 export const loadConfig = (
   cwd: string,
@@ -55,7 +58,37 @@ export const loadConfig = (
     };
   }
 
-  return normalizeConfig(cwd, userConfig);
+  finalConfig = normalizeConfig(cwd, userConfig);
+
+  return finalConfig;
+};
+
+export const getConfig = () => {
+  if (!finalConfig) {
+    throw new Error('请先调用 loadConfig 方法');
+  }
+
+  return finalConfig;
+};
+
+export const setConfig = <T extends keyof CommandConfig>(
+  key: T,
+  value: CommandConfig[T],
+): CommandConfig => {
+  if (!finalConfig) {
+    throw new Error('请先调用 loadConfig 方法');
+  }
+
+  if (_.isPlainObject(value)) {
+    finalConfig[key] = {
+      ...(finalConfig[key] as object),
+      ...(value as object),
+    } as CommandConfig[T];
+  } else {
+    finalConfig[key] = value;
+  }
+
+  return finalConfig;
 };
 
 export const normalizeConfig = (
@@ -84,6 +117,9 @@ export const normalizeConfig = (
     proxyTestUrl: PROXY_TEST_URL,
     proxyTestInterval: PROXY_TEST_INTERVAL,
     checkHostname: false,
+    cache: {
+      type: 'default',
+    },
   };
   const config: CommandConfig = _.defaultsDeep(userConfig, defaultConfig);
 
@@ -120,6 +156,14 @@ export const normalizeConfig = (
   // istanbul ignore next
   if (config.clashConfig?.ssrFormat === 'legacy') {
     showDEP008();
+  }
+
+  if (config.cache && config.cache.type === 'redis') {
+    if (!config.cache.redisUrl) {
+      throw new Error('缓存配置错误，请检查 cache.redisUrl 配置');
+    }
+
+    redis.createRedis(config.cache.redisUrl);
   }
 
   return config;
@@ -202,6 +246,12 @@ export const validateConfig = (userConfig: Partial<CommandConfig>): void => {
       ),
     ),
     customParams: Joi.object(),
+    cache: Joi.object({
+      type: Joi.string().valid('redis', 'default'),
+      redisUrl: Joi.string().uri({
+        scheme: [/rediss?/],
+      }),
+    }),
   }).unknown();
 
   const { error } = schema.validate(userConfig);

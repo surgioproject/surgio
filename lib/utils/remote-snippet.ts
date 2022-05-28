@@ -1,15 +1,16 @@
 import Bluebird from 'bluebird';
-import crypto from 'crypto';
 import { logger } from '@surgio/logger';
 import detectNewline from 'detect-newline';
 import nunjucks from 'nunjucks';
 import espree, { ExpressionStatementNode } from 'espree';
+import { CACHE_KEYS } from '../constant';
 
 import { RemoteSnippet, RemoteSnippetConfig } from '../types';
 import { ConfigCache } from './cache';
+import { getConfig } from './config';
 import { getNetworkConcurrency, getRemoteSnippetCacheMaxage } from './env-flag';
 import httpClient from './http-client';
-import { isNow } from './index';
+import { toMD5 } from './index';
 import { createTmpFactory } from './tmp-helper';
 
 export const parseMacro = (
@@ -116,7 +117,8 @@ export const loadRemoteSnippetList = (
   remoteSnippetList: ReadonlyArray<RemoteSnippetConfig>,
   cacheSnippet = true,
 ): Promise<ReadonlyArray<RemoteSnippet>> => {
-  const tmpFactory = createTmpFactory('remote-snippets');
+  const cacheType = getConfig()?.cache?.type || 'default';
+  const tmpFactory = createTmpFactory(CACHE_KEYS.RemoteSnippets, cacheType);
 
   function load(url: string): Promise<string> {
     return httpClient
@@ -134,11 +136,11 @@ export const loadRemoteSnippetList = (
   return Bluebird.map(
     remoteSnippetList,
     (item) => {
-      const fileMd5 = crypto.createHash('md5').update(item.url).digest('hex');
+      const fileMd5 = toMD5(item.url);
       const isSurgioSnippet = item.surgioSnippet;
 
       return (async () => {
-        if (cacheSnippet || isNow()) {
+        if (cacheSnippet) {
           const tmp = tmpFactory(fileMd5, getRemoteSnippetCacheMaxage());
           const tmpContent = await tmp.getContent();
           let snippet: string;

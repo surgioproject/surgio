@@ -76,3 +76,8 @@ export const CATEGORIES = {
 export const RELAY_SERVICE = 'https://surgio-cors.herokuapp.com/';
 
 export const TMP_FOLDER_NAME = 'surgio-config';
+
+export const CACHE_KEYS = {
+  RemoteSnippets: 'remote-snippets',
+  Provider: 'provider',
+};

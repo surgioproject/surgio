@@ -1,13 +1,13 @@
-import Debug from 'debug';
+import { createLogger } from '@surgio/logger';
 import { URL } from 'url';
 
 import { NodeTypeEnum, ShadowsocksNodeConfig } from '../types';
 import { decodeStringList, fromUrlSafeBase64 } from './index';
 
-const debug = Debug('surgio:utils:ss');
+const logger = createLogger({ service: 'surgio:utils:ss' });
 
 export const parseSSUri = (str: string): ShadowsocksNodeConfig => {
-  debug('Shadowsocks URI', str);
+  logger.debug('Shadowsocks URI', str);
 
   const scheme = new URL(str);
   const pluginString = scheme.searchParams.get('plugin');

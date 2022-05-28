@@ -1,12 +1,12 @@
-import Debug from 'debug';
+import { createLogger } from '@surgio/logger';
 import { URL } from 'url';
 
 import { NodeTypeEnum, TrojanNodeConfig } from '../types';
 
-const debug = Debug('surgio:utils:trojan');
+const logger = createLogger({ service: 'surgio:utils:trojan' });
 
 export const parseTrojanUri = (str: string): TrojanNodeConfig => {
-  debug('Trojan URI', str);
+  logger.debug('Trojan URI', str);
 
   const scheme = new URL(str);
 

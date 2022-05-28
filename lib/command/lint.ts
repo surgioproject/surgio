@@ -1,5 +1,6 @@
 // istanbul ignore file
 import Command from 'common-bin';
+
 import { check, checkAndFix } from '../utils/linter';
 
 class LintCommand extends Command {

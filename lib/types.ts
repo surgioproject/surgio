@@ -24,11 +24,11 @@ export enum SupportProviderEnum {
 }
 
 export interface CommandConfig {
+  publicUrl: string;
   readonly output: string;
   readonly artifacts: ReadonlyArray<ArtifactConfig>;
   readonly remoteSnippets?: ReadonlyArray<RemoteSnippetConfig>;
   readonly urlBase: string;
-  publicUrl: string;
   readonly providerDir: string;
   readonly templateDir: string;
   readonly configDir: string;
@@ -74,6 +74,10 @@ export interface CommandConfig {
     readonly [name: string]: NodeNameFilterType | SortedNodeNameFilterType;
   };
   readonly customParams?: PlainObjectOf<string | boolean | number>;
+  readonly cache?: {
+    readonly type?: 'redis' | 'default';
+    readonly redisUrl?: string;
+  };
 }
 
 export interface RemoteSnippetConfig {
@@ -116,6 +120,9 @@ export interface ProviderConfig {
   readonly renameNode?: (name: string) => string;
   readonly relayUrl?: boolean | string;
   readonly requestUserAgent?: string;
+  readonly cache?: {
+    readonly type?: 'redis' | 'default';
+  };
 }
 
 export interface BlackSSLProviderConfig extends ProviderConfig {

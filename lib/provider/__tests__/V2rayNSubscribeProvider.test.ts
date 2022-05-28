@@ -1,8 +1,18 @@
 import test from 'ava';
+import sinon from 'sinon';
+
 import { SupportProviderEnum } from '../../types';
+import * as config from '../../utils/config';
 import V2rayNSubscribeProvider, {
   getV2rayNSubscription,
 } from '../V2rayNSubscribeProvider';
+
+const sandbox = sinon.createSandbox();
+
+test.beforeEach(() => {
+  sandbox.restore();
+  sandbox.stub(config, 'getConfig').returns({} as any);
+});
 
 test('V2rayNSubscribeProvider', async (t) => {
   const provider = new V2rayNSubscribeProvider('test', {

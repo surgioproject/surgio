@@ -1,7 +1,16 @@
 import test from 'ava';
+import sinon from 'sinon';
 
 import { NodeTypeEnum } from '../../types';
+import * as config from '../../utils/config';
 import { getShadowsocksrSubscription } from '../ShadowsocksrSubscribeProvider';
+
+const sandbox = sinon.createSandbox();
+
+test.beforeEach(() => {
+  sandbox.restore();
+  sandbox.stub(config, 'getConfig').returns({} as any);
+});
 
 test('getShadowsocksrSubscription', async (t) => {
   const { nodeList } = await getShadowsocksrSubscription(

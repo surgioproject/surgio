@@ -3,8 +3,9 @@ import Command from 'common-bin';
 import check from 'check-node-version';
 import { promisify } from 'util';
 import { join } from 'path';
+import redis from '../redis';
+import { defineGlobalOptions } from '../utils/command';
 
-import { isPkgBundle } from '../utils';
 import { errorHandler } from '../utils/error-helper';
 
 type OnComplete = Parameters<typeof check>[1];
@@ -14,15 +15,8 @@ class DoctorCommand extends Command {
   constructor(rawArgv?: string[]) {
     super(rawArgv);
     this.usage = '使用方法: surgio doctor';
-    this.options = {
-      c: {
-        alias: 'config',
-        demandOption: false,
-        describe: 'Surgio 配置文件',
-        default: './surgio.conf.js',
-        type: 'string',
-      },
-    };
+
+    defineGlobalOptions(this.yargs);
   }
 
   public async run(ctx): Promise<void> {
@@ -31,6 +25,8 @@ class DoctorCommand extends Command {
     doctorInfo.forEach((item) => {
       console.log(item);
     });
+
+    await redis.destroyRedis();
   }
 
   // istanbul ignore next
@@ -48,9 +44,7 @@ class DoctorCommand extends Command {
   ): Promise<ReadonlyArray<string>> {
     const doctorInfo: string[] = [];
     const pkg = require('../../package.json');
-    const checkInfo = isPkgBundle()
-      ? null
-      : await promisify<CheckInfo>(check)();
+    const checkInfo = await promisify<CheckInfo>(check)();
 
     try {
       const gatewayPkg = require(join(
