@@ -69,6 +69,7 @@ export class RedisCache {
   };
 }
 
+// istanbul ignore next
 export const cleanCaches = async () => {
   ConfigCache.flushAll();
   SubscriptionCache.flushAll();
