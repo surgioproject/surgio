@@ -1,3 +1,12 @@
+# [2.19.0-0](https://github.com/geekdada/surgio/compare/v2.18.4...v2.19.0-0) (2022-05-28)
+
+
+### Features
+
+* support Redis cache ([7d1ae46](https://github.com/geekdada/surgio/commit/7d1ae460f1466d0f4058c83db67fa176b1fba915))
+
+
+
 ## [2.18.4](https://github.com/geekdada/surgio/compare/v2.18.3...v2.18.4) (2022-05-26)
 
 
