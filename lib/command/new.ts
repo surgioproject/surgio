@@ -1,7 +1,7 @@
 // istanbul ignore file
 import { createLogger } from '@surgio/logger';
 import { join } from 'path';
-import { runner, Logger } from 'hygen';
+import { runner, Logger } from '@royli/hygen';
 import Command, { Context } from 'common-bin';
 
 import { defineGlobalOptions } from '../utils/command';

@@ -645,6 +645,24 @@
     "@nodelib/fs.scandir" "2.1.5"
     fastq "^1.6.0"
 
+"@royli/hygen@^6.2.0":
+  version "6.2.0"
+  resolved "https://registry.yarnpkg.com/@royli/hygen/-/hygen-6.2.0.tgz#1d44f4d48f738e7ac991824ffb13529bb7dbdc84"
+  integrity sha512-Qs5pC3ETSRQb7iqZ9eAgFxpedyb1Ezu76H/d4HULT/T/YNO3o5QQ/+lwAAfpIFWh5ws3G9TPrwZ3tAKScNIVjQ==
+  dependencies:
+    chalk "^4.1.2"
+    change-case "^3.1.0"
+    debug "^4.3.3"
+    degit "^2.8.4"
+    ejs "^3.1.6"
+    enquirer "^2.3.6"
+    execa "^5.0.0"
+    front-matter "^4.0.2"
+    fs-extra "^10.0.0"
+    ignore-walk "^4.0.1"
+    inflection "^1.12.0"
+    yargs-parser "^21.0.0"
+
 "@samverschueren/stream-to-observable@^0.3.0":
   version "0.3.1"
   resolved "https://registry.yarnpkg.com/@samverschueren/stream-to-observable/-/stream-to-observable-0.3.1.tgz#a21117b19ee9be70c379ec1877537ef2e1c63301"
@@ -911,7 +929,7 @@
   resolved "https://registry.yarnpkg.com/@types/ms/-/ms-0.7.31.tgz#31b7ca6407128a3d2bbc27fe2d21b345397f6197"
   integrity sha512-iiUgKzV9AuaEkZqkOLDIvlQiL6ltuZd9tGcW3gwpnX8JbuiuhFlEGmmFXEXkN50Cvq7Os88IY2v0dkDqXYWVgA==
 
-"@types/node@*", "@types/node@^17.0.19":
+"@types/node@*":
   version "17.0.35"
   resolved "https://registry.yarnpkg.com/@types/node/-/node-17.0.35.tgz#635b7586086d51fb40de0a2ec9d1014a5283ba4a"
   integrity sha512-vu1SrqBjbbZ3J6vwY17jBs8Sr/BKA+/a/WtjRG+whKg1iuLFOosq872EXS0eXWILdO36DHQQeku/ZcL6hz2fpg==
@@ -4378,26 +4396,6 @@ husky@^4.3.0:
     please-upgrade-node "^3.2.0"
     slash "^3.0.0"
     which-pm-runs "^1.0.0"
-
-hygen@^6.2.0:
-  version "6.2.0"
-  resolved "https://registry.yarnpkg.com/hygen/-/hygen-6.2.0.tgz#9f71af9218a1cb24f2c9f017a2594a6d61e6874f"
-  integrity sha512-5kma/nx7K+gJu8Q8kirkamUDb2TLvDJEiG/hfAL2Jt93SGrWEd0vWVEwaJW7qQylbIoT7gBVefrXZS2sYS8aag==
-  dependencies:
-    "@types/node" "^17.0.19"
-    chalk "^4.1.2"
-    change-case "^3.1.0"
-    debug "^4.3.3"
-    degit "^2.8.4"
-    ejs "^3.1.6"
-    enquirer "^2.3.6"
-    eslint-plugin-prettier "^4.0.0"
-    execa "^5.0.0"
-    front-matter "^4.0.2"
-    fs-extra "^10.0.0"
-    ignore-walk "^4.0.1"
-    inflection "^1.12.0"
-    yargs-parser "^21.0.0"
 
 iconv-lite@0.4.24, iconv-lite@^0.4.15, iconv-lite@^0.4.24:
   version "0.4.24"
