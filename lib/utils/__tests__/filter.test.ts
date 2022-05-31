@@ -1,5 +1,6 @@
 import test from 'ava';
 import { NodeTypeEnum, VmessNodeConfig } from '../../types';
+import { discardGlob } from '../filter';
 import * as filter from '../filter';
 
 test('validateFilter', (t) => {
@@ -83,6 +84,52 @@ test('useRegexp', (t) => {
     }),
   );
   t.false(
+    fn({
+      nodeName: '美国',
+      type: NodeTypeEnum.Shadowsocks,
+    }),
+  );
+});
+
+test('useGlob', (t) => {
+  const fn = filter.useGlob('测试*');
+
+  t.true(
+    fn({
+      nodeName: '测试',
+      type: NodeTypeEnum.Shadowsocks,
+    }),
+  );
+  t.true(
+    fn({
+      nodeName: '测试节点',
+      type: NodeTypeEnum.Shadowsocks,
+    }),
+  );
+  t.false(
+    fn({
+      nodeName: '美国',
+      type: NodeTypeEnum.Shadowsocks,
+    }),
+  );
+});
+
+test('discardGlob', (t) => {
+  const fn = filter.discardGlob('测试*');
+
+  t.false(
+    fn({
+      nodeName: '测试',
+      type: NodeTypeEnum.Shadowsocks,
+    }),
+  );
+  t.false(
+    fn({
+      nodeName: '测试节点',
+      type: NodeTypeEnum.Shadowsocks,
+    }),
+  );
+  t.true(
     fn({
       nodeName: '美国',
       type: NodeTypeEnum.Shadowsocks,
@@ -242,7 +289,7 @@ test('singaporeFilter', (t) => {
     }),
   );
 });
-
+333333333;
 test('taiwanFilter', (t) => {
   t.true(
     filter.taiwanFilter({

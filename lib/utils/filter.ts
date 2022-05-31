@@ -1,4 +1,6 @@
 import _ from 'lodash';
+import micromatch from 'micromatch';
+import isGlob from 'is-glob';
 
 import flag, { TAIWAN } from '../misc/flag_cn';
 import {
@@ -155,6 +157,14 @@ export const useRegexp = (regexp: RegExp): NodeNameFilterType => {
   return (item) => regexp.test(item.nodeName);
 };
 
+export const useGlob = (glob: string): NodeNameFilterType => {
+  return (item) => matchGlob(item.nodeName, glob);
+};
+
+export const discardGlob = (glob: string): NodeNameFilterType => {
+  return (item) => !matchGlob(item.nodeName, glob);
+};
+
 export const useProviders = (
   keywords: ReadonlyArray<string>,
   isStrict = true,
@@ -287,6 +297,10 @@ export const youtubePremiumFilter: NodeNameFilterType = mergeFilters([
   singaporeFilter,
   taiwanFilter,
 ]);
+
+export const matchGlob = (str: string, glob: string): boolean => {
+  return micromatch.contains(str, glob);
+};
 
 // istanbul ignore next
 export const shadowsocksFilter: NodeNameFilterType = (item) =>
