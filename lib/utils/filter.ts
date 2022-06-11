@@ -1,6 +1,5 @@
 import _ from 'lodash';
 import micromatch from 'micromatch';
-import isGlob from 'is-glob';
 
 import flag, { TAIWAN } from '../misc/flag_cn';
 import {

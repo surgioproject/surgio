@@ -203,6 +203,40 @@ module.exports = {
 2. 默认开启严格模式；
 :::
 
+### useGlob <Badge text="v2.19.0" vertical="middle" />
+
+能够使用 glob 语法筛选出节点。
+
+支持的语法见 [这里](https://github.com/micromatch/micromatch#matching-features)。
+
+```js
+// surgio.conf.js
+const { utils } = require('surgio');
+
+module.exports = {
+  customFilters: {
+    premiumNodes: utils.useGlob('*Premium*'),
+  },
+}
+```
+
+### discardGlob <Badge text="v2.19.0" vertical="middle" />
+
+能够使用 glob 语法移出节点。
+
+支持的语法见 [这里](https://github.com/micromatch/micromatch#matching-features)。
+
+```js
+// surgio.conf.js
+const { utils } = require('surgio');
+
+module.exports = {
+  customFilters: {
+    hongKongNodes: utils.discardGlob('*(US|JP)*'), // 不匹配 US 和 JP
+  },
+}
+```
+
 ## 如何在自定义过滤器时引用内置的过滤器
 
 你可能需要在自定义过滤器时引用内置的过滤器（你可以在 [这里](/guide/custom-template.md#过滤器) 找到所有内置的过滤器）。

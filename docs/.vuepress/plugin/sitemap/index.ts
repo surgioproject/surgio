@@ -140,4 +140,4 @@ const plugin: Plugin<any> = (options, app) => {
   };
 };
 
-module.exports = plugin
+export default plugin
