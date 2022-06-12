@@ -1,3 +1,12 @@
+# [2.19.0](https://github.com/geekdada/surgio/compare/v2.19.0-1...v2.19.0) (2022-06-12)
+
+
+### Features
+
+* useGlob, discardGlob ([119bdeb](https://github.com/geekdada/surgio/commit/119bdeb449cf23ebb0c3c00b54a506378263ddf8))
+
+
+
 # [2.19.0-1](https://github.com/geekdada/surgio/compare/v2.19.0-0...v2.19.0-1) (2022-05-28)
 
 
