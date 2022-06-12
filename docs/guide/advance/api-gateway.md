@@ -73,11 +73,24 @@ module.exports.handler = gateway.createLambdaHandler();
 
 点击 __Deploy site__ 按钮，即可部署。
 
+### 配置 Redis 缓存
+
+:::tip 此步骤可选，推荐配置
+
+[教程](/guide/advance/redis-cache.md)
+:::
+
 ### 查看用量
 
 你可以在账户的 Billing 页面查询当月的用量。
 
 ### 使用
+
+你可能还需要更新 _surgio.conf.js_ 内 `urlBase` 的值，它应该类似：
+
+```
+https://surgio-demo.netlify.app/get-artifact/
+```
 
 :::tip 移步至
 [托管 API 的功能介绍](/guide/api.md)
@@ -156,11 +169,24 @@ const PORT = process.env.PORT || 3000
 
 ![](../images/railway-22.png)
 
+### 配置 Redis 缓存
+
+:::tip 此步骤可选，推荐配置
+
+[教程](/guide/advance/redis-cache.md)
+:::
+
 ### 查看用量
 
 Railway 每月有 5 刀的免费用量，足够单个 Surgio 项目使用。你可以在 [这里](https://railway.app/account/billing) 查看本月的用量。
 
 ### 使用
+
+你可能还需要更新 _surgio.conf.js_ 内 `urlBase` 的值，它应该类似：
+
+```
+https://surgio-demo.railway.app/get-artifact/
+```
 
 :::tip 移步至
 [托管 API 的功能介绍](/guide/api.md)
