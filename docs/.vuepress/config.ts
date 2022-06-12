@@ -3,9 +3,9 @@ import { path } from '@vuepress/utils'
 import docsearchPlugin from  '@vuepress/plugin-docsearch'
 import registerComponentsPlugin from '@vuepress/plugin-register-components'
 import { googleAnalyticsPlugin } from '@vuepress/plugin-google-analytics';
+import { sitemapPlugin } from "vuepress-plugin-sitemap2";
 
 import customTheme from './theme'
-import sitemapPlugin from './plugin/sitemap'
 
 const meta = {
   title: 'Surgio',
