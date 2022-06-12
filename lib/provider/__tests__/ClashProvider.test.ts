@@ -9,9 +9,13 @@ import ClashProvider, {
   parseClashConfig,
 } from '../ClashProvider';
 import Provider from '../Provider';
+import * as config from '../../utils/config';
+
+const sandbox = sinon.createSandbox();
 
 test.beforeEach(() => {
-  sinon.restore();
+  sandbox.restore();
+  sandbox.stub(config, 'getConfig').returns({} as any);
 });
 
 test('ClashProvider', async (t) => {
@@ -568,7 +572,7 @@ test('ClashProvider relayUrl', async (t) => {
 });
 
 test('ClashProvider requestUserAgent', async (t) => {
-  const mock = sinon.spy(Provider, 'requestCacheableResource');
+  const mock = sandbox.spy(Provider, 'requestCacheableResource');
 
   const requestUserAgent = 'test useragent';
   const provider = new ClashProvider('test', {
@@ -583,7 +587,11 @@ test('ClashProvider requestUserAgent', async (t) => {
     await provider.getNodeList();
   });
 
-  sinon.assert.calledWithExactly(mock, 'http://example.com/clash-sample.yaml', {
-    requestUserAgent: 'test useragent',
-  });
+  sandbox.assert.calledWithExactly(
+    mock,
+    'http://example.com/clash-sample.yaml',
+    {
+      requestUserAgent: 'test useragent',
+    },
+  );
 });

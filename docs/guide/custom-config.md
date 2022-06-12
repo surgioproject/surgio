@@ -15,6 +15,8 @@ module.exports = {
 };
 ```
 
+## 配置属性
+
 ### artifacts
 
 - 类型: `Artifact[]`
@@ -358,6 +360,33 @@ module.exports = {
 2. 英文字母请使用大写；
 :::
 
-### 环境变量
+### cache <Badge text="v2.19.0" vertical="middle" />
+
+- 类型: `object`
+- 默认值: `undefined`
+
+定义缓存的实现方式。默认情况下使用本地缓存文件和内存的方式存储。如果你使用了 API 网关，非常推荐开启 Redis 缓存，可以有效降低冷启动的时间。
+
+#### cache.type
+
+- 类型: `string`
+- 默认值: `default`
+- 可选值: `default`, `redis`
+
+定义：
+- `default`：使用本地缓存文件和内存的方式存储
+- `redis`: 使用 Redis 的方式存储
+
+#### cache.redisUrl
+
+- 类型: `string`
+- 默认值: `undefined`
+
+假如 `cache.type` 为 `redis`，则需要指定 Redis 的连接地址。 这个属性支持的格式有：
+
+- `redis://xxx`
+- `rediss://xxx` (TLS)
+
+## 环境变量
 
 Surgio 支持使用 [环境变量](/guide/env.md) 来调整没有公开的配置，但属于高级用法，请酌情使用。

@@ -11,7 +11,9 @@ import ShadowsocksJsonSubscribeProvider from '../provider/ShadowsocksJsonSubscri
 import ShadowsocksrSubscribeProvider from '../provider/ShadowsocksrSubscribeProvider';
 import ShadowsocksSubscribeProvider from '../provider/ShadowsocksSubscribeProvider';
 import V2rayNSubscribeProvider from '../provider/V2rayNSubscribeProvider';
+import redis from '../redis';
 import { CommandConfig } from '../types';
+import { defineGlobalOptions } from '../utils/command';
 import { loadConfig } from '../utils/config';
 import { getProvider } from '../provider';
 import { errorHandler } from '../utils/error-helper';
@@ -35,15 +37,8 @@ class SubscriptionsCommand extends Command {
   constructor(rawArgv?: string[]) {
     super(rawArgv);
     this.usage = '使用方法: surgio subscriptions';
-    this.options = {
-      c: {
-        alias: 'config',
-        demandOption: false,
-        describe: 'Surgio 配置文件',
-        default: './surgio.conf.js',
-        type: 'string',
-      },
-    };
+
+    defineGlobalOptions(this.yargs);
   }
 
   public async run(ctx): Promise<void> {
@@ -71,6 +66,8 @@ class SubscriptionsCommand extends Command {
         console.log('⚠️  无法查询 %s 的流量信息', provider.name);
       }
     }
+
+    await redis.destroyRedis();
   }
 
   // istanbul ignore next

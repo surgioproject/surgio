@@ -1,9 +1,10 @@
 // istanbul ignore file
 import { createLogger } from '@surgio/logger';
 import { join } from 'path';
-import { runner } from '@royli/hygen';
-import Logger from '@royli/hygen/lib/logger';
+import { runner, Logger } from '@royli/hygen';
 import Command, { Context } from 'common-bin';
+
+import { defineGlobalOptions } from '../utils/command';
 
 const defaultTemplates = join(__dirname, '../../hygen-template');
 const logger = createLogger({ service: 'surgio:NewCommand' });
@@ -12,15 +13,8 @@ class NewCommand extends Command {
   constructor(rawArgv?: string[]) {
     super(rawArgv);
     this.usage = '使用方法: surgio new [provider|template|artifact]';
-    this.options = {
-      c: {
-        alias: 'config',
-        demandOption: false,
-        describe: 'Surgio 配置文件',
-        default: './surgio.conf.js',
-        type: 'string',
-      },
-    };
+
+    defineGlobalOptions(this.yargs);
   }
 
   // istanbul ignore next

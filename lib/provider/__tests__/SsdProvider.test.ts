@@ -1,8 +1,16 @@
 import test from 'ava';
-import nock from 'nock';
+import sinon from 'sinon';
 
 import { SupportProviderEnum } from '../../types';
+import * as config from '../../utils/config';
 import SsdProvider from '../SsdProvider';
+
+const sandbox = sinon.createSandbox();
+
+test.beforeEach(() => {
+  sandbox.restore();
+  sandbox.stub(config, 'getConfig').returns({} as any);
+});
 
 test('SsdProvider 1', async (t) => {
   const provider = new SsdProvider('test', {

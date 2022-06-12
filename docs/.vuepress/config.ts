@@ -1,6 +1,11 @@
 import { defineUserConfig } from 'vuepress'
-import type { DefaultThemeOptions } from 'vuepress'
 import { path } from '@vuepress/utils'
+import docsearchPlugin from  '@vuepress/plugin-docsearch'
+import registerComponentsPlugin from '@vuepress/plugin-register-components'
+import { googleAnalyticsPlugin } from '@vuepress/plugin-google-analytics';
+import { sitemapPlugin } from "vuepress-plugin-sitemap2";
+
+import customTheme from './theme'
 
 const meta = {
   title: 'Surgio',
@@ -10,7 +15,7 @@ const meta = {
   favicon: 'https://surgio.js.org/favicon-96x96.png',
 };
 
-export default defineUserConfig<DefaultThemeOptions>({
+export default defineUserConfig({
   locales: {
     '/': {
       lang: 'zh-CN',
@@ -57,89 +62,21 @@ export default defineUserConfig<DefaultThemeOptions>({
     ['meta', { property: 'og:site_name', content: meta.title }],
     ['meta', { property: 'og:url', content: meta.url }],
   ],
-  theme: path.resolve(__dirname, './theme'),
-  themeConfig: {
-    docsRepo: 'geekdada/surgio',
-    docsBranch: 'master',
-    repo: 'geekdada/surgio',
-    repoLabel: 'GitHub',
-    editLink: true,
-    editLinkText: '帮助我们改善此页面！',
-    docsDir: 'docs',
-    navbar: [
-      {
-        text: 'Changelog',
-        link: 'https://github.com/surgioproject/surgio/releases',
-      },
-    ],
-    sidebar: [
-      {
-        text: '指南',
-        children: [
-          '/guide',
-          '/guide/getting-started',
-          {
-            text: '自定义',
-            children: [
-              '/guide/custom-config',
-              '/guide/custom-provider',
-              '/guide/custom-template',
-              '/guide/custom-artifact',
-            ],
-          },
-          {
-            text: '客户端规则维护指南',
-            children: ['/guide/client/clash'],
-          },
-          '/guide/api',
-          '/guide/cli',
-          '/guide/faq',
-          '/guide/upgrade-guide-v2',
-          '/guide/learning-resources',
-        ],
-      },
-      {
-        text: '进阶',
-        children: [
-          '/guide/advance/surge-advance',
-          '/guide/advance/custom-filter',
-          '/guide/advance/automation',
-          '/guide/advance/api-gateway',
-          {
-            link: 'https://blog.dada.li/2019/better-proxy-rules-for-apple-services',
-            text: '苹果服务的连接策略推荐'
-          }
-        ],
-      },
-    ],
-  },
+  theme: customTheme,
   plugins: [
-    [
-      '@vuepress/docsearch',
-      {
-        apiKey: '6e7242cfd891a169eb12749ab473ba8f',
-        indexName: 'surgio',
-      },
-    ],
-    [
-      '@vuepress/register-components',
-      {
-        components: {
-          Sponsor: path.resolve(__dirname, './components/Sponsor.vue'),
-        },
-      },
-    ],
-    [
-      '@vuepress/google-analytics',
-      {
-        ga: 'UA-146417304-1',
-      },
-    ],
-    [
-      require('./plugin/sitemap'),
-      {
-        hostname: 'https://surgio.js.org',
-      },
-    ],
+    docsearchPlugin({
+      appId: 'AXEPS6U765',
+      apiKey: 'c7282707083d364aceb47ba33e14d5ab',
+      indexName: 'surgio',
+    }),
+    registerComponentsPlugin({
+      componentsDir: path.resolve(__dirname, './components'),
+    }),
+    googleAnalyticsPlugin({
+      id: 'UA-146417304-1',
+    }),
+    sitemapPlugin({
+      hostname: 'https://surgio.js.org',
+    }),
   ],
 })

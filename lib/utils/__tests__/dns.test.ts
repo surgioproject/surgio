@@ -7,7 +7,7 @@ import { resolveDomain } from '../dns';
 
 const sandbox = sinon.createSandbox();
 
-test.afterEach.always(() => {
+test.afterEach(() => {
   sandbox.restore();
 });
 

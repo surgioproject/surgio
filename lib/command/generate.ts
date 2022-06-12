@@ -1,7 +1,8 @@
 import Command from 'common-bin';
-import path from 'path';
+import redis from '../redis';
+import { defineGlobalOptions } from '../utils/command';
 
-import { loadConfig } from '../utils/config';
+import { getConfig, loadConfig, setConfig } from '../utils/config';
 import generate from '../generate';
 import { errorHandler } from '../utils/error-helper';
 import { checkAndFix } from '../utils/linter';
@@ -15,10 +16,6 @@ class GenerateCommand extends Command {
         type: 'string',
         alias: 'output',
         description: '生成规则的目录',
-      },
-      c: {
-        alias: 'config',
-        default: './surgio.conf.js',
       },
       'cache-snippet': {
         type: 'boolean',
@@ -36,9 +33,13 @@ class GenerateCommand extends Command {
         description: '跳过代码检查',
       },
     };
+
+    defineGlobalOptions(this.yargs);
   }
 
   public async run(ctx): Promise<void> {
+    loadConfig(ctx.cwd, ctx.argv.config);
+
     if (!ctx.argv.skipLint) {
       const result = await checkAndFix(ctx.cwd);
 
@@ -49,16 +50,13 @@ class GenerateCommand extends Command {
       }
     }
 
-    const config = loadConfig(ctx.cwd, ctx.argv.config, {
-      // istanbul ignore next
-      ...(ctx.argv.output
-        ? {
-            output: path.resolve(ctx.cwd, ctx.argv.output),
-          }
-        : null),
-    });
+    if (ctx.argv.output) {
+      setConfig('output', ctx.argv.output);
+    }
 
-    await generate(config, ctx.argv.skipFail, ctx.argv.cacheSnippet);
+    await generate(getConfig(), ctx.argv.skipFail, ctx.argv.cacheSnippet);
+
+    await redis.destroyRedis();
   }
 
   // istanbul ignore next

@@ -1,4 +1,5 @@
 import test from 'ava';
+
 import { NodeTypeEnum, VmessNodeConfig } from '../../types';
 import * as filter from '../filter';
 
@@ -85,6 +86,82 @@ test('useRegexp', (t) => {
   t.false(
     fn({
       nodeName: '美国',
+      type: NodeTypeEnum.Shadowsocks,
+    }),
+  );
+});
+
+test('useGlob', (t) => {
+  let fn = filter.useGlob('测试*');
+
+  t.true(
+    fn({
+      nodeName: '测试',
+      type: NodeTypeEnum.Shadowsocks,
+    }),
+  );
+  t.true(
+    fn({
+      nodeName: '测试节点',
+      type: NodeTypeEnum.Shadowsocks,
+    }),
+  );
+  t.false(
+    fn({
+      nodeName: '美国',
+      type: NodeTypeEnum.Shadowsocks,
+    }),
+  );
+
+  fn = filter.useGlob('(汉堡|薯条)');
+
+  t.true(
+    fn({
+      nodeName: '两个汉堡',
+      type: NodeTypeEnum.Shadowsocks,
+    }),
+  );
+  t.true(
+    fn({
+      nodeName: '三个薯条',
+      type: NodeTypeEnum.Shadowsocks,
+    }),
+  );
+});
+
+test('discardGlob', (t) => {
+  let fn = filter.discardGlob('测试*');
+
+  t.false(
+    fn({
+      nodeName: '测试',
+      type: NodeTypeEnum.Shadowsocks,
+    }),
+  );
+  t.false(
+    fn({
+      nodeName: '测试节点',
+      type: NodeTypeEnum.Shadowsocks,
+    }),
+  );
+  t.true(
+    fn({
+      nodeName: '美国',
+      type: NodeTypeEnum.Shadowsocks,
+    }),
+  );
+
+  fn = filter.discardGlob('(汉堡|薯条)');
+
+  t.false(
+    fn({
+      nodeName: '两个汉堡',
+      type: NodeTypeEnum.Shadowsocks,
+    }),
+  );
+  t.true(
+    fn({
+      nodeName: '无限堡薯',
       type: NodeTypeEnum.Shadowsocks,
     }),
   );
@@ -242,7 +319,7 @@ test('singaporeFilter', (t) => {
     }),
   );
 });
-
+333333333;
 test('taiwanFilter', (t) => {
   t.true(
     filter.taiwanFilter({

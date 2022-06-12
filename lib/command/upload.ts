@@ -5,8 +5,10 @@ import fs from 'fs';
 import dir from 'node-dir';
 import ora, { Ora } from 'ora';
 import path from 'path';
+import redis from '../redis';
+import { defineGlobalOptions } from '../utils/command';
 
-import { loadConfig } from '../utils/config';
+import { loadConfig, setConfig } from '../utils/config';
 import { errorHandler } from '../utils/error-helper';
 
 class GenerateCommand extends Command {
@@ -22,24 +24,17 @@ class GenerateCommand extends Command {
         alias: 'output',
         description: '生成规则的目录',
       },
-      c: {
-        alias: 'config',
-        demandOption: false,
-        describe: 'Surgio 配置文件',
-        default: './surgio.conf.js',
-        type: 'string',
-      },
     };
+
+    defineGlobalOptions(this.yargs);
   }
 
   public async run(ctx): Promise<void> {
-    const config = loadConfig(ctx.cwd, ctx.argv.config, {
-      ...(ctx.argv.output
-        ? {
-            output: path.resolve(ctx.cwd, ctx.argv.output),
-          }
-        : null),
-    });
+    const config = loadConfig(ctx.cwd, ctx.argv.config);
+
+    if (ctx.argv.output) {
+      setConfig('output', ctx.argv.output);
+    }
 
     const ossConfig = {
       region: config?.upload?.region,
@@ -104,6 +99,7 @@ class GenerateCommand extends Command {
     this.spinner.start('开始上传到阿里云 OSS');
     await upload();
     await deleteUnwanted();
+    await redis.destroyRedis();
     this.spinner.succeed();
   }
 

@@ -1,5 +1,15 @@
 import test from 'ava';
+import sinon from 'sinon';
+
+import * as config from '../config';
 import * as utils from '../remote-snippet';
+
+const sandbox = sinon.createSandbox();
+
+test.beforeEach(() => {
+  sandbox.restore();
+  sandbox.stub(config, 'getConfig').returns({} as any);
+});
 
 test.serial('loadRemoteSnippetList', async (t) => {
   const snippets = [

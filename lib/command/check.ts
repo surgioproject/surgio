@@ -6,8 +6,10 @@ import path from 'path';
 import Listr from 'listr';
 import inquirer from 'inquirer';
 
+import redis from '../redis';
 import { PossibleNodeConfigType } from '../types';
-import { loadConfig } from '../utils/config';
+import { defineGlobalOptions } from '../utils/command';
+import { getConfig, loadConfig } from '../utils/config';
 import { getProvider } from '../provider';
 import { errorHandler } from '../utils/error-helper';
 
@@ -15,18 +17,13 @@ class CheckCommand extends Command {
   constructor(rawArgv?: string[]) {
     super(rawArgv);
     this.usage = '使用方法: surgio check [provider]';
-    this.options = {
-      c: {
-        alias: 'config',
-        demandOption: false,
-        describe: 'Surgio 配置文件',
-        default: './surgio.conf.js',
-        type: 'string',
-      },
-    };
+
+    defineGlobalOptions(this.yargs);
   }
 
   public async run(ctx): Promise<void> {
+    loadConfig(ctx.cwd, ctx.argv.config);
+
     const tasks = this.getTasks();
     const tasksResult = await tasks.run({
       cmdCtx: ctx,
@@ -51,6 +48,8 @@ class CheckCommand extends Command {
     ]);
 
     console.log(JSON.stringify(answers.node, null, 2));
+
+    await redis.destroyRedis();
   }
 
   public get description(): string {
@@ -75,7 +74,7 @@ class CheckCommand extends Command {
           assert(cmdCtx.argv._[0], '没有指定 Provider');
 
           const providerName = cmdCtx.argv._[0];
-          const config = loadConfig(cmdCtx.cwd, cmdCtx.argv.config);
+          const config = getConfig();
           const filePath = path.resolve(
             config.providerDir,
             `./${providerName}.js`,

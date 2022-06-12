@@ -1,5 +1,5 @@
+import { URLSearchParams } from 'url';
 import { VmessNodeConfig } from '../types';
-import queryString from 'query-string';
 
 // https://github.com/v2ray/v2ray-core/issues/1569
 export const formatVmessUri = (
@@ -12,13 +12,13 @@ export const formatVmessUri = (
     `${nodeConfig.hostname}:${nodeConfig.port}`,
     nodeConfig.path || '/',
   ];
-  const queries: any = {
+  const queries: Record<string, string> = {
     network: nodeConfig.network,
-    tls: nodeConfig.tls,
+    tls: nodeConfig.tls ? 'true' : 'false',
   };
 
   if (nodeConfig.skipCertVerify) {
-    queries['tls.allowInsecure'] = true;
+    queries['tls.allowInsecure'] = 'true';
   }
 
   if (nodeConfig.network === 'ws') {
@@ -38,5 +38,7 @@ export const formatVmessUri = (
     }
   }
 
-  return `vmess://${uri.join('')}?${queryString.stringify(queries)}`;
+  const queryObject = new URLSearchParams(queries);
+
+  return `vmess://${uri.join('')}?${queryObject.toString()}`;
 };

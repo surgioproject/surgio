@@ -2,31 +2,34 @@ import { createLogger } from '@surgio/logger';
 import os from 'os';
 import path from 'path';
 import fs from 'fs-extra';
+import Redis from 'ioredis';
 
 import { TMP_FOLDER_NAME } from '../constant';
+import redis from '../redis';
+import { msToSeconds } from './index';
 
 const logger = createLogger({ service: 'surgio:utils:tmp-helper' });
 const tmpDir = path.join(os.tmpdir(), TMP_FOLDER_NAME);
 
-export class TmpFile {
-  public filename: string;
-  public extname: string;
+abstract class TmpHelper {
+  protected constructor(public cacheKey: string, public maxAge?: number) {}
 
-  constructor(public filePath: string, public maxAge?: number) {
-    this.filename = path.basename(filePath);
-    this.extname = path.extname(filePath);
+  public abstract setContent(content: string): Promise<void>;
 
-    fs.accessSync(path.dirname(this.filePath), fs.constants.W_OK);
+  public abstract getContent(): Promise<string | undefined>;
+}
+
+export class TmpFile implements TmpHelper {
+  constructor(public cacheKey: string, public maxAge?: number) {
+    fs.accessSync(path.dirname(this.cacheKey), fs.constants.W_OK);
   }
 
-  public async setContent(content: string): Promise<this> {
-    await fs.writeJson(this.filePath, {
+  public async setContent(content: string): Promise<void> {
+    await fs.writeJson(this.cacheKey, {
       content,
       maxAge: this.maxAge,
       lastEditTime: new Date().getTime(),
     });
-
-    return this;
   }
 
   public async getContent(): Promise<string | undefined> {
@@ -38,11 +41,11 @@ export class TmpFile {
   }
 
   private async validateContent(): Promise<TmpContent | undefined> {
-    if (!fs.existsSync(this.filePath)) {
+    if (!fs.existsSync(this.cacheKey)) {
       return undefined;
     }
 
-    const tmpContent: TmpContent = await fs.readJson(this.filePath);
+    const tmpContent: TmpContent = await fs.readJson(this.cacheKey);
     const now = Date.now();
 
     if (!tmpContent.maxAge) {
@@ -57,6 +60,33 @@ export class TmpFile {
   }
 }
 
+export class TmpRedis implements TmpHelper {
+  private redisClient: Redis;
+
+  constructor(public cacheKey: string, public maxAge?: number) {
+    this.redisClient = redis.getRedis();
+  }
+
+  public async getContent(): Promise<string | undefined> {
+    const value = await this.redisClient.get(this.cacheKey);
+
+    return value ? value : undefined;
+  }
+
+  public async setContent(content: string): Promise<void> {
+    if (this.maxAge) {
+      await this.redisClient.set(
+        this.cacheKey,
+        content,
+        'EX',
+        msToSeconds(this.maxAge),
+      );
+    } else {
+      await this.redisClient.set(this.cacheKey, content);
+    }
+  }
+}
+
 export interface TmpContent {
   readonly content: string;
   readonly lastEditTime: number;
@@ -65,15 +95,22 @@ export interface TmpContent {
 
 export const createTmpFactory = (
   baseDir: string,
-): ((filePath: string, maxAge?: number) => TmpFile) => {
-  baseDir = path.join(tmpDir, baseDir);
-
+  cacheType: 'default' | 'redis' = 'default',
+): ((filePath: string, maxAge?: number) => TmpFile | TmpRedis) => {
   logger.debug('tmpDir: %s', baseDir);
+  logger.debug('tmpDir cache type: %s', cacheType);
 
-  if (!fs.existsSync(baseDir)) {
-    fs.mkdirpSync(baseDir);
+  if (cacheType === 'default') {
+    const fullTmpDir = path.join(tmpDir, baseDir);
+
+    if (!fs.existsSync(fullTmpDir)) {
+      fs.mkdirpSync(fullTmpDir);
+    }
+
+    return (fileCacheKey: string, maxAge?: number) =>
+      new TmpFile(path.join(fullTmpDir, fileCacheKey), maxAge);
+  } else {
+    return (fileCacheKey: string, maxAge?: number) =>
+      new TmpRedis(`${baseDir}:${fileCacheKey}`, maxAge);
   }
-
-  return (filePath: string, maxAge?: number) =>
-    new TmpFile(path.join(baseDir, filePath), maxAge);
 };

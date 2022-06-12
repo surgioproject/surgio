@@ -1,9 +1,9 @@
-import Debug from 'debug';
+import { createLogger } from '@surgio/logger';
 
 import { NodeTypeEnum, ShadowsocksrNodeConfig } from '../types';
 import { fromUrlSafeBase64 } from './index';
 
-const debug = Debug('surgio:utils:ssr');
+const logger = createLogger({ service: 'surgio:utils:ssr' });
 
 /**
  * 协议：https://github.com/shadowsocksr-backup/shadowsocks-rss/wiki/SSR-QRcode-scheme
@@ -15,7 +15,7 @@ export const parseSSRUri = (str: string): ShadowsocksrNodeConfig => {
   const configArray = scheme.split('/');
   const basicInfo = configArray[0].split(':');
 
-  debug('SSR URI', scheme);
+  logger.debug('SSR URI', scheme);
 
   // 去除首部分
   configArray.shift();
