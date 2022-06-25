@@ -73,7 +73,7 @@
     "query-string": "^7.1.1",
     "rimraf": "^3.0.0",
     "source-map-support": "^0.5.19",
-    "update-notifier": "^5.0.0",
+    "update-notifier": "^6.0.0",
     "urlsafe-base64": "^1.0.0",
     "yaml": "^1.9.2"
   },
