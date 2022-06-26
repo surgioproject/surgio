@@ -95,6 +95,7 @@
     "@types/urlsafe-base64": "^1.0.28",
     "@typescript-eslint/eslint-plugin": "^5.29.0",
     "@typescript-eslint/parser": "^5.29.0",
+    "@vuepress/client": "^2.0.0-beta.48",
     "@vuepress/plugin-docsearch": "^2.0.0-beta.48",
     "@vuepress/plugin-google-analytics": "^2.0.0-beta.48",
     "@vuepress/plugin-register-components": "^2.0.0-beta.48",
@@ -148,7 +149,8 @@
     ]
   },
   "engines": {
-    "node": ">=12.22.0"
+    "node": ">=12.22.0",
+    "pnpm": ">=7"
   },
   "lint-staged": {
     "*.js": "eslint",

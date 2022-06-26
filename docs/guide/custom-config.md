@@ -271,7 +271,20 @@ module.exports = {
 - 类型: `string`
 - 默认值: `undefined`
 
-鉴权码。
+用于调用接口和登录的鉴权码。
+
+#### gateway.viewerToken
+
+> <Badge text="Gateway: v1.7.0" vertical="middle" />
+
+- 类型: `string`
+- 默认值: `undefined`
+
+专门用于调用以下接口的鉴权码：
+
+- `/get-artifact`
+- `/export-providers`
+- `/render`
 
 #### gateway.useCacheOnError
 

@@ -6,6 +6,8 @@ import _ from 'lodash';
 import { Environment } from 'nunjucks';
 import path from 'path';
 import { EventEmitter } from 'events';
+import { deprecate } from 'util';
+import { DEP009 } from '../misc/deprecation';
 
 import { getProvider } from '../provider';
 import {
@@ -66,6 +68,8 @@ import { loadLocalSnippet } from './template';
 
 type ThenArg<T> = T extends PromiseLike<infer U> ? U : T;
 
+const showDEP009 = deprecate(_.noop, DEP009, 'DEP009');
+
 export interface ArtifactOptions {
   readonly remoteSnippetList?: ReadonlyArray<RemoteSnippet>;
   readonly templateEngine?: Environment;
@@ -105,6 +109,10 @@ export class Artifact extends EventEmitter {
     assert(artifact.provider, '必须指定 artifact 的 provider 属性');
     if (!templateString) {
       assert(template, '必须指定 artifact 的 template 属性');
+    }
+
+    if (this.artifact.proxyGroupModifier) {
+      showDEP009();
     }
 
     const mainProviderName = artifact.provider;

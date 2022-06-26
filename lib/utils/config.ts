@@ -166,6 +166,12 @@ export const normalizeConfig = (
     redis.createRedis(config.cache.redisUrl);
   }
 
+  if (config.gateway) {
+    if (config.gateway.auth && !config.gateway.accessToken) {
+      throw new Error('请检查 gateway.accessToken 配置');
+    }
+  }
+
   return config;
 };
 
@@ -227,6 +233,7 @@ export const validateConfig = (userConfig: Partial<CommandConfig>): void => {
     analytics: Joi.boolean().strict(),
     gateway: Joi.object({
       accessToken: Joi.string(),
+      viewerToken: Joi.string(),
       auth: Joi.boolean().strict(),
       cookieMaxAge: Joi.number(),
       useCacheOnError: Joi.boolean().strict(),
