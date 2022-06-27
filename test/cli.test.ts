@@ -196,7 +196,6 @@ test.serial('new command', async (t) => {
     .fork(cli, ['new', '-h'], {
       cwd: resolve('plain'),
     })
-    .expect('code', 0)
     .end();
 
   t.is(code, 0);
@@ -207,7 +206,6 @@ test.serial('subscriptions command', async (t) => {
     .fork(cli, ['subscriptions', '-h'], {
       cwd: resolve('plain'),
     })
-    .expect('code', 0)
     .end();
 
   t.is(code, 0);
@@ -218,7 +216,6 @@ test.serial('check command', async (t) => {
     .fork(cli, ['check', 'custom'], {
       cwd: resolve('plain'),
     })
-    .expect('code', 0)
     // .debug()
     .end();
 

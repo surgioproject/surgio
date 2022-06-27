@@ -50,6 +50,7 @@ jobs:
 
       - name: test, report coverage
         run: |
+          pnpm build
           pnpm test:lint
           pnpm coverage
 

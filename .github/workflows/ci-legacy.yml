@@ -8,6 +8,9 @@ on:
     branches:
       - master
 
+env:
+  AVA_FORCE_CI: not-ci
+
 jobs:
   test:
 
@@ -18,18 +21,18 @@ jobs:
         node-version: [12]
 
     steps:
-      - uses: actions/checkout@v1
+      - uses: actions/checkout@v3
 
       - name: Use Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v1
+        uses: actions/setup-node@v3
         with:
           node-version: ${{ matrix.node-version }}
 
-      - name: yarn install, build
+      - name: Install dependencies
         run: |
-          yarn install
+          npm install
 
-      - name: test, report coverage
+      - name: Build and test
         run: |
-          yarn test:lint
-          yarn coverage
+          npm run build
+          npm run test
