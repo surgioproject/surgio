@@ -29,7 +29,7 @@
     "build": "run-s clean && tsc -p tsconfig.json",
     "prepublishOnly": "run-s build",
     "changelog": "conventional-changelog -p angular -i CHANGELOG.md -s -r 0",
-    "pub": "np",
+    "pub": "np --no-cleanup",
     "version": "npm run changelog && git add .",
     "prepare": "husky install",
     "docs:dev": "vuepress dev docs",
