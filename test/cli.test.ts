@@ -18,35 +18,34 @@ test.afterEach(async () => {
 });
 
 test.serial('doctor command', async (t) => {
-  await t.notThrowsAsync(async () => {
-    await coffee
-      .fork(cli, ['doctor'], {
-        cwd: resolve('plain'),
-      })
-      .expect('code', 0)
-      .end();
-  });
+  const { code } = await coffee
+    .fork(cli, ['doctor'], {
+      cwd: resolve('plain'),
+    })
+    .end();
+
+  t.is(code, 0);
 });
 
 test.serial('help command', async (t) => {
-  await t.notThrowsAsync(async () => {
-    await coffee
-      .fork(cli, ['generate', '-h'], {
-        cwd: resolve('plain'),
-      })
-      .expect('code', 0)
-      .end();
-  });
+  const { code } = await coffee
+    .fork(cli, ['generate', '-h'], {
+      cwd: resolve('plain'),
+    })
+    .end();
+
+  t.is(code, 0);
 });
 
 test.serial('cli works', async (t) => {
-  await coffee
+  const { code } = await coffee
     .fork(cli, ['generate'], {
       cwd: resolve('plain'),
       execArgv: ['--require', require.resolve('./stub-axios.js')],
     })
-    .expect('code', 0)
     .end();
+
+  t.is(code, 0);
 
   const confString1 = fs.readFileSync(resolve('plain/dist/ss_json.conf'), {
     encoding: 'utf8',
@@ -82,16 +81,15 @@ test.serial('cli works', async (t) => {
 });
 
 test.serial('--skip-fail should work', async (t) => {
-  await t.notThrowsAsync(async () => {
-    await coffee
-      .fork(cli, ['generate', '--skip-fail'], {
-        cwd: resolve('plain'),
-        execArgv: ['--require', require.resolve('./stub-axios.js')],
-      })
-      // .debug()
-      .expect('code', 0)
-      .end();
-  });
+  const { code } = await coffee
+    .fork(cli, ['generate', '--skip-fail'], {
+      cwd: resolve('plain'),
+      execArgv: ['--require', require.resolve('./stub-axios.js')],
+    })
+    // .debug()
+    .end();
+
+  t.is(code, 0);
 });
 
 test.serial('template error', async (t) => {
@@ -188,54 +186,51 @@ test.serial('custom filter', async (t) => {
     },
   );
 
+  t.is(code, 0);
   t.snapshot(confString1);
   t.snapshot(confString2);
 });
 
 test.serial('new command', async (t) => {
-  await coffee
+  const { code } = await coffee
     .fork(cli, ['new', '-h'], {
       cwd: resolve('plain'),
     })
-    .expect('code', 0)
     .end();
 
-  t.pass();
+  t.is(code, 0);
 });
 
 test.serial('subscriptions command', async (t) => {
-  await coffee
+  const { code } = await coffee
     .fork(cli, ['subscriptions', '-h'], {
       cwd: resolve('plain'),
     })
-    .expect('code', 0)
     .end();
 
-  t.pass();
+  t.is(code, 0);
 });
 
 test.serial('check command', async (t) => {
-  await coffee
+  const { code } = await coffee
     .fork(cli, ['check', 'custom'], {
       cwd: resolve('plain'),
     })
-    .expect('code', 0)
     // .debug()
     .end();
 
-  t.pass();
+  t.is(code, 0);
 });
 
 test.serial('v2ray tls options', async (t) => {
   process.env.TEST_TLS13_ENABLE = 'true';
   process.env.TEST_SKIP_CERT_VERIFY_ENABLE = 'true';
 
-  await coffee
+  const { code } = await coffee
     .fork(cli, ['generate'], {
       cwd: resolve('plain'),
       execArgv: ['--require', require.resolve('./stub-axios.js')],
     })
-    .expect('code', 0)
     .end();
 
   const confString1 = fs.readFileSync(resolve('plain/dist/v2rayn.conf'), {
@@ -245,6 +240,7 @@ test.serial('v2ray tls options', async (t) => {
     encoding: 'utf8',
   });
 
+  t.is(code, 0);
   t.snapshot(confString1);
   t.snapshot(confString2);
 

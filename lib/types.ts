@@ -64,6 +64,7 @@ export interface CommandConfig {
   };
   readonly gateway?: {
     readonly accessToken?: string;
+    readonly viewerToken?: string;
     readonly auth?: boolean;
     readonly cookieMaxAge?: number;
     readonly useCacheOnError?: boolean;

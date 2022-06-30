@@ -1,3 +1,12 @@
+# [2.20.0-0](https://github.com/geekdada/surgio/compare/v2.19.0...v2.20.0-0) (2022-06-29)
+
+
+### Features
+
+* 支持 viewerToken 的配置 ([d7a74da](https://github.com/geekdada/surgio/commit/d7a74dafe83eed1a4977fb8206e0c3001eb2fc62))
+
+
+
 # [2.19.0](https://github.com/geekdada/surgio/compare/v2.19.0-1...v2.19.0) (2022-06-12)
 
 

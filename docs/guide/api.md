@@ -21,6 +21,7 @@ module.exports = {
   gateway: {
     auth: true,
     accessToken: 'YOUR_PASSWORD',
+    viewerToken: 'ANOTHER_PASSWORD', // 可选
   },
 }
 ```
@@ -36,13 +37,17 @@ module.exports = {
 #### 未开启鉴权
 
 ```
-https://xxxxxx.xxx.now.sh/list-artifact
+https://example.com/get-artifact/surge.conf
 ```
 
 #### 开启鉴权
 
+假如你同时设置了 `accessToken` 和 `viewerToken`，则这两个鉴权码都可用于调用这篇文章中所述的接口。
+
+如果仅设置了 `accessToken`，那么请使用 `accessToken` 进行登录和调用所有接口。
+
 ```
-https://xxxxxx.xxx.now.sh/list-artifact?access_token=YOUR_PASSWORD
+https://example.com/get-artifact/surge.conf?access_token=YOUR_PASSWORD
 ```
 
 ## 面板

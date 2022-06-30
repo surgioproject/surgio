@@ -26,6 +26,16 @@ sidebarDepth: 1
 
 确保 `surgio` 升级至 `v2.17.0` 或以上; `@surgio/gateway` 升级至 `v1.5.0` 或以上。
 
+#### 开启接口鉴权
+
+:::warning 注意
+不建议关闭鉴权！
+:::
+
+请阅读 [这里](/guide/api.md#打开鉴权)。
+
+#### 增加平台配置
+
 在代码库根目录新建文件 `netlify.toml`，内容如下：
 
 ```toml
@@ -105,6 +115,18 @@ https://surgio-demo.netlify.app/get-artifact/
 :::
 
 ### 准备
+
+确保 `surgio` 升级至 `v2.17.0` 或以上; `@surgio/gateway` 升级至 `v1.5.0` 或以上。
+
+#### 开启接口鉴权
+
+:::warning 注意
+不建议关闭鉴权！
+:::
+
+请阅读 [这里](/guide/api.md#打开鉴权)。
+
+#### 增加平台配置
 
 在代码库的根目录新建文件 `Procfile`，内容如下：
 

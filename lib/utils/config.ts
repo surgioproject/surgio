@@ -25,6 +25,7 @@ export const loadConfig = (
 ): CommandConfig => {
   const absPath = path.resolve(cwd, configPath);
 
+  // istanbul ignore next
   if (!fs.existsSync(absPath)) {
     throw new Error(`配置文件 ${absPath} 不存在`);
   }
@@ -64,6 +65,7 @@ export const loadConfig = (
 };
 
 export const getConfig = () => {
+  // istanbul ignore next
   if (!finalConfig) {
     throw new Error('请先调用 loadConfig 方法');
   }
@@ -75,6 +77,7 @@ export const setConfig = <T extends keyof CommandConfig>(
   key: T,
   value: CommandConfig[T],
 ): CommandConfig => {
+  // istanbul ignore next
   if (!finalConfig) {
     throw new Error('请先调用 loadConfig 方法');
   }
@@ -158,12 +161,20 @@ export const normalizeConfig = (
     showDEP008();
   }
 
+  // istanbul ignore next
   if (config.cache && config.cache.type === 'redis') {
     if (!config.cache.redisUrl) {
       throw new Error('缓存配置错误，请检查 cache.redisUrl 配置');
     }
 
     redis.createRedis(config.cache.redisUrl);
+  }
+
+  // istanbul ignore next
+  if (config.gateway) {
+    if (config.gateway.auth && !config.gateway.accessToken) {
+      throw new Error('请检查 gateway.accessToken 配置');
+    }
   }
 
   return config;
@@ -227,6 +238,7 @@ export const validateConfig = (userConfig: Partial<CommandConfig>): void => {
     analytics: Joi.boolean().strict(),
     gateway: Joi.object({
       accessToken: Joi.string(),
+      viewerToken: Joi.string(),
       auth: Joi.boolean().strict(),
       cookieMaxAge: Joi.number(),
       useCacheOnError: Joi.boolean().strict(),
