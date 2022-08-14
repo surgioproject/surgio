@@ -125,12 +125,11 @@ export class Artifact extends EventEmitter {
     return this.initProgress === this.providerNameList.length;
   }
 
-  public getRenderContext(
-    extendRenderContext: ExtendableRenderContext = {},
-  ): any {
+  public getRenderContext(extendRenderContext: ExtendableRenderContext = {}) {
     const config = this.surgioConfig;
     const gatewayConfig = config.gateway;
-    const gatewayHasToken = !!gatewayConfig?.accessToken;
+    const gatewayToken =
+      gatewayConfig?.viewerToken || gatewayConfig?.accessToken;
     const { name: artifactName, customParams, downloadUrl } = this.artifact;
 
     const {
@@ -156,12 +155,7 @@ export class Artifact extends EventEmitter {
       proxyTestUrl: config.proxyTestUrl,
       downloadUrl: downloadUrl
         ? downloadUrl
-        : getDownloadUrl(
-            config.urlBase,
-            artifactName,
-            true,
-            gatewayHasToken ? gatewayConfig?.accessToken : undefined,
-          ),
+        : getDownloadUrl(config.urlBase, artifactName, true, gatewayToken),
       snippet: (filePath: string): RemoteSnippet => {
         return loadLocalSnippet(config.templateDir, filePath);
       },
@@ -173,18 +167,8 @@ export class Artifact extends EventEmitter {
       providerName: this.artifact.provider,
       artifactName,
       getDownloadUrl: (name: string) =>
-        getDownloadUrl(
-          config.urlBase,
-          name,
-          true,
-          gatewayHasToken ? gatewayConfig?.accessToken : undefined,
-        ),
-      getUrl: (p: string) =>
-        getUrl(
-          config.publicUrl,
-          p,
-          gatewayHasToken ? gatewayConfig?.accessToken : undefined,
-        ),
+        getDownloadUrl(config.urlBase, name, true, gatewayToken),
+      getUrl: (p: string) => getUrl(config.publicUrl, p, gatewayToken),
       getNodeNames,
       getClashNodeNames,
       getClashNodes,
