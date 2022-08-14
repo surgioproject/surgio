@@ -1,3 +1,12 @@
+## [2.20.1](https://github.com/geekdada/surgio/compare/v2.20.0...v2.20.1) (2022-08-14)
+
+
+### Bug Fixes
+
+* getDownloadUrl and getUrl doesn't use viewerToken first ([c574642](https://github.com/geekdada/surgio/commit/c574642d81c7f620550b76e5896ae1999330022e))
+
+
+
 # [2.20.0](https://github.com/geekdada/surgio/compare/v2.20.0-0...v2.20.0) (2022-06-30)
 
 
