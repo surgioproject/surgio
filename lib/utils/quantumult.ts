@@ -192,6 +192,10 @@ export const getQuantumultXNodes = function (
             // do nothing
           }
 
+          if (typeof nodeConfig.testUrl === 'string') {
+            config.push(`server_check_url=${nodeConfig['testUrl']}`);
+          }
+
           config.push(`tag=${nodeConfig.nodeName}`);
 
           // istanbul ignore next
@@ -250,6 +254,10 @@ export const getQuantumultXNodes = function (
             );
           }
 
+          if (typeof nodeConfig.testUrl === 'string') {
+            config.push(`server_check_url=${nodeConfig['testUrl']}`);
+          }
+
           config.push(`tag=${nodeConfig.nodeName}`);
 
           return `shadowsocks=${config.join(', ')}`;
@@ -265,6 +273,9 @@ export const getQuantumultXNodes = function (
             `obfs-host=${nodeConfig.obfsparam}`,
             ...(nodeConfig['udp-relay'] ? [`udp-relay=true`] : []),
             ...(nodeConfig.tfo ? [`fast-open=${nodeConfig.tfo}`] : []),
+            ...(typeof nodeConfig.testUrl === 'string'
+              ? [`server_check_url=${nodeConfig.testUrl}`]
+              : []),
             `tag=${nodeConfig.nodeName}`,
           ].join(', ');
 
@@ -285,6 +296,10 @@ export const getQuantumultXNodes = function (
               `tls-verification=${nodeConfig.skipCertVerify !== true}`,
               ...(nodeConfig.tls13 ? [`tls13=${nodeConfig.tls13}`] : []),
             );
+          }
+
+          if (typeof nodeConfig.testUrl === 'string') {
+            config.push(`server_check_url=${nodeConfig['testUrl']}`);
           }
 
           config.push(`tag=${nodeConfig.nodeName}`);
@@ -345,6 +360,10 @@ export const getQuantumultXNodes = function (
             if (nodeConfig.sni) {
               config.push(`tls-host=${nodeConfig.sni}`);
             }
+          }
+
+          if (typeof nodeConfig.testUrl === 'string') {
+            config.push(`server_check_url=${nodeConfig['testUrl']}`);
           }
 
           config.push(`tag=${nodeConfig.nodeName}`);
