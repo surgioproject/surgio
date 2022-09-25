@@ -105,8 +105,7 @@ export const getQuantumultNodes = function (
         // istanbul ignore next
         default:
           logger.warn(
-            `不支持为 Quantumult 生成 ${
-              (nodeConfig as any).type
+            `不支持为 Quantumult 生成 ${(nodeConfig as any).type
             } 的节点，节点 ${(nodeConfig as any).nodeName} 会被省略`,
           );
           return void 0;
@@ -192,6 +191,10 @@ export const getQuantumultXNodes = function (
             // do nothing
           }
 
+          if (typeof nodeConfig.testUrl === 'string') {
+            config.push(`server_check_url=${nodeConfig['testUrl']}`);
+          }
+
           config.push(`tag=${nodeConfig.nodeName}`);
 
           // istanbul ignore next
@@ -213,16 +216,16 @@ export const getQuantumultXNodes = function (
             ...pickAndFormatStringList(nodeConfig, ['method', 'password']),
             ...(nodeConfig.obfs && ['http', 'tls'].includes(nodeConfig.obfs)
               ? [
-                  `obfs=${nodeConfig.obfs}`,
-                  `obfs-host=${nodeConfig['obfs-host']}`,
-                ]
+                `obfs=${nodeConfig.obfs}`,
+                `obfs-host=${nodeConfig['obfs-host']}`,
+              ]
               : []),
             ...(nodeConfig.obfs && ['ws', 'wss'].includes(nodeConfig.obfs)
               ? [
-                  `obfs=${nodeConfig.obfs}`,
-                  `obfs-host=${nodeConfig['obfs-host'] || nodeConfig.hostname}`,
-                  `obfs-uri=${nodeConfig['obfs-uri'] || '/'}`,
-                ]
+                `obfs=${nodeConfig.obfs}`,
+                `obfs-host=${nodeConfig['obfs-host'] || nodeConfig.hostname}`,
+                `obfs-uri=${nodeConfig['obfs-uri'] || '/'}`,
+              ]
               : []),
             ...(nodeConfig['udp-relay'] ? [`udp-relay=true`] : []),
             ...(nodeConfig.tfo ? [`fast-open=${nodeConfig.tfo}`] : []),
@@ -250,6 +253,10 @@ export const getQuantumultXNodes = function (
             );
           }
 
+          if (typeof nodeConfig.testUrl === 'string') {
+            config.push(`server_check_url=${nodeConfig['testUrl']}`);
+          }
+
           config.push(`tag=${nodeConfig.nodeName}`);
 
           return `shadowsocks=${config.join(', ')}`;
@@ -265,6 +272,9 @@ export const getQuantumultXNodes = function (
             `obfs-host=${nodeConfig.obfsparam}`,
             ...(nodeConfig['udp-relay'] ? [`udp-relay=true`] : []),
             ...(nodeConfig.tfo ? [`fast-open=${nodeConfig.tfo}`] : []),
+            ...(typeof nodeConfig.testUrl === 'string'
+              ? [`server_check_url=${nodeConfig.testUrl}`]
+              : []),
             `tag=${nodeConfig.nodeName}`,
           ].join(', ');
 
@@ -285,6 +295,10 @@ export const getQuantumultXNodes = function (
               `tls-verification=${nodeConfig.skipCertVerify !== true}`,
               ...(nodeConfig.tls13 ? [`tls13=${nodeConfig.tls13}`] : []),
             );
+          }
+
+          if (typeof nodeConfig.testUrl === 'string') {
+            config.push(`server_check_url=${nodeConfig['testUrl']}`);
           }
 
           config.push(`tag=${nodeConfig.nodeName}`);
@@ -347,6 +361,10 @@ export const getQuantumultXNodes = function (
             }
           }
 
+          if (typeof nodeConfig.testUrl === 'string') {
+            config.push(`server_check_url=${nodeConfig['testUrl']}`);
+          }
+
           config.push(`tag=${nodeConfig.nodeName}`);
 
           return `trojan=${config.join(', ')}`;
@@ -355,8 +373,7 @@ export const getQuantumultXNodes = function (
         // istanbul ignore next
         default:
           logger.warn(
-            `不支持为 QuantumultX 生成 ${
-              (nodeConfig as any).type
+            `不支持为 QuantumultX 生成 ${(nodeConfig as any).type
             } 的节点，节点 ${(nodeConfig as any).nodeName} 会被省略`,
           );
           return void 0;
