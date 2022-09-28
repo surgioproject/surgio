@@ -386,4 +386,102 @@ test('getQuantumultXNodes', (t) => {
     ]),
     'trojan=example.com:443, password=password1, tls-verification=false, fast-open=true, udp-relay=true, tls13=true, obfs=wss, obfs-uri=/ws, obfs-host=sni.example.com, tag=trojan',
   );
+
+  t.is(
+    quantumult.getQuantumultXNodes([
+      {
+        type: NodeTypeEnum.Trojan,
+        nodeName: 'trojan',
+        hostname: 'example.com',
+        port: 443,
+        password: 'password1',
+        sni: 'sni.example.com',
+        'udp-relay': true,
+        skipCertVerify: true,
+        tfo: true,
+        tls13: true,
+        network: 'ws',
+        wsPath: '/ws',
+        wsHeaders: {
+          host: 'example.com',
+          'multi words key': 'multi words value',
+        },
+        testUrl: 'http://example.com',
+      },
+    ]),
+    'trojan=example.com:443, password=password1, tls-verification=false, fast-open=true, udp-relay=true, tls13=true, obfs=wss, obfs-uri=/ws, obfs-host=sni.example.com, server_check_url=http://example.com, tag=trojan',
+  );
+
+  t.is(
+    quantumult.getQuantumultXNodes([
+      {
+        type: NodeTypeEnum.Vmess,
+        alterId: '64',
+        hostname: '1.1.1.1',
+        method: 'auto',
+        network: 'tcp',
+        nodeName: '测试',
+        port: 443,
+        tls: true,
+        tls13: true,
+        'udp-relay': true,
+        uuid: '1386f85e-657b-4d6e-9d56-78badb75e1fd',
+        quantumultXConfig: {
+          vmessAEAD: true,
+        },
+        testUrl: 'http://example.com',
+      },
+    ]),
+    'vmess=1.1.1.1:443, method=chacha20-ietf-poly1305, password=1386f85e-657b-4d6e-9d56-78badb75e1fd, udp-relay=true, aead=true, obfs=over-tls, tls-verification=true, tls13=true, server_check_url=http://example.com, tag=测试',
+  );
+  t.is(
+    quantumult.getQuantumultXNodes([
+      {
+        type: NodeTypeEnum.HTTPS,
+        nodeName: 'test',
+        hostname: 'a.com',
+        port: 443,
+        tls13: true,
+        username: 'snsms',
+        password: 'nndndnd',
+        testUrl: 'http://example.com',
+      },
+    ]),
+    'http=a.com:443, username=snsms, password=nndndnd, over-tls=true, tls-verification=true, tls13=true, server_check_url=http://example.com, tag=test',
+  );
+  t.is(
+    quantumult.getQuantumultXNodes([
+      {
+        nodeName: '🇺🇸US 1',
+        type: NodeTypeEnum.Shadowsocks,
+        hostname: 'us.example.com',
+        port: 443,
+        method: 'chacha20-ietf-poly1305',
+        password: 'password',
+        'udp-relay': true,
+        obfs: 'tls',
+        'obfs-host': 'gateway-carry.icloud.com',
+        testUrl: 'http://example.com',
+      },
+    ]),
+    'shadowsocks=us.example.com:443, method=chacha20-ietf-poly1305, password=password, obfs=tls, obfs-host=gateway-carry.icloud.com, udp-relay=true, server_check_url=http://example.com, tag=🇺🇸US 1',
+  );
+  t.is(
+    quantumult.getQuantumultXNodes([
+      {
+        type: NodeTypeEnum.Shadowsocksr,
+        nodeName: '🇭🇰HK',
+        hostname: 'hk.example.com',
+        port: 10000,
+        method: 'chacha20-ietf',
+        password: 'password',
+        obfs: 'tls1.2_ticket_auth',
+        obfsparam: 'music.163.com',
+        protocol: 'auth_aes128_md5',
+        protoparam: '',
+        testUrl: 'http://example.com',
+      },
+    ]),
+    'shadowsocks=hk.example.com:10000, method=chacha20-ietf, password=password, ssr-protocol=auth_aes128_md5, ssr-protocol-param=, obfs=tls1.2_ticket_auth, obfs-host=music.163.com, server_check_url=http://example.com, tag=🇭🇰HK',
+  );
 });
