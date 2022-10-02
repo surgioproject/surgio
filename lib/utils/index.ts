@@ -29,6 +29,7 @@ import { validateFilter, applyFilter } from './filter';
 import { formatVmessUri } from './v2ray';
 
 export * from './surge';
+export * from './surfboard';
 export * from './clash';
 export * from './quantumult';
 

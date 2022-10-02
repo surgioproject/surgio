@@ -117,6 +117,9 @@ export const normalizeConfig = (
     quantumultXConfig: {
       vmessAEAD: true,
     },
+    surfboardConfig: {
+      vmessAEAD: true,
+    },
     proxyTestUrl: PROXY_TEST_URL,
     proxyTestInterval: PROXY_TEST_INTERVAL,
     checkHostname: false,
@@ -227,6 +230,9 @@ export const validateConfig = (userConfig: Partial<CommandConfig>): void => {
       shadowsocksFormat: Joi.string().valid('ss', 'custom'),
       v2ray: Joi.string().valid('native', 'external'),
       resolveHostname: Joi.boolean().strict(),
+      vmessAEAD: Joi.boolean().strict(),
+    }).unknown(),
+    surfboardConfig: Joi.object({
       vmessAEAD: Joi.boolean().strict(),
     }).unknown(),
     quantumultXConfig: Joi.object({

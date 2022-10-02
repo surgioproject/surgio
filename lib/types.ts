@@ -62,6 +62,9 @@ export interface CommandConfig {
   readonly clashConfig?: {
     readonly ssrFormat: 'native' | 'legacy';
   };
+  readonly surfboardConfig?: {
+    readonly vmessAEAD?: boolean;
+  };
   readonly gateway?: {
     readonly accessToken?: string;
     readonly viewerToken?: string;
@@ -291,6 +294,7 @@ export interface SimpleNodeConfig {
   surgeConfig?: CommandConfig['surgeConfig'];
   clashConfig?: CommandConfig['clashConfig'];
   quantumultXConfig?: CommandConfig['quantumultXConfig'];
+  surfboardConfig?: CommandConfig['surfboardConfig'];
   hostnameIp?: ReadonlyArray<string>;
   provider?: Provider;
   underlyingProxy?: string;
