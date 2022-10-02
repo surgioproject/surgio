@@ -13,6 +13,7 @@ import {
   QUANTUMULT_X_SUPPORTED_RULE,
   CLASH_SUPPORTED_RULE,
   LOON_SUPPORTED_RULE,
+  SURFBOARD_SUPPORTED_RULE,
 } from '../constant';
 import { addProxyToSurgeRuleSet } from '../utils/remote-snippet';
 
@@ -154,6 +155,36 @@ export function getEngine(templateDir: string): nunjucks.Environment {
         if (matched && LOON_SUPPORTED_RULE.some((s) => matched[1] === s)) {
           // 过滤出支持的规则类型
           return `${item}`.replace(/\/\/.*$/, '').trim();
+        }
+
+        return null;
+      })
+      .filter((item) => !!item)
+      .join('\n');
+  });
+
+  engine.addFilter('surfboard', (str?: string): string => {
+    // istanbul ignore next
+    if (!str) {
+      return '';
+    }
+
+    const array = str.split('\n');
+
+    return array
+      .map((item) => {
+        const testString: string =
+          !!item && item.trim() !== '' ? item.toUpperCase() : '';
+
+        if (testString.startsWith('#') || testString === '') {
+          return item;
+        }
+
+        const matched = testString.match(/^([\w-]+),/);
+
+        if (matched && SURFBOARD_SUPPORTED_RULE.some((s) => matched[1] === s)) {
+          // 过滤出支持的规则类型
+          return item.trim();
         }
 
         return null;

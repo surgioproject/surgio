@@ -62,6 +62,20 @@ export const MELLOW_UNSUPPORTED_RULE: ReadonlyArray<string> = [
   'RULE-SET',
 ];
 
+// @see https://getsurfboard.com/docs/profile-format/rule/
+export const SURFBOARD_SUPPORTED_RULE: ReadonlyArray<string> = [
+  'DOMAIN-SUFFIX',
+  'DOMAIN',
+  'DOMAIN-KEYWORD',
+  'IP-CIDR',
+  'IP-CIDR6',
+  'GEOIP',
+  'FINAL',
+  'PROCESS-NAME',
+  'RULE-SET',
+  'DOMAIN-SET',
+];
+
 export const CATEGORIES = {
   SNIPPET: 'Snippet',
   SURGE: 'Surge',
@@ -71,6 +85,7 @@ export const CATEGORIES = {
   QUANTUMULT_X_REWRITE: 'Quantumult X Rewrite',
   CLASH: 'Clash',
   LOON: 'Loon',
+  SURFBOARD: 'Surfboard',
 };
 
 export const RELAY_SERVICE = 'https://surgio-cors.herokuapp.com/';
