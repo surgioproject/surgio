@@ -1,3 +1,12 @@
+# [2.21.0](https://github.com/geekdada/surgio/compare/v2.20.1...v2.21.0) (2022-10-03)
+
+
+### Features
+
+* support QuantumultX server_check_url ([0919d00](https://github.com/geekdada/surgio/commit/0919d0045604910a069b3482168394d9a140ce46))
+
+
+
 ## [2.20.1](https://github.com/geekdada/surgio/compare/v2.20.0...v2.20.1) (2022-08-14)
 
 
