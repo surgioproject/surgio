@@ -95,6 +95,8 @@ module.exports = {
 - `categories.QUANTUMULT_X_FILTER` - Remote Filter 片段
 - `categories.QUANTUMULT_X_REWRITE` - Remote Rewrite 片段
 - `categories.CLASH` - 完整 Clash 配置
+- `categories.LOON` - 完整 Loon 配置
+- `categories.SURFBOARD` - 完整 Surfboard 配置
 
 ## 接口
 

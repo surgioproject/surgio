@@ -31,6 +31,7 @@ import {
   getShadowsocksNodesJSON,
   getShadowsocksrNodes,
   getSurgeNodes,
+  getSurfboardNodes,
   getUrl,
   getV2rayNNodes,
   isIp,
@@ -173,6 +174,7 @@ export class Artifact extends EventEmitter {
       getClashNodeNames,
       getClashNodes,
       getSurgeNodes,
+      getSurfboardNodes,
       getShadowsocksNodes,
       getShadowsocksNodesJSON,
       getShadowsocksrNodes,
@@ -397,6 +399,7 @@ export class Artifact extends EventEmitter {
           nodeConfig.surgeConfig = config.surgeConfig;
           nodeConfig.clashConfig = config.clashConfig;
           nodeConfig.quantumultXConfig = config.quantumultXConfig;
+          nodeConfig.surfboardConfig = config.surfboardConfig;
 
           if (provider.renameNode) {
             const newName = provider.renameNode(nodeConfig.nodeName);

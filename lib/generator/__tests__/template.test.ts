@@ -217,6 +217,75 @@ test('loon filter 3', (t) => {
   t.is(result, '');
 });
 
+test('surfboard filter 1', (t) => {
+  const body = `{{ str | surfboard }}`;
+  const str = `# Comment`;
+  const result = templateEngine.renderString(body, {
+    str,
+  });
+
+  t.is(result, '# Comment');
+});
+
+test('surfboard filter 2', (t) => {
+  const body = `{{ str | surfboard }}`;
+  const str = [
+    'IP-CIDR,67.198.55.0/24,Proxy,no-resolve // test rule',
+    'DOMAIN,example.com,Proxy,force-remote-dns',
+  ].join('\n');
+  const result = templateEngine.renderString(body, {
+    str,
+  });
+
+  t.is(
+    result,
+    [
+      'IP-CIDR,67.198.55.0/24,Proxy,no-resolve // test rule',
+      'DOMAIN,example.com,Proxy,force-remote-dns',
+    ].join('\n'),
+  );
+});
+
+test('surfboard filter 3', (t) => {
+  const body = `{{ str | surfboard }}`;
+  const str = `IP-CIDR6,xxxxxxxxxxxx`;
+  const result = templateEngine.renderString(body, {
+    str,
+  });
+
+  t.is(result, 'IP-CIDR6,xxxxxxxxxxxx');
+});
+
+test('surfboard filter 4', (t) => {
+  const body = `{{ str | surfboard }}`;
+  const str = `PROCESS-NAME,Telegram,Proxy,no-resolve // test rule`;
+  const result = templateEngine.renderString(body, {
+    str,
+  });
+
+  t.is(result, 'PROCESS-NAME,Telegram,Proxy,no-resolve // test rule');
+});
+
+test('surfboard filter 5', (t) => {
+  const body = `{{ str | surfboard }}`;
+  const str = `RULE-SET,http://example.com/rule-set,DIRECT`;
+  const result = templateEngine.renderString(body, {
+    str,
+  });
+
+  t.is(result, 'RULE-SET,http://example.com/rule-set,DIRECT');
+});
+
+test('surfboard filter 6', (t) => {
+  const body = `{{ str | surfboard }}`;
+  const str = `URL-REGEX,xxxxxxxxxxxx`;
+  const result = templateEngine.renderString(body, {
+    str,
+  });
+
+  t.is(result, '');
+});
+
 test('spaces in string', (t) => {
   const str = `    `;
 

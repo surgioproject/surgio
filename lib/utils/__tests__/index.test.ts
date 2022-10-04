@@ -502,6 +502,13 @@ test('output api should fail with invalid filter', (t) => {
   );
   t.throws(
     () => {
+      utils.getSurfboardNodes([], undefined);
+    },
+    undefined,
+    ERR_INVALID_FILTER,
+  );
+  t.throws(
+    () => {
       utils.getClashNodes([], undefined);
     },
     undefined,

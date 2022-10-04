@@ -1,6 +1,9 @@
 getSurgeNodes
 {{ getSurgeNodes(nodeList) }}
 ----
+getSurfboardNodes
+{{ getSurfboardNodes(nodeList) }}
+----
 getNodeNames
 {{ getNodeNames(nodeList) }}
 ----
