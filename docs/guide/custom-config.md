@@ -252,6 +252,25 @@ module.exports = {
 
 如果你还在使用 ClashR，则需要使用 legacy 的方式输出 Clash 配置。
 
+### surfboardConfig
+
+- 类型: `object`
+- 默认值: `undefined`
+
+```js
+// surgio.conf.js
+module.exports = {
+  surfboardConfig: {},
+};
+```
+
+#### surfboardConfig.vmessAEAD
+
+- 类型: `boolean`
+- 默认值: `true`
+
+默认开启 Vmess AEAD 加密，如果您的服务器不支持 AEAD 加密，请关闭。
+
 ### gateway
 
 - 类型: `object`

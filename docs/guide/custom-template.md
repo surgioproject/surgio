@@ -337,6 +337,24 @@ Proxy-2, vmess1, vmess1://75da2e14-4d08-480b-b3cb-0079a0c51275@example.com:10025
 {{ getLoonNodes(nodeList) }}
 ```
 
+### getSurfboardNodes
+
+`getSurfboardNodes(nodeList, filter?)`
+
+:::tip 提示
+- `filter` 为可选参数，可传入标准的过滤器或自定义的过滤器
+- 支持输出 Shadowsocks, HTTPS, HTTP, Vmess, Trojan 节点
+:::
+
+使用时请参考 [官方文档](https://getsurfboard.com/docs/profile-format/overview)
+
+示例：
+
+```
+[Proxy]
+{{ getSurfboardNodes(nodeList) }}
+```
+
 ### getNodeNames
 
 `getNodeNames(nodeList, filter?, separator?)`
@@ -593,4 +611,15 @@ Surgio 不会处理类似 `[rewrite_local]` 这样的标题，所以请 **不要
 {% import './snippet/blocked_rules.tpl' as blocked_rules %}
 
 {{ blocked_rules.main('🚀 Proxy') | loon }}
+```
+
+### Surfboard 规则处理
+
+处理后的规则仅包含 [这里](https://getsurfboard.com/docs/profile-format/rule/) 列出的几种规则类型。
+
+```html
+<!-- .tpl 文件 -->
+{% import './snippet/blocked_rules.tpl' as blocked_rules %}
+
+{{ blocked_rules.main('🚀 Proxy') | surfboard }}
 ```
