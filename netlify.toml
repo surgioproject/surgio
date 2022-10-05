@@ -1,6 +1,0 @@
-[build]
-    publish = "docs/.vuepress/dist"
-    command = "./scripts/prepare_netlify.sh && pnpm docs:build"
-
-[build.environment]
-    NPM_FLAGS = "--prefix=/dev/null"
