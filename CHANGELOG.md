@@ -1,5 +1,14 @@
+## <small>2.22.1 (2022-10-05)</small>
+
+* revert: revert netlify setup ([c0c7d8a](https://github.com/geekdada/surgio/commit/c0c7d8a))
+* chore: fix netlify build ([a848637](https://github.com/geekdada/surgio/commit/a848637))
+* chore: upgrade deps ([95ff2ca](https://github.com/geekdada/surgio/commit/95ff2ca))
+
+
+
 ## 2.22.0 (2022-10-04)
 
+* 2.22.0 ([47b3d6e](https://github.com/geekdada/surgio/commit/47b3d6e))
 * fix: vuepress ([03acecf](https://github.com/geekdada/surgio/commit/03acecf))
 * docs: update ([1a154be](https://github.com/geekdada/surgio/commit/1a154be))
 * feat: support getSurfboardNodes and surfboard vmess aead config ([4099f98](https://github.com/geekdada/surgio/commit/4099f98))
