@@ -339,6 +339,8 @@ Proxy-2, vmess1, vmess1://75da2e14-4d08-480b-b3cb-0079a0c51275@example.com:10025
 
 ### getSurfboardNodes
 
+> <Badge text="v2.22.1" vertical="middle" />
+
 `getSurfboardNodes(nodeList, filter?)`
 
 :::tip 提示

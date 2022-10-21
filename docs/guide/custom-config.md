@@ -240,6 +240,7 @@ module.exports = {
 module.exports = {
   clashConfig: {
     ssrFormat: 'native', // or 'legacy'
+    enableTuic: false,
   },
 };
 ```
@@ -251,6 +252,15 @@ module.exports = {
 - 可选值: `native|legacy`
 
 如果你还在使用 ClashR，则需要使用 legacy 的方式输出 Clash 配置。
+
+#### clashConfig.enableTuic
+
+> <Badge text="v2.23.0" vertical="middle" />
+
+- 类型: `boolean`
+- 默认值: `false`
+
+目前仅 Stash 支持 Tuic，如果你希望在 Clash 节点中输出 Tuic 请开启此项。
 
 ### surfboardConfig
 

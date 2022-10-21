@@ -34,8 +34,8 @@ module.exports = getProvider;
 
 |                       类型                       | 描述                               | 备注                                                                                                                       |
 |:----------------------------------------------:|----------------------------------|--------------------------------------------------------------------------------------------------------------------------|
-| `custom` <Badge text="推荐" vertical="middle" /> | 自己维护的节点                          | 支持 Shadowsocks, Shadowsocksr, Snell, HTTPS, HTTP, Vmess, Socks5                                                          |
-| `clash` <Badge text="推荐" vertical="middle" />  | Clash 配置                         | 支持 Shadowsocks, Shadowsocksr, Snell, HTTPS, HTTP, Vmess                                                                  |
+| `custom` <Badge text="推荐" vertical="middle" /> | 自己维护的节点                          | 支持 Shadowsocks, Shadowsocksr, Snell, HTTPS, HTTP, Vmess, Socks5, Tuic                                                          |
+| `clash` <Badge text="推荐" vertical="middle" />  | Clash 配置                         | 支持 Shadowsocks, Shadowsocksr, Snell, HTTPS, HTTP, Vmess, Socks5, Tuic                                                                  |
 |                    `trojan`                    | Trojan 订阅                        | Shadowrocket 支持的 Trojan 订阅格式                                                                                             |
 |          `shadowsocks_json_subscribe`          | 针对 Windows 客户端的 Shadowsocks 订阅地址 | 通常命名为 *gui-config.json*                                                                                                  |
 |            `shadowsocks_subscribe`             | 通用的 Shadowsocks 订阅地址             |                                                                                                                          |
@@ -261,7 +261,7 @@ module.exports = {
 
 不同的类型的节点 `NodeConfig` 结构有一些不同，下面是所有支持的节点类型：
 
-*Shadowsocks*
+#### *Shadowsocks*
 
 ```json5
 {
@@ -286,7 +286,7 @@ module.exports = {
 2. TLS 1.3 需要服务端支持
 :::
 
-*Shadowsocksr*
+#### *Shadowsocksr*
 
 ```json5
 {
@@ -305,7 +305,7 @@ module.exports = {
 }
 ```
 
-*Vmess*
+#### *Vmess*
 
 ```json5
 {
@@ -329,7 +329,7 @@ module.exports = {
 }
 ```
 
-*Snell*
+#### *Snell*
 
 ```json5
 {
@@ -343,7 +343,7 @@ module.exports = {
 }
 ```
 
-*HTTPS*
+#### *HTTPS*
 
 ```json5
 {
@@ -357,7 +357,7 @@ module.exports = {
 }
 ```
 
-*HTTP*
+#### *HTTP*
 
 ```json5
 {
@@ -370,7 +370,7 @@ module.exports = {
 }
 ```
 
-*Trojan*
+#### *Trojan*
 
 ```json5
 {
@@ -390,7 +390,7 @@ module.exports = {
 }
 ```
 
-*Socks5*
+#### *Socks5*
 
 ```json5
 {
@@ -405,7 +405,27 @@ module.exports = {
   'udp-relay': false, // 可选, 仅 Clash 支持
   sni: 'example.com', // 可选, 仅 Surge 支持
   tfo: true, // 可选, 仅 Surge 支持
-  clientCert: 'item' // 可选, 仅 Surge 支持, 参考 https://github.com/Blankwonder/Surge-Manual/blob/master/release-note/surge-mac.md#version-250
+  clientCert: 'item' // 可选, 仅 Surge 支持
+}
+```
+
+`clientCert` 仅 Surge 支持, 参考 [文档](https://github.com/Blankwonder/Surge-Manual/blob/master/release-note/surge-mac.md#version-250) 进行配置。
+
+#### *Tuic*
+
+> <Badge text="v2.23.0" vertical="middle" />
+
+```json5
+{
+  type: 'tuic',
+  nodeName: 'Tuic',
+  hostname: 'tuic.example.com',
+  port: 443,
+  token: 'password',
+  sni: 'sni.example.com', // 可选
+  skipCertVerify: true, // 可选
+  alps: ['h3'], // 可选，Stash 不支持空值
+  'udp-relay': false, // 可选, 仅 Clash 支持更改，Surge 默认开启
 }
 ```
 
