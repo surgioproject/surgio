@@ -3,6 +3,7 @@ import ms from 'ms';
 import {
   ENV_NETWORK_RESOLVE_TIMEOUT,
   ENV_NETWORK_TIMEOUT_KEY,
+  ENV_SURGIO_GFW_FREE,
   ENV_SURGIO_NETWORK_CLASH_UA,
   ENV_SURGIO_NETWORK_CONCURRENCY,
   ENV_SURGIO_NETWORK_RETRY,
@@ -42,3 +43,6 @@ export const getProviderCacheMaxage = (): number =>
   process.env[ENV_SURGIO_PROVIDER_CACHE_MAXAGE]
     ? Number(process.env[ENV_SURGIO_PROVIDER_CACHE_MAXAGE])
     : ms('10m');
+
+export const getIsGFWFree = (): boolean =>
+  typeof process.env[ENV_SURGIO_GFW_FREE] !== 'undefined';

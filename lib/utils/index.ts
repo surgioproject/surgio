@@ -25,6 +25,7 @@ import {
   VmessNodeConfig,
 } from '../types';
 import { ERR_INVALID_FILTER, OBFS_UA } from '../constant';
+import { getIsGFWFree } from './env-flag';
 import { validateFilter, applyFilter } from './filter';
 import { formatVmessUri } from './v2ray';
 
@@ -627,11 +628,18 @@ export const isAWS = (): boolean =>
   typeof process.env.AWS_EXECUTION_ENV !== 'undefined' ||
   typeof process.env.AWS_REGION !== 'undefined';
 
+// istanbul ignore next
+export const isFlyIO = (): boolean =>
+  typeof process.env.FLY_REGION !== 'undefined';
+
 export const isGFWFree = (): boolean =>
+  getIsGFWFree() ||
   isAWS() ||
+  isAWSLambda() ||
   isVercel() ||
   isHeroku() ||
   isGitHubActions() ||
   isGitLabCI() ||
   isRailway() ||
-  isNetlify();
+  isNetlify() ||
+  isFlyIO();

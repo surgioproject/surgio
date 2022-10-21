@@ -13,6 +13,8 @@ import { transports } from '@surgio/logger';
 import {
   isAWS,
   isAWSLambda,
+  isFlyIO,
+  isGFWFree,
   isGitHubActions,
   isGitLabCI,
   isHeroku,
@@ -29,14 +31,7 @@ import { CATEGORIES } from './constant';
 import redis from './redis';
 
 // istanbul ignore next
-if (
-  !isNow() &&
-  !isHeroku() &&
-  !isGitHubActions() &&
-  !isGitLabCI() &&
-  !isRailway() &&
-  !isNetlify()
-) {
+if (!isGFWFree()) {
   // Global proxy
   bootstrap();
 }
@@ -82,6 +77,7 @@ export const utils = {
   isRailway,
   isNetlify,
   isAWS,
+  isFlyIO,
   isAWSLambda,
 };
 

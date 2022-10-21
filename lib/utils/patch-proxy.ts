@@ -1,6 +1,7 @@
 // istanbul ignore file
 
 import { createLogger } from '@surgio/logger';
+
 import { isGFWFree } from './';
 
 const logger = createLogger({ service: 'surgio:utils:patch-proxy' });

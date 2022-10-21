@@ -226,7 +226,7 @@ export const getClashNodes = function (
             );
             return null;
           }
-          if (!nodeConfig.alpn || !nodeConfig.alpn.length) {
+          if (nodeConfig.alpn && !nodeConfig.alpn.length) {
             logger.warn(
               `节点 ${nodeConfig.nodeName} 的 alpn 为空。Stash 客户端不支持 ALPN 为空，默认的 ALPN 为 h3。`,
             );
