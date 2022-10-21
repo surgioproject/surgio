@@ -515,4 +515,65 @@ test('getClashNodes', async (t) => {
       },
     ],
   );
+
+  t.deepEqual(
+    clash.getClashNodes([
+      {
+        nodeName: 'tuic',
+        type: NodeTypeEnum.Tuic,
+        hostname: '1.1.1.1',
+        port: 443,
+        token: 'password',
+      },
+    ]),
+    [],
+  );
+
+  t.deepEqual(
+    clash.getClashNodes([
+      {
+        nodeName: 'tuic',
+        type: NodeTypeEnum.Tuic,
+        clashConfig: {
+          enableTuic: true,
+        },
+        hostname: '1.1.1.1',
+        port: 443,
+        token: 'password',
+      },
+      {
+        nodeName: 'tuic',
+        type: NodeTypeEnum.Tuic,
+        clashConfig: {
+          enableTuic: true,
+        },
+        hostname: '1.1.1.1',
+        port: 443,
+        token: 'password',
+        'udp-relay': false,
+        skipCertVerify: true,
+        alpn: ['h3'],
+      },
+    ]),
+    [
+      {
+        type: 'tuic',
+        name: 'tuic',
+        server: '1.1.1.1',
+        port: 443,
+        token: 'password',
+        'skip-cert-verify': false,
+      },
+      {
+        type: 'tuic',
+        name: 'tuic',
+        server: '1.1.1.1',
+        port: 443,
+        token: 'password',
+        'skip-cert-verify': true,
+        udp: false,
+        alpn: ['h3'],
+      },
+    ],
+  );
 });

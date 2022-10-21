@@ -413,7 +413,7 @@ export const generateClashProxyGroup = (
 export const toYaml = (obj: JsonObject): string => YAML.stringify(obj);
 
 export const pickAndFormatStringList = (
-  obj: any,
+  obj: Record<string, any>,
   keyList: readonly string[],
 ): readonly string[] => {
   const result: string[] = [];

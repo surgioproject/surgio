@@ -23,6 +23,9 @@ export default class CustomProvider extends Provider {
       binPath: Joi.string(),
       localPort: Joi.number(),
       underlyingProxy: Joi.string(),
+      skipCertVerify: Joi.boolean().strict(),
+      sni: Joi.string(),
+      alpn: Joi.array().items(Joi.string()),
     }).unknown();
     const schema = Joi.object({
       nodeList: Joi.array().items(nodeSchema).required(),

@@ -200,7 +200,7 @@ export const getClashNodes = function (
               : null),
           };
 
-        case NodeTypeEnum.Socks5: {
+        case NodeTypeEnum.Socks5:
           return {
             type: 'socks5',
             name: nodeConfig.nodeName,
@@ -218,7 +218,33 @@ export const getClashNodes = function (
               ? { udp: nodeConfig.udpRelay }
               : null),
           };
-        }
+
+        case NodeTypeEnum.Tuic:
+          if (!nodeConfig.clashConfig?.enableTuic) {
+            logger.warn(
+              `默认不为 Clash 生成 Tuic 节点，节点 ${nodeConfig.nodeName} 会被省略。如需开启，请在配置文件中设置 clashConfig.enableTuic 为 true。`,
+            );
+            return null;
+          }
+          if (!nodeConfig.alpn || !nodeConfig.alpn.length) {
+            logger.warn(
+              `节点 ${nodeConfig.nodeName} 的 alpn 为空。Stash 客户端不支持 ALPN 为空，默认的 ALPN 为 h3。`,
+            );
+          }
+
+          return {
+            type: 'tuic',
+            name: nodeConfig.nodeName,
+            server: nodeConfig.hostname,
+            port: nodeConfig.port,
+            token: nodeConfig.token,
+            ...(typeof nodeConfig['udp-relay'] === 'boolean'
+              ? { udp: nodeConfig['udp-relay'] }
+              : null),
+            ...(nodeConfig.alpn ? { alpn: nodeConfig.alpn } : null),
+            ...(nodeConfig.sni ? { sni: nodeConfig.sni } : null),
+            'skip-cert-verify': nodeConfig.skipCertVerify === true,
+          };
 
         // istanbul ignore next
         default:

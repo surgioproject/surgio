@@ -9,6 +9,7 @@ export enum NodeTypeEnum {
   Vmess = 'vmess',
   Trojan = 'trojan',
   Socks5 = 'socks5',
+  Tuic = 'tuic',
 }
 
 export enum SupportProviderEnum {
@@ -60,7 +61,8 @@ export interface CommandConfig {
     readonly vmessAEAD?: boolean;
   };
   readonly clashConfig?: {
-    readonly ssrFormat: 'native' | 'legacy';
+    readonly ssrFormat?: 'native' | 'legacy';
+    readonly enableTuic?: boolean;
   };
   readonly surfboardConfig?: {
     readonly vmessAEAD?: boolean;
@@ -186,10 +188,8 @@ export interface HttpNodeConfig extends SimpleNodeConfig {
   readonly password: string;
 }
 
-export interface HttpsNodeConfig extends SimpleNodeConfig {
+export interface HttpsNodeConfig extends TlsNodeConfig {
   readonly type: NodeTypeEnum.HTTPS;
-  readonly hostname: string;
-  readonly port: number | string;
   readonly username: string;
   readonly password: string;
   readonly tls13?: boolean;
@@ -253,19 +253,19 @@ export interface VmessNodeConfig extends SimpleNodeConfig {
   readonly wsHeaders?: Record<string, string>;
 }
 
-export interface TrojanNodeConfig extends SimpleNodeConfig {
+export interface TrojanNodeConfig extends TlsNodeConfig {
   readonly type: NodeTypeEnum.Trojan;
-  readonly hostname: string;
-  readonly port: number | string;
   readonly password: string;
-  readonly skipCertVerify?: boolean;
-  readonly alpn?: ReadonlyArray<string>;
-  readonly sni?: string;
   readonly 'udp-relay'?: boolean;
-  readonly tls13?: boolean;
   readonly network?: 'tcp' | 'ws';
   readonly wsPath?: string;
   readonly wsHeaders?: Record<string, string>;
+}
+
+export interface TuicNodeConfig extends TlsNodeConfig {
+  readonly type: NodeTypeEnum.Tuic;
+  readonly token: string;
+  readonly 'udp-relay'?: boolean;
 }
 
 export interface Socks5NodeConfig extends SimpleNodeConfig {
@@ -284,11 +284,11 @@ export interface Socks5NodeConfig extends SimpleNodeConfig {
 export interface SimpleNodeConfig {
   readonly type: NodeTypeEnum;
   nodeName: string;
-  readonly enable?: boolean;
+  enable?: boolean;
 
   tfo?: boolean; // TCP Fast Open
-
   mptcp?: boolean; // Multi-Path TCP
+
   binPath?: string;
   localPort?: number;
   surgeConfig?: CommandConfig['surgeConfig'];
@@ -299,6 +299,15 @@ export interface SimpleNodeConfig {
   provider?: Provider;
   underlyingProxy?: string;
   testUrl?: string;
+}
+
+export interface TlsNodeConfig extends SimpleNodeConfig {
+  readonly hostname: string;
+  readonly port: number | string;
+  readonly tls13?: boolean;
+  readonly skipCertVerify?: boolean;
+  readonly sni?: string;
+  readonly alpn?: ReadonlyArray<string>;
 }
 
 export interface PlainObject {
@@ -340,7 +349,8 @@ export type PossibleNodeConfigType =
   | SnellNodeConfig
   | VmessNodeConfig
   | TrojanNodeConfig
-  | Socks5NodeConfig;
+  | Socks5NodeConfig
+  | TuicNodeConfig;
 
 export type ProxyGroupModifier = (
   nodeList: ReadonlyArray<PossibleNodeConfigType>,

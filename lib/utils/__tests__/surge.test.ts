@@ -477,4 +477,39 @@ test('getSurgeNodes', async (t) => {
     ]),
     '测试 6 = vmess, 1.1.1.1, 8080, username=1386f85e-657b-4d6e-9d56-78badb75e1fd, ws=true, ws-path=/, ws-headers="host:1.1.1.1|user-agent:Mozilla/5.0 (iPhone; CPU iPhone OS 13_5 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/13.1.1 Mobile/15E148 Safari/604.1", tls=true, tls13=true, skip-cert-verify=true, tfo=true, mptcp=true, test-url=http://www.google.com, vmess-aead=false',
   );
+
+  t.is(
+    surge.getSurgeNodes([
+      {
+        type: NodeTypeEnum.Tuic,
+        nodeName: '测试 Tuic',
+        hostname: 'example.com',
+        port: 443,
+        token: 'token',
+      },
+      {
+        type: NodeTypeEnum.Tuic,
+        nodeName: '测试 Tuic',
+        hostname: 'example.com',
+        port: 443,
+        token: 'token',
+        alpn: ['h3'],
+      },
+      {
+        type: NodeTypeEnum.Tuic,
+        nodeName: '测试 Tuic',
+        hostname: 'example.com',
+        port: 443,
+        token: 'token',
+        alpn: ['h3'],
+        sni: 'sni.example.com',
+        skipCertVerify: true,
+      },
+    ]),
+    [
+      '测试 Tuic = tuic, example.com, 443, token=token',
+      '测试 Tuic = tuic, example.com, 443, token=token, alpn=h3',
+      '测试 Tuic = tuic, example.com, 443, token=token, sni=sni.example.com, alpn=h3, skip-cert-verify=true',
+    ].join('\n'),
+  );
 });

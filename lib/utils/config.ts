@@ -113,6 +113,7 @@ export const normalizeConfig = (
     },
     clashConfig: {
       ssrFormat: 'native',
+      enableTuic: false,
     },
     quantumultXConfig: {
       vmessAEAD: true,
@@ -240,6 +241,7 @@ export const validateConfig = (userConfig: Partial<CommandConfig>): void => {
     }).unknown(),
     clashConfig: Joi.object({
       ssrFormat: Joi.string().valid('native', 'legacy'),
+      enableTuic: Joi.bool().strict(),
     }).unknown(),
     analytics: Joi.boolean().strict(),
     gateway: Joi.object({

@@ -14,6 +14,7 @@ import {
   SnellNodeConfig,
   SubscriptionUserinfo,
   TrojanNodeConfig,
+  TuicNodeConfig,
   VmessNodeConfig,
 } from '../types';
 import { lowercaseHeaderKeys } from '../utils';
@@ -28,7 +29,8 @@ type SupportConfigTypes =
   | HttpNodeConfig
   | ShadowsocksrNodeConfig
   | SnellNodeConfig
-  | TrojanNodeConfig;
+  | TrojanNodeConfig
+  | TuicNodeConfig;
 
 const logger = createLogger({
   service: 'surgio:ClashProvider',
@@ -358,6 +360,23 @@ export const parseClashConfig = (
               ? { network: 'ws', wsPath: _.get(wsOpts, 'path', '/'), wsHeaders }
               : null),
           } as TrojanNodeConfig;
+        }
+
+        case 'tuic': {
+          return {
+            type: NodeTypeEnum.Tuic,
+            nodeName: item.name,
+            hostname: item.server,
+            port: item.port,
+            token: item.token,
+            'udp-relay': resolveUdpRelay(item.udp, udpRelay),
+            ...('skip-cert-verify' in item
+              ? { skipCertVerify: item['skip-cert-verify'] === true }
+              : null),
+            tls13: tls13 ?? false,
+            ...('sni' in item ? { sni: item.sni } : null),
+            ...('alpn' in item ? { alpn: item.alpn } : null),
+          } as TuicNodeConfig;
         }
 
         default:

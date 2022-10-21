@@ -3,6 +3,7 @@ import fs from 'fs-extra';
 import _ from 'lodash';
 import os from 'os';
 import { join } from 'path';
+import { Node } from 'yaml/types';
 import { ERR_INVALID_FILTER, OBFS_UA } from '../constant';
 import {
   HttpNodeConfig,
@@ -447,6 +448,29 @@ export const getSurgeNodes = function (
                 : []),
             );
           }
+
+          return [nodeConfig.nodeName, config.join(', ')].join(' = ');
+        }
+
+        case NodeTypeEnum.Tuic: {
+          const config = [
+            'tuic',
+            nodeConfig.hostname,
+            nodeConfig.port,
+            ...pickAndFormatStringList(nodeConfig, ['token', 'sni']),
+            ...(Array.isArray(nodeConfig.alpn)
+              ? [`alpn=${nodeConfig.alpn.join(',')}`]
+              : []),
+            ...(typeof nodeConfig.underlyingProxy === 'string'
+              ? [`underlying-proxy=${nodeConfig.underlyingProxy}`]
+              : []),
+            ...(typeof nodeConfig.testUrl === 'string'
+              ? [`test-url=${nodeConfig.testUrl}`]
+              : []),
+            ...(typeof nodeConfig.skipCertVerify === 'boolean'
+              ? [`skip-cert-verify=${nodeConfig.skipCertVerify}`]
+              : []),
+          ];
 
           return [nodeConfig.nodeName, config.join(', ')].join(' = ');
         }

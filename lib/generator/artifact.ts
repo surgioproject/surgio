@@ -7,8 +7,8 @@ import { Environment } from 'nunjucks';
 import path from 'path';
 import { EventEmitter } from 'events';
 import { deprecate } from 'util';
-import { DEP009 } from '../misc/deprecation';
 
+import { DEP009 } from '../misc/deprecation';
 import { getProvider } from '../provider';
 import {
   ArtifactConfig,
