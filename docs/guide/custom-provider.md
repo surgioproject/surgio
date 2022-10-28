@@ -424,7 +424,7 @@ module.exports = {
   token: 'password',
   sni: 'sni.example.com', // 可选
   skipCertVerify: true, // 可选
-  alps: ['h3'], // 可选，Stash 不支持空值
+  alpn: ['h3'], // 可选，Stash 不支持空值
   'udp-relay': false, // 可选, 仅 Clash 支持更改，Surge 默认开启
 }
 ```
