@@ -56,7 +56,6 @@ module.exports = {
 ### url
 
 - 类型: `string`
-- 默认值: `undefined`
 - <Badge text="必须" vertical="middle" />
 
 若机场没有提供这种订阅地址，推荐使用 Fndroid 的 [接口](https://github.com/Fndroid/jsbox_script/wiki/%E5%BC%80%E6%94%BE%E6%8E%A5%E5%8F%A3%E4%BD%BF%E7%94%A8%E5%8F%8A%E8%AF%B4%E6%98%8E#surge%E6%89%98%E7%AE%A1%E8%BD%AC%E6%8D%A2shadowsockswindows%E9%85%8D%E7%BD%AE) 进行转换。
@@ -90,7 +89,6 @@ module.exports = {
 ### url
 
 - 类型: `string`
-- 默认值: `undefined`
 - <Badge text="必须" vertical="middle" />
 
 :::warning 注意
@@ -117,7 +115,6 @@ module.exports = {
 ### url
 
 - 类型: `string`
-- 默认值: `undefined`
 - <Badge text="必须" vertical="middle" />
 
 ## v2rayn_subscribe
@@ -132,7 +129,6 @@ module.exports = {
 ### url
 
 - 类型: `string`
-- 默认值: `undefined`
 - <Badge text="必须" vertical="middle" />
 
 :::warning 注意
@@ -179,7 +175,6 @@ module.exports = {
 ### url
 
 - 类型: `string`
-- 默认值: `undefined`
 - <Badge text="必须" vertical="middle" />
 
 ### udpRelay
@@ -206,7 +201,6 @@ module.exports = {
 ### url
 
 - 类型: `string`
-- 默认值: `undefined`
 - <Badge text="必须" vertical="middle" />
 
 ### udpRelay
@@ -225,7 +219,6 @@ module.exports = {
 ### url
 
 - 类型: `string`
-- 默认值: `undefined`
 - <Badge text="必须" vertical="middle" />
 
 ### udpRelay
@@ -256,7 +249,6 @@ module.exports = {
 ### nodeList
 
 - 类型: `NodeConfig[]`
-- 默认值: `undefined`
 - <Badge text="必须" vertical="middle" />
 
 不同的类型的节点 `NodeConfig` 结构有一些不同，下面是所有支持的节点类型：
@@ -457,21 +449,38 @@ module.exports = {
 
 ### nodeConfig.tfo
 
-- 类型: `Boolean`
+- 类型: `boolean`
 - 默认值: `false`
 
 是否为该节点开启 TFO（TCP Fast Open）。
 
 ### nodeConfig.mptcp
 
-- 类型: `Boolean`
+- 类型: `boolean`
 - 默认值: `false`
 
 是否为该节点开启 Multipath TCP。目前仅 Surge 支持这一特性。
 
+### nodeConfig.shadowTls <Badge text="v2.24.0" vertical="middle" />
+
+- 类型: `object`
+- 默认值: `undefined`
+
+目前仅 Surge 支持这一特性。
+
+### nodeConfig.shadowTls.password
+
+- 类型: `string`
+- <Badge text="必须" vertical="middle" />
+
+### nodeConfig.shadowTls.sni
+
+- 类型: `string`
+- 默认值: `undefined`
+
 ### nodeConfig.tls13
 
-- 类型: `Boolean`
+- 类型: `boolean`
 - 默认值: `false`
 
 为 TLS 节点开启 TLS 1.3 支持。
@@ -483,7 +492,7 @@ module.exports = {
 
 ### nodeConfig.skipCertVerify
 
-- 类型: `Boolean`
+- 类型: `boolean`
 - 默认值: `false`
 
 关闭 TLS 节点的证书检查。
@@ -495,7 +504,7 @@ module.exports = {
 
 ### nodeConfig.underlyingProxy <Badge text="v2.2.0" vertical="middle" />
 
-- 类型: `String`
+- 类型: `string`
 - 默认值: `undefined`
 
 可以通过一个代理跳板使用另一个代理，可以无限嵌套使用。目前仅 Surge 支持该特性。
@@ -506,7 +515,7 @@ Surgio 不会验证名称是否有效
 
 ### nodeConfig.testUrl <Badge text="v2.8.0" vertical="middle" />
 
-- 类型: `String`
+- 类型: `string`
 - 默认值: `undefined`
 
 在新版的 Surge 中支持针对某个 Proxy 设置测试的地址。你可以通过这个参数来设置改地址。
@@ -515,6 +524,13 @@ Surgio 不会验证名称是否有效
 1. Surgio 不会验证名称是否有效；
 2. 目前仅 Surge 支持该特性；
 :::
+
+### nodeConfig.serverCertFingerprintSha256 <Badge text="v2.24.0" vertical="middle" />
+
+- 类型: `string`
+- 默认值: `undefined`
+
+用于验证服务器证书的 SHA256 指纹。目前仅 Surge 支持该特性。
 
 ### provider.nodeFilter
 
@@ -577,7 +593,7 @@ module.exports = {
 
 ### provider.startPort
 
-- 类型: `Number`
+- 类型: `number`
 
 在调用 `getSurgeNodes` 时会强制要求设置该值。建议大于 10000。
 
@@ -585,28 +601,28 @@ module.exports = {
 
 ### provider.addFlag
 
-- 类型: `Boolean`
+- 类型: `boolean`
 - 默认值: `false`
 
 在节点名称前加国旗 Emoji。需要注意的是，Surgio 是根据有限的节点名关键词判断位置的，如果无法匹配则会保留原节点名。你可以在所有的过滤器中检索国旗 Emoji。
 
 ### provider.removeExistingFlag <Badge text="v2.5.0" vertical="middle" />
 
-- 类型: `Boolean`
+- 类型: `boolean`
 - 默认值: `false`
 
 去除订阅中的国旗 Emoji。可以在不开启 `addFlag` 时使用，这时会输出没有 Emoji 的节点名称。
 
 ### provider.tfo
 
-- 类型: `Boolean`
+- 类型: `boolean`
 - 默认值: `false`
 
 是否为该订阅强制开启 TFO（TCP Fast Open）。部分机场虽然支持 TFO 但是没有在订阅中开启，你可以通过这个配置强制打开。
 
 ### provider.mptcp
 
-- 类型: `Boolean`
+- 类型: `boolean`
 - 默认值: `false`
 
 是否为该订阅强制开启 Multipath TCP。目前仅 Surge 支持这一特性。
