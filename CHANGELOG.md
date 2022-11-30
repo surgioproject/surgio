@@ -1,3 +1,17 @@
+# [2.24.0](https://github.com/geekdada/surgio/compare/v2.23.0...v2.24.0) (2022-11-30)
+
+
+### Bug Fixes
+
+* fixes [#210](https://github.com/geekdada/surgio/issues/210) ([fda604a](https://github.com/geekdada/surgio/commit/fda604ae3ea730bcce2af9a25c1e1fb9f3732868))
+
+
+### Features
+
+* add new config for surge ([509ab5a](https://github.com/geekdada/surgio/commit/509ab5a69fd41c3f8fb98b8469c33676593741f9))
+
+
+
 # [2.23.0](https://github.com/geekdada/surgio/compare/v2.22.1...v2.23.0) (2022-10-21)
 
 
