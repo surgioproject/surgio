@@ -71,20 +71,23 @@ export const getSurgeNodes = function (
                 config.hostname,
                 config.port,
                 'encrypt-method=' + config.method,
-                ...pickAndFormatStringList(config, [
-                  'password',
-                  'udp-relay',
-                  'obfs',
-                  'obfs-host',
-                  'tfo',
-                  'mptcp',
-                ]),
-                ...(typeof config.testUrl === 'string'
-                  ? [`test-url=${config.testUrl}`]
-                  : []),
-                ...(typeof config.underlyingProxy === 'string'
-                  ? [`underlying-proxy=${config.underlyingProxy}`]
-                  : []),
+                ...pickAndFormatStringList(
+                  config,
+                  [
+                    'password',
+                    'udp-relay',
+                    'obfs',
+                    'obfs-host',
+                    'tfo',
+                    'mptcp',
+                    'testUrl',
+                    'underlyingProxy',
+                  ],
+                  {
+                    keyFormat: 'kebabCase',
+                  },
+                ),
+                ...parseShadowTlsConfig(nodeConfig),
               ].join(', '),
             ].join(' = ');
           }
@@ -99,19 +102,22 @@ export const getSurgeNodes = function (
               config.method,
               config.password,
               'https://raw.githubusercontent.com/ConnersHua/SSEncrypt/master/SSEncrypt.module',
-              ...pickAndFormatStringList(config, [
-                'udp-relay',
-                'obfs',
-                'obfs-host',
-                'tfo',
-                'mptcp',
-              ]),
-              ...(typeof config.testUrl === 'string'
-                ? [`test-url=${config.testUrl}`]
-                : []),
-              ...(typeof config.underlyingProxy === 'string'
-                ? [`underlying-proxy=${config.underlyingProxy}`]
-                : []),
+              ...pickAndFormatStringList(
+                config,
+                [
+                  'udp-relay',
+                  'obfs',
+                  'obfs-host',
+                  'tfo',
+                  'mptcp',
+                  'testUrl',
+                  'underlyingProxy',
+                ],
+                {
+                  keyFormat: 'kebabCase',
+                },
+              ),
+              ...parseShadowTlsConfig(nodeConfig),
             ].join(', '),
           ].join(' = ');
         }
@@ -127,21 +133,23 @@ export const getSurgeNodes = function (
               config.port,
               config.username,
               config.password,
-              ...(typeof config.skipCertVerify === 'boolean'
-                ? [`skip-cert-verify=${config.skipCertVerify}`]
-                : []),
-              ...(typeof config.underlyingProxy === 'string'
-                ? [`underlying-proxy=${config.underlyingProxy}`]
-                : []),
-              ...(typeof config.testUrl === 'string'
-                ? [`test-url=${config.testUrl}`]
-                : []),
-              ...pickAndFormatStringList(config, [
-                'sni',
-                'tfo',
-                'mptcp',
-                'tls13',
-              ]),
+              ...pickAndFormatStringList(
+                config,
+                [
+                  'sni',
+                  'tfo',
+                  'mptcp',
+                  'tls13',
+                  'testUrl',
+                  'skipCertVerify',
+                  'underlyingProxy',
+                  'serverCertFingerprintSha256',
+                ],
+                {
+                  keyFormat: 'kebabCase',
+                },
+              ),
+              ...parseShadowTlsConfig(nodeConfig),
             ].join(', '),
           ].join(' = ');
         }
@@ -157,13 +165,14 @@ export const getSurgeNodes = function (
               config.port,
               config.username,
               config.password,
-              ...(typeof config.underlyingProxy === 'string'
-                ? [`underlying-proxy=${config.underlyingProxy}`]
-                : []),
-              ...(typeof config.testUrl === 'string'
-                ? [`test-url=${config.testUrl}`]
-                : []),
-              ...pickAndFormatStringList(config, ['tfo', 'mptcp']),
+              ...pickAndFormatStringList(
+                config,
+                ['tfo', 'mptcp', 'underlyingProxy', 'testUrl'],
+                {
+                  keyFormat: 'kebabCase',
+                },
+              ),
+              ...parseShadowTlsConfig(nodeConfig),
             ].join(', '),
           ].join(' = ');
         }
@@ -177,20 +186,24 @@ export const getSurgeNodes = function (
               'snell',
               config.hostname,
               config.port,
-              ...(typeof config.underlyingProxy === 'string'
-                ? [`underlying-proxy=${config.underlyingProxy}`]
-                : []),
-              ...(typeof config.testUrl === 'string'
-                ? [`test-url=${config.testUrl}`]
-                : []),
-              ...pickAndFormatStringList(config, [
-                'psk',
-                'obfs',
-                'obfs-host',
-                'version',
-                'tfo',
-                'mptcp',
-              ]),
+              ...pickAndFormatStringList(
+                config,
+                [
+                  'psk',
+                  'obfs',
+                  'obfs-host',
+                  'version',
+                  'reuse',
+                  'tfo',
+                  'mptcp',
+                  'testUrl',
+                  'underlyingProxy',
+                ],
+                {
+                  keyFormat: 'kebabCase',
+                },
+              ),
+              ...parseShadowTlsConfig(nodeConfig),
             ].join(', '),
           ].join(' = ');
         }
@@ -294,37 +307,34 @@ export const getSurgeNodes = function (
             if (config.tls) {
               configList.push(
                 'tls=true',
-                ...(typeof config.tls13 === 'boolean'
-                  ? [`tls13=${config.tls13}`]
-                  : []),
-                ...(typeof config.skipCertVerify === 'boolean'
-                  ? [`skip-cert-verify=${config.skipCertVerify}`]
-                  : []),
+                ...pickAndFormatStringList(
+                  config,
+                  ['tls13', 'skipCertVerify', 'serverCertFingerprintSha256'],
+                  {
+                    keyFormat: 'kebabCase',
+                  },
+                ),
                 ...(config.host ? [`sni=${config.host}`] : []),
               );
             }
 
-            if (typeof config.tfo === 'boolean') {
-              configList.push(`tfo=${config.tfo}`);
-            }
-
-            if (typeof config.mptcp === 'boolean') {
-              configList.push(`mptcp=${config.mptcp}`);
-            }
-
-            if (config['underlyingProxy']) {
-              configList.push(`underlying-proxy=${config['underlyingProxy']}`);
-            }
-
-            if (config['testUrl']) {
-              configList.push(`test-url=${config['testUrl']}`);
-            }
+            configList.push(
+              ...pickAndFormatStringList(
+                config,
+                ['tfo', 'mptcp', 'underlyingProxy', 'testUrl'],
+                {
+                  keyFormat: 'kebabCase',
+                },
+              ),
+            );
 
             if (nodeConfig?.surgeConfig?.vmessAEAD) {
               configList.push('vmess-aead=true');
             } else {
               configList.push('vmess-aead=false');
             }
+
+            configList.push(...parseShadowTlsConfig(nodeConfig));
 
             return [config.nodeName, configList.join(', ')].join(' = ');
           } else {
@@ -385,21 +395,23 @@ export const getSurgeNodes = function (
             nodeConfig.hostname,
             `${nodeConfig.port}`,
             `password=${nodeConfig.password}`,
-            ...pickAndFormatStringList(nodeConfig, [
-              'tfo',
-              'mptcp',
-              'sni',
-              'tls13',
-            ]),
-            ...(typeof nodeConfig.testUrl === 'string'
-              ? [`test-url=${nodeConfig.testUrl}`]
-              : []),
-            ...(typeof nodeConfig.underlyingProxy === 'string'
-              ? [`underlying-proxy=${nodeConfig.underlyingProxy}`]
-              : []),
-            ...(typeof nodeConfig.skipCertVerify === 'boolean'
-              ? [`skip-cert-verify=${nodeConfig.skipCertVerify}`]
-              : []),
+            ...pickAndFormatStringList(
+              nodeConfig,
+              [
+                'tfo',
+                'mptcp',
+                'sni',
+                'tls13',
+                'testUrl',
+                'underlyingProxy',
+                'skipCertVerify',
+                'serverCertFingerprintSha256',
+              ],
+              {
+                keyFormat: 'kebabCase',
+              },
+            ),
+            ...parseShadowTlsConfig(nodeConfig),
           ];
 
           if (nodeConfig.network === 'ws') {
@@ -422,20 +434,25 @@ export const getSurgeNodes = function (
             nodeConfig.tls === true ? 'socks5-tls' : 'socks5',
             nodeConfig.hostname,
             nodeConfig.port,
-            ...(typeof nodeConfig.underlyingProxy === 'string'
-              ? [`underlying-proxy=${nodeConfig.underlyingProxy}`]
-              : []),
-            ...(typeof nodeConfig.testUrl === 'string'
-              ? [`test-url=${nodeConfig.testUrl}`]
-              : []),
-            ...pickAndFormatStringList(nodeConfig, [
-              'username',
-              'password',
-              'sni',
-              'tfo',
-              'mptcp',
-              'tls13',
-            ]),
+            ...pickAndFormatStringList(
+              nodeConfig,
+              [
+                'username',
+                'password',
+                'sni',
+                'tfo',
+                'mptcp',
+                'tls13',
+                'udpRelay',
+                'testUrl',
+                'underlyingProxy',
+                'serverCertFingerprintSha256',
+              ],
+              {
+                keyFormat: 'kebabCase',
+              },
+            ),
+            ...parseShadowTlsConfig(nodeConfig),
           ];
 
           if (nodeConfig.tls === true) {
@@ -457,18 +474,22 @@ export const getSurgeNodes = function (
             'tuic',
             nodeConfig.hostname,
             nodeConfig.port,
-            ...pickAndFormatStringList(nodeConfig, ['token', 'sni']),
+            ...pickAndFormatStringList(
+              nodeConfig,
+              [
+                'token',
+                'sni',
+                'underlyingProxy',
+                'testUrl',
+                'skipCertVerify',
+                'serverCertFingerprintSha256',
+              ],
+              {
+                keyFormat: 'kebabCase',
+              },
+            ),
             ...(Array.isArray(nodeConfig.alpn)
               ? [`alpn=${nodeConfig.alpn.join(',')}`]
-              : []),
-            ...(typeof nodeConfig.underlyingProxy === 'string'
-              ? [`underlying-proxy=${nodeConfig.underlyingProxy}`]
-              : []),
-            ...(typeof nodeConfig.testUrl === 'string'
-              ? [`test-url=${nodeConfig.testUrl}`]
-              : []),
-            ...(typeof nodeConfig.skipCertVerify === 'boolean'
-              ? [`skip-cert-verify=${nodeConfig.skipCertVerify}`]
               : []),
           ];
 
@@ -489,3 +510,17 @@ export const getSurgeNodes = function (
 
   return result.join('\n');
 };
+
+function parseShadowTlsConfig(config: PossibleNodeConfigType) {
+  const result: string[] = [];
+
+  if (config.shadowTls) {
+    result.push(`shadow-tls-password=${config.shadowTls.password}`);
+
+    if (config.shadowTls.sni) {
+      result.push(`shadow-tls-sni=${config.shadowTls.sni}`);
+    }
+  }
+
+  return result;
+}

@@ -486,6 +486,7 @@ test('getSurgeNodes', async (t) => {
         hostname: 'example.com',
         port: 443,
         token: 'token',
+        serverCertFingerprintSha256: 'sha256',
       },
       {
         type: NodeTypeEnum.Tuic,
@@ -507,9 +508,28 @@ test('getSurgeNodes', async (t) => {
       },
     ]),
     [
-      '测试 Tuic = tuic, example.com, 443, token=token',
+      '测试 Tuic = tuic, example.com, 443, token=token, server-cert-fingerprint-sha256=sha256',
       '测试 Tuic = tuic, example.com, 443, token=token, alpn=h3',
-      '测试 Tuic = tuic, example.com, 443, token=token, sni=sni.example.com, alpn=h3, skip-cert-verify=true',
+      '测试 Tuic = tuic, example.com, 443, token=token, sni=sni.example.com, skip-cert-verify=true, alpn=h3',
+    ].join('\n'),
+  );
+
+  t.is(
+    surge.getSurgeNodes([
+      {
+        type: NodeTypeEnum.Snell,
+        nodeName: '测试 Snell',
+        hostname: 'example.com',
+        port: 443,
+        psk: 'psk',
+        shadowTls: {
+          password: 'password',
+          sni: 'sni.example.com',
+        },
+      },
+    ]),
+    [
+      '测试 Snell = snell, example.com, 443, psk=psk, shadow-tls-password=password, shadow-tls-sni=sni.example.com',
     ].join('\n'),
   );
 });

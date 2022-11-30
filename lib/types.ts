@@ -192,9 +192,6 @@ export interface HttpsNodeConfig extends TlsNodeConfig {
   readonly type: NodeTypeEnum.HTTPS;
   readonly username: string;
   readonly password: string;
-  readonly tls13?: boolean;
-  readonly skipCertVerify?: boolean;
-  readonly sni?: string;
 }
 
 export interface ShadowsocksNodeConfig extends SimpleNodeConfig {
@@ -218,9 +215,10 @@ export interface SnellNodeConfig extends SimpleNodeConfig {
   readonly hostname: string;
   readonly port: number | string;
   readonly psk: string;
-  readonly obfs: string;
+  readonly obfs?: string;
   readonly 'obfs-host'?: string;
   readonly version?: string;
+  readonly reuse?: boolean;
 }
 
 export interface ShadowsocksrNodeConfig extends SimpleNodeConfig {
@@ -251,6 +249,7 @@ export interface VmessNodeConfig extends SimpleNodeConfig {
   readonly tls13?: boolean;
   readonly skipCertVerify?: boolean;
   readonly wsHeaders?: Record<string, string>;
+  readonly serverCertFingerprintSha256?: string;
 }
 
 export interface TrojanNodeConfig extends TlsNodeConfig {
@@ -286,8 +285,14 @@ export interface SimpleNodeConfig {
   nodeName: string;
   enable?: boolean;
 
+  // TCP features
   tfo?: boolean; // TCP Fast Open
   mptcp?: boolean; // Multi-Path TCP
+  // https://github.com/ihciah/shadow-tls
+  shadowTls?: {
+    password: string;
+    sni?: string;
+  };
 
   binPath?: string;
   localPort?: number;
@@ -308,6 +313,7 @@ export interface TlsNodeConfig extends SimpleNodeConfig {
   readonly skipCertVerify?: boolean;
   readonly sni?: string;
   readonly alpn?: ReadonlyArray<string>;
+  readonly serverCertFingerprintSha256?: string;
 }
 
 export interface PlainObject {

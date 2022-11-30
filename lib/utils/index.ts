@@ -10,6 +10,7 @@ import URLSafeBase64 from 'urlsafe-base64';
 import YAML from 'yaml';
 import net from 'net';
 import crypto from 'crypto';
+import { camelCase, snakeCase, paramCase } from 'change-case';
 
 import {
   NodeFilterType,
@@ -413,14 +414,37 @@ export const generateClashProxyGroup = (
 
 export const toYaml = (obj: JsonObject): string => YAML.stringify(obj);
 
+// istanbul ignore next
+export const changeCase = (
+  str: string,
+  format: 'camelCase' | 'snakeCase' | 'kebabCase',
+): string => {
+  switch (format) {
+    case 'camelCase':
+      return camelCase(str);
+    case 'snakeCase':
+      return snakeCase(str);
+    case 'kebabCase':
+      return paramCase(str);
+  }
+};
+
 export const pickAndFormatStringList = (
   obj: Record<string, any>,
   keyList: readonly string[],
+  options: {
+    keyFormat?: 'camelCase' | 'snakeCase' | 'kebabCase';
+  } = {},
 ): readonly string[] => {
   const result: string[] = [];
+
   keyList.forEach((key) => {
     if (obj.hasOwnProperty(key)) {
-      result.push(`${key}=${obj[key]}`);
+      const propeertyKey = options.keyFormat
+        ? changeCase(key, options.keyFormat)
+        : key;
+
+      result.push(`${propeertyKey}=${obj[key]}`);
     }
   });
   return result;

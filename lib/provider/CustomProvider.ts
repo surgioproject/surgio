@@ -20,25 +20,30 @@ export default class CustomProvider extends Provider {
       enable: Joi.boolean().strict(),
       tfo: Joi.boolean().strict(),
       mptcp: Joi.boolean().strict(),
+      shadowTls: Joi.object({
+        password: Joi.string().required(),
+        sni: Joi.string(),
+      }),
       binPath: Joi.string(),
       localPort: Joi.number(),
       underlyingProxy: Joi.string(),
       skipCertVerify: Joi.boolean().strict(),
       sni: Joi.string(),
       alpn: Joi.array().items(Joi.string()),
+      serverCertFingerprintSha256: Joi.string(),
     }).unknown();
     const schema = Joi.object({
       nodeList: Joi.array().items(nodeSchema).required(),
     }).unknown();
 
-    const { error } = schema.validate(config);
+    const { error, value } = schema.validate(config);
 
     // istanbul ignore next
     if (error) {
       throw error;
     }
 
-    this.nodeList = config.nodeList;
+    this.nodeList = value.nodeList;
   }
 
   public async getNodeList(): Promise<ReadonlyArray<PossibleNodeConfigType>> {

@@ -45,6 +45,7 @@
     "bluebird": "^3.7.2",
     "bytes": "^3.1.2",
     "chalk": "^4.1.2",
+    "change-case": "^4.1.2",
     "check-node-version": "^4.2.1",
     "common-bin": "^2.9.2",
     "cross-env": "^7.0.3",

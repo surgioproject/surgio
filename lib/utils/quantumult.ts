@@ -1,6 +1,8 @@
 import { createLogger } from '@surgio/logger';
 import _ from 'lodash';
+import { deprecate } from 'util';
 
+import { DEP010 } from '../misc/deprecation';
 import { ERR_INVALID_FILTER, OBFS_UA } from '../constant';
 import {
   HttpsNodeConfig,
@@ -21,7 +23,7 @@ import {
 } from './index';
 
 const logger = createLogger({ service: 'surgio:utils:quantumult' });
-
+const showDEP010 = deprecate(_.noop, DEP010, 'DEP010');
 export const getQuantumultNodes = function (
   list: ReadonlyArray<
     | ShadowsocksNodeConfig
@@ -32,6 +34,8 @@ export const getQuantumultNodes = function (
   groupName = 'Surgio',
   filter?: NodeNameFilterType | SortedNodeNameFilterType,
 ): string {
+  showDEP010();
+
   // istanbul ignore next
   if (arguments.length === 3 && typeof filter === 'undefined') {
     throw new Error(ERR_INVALID_FILTER);
