@@ -246,6 +246,34 @@ export const getClashNodes = function (
             'skip-cert-verify': nodeConfig.skipCertVerify === true,
           };
 
+        case NodeTypeEnum.WireGuard:
+          if (!nodeConfig.clashConfig?.enableWireGuard) {
+            logger.warn(
+              `默认不为 Clash 生成 WireGuard 节点，节点 ${nodeConfig.nodeName} 会被省略。如需开启，请在配置文件中设置 clashConfig.enableWireGuard 为 true。`,
+            );
+            return null;
+          }
+          return {
+            type: 'wireguard',
+            name: nodeConfig.nodeName,
+            server: nodeConfig.hostname,
+            port: nodeConfig.port,
+            ip: nodeConfig.selfIp,
+            ...(nodeConfig.selfIpV6 ? { ipv6: nodeConfig.selfIpV6 } : null),
+            'private-key': nodeConfig.privateKey,
+            'public-key': nodeConfig.publicKey,
+            ...(nodeConfig.presharedKey
+              ? { 'preshared-key': nodeConfig.presharedKey }
+              : null),
+            ...(nodeConfig.dns
+              ? { dns: JSON.stringify(nodeConfig.dns) }
+              : null),
+            ...(nodeConfig.mtu ? { mtu: nodeConfig.mtu } : null),
+            ...(!(nodeConfig.udp === undefined)
+              ? { udp: nodeConfig.udp }
+              : { udp: true }),
+          };
+
         // istanbul ignore next
         default:
           logger.warn(

@@ -31,6 +31,7 @@ export default class CustomProvider extends Provider {
       sni: Joi.string(),
       alpn: Joi.array().items(Joi.string()),
       serverCertFingerprintSha256: Joi.string(),
+      // TODO: Maybe needs to be filled.
     }).unknown();
     const schema = Joi.object({
       nodeList: Joi.array().items(nodeSchema).required(),

@@ -35,6 +35,44 @@ export const getSurgeExtendHeaders = (
     .join('|');
 };
 
+export const getSurgeWireGuardNodesConfig = function (
+  list: ReadonlyArray<PossibleNodeConfigType>,
+  filter?: NodeFilterType | SortedNodeNameFilterType,
+): string {
+  // istanbul ignore next
+  if (arguments.length === 2 && typeof filter === 'undefined') {
+    throw new Error(ERR_INVALID_FILTER);
+  }
+
+  const result: string[] = applyFilter(list, filter)
+    .map((nodeConfig): string | undefined => {
+      if (nodeConfig.type === NodeTypeEnum.WireGuard) {
+        return [
+          `[WireGuard ${nodeConfig.nodeName}]`,
+          `dns-server = ${nodeConfig.dns.join(', ')}`,
+          ...pickAndFormatStringList(
+            nodeConfig,
+            ['selfIp', 'selfIpV6', 'mtu', 'perferIpv6'],
+            {
+              keyFormat: 'kebabCase',
+            },
+          ),
+          `peer = (${[
+            ...pickAndFormatStringList(
+              nodeConfig,
+              ['privateKey', 'allowedIps', 'keepalive', 'presharedKey'],
+              { keyFormat: 'kebabCase' },
+            ),
+            `endpoint = ${nodeConfig.hostname}`,
+          ].join(', ')})`,
+        ].join('\n');
+      }
+      return undefined;
+    })
+    .filter((item): item is string => item !== undefined);
+  return result.join('\n');
+};
+
 /**
  * @see https://manual.nssurge.com/policy/proxy.html
  */
@@ -491,6 +529,18 @@ export const getSurgeNodes = function (
             ...(Array.isArray(nodeConfig.alpn)
               ? [`alpn=${nodeConfig.alpn.join(',')}`]
               : []),
+          ];
+
+          return [nodeConfig.nodeName, config.join(', ')].join(' = ');
+        }
+
+        case NodeTypeEnum.WireGuard: {
+          const config = [
+            'wireguard',
+            `selection-name=${nodeConfig.nodeName}`, // TODO: support different selection name and nodeName
+            ...pickAndFormatStringList(nodeConfig, ['underlyingProxy'], {
+              keyFormat: 'kebabCase',
+            }),
           ];
 
           return [nodeConfig.nodeName, config.join(', ')].join(' = ');

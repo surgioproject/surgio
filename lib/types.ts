@@ -10,6 +10,7 @@ export enum NodeTypeEnum {
   Trojan = 'trojan',
   Socks5 = 'socks5',
   Tuic = 'tuic',
+  WireGuard = 'wireguard',
 }
 
 export enum SupportProviderEnum {
@@ -63,6 +64,7 @@ export interface CommandConfig {
   readonly clashConfig?: {
     readonly ssrFormat?: 'native' | 'legacy';
     readonly enableTuic?: boolean;
+    readonly enableWireGuard?: boolean;
   };
   readonly surfboardConfig?: {
     readonly vmessAEAD?: boolean;
@@ -267,6 +269,24 @@ export interface TuicNodeConfig extends TlsNodeConfig {
   readonly 'udp-relay'?: boolean;
 }
 
+export interface WireGuardNodeConfig extends SimpleNodeConfig {
+  readonly hostname: string;
+  readonly port: number | string;
+  // TODO: One question is that IPs of each devices must be unique.
+  // Maybe we can consider provide a funcion to do this.
+  readonly selfIp: string; // TODO: surge support only use one of these, maybe needs to be concerned.
+  readonly selfIpV6?: string;
+  readonly preferIpv6?: boolean;
+  readonly allowedIps?: string;
+  readonly privateKey: string;
+  readonly publicKey: string;
+  readonly presharedKey?: string;
+  readonly dns: string[];
+  readonly mtu?: string;
+  readonly keepalive?: number;
+  readonly udp?: boolean;
+}
+
 export interface Socks5NodeConfig extends SimpleNodeConfig {
   readonly type: NodeTypeEnum.Socks5;
   readonly hostname: string;
@@ -356,7 +376,8 @@ export type PossibleNodeConfigType =
   | VmessNodeConfig
   | TrojanNodeConfig
   | Socks5NodeConfig
-  | TuicNodeConfig;
+  | TuicNodeConfig
+  | WireGuardNodeConfig;
 
 export type ProxyGroupModifier = (
   nodeList: ReadonlyArray<PossibleNodeConfigType>,

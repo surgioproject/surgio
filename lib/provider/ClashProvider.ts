@@ -16,6 +16,7 @@ import {
   TrojanNodeConfig,
   TuicNodeConfig,
   VmessNodeConfig,
+  WireGuardNodeConfig,
 } from '../types';
 import { lowercaseHeaderKeys } from '../utils';
 import { getNetworkClashUA } from '../utils/env-flag';
@@ -30,7 +31,8 @@ type SupportConfigTypes =
   | ShadowsocksrNodeConfig
   | SnellNodeConfig
   | TrojanNodeConfig
-  | TuicNodeConfig;
+  | TuicNodeConfig
+  | WireGuardNodeConfig;
 
 const logger = createLogger({
   service: 'surgio:ClashProvider',
@@ -377,6 +379,25 @@ export const parseClashConfig = (
             ...('sni' in item ? { sni: item.sni } : null),
             ...('alpn' in item ? { alpn: item.alpn } : null),
           } as TuicNodeConfig;
+        }
+
+        case 'wiregurad': {
+          return {
+            type: NodeTypeEnum.WireGuard,
+            nodeName: item.name,
+            hostname: item.server,
+            port: item.port,
+            selfIp: item.ip,
+            ...('ipv6' in item ? { selfIpV6: item.ipv6 } : null),
+            privateKey: item['private-key'],
+            publicKey: item['public-key'],
+            ...('preshared-key' in item
+              ? { presharedKey: item['preshared-key'] }
+              : null),
+            ...('dns' in item ? { dns: item.dns } : { dns: '8.8.8.8' }), // FIXME: I don't know if it's correct here.
+            ...('mtu' in item ? { mtu: item.mtu } : null),
+            udp: item.udp,
+          } as WireGuardNodeConfig;
         }
 
         default:
