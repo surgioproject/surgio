@@ -434,10 +434,10 @@ module.exports = {
   selfIp: '10.0.2.2',
   selfIpV6: 'fd00:114::514', // 可选
   preferIpv6: false, // 可选,仅 Surge 生效
-  allowIps: '0.0.0.0/0', // 可选,仅 Surge 生效
+  allowedIps: '0.0.0.0/0', // 可选,仅 Surge 生效
   privateKey: 'sDEZLACT3zgNCS0CyClgcBC2eYROqYrwLT4wdtAJj3s=',
   publicKey: 'fWO8XS9/nwUQcqnkfBpKeqIqbzclQ6EKP20Pgvzwclg=',
-  presharedKey: '' // 可选
+  presharedKey: '', // 可选
   dns: ['8.8.8.8', '2606:4700:4700::1001'],
   mtu: 1280, // 可选
   keepalive: 60, // 可选

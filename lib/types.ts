@@ -270,6 +270,7 @@ export interface TuicNodeConfig extends TlsNodeConfig {
 }
 
 export interface WireGuardNodeConfig extends SimpleNodeConfig {
+  readonly type: NodeTypeEnum.WireGuard;
   readonly hostname: string;
   readonly port: number | string;
   // TODO: One question is that IPs of each devices must be unique.
@@ -282,7 +283,7 @@ export interface WireGuardNodeConfig extends SimpleNodeConfig {
   readonly publicKey: string;
   readonly presharedKey?: string;
   readonly dns: string[];
-  readonly mtu?: string;
+  readonly mtu?: number;
   readonly keepalive?: number;
   readonly udp?: boolean;
 }

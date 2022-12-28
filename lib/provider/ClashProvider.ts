@@ -381,7 +381,7 @@ export const parseClashConfig = (
           } as TuicNodeConfig;
         }
 
-        case 'wiregurad': {
+        case 'wireguard': {
           return {
             type: NodeTypeEnum.WireGuard,
             nodeName: item.name,

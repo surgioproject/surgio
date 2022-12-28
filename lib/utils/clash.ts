@@ -265,9 +265,7 @@ export const getClashNodes = function (
             ...(nodeConfig.presharedKey
               ? { 'preshared-key': nodeConfig.presharedKey }
               : null),
-            ...(nodeConfig.dns
-              ? { dns: JSON.stringify(nodeConfig.dns) }
-              : null),
+            ...(nodeConfig.dns ? { dns: nodeConfig.dns } : null), // TODO:Attention: don't know if this commit works.
             ...(nodeConfig.mtu ? { mtu: nodeConfig.mtu } : null),
             ...(!(nodeConfig.udp === undefined)
               ? { udp: nodeConfig.udp }
