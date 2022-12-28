@@ -70,7 +70,7 @@ export const getSurgeWireGuardNodesConfig = function (
       return undefined;
     })
     .filter((item): item is string => item !== undefined);
-  return result.join('\n');
+  return result.join('\n') + '\n';
 };
 
 /**
