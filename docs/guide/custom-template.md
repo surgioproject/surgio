@@ -230,6 +230,24 @@ Youtube Premium 节点过滤器。Surgio 默认会将名称中包含 *日*, *美
 🇭🇰HK(Netflix) = custom, hk.example.com, 10000, chacha20-ietf-poly1305, password, https://raw.githubusercontent.com/ConnersHua/SSEncrypt/master/SSEncrypt.module, udp-relay=true
 ```
 
+### getSurgeWireGuardNodesConfig
+
+`getSurgeWireGuardNodesConfig(nodeList, filter?)`
+
+由于 Surge 对 WireGuard 处理的特殊性，我们需要引入一个额外的方法来向 Surge 配置文件中加入 WireGuard 的配置文件
+
+:::使用方法
+
+在 Surge 配置文件的一块空余之处调用此方法，例如:
+
+```
+...
+[Script]
+stream-all = type=generic, timeout=15, script-path=https://raw.githubusercontent.com/LucaLin233/Luca_Conf/main/Surge/JS/stream-all.js
+
+{{ getSurgeWireGuardNodesConfig(nodeList) }}
+```
+切记不要在一个[foo]段的中间插入该函数
 ### getShadowsocksNodes
 
 `getShadowsocksNodes(nodeList, providerName)`

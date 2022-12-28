@@ -241,6 +241,7 @@ module.exports = {
   clashConfig: {
     ssrFormat: 'native', // or 'legacy'
     enableTuic: false,
+    enableWireGuard: false,
   },
 };
 ```
@@ -261,6 +262,15 @@ module.exports = {
 - 默认值: `false`
 
 目前仅 Stash 支持 Tuic，如果你希望在 Clash 节点中输出 Tuic 请开启此项。
+
+#### clashConfig.enableWireGuard
+
+> <Badge text="TODO" vertical="middle" />
+
+- 类型: `boolean`
+- 默认值: `false`
+
+目前仅 Stash 及 Clash Premium Core 支持 WireGurad，如果你希望在 Clash 节点中输出 Tuic 请开启此项。
 
 ### surfboardConfig
 

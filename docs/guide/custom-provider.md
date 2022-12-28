@@ -421,6 +421,31 @@ module.exports = {
 }
 ```
 
+#### *WireGuard*
+
+> <Badge text="TODO" />
+
+```json5
+{
+  type: 'wireguard',
+  nodeName: 'WireGuard',
+  hostname: 'wireguard.example.com',
+  port: 51820,
+  selfIp: '10.0.2.2',
+  selfIpV6: 'fd00:114::514', // 可选
+  preferIpv6: false, // 可选,仅 Surge 生效
+  allowIps: '0.0.0.0/0', // 可选,仅 Surge 生效
+  privateKey: 'sDEZLACT3zgNCS0CyClgcBC2eYROqYrwLT4wdtAJj3s=',
+  publicKey: 'fWO8XS9/nwUQcqnkfBpKeqIqbzclQ6EKP20Pgvzwclg=',
+  presharedKey: '' // 可选
+  dns: ['8.8.8.8', '2606:4700:4700::1001'],
+  mtu: 1280, // 可选
+  keepalive: 60, // 可选
+  udp: true, // 可选,仅 Clash 生效, 默认为 true
+}
+```
+目前 `WireGuard` 协议仅 Surge, Stash, Clash Meta Core 与 Clash Premium Core 支持.
+
 ## 公共属性
 
 :::tip 提示
