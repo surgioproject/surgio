@@ -49,10 +49,10 @@ export const getSurgeWireGuardNodesConfig = function (
       if (nodeConfig.type === NodeTypeEnum.WireGuard) {
         return [
           `[WireGuard ${nodeConfig.nodeName}]`,
-          `dns-server = ${nodeConfig.dns.join(', ')}`,
+          `dns-server=${nodeConfig.dns.join(', ')}`,
           ...pickAndFormatStringList(
             nodeConfig,
-            ['selfIp', 'selfIpV6', 'mtu', 'perferIpv6'],
+            ['privateKey', 'selfIp', 'selfIpV6', 'mtu', 'preferIpv6'],
             {
               keyFormat: 'kebabCase',
             },
@@ -60,10 +60,10 @@ export const getSurgeWireGuardNodesConfig = function (
           `peer = (${[
             ...pickAndFormatStringList(
               nodeConfig,
-              ['privateKey', 'allowedIps', 'keepalive', 'presharedKey'],
+              ['publicKey', 'allowedIps', 'keepalive', 'presharedKey'], // TODO: 需要一个字符非空检测
               { keyFormat: 'kebabCase' },
             ),
-            `endpoint = ${nodeConfig.hostname}`,
+            `endpoint=${nodeConfig.hostname}:${nodeConfig.port}`,
           ].join(', ')})`,
         ].join('\n');
       }
@@ -537,7 +537,7 @@ export const getSurgeNodes = function (
         case NodeTypeEnum.WireGuard: {
           const config = [
             'wireguard',
-            `selection-name=${nodeConfig.nodeName}`, // TODO: support different selection name and nodeName
+            `section-name = ${nodeConfig.nodeName}`, // TODO: support different section-name and nodeName
             ...pickAndFormatStringList(nodeConfig, ['underlyingProxy'], {
               keyFormat: 'kebabCase',
             }),
