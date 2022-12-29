@@ -576,4 +576,98 @@ test('getClashNodes', async (t) => {
       },
     ],
   );
+
+  t.deepEqual(
+    clash.getClashNodes([
+      {
+        type: NodeTypeEnum.WireGuard,
+        nodeName: 'WireGuard',
+        hostname: 'wireguard.example.com',
+        port: 51820,
+        selfIp: '10.0.2.2',
+        selfIpV6: 'fd00:114::514', // 可选
+        preferIpv6: false, // 可选,仅 Surge 生效
+        allowedIps: '0.0.0.0/0', // 可选,仅 Surge 生效
+        privateKey: 'sDEZLACT3zgNCS0CyClgcBC2eYROqYrwLT4wdtAJj3s=',
+        publicKey: 'fWO8XS9/nwUQcqnkfBpKeqIqbzclQ6EKP20Pgvzwclg=',
+        presharedKey: '', // 可选
+        dns: ['8.8.8.8', '2606:4700:4700::1001'],
+        mtu: 1280, // 可选
+        keepalive: 60, // 可选
+        udp: true, // 可选,仅 Clash 生效, 默认为 true
+      },
+    ]),
+    [],
+  );
+
+  t.deepEqual(
+    clash.getClashNodes([
+      {
+        clashConfig: {
+          enableWireGuard: true,
+        },
+        type: NodeTypeEnum.WireGuard,
+        nodeName: 'WireGuard',
+        hostname: 'wireguard.example.com',
+        port: 51820,
+        selfIp: '10.0.2.2',
+        selfIpV6: 'fd00:114::514', // 可选
+        preferIpv6: false, // 可选,仅 Surge 生效
+        allowedIps: '0.0.0.0/0', // 可选,仅 Surge 生效
+        privateKey: 'sDEZLACT3zgNCS0CyClgcBC2eYROqYrwLT4wdtAJj3s=',
+        publicKey: 'fWO8XS9/nwUQcqnkfBpKeqIqbzclQ6EKP20Pgvzwclg=',
+        presharedKey: '', // 可选
+        dns: ['8.8.8.8', '2606:4700:4700::1001'],
+        mtu: 1280, // 可选
+        keepalive: 60, // 可选
+        udp: true, // 可选,仅 Clash 生效, 默认为 true
+      },
+    ]),
+    [
+      {
+        dns: ['8.8.8.8', '2606:4700:4700::1001'],
+        ip: '10.0.2.2',
+        ipv6: 'fd00:114::514',
+        mtu: 1280,
+        name: 'WireGuard',
+        port: 51820,
+        'private-key': 'sDEZLACT3zgNCS0CyClgcBC2eYROqYrwLT4wdtAJj3s=',
+        'public-key': 'fWO8XS9/nwUQcqnkfBpKeqIqbzclQ6EKP20Pgvzwclg=',
+        server: 'wireguard.example.com',
+        type: 'wireguard',
+        udp: true,
+      },
+    ],
+  );
+
+  t.deepEqual(
+    clash.getClashNodes([
+      {
+        clashConfig: {
+          enableWireGuard: true,
+        },
+        type: NodeTypeEnum.WireGuard,
+        nodeName: 'WireGuard',
+        hostname: 'wireguard.example.com',
+        port: 51820,
+        selfIp: '10.0.2.2',
+        privateKey: 'sDEZLACT3zgNCS0CyClgcBC2eYROqYrwLT4wdtAJj3s=',
+        publicKey: 'fWO8XS9/nwUQcqnkfBpKeqIqbzclQ6EKP20Pgvzwclg=',
+        dns: ['8.8.8.8', '2606:4700:4700::1001'],
+      },
+    ]),
+    [
+      {
+        dns: ['8.8.8.8', '2606:4700:4700::1001'],
+        ip: '10.0.2.2',
+        name: 'WireGuard',
+        port: 51820,
+        'private-key': 'sDEZLACT3zgNCS0CyClgcBC2eYROqYrwLT4wdtAJj3s=',
+        'public-key': 'fWO8XS9/nwUQcqnkfBpKeqIqbzclQ6EKP20Pgvzwclg=',
+        server: 'wireguard.example.com',
+        type: 'wireguard',
+        udp: true,
+      },
+    ],
+  );
 });
