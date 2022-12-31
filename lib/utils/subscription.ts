@@ -67,11 +67,13 @@ export const formatSubscriptionUserInfo = (
   readonly expire: string;
 } => {
   return {
-    upload: filesize(userInfo.upload, {base:2}),
-    download: filesize(userInfo.download, {base:2}),
-    used: filesize(userInfo.upload + userInfo.download, {base:2}),
-    left: filesize(userInfo.total - userInfo.upload - userInfo.download, {base:2}),
-    total: filesize(userInfo.total, {base:2}),
+    upload: filesize(userInfo.upload, { base: 2 }),
+    download: filesize(userInfo.download, { base: 2 }),
+    used: filesize(userInfo.upload + userInfo.download, { base: 2 }),
+    left: filesize(userInfo.total - userInfo.upload - userInfo.download, {
+      base: 2,
+    }),
+    total: filesize(userInfo.total, { base: 2 }),
     expire: userInfo.expire
       ? `${format(
           new Date(userInfo.expire * 1000),
