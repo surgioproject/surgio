@@ -317,6 +317,9 @@ export const v2rayFilter: NodeNameFilterType = (item) =>
 export const snellFilter: NodeNameFilterType = (item) =>
   item.type === NodeTypeEnum.Snell;
 // istanbul ignore next
+export const tuicFilter: NodeNameFilterType = (item) =>
+  item.type === NodeTypeEnum.Tuic;
+// istanbul ignore next
 export const httpFilter: NodeNameFilterType = (item) =>
   item.type === NodeTypeEnum.HTTP;
 // istanbul ignore next
