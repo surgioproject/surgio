@@ -620,12 +620,12 @@ module.exports = {
 
 是否为该订阅强制开启 TFO（TCP Fast Open）。部分机场虽然支持 TFO 但是没有在订阅中开启，你可以通过这个配置强制打开。
 
-### provider.underlyingProxy
+### provider.underlyingProxy <Badge text="v2.25.0" vertical="middle" />
 
 - 类型: `string`
 - 默认值: `undefined`
 
-是否对节点使用自定义 underlyingProxy。如果你希望使用自己的落地节点，仅使用进行机场流量转发，可以在这里配置自己的节点作为 underlyingProxy。
+是否对节点使用自定义 [Underlying Proxy](https://manual.nssurge.com/policy/proxy.html)。如果你希望使用自己的落地节点，仅使用机场进行流量转发，可以为自定义类型 Provider 设置 Underlying Proxy。
 
 目前仅 Surge 支持该特性。
 
