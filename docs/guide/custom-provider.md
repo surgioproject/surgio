@@ -620,6 +620,19 @@ module.exports = {
 
 是否为该订阅强制开启 TFO（TCP Fast Open）。部分机场虽然支持 TFO 但是没有在订阅中开启，你可以通过这个配置强制打开。
 
+### provider.underlyingProxy
+
+- 类型: `string`
+- 默认值: `undefined`
+
+是否对节点使用自定义 underlyingProxy。如果你希望使用自己的落地节点，仅使用进行机场流量转发，可以在这里配置自己的节点作为 underlyingProxy。
+
+目前仅 Surge 支持该特性。
+
+:::warning 注意
+Surgio 不会验证名称是否有效
+:::
+
 ### provider.mptcp
 
 - 类型: `boolean`

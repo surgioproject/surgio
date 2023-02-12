@@ -425,6 +425,11 @@ export class Artifact extends EventEmitter {
             nodeConfig.tfo = provider.tfo;
           }
 
+          // Underlying Proxy
+          if (provider.underlyingProxy) {
+            nodeConfig.underlyingProxy = provider.underlyingProxy;
+          }
+
           // MPTCP
           if (provider.mptcp) {
             nodeConfig.mptcp = provider.mptcp;

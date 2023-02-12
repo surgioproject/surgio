@@ -32,6 +32,7 @@ export default class Provider {
   public readonly addFlag?: boolean;
   public readonly removeExistingFlag?: boolean;
   public readonly tfo?: boolean;
+  public readonly underlyingProxy?: string;
   public readonly mptcp?: boolean;
   public readonly renameNode?: ProviderConfig['renameNode'];
   public readonly relayUrl?: boolean | string;
@@ -81,6 +82,7 @@ export default class Provider {
       removeExistingFlag: Joi.boolean().strict(),
       mptcp: Joi.boolean().strict(),
       tfo: Joi.boolean().strict(),
+      underlyingProxy: Joi.string(),
       startPort: Joi.number().integer().min(1024).max(65535),
       relayUrl: [Joi.boolean().strict(), Joi.string()],
       renameNode: Joi.function(),
