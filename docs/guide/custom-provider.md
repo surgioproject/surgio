@@ -625,7 +625,7 @@ module.exports = {
 - 类型: `string`
 - 默认值: `undefined`
 
-是否对节点使用自定义 [Underlying Proxy](https://manual.nssurge.com/policy/proxy.html)。如果你希望使用自己的落地节点，仅使用机场进行流量转发，可以为自定义类型 Provider 设置 Underlying Proxy。
+是否对当前 Provider 中所有节点使用自定义 [Underlying Proxy](https://manual.nssurge.com/policy/proxy.html)。在 `CustomProvider` 中也可以使用，但是优先级低于 `nodeConfig.underlyingProxy`。
 
 目前仅 Surge 支持该特性。
 
