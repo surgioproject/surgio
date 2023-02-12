@@ -112,6 +112,7 @@ export default class Provider {
       'renameNode',
       'relayUrl',
       'requestUserAgent',
+      'underlyingProxy',
     ].forEach((key) => {
       this[key] = value[key];
     });

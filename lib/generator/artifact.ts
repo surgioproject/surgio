@@ -425,14 +425,14 @@ export class Artifact extends EventEmitter {
             nodeConfig.tfo = provider.tfo;
           }
 
-          // Underlying Proxy
-          if (provider.underlyingProxy) {
-            nodeConfig.underlyingProxy = provider.underlyingProxy;
-          }
-
           // MPTCP
           if (provider.mptcp) {
             nodeConfig.mptcp = provider.mptcp;
+          }
+
+          // Underlying Proxy
+          if (!nodeConfig.underlyingProxy && provider.underlyingProxy) {
+            nodeConfig.underlyingProxy = provider.underlyingProxy;
           }
 
           // check whether the hostname resolves in case of blocking clash's node heurestic

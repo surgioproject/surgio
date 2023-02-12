@@ -129,6 +129,7 @@ export interface ProviderConfig {
   readonly cache?: {
     readonly type?: 'redis' | 'default';
   };
+  readonly underlyingProxy?: string;
 }
 
 export interface BlackSSLProviderConfig extends ProviderConfig {

@@ -167,3 +167,22 @@ test('getRenderContext', async (t) => {
     },
   });
 });
+
+test('Artifact with underlyingProxy', async (t) => {
+  const fixture = resolve('plain');
+  const config = loadConfig(fixture, './surgio.conf.js');
+  const templateEngine = getEngine(config.templateDir);
+
+  const artifact = new Artifact(
+    config,
+    {
+      name: 'new_path.conf',
+      template: 'test',
+      provider: 'ss_with_up',
+    },
+    { templateEngine },
+  );
+  await artifact.init();
+
+  t.snapshot(artifact.render());
+});

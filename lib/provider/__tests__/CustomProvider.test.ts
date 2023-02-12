@@ -69,3 +69,73 @@ test('CustomProvider should format header keys to lowercase', async (t) => {
     },
   ]);
 });
+
+test('CustomProvider underlying proxy', async (t) => {
+  t.deepEqual(
+    await new CustomProvider('test', {
+      type: SupportProviderEnum.Custom,
+      underlyingProxy: 'underlying-proxy',
+      nodeList: [
+        {
+          type: NodeTypeEnum.Shadowsocks,
+          nodeName: 'test',
+          'udp-relay': true,
+        },
+      ],
+    }).getNodeList(),
+    [
+      {
+        nodeName: 'test',
+        type: 'shadowsocks',
+        'udp-relay': true,
+        underlyingProxy: 'underlying-proxy',
+      },
+    ],
+  );
+
+  t.deepEqual(
+    await new CustomProvider('test', {
+      type: SupportProviderEnum.Custom,
+      underlyingProxy: 'underlying-proxy-1',
+      nodeList: [
+        {
+          type: NodeTypeEnum.Shadowsocks,
+          nodeName: 'test',
+          'udp-relay': true,
+          underlyingProxy: 'underlying-proxy-2',
+        },
+      ],
+    }).getNodeList(),
+    [
+      {
+        nodeName: 'test',
+        type: 'shadowsocks',
+        'udp-relay': true,
+        underlyingProxy: 'underlying-proxy-2',
+      },
+    ],
+  );
+
+  t.deepEqual(
+    await new CustomProvider('test', {
+      type: SupportProviderEnum.Custom,
+      underlyingProxy: 'underlying-proxy-2',
+      nodeList: [
+        {
+          type: NodeTypeEnum.Shadowsocks,
+          nodeName: 'test',
+          'udp-relay': true,
+          underlyingProxy: 'underlying-proxy-2',
+        },
+      ],
+    }).getNodeList(),
+    [
+      {
+        nodeName: 'test',
+        type: 'shadowsocks',
+        'udp-relay': true,
+        underlyingProxy: 'underlying-proxy-2',
+      },
+    ],
+  );
+});
