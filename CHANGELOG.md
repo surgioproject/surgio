@@ -1,3 +1,14 @@
+# [2.25.0](https://github.com/geekdada/surgio/compare/v2.24.1...v2.25.0) (2023-02-12)
+
+
+### Features
+
+* add `underlyingProxy` support to `provider` ([7beca7c](https://github.com/geekdada/surgio/commit/7beca7ca451cbb058fafa53f3282d9403bb97d7c))
+* add tuicFilter ([1dbac5f](https://github.com/geekdada/surgio/commit/1dbac5fa0afaf69c84aa98a3ba82d5f5c365650f))
+* support underlyingProxy in CustomProvider ([754982c](https://github.com/geekdada/surgio/commit/754982ca7b295c9ff3150a9cf4c007ba71d840dc))
+
+
+
 ## [2.24.1](https://github.com/geekdada/surgio/compare/v2.24.0...v2.24.1) (2022-12-31)
 
 
