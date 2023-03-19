@@ -467,42 +467,6 @@ export const decodeStringList = <T = Record<string, string | boolean>>(
   return result as T;
 };
 
-export const normalizeClashProxyGroupConfig = (
-  nodeList: ReadonlyArray<PossibleNodeConfigType>,
-  customFilters: PlainObjectOf<NodeNameFilterType | SortedNodeNameFilterType>,
-  proxyGroupModifier: ProxyGroupModifier,
-  options: {
-    readonly proxyTestUrl?: string;
-    readonly proxyTestInterval?: number;
-  } = {},
-): ReadonlyArray<any> => {
-  const proxyGroup = proxyGroupModifier(nodeList, customFilters);
-
-  return proxyGroup.map((item) => {
-    if (item.hasOwnProperty('filter')) {
-      // istanbul ignore next
-      if (!item.filter || !validateFilter(item.filter)) {
-        throw new Error(
-          `过滤器 ${item.filter} 无效，请检查 proxyGroupModifier`,
-        );
-      }
-
-      return generateClashProxyGroup(item.name, item.type, nodeList, {
-        filter: item.filter,
-        existingProxies: item.proxies,
-        proxyTestUrl: options.proxyTestUrl,
-        proxyTestInterval: options.proxyTestInterval,
-      });
-    } else {
-      return generateClashProxyGroup(item.name, item.type, nodeList, {
-        existingProxies: item.proxies,
-        proxyTestUrl: options.proxyTestUrl,
-        proxyTestInterval: options.proxyTestInterval,
-      });
-    }
-  });
-};
-
 export const ensureConfigFolder = (dir: string = os.homedir()): string => {
   let baseDir;
 

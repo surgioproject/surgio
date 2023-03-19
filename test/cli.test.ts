@@ -168,13 +168,13 @@ test.serial('assign local port', async (t) => {
   t.truthy(conf1.Proxy.测试中文.includes('local-port = 5000'));
 });
 
-test.serial('custom filter', async (t) => {
+test.serial.only('custom filter', async (t) => {
   const { code } = await coffee
     .fork(cli, ['generate'], {
       cwd: resolve('custom-filter'),
       execArgv: ['--require', require.resolve('./stub-axios.js')],
     })
-    // .debug()
+    .debug()
     .end();
   const confString1 = fs.readFileSync(resolve('custom-filter/dist/ss.conf'), {
     encoding: 'utf8',

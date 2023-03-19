@@ -62,49 +62,17 @@ export const getSurgeNodes = function (
             return void 0;
           }
 
-          // Native support for Shadowsocks
-          if (nodeConfig?.surgeConfig?.shadowsocksFormat === 'ss') {
-            return [
-              config.nodeName,
-              [
-                'ss',
-                config.hostname,
-                config.port,
-                'encrypt-method=' + config.method,
-                ...pickAndFormatStringList(
-                  config,
-                  [
-                    'password',
-                    'udp-relay',
-                    'obfs',
-                    'obfs-host',
-                    'tfo',
-                    'mptcp',
-                    'testUrl',
-                    'underlyingProxy',
-                  ],
-                  {
-                    keyFormat: 'kebabCase',
-                  },
-                ),
-                ...parseShadowTlsConfig(nodeConfig),
-              ].join(', '),
-            ].join(' = ');
-          }
-
-          // Using custom format
           return [
             config.nodeName,
             [
-              'custom',
+              'ss',
               config.hostname,
               config.port,
-              config.method,
-              config.password,
-              'https://raw.githubusercontent.com/ConnersHua/SSEncrypt/master/SSEncrypt.module',
+              'encrypt-method=' + config.method,
               ...pickAndFormatStringList(
                 config,
                 [
+                  'password',
                   'udp-relay',
                   'obfs',
                   'obfs-host',
@@ -273,120 +241,67 @@ export const getSurgeNodes = function (
         case NodeTypeEnum.Vmess: {
           const config = nodeConfig as VmessNodeConfig;
 
-          if (nodeConfig?.surgeConfig?.v2ray === 'native') {
-            // Native support for vmess
+          const configList = [
+            'vmess',
+            config.hostname,
+            config.port,
+            `username=${config.uuid}`,
+          ];
 
-            const configList = [
-              'vmess',
-              config.hostname,
-              config.port,
-              `username=${config.uuid}`,
-            ];
+          if (
+            ['chacha20-ietf-poly1305', 'aes-128-gcm'].includes(config.method)
+          ) {
+            configList.push(`encrypt-method=${config.method}`);
+          }
 
-            if (
-              ['chacha20-ietf-poly1305', 'aes-128-gcm'].includes(config.method)
-            ) {
-              configList.push(`encrypt-method=${config.method}`);
-            }
-
-            if (config.network === 'ws') {
-              configList.push('ws=true');
-              configList.push(`ws-path=${config.path}`);
-              configList.push(
-                'ws-headers=' +
-                  JSON.stringify(
-                    getSurgeExtendHeaders({
-                      host: config.host || config.hostname,
-                      'user-agent': OBFS_UA,
-                      ..._.omit(config.wsHeaders, ['host']), // host 本质上是一个头信息，所以可能存在冲突的情况。以 host 属性为准。
-                    }),
-                  ),
-              );
-            }
-
-            if (config.tls) {
-              configList.push(
-                'tls=true',
-                ...pickAndFormatStringList(
-                  config,
-                  ['tls13', 'skipCertVerify', 'serverCertFingerprintSha256'],
-                  {
-                    keyFormat: 'kebabCase',
-                  },
-                ),
-                ...(config.host ? [`sni=${config.host}`] : []),
-              );
-            }
-
+          if (config.network === 'ws') {
+            configList.push('ws=true');
+            configList.push(`ws-path=${config.path}`);
             configList.push(
+              'ws-headers=' +
+                JSON.stringify(
+                  getSurgeExtendHeaders({
+                    host: config.host || config.hostname,
+                    'user-agent': OBFS_UA,
+                    ..._.omit(config.wsHeaders, ['host']), // host 本质上是一个头信息，所以可能存在冲突的情况。以 host 属性为准。
+                  }),
+                ),
+            );
+          }
+
+          if (config.tls) {
+            configList.push(
+              'tls=true',
               ...pickAndFormatStringList(
                 config,
-                ['tfo', 'mptcp', 'underlyingProxy', 'testUrl'],
+                ['tls13', 'skipCertVerify', 'serverCertFingerprintSha256'],
                 {
                   keyFormat: 'kebabCase',
                 },
               ),
+              ...(config.host ? [`sni=${config.host}`] : []),
             );
-
-            if (nodeConfig?.surgeConfig?.vmessAEAD) {
-              configList.push('vmess-aead=true');
-            } else {
-              configList.push('vmess-aead=false');
-            }
-
-            configList.push(...parseShadowTlsConfig(nodeConfig));
-
-            return [config.nodeName, configList.join(', ')].join(' = ');
-          } else {
-            // Using external provider
-
-            // istanbul ignore next
-            if (!config.binPath) {
-              throw new Error(
-                '请按照文档 https://url.royli.dev/vdGh2 添加 V2Ray 二进制文件路径',
-              );
-            }
-
-            if (config.localPort === 0) {
-              throw new Error(
-                `为 Surge 生成 Vmess 配置时必须为 Provider ${config.provider?.name} 设置 startPort，参考 https://url.royli.dev/bWcpe`,
-              );
-            }
-
-            const jsonFileName = `v2ray_${config.localPort}_${config.hostname}_${config.port}.json`;
-            const jsonFilePath = join(ensureConfigFolder(), jsonFileName);
-            const jsonFile = formatV2rayConfig(
-              config.localPort as number,
-              nodeConfig,
-            );
-            const args = [
-              '--config',
-              jsonFilePath.replace(os.homedir(), '$HOME'),
-            ];
-            const configString = [
-              'external',
-              `exec = ${JSON.stringify(config.binPath)}`,
-              ...args.map((arg) => `args = ${JSON.stringify(arg)}`),
-              `local-port = ${config.localPort}`,
-            ];
-
-            if (config.hostnameIp && config.hostnameIp.length) {
-              configString.push(
-                ...config.hostnameIp.map((item) => `addresses = ${item}`),
-              );
-            }
-
-            if (isIp(config.hostname)) {
-              configString.push(`addresses = ${config.hostname}`);
-            }
-
-            // istanbul ignore next
-            if (process.env.NODE_ENV !== 'test') {
-              fs.writeJSONSync(jsonFilePath, jsonFile);
-            }
-
-            return [config.nodeName, configString.join(', ')].join(' = ');
           }
+
+          configList.push(
+            ...pickAndFormatStringList(
+              config,
+              ['tfo', 'mptcp', 'underlyingProxy', 'testUrl'],
+              {
+                keyFormat: 'kebabCase',
+              },
+            ),
+          );
+
+          if (nodeConfig?.surgeConfig?.vmessAEAD) {
+            configList.push('vmess-aead=true');
+          } else {
+            configList.push('vmess-aead=false');
+          }
+
+          configList.push(...parseShadowTlsConfig(nodeConfig));
+
+          return [config.nodeName, configList.join(', ')].join(' = ');
         }
 
         case NodeTypeEnum.Trojan: {

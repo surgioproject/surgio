@@ -52,8 +52,6 @@ export interface CommandConfig {
     [name: string]: ReadonlyArray<string | RegExp> | string | RegExp;
   };
   readonly surgeConfig?: {
-    readonly shadowsocksFormat?: 'ss' | 'custom';
-    readonly v2ray?: 'native' | 'external';
     readonly resolveHostname?: boolean;
     readonly vmessAEAD?: boolean;
   };
@@ -61,7 +59,6 @@ export interface CommandConfig {
     readonly vmessAEAD?: boolean;
   };
   readonly clashConfig?: {
-    readonly ssrFormat?: 'native' | 'legacy';
     readonly enableTuic?: boolean;
   };
   readonly surfboardConfig?: {
@@ -104,7 +101,6 @@ export interface ArtifactConfig {
   readonly combineProviders?: ReadonlyArray<string>;
   readonly categories?: ReadonlyArray<string>;
   readonly customParams?: PlainObjectOf<string | boolean | number>;
-  readonly proxyGroupModifier?: ProxyGroupModifier;
   readonly destDir?: string;
   readonly templateString?: string;
   readonly downloadUrl?: string;

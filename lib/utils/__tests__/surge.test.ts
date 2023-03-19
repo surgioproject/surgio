@@ -86,9 +86,6 @@ test('getSurgeNodes', async (t) => {
       uuid: '1386f85e-657b-4d6e-9d56-78badb75e1fd',
       binPath: '/usr/local/bin/v2ray',
       localPort: 61101,
-      surgeConfig: {
-        v2ray: 'native',
-      },
     },
     {
       type: NodeTypeEnum.Vmess,
@@ -104,9 +101,6 @@ test('getSurgeNodes', async (t) => {
       uuid: '1386f85e-657b-4d6e-9d56-78badb75e1fd',
       binPath: '/usr/local/bin/v2ray',
       localPort: 61101,
-      surgeConfig: {
-        v2ray: 'native',
-      },
     },
     {
       nodeName: 'Test Node 4',
@@ -119,9 +113,6 @@ test('getSurgeNodes', async (t) => {
       'obfs-host': 'example.com',
       'udp-relay': true,
       mptcp: true,
-      surgeConfig: {
-        shadowsocksFormat: 'ss',
-      },
     },
     {
       nodeName: 'Test Node 5',
@@ -131,9 +122,6 @@ test('getSurgeNodes', async (t) => {
       method: 'chacha20-ietf-poly1305',
       password: 'password',
       mptcp: false,
-      surgeConfig: {
-        shadowsocksFormat: 'ss',
-      },
     },
     {
       nodeName: 'Test Node 6',
@@ -142,9 +130,6 @@ test('getSurgeNodes', async (t) => {
       port: '443',
       method: 'chacha20-ietf-poly1305',
       password: 'password',
-      surgeConfig: {
-        shadowsocksFormat: 'ss',
-      },
     },
     {
       nodeName: 'Test Node 7',
@@ -153,9 +138,6 @@ test('getSurgeNodes', async (t) => {
       port: '443',
       method: 'chacha20-ietf-poly1305',
       password: 'password',
-      surgeConfig: {
-        shadowsocksFormat: 'ss',
-      },
       tfo: true,
       mptcp: true,
     },
@@ -175,9 +157,6 @@ test('getSurgeNodes', async (t) => {
       uuid: '1386f85e-657b-4d6e-9d56-78badb75e1fd',
       binPath: '/usr/local/bin/v2ray',
       localPort: 61101,
-      surgeConfig: {
-        v2ray: 'native',
-      },
       tfo: true,
       mptcp: true,
     },
@@ -197,9 +176,6 @@ test('getSurgeNodes', async (t) => {
       uuid: '1386f85e-657b-4d6e-9d56-78badb75e1fd',
       binPath: '/usr/local/bin/v2ray',
       localPort: 61101,
-      surgeConfig: {
-        v2ray: 'native',
-      },
       tfo: true,
       mptcp: true,
       underlyingProxy: 'another-proxy',
@@ -213,11 +189,11 @@ test('getSurgeNodes', async (t) => {
 
   t.is(
     txt1[0],
-    'Test Node 1 = custom, example.com, 443, chacha20-ietf-poly1305, password, https://raw.githubusercontent.com/ConnersHua/SSEncrypt/master/SSEncrypt.module, udp-relay=true, obfs=tls, obfs-host=example.com',
+    'Test Node 1 = ss, example.com, 443, encrypt-method=chacha20-ietf-poly1305, password=password, udp-relay=true, obfs=tls, obfs-host=example.com',
   );
   t.is(
     txt1[1],
-    'Test Node 2 = custom, example2.com, 443, chacha20-ietf-poly1305, password, https://raw.githubusercontent.com/ConnersHua/SSEncrypt/master/SSEncrypt.module',
+    'Test Node 2 = ss, example2.com, 443, encrypt-method=chacha20-ietf-poly1305, password=password',
   );
   t.is(
     txt1[2],
@@ -225,7 +201,7 @@ test('getSurgeNodes', async (t) => {
   );
   t.is(
     txt1[3],
-    '测试 3 = external, exec = "/usr/local/bin/v2ray", args = "--config", args = "$HOME/.config/surgio/v2ray_61101_1.1.1.1_8080.json", local-port = 61101, addresses = 1.1.1.1',
+    '测试 3 = vmess, 1.1.1.1, 8080, username=1386f85e-657b-4d6e-9d56-78badb75e1fd, ws=true, ws-path=/, ws-headers="host:1.1.1.1|user-agent:Mozilla/5.0 (iPhone; CPU iPhone OS 13_5 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/13.1.1 Mobile/15E148 Safari/604.1", vmess-aead=false',
   );
   t.is(
     txt1[4],
@@ -262,7 +238,7 @@ test('getSurgeNodes', async (t) => {
 
   t.is(
     txt2,
-    'Test Node 1 = custom, example.com, 443, chacha20-ietf-poly1305, password, https://raw.githubusercontent.com/ConnersHua/SSEncrypt/master/SSEncrypt.module, udp-relay=true, obfs=tls, obfs-host=example.com',
+    'Test Node 1 = ss, example.com, 443, encrypt-method=chacha20-ietf-poly1305, password=password, udp-relay=true, obfs=tls, obfs-host=example.com',
   );
 
   t.is(
@@ -467,9 +443,6 @@ test('getSurgeNodes', async (t) => {
         uuid: '1386f85e-657b-4d6e-9d56-78badb75e1fd',
         binPath: '/usr/local/bin/v2ray',
         localPort: 61101,
-        surgeConfig: {
-          v2ray: 'native',
-        },
         tfo: true,
         mptcp: true,
         testUrl: 'http://www.google.com',

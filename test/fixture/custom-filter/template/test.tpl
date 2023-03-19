@@ -8,8 +8,6 @@
 ----
 {{ getNodeNames(nodeList, customFilters.globalKeywordFilter) }}
 ----
-{{ clashProxyConfig | yaml }}
-----
 {{ getSurgeNodes(nodeList, customFilters.sortFilter) }}
 ----
 {{ getNodeNames(nodeList, customFilters.sortFilter) }}

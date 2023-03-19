@@ -3,18 +3,12 @@ import fs from 'fs-extra';
 import _ from 'lodash';
 import path from 'path';
 import { URL } from 'url';
-import { deprecate } from 'util';
 
-import { DEP005, DEP006, DEP008 } from '../misc/deprecation';
 import redis from '../redis';
 import { CommandConfig } from '../types';
 import { PROXY_TEST_INTERVAL, PROXY_TEST_URL } from '../constant';
 import { addFlagMap } from './flag';
 import { ensureConfigFolder } from './index';
-
-const showDEP005 = deprecate(_.noop, DEP005, 'DEP005');
-const showDEP006 = deprecate(_.noop, DEP006, 'DEP006');
-const showDEP008 = deprecate(_.noop, DEP008, 'DEP008');
 
 let finalConfig: CommandConfig | null = null;
 
@@ -106,13 +100,10 @@ export const normalizeConfig = (
     providerDir: path.join(cwd, './provider'),
     configDir: ensureConfigFolder(),
     surgeConfig: {
-      shadowsocksFormat: 'ss',
-      v2ray: 'native',
       resolveHostname: false,
       vmessAEAD: true,
     },
     clashConfig: {
-      ssrFormat: 'native',
       enableTuic: false,
     },
     quantumultXConfig: {
@@ -151,21 +142,6 @@ export const normalizeConfig = (
   }
 
   // istanbul ignore next
-  if (config.surgeConfig?.shadowsocksFormat === 'custom') {
-    showDEP005();
-  }
-
-  // istanbul ignore next
-  if (config.surgeConfig?.v2ray === 'external') {
-    showDEP006();
-  }
-
-  // istanbul ignore next
-  if (config.clashConfig?.ssrFormat === 'legacy') {
-    showDEP008();
-  }
-
-  // istanbul ignore next
   if (config.cache && config.cache.type === 'redis') {
     if (!config.cache.redisUrl) {
       throw new Error('缓存配置错误，请检查 cache.redisUrl 配置');
@@ -192,7 +168,6 @@ export const validateConfig = (userConfig: Partial<CommandConfig>): void => {
     provider: Joi.string().required(),
     combineProviders: Joi.array().items(Joi.string()),
     customParams: Joi.object(),
-    proxyGroupModifier: Joi.function(),
     destDir: Joi.string(),
     downloadUrl: Joi.string(),
   }).unknown();
@@ -228,8 +203,6 @@ export const validateConfig = (userConfig: Partial<CommandConfig>): void => {
       Joi.array().items(Joi.string(), Joi.object().regex()),
     ]),
     surgeConfig: Joi.object({
-      shadowsocksFormat: Joi.string().valid('ss', 'custom'),
-      v2ray: Joi.string().valid('native', 'external'),
       resolveHostname: Joi.boolean().strict(),
       vmessAEAD: Joi.boolean().strict(),
     }).unknown(),
@@ -240,7 +213,6 @@ export const validateConfig = (userConfig: Partial<CommandConfig>): void => {
       vmessAEAD: Joi.boolean().strict(),
     }).unknown(),
     clashConfig: Joi.object({
-      ssrFormat: Joi.string().valid('native', 'legacy'),
       enableTuic: Joi.bool().strict(),
     }).unknown(),
     analytics: Joi.boolean().strict(),

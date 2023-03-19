@@ -6,9 +6,7 @@ import _ from 'lodash';
 import { Environment } from 'nunjucks';
 import path from 'path';
 import { EventEmitter } from 'events';
-import { deprecate } from 'util';
 
-import { DEP009 } from '../misc/deprecation';
 import { getProvider } from '../provider';
 import {
   ArtifactConfig,
@@ -25,7 +23,6 @@ import {
   getDownloadUrl,
   getMellowNodes,
   getNodeNames,
-  getQuantumultNodes,
   getQuantumultXNodes,
   getShadowsocksNodes,
   getShadowsocksNodesJSON,
@@ -35,7 +32,6 @@ import {
   getUrl,
   getV2rayNNodes,
   isIp,
-  normalizeClashProxyGroupConfig,
   toBase64,
   toUrlSafeBase64,
 } from '../utils';
@@ -68,8 +64,6 @@ import { getLoonNodes } from '../utils/loon';
 import { loadLocalSnippet } from './template';
 
 type ThenArg<T> = T extends PromiseLike<infer U> ? U : T;
-
-const showDEP009 = deprecate(_.noop, DEP009, 'DEP009');
 
 export interface ArtifactOptions {
   readonly remoteSnippetList?: ReadonlyArray<RemoteSnippet>;
@@ -110,10 +104,6 @@ export class Artifact extends EventEmitter {
     assert(artifact.provider, '必须指定 artifact 的 provider 属性');
     if (!templateString) {
       assert(template, '必须指定 artifact 的 template 属性');
-    }
-
-    if (this.artifact.proxyGroupModifier) {
-      showDEP009();
     }
 
     const mainProviderName = artifact.provider;
@@ -178,7 +168,6 @@ export class Artifact extends EventEmitter {
       getShadowsocksNodes,
       getShadowsocksNodesJSON,
       getShadowsocksrNodes,
-      getQuantumultNodes,
       getV2rayNNodes,
       getQuantumultXNodes,
       getMellowNodes,
@@ -207,34 +196,6 @@ export class Artifact extends EventEmitter {
       youtubePremiumFilter,
       customFilters,
       customParams: mergedCustomParams,
-      ...(this.artifact.proxyGroupModifier
-        ? {
-            clashProxyConfig: {
-              proxies: getClashNodes(nodeList),
-              'proxy-groups': normalizeClashProxyGroupConfig(
-                nodeList,
-                {
-                  usFilter,
-                  hkFilter,
-                  japanFilter,
-                  koreaFilter,
-                  singaporeFilter,
-                  taiwanFilter,
-                  chinaBackFilter,
-                  chinaOutFilter,
-                  netflixFilter,
-                  youtubePremiumFilter,
-                  ...customFilters,
-                },
-                this.artifact.proxyGroupModifier,
-                {
-                  proxyTestUrl: config.proxyTestUrl,
-                  proxyTestInterval: config.proxyTestInterval,
-                },
-              ),
-            },
-          }
-        : {}),
     };
   }
 

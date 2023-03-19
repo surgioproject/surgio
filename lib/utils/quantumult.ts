@@ -1,125 +1,17 @@
 import { createLogger } from '@surgio/logger';
 import _ from 'lodash';
-import { deprecate } from 'util';
 
-import { DEP010 } from '../misc/deprecation';
-import { ERR_INVALID_FILTER, OBFS_UA } from '../constant';
+import { ERR_INVALID_FILTER } from '../constant';
 import {
-  HttpsNodeConfig,
   NodeNameFilterType,
   NodeTypeEnum,
   PossibleNodeConfigType,
-  ShadowsocksNodeConfig,
-  ShadowsocksrNodeConfig,
   SortedNodeNameFilterType,
-  VmessNodeConfig,
 } from '../types';
 import { applyFilter } from './filter';
-import {
-  getShadowsocksNodes,
-  getShadowsocksrNodes,
-  pickAndFormatStringList,
-  toBase64,
-} from './index';
+import { pickAndFormatStringList } from './index';
 
 const logger = createLogger({ service: 'surgio:utils:quantumult' });
-const showDEP010 = deprecate(_.noop, DEP010, 'DEP010');
-export const getQuantumultNodes = function (
-  list: ReadonlyArray<
-    | ShadowsocksNodeConfig
-    | VmessNodeConfig
-    | ShadowsocksrNodeConfig
-    | HttpsNodeConfig
-  >,
-  groupName = 'Surgio',
-  filter?: NodeNameFilterType | SortedNodeNameFilterType,
-): string {
-  showDEP010();
-
-  // istanbul ignore next
-  if (arguments.length === 3 && typeof filter === 'undefined') {
-    throw new Error(ERR_INVALID_FILTER);
-  }
-
-  function getHeader(wsHeaders: Record<string, string>): string {
-    return Object.keys(wsHeaders)
-      .map((headerKey) => `${headerKey}:${wsHeaders[headerKey]}`)
-      .join('[Rr][Nn]');
-  }
-
-  const result: ReadonlyArray<string> = applyFilter(list, filter)
-    .map((nodeConfig): string | undefined => {
-      switch (nodeConfig.type) {
-        case NodeTypeEnum.Vmess: {
-          const config = [
-            'vmess',
-            nodeConfig.hostname,
-            nodeConfig.port,
-            nodeConfig.method === 'auto'
-              ? 'chacha20-ietf-poly1305'
-              : nodeConfig.method,
-            JSON.stringify(nodeConfig.uuid),
-            nodeConfig.alterId,
-            `group=${groupName}`,
-            `over-tls=${nodeConfig.tls === true ? 'true' : 'false'}`,
-            `certificate=1`,
-            `obfs=${nodeConfig.network}`,
-            `obfs-path=${JSON.stringify(nodeConfig.path || '/')}`,
-            `obfs-header=${JSON.stringify(
-              getHeader({
-                host: nodeConfig.host || nodeConfig.hostname,
-                'user-agent': OBFS_UA, // 需要用 "" 包裹否则 Surge 会无法解析
-                ..._.omit(nodeConfig.wsHeaders, ['host']),
-              }),
-            )}`,
-          ]
-            .filter((value) => !!value)
-            .join(',');
-
-          return (
-            'vmess://' + toBase64([nodeConfig.nodeName, config].join(' = '))
-          );
-        }
-
-        case NodeTypeEnum.Shadowsocks: {
-          return getShadowsocksNodes([nodeConfig], groupName);
-        }
-
-        case NodeTypeEnum.Shadowsocksr:
-          return getShadowsocksrNodes([nodeConfig], groupName);
-
-        case NodeTypeEnum.HTTPS: {
-          const config = [
-            nodeConfig.nodeName,
-            [
-              'http',
-              `upstream-proxy-address=${nodeConfig.hostname}`,
-              `upstream-proxy-port=${nodeConfig.port}`,
-              'upstream-proxy-auth=true',
-              `upstream-proxy-username=${nodeConfig.username}`,
-              `upstream-proxy-password=${nodeConfig.password}`,
-              'over-tls=true',
-              'certificate=1',
-            ].join(', '),
-          ].join(' = ');
-
-          return 'http://' + toBase64(config);
-        }
-
-        // istanbul ignore next
-        default:
-          logger.warn(
-            `不支持为 Quantumult 生成 ${
-              (nodeConfig as any).type
-            } 的节点，节点 ${(nodeConfig as any).nodeName} 会被省略`,
-          );
-          return void 0;
-      }
-    })
-    .filter((item): item is string => item !== undefined);
-
-  return result.join('\n');
-};
 
 /**
  * @see https://github.com/crossutility/Quantumult-X/blob/master/sample.conf

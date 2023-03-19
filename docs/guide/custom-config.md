@@ -168,32 +168,11 @@ SSR 的可执行文件地址。请使用 libev 版本的二进制文件，可以
 // surgio.conf.js
 module.exports = {
   surgeConfig: {
-    shadowsocksFormat: 'custom', // or 'ss'
     v2ray: 'native',
     resolveHostname: true,
   },
 };
 ```
-
-#### surgeConfig.shadowsocksFormat
-
-- 类型: `string`
-- 默认值: `ss`
-- 可选值: `custom|ss`
-
-定义生成 Shadowsocks 节点配置的类型，默认使用 `ss` 的形式，旧版本 Surge 需手动设置为 `custom`。
-
-#### surgeConfig.v2ray
-
-- 类型: `string`
-- 默认值: `native`
-- 可选值: `external|native`
-
-:::warning 注意
-仅 Surge 4 for iOS 和 Surge 3.3.1 (894) for macOS 之后的版本支持 `native` 方式。
-:::
-
-定义生成 Vmess 节点配置的类型，默认使用 `native` 的方式。旧版本 Surge for Mac 需要使用 External Provider 的形式
 
 #### surgeConfig.resolveHostname
 
@@ -239,19 +218,10 @@ module.exports = {
 // surgio.conf.js
 module.exports = {
   clashConfig: {
-    ssrFormat: 'native', // or 'legacy'
     enableTuic: false,
   },
 };
 ```
-
-#### clashConfig.ssrFormat
-
-- 类型: `string`
-- 默认值: `native`
-- 可选值: `native|legacy`
-
-如果你还在使用 ClashR，则需要使用 legacy 的方式输出 Clash 配置。
 
 #### clashConfig.enableTuic
 

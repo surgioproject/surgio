@@ -107,26 +107,6 @@ DOMAIN-KEYWORD,baidu,DIRECT
 
 获取自定义的模板参数。请 [先在 Artifact 中定义](/guide/custom-artifact.md#customparams) 再使用。
 
-### clashProxyConfig
-
-- 类型: `string`
-
-:::tip 提示
-- 支持输出 Shadowsocks, Shadowsocksr, Snell, Vmess 节点；
-:::
-
-Clash 的 `proxies` 和 `proxy-groups` 配置对象。`clashProxyConfig` 的内容依赖 Artifact 的 [`proxyGroupModifier` 函数](/guide/custom-artifact.md#proxygroupmodifier-nodelist-filters)。
-
-由于很难在模板中直接书写 Yaml 格式的文本，所以引入了一个特殊的变量用来存储 Clash 的节点配置，然后利用 Nunjucks 的 [filter](https://nunjucks.bootcss.com/templating.html#part-cda1d805a3577fa5) 来输出 Yaml 格式文本。
-
-```
-{{ clashProxyConfig | yaml }}
-```
-
-:::tip 提示
-你当然可以在模板中使用 Nunjucks 内置的 filter。
-:::
-
 ## 过滤器
 
 ### 如何使用过滤器？
@@ -201,8 +181,6 @@ Youtube Premium 节点过滤器。Surgio 默认会将名称中包含 *日*, *美
 
 ```html
 <!-- .tpl 文件 -->
-{{ getQuantumultNodes(nodeList, providerName) | base64 }}
-
 {{ getSurgeNodes(nodeList) }}
 ```
 
@@ -250,30 +228,6 @@ ss://cmM0LW1kNTpwYXNzd29yZA@hk.com:1234/?group=subscribe_demo#%F0%9F%87%AD%F0%9F
 ```html
 <!-- .tpl 文件 -->
 {{ getShadowsocksNodes(nodeList, providerName) | base64 }}
-```
-
-### getQuantumultNodes
-
-`getQuantumultNodes(nodeList, providerName?, filter?)`
-
-:::tip 提示
-- 第二个参数为 Group 名称，可选
-- 第三个参数可选，可传入标准的过滤器或自定义的过滤器
-- 支持输出 Shadowsocks, Shadowsocksr, Vmess, HTTPS 节点
-:::
-
-生成 Quantumult 的节点配置，例如：
-
-```
-vmess://5rWL6K+VIDEgPSB2bWVzcywxLjEuMS4xLDgwODAsY2hhY2hhMjAtaWV0Zi1wb2x5MTMwNSwiMTM4NmY4NWUtNjU3Yi00ZDZlLTlkNTYtNzhiYWRiNzVlMWZkIiw2NCxncm91cD1TdXJnaW8sb3Zlci10bHM9ZmFsc2UsY2VydGlmaWNhdGU9MSxvYmZzPXdzLG9iZnMtcGF0aD0iLyIsb2Jmcy1oZWFkZXI9Ikhvc3Q6ZXhhbXBsZS5jb21bUnJdW05uXVVzZXItQWdlbnQ6TW96aWxsYS81LjAgKGlQaG9uZTsgQ1BVIGlQaG9uZSBPUyAxMl8zXzEgbGlrZSBNYWMgT1MgWCkgQXBwbGVXZWJLaXQvNjA1LjEuMTUgKEtIVE1MLCBsaWtlIEdlY2tvKSBNb2JpbGUvMTVFMTQ4Ig==
-vmess://5rWL6K+VIDIgPSB2bWVzcywxLjEuMS4xLDgwODAsY2hhY2hhMjAtaWV0Zi1wb2x5MTMwNSwiMTM4NmY4NWUtNjU3Yi00ZDZlLTlkNTYtNzhiYWRiNzVlMWZkIiw2NCxncm91cD1TdXJnaW8sb3Zlci10bHM9ZmFsc2UsY2VydGlmaWNhdGU9MSxvYmZzPXRjcCxvYmZzLXBhdGg9Ii8iLG9iZnMtaGVhZGVyPSJIb3N0OjEuMS4xLjFbUnJdW05uXVVzZXItQWdlbnQ6TW96aWxsYS81LjAgKGlQaG9uZTsgQ1BVIGlQaG9uZSBPUyAxMl8zXzEgbGlrZSBNYWMgT1MgWCkgQXBwbGVXZWJLaXQvNjA1LjEuMTUgKEtIVE1MLCBsaWtlIEdlY2tvKSBNb2JpbGUvMTVFMTQ4Ig==
-```
-
-你可以使用 `base64` filter 来将上面的文本转换成 Quantumult 能够识别的订阅内容。
-
-```html
-<!-- .tpl 文件 -->
-{{ getQuantumultNodes(nodeList, providerName) | base64 }}
 ```
 
 ### getQuantumultXNodes

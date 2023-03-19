@@ -108,8 +108,6 @@ export const getClashNodes = function (
           };
 
         case NodeTypeEnum.Shadowsocksr: {
-          const ssrFormat = nodeConfig?.clashConfig?.ssrFormat;
-
           return {
             type: 'ssr',
             name: nodeConfig.nodeName,
@@ -119,15 +117,8 @@ export const getClashNodes = function (
             obfs: nodeConfig.obfs,
             protocol: nodeConfig.protocol,
             cipher: nodeConfig.method,
-            ...(ssrFormat === 'native'
-              ? {
-                  'obfs-param': nodeConfig.obfsparam ?? '',
-                  'protocol-param': nodeConfig.protoparam ?? '',
-                }
-              : {
-                  obfsparam: nodeConfig.obfsparam ?? '',
-                  protocolparam: nodeConfig.protoparam ?? '',
-                }),
+            'obfs-param': nodeConfig.obfsparam ?? '',
+            'protocol-param': nodeConfig.protoparam ?? '',
             udp: nodeConfig['udp-relay'] === true,
           };
         }

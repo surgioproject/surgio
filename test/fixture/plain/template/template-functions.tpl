@@ -19,9 +19,6 @@ getMellowNodes
 getLoonNodes
 {{ getLoonNodes(nodeList) }}
 ----
-clashProxyConfig
-{{ clashProxyConfig | yaml }}
-----
 proxyTestUrl
 {{ proxyTestUrl }}
 ----

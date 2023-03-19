@@ -3,8 +3,6 @@ import nunjucks from 'nunjucks';
 import path from 'path';
 import { JsonObject } from 'type-fest';
 import YAML from 'yaml';
-import { deprecate } from 'util';
-import { DEP007 } from '../misc/deprecation';
 
 import { RemoteSnippet } from '../types';
 import { decodeStringList, toBase64 } from '../utils';
@@ -52,7 +50,6 @@ export function getEngine(templateDir: string): nunjucks.Environment {
       .join('\n');
   };
 
-  engine.addFilter('patchYamlArray', deprecate(clashFilter, DEP007, 'DEP007'));
   engine.addFilter('clash', clashFilter);
 
   engine.addFilter('quantumultx', (str?: string): string => {

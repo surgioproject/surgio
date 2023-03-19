@@ -8,39 +8,12 @@ module.exports = {
       name: 'ss.conf',
       template: 'test',
       provider: 'ss',
-      proxyGroupModifier(nodeList, filters) {
-        return [
-          {
-            name: 'global filter',
-            filter: filters.globalKeywordFilter,
-            type: 'select',
-          },
-          {
-            name: 'provider filter',
-            filter: filters.keywordFilter,
-            type: 'select',
-          },
-          {
-            name: 'sort filter',
-            filter: filters.sortFilter,
-            type: 'select',
-          },
-        ];
-      },
     },
     {
       name: 'test_sorted_filter.conf',
       template: 'test2',
       provider: 'ss2',
       combineProviders: ['custom'],
-      proxyGroupModifier() {
-        return [
-          {
-            name: 'all',
-            type: 'select',
-          },
-        ];
-      },
     },
   ],
   urlBase: 'http://example.com/',
