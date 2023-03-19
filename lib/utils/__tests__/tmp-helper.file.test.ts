@@ -20,6 +20,7 @@ test.after.always(async () => {
 
 test.serial('no permission', (t) => {
   t.throws(() => {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const file = new TmpFile('/System');
   });
 });

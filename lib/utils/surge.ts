@@ -1,9 +1,5 @@
 import { createLogger } from '@surgio/logger';
-import fs from 'fs-extra';
 import _ from 'lodash';
-import os from 'os';
-import { join } from 'path';
-import { Node } from 'yaml/types';
 import { ERR_INVALID_FILTER, OBFS_UA } from '../constant';
 import {
   HttpNodeConfig,
@@ -17,12 +13,7 @@ import {
   SortedNodeNameFilterType,
   VmessNodeConfig,
 } from '../types';
-import {
-  ensureConfigFolder,
-  formatV2rayConfig,
-  isIp,
-  pickAndFormatStringList,
-} from './index';
+import { isIp, pickAndFormatStringList } from './index';
 import { applyFilter } from './filter';
 
 const logger = createLogger({ service: 'surgio:utils:surge' });

@@ -16,9 +16,6 @@ import {
   NodeFilterType,
   NodeNameFilterType,
   NodeTypeEnum,
-  PlainObjectOf,
-  PossibleNodeConfigType,
-  ProxyGroupModifier,
   ShadowsocksNodeConfig,
   ShadowsocksrNodeConfig,
   SimpleNodeConfig,
@@ -27,7 +24,7 @@ import {
 } from '../types';
 import { ERR_INVALID_FILTER, OBFS_UA } from '../constant';
 import { getIsGFWFree } from './env-flag';
-import { validateFilter, applyFilter } from './filter';
+import { applyFilter } from './filter';
 import { formatVmessUri } from './v2ray';
 
 export * from './surge';

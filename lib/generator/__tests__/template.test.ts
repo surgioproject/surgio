@@ -1,7 +1,6 @@
 // tslint:disable:no-expression-statement
 import test from 'ava';
 import fs from 'fs-extra';
-import { renderString } from 'nunjucks';
 import { join } from 'path';
 import {
   convertNewSurgeScriptRuleToQuantumultXRewriteRule,

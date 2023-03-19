@@ -1,7 +1,7 @@
 // istanbul ignore file
 import OSS from 'ali-oss';
 import Command from 'common-bin';
-import fs from 'fs';
+import fs from 'fs-extra';
 import dir from 'node-dir';
 import ora, { Ora } from 'ora';
 import path from 'path';

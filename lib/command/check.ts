@@ -1,7 +1,7 @@
 // istanbul ignore file
 import assert from 'assert';
 import Command, { Context } from 'common-bin';
-import fs from 'fs';
+import fs from 'fs-extra';
 import path from 'path';
 import Listr from 'listr';
 import inquirer from 'inquirer';

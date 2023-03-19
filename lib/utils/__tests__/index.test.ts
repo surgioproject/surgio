@@ -8,12 +8,7 @@ import {
   VmessNodeConfig,
 } from '../../types';
 import * as utils from '../index';
-import {
-  ERR_INVALID_FILTER,
-  PROXY_TEST_INTERVAL,
-  PROXY_TEST_URL,
-} from '../../constant';
-import * as filter from '../filter';
+import { ERR_INVALID_FILTER } from '../../constant';
 
 test('getNodeNames', async (t) => {
   const nodeNameList: ReadonlyArray<SimpleNodeConfig> = [

@@ -1,5 +1,5 @@
 import test from 'ava';
-import coffee from 'coffee';
+import * as coffee from 'coffee';
 import { join } from 'path';
 import fs from 'fs-extra';
 import ini from 'ini';
