@@ -1,48 +1,31 @@
 // istanbul ignore file
+import { Flags } from '@oclif/core';
 import OSS from 'ali-oss';
-import Command from 'common-bin';
 import fs from 'fs-extra';
 import dir from 'node-dir';
-import ora, { Ora } from 'ora';
 import path from 'path';
+
+import BaseCommand from '../base-command';
 import redis from '../redis';
-import { defineGlobalOptions } from '../utils/command';
+import { setConfig } from '../utils/config';
 
-import { loadConfig, setConfig } from '../utils/config';
-import { errorHandler } from '../utils/error-helper';
+class UploadCommand extends BaseCommand<typeof UploadCommand> {
+  static description = '上传规则到阿里云 OSS';
 
-class GenerateCommand extends Command {
-  private readonly spinner: Ora;
+  public async run(): Promise<void> {
+    const config = this.surgioConfig;
 
-  constructor(rawArgv?: string[]) {
-    super(rawArgv);
-    this.usage = '使用方法: surgio upload';
-    this.spinner = ora();
-    this.options = {
-      o: {
-        type: 'string',
-        alias: 'output',
-        description: '生成规则的目录',
-      },
-    };
-
-    defineGlobalOptions(this.yargs);
-  }
-
-  public async run(ctx): Promise<void> {
-    const config = loadConfig(ctx.cwd, ctx.argv.config);
-
-    if (ctx.argv.output) {
-      setConfig('output', ctx.argv.output);
+    if (this.flags.output) {
+      setConfig('output', this.flags.output);
     }
 
     const ossConfig = {
       region: config?.upload?.region,
       bucket: config?.upload?.bucket,
       endpoint: config?.upload?.endpoint,
-      accessKeyId: ctx.env.OSS_ACCESS_KEY_ID || config?.upload?.accessKeyId,
+      accessKeyId: process.env.OSS_ACCESS_KEY_ID || config?.upload?.accessKeyId,
       accessKeySecret:
-        ctx.env.OSS_ACCESS_KEY_SECRET || config?.upload?.accessKeySecret,
+        process.env.OSS_ACCESS_KEY_SECRET || config?.upload?.accessKeySecret,
     };
     const client = new OSS({
       secure: true,
@@ -96,24 +79,19 @@ class GenerateCommand extends Command {
       }
     };
 
-    this.spinner.start('开始上传到阿里云 OSS');
+    this.ora.start('开始上传到阿里云 OSS');
     await upload();
     await deleteUnwanted();
     await redis.destroyRedis();
-    this.spinner.succeed();
-  }
-
-  // istanbul ignore next
-  public get description(): string {
-    return '上传规则到阿里云 OSS';
-  }
-
-  // istanbul ignore next
-  public errorHandler(err): void {
-    this.spinner.fail();
-
-    errorHandler.call(this, err);
+    this.ora.succeed();
   }
 }
 
-export = GenerateCommand;
+UploadCommand.flags = {
+  output: Flags.string({
+    char: 'o',
+    description: '生成规则的目录',
+  }),
+};
+
+export default UploadCommand;

@@ -1,4 +1,4 @@
-import filesize from 'filesize';
+import { filesize } from 'filesize';
 import bytes from 'bytes';
 import { format, formatDistanceToNow } from 'date-fns';
 
@@ -67,13 +67,13 @@ export const formatSubscriptionUserInfo = (
   readonly expire: string;
 } => {
   return {
-    upload: filesize(userInfo.upload, { base: 2 }),
-    download: filesize(userInfo.download, { base: 2 }),
-    used: filesize(userInfo.upload + userInfo.download, { base: 2 }),
+    upload: filesize(userInfo.upload, { base: 2 }) as string,
+    download: filesize(userInfo.download, { base: 2 }) as string,
+    used: filesize(userInfo.upload + userInfo.download, { base: 2 }) as string,
     left: filesize(userInfo.total - userInfo.upload - userInfo.download, {
       base: 2,
-    }),
-    total: filesize(userInfo.total, { base: 2 }),
+    }) as string,
+    total: filesize(userInfo.total, { base: 2 }) as string,
     expire: userInfo.expire
       ? `${format(
           new Date(userInfo.expire * 1000),

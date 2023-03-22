@@ -1,9 +1,9 @@
 // istanbul ignore file
-import Command from 'common-bin';
 import { promises as fsp } from 'fs';
 import { basename, join } from 'path';
 import { createLogger } from '@surgio/logger';
 
+import BaseCommand from '../base-command';
 import BlackSSLProvider from '../provider/BlackSSLProvider';
 import ClashProvider from '../provider/ClashProvider';
 import CustomProvider from '../provider/CustomProvider';
@@ -12,11 +12,7 @@ import ShadowsocksrSubscribeProvider from '../provider/ShadowsocksrSubscribeProv
 import ShadowsocksSubscribeProvider from '../provider/ShadowsocksSubscribeProvider';
 import V2rayNSubscribeProvider from '../provider/V2rayNSubscribeProvider';
 import redis from '../redis';
-import { CommandConfig } from '../types';
-import { defineGlobalOptions } from '../utils/command';
-import { loadConfig } from '../utils/config';
 import { getProvider } from '../provider';
-import { errorHandler } from '../utils/error-helper';
 import { formatSubscriptionUserInfo } from '../utils/subscription';
 
 const logger = createLogger({
@@ -31,19 +27,10 @@ type PossibleProviderType =
   | ShadowsocksrSubscribeProvider
   | ClashProvider;
 
-class SubscriptionsCommand extends Command {
-  private config: CommandConfig;
+class SubscriptionsCommand extends BaseCommand<typeof SubscriptionsCommand> {
+  static description = '查询订阅信息';
 
-  constructor(rawArgv?: string[]) {
-    super(rawArgv);
-    this.usage = '使用方法: surgio subscriptions';
-
-    defineGlobalOptions(this.yargs);
-  }
-
-  public async run(ctx): Promise<void> {
-    this.config = loadConfig(ctx.cwd, ctx.argv.config);
-
+  public async run(): Promise<void> {
     const providerList = await this.listProviders();
 
     for (const provider of providerList) {
@@ -70,18 +57,8 @@ class SubscriptionsCommand extends Command {
     await redis.destroyRedis();
   }
 
-  // istanbul ignore next
-  public get description(): string {
-    return '查询订阅流量';
-  }
-
-  // istanbul ignore next
-  public errorHandler(err): void {
-    errorHandler.call(this, err);
-  }
-
   private async listProviders(): Promise<ReadonlyArray<PossibleProviderType>> {
-    const files = await fsp.readdir(this.config.providerDir, {
+    const files = await fsp.readdir(this.surgioConfig.providerDir, {
       encoding: 'utf8',
     });
     const providerList: PossibleProviderType[] = [];
@@ -93,10 +70,12 @@ class SubscriptionsCommand extends Command {
 
       try {
         const providerName = basename(path, '.js');
+        const module = await import(path);
 
         logger.debug('read %s %s', providerName, path);
+
         // eslint-disable-next-line prefer-const
-        provider = await getProvider(providerName, require(path));
+        provider = await getProvider(providerName, module.default);
       } catch (err) {
         logger.debug(`${path} 不是一个合法的模块`);
         return undefined;
@@ -112,7 +91,9 @@ class SubscriptionsCommand extends Command {
     }
 
     for (const file of files) {
-      const result = await readProvider(join(this.config.providerDir, file));
+      const result = await readProvider(
+        join(this.surgioConfig.providerDir, file),
+      );
       if (result) {
         providerList.push(result);
       }
@@ -122,4 +103,4 @@ class SubscriptionsCommand extends Command {
   }
 }
 
-export = SubscriptionsCommand;
+export default SubscriptionsCommand;

@@ -3,8 +3,8 @@ import { logger } from '@surgio/logger';
 import detectNewline from 'detect-newline';
 import nunjucks from 'nunjucks';
 import espree, { ExpressionStatementNode } from 'espree';
-import { CACHE_KEYS } from '../constant';
 
+import { CACHE_KEYS } from '../constant';
 import { RemoteSnippet, RemoteSnippetConfig } from '../types';
 import { ConfigCache } from './cache';
 import { getConfig } from './config';
