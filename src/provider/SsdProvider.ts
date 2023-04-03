@@ -170,13 +170,13 @@ export const parseSsdConfig = (
     port: server.port ?? port,
     method: server.encryption ?? encryption,
     password: server.password ?? password,
-    'udp-relay': udpRelay === true,
+    udpRelay: udpRelay === true,
 
     // obfs-local
     ...(plugin && plugin === 'simple-obfs'
       ? {
           obfs: pluginOpts.obfs as ShadowsocksNodeConfig['obfs'],
-          'obfs-host': (pluginOpts['obfs-host'] as string) || 'www.bing.com',
+          obfsHost: (pluginOpts['obfs-host'] as string) || 'www.bing.com',
         }
       : null),
 
@@ -184,7 +184,7 @@ export const parseSsdConfig = (
     ...(plugin && plugin === 'v2ray-plugin'
       ? {
           obfs: (pluginOpts.tls as boolean) ? 'wss' : 'ws',
-          'obfs-host': pluginOpts.host as string,
+          obfsHost: pluginOpts.host as string,
         }
       : null),
   };

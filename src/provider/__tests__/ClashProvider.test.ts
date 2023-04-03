@@ -100,7 +100,7 @@ test('getClashSubscription', async (t) => {
     port: 443,
     method: 'chacha20-ietf-poly1305',
     password: 'password',
-    'udp-relay': true,
+    udpRelay: true,
   });
   t.deepEqual(config.shift(), {
     type: NodeTypeEnum.Shadowsocks,
@@ -109,9 +109,9 @@ test('getClashSubscription', async (t) => {
     port: 443,
     method: 'chacha20-ietf-poly1305',
     password: 'password',
-    'udp-relay': false,
+    udpRelay: false,
     obfs: 'tls',
-    'obfs-host': 'www.bing.com',
+    obfsHost: 'www.bing.com',
   });
   t.deepEqual(config.shift(), {
     type: NodeTypeEnum.Shadowsocks,
@@ -120,10 +120,10 @@ test('getClashSubscription', async (t) => {
     port: 443,
     method: 'chacha20-ietf-poly1305',
     password: 'password',
-    'udp-relay': false,
+    udpRelay: false,
     obfs: 'ws',
-    'obfs-host': 'server',
-    'obfs-uri': '/',
+    obfsHost: 'server',
+    obfsUri: '/',
     wsHeaders: {},
   });
   t.deepEqual(config.shift(), {
@@ -136,7 +136,7 @@ test('getClashSubscription', async (t) => {
     method: 'auto',
     tls: false,
     network: 'tcp',
-    'udp-relay': false,
+    udpRelay: false,
   });
   t.deepEqual(config.shift(), {
     type: NodeTypeEnum.Vmess,
@@ -149,7 +149,7 @@ test('getClashSubscription', async (t) => {
     alterId: '32',
     method: 'auto',
     network: 'ws',
-    'udp-relay': true,
+    udpRelay: true,
     tls: true,
     tls13: false,
     skipCertVerify: true,
@@ -168,7 +168,7 @@ test('getClashSubscription', async (t) => {
     alterId: '32',
     method: 'auto',
     network: 'ws',
-    'udp-relay': false,
+    udpRelay: false,
     tls: true,
     tls13: false,
     skipCertVerify: false,
@@ -209,9 +209,9 @@ test('getClashSubscription', async (t) => {
     port: 443,
     method: 'chacha20-ietf-poly1305',
     password: 'password',
-    'udp-relay': false,
+    udpRelay: false,
     obfs: 'tls',
-    'obfs-host': 'example.com',
+    obfsHost: 'example.com',
   });
   t.deepEqual(config.shift(), {
     type: NodeTypeEnum.Shadowsocks,
@@ -220,10 +220,10 @@ test('getClashSubscription', async (t) => {
     port: 443,
     method: 'chacha20-ietf-poly1305',
     password: 'password',
-    'udp-relay': false,
+    udpRelay: false,
     obfs: 'wss',
-    'obfs-host': 'cloudflare.com',
-    'obfs-uri': '/ws',
+    obfsHost: 'cloudflare.com',
+    obfsUri: '/ws',
     skipCertVerify: false,
     tls13: false,
     wsHeaders: {},
@@ -243,7 +243,7 @@ test('getClashSubscription udpRelay', async (t) => {
     port: 443,
     method: 'chacha20-ietf-poly1305',
     password: 'password',
-    'udp-relay': true,
+    udpRelay: true,
   });
   t.deepEqual(config[1], {
     type: NodeTypeEnum.Shadowsocks,
@@ -252,9 +252,9 @@ test('getClashSubscription udpRelay', async (t) => {
     port: 443,
     method: 'chacha20-ietf-poly1305',
     password: 'password',
-    'udp-relay': true,
+    udpRelay: true,
     obfs: 'tls',
-    'obfs-host': 'www.bing.com',
+    obfsHost: 'www.bing.com',
   });
   t.deepEqual(config[2], {
     type: NodeTypeEnum.Shadowsocks,
@@ -263,10 +263,10 @@ test('getClashSubscription udpRelay', async (t) => {
     port: 443,
     method: 'chacha20-ietf-poly1305',
     password: 'password',
-    'udp-relay': true,
+    udpRelay: true,
     obfs: 'ws',
-    'obfs-host': 'server',
-    'obfs-uri': '/',
+    obfsHost: 'server',
+    obfsUri: '/',
     wsHeaders: {},
   });
   t.deepEqual(config[3], {
@@ -279,7 +279,7 @@ test('getClashSubscription udpRelay', async (t) => {
     method: 'auto',
     tls: false,
     network: 'tcp',
-    'udp-relay': true,
+    udpRelay: true,
   });
 });
 
@@ -355,7 +355,7 @@ test('snell Configurations', (t) => {
         port: 44046,
         psk: 'yourpsk',
         obfs: 'tls',
-        'obfs-host': 'example.com',
+        obfsHost: 'example.com',
         version: '2',
       },
     ],
@@ -381,7 +381,7 @@ test('trojan configurations', (t) => {
         port: 443,
         password: 'password1',
         tls13: false,
-        'udp-relay': false,
+        udpRelay: false,
       },
     ],
   );
@@ -409,7 +409,7 @@ test('trojan configurations', (t) => {
         skipCertVerify: true,
         alpn: ['http/1.1'],
         sni: 'sni.example.com',
-        'udp-relay': true,
+        udpRelay: true,
         tls13: false,
       },
     ],
@@ -442,7 +442,7 @@ test('trojan configurations', (t) => {
         skipCertVerify: true,
         alpn: ['http/1.1'],
         sni: 'sni.example.com',
-        'udp-relay': false,
+        udpRelay: false,
         tls13: true,
       },
     ],
@@ -478,7 +478,7 @@ test('ssr', async (t) => {
         protocol: 'auth_sha1_v4',
         protoparam: '#',
         type: NodeTypeEnum.Shadowsocksr,
-        'udp-relay': false,
+        udpRelay: false,
       },
     ],
   );
@@ -510,7 +510,7 @@ test('ssr', async (t) => {
         protocol: 'auth_sha1_v4',
         protoparam: '#',
         type: NodeTypeEnum.Shadowsocksr,
-        'udp-relay': true,
+        udpRelay: true,
       },
     ],
   );
@@ -547,10 +547,10 @@ test('shadowsocks v2ray mux', async (t) => {
         method: 'chacha20-ietf-poly1305',
         password: 'password',
         obfs: 'wss',
-        'obfs-host': 'server',
-        'obfs-uri': '/',
+        obfsHost: 'server',
+        obfsUri: '/',
         mux: true,
-        'udp-relay': false,
+        udpRelay: false,
         skipCertVerify: true,
         tls13: false,
         wsHeaders: {

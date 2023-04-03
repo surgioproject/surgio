@@ -117,7 +117,7 @@ export const getTrojanSubscription = async ({
 
       return {
         ...nodeConfig,
-        'udp-relay': udpRelay,
+        udpRelay,
         tls13,
       };
     });

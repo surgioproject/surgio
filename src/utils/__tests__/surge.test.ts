@@ -23,8 +23,8 @@ test('getSurgeNodes', async (t) => {
       method: 'chacha20-ietf-poly1305',
       password: 'password',
       obfs: 'tls',
-      'obfs-host': 'example.com',
-      'udp-relay': true,
+      obfsHost: 'example.com',
+      udpRelay: true,
     },
     {
       nodeName: 'Test Node 2',
@@ -110,8 +110,8 @@ test('getSurgeNodes', async (t) => {
       method: 'chacha20-ietf-poly1305',
       password: 'password',
       obfs: 'tls',
-      'obfs-host': 'example.com',
-      'udp-relay': true,
+      obfsHost: 'example.com',
+      udpRelay: true,
       mptcp: true,
     },
     {

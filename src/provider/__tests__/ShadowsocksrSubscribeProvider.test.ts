@@ -33,7 +33,7 @@ test('getShadowsocksrSubscription', async (t) => {
     obfsparam: 'breakwa11.moe',
     protocol: 'auth_aes128_md5',
     protoparam: '',
-    'udp-relay': false,
+    udpRelay: false,
   });
   t.deepEqual(nodeList2[0], {
     nodeName: '测试中文',
@@ -46,6 +46,6 @@ test('getShadowsocksrSubscription', async (t) => {
     obfsparam: 'breakwa11.moe',
     protocol: 'auth_aes128_md5',
     protoparam: '',
-    'udp-relay': true,
+    udpRelay: true,
   });
 });

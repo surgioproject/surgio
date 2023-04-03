@@ -192,13 +192,13 @@ export const parseClashConfig = (
             port: item.port,
             method: item.cipher,
             password: item.password,
-            'udp-relay': resolveUdpRelay(item.udp, udpRelay),
+            udpRelay: resolveUdpRelay(item.udp, udpRelay),
 
             // obfs-local 新格式
             ...(item.plugin && item.plugin === 'obfs'
               ? {
                   obfs: item['plugin-opts'].mode,
-                  'obfs-host': item['plugin-opts'].host || 'www.bing.com',
+                  obfsHost: item['plugin-opts'].host || 'www.bing.com',
                 }
               : null),
 
@@ -206,7 +206,7 @@ export const parseClashConfig = (
             ...(item.obfs
               ? {
                   obfs: item.obfs,
-                  'obfs-host': item['obfs-host'] || 'www.bing.com',
+                  obfsHost: item['obfs-host'] || 'www.bing.com',
                 }
               : null),
 
@@ -216,8 +216,8 @@ export const parseClashConfig = (
             item['plugin-opts'].mode === 'websocket'
               ? {
                   obfs: item['plugin-opts'].tls === true ? 'wss' : 'ws',
-                  'obfs-host': item['plugin-opts'].host || item.server,
-                  'obfs-uri': item['plugin-opts'].path || '/',
+                  obfsHost: item['plugin-opts'].host || item.server,
+                  obfsUri: item['plugin-opts'].path || '/',
                   wsHeaders,
                   ...(item['plugin-opts'].tls === true
                     ? {
@@ -266,7 +266,7 @@ export const parseClashConfig = (
             uuid: item.uuid,
             alterId: item.alterId ? `${item.alterId}` : '0',
             method: item.cipher || 'auto',
-            'udp-relay': resolveUdpRelay(item.udp, udpRelay),
+            udpRelay: resolveUdpRelay(item.udp, udpRelay),
             tls: item.tls ?? false,
             network: item.network || 'tcp',
             ...(item.network === 'ws'
@@ -317,7 +317,7 @@ export const parseClashConfig = (
             psk: item.psk,
             obfs: _.get(item, 'obfs-opts.mode', 'http'),
             ...(typeof item?.['obfs-opts']?.host !== 'undefined'
-              ? { 'obfs-host': item['obfs-opts'].host }
+              ? { obfsHost: item['obfs-opts'].host }
               : null),
             ...('version' in item ? { version: item.version } : null),
           } as SnellNodeConfig;
@@ -335,7 +335,7 @@ export const parseClashConfig = (
             protocol: item.protocol,
             protoparam: item['protocol-param'] ?? item.protocolparam,
             method: item.cipher,
-            'udp-relay': resolveUdpRelay(item.udp, udpRelay),
+            udpRelay: resolveUdpRelay(item.udp, udpRelay),
           } as ShadowsocksrNodeConfig;
 
         case 'trojan': {
@@ -354,7 +354,7 @@ export const parseClashConfig = (
               : null),
             ...('alpn' in item ? { alpn: item.alpn } : null),
             ...('sni' in item ? { sni: item.sni } : null),
-            'udp-relay': resolveUdpRelay(item.udp, udpRelay),
+            udpRelay: resolveUdpRelay(item.udp, udpRelay),
             tls13: tls13 ?? false,
             ...(network === 'ws'
               ? { network: 'ws', wsPath: _.get(wsOpts, 'path', '/'), wsHeaders }
@@ -369,7 +369,7 @@ export const parseClashConfig = (
             hostname: item.server,
             port: item.port,
             token: item.token,
-            'udp-relay': resolveUdpRelay(item.udp, udpRelay),
+            udpRelay: resolveUdpRelay(item.udp, udpRelay),
             ...('skip-cert-verify' in item
               ? { skipCertVerify: item['skip-cert-verify'] === true }
               : null),

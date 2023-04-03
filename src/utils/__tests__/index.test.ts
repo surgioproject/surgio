@@ -50,8 +50,8 @@ test('getShadowsocksNodes', async (t) => {
       method: 'chacha20-ietf-poly1305',
       password: 'password',
       obfs: 'tls',
-      'obfs-host': 'gateway.icloud.com',
-      'udp-relay': true,
+      obfsHost: 'gateway.icloud.com',
+      udpRelay: true,
     },
   ];
   const txt1 = utils.getShadowsocksNodes(nodeList, 'GroupName');
@@ -129,8 +129,8 @@ test('getMellowNodes', async (t) => {
       method: 'chacha20-ietf-poly1305',
       password: 'password',
       obfs: 'tls',
-      'obfs-host': 'gateway.icloud.com',
-      'udp-relay': true,
+      obfsHost: 'gateway.icloud.com',
+      udpRelay: true,
     },
   ];
 

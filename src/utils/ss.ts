@@ -29,19 +29,19 @@ export const parseSSUri = (str: string): ShadowsocksNodeConfig => {
     ...(pluginInfo['obfs-local']
       ? {
           obfs: pluginInfo.obfs as 'http' | 'tls',
-          'obfs-host': pluginInfo['obfs-host'] + '',
+          obfsHost: pluginInfo['obfs-host'] + '',
         }
       : null),
     ...(pluginInfo['simple-obfs']
       ? {
           obfs: pluginInfo.obfs as 'http' | 'tls',
-          'obfs-host': pluginInfo['obfs-host'] + '',
+          obfsHost: pluginInfo['obfs-host'] + '',
         }
       : null),
     ...(pluginInfo['v2ray-plugin']
       ? {
           obfs: pluginInfo.tls ? 'wss' : 'ws',
-          'obfs-host': pluginInfo.host + '',
+          obfsHost: pluginInfo.host + '',
         }
       : null),
   };

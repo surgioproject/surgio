@@ -1,4 +1,4 @@
-# Snapshot report for `lib/generator/__tests__/artifact.test.ts`
+# Snapshot report for `src/generator/__tests__/artifact.test.ts`
 
 The actual snapshot is saved in `artifact.test.ts.snap`.
 

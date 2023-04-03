@@ -102,7 +102,7 @@ export const getShadowsocksrSubscription = async (
       const nodeConfig = parseSSRUri(str);
 
       if (udpRelay !== void 0) {
-        (nodeConfig['udp-relay'] as boolean) = udpRelay;
+        (nodeConfig.udpRelay as boolean) = udpRelay;
       }
 
       return nodeConfig;

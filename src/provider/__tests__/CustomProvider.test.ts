@@ -29,7 +29,7 @@ test('CustomProvider should throw error if udp-relay is a string', async (t) => 
       {
         type: NodeTypeEnum.Shadowsocks,
         nodeName: 'test',
-        'udp-relay': 'true',
+        udpRelay: 'true',
       },
     ],
   });
@@ -40,7 +40,7 @@ test('CustomProvider should throw error if udp-relay is a string', async (t) => 
     },
     {
       instanceOf: ValidationError,
-      message: '"udp-relay" must be a boolean',
+      message: '"udpRelay" must be a boolean',
     },
   );
 });
@@ -79,7 +79,7 @@ test('CustomProvider underlying proxy', async (t) => {
         {
           type: NodeTypeEnum.Shadowsocks,
           nodeName: 'test',
-          'udp-relay': true,
+          udpRelay: true,
         },
       ],
     }).getNodeList(),
@@ -87,7 +87,7 @@ test('CustomProvider underlying proxy', async (t) => {
       {
         nodeName: 'test',
         type: 'shadowsocks',
-        'udp-relay': true,
+        udpRelay: true,
         underlyingProxy: 'underlying-proxy',
       },
     ],
@@ -101,7 +101,7 @@ test('CustomProvider underlying proxy', async (t) => {
         {
           type: NodeTypeEnum.Shadowsocks,
           nodeName: 'test',
-          'udp-relay': true,
+          udpRelay: true,
           underlyingProxy: 'underlying-proxy-2',
         },
       ],
@@ -110,7 +110,7 @@ test('CustomProvider underlying proxy', async (t) => {
       {
         nodeName: 'test',
         type: 'shadowsocks',
-        'udp-relay': true,
+        udpRelay: true,
         underlyingProxy: 'underlying-proxy-2',
       },
     ],
@@ -124,7 +124,7 @@ test('CustomProvider underlying proxy', async (t) => {
         {
           type: NodeTypeEnum.Shadowsocks,
           nodeName: 'test',
-          'udp-relay': true,
+          udpRelay: true,
           underlyingProxy: 'underlying-proxy-2',
         },
       ],
@@ -133,7 +133,7 @@ test('CustomProvider underlying proxy', async (t) => {
       {
         nodeName: 'test',
         type: 'shadowsocks',
-        'udp-relay': true,
+        udpRelay: true,
         underlyingProxy: 'underlying-proxy-2',
       },
     ],

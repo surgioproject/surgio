@@ -1,4 +1,5 @@
 import Joi from 'joi';
+
 import {
   CustomProviderConfig,
   NodeTypeEnum,
@@ -21,6 +22,9 @@ export default class CustomProvider extends Provider {
       enable: Joi.boolean().strict(),
       tfo: Joi.boolean().strict(),
       mptcp: Joi.boolean().strict(),
+      udpRelay: Joi.boolean().strict(),
+      obfsHost: Joi.string(),
+      obfsUri: Joi.string(),
       shadowTls: Joi.object({
         password: Joi.string().required(),
         sni: Joi.string(),
@@ -50,24 +54,29 @@ export default class CustomProvider extends Provider {
   }
 
   public async getNodeList(): Promise<ReadonlyArray<PossibleNodeConfigType>> {
-    const udpRelayCheckSchema = Joi.object({
-      'udp-relay': Joi.bool().strict(),
-    }).unknown();
-
     return this.nodeList.map((item) => {
-      const { error: udpRelayCheckError } = udpRelayCheckSchema.validate(item);
-      const lowercaseKeys = ['wsHeaders'];
-
-      // istanbul ignore next
-      if (udpRelayCheckError) {
-        throw udpRelayCheckError;
-      }
+      const propertyKeysMustBeLowercase = ['wsHeaders'];
 
       if (this.underlyingProxy && !item.underlyingProxy) {
         item.underlyingProxy = this.underlyingProxy;
       }
 
-      lowercaseKeys.forEach((key) => {
+      // istanbul ignore next
+      if (item['udp-relay']) {
+        throw new Error('udp-relay is abandoned, please use udpRelay instead');
+      }
+
+      // istanbul ignore next
+      if (item['obfs-host']) {
+        throw new Error('obfs-host is abandoned, please use obfsHost instead');
+      }
+
+      // istanbul ignore next
+      if (item['udp-relay']) {
+        throw new Error('obfs-uri is abandoned, please use obfsUri instead');
+      }
+
+      propertyKeysMustBeLowercase.forEach((key) => {
         if (item[key]) {
           item[key] = Object.keys(item[key]).reduce((acc, curr) => {
             acc[curr.toLowerCase()] = item[key][curr];

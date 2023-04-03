@@ -37,7 +37,7 @@ export const getLoonNodes = function (
             if (['http', 'tls'].includes(nodeConfig.obfs)) {
               config.push(
                 nodeConfig.obfs,
-                nodeConfig['obfs-host'] || nodeConfig.hostname,
+                nodeConfig.obfsHost || nodeConfig.hostname,
               );
             } else {
               logger.warn(
@@ -51,7 +51,7 @@ export const getLoonNodes = function (
             config.push('fast-open=true');
           }
 
-          if (nodeConfig['udp-relay']) {
+          if (nodeConfig.udpRelay) {
             config.push('udp=true');
           }
 
@@ -75,7 +75,7 @@ export const getLoonNodes = function (
             config.push('fast-open=true');
           }
 
-          if (nodeConfig['udp-relay']) {
+          if (nodeConfig.udpRelay) {
             config.push('udp=true');
           }
 

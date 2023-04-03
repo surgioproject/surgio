@@ -16,7 +16,7 @@ test('parseSSUri', (t) => {
       port: '12345',
       type: NodeTypeEnum.Shadowsocks,
       obfs: 'http',
-      'obfs-host': 'example.com',
+      obfsHost: 'example.com',
     },
   );
 });

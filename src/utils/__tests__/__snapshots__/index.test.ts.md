@@ -1,4 +1,4 @@
-# Snapshot report for `lib/utils/__tests__/index.test.ts`
+# Snapshot report for `src/utils/__tests__/index.test.ts`
 
 The actual snapshot is saved in `index.test.ts.snap`.
 

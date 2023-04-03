@@ -85,7 +85,7 @@ export const getShadowsocksJSONConfig = async (
       };
 
       if (typeof udpRelay === 'boolean') {
-        nodeConfig['udp-relay'] = udpRelay;
+        nodeConfig.udpRelay = udpRelay;
       }
       if (item.plugin === 'obfs-local') {
         const obfs = item.plugin_opts.match(/obfs=(\w+)/);
@@ -93,7 +93,7 @@ export const getShadowsocksJSONConfig = async (
 
         if (obfs) {
           nodeConfig.obfs = obfs[1];
-          nodeConfig['obfs-host'] = obfsHost ? obfsHost[1] : 'www.bing.com';
+          nodeConfig.obfsHost = obfsHost ? obfsHost[1] : 'www.bing.com';
         }
       }
 

@@ -25,9 +25,9 @@ test('getShadowsocksSubscription with udp', async (t) => {
     port: '443',
     method: 'chacha20-ietf-poly1305',
     password: 'password',
-    'udp-relay': true,
+    udpRelay: true,
     obfs: 'tls',
-    'obfs-host': 'gateway-carry.icloud.com',
+    obfsHost: 'gateway-carry.icloud.com',
   });
   t.deepEqual(nodeList[1], {
     nodeName: '🇺🇸US 2',
@@ -36,7 +36,7 @@ test('getShadowsocksSubscription with udp', async (t) => {
     port: '443',
     method: 'chacha20-ietf-poly1305',
     password: 'password',
-    'udp-relay': true,
+    udpRelay: true,
   });
   t.deepEqual(nodeList[2], {
     nodeName: '🇺🇸US 3',
@@ -45,9 +45,9 @@ test('getShadowsocksSubscription with udp', async (t) => {
     port: '443',
     method: 'chacha20-ietf-poly1305',
     password: 'password',
-    'udp-relay': true,
+    udpRelay: true,
     obfs: 'wss',
-    'obfs-host': 'gateway-carry.icloud.com',
+    obfsHost: 'gateway-carry.icloud.com',
   });
 });
 
@@ -64,7 +64,7 @@ test('getShadowsocksSubscription without udp', async (t) => {
     method: 'chacha20-ietf-poly1305',
     password: 'password',
     obfs: 'tls',
-    'obfs-host': 'gateway-carry.icloud.com',
+    obfsHost: 'gateway-carry.icloud.com',
   });
   t.deepEqual(nodeList[1], {
     nodeName: '🇺🇸US 2',

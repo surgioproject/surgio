@@ -36,7 +36,7 @@ export const getQuantumultXNodes = function (
               ? `method=chacha20-ietf-poly1305`
               : `method=${nodeConfig.method}`,
             `password=${nodeConfig.uuid}`,
-            ...(nodeConfig['udp-relay'] ? ['udp-relay=true'] : []),
+            ...(nodeConfig.udpRelay ? ['udp-relay=true'] : []),
             ...(nodeConfig.tfo ? ['fast-open=true'] : []),
             ...(nodeConfig.quantumultXConfig?.vmessAEAD
               ? ['aead=true']
@@ -112,19 +112,16 @@ export const getQuantumultXNodes = function (
             `${nodeConfig.hostname}:${nodeConfig.port}`,
             ...pickAndFormatStringList(nodeConfig, ['method', 'password']),
             ...(nodeConfig.obfs && ['http', 'tls'].includes(nodeConfig.obfs)
-              ? [
-                  `obfs=${nodeConfig.obfs}`,
-                  `obfs-host=${nodeConfig['obfs-host']}`,
-                ]
+              ? [`obfs=${nodeConfig.obfs}`, `obfs-host=${nodeConfig.obfsHost}`]
               : []),
             ...(nodeConfig.obfs && ['ws', 'wss'].includes(nodeConfig.obfs)
               ? [
                   `obfs=${nodeConfig.obfs}`,
-                  `obfs-host=${nodeConfig['obfs-host'] || nodeConfig.hostname}`,
-                  `obfs-uri=${nodeConfig['obfs-uri'] || '/'}`,
+                  `obfs-host=${nodeConfig.obfsHost || nodeConfig.hostname}`,
+                  `obfs-uri=${nodeConfig.obfsUri || '/'}`,
                 ]
               : []),
-            ...(nodeConfig['udp-relay'] ? [`udp-relay=true`] : []),
+            ...(nodeConfig.udpRelay ? [`udp-relay=true`] : []),
             ...(nodeConfig.tfo ? [`fast-open=${nodeConfig.tfo}`] : []),
           ];
 
@@ -167,7 +164,7 @@ export const getQuantumultXNodes = function (
             `ssr-protocol-param=${nodeConfig.protoparam}`,
             `obfs=${nodeConfig.obfs}`,
             `obfs-host=${nodeConfig.obfsparam}`,
-            ...(nodeConfig['udp-relay'] ? [`udp-relay=true`] : []),
+            ...(nodeConfig.udpRelay ? [`udp-relay=true`] : []),
             ...(nodeConfig.tfo ? [`fast-open=${nodeConfig.tfo}`] : []),
             ...(typeof nodeConfig.testUrl === 'string'
               ? [`server_check_url=${nodeConfig.testUrl}`]
@@ -209,7 +206,7 @@ export const getQuantumultXNodes = function (
             ...pickAndFormatStringList(nodeConfig, ['password']),
             `tls-verification=${nodeConfig.skipCertVerify !== true}`,
             ...(nodeConfig.tfo ? [`fast-open=${nodeConfig.tfo}`] : []),
-            ...(nodeConfig['udp-relay'] ? [`udp-relay=true`] : []),
+            ...(nodeConfig.udpRelay ? [`udp-relay=true`] : []),
             ...(nodeConfig.tls13 ? [`tls13=${nodeConfig.tls13}`] : []),
           ];
 

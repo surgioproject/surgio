@@ -133,7 +133,7 @@ export const getV2rayNSubscription = async ({
         if (item.startsWith('ss://')) {
           return {
             ...parseSSUri(item),
-            'udp-relay': udpRelay,
+            udpRelay: udpRelay,
             skipCertVerify: skipCertVerify,
             tls13: tls13,
           };
@@ -184,7 +184,7 @@ export const parseJSONConfig = (
     tls: config.tls === 'tls',
     host: config.host,
     path: config.path || '/',
-    'udp-relay': udpRelay === true,
+    udpRelay: udpRelay === true,
     ...(config.tls === 'tls'
       ? {
           skipCertVerify: skipCertVerify ?? false,

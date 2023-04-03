@@ -11,8 +11,8 @@ module.exports = {
       method: 'chacha20-ietf-poly1305',
       password: 'surgio',
       obfs: 'tls',
-      'obfs-host': 'world.taobao.com',
-      'udp-relay': true,
+      obfsHost: 'world.taobao.com',
+      udpRelay: true,
     },
     {
       nodeName: '🇭🇰HK Netflix',
@@ -22,8 +22,8 @@ module.exports = {
       method: 'chacha20-ietf-poly1305',
       password: 'surgio',
       obfs: 'tls',
-      'obfs-host': 'world.taobao.com',
-      'udp-relay': true,
+      obfsHost: 'world.taobao.com',
+      udpRelay: true,
     },
   ],
 };

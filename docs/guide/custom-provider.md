@@ -264,9 +264,9 @@ module.exports = {
   method: 'chacha20-ietf-poly1305',
   password: 'password',
   obfs: 'tls', // tls, http, ws, wss
-  'obfs-host': 'gateway-carry.icloud.com',
+  obfsHost: 'gateway-carry.icloud.com',
   'obfs-uri': '/', // 当 obfs 为 ws 或 wss 时可配置
-  'udp-relay': true,
+  udpRelay: true,
   tfo: false, // TCP Fast Open
   tls13: false, // TLS 1.3，适用于 v2ray-plugin
   mux: false, // 目前仅 Clash + Shadowsocks + v2ray-plugin 可用
@@ -292,7 +292,7 @@ module.exports = {
   obfsparam: 'music.163.com',
   protocol: 'auth_aes128_md5',
   protoparam: '',
-  'udp-relay': true,
+  udpRelay: true,
   tfo: false, // TCP Fast Open
 }
 ```
@@ -314,7 +314,7 @@ module.exports = {
   uuid: '1386f85e-657b-4d6e-9d56-78badb75e1fd',
   tfo: false, // TCP Fast Open
   tls13: false, // TLS 1.3, TLS 开启时有效
-  'udp-relay': true, // 开启 UDP 转发
+  udpRelay: true, // 开启 UDP 转发
   wsHeaders: {
     key: 'value',
   },
@@ -374,7 +374,7 @@ module.exports = {
   sni: 'example.com', // 可选
   alpn: ['http/1.1'], // 可选
   skipCertVerify: true, // 可选
-  'udp-relay': true, // 可选
+  udpRelay: true, // 可选
   tls13: false, // TLS 1.3
   network: 'ws', // 可不填
   wsPath: '/', // 可选
@@ -394,7 +394,7 @@ module.exports = {
   password: 'password', // 可选
   tls: true, // 可选
   skipCertVerify: true, // 可选
-  'udp-relay': false, // 可选, 仅 Clash 支持
+  udpRelay: false, // 可选, 仅 Clash 支持
   sni: 'example.com', // 可选, 仅 Surge 支持
   tfo: true, // 可选, 仅 Surge 支持
   clientCert: 'item' // 可选, 仅 Surge 支持
@@ -417,7 +417,7 @@ module.exports = {
   sni: 'sni.example.com', // 可选
   skipCertVerify: true, // 可选
   alpn: ['h3'], // 可选，Stash 不支持空值
-  'udp-relay': false, // 可选, 仅 Clash 支持更改，Surge 默认开启
+  udpRelay: false, // 可选, 仅 Clash 支持更改，Surge 默认开启
 }
 ```
 

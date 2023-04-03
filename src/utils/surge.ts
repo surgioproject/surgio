@@ -64,9 +64,9 @@ export const getSurgeNodes = function (
                 config,
                 [
                   'password',
-                  'udp-relay',
+                  'udpRelay',
                   'obfs',
-                  'obfs-host',
+                  'obfsHost',
                   'tfo',
                   'mptcp',
                   'testUrl',
@@ -150,7 +150,7 @@ export const getSurgeNodes = function (
                 [
                   'psk',
                   'obfs',
-                  'obfs-host',
+                  'obfsHost',
                   'version',
                   'reuse',
                   'tfo',

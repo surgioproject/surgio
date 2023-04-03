@@ -58,12 +58,13 @@ export const getSurfboardNodes = function (
               config.hostname,
               config.port,
               'encrypt-method=' + config.method,
-              ...pickAndFormatStringList(config, [
-                'password',
-                'udp-relay',
-                'obfs',
-                'obfs-host',
-              ]),
+              ...pickAndFormatStringList(
+                config,
+                ['password', 'udpRelay', 'obfs', 'obfsHost'],
+                {
+                  keyFormat: 'kebabCase',
+                },
+              ),
             ].join(', '),
           ].join(' = ');
         }

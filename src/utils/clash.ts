@@ -39,13 +39,13 @@ export const getClashNodes = function (
             password: nodeConfig.password,
             port: nodeConfig.port,
             server: nodeConfig.hostname,
-            udp: nodeConfig['udp-relay'] === true,
+            udp: nodeConfig.udpRelay === true,
             ...(nodeConfig.obfs && ['tls', 'http'].includes(nodeConfig.obfs)
               ? {
                   plugin: 'obfs',
                   'plugin-opts': {
                     mode: nodeConfig.obfs,
-                    host: nodeConfig['obfs-host'],
+                    host: nodeConfig.obfsHost,
                   },
                 }
               : null),
@@ -61,8 +61,8 @@ export const getClashNodes = function (
                           'skip-cert-verify': nodeConfig.skipCertVerify,
                         }
                       : null),
-                    host: nodeConfig['obfs-host'],
-                    path: nodeConfig['obfs-uri'] || '/',
+                    host: nodeConfig.obfsHost,
+                    path: nodeConfig.obfsUri || '/',
                     mux:
                       typeof nodeConfig.mux === 'boolean'
                         ? nodeConfig.mux
@@ -80,7 +80,7 @@ export const getClashNodes = function (
             name: nodeConfig.nodeName,
             server: nodeConfig.hostname,
             port: nodeConfig.port,
-            udp: nodeConfig['udp-relay'] === true,
+            udp: nodeConfig.udpRelay === true,
             uuid: nodeConfig.uuid,
             alterId: nodeConfig.alterId,
             ...(nodeConfig.network === 'tcp'
@@ -119,7 +119,7 @@ export const getClashNodes = function (
             cipher: nodeConfig.method,
             'obfs-param': nodeConfig.obfsparam ?? '',
             'protocol-param': nodeConfig.protoparam ?? '',
-            udp: nodeConfig['udp-relay'] === true,
+            udp: nodeConfig.udpRelay === true,
           };
         }
 
@@ -132,9 +132,9 @@ export const getClashNodes = function (
             psk: nodeConfig.psk,
             'obfs-opts': {
               mode: nodeConfig.obfs,
-              ...(nodeConfig['obfs-host']
+              ...(nodeConfig.obfsHost
                 ? {
-                    host: nodeConfig['obfs-host'],
+                    host: nodeConfig.obfsHost,
                   }
                 : null),
             },
@@ -174,9 +174,7 @@ export const getClashNodes = function (
             server: nodeConfig.hostname,
             port: nodeConfig.port,
             password: nodeConfig.password,
-            ...(nodeConfig['udp-relay']
-              ? { udp: nodeConfig['udp-relay'] }
-              : null),
+            ...(nodeConfig.udpRelay ? { udp: nodeConfig.udpRelay } : null),
             ...(nodeConfig.alpn ? { alpn: nodeConfig.alpn } : null),
             ...(nodeConfig.sni ? { sni: nodeConfig.sni } : null),
             'skip-cert-verify': nodeConfig.skipCertVerify === true,
@@ -229,8 +227,8 @@ export const getClashNodes = function (
             server: nodeConfig.hostname,
             port: nodeConfig.port,
             token: nodeConfig.token,
-            ...(typeof nodeConfig['udp-relay'] === 'boolean'
-              ? { udp: nodeConfig['udp-relay'] }
+            ...(typeof nodeConfig.udpRelay === 'boolean'
+              ? { udp: nodeConfig.udpRelay }
               : null),
             ...(nodeConfig.alpn ? { alpn: nodeConfig.alpn } : null),
             ...(nodeConfig.sni ? { sni: nodeConfig.sni } : null),

@@ -1,6 +1,5 @@
 import { createLogger } from '@surgio/logger';
 import fs from 'fs-extra';
-import _ from 'lodash';
 import os from 'os';
 import { join } from 'path';
 import queryString from 'query-string';
@@ -157,15 +156,14 @@ export const getShadowsocksNodes = (
 
       switch (nodeConfig.type) {
         case NodeTypeEnum.Shadowsocks: {
-          const config = _.cloneDeep(nodeConfig);
           const query: {
             readonly plugin?: string;
             readonly group?: string;
           } = {
-            ...(config.obfs
+            ...(nodeConfig.obfs
               ? {
                   plugin: `${encodeURIComponent(
-                    `obfs-local;obfs=${config.obfs};obfs-host=${config['obfs-host']}`,
+                    `obfs-local;obfs=${nodeConfig.obfs};obfs-host=${nodeConfig.obfsHost}`,
                   )}`,
                 }
               : null),
@@ -174,18 +172,18 @@ export const getShadowsocksNodes = (
 
           return [
             'ss://',
-            toUrlSafeBase64(`${config.method}:${config.password}`),
+            toUrlSafeBase64(`${nodeConfig.method}:${nodeConfig.password}`),
             '@',
-            config.hostname,
+            nodeConfig.hostname,
             ':',
-            config.port,
+            nodeConfig.port,
             '/?',
             queryString.stringify(query, {
               encode: false,
               sort: false,
             }),
             '#',
-            encodeURIComponent(config.nodeName),
+            encodeURIComponent(nodeConfig.nodeName),
           ].join('');
         }
 
@@ -314,7 +312,7 @@ export const getShadowsocksNodesJSON = (
 
       switch (nodeConfig.type) {
         case NodeTypeEnum.Shadowsocks: {
-          const useObfs = Boolean(nodeConfig.obfs && nodeConfig['obfs-host']);
+          const useObfs = Boolean(nodeConfig.obfs && nodeConfig.obfsHost);
           return {
             remarks: nodeConfig.nodeName,
             server: nodeConfig.hostname,
@@ -328,7 +326,7 @@ export const getShadowsocksNodesJSON = (
             ...(useObfs
               ? {
                   plugin: 'obfs-local',
-                  'plugin-opts': `obfs=${nodeConfig.obfs};obfs-host=${nodeConfig['obfs-host']}`,
+                  'plugin-opts': `obfs=${nodeConfig.obfs};obfs-host=${nodeConfig.obfsHost}`,
                 }
               : null),
           };
@@ -361,55 +359,6 @@ export const getNodeNames = function (
     .map((item) => item.nodeName)
     .join(separator || ', ');
 };
-
-export const generateClashProxyGroup = (
-  ruleName: string,
-  ruleType: 'select' | 'url-test' | 'fallback' | 'load-balance',
-  nodeNameList: ReadonlyArray<SimpleNodeConfig>,
-  options: {
-    readonly filter?: NodeNameFilterType | SortedNodeNameFilterType;
-    readonly existingProxies?: ReadonlyArray<string>;
-    readonly proxyTestUrl?: string;
-    readonly proxyTestInterval?: number;
-  },
-): {
-  readonly type: string;
-  readonly name: string;
-  readonly proxies: readonly string[];
-  readonly url?: string;
-  readonly interval?: number;
-} => {
-  let proxies;
-
-  if (options.existingProxies) {
-    if (options.filter) {
-      const nodes = applyFilter(nodeNameList, options.filter);
-      proxies = ([] as string[]).concat(
-        options.existingProxies,
-        nodes.map((item) => item.nodeName),
-      );
-    } else {
-      proxies = options.existingProxies;
-    }
-  } else {
-    const nodes = applyFilter(nodeNameList, options.filter);
-    proxies = nodes.map((item) => item.nodeName);
-  }
-
-  return {
-    type: ruleType,
-    name: ruleName,
-    proxies,
-    ...(['url-test', 'fallback', 'load-balance'].includes(ruleType)
-      ? {
-          url: options.proxyTestUrl,
-          interval: options.proxyTestInterval,
-        }
-      : null),
-  };
-};
-
-export const toYaml = (obj: JsonObject): string => YAML.stringify(obj);
 
 // istanbul ignore next
 export const changeCase = (

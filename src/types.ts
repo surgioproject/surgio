@@ -197,10 +197,10 @@ export interface ShadowsocksNodeConfig extends SimpleNodeConfig {
   readonly port: number | string;
   readonly method: string;
   readonly password: string;
-  readonly 'udp-relay'?: boolean;
+  readonly udpRelay?: boolean;
   readonly obfs?: 'tls' | 'http' | 'ws' | 'wss';
-  readonly 'obfs-host'?: string;
-  readonly 'obfs-uri'?: string;
+  readonly obfsHost?: string;
+  readonly obfsUri?: string;
   readonly skipCertVerify?: boolean;
   readonly wsHeaders?: Record<string, string>;
   readonly tls13?: boolean;
@@ -213,7 +213,7 @@ export interface SnellNodeConfig extends SimpleNodeConfig {
   readonly port: number | string;
   readonly psk: string;
   readonly obfs?: string;
-  readonly 'obfs-host'?: string;
+  readonly obfsHost?: string;
   readonly version?: string;
   readonly reuse?: boolean;
 }
@@ -228,7 +228,7 @@ export interface ShadowsocksrNodeConfig extends SimpleNodeConfig {
   readonly password: string;
   readonly obfsparam: string;
   readonly protoparam: string;
-  readonly 'udp-relay'?: boolean;
+  readonly udpRelay?: boolean;
 }
 
 export interface VmessNodeConfig extends SimpleNodeConfig {
@@ -242,7 +242,7 @@ export interface VmessNodeConfig extends SimpleNodeConfig {
   readonly tls: boolean;
   readonly host?: string;
   readonly path?: string;
-  readonly 'udp-relay'?: boolean;
+  readonly udpRelay?: boolean;
   readonly tls13?: boolean;
   readonly skipCertVerify?: boolean;
   readonly wsHeaders?: Record<string, string>;
@@ -252,7 +252,7 @@ export interface VmessNodeConfig extends SimpleNodeConfig {
 export interface TrojanNodeConfig extends TlsNodeConfig {
   readonly type: NodeTypeEnum.Trojan;
   readonly password: string;
-  readonly 'udp-relay'?: boolean;
+  readonly udpRelay?: boolean;
   readonly network?: 'tcp' | 'ws';
   readonly wsPath?: string;
   readonly wsHeaders?: Record<string, string>;
@@ -261,7 +261,7 @@ export interface TrojanNodeConfig extends TlsNodeConfig {
 export interface TuicNodeConfig extends TlsNodeConfig {
   readonly type: NodeTypeEnum.Tuic;
   readonly token: string;
-  readonly 'udp-relay'?: boolean;
+  readonly udpRelay?: boolean;
 }
 
 export interface Socks5NodeConfig extends SimpleNodeConfig {
