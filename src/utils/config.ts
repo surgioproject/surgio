@@ -14,10 +14,9 @@ let finalConfig: CommandConfig | null = null;
 
 export const loadConfig = (
   cwd: string,
-  configPath: string,
   override?: Partial<CommandConfig>,
 ): CommandConfig => {
-  const absPath = path.resolve(cwd, configPath);
+  const absPath = path.join(cwd, 'surgio.conf.js');
 
   // istanbul ignore next
   if (!fs.existsSync(absPath)) {

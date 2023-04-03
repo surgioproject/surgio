@@ -14,7 +14,7 @@ class NewCommand extends BaseCommand<typeof NewCommand> {
 
     await runner(args, {
       templates: defaultTemplates,
-      cwd: process.cwd(),
+      cwd: this.projectDir,
       logger: new Logger(console.log.bind(console)),
       createPrompter: () => require('inquirer'),
       exec: (action, body) => {

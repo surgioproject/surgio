@@ -8,7 +8,7 @@ const resolve = (p) => join(__dirname, '../../../test/fixture/', p);
 
 test('new Artifact()', async (t) => {
   const fixture = resolve('plain');
-  const config = loadConfig(fixture, './surgio.conf.js');
+  const config = loadConfig(fixture);
   const artifact = new Artifact(config, {
     name: 'new_path.conf',
     template: 'test',
@@ -31,7 +31,7 @@ test('new Artifact()', async (t) => {
 
 test('Artifact without templateEngine', async (t) => {
   const fixture = resolve('plain');
-  const config = loadConfig(fixture, './surgio.conf.js');
+  const config = loadConfig(fixture);
   const artifact = new Artifact(config, {
     name: 'new_path.conf',
     template: 'test',
@@ -67,7 +67,7 @@ test('Artifact without templateEngine', async (t) => {
 
 test('render with extendRenderContext', async (t) => {
   const fixture = resolve('plain');
-  const config = loadConfig(fixture, './surgio.conf.js');
+  const config = loadConfig(fixture);
   const templateEngine = getEngine(config.templateDir);
 
   {
@@ -130,7 +130,7 @@ test('render with extendRenderContext', async (t) => {
 
 test('getRenderContext', async (t) => {
   const fixture = resolve('plain');
-  const config = loadConfig(fixture, './surgio.conf.js');
+  const config = loadConfig(fixture);
   const templateEngine = getEngine(config.templateDir);
   const artifact = new Artifact(
     config,
@@ -170,7 +170,7 @@ test('getRenderContext', async (t) => {
 
 test('Artifact with underlyingProxy', async (t) => {
   const fixture = resolve('plain');
-  const config = loadConfig(fixture, './surgio.conf.js');
+  const config = loadConfig(fixture);
   const templateEngine = getEngine(config.templateDir);
 
   const artifact = new Artifact(

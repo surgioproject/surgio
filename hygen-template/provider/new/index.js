@@ -1,6 +1,7 @@
 'use strict';
 
-const { SupportProviderEnum } = require('../../../build/types');
+const { types } = require('../../../build/internal');
+const { SupportProviderEnum } = types;
 
 module.exports = {
   prompt: ({ prompter: inquirer }) => {

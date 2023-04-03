@@ -1,6 +1,9 @@
 import { Command, Flags, Interfaces, Config } from '@oclif/core';
 import { transports } from '@surgio/logger';
-import type { Ora } from 'ora';
+import ora from 'ora';
+import { resolve } from 'path';
+import fs from 'fs-extra';
+import dotenv from 'dotenv';
 
 import { CommandConfig } from './types';
 import { loadConfig } from './utils/config';
@@ -15,7 +18,10 @@ abstract class BaseCommand<T extends typeof Command> extends Command {
   protected flags!: Flags<T>;
   protected args!: Args<T>;
   protected surgioConfig!: CommandConfig;
-  public ora!: Ora;
+  public ora = ora({
+    stream: process.stdout,
+  });
+  public projectDir!: string;
 
   constructor(argv: string[], config: Config) {
     super(argv, config);
@@ -23,9 +29,6 @@ abstract class BaseCommand<T extends typeof Command> extends Command {
 
   public async init(): Promise<void> {
     await super.init();
-
-    const { default: ora } = await import('ora');
-    this.ora = ora();
 
     const { args, flags } = await this.parse({
       flags: this.ctor.flags,
@@ -42,7 +45,19 @@ abstract class BaseCommand<T extends typeof Command> extends Command {
       transports.console.level = 'debug';
     }
 
-    this.surgioConfig = await loadConfig(process.cwd(), flags.config);
+    if (flags.project.startsWith('.')) {
+      flags.project = resolve(process.cwd(), flags.project);
+    }
+
+    const envPath = resolve(flags.project, './.env');
+
+    // istanbul ignore next
+    if (fs.existsSync(envPath)) {
+      dotenv.config({ path: envPath });
+    }
+
+    this.projectDir = flags.project;
+    this.surgioConfig = await loadConfig(this.projectDir);
   }
 
   protected async catch(err: Error & { exitCode?: number }): Promise<any> {
@@ -56,10 +71,10 @@ abstract class BaseCommand<T extends typeof Command> extends Command {
 
 BaseCommand.enableJsonFlag = true;
 BaseCommand.baseFlags = {
-  config: Flags.string({
-    char: 'c',
-    description: '配置文件',
-    default: './surgio.conf.js',
+  project: Flags.string({
+    char: 'p',
+    description: 'Surgio 配置目录',
+    default: './',
     helpGroup: 'GLOBAL',
   }),
   verbose: Flags.boolean({

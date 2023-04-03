@@ -1,13 +1,16 @@
-import { Command } from '@oclif/core';
 import chalk from 'chalk';
 
+import BaseCommand from '../base-command';
 import { generateDoctorInfo } from './doctor';
 
 export const errorHandler = async function (
-  this: Command,
+  this: BaseCommand<any>,
   err: Error,
 ): Promise<void> {
-  const doctorInfo = await generateDoctorInfo(process.cwd(), this.config.pjson);
+  const doctorInfo = await generateDoctorInfo(
+    this.projectDir,
+    this.config.pjson,
+  );
 
   console.error();
   console.error(chalk.red(`❌ 发生错误 ❌`));

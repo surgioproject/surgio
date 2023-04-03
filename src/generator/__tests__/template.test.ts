@@ -2,6 +2,7 @@
 import test from 'ava';
 import fs from 'fs-extra';
 import { join } from 'path';
+
 import {
   convertNewSurgeScriptRuleToQuantumultXRewriteRule,
   convertSurgeScriptRuleToQuantumultXRewriteRule,
@@ -9,7 +10,7 @@ import {
   loadLocalSnippet,
 } from '../template';
 
-const templateEngine = getEngine(process.cwd());
+const templateEngine = getEngine(__dirname);
 const assetDir = join(__dirname, '../../../test/asset/');
 
 test('clash #1', (t) => {

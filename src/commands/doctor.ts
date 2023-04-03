@@ -8,7 +8,7 @@ class DoctorCommand extends BaseCommand<typeof DoctorCommand> {
 
   public async run(): Promise<void> {
     const doctorInfo = await generateDoctorInfo(
-      process.cwd(),
+      this.projectDir,
       this.config.pjson,
     );
 

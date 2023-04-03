@@ -39,8 +39,8 @@
       "node"
     ],
     "typeRoots": [
-      "node_modules/@types",
-      "types"
+      "./node_modules/@types",
+      "./types"
     ]
   },
   "include": [
@@ -49,7 +49,4 @@
   ],
   "exclude": ["node_modules/**"],
   "compileOnSave": false,
-  "ts-node": {
-    "swc": true
-  }
 }

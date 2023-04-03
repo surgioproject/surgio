@@ -11,9 +11,9 @@ class LintCommand extends BaseCommand<typeof LintCommand> {
     let result;
 
     if (this.flags.fix) {
-      result = await checkAndFix(process.cwd());
+      result = await checkAndFix(this.projectDir);
     } else {
-      result = await check(process.cwd());
+      result = await check(this.projectDir);
     }
 
     if (!result) {

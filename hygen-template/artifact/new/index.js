@@ -4,11 +4,11 @@ const { basename } = require('path');
 const { promises: fsp } = require('fs');
 const _ = require('lodash');
 
-const { loadConfig } = require('../../../build/utils/config');
+const internal = require('../../../build/internal');
 
 module.exports = {
   prompt: ({ prompter: inquirer }) => {
-    const config = loadConfig(process.cwd(), './surgio.conf.js');
+    const config = internal.config.loadConfig(process.cwd());
 
     return inquirer.prompt([
       {

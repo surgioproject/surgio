@@ -16,7 +16,7 @@ class GenerateCommand extends BaseCommand<typeof GenerateCommand> {
 
   public async run(): Promise<void> {
     if (!this.flags['skip-lint']) {
-      const result = await checkAndFix(process.cwd());
+      const result = await checkAndFix(this.projectDir);
 
       if (!result) {
         throw new Error(
