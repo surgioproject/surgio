@@ -386,13 +386,19 @@ export const pickAndFormatStringList = (
 
   keyList.forEach((key) => {
     if (obj.hasOwnProperty(key)) {
-      const propeertyKey = options.keyFormat
+      const propertyKey = options.keyFormat
         ? changeCase(key, options.keyFormat)
         : key;
+      const propertyValue = obj[key];
 
-      result.push(`${propeertyKey}=${obj[key]}`);
+      if (Array.isArray(propertyValue)) {
+        result.push(`${propertyKey}=${propertyValue.join(',')}`);
+      } else {
+        result.push(`${propertyKey}=${propertyValue}`);
+      }
     }
   });
+
   return result;
 };
 

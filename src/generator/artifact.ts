@@ -34,6 +34,7 @@ import {
   isIp,
   toBase64,
   toUrlSafeBase64,
+  getSurgeWireguardNodes,
 } from '../utils';
 import { resolveDomain } from '../utils/dns';
 import { getNetworkConcurrency } from '../utils/env-flag';
@@ -164,6 +165,7 @@ export class Artifact extends EventEmitter {
       getClashNodeNames,
       getClashNodes,
       getSurgeNodes,
+      getSurgeWireguardNodes,
       getSurfboardNodes,
       getShadowsocksNodes,
       getShadowsocksNodesJSON,
@@ -397,7 +399,11 @@ export class Artifact extends EventEmitter {
           }
 
           // check whether the hostname resolves in case of blocking clash's node heurestic
-          if (config?.checkHostname && !isIp(nodeConfig.hostname)) {
+          if (
+            config?.checkHostname &&
+            'hostname' in nodeConfig &&
+            !isIp(nodeConfig.hostname)
+          ) {
             try {
               const domains = await resolveDomain(nodeConfig.hostname);
               if (domains.length < 1) {
@@ -414,6 +420,7 @@ export class Artifact extends EventEmitter {
 
           if (
             config?.surgeConfig?.resolveHostname &&
+            'hostname' in nodeConfig &&
             !isIp(nodeConfig.hostname) &&
             [NodeTypeEnum.Vmess, NodeTypeEnum.Shadowsocksr].includes(
               nodeConfig.type,

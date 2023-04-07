@@ -10,6 +10,7 @@ export enum NodeTypeEnum {
   Trojan = 'trojan',
   Socks5 = 'socks5',
   Tuic = 'tuic',
+  Wireguard = 'wireguard',
 }
 
 export enum SupportProviderEnum {
@@ -277,6 +278,21 @@ export interface Socks5NodeConfig extends SimpleNodeConfig {
   readonly clientCert?: string;
 }
 
+export interface WireguardNodeConfig extends SimpleNodeConfig {
+  readonly type: NodeTypeEnum.Wireguard;
+  readonly endpoint: string;
+  readonly selfIp: string;
+  readonly selfIpV6?: string;
+  readonly preferIpv6?: boolean;
+  readonly privateKey: string;
+  readonly publicKey: string;
+  readonly mtu?: number;
+  readonly dnsServer?: string[];
+  readonly presharedKey?: string;
+  readonly allowedIps?: string;
+  readonly keepAlive?: number;
+}
+
 export interface SimpleNodeConfig {
   readonly type: NodeTypeEnum;
   nodeName: string;
@@ -313,15 +329,8 @@ export interface TlsNodeConfig extends SimpleNodeConfig {
   readonly serverCertFingerprintSha256?: string;
 }
 
-export interface PlainObject {
-  readonly [name: string]: any;
-}
 export interface PlainObjectOf<T> {
   readonly [name: string]: T;
-}
-
-export interface CreateServerOptions {
-  readonly cwd?: string;
 }
 
 export interface SubscriptionUserinfo {
@@ -353,14 +362,5 @@ export type PossibleNodeConfigType =
   | VmessNodeConfig
   | TrojanNodeConfig
   | Socks5NodeConfig
-  | TuicNodeConfig;
-
-export type ProxyGroupModifier = (
-  nodeList: ReadonlyArray<PossibleNodeConfigType>,
-  filters: PlainObjectOf<NodeNameFilterType | SortedNodeNameFilterType>,
-) => ReadonlyArray<{
-  readonly name: string;
-  readonly type: 'select' | 'url-test' | 'fallback' | 'load-balance';
-  readonly proxies?: ReadonlyArray<string>;
-  readonly filter?: NodeNameFilterType;
-}>;
+  | TuicNodeConfig
+  | WireguardNodeConfig;

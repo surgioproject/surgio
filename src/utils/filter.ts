@@ -331,3 +331,6 @@ export const trojanFilter: NodeNameFilterType = (item) =>
 // istanbul ignore next
 export const socks5Filter: NodeNameFilterType = (item) =>
   item.type === NodeTypeEnum.Socks5;
+// istanbul ignore next
+export const wireguardFilter: NodeNameFilterType = (item) =>
+  item.type === NodeTypeEnum.Wireguard;

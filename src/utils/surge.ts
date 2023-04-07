@@ -22,7 +22,7 @@ export const getSurgeExtendHeaders = (
   wsHeaders: Record<string, string>,
 ): string => {
   return Object.keys(wsHeaders)
-    .map((headerKey) => `${headerKey}:${wsHeaders[headerKey]}`)
+    .map((headerKey) => `${headerKey.toLowerCase()}:${wsHeaders[headerKey]}`)
     .join('|');
 };
 
@@ -402,6 +402,12 @@ export const getSurgeNodes = function (
           return [nodeConfig.nodeName, config.join(', ')].join(' = ');
         }
 
+        case NodeTypeEnum.Wireguard:
+          logger.info(
+            'getSurgeNodes 不输出 Wireguard 节点，请配合使用 getSurgeWireguardNodes。',
+          );
+          return undefined;
+
         // istanbul ignore next
         default:
           logger.warn(
@@ -409,12 +415,74 @@ export const getSurgeNodes = function (
               (nodeConfig as any).nodeName
             } 会被省略`,
           );
-          return void 0;
+          return undefined;
       }
     })
     .filter((item): item is string => item !== undefined);
 
   return result.join('\n');
+};
+
+export const getSurgeWireguardNodes = (
+  list: ReadonlyArray<PossibleNodeConfigType>,
+): string => {
+  const result = list
+    .map((nodeConfig) => {
+      if (nodeConfig.type !== NodeTypeEnum.Wireguard) {
+        return undefined;
+      }
+
+      const configSection: string[] = [
+        `[WireGuard ${nodeConfig.nodeName}]`,
+        `self-ip=${nodeConfig.selfIp}`,
+        `private-key=${nodeConfig.privateKey}`,
+      ];
+      const peerConfig: string[] = [
+        `endpoint=${nodeConfig.endpoint}`,
+        `public-key=${nodeConfig.publicKey}`,
+      ];
+      const optionalKeys: Array<keyof typeof nodeConfig> = [
+        'mtu',
+        'dnsServer',
+        'preferIpv6',
+        'selfIpV6',
+      ];
+      const optionalPeerConfigKeys: Array<keyof typeof nodeConfig> = [
+        'presharedKey',
+        'allowedIps',
+      ];
+
+      for (const key of optionalKeys) {
+        if (nodeConfig[key] !== undefined) {
+          configSection.push(
+            ...pickAndFormatStringList(nodeConfig, [key], {
+              keyFormat: 'kebabCase',
+            }),
+          );
+        }
+      }
+
+      for (const key of optionalPeerConfigKeys) {
+        if (nodeConfig[key] !== undefined) {
+          peerConfig.push(
+            ...pickAndFormatStringList(nodeConfig, [key], {
+              keyFormat: 'kebabCase',
+            }),
+          );
+        }
+      }
+
+      if (nodeConfig.keepAlive) {
+        peerConfig.push(`keepalive=${nodeConfig.keepAlive}`);
+      }
+
+      configSection.push(`peer=(${peerConfig.join(', ')})`);
+
+      return configSection.join('\n');
+    })
+    .filter((item): item is string => item !== undefined);
+
+  return result.join('\n\n');
 };
 
 function parseShadowTlsConfig(config: PossibleNodeConfigType) {

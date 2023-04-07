@@ -506,3 +506,34 @@ test('getSurgeNodes', async (t) => {
     ].join('\n'),
   );
 });
+
+test('getSurgeWireguardNodes', (t) => {
+  t.snapshot(
+    surge.getSurgeWireguardNodes([
+      {
+        type: NodeTypeEnum.Wireguard,
+        nodeName: 'wg node',
+        endpoint: 'wg.example.com:51820',
+        publicKey: 'publicKey',
+        privateKey: 'privateKey',
+        selfIp: '10.0.0.1',
+        mtu: 1420,
+      },
+      {
+        type: NodeTypeEnum.Wireguard,
+        nodeName: 'wg node',
+        endpoint: 'wg.example.com:51820',
+        publicKey: 'publicKey',
+        privateKey: 'privateKey',
+        selfIp: '10.0.0.1',
+        mtu: 1420,
+        preferIpv6: true,
+        selfIpV6: '2001:db8:85a3::8a2e:370:7334',
+        dnsServer: ['1.1.1.1'],
+        allowedIps: '0.0.0.0/0',
+        presharedKey: 'presharedKey',
+        keepAlive: 25,
+      },
+    ]),
+  );
+});
