@@ -134,11 +134,10 @@ export const getClashNodes = function (
 
         case NodeTypeEnum.Snell:
           if (Number(nodeConfig.version) >= 4) {
-            if (!nodeConfig.clashConfig?.enableTuic) {
-              logger.warn(
-                `Clash尚不支持Snell v${nodeConfig.version}，节点 ${nodeConfig.nodeName} 会被省略。`,
-              );
-              return null;
+            logger.warn(
+              `Clash尚不支持Snell v${nodeConfig.version}，节点 ${nodeConfig.nodeName} 会被省略。`,
+            );
+            return null;
           }
           return {
             type: 'snell',
