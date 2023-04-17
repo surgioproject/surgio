@@ -1,7 +1,7 @@
-import Joi from 'joi';
 import { createLogger } from '@surgio/logger';
 import assert from 'assert';
 import bytes from 'bytes';
+import { z } from 'zod';
 
 import {
   NodeTypeEnum,
@@ -18,36 +18,31 @@ const logger = createLogger({
 });
 
 export default class SsdProvider extends Provider {
-  public readonly _url: string;
+  readonly #originalUrl: string;
   public readonly udpRelay?: boolean;
 
   constructor(name: string, config: SsdProviderConfig) {
     super(name, config);
 
-    const schema = Joi.object({
-      url: Joi.string()
-        .uri({
-          scheme: [/https?/],
-        })
-        .required(),
-      udpRelay: Joi.boolean().strict(),
-    }).unknown();
-
-    const { error } = schema.validate(config);
+    const schema = z.object({
+      url: z.string().url(),
+      udpRelay: z.boolean().optional(),
+    });
+    const result = schema.safeParse(config);
 
     // istanbul ignore next
-    if (error) {
-      throw error;
+    if (!result.success) {
+      throw result.error;
     }
 
-    this._url = config.url;
-    this.udpRelay = config.udpRelay;
+    this.#originalUrl = result.data.url;
+    this.udpRelay = result.data.udpRelay;
     this.supportGetSubscriptionUserInfo = true;
   }
 
   // istanbul ignore next
   public get url(): string {
-    return relayableUrl(this._url, this.relayUrl);
+    return relayableUrl(this.#originalUrl, this.config.relayUrl);
   }
 
   public async getSubscriptionUserInfo({
@@ -58,7 +53,7 @@ export default class SsdProvider extends Provider {
     const { subscriptionUserinfo } = await getSsdSubscription(
       this.url,
       this.udpRelay,
-      requestUserAgent || this.requestUserAgent,
+      requestUserAgent || this.config.requestUserAgent,
     );
 
     if (subscriptionUserinfo) {
@@ -75,7 +70,7 @@ export default class SsdProvider extends Provider {
     const { nodeList } = await getSsdSubscription(
       this.url,
       this.udpRelay,
-      requestUserAgent || this.requestUserAgent,
+      requestUserAgent || this.config.requestUserAgent,
     );
 
     return nodeList;

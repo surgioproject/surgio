@@ -1,6 +1,6 @@
-import Joi from 'joi';
 import { logger } from '@surgio/logger';
 import assert from 'assert';
+import { z } from 'zod';
 
 import {
   NodeTypeEnum,
@@ -19,40 +19,35 @@ export default class V2rayNSubscribeProvider extends Provider {
   public readonly udpRelay?: boolean;
   public readonly tls13?: boolean;
 
-  private readonly _url: string;
+  readonly #originalUrl: string;
 
   constructor(name: string, config: V2rayNSubscribeProviderConfig) {
     super(name, config);
 
-    const schema = Joi.object({
-      url: Joi.string()
-        .uri({
-          scheme: [/https?/],
-        })
-        .required(),
-      udpRelay: Joi.bool().strict(),
-      tls13: Joi.bool().strict(),
-      compatibleMode: Joi.bool().strict(),
-      skipCertVerify: Joi.bool().strict(),
-    }).unknown();
-
-    const { error } = schema.validate(config);
+    const schema = z.object({
+      url: z.string().url(),
+      udpRelay: z.boolean().optional(),
+      tls13: z.boolean().optional(),
+      compatibleMode: z.boolean().optional(),
+      skipCertVerify: z.boolean().optional(),
+    });
+    const result = schema.safeParse(config);
 
     // istanbul ignore next
-    if (error) {
-      throw error;
+    if (!result.success) {
+      throw result.error;
     }
 
-    this._url = config.url;
-    this.compatibleMode = config.compatibleMode;
-    this.skipCertVerify = config.skipCertVerify;
-    this.tls13 = config.tls13;
-    this.udpRelay = config.udpRelay;
+    this.#originalUrl = result.data.url;
+    this.compatibleMode = result.data.compatibleMode;
+    this.skipCertVerify = result.data.skipCertVerify;
+    this.tls13 = result.data.tls13;
+    this.udpRelay = result.data.udpRelay;
   }
 
   // istanbul ignore next
   public get url(): string {
-    return relayableUrl(this._url, this.relayUrl);
+    return relayableUrl(this.#originalUrl, this.config.relayUrl);
   }
 
   public getNodeList({
@@ -66,7 +61,7 @@ export default class V2rayNSubscribeProvider extends Provider {
       tls13: this.tls13,
       udpRelay: this.udpRelay,
       isCompatibleMode: this.compatibleMode,
-      requestUserAgent: requestUserAgent || this.requestUserAgent,
+      requestUserAgent: requestUserAgent || this.config.requestUserAgent,
     });
   }
 }

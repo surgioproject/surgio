@@ -1,5 +1,5 @@
 import test from 'ava';
-import { ValidationError } from 'joi';
+import { ZodError } from 'zod';
 import sinon from 'sinon';
 
 import { NodeTypeEnum, SupportProviderEnum } from '../../types';
@@ -23,24 +23,24 @@ test('CustomProvider should work', async (t) => {
 });
 
 test('CustomProvider should throw error if udp-relay is a string', async (t) => {
-  const provider = new CustomProvider('test', {
-    type: SupportProviderEnum.Custom,
-    nodeList: [
-      {
-        type: NodeTypeEnum.Shadowsocks,
-        nodeName: 'test',
-        udpRelay: 'true',
-      },
-    ],
-  });
-
-  return t.throwsAsync(
-    async () => {
-      await provider.getNodeList();
-    },
+  t.throws(
+    () =>
+      new CustomProvider('test', {
+        type: SupportProviderEnum.Custom,
+        nodeList: [
+          {
+            type: NodeTypeEnum.Shadowsocks,
+            nodeName: 'test',
+            udpRelay: 'true',
+            hostname: 'example.com',
+            port: 443,
+            method: 'chacha20-ietf-poly1305',
+            password: 'password',
+          },
+        ],
+      }),
     {
-      instanceOf: ValidationError,
-      message: '"udpRelay" must be a boolean',
+      instanceOf: ZodError,
     },
   );
 });
@@ -52,6 +52,10 @@ test('CustomProvider should format header keys to lowercase', async (t) => {
       {
         type: NodeTypeEnum.Shadowsocks,
         nodeName: 'test',
+        hostname: 'example.com',
+        port: 443,
+        method: 'chacha20-ietf-poly1305',
+        password: 'password',
         wsHeaders: {
           Host: 'Example.com',
         },
@@ -63,6 +67,10 @@ test('CustomProvider should format header keys to lowercase', async (t) => {
     {
       type: NodeTypeEnum.Shadowsocks,
       nodeName: 'test',
+      hostname: 'example.com',
+      port: 443,
+      method: 'chacha20-ietf-poly1305',
+      password: 'password',
       wsHeaders: {
         host: 'Example.com',
       },
@@ -79,6 +87,10 @@ test('CustomProvider underlying proxy', async (t) => {
         {
           type: NodeTypeEnum.Shadowsocks,
           nodeName: 'test',
+          hostname: 'example.com',
+          port: 443,
+          method: 'chacha20-ietf-poly1305',
+          password: 'password',
           udpRelay: true,
         },
       ],
@@ -87,6 +99,10 @@ test('CustomProvider underlying proxy', async (t) => {
       {
         nodeName: 'test',
         type: 'shadowsocks',
+        hostname: 'example.com',
+        port: 443,
+        method: 'chacha20-ietf-poly1305',
+        password: 'password',
         udpRelay: true,
         underlyingProxy: 'underlying-proxy',
       },
@@ -101,6 +117,10 @@ test('CustomProvider underlying proxy', async (t) => {
         {
           type: NodeTypeEnum.Shadowsocks,
           nodeName: 'test',
+          hostname: 'example.com',
+          port: 443,
+          method: 'chacha20-ietf-poly1305',
+          password: 'password',
           udpRelay: true,
           underlyingProxy: 'underlying-proxy-2',
         },
@@ -110,6 +130,10 @@ test('CustomProvider underlying proxy', async (t) => {
       {
         nodeName: 'test',
         type: 'shadowsocks',
+        hostname: 'example.com',
+        port: 443,
+        method: 'chacha20-ietf-poly1305',
+        password: 'password',
         udpRelay: true,
         underlyingProxy: 'underlying-proxy-2',
       },
@@ -125,6 +149,10 @@ test('CustomProvider underlying proxy', async (t) => {
           type: NodeTypeEnum.Shadowsocks,
           nodeName: 'test',
           udpRelay: true,
+          hostname: 'example.com',
+          port: 443,
+          method: 'chacha20-ietf-poly1305',
+          password: 'password',
           underlyingProxy: 'underlying-proxy-2',
         },
       ],
@@ -134,6 +162,10 @@ test('CustomProvider underlying proxy', async (t) => {
         nodeName: 'test',
         type: 'shadowsocks',
         udpRelay: true,
+        hostname: 'example.com',
+        port: 443,
+        method: 'chacha20-ietf-poly1305',
+        password: 'password',
         underlyingProxy: 'underlying-proxy-2',
       },
     ],

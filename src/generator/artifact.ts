@@ -8,6 +8,7 @@ import path from 'path';
 import { EventEmitter } from 'events';
 
 import { getProvider } from '../provider';
+import { PossibleProviderType } from '../provider/types';
 import {
   ArtifactConfig,
   CommandConfig,
@@ -291,7 +292,7 @@ export class Artifact extends EventEmitter {
       throw new Error(`文件 ${filePath} 不存在`);
     }
 
-    let provider: ThenArg<ReturnType<typeof getProvider>>;
+    let provider: PossibleProviderType;
     let nodeConfigList: ReadonlyArray<PossibleNodeConfigType>;
 
     try {
@@ -299,40 +300,49 @@ export class Artifact extends EventEmitter {
       provider = await getProvider(providerName, require(filePath));
       this.providerMap.set(providerName, provider);
     } catch (err) /* istanbul ignore next */ {
-      err.message = `处理 ${providerName} 时出现错误，相关文件 ${filePath} ，错误原因: ${err.message}`;
-      throw err;
+      throw new Error(
+        `处理 Provider ${providerName} 时出现错误\n文件地址: ${filePath}`,
+        {
+          cause: err,
+        },
+      );
     }
 
     try {
       nodeConfigList = await provider.getNodeList({ requestUserAgent });
     } catch (err) /* istanbul ignore next */ {
-      err.message = `获取 ${providerName} 节点时出现错误，相关文件 ${filePath} ，错误原因: ${err.message}`;
-      throw err;
+      throw new Error(
+        `获取 Provider ${providerName} 节点时出现错误\n文件地址: ${filePath}`,
+        {
+          cause: err,
+        },
+      );
     }
 
     // Filter 仅使用第一个 Provider 中的定义
     if (providerName === mainProviderName) {
       if (!this.netflixFilter) {
-        this.netflixFilter = provider.netflixFilter || defaultNetflixFilter;
+        this.netflixFilter =
+          provider.config.netflixFilter || defaultNetflixFilter;
       }
       if (!this.youtubePremiumFilter) {
         this.youtubePremiumFilter =
-          provider.youtubePremiumFilter || defaultYoutubePremiumFilter;
+          provider.config.youtubePremiumFilter || defaultYoutubePremiumFilter;
       }
       if (!this.customFilters) {
         this.customFilters = {
           ...config.customFilters,
-          ...provider.customFilters,
+          ...provider.config.customFilters,
         };
       }
     }
 
     if (
-      validateFilter(provider.nodeFilter) &&
-      typeof provider.nodeFilter === 'object' &&
-      provider.nodeFilter.supportSort
+      validateFilter(provider.config.nodeFilter) &&
+      typeof provider.config.nodeFilter === 'object' &&
+      provider.config.nodeFilter.supportSort
     ) {
-      nodeConfigList = provider.nodeFilter.filter(nodeConfigList);
+      nodeConfigList = provider.config.nodeFilter.filter(nodeConfigList);
     }
 
     nodeConfigList = (
@@ -343,12 +353,12 @@ export class Artifact extends EventEmitter {
           return undefined;
         }
 
-        if (!provider.nodeFilter) {
+        if (!provider.config.nodeFilter) {
           isValid = true;
-        } else if (validateFilter(provider.nodeFilter)) {
+        } else if (validateFilter(provider.config.nodeFilter)) {
           isValid =
-            typeof provider.nodeFilter === 'function'
-              ? provider.nodeFilter(nodeConfig)
+            typeof provider.config.nodeFilter === 'function'
+              ? provider.config.nodeFilter(nodeConfig)
               : true;
         }
 
@@ -364,38 +374,38 @@ export class Artifact extends EventEmitter {
           nodeConfig.quantumultXConfig = config.quantumultXConfig;
           nodeConfig.surfboardConfig = config.surfboardConfig;
 
-          if (provider.renameNode) {
-            const newName = provider.renameNode(nodeConfig.nodeName);
+          if (provider.config.renameNode) {
+            const newName = provider.config.renameNode(nodeConfig.nodeName);
 
             if (newName) {
               nodeConfig.nodeName = newName;
             }
           }
 
-          if (provider.addFlag) {
+          if (provider.config.addFlag) {
             // 给节点名加国旗
             nodeConfig.nodeName = prependFlag(
               nodeConfig.nodeName,
-              provider.removeExistingFlag,
+              provider.config.removeExistingFlag,
             );
-          } else if (provider.removeExistingFlag) {
+          } else if (provider.config.removeExistingFlag) {
             // 去掉名称中的国旗
             nodeConfig.nodeName = removeFlag(nodeConfig.nodeName);
           }
 
           // TCP Fast Open
-          if (provider.tfo) {
-            nodeConfig.tfo = provider.tfo;
+          if (provider.config.tfo) {
+            nodeConfig.tfo = provider.config.tfo;
           }
 
           // MPTCP
-          if (provider.mptcp) {
-            nodeConfig.mptcp = provider.mptcp;
+          if (provider.config.mptcp) {
+            nodeConfig.mptcp = provider.config.mptcp;
           }
 
           // Underlying Proxy
-          if (!nodeConfig.underlyingProxy && provider.underlyingProxy) {
-            nodeConfig.underlyingProxy = provider.underlyingProxy;
+          if (!nodeConfig.underlyingProxy && provider.config.underlyingProxy) {
+            nodeConfig.underlyingProxy = provider.config.underlyingProxy;
           }
 
           // check whether the hostname resolves in case of blocking clash's node heurestic

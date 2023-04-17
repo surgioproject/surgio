@@ -1,5 +1,4 @@
 import { createLogger } from '@surgio/logger';
-import Joi from 'joi';
 
 import { CACHE_KEYS } from '../constant';
 import {
@@ -18,104 +17,29 @@ import { getProviderCacheMaxage } from '../utils/env-flag';
 import httpClient, { getUserAgent } from '../utils/http-client';
 import { parseSubscriptionUserInfo } from '../utils/subscription';
 import { msToSeconds, toMD5 } from '../utils';
+import { ProviderValidator } from '../validators';
 
 const logger = createLogger({
   service: 'surgio:Provider',
 });
 
-export default class Provider {
+export default abstract class Provider {
   public readonly type: SupportProviderEnum;
-  public readonly nodeFilter?: ProviderConfig['nodeFilter'];
-  public readonly netflixFilter?: ProviderConfig['netflixFilter'];
-  public readonly youtubePremiumFilter?: ProviderConfig['youtubePremiumFilter'];
-  public readonly customFilters?: ProviderConfig['customFilters'];
-  public readonly addFlag?: boolean;
-  public readonly removeExistingFlag?: boolean;
-  public readonly tfo?: boolean;
-  public readonly underlyingProxy?: string;
-  public readonly mptcp?: boolean;
-  public readonly renameNode?: ProviderConfig['renameNode'];
-  public readonly relayUrl?: boolean | string;
-  public readonly requestUserAgent?: string;
+  public readonly config: ProviderConfig;
+
   // 是否支持在订阅中获取用户流量信息
   public supportGetSubscriptionUserInfo: boolean;
-  // External Provider 的起始端口，Surge 配置中使用
-  public startPort?: number;
 
-  constructor(public name: string, config: ProviderConfig) {
-    const schema = Joi.object({
-      type: Joi.string()
-        .valid(...Object.values<string>(SupportProviderEnum))
-        .required(),
-      nodeFilter: Joi.any().allow(
-        Joi.function(),
-        Joi.object({
-          filter: Joi.function(),
-          supportSort: Joi.boolean().strict(),
-        }),
-      ),
-      netflixFilter: Joi.any().allow(
-        Joi.function(),
-        Joi.object({
-          filter: Joi.function(),
-          supportSort: Joi.boolean().strict(),
-        }),
-      ),
-      youtubePremiumFilter: Joi.any().allow(
-        Joi.function(),
-        Joi.object({
-          filter: Joi.function(),
-          supportSort: Joi.boolean().strict(),
-        }),
-      ),
-      customFilters: Joi.object().pattern(
-        Joi.string(),
-        Joi.any().allow(
-          Joi.function(),
-          Joi.object({
-            filter: Joi.function(),
-            supportSort: Joi.boolean().strict(),
-          }),
-        ),
-      ),
-      addFlag: Joi.boolean().strict(),
-      removeExistingFlag: Joi.boolean().strict(),
-      mptcp: Joi.boolean().strict(),
-      tfo: Joi.boolean().strict(),
-      underlyingProxy: Joi.string(),
-      startPort: Joi.number().integer().min(1024).max(65535),
-      relayUrl: [Joi.boolean().strict(), Joi.string()],
-      renameNode: Joi.function(),
-      requestUserAgent: Joi.string(),
-    }).unknown();
-
-    const { error, value } = schema.validate(config);
+  protected constructor(public name: string, config: ProviderConfig) {
+    const result = ProviderValidator.safeParse(config);
 
     // istanbul ignore next
-    if (error) {
-      throw error;
+    if (!result.success) {
+      throw result.error;
     }
 
     this.supportGetSubscriptionUserInfo = false;
-
-    [
-      'type',
-      'nodeFilter',
-      'netflixFilter',
-      'youtubePremiumFilter',
-      'customFilters',
-      'addFlag',
-      'removeExistingFlag',
-      'tfo',
-      'mptcp',
-      'startPort',
-      'renameNode',
-      'relayUrl',
-      'requestUserAgent',
-      'underlyingProxy',
-    ].forEach((key) => {
-      this[key] = value[key];
-    });
+    this.config = result.data;
   }
 
   static async requestCacheableResource(
@@ -185,8 +109,8 @@ export default class Provider {
   }
 
   public get nextPort(): number {
-    if (this.startPort) {
-      return this.startPort++;
+    if (this.config.startPort) {
+      return this.config.startPort++;
     }
     return 0;
   }

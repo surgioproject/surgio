@@ -1,12 +1,12 @@
-import Joi from 'joi';
 import fs from 'fs-extra';
 import _ from 'lodash';
 import path from 'path';
 import { URL } from 'url';
 
 import redis from '../redis';
-import { CommandConfig } from '../types';
+import { CommandConfig, CommandConfigBeforeNormalize } from '../types';
 import { PROXY_TEST_INTERVAL, PROXY_TEST_URL } from '../constant';
+import { SurgioConfigValidator } from '../validators';
 import { addFlagMap } from './flag';
 import { ensureConfigFolder } from './index';
 
@@ -23,9 +23,7 @@ export const loadConfig = (
     throw new Error(`配置文件 ${absPath} 不存在`);
   }
 
-  const userConfig = _.cloneDeep(require(absPath));
-
-  validateConfig(userConfig);
+  const userConfig = validateConfig(_.cloneDeep(require(absPath)));
 
   if (userConfig.flags) {
     Object.keys(userConfig.flags).forEach((emoji) => {
@@ -89,7 +87,7 @@ export const setConfig = <T extends keyof CommandConfig>(
 
 export const normalizeConfig = (
   cwd: string,
-  userConfig: Partial<CommandConfig>,
+  userConfig: Partial<CommandConfigBeforeNormalize>,
 ): CommandConfig => {
   const defaultConfig: Partial<CommandConfig> = {
     artifacts: [],
@@ -136,10 +134,6 @@ export const normalizeConfig = (
     config.publicUrl = '/';
   }
 
-  if (config.binPath && config.binPath.v2ray) {
-    config.binPath.vmess = config.binPath.v2ray;
-  }
-
   // istanbul ignore next
   if (config.cache && config.cache.type === 'redis') {
     if (!config.cache.redisUrl) {
@@ -159,96 +153,15 @@ export const normalizeConfig = (
   return config;
 };
 
-export const validateConfig = (userConfig: Partial<CommandConfig>): void => {
-  const artifactSchema = Joi.object({
-    name: Joi.string().required(),
-    categories: Joi.array().items(Joi.string()),
-    template: Joi.string().required(),
-    provider: Joi.string().required(),
-    combineProviders: Joi.array().items(Joi.string()),
-    customParams: Joi.object(),
-    destDir: Joi.string(),
-    downloadUrl: Joi.string(),
-  }).unknown();
-  const remoteSnippetSchema = Joi.object({
-    url: Joi.string()
-      .uri({
-        scheme: [/https?/],
-      })
-      .required(),
-    name: Joi.string().required(),
-    surgioSnippet: Joi.boolean().strict(),
-  });
-  const schema = Joi.object({
-    artifacts: Joi.array().items(artifactSchema).required(),
-    remoteSnippets: Joi.array().items(remoteSnippetSchema),
-    urlBase: Joi.string(),
-    upload: Joi.object({
-      prefix: Joi.string(),
-      region: Joi.string(),
-      endpoint: Joi.string(),
-      bucket: Joi.string().required(),
-      accessKeyId: Joi.string().required(),
-      accessKeySecret: Joi.string().required(),
-    }),
-    binPath: Joi.object({
-      shadowsocksr: Joi.string().pattern(/^\//),
-      v2ray: Joi.string().pattern(/^\//),
-      vmess: Joi.string().pattern(/^\//),
-    }),
-    flags: Joi.object().pattern(Joi.string(), [
-      Joi.string(),
-      Joi.object().regex(),
-      Joi.array().items(Joi.string(), Joi.object().regex()),
-    ]),
-    surgeConfig: Joi.object({
-      resolveHostname: Joi.boolean().strict(),
-      vmessAEAD: Joi.boolean().strict(),
-    }).unknown(),
-    surfboardConfig: Joi.object({
-      vmessAEAD: Joi.boolean().strict(),
-    }).unknown(),
-    quantumultXConfig: Joi.object({
-      vmessAEAD: Joi.boolean().strict(),
-    }).unknown(),
-    clashConfig: Joi.object({
-      enableTuic: Joi.bool().strict(),
-    }).unknown(),
-    analytics: Joi.boolean().strict(),
-    gateway: Joi.object({
-      accessToken: Joi.string(),
-      viewerToken: Joi.string(),
-      auth: Joi.boolean().strict(),
-      cookieMaxAge: Joi.number(),
-      useCacheOnError: Joi.boolean().strict(),
-    }).unknown(),
-    proxyTestUrl: Joi.string().uri({
-      scheme: [/https?/],
-    }),
-    proxyTestInterval: Joi.number(),
-    customFilters: Joi.object().pattern(
-      Joi.string(),
-      Joi.any().allow(
-        Joi.function(),
-        Joi.object({
-          filter: Joi.function(),
-          supportSort: Joi.boolean().strict(),
-        }),
-      ),
-    ),
-    customParams: Joi.object(),
-    cache: Joi.object({
-      type: Joi.string().valid('redis', 'default'),
-      redisUrl: Joi.string().uri({
-        scheme: [/rediss?/],
-      }),
-    }),
-  }).unknown();
-
-  const { error } = schema.validate(userConfig);
+export const validateConfig = (
+  userConfig: Partial<CommandConfig>,
+): CommandConfigBeforeNormalize => {
+  const result = SurgioConfigValidator.safeParse(userConfig);
 
   // istanbul ignore next
-  if (error) {
-    throw error;
+  if (!result.success) {
+    throw result.error;
   }
+
+  return result.data;
 };

@@ -581,7 +581,7 @@ test('ClashProvider requestUserAgent', async (t) => {
     requestUserAgent,
   });
 
-  t.is(provider.requestUserAgent, requestUserAgent);
+  t.is(provider.config.requestUserAgent, requestUserAgent);
 
   await t.notThrowsAsync(async () => {
     await provider.getNodeList();

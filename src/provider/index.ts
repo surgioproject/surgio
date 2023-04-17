@@ -10,8 +10,6 @@ import TrojanProvider from './TrojanProvider';
 import { PossibleProviderType } from './types';
 import V2rayNSubscribeProvider from './V2rayNSubscribeProvider';
 
-export { PossibleProviderType };
-
 export async function getProvider(
   name: string,
   config: any,

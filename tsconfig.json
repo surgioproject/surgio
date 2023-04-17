@@ -1,7 +1,7 @@
 {
   "compilerOptions": {
     // https://github.com/microsoft/TypeScript/wiki/Node-Target-Mapping
-    "target": "ES2020",
+    "target": "ES2022",
     "module": "Node16",
     "moduleResolution": "Node",
     "declaration": true,
@@ -33,7 +33,7 @@
     "pretty": true /* Stylize errors and messages using color and context. */,
 
     "lib": [
-      "ES2020"
+      "ES2022"
     ],
     "types": [
       "node"

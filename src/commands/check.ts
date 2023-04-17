@@ -32,10 +32,17 @@ class CheckCommand extends BaseCommand<typeof CheckCommand> {
         type: 'list',
         name: 'node',
         message: '请选择节点',
-        choices: nodeList.map((node) => ({
-          name: `${node.nodeName} - ${node.hostname}:${node.port}`,
-          value: node,
-        })),
+        choices: nodeList.map((node) => {
+          const name =
+            'hostname' in node && 'port' in node
+              ? `${node.nodeName} - ${node.hostname}:${node.port}`
+              : node.nodeName;
+
+          return {
+            name,
+            value: node,
+          };
+        }),
       },
     ]);
 

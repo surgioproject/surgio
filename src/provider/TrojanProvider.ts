@@ -1,6 +1,5 @@
-import Joi from 'joi';
 import assert from 'assert';
-import { createLogger } from '@surgio/logger';
+import { z } from 'zod';
 
 import {
   SubscriptionUserinfo,
@@ -12,44 +11,35 @@ import relayableUrl from '../utils/relayable-url';
 import { parseTrojanUri } from '../utils/trojan';
 import Provider from './Provider';
 
-const logger = createLogger({
-  service: 'surgio:TrojanProvider',
-});
-
 export default class TrojanProvider extends Provider {
-  public readonly _url: string;
+  readonly #originalUrl: string;
   public readonly udpRelay?: boolean;
   public readonly tls13?: boolean;
 
   constructor(name: string, config: TrojanProviderConfig) {
     super(name, config);
 
-    const schema = Joi.object({
-      url: Joi.string()
-        .uri({
-          scheme: [/https?/],
-        })
-        .required(),
-      udpRelay: Joi.bool().strict(),
-      tls13: Joi.bool().strict(),
-    }).unknown();
-
-    const { error } = schema.validate(config);
+    const schema = z.object({
+      url: z.string().url(),
+      udpRelay: z.boolean().optional(),
+      tls13: z.boolean().optional(),
+    });
+    const result = schema.safeParse(config);
 
     // istanbul ignore next
-    if (error) {
-      throw error;
+    if (!result.success) {
+      throw result.error;
     }
 
-    this._url = config.url;
-    this.udpRelay = config.udpRelay;
-    this.tls13 = config.tls13;
+    this.#originalUrl = result.data.url;
+    this.udpRelay = result.data.udpRelay;
+    this.tls13 = result.data.tls13;
     this.supportGetSubscriptionUserInfo = true;
   }
 
   // istanbul ignore next
   public get url(): string {
-    return relayableUrl(this._url, this.relayUrl);
+    return relayableUrl(this.#originalUrl, this.config.relayUrl);
   }
 
   public async getSubscriptionUserInfo({
@@ -61,7 +51,7 @@ export default class TrojanProvider extends Provider {
       url: this.url,
       udpRelay: this.udpRelay,
       tls13: this.tls13,
-      requestUserAgent: requestUserAgent || this.requestUserAgent,
+      requestUserAgent: requestUserAgent || this.config.requestUserAgent,
     });
 
     if (subscriptionUserinfo) {
@@ -79,7 +69,7 @@ export default class TrojanProvider extends Provider {
       url: this.url,
       udpRelay: this.udpRelay,
       tls13: this.tls13,
-      requestUserAgent: requestUserAgent || this.requestUserAgent,
+      requestUserAgent: requestUserAgent || this.config.requestUserAgent,
     });
 
     return nodeList;

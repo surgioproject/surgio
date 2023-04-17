@@ -5,6 +5,7 @@ import ShadowsocksJsonSubscribeProvider from './ShadowsocksJsonSubscribeProvider
 import ShadowsocksrSubscribeProvider from './ShadowsocksrSubscribeProvider';
 import ShadowsocksSubscribeProvider from './ShadowsocksSubscribeProvider';
 import SsdProvider from './SsdProvider';
+import TrojanProvider from './TrojanProvider';
 import V2rayNSubscribeProvider from './V2rayNSubscribeProvider';
 
 export type PossibleProviderType =
@@ -15,4 +16,5 @@ export type PossibleProviderType =
   | V2rayNSubscribeProvider
   | ShadowsocksrSubscribeProvider
   | ClashProvider
-  | SsdProvider;
+  | SsdProvider
+  | TrojanProvider;

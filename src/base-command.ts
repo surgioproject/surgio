@@ -65,7 +65,6 @@ abstract class BaseCommand<T extends typeof Command> extends Command {
       this.ora.fail();
     }
     await errorHandler.call(this, err);
-    return super.catch(err);
   }
 }
 

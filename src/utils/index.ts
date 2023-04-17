@@ -572,6 +572,7 @@ export const isAWS = (): boolean =>
 export const isFlyIO = (): boolean =>
   typeof process.env.FLY_REGION !== 'undefined';
 
+// istanbul ignore next
 export const isGFWFree = (): boolean =>
   getIsGFWFree() ||
   isAWS() ||
@@ -583,3 +584,8 @@ export const isGFWFree = (): boolean =>
   isRailway() ||
   isNetlify() ||
   isFlyIO();
+
+// istanbul ignore next
+export const assertNever = (x: never): never => {
+  throw new TypeError(`Unexpected object: ${x}`);
+};

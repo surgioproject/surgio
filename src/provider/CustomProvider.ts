@@ -1,56 +1,99 @@
-import Joi from 'joi';
+import { z } from 'zod';
 
 import {
   CustomProviderConfig,
   NodeTypeEnum,
   PossibleNodeConfigType,
 } from '../types';
+import { assertNever } from '../utils';
 import Provider from './Provider';
+import {
+  WireguardNodeConfigValidator,
+  ShadowsocksNodeConfigValidator,
+  HttpNodeConfigValidator,
+  HttpsNodeConfigValidator,
+  TrojanNodeConfigValidator,
+  ShadowsocksrNodeConfigValidator,
+  Socks5NodeConfigValidator,
+  VmessNodeConfigValidator,
+  SnellNodeConfigValidator,
+  TuicNodeConfigValidator,
+} from '../validators';
 
 export default class CustomProvider extends Provider {
-  public readonly nodeList: ReadonlyArray<any>;
+  public readonly nodeList: ReadonlyArray<PossibleNodeConfigType>;
   public readonly underlyingProxy?: string;
 
   constructor(name: string, config: CustomProviderConfig) {
     super(name, config);
 
-    const nodeSchema = Joi.object({
-      type: Joi.string()
-        .valid(...Object.values<string>(NodeTypeEnum))
-        .required(),
-      nodeName: Joi.string().required(),
-      enable: Joi.boolean().strict(),
-      tfo: Joi.boolean().strict(),
-      mptcp: Joi.boolean().strict(),
-      udpRelay: Joi.boolean().strict(),
-      obfsHost: Joi.string(),
-      obfsUri: Joi.string(),
-      shadowTls: Joi.object({
-        password: Joi.string().required(),
-        sni: Joi.string(),
-      }),
-      binPath: Joi.string(),
-      localPort: Joi.number(),
-      underlyingProxy: Joi.string(),
-      skipCertVerify: Joi.boolean().strict(),
-      sni: Joi.string(),
-      alpn: Joi.array().items(Joi.string()),
-      serverCertFingerprintSha256: Joi.string(),
-    }).unknown();
-    const schema = Joi.object({
-      nodeList: Joi.array().items(nodeSchema).required(),
-      underlyingProxy: Joi.string(),
-    }).unknown();
-
-    const { error, value } = schema.validate(config);
+    const schema = z.object({
+      nodeList: z.array(z.unknown()),
+      underlyingProxy: z.ostring(),
+    });
+    const result = schema.safeParse(config);
+    const nodeList: PossibleNodeConfigType[] = [];
 
     // istanbul ignore next
-    if (error) {
-      throw error;
+    if (!result.success) {
+      throw result.error;
     }
 
-    this.nodeList = value.nodeList;
-    this.underlyingProxy = value.underlyingProxy;
+    for (const node of result.data.nodeList) {
+      if (typeof node !== 'object' || node === null || !('type' in node)) {
+        throw new Error('Invalid node type');
+      }
+
+      const type = node.type as NodeTypeEnum;
+
+      switch (type) {
+        case NodeTypeEnum.Shadowsocks:
+          nodeList.push(ShadowsocksNodeConfigValidator.parse(node));
+          break;
+
+        case NodeTypeEnum.Shadowsocksr:
+          nodeList.push(ShadowsocksrNodeConfigValidator.parse(node));
+          break;
+
+        case NodeTypeEnum.Vmess:
+          nodeList.push(VmessNodeConfigValidator.parse(node));
+          break;
+
+        case NodeTypeEnum.Trojan:
+          nodeList.push(TrojanNodeConfigValidator.parse(node));
+          break;
+
+        case NodeTypeEnum.Socks5:
+          nodeList.push(Socks5NodeConfigValidator.parse(node));
+          break;
+
+        case NodeTypeEnum.HTTP:
+          nodeList.push(HttpNodeConfigValidator.parse(node));
+          break;
+
+        case NodeTypeEnum.HTTPS:
+          nodeList.push(HttpsNodeConfigValidator.parse(node));
+          break;
+
+        case NodeTypeEnum.Snell:
+          nodeList.push(SnellNodeConfigValidator.parse(node));
+          break;
+
+        case NodeTypeEnum.Tuic:
+          nodeList.push(TuicNodeConfigValidator.parse(node));
+          break;
+
+        case NodeTypeEnum.Wireguard:
+          nodeList.push(WireguardNodeConfigValidator.parse(node));
+          break;
+
+        default:
+          assertNever(type);
+      }
+    }
+
+    this.nodeList = nodeList;
+    this.underlyingProxy = result.data.underlyingProxy;
   }
 
   public async getNodeList(): Promise<ReadonlyArray<PossibleNodeConfigType>> {

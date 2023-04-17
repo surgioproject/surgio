@@ -1,6 +1,6 @@
-import Joi from 'joi';
 import { createLogger } from '@surgio/logger';
 import assert from 'assert';
+import { z } from 'zod';
 
 import {
   ShadowsocksrNodeConfig,
@@ -19,35 +19,30 @@ const logger = createLogger({
 
 export default class ShadowsocksrSubscribeProvider extends Provider {
   public readonly udpRelay?: boolean;
-  private readonly _url: string;
+  readonly #originalUrl: string;
 
   constructor(name: string, config: ShadowsocksrSubscribeProviderConfig) {
     super(name, config);
 
-    const schema = Joi.object({
-      url: Joi.string()
-        .uri({
-          scheme: [/https?/],
-        })
-        .required(),
-      udpRelay: Joi.boolean().strict(),
-    }).unknown();
-
-    const { error } = schema.validate(config);
+    const schema = z.object({
+      url: z.string().url(),
+      udpRelay: z.boolean().optional(),
+    });
+    const result = schema.safeParse(config);
 
     // istanbul ignore next
-    if (error) {
-      throw error;
+    if (!result.success) {
+      throw result.error;
     }
 
-    this._url = config.url;
-    this.udpRelay = config.udpRelay;
+    this.#originalUrl = result.data.url;
+    this.udpRelay = result.data.udpRelay;
     this.supportGetSubscriptionUserInfo = true;
   }
 
   // istanbul ignore next
   public get url(): string {
-    return relayableUrl(this._url, this.relayUrl);
+    return relayableUrl(this.#originalUrl, this.config.relayUrl);
   }
 
   public async getSubscriptionUserInfo({
@@ -58,7 +53,7 @@ export default class ShadowsocksrSubscribeProvider extends Provider {
     const { subscriptionUserinfo } = await getShadowsocksrSubscription(
       this.url,
       this.udpRelay,
-      requestUserAgent || this.requestUserAgent,
+      requestUserAgent || this.config.requestUserAgent,
     );
 
     if (subscriptionUserinfo) {
@@ -75,7 +70,7 @@ export default class ShadowsocksrSubscribeProvider extends Provider {
     const { nodeList } = await getShadowsocksrSubscription(
       this.url,
       this.udpRelay,
-      requestUserAgent || this.requestUserAgent,
+      requestUserAgent || this.config.requestUserAgent,
     );
 
     return nodeList;

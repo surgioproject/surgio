@@ -1,6 +1,5 @@
-import Joi from 'joi';
 import assert from 'assert';
-import { createLogger } from '@surgio/logger';
+import { z } from 'zod';
 
 import {
   ShadowsocksNodeConfig,
@@ -12,41 +11,32 @@ import relayableUrl from '../utils/relayable-url';
 import { parseSSUri } from '../utils/ss';
 import Provider from './Provider';
 
-const logger = createLogger({
-  service: 'surgio:ShadowsocksSubscribeProvider',
-});
-
 export default class ShadowsocksSubscribeProvider extends Provider {
   public readonly udpRelay?: boolean;
-  private readonly _url: string;
+  readonly #originalUrl: string;
 
   constructor(name: string, config: ShadowsocksSubscribeProviderConfig) {
     super(name, config);
 
-    const schema = Joi.object({
-      url: Joi.string()
-        .uri({
-          scheme: [/https?/],
-        })
-        .required(),
-      udpRelay: Joi.boolean().strict(),
-    }).unknown();
-
-    const { error } = schema.validate(config);
+    const schema = z.object({
+      url: z.string().url(),
+      udpRelay: z.boolean().optional(),
+    });
+    const result = schema.safeParse(config);
 
     // istanbul ignore next
-    if (error) {
-      throw error;
+    if (!result.success) {
+      throw result.error;
     }
 
-    this._url = config.url;
-    this.udpRelay = config.udpRelay;
+    this.#originalUrl = result.data.url;
+    this.udpRelay = result.data.udpRelay;
     this.supportGetSubscriptionUserInfo = true;
   }
 
   // istanbul ignore next
   public get url(): string {
-    return relayableUrl(this._url, this.relayUrl);
+    return relayableUrl(this.#originalUrl, this.config.relayUrl);
   }
 
   public async getSubscriptionUserInfo({
@@ -57,7 +47,7 @@ export default class ShadowsocksSubscribeProvider extends Provider {
     const { subscriptionUserinfo } = await getShadowsocksSubscription(
       this.url,
       this.udpRelay,
-      requestUserAgent || this.requestUserAgent,
+      requestUserAgent || this.config.requestUserAgent,
     );
 
     if (subscriptionUserinfo) {
@@ -74,7 +64,7 @@ export default class ShadowsocksSubscribeProvider extends Provider {
     const { nodeList } = await getShadowsocksSubscription(
       this.url,
       this.udpRelay,
-      requestUserAgent || this.requestUserAgent,
+      requestUserAgent || this.config.requestUserAgent,
     );
 
     return nodeList;

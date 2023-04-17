@@ -7,7 +7,7 @@ import Bluebird from 'bluebird';
 import { TMP_FOLDER_NAME } from '../../constant';
 import { createTmpFactory, TmpFile } from '../tmp-helper';
 
-test.after.always(async () => {
+test.afterEach.always(async () => {
   const dir = path.join(
     os.tmpdir(),
     TMP_FOLDER_NAME,

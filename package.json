@@ -2,8 +2,6 @@
   "name": "surgio",
   "description": "Generating rules for Surge, Clash, Quantumult like a PRO",
   "version": "2.25.0",
-  "main": "./build/index.js",
-  "typings": "./build/index.d.ts",
   "exports": {
     ".": {
       "types": "./build/index.d.ts",
@@ -31,6 +29,7 @@
   "homepage": "https://surgio.royli.dev",
   "scripts": {
     "test": "run-s build test:*",
+    "test:types": "tsc --noEmit",
     "test:lint": "eslint -c .eslintrc.js --ext .js,.ts .",
     "test:unit": "ava",
     "test:cli": "mocha",
@@ -93,7 +92,6 @@
     "hpagent": "^1.2.0",
     "inquirer": "^8.2.5",
     "ioredis": "^5.3.1",
-    "joi": "^17.9.1",
     "lodash": "^4.17.21",
     "micromatch": "^4.0.5",
     "ms": "^2.1.3",
@@ -107,7 +105,9 @@
     "type-fest": "^3.7.2",
     "update-notifier": "^5.1.0",
     "urlsafe-base64": "^1.0.0",
-    "yaml": "^2.2.1"
+    "yaml": "^2.2.1",
+    "zod": "^3.21.4",
+    "zod-validation-error": "^1.3.0"
   },
   "devDependencies": {
     "@algolia/client-search": "^4.16.0",
@@ -120,7 +120,6 @@
     "@types/chai": "^4.3.4",
     "@types/debug": "^4.1.7",
     "@types/fs-extra": "^11.0.1",
-    "@types/hapi__joi": "^17.1.9",
     "@types/inquirer": "^8.2.6",
     "@types/ioredis-mock": "^8.2.1",
     "@types/lodash": "^4.14.192",

@@ -1,5 +1,6 @@
 import assert from 'assert';
-import Joi from 'joi';
+import { z } from 'zod';
+
 import {
   NodeTypeEnum,
   ShadowsocksJsonSubscribeProviderConfig,
@@ -9,35 +10,30 @@ import relayableUrl from '../utils/relayable-url';
 import Provider from './Provider';
 
 export default class ShadowsocksJsonSubscribeProvider extends Provider {
+  readonly #originalUrl: string;
   public readonly udpRelay?: boolean;
-  private readonly _url: string;
 
   constructor(name: string, config: ShadowsocksJsonSubscribeProviderConfig) {
     super(name, config);
 
-    const schema = Joi.object({
-      url: Joi.string()
-        .uri({
-          scheme: [/https?/],
-        })
-        .required(),
-      udpRelay: Joi.boolean().strict(),
-    }).unknown();
-
-    const { error } = schema.validate(config);
+    const schema = z.object({
+      url: z.string().url(),
+      udpRelay: z.boolean().optional(),
+    });
+    const result = schema.safeParse(config);
 
     // istanbul ignore next
-    if (error) {
-      throw error;
+    if (!result.success) {
+      throw result.error;
     }
 
-    this._url = config.url;
-    this.udpRelay = config.udpRelay;
+    this.#originalUrl = result.data.url;
+    this.udpRelay = result.data.udpRelay;
   }
 
   // istanbul ignore next
   public get url(): string {
-    return relayableUrl(this._url, this.relayUrl);
+    return relayableUrl(this.#originalUrl, this.config.relayUrl);
   }
 
   public getNodeList({
@@ -48,7 +44,7 @@ export default class ShadowsocksJsonSubscribeProvider extends Provider {
     return getShadowsocksJSONConfig(
       this.url,
       this.udpRelay,
-      requestUserAgent || this.requestUserAgent,
+      requestUserAgent || this.config.requestUserAgent,
     );
   }
 }

@@ -1,6 +1,6 @@
 // istanbul ignore file
 
-import Joi from 'joi';
+import { z } from 'zod';
 import assert from 'assert';
 
 import {
@@ -20,20 +20,19 @@ export default class BlackSSLProvider extends Provider {
   constructor(name: string, config: BlackSSLProviderConfig) {
     super(name, config);
 
-    const schema = Joi.object({
-      username: Joi.string().required(),
-      password: Joi.string().required(),
-    }).unknown();
-
-    const { error } = schema.validate(config);
+    const schema = z.object({
+      username: z.string(),
+      password: z.string(),
+    });
+    const result = schema.safeParse(config);
 
     // istanbul ignore next
-    if (error) {
-      throw error;
+    if (!result.success) {
+      throw result.error;
     }
 
-    this.username = config.username;
-    this.password = config.password;
+    this.username = result.data.username;
+    this.password = result.data.password;
     this.supportGetSubscriptionUserInfo = true;
   }
 
