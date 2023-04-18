@@ -6,9 +6,19 @@ import {
   NodeNameFilterType,
   NodeTypeEnum,
   PossibleNodeConfigType,
+  SimpleNodeConfig,
   SortedNodeNameFilterType,
 } from '../types';
-import { applyFilter } from './filter';
+import {
+  applyFilter,
+  httpFilter,
+  httpsFilter,
+  shadowsocksFilter,
+  shadowsocksrFilter,
+  socks5Filter,
+  trojanFilter,
+  vmessFilter,
+} from './filter';
 import { pickAndFormatStringList } from './index';
 
 const logger = createLogger({ service: 'surgio:utils:quantumult' });
@@ -277,4 +287,31 @@ export const getQuantumultXNodes = function (
     .filter((item): item is string => item !== undefined);
 
   return result.join('\n');
+};
+
+export const getQuantumultXNodeNames = function (
+  list: ReadonlyArray<SimpleNodeConfig>,
+  filter?: NodeNameFilterType | SortedNodeNameFilterType,
+  separator?: string,
+): string {
+  // istanbul ignore next
+  if (arguments.length === 2 && typeof filter === 'undefined') {
+    throw new Error(ERR_INVALID_FILTER);
+  }
+
+  return applyFilter(
+    list.filter(
+      (item) =>
+        shadowsocksFilter(item) ||
+        shadowsocksrFilter(item) ||
+        vmessFilter(item) ||
+        httpFilter(item) ||
+        httpsFilter(item) ||
+        trojanFilter(item) ||
+        socks5Filter(item),
+    ),
+    filter,
+  )
+    .map((item) => item.nodeName)
+    .join(separator || ', ');
 };

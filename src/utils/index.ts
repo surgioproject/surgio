@@ -6,7 +6,6 @@ import queryString from 'query-string';
 import { JsonObject } from 'type-fest';
 import { URL, URLSearchParams } from 'url';
 import URLSafeBase64 from 'urlsafe-base64';
-import YAML from 'yaml';
 import net from 'net';
 import crypto from 'crypto';
 import { camelCase, snakeCase, paramCase } from 'change-case';
@@ -588,4 +587,12 @@ export const isGFWFree = (): boolean =>
 // istanbul ignore next
 export const assertNever = (x: never): never => {
   throw new TypeError(`Unexpected object: ${x}`);
+};
+
+export const getPortFromHost = (host: string): number => {
+  const match = host.match(/:(\d+)$/);
+  if (match) {
+    return Number(match[1]);
+  }
+  throw new Error(`Invalid host: ${host}`);
 };

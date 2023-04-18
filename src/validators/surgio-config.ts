@@ -62,6 +62,7 @@ export const SurgioConfigValidator = z.object({
   clashConfig: z
     .object({
       enableTuic: z.oboolean(),
+      enableShadowTls: z.oboolean(),
     })
     .optional(),
   gateway: z

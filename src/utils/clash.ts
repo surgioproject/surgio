@@ -10,7 +10,19 @@ import {
   SimpleNodeConfig,
   SortedNodeNameFilterType,
 } from '../types';
-import { applyFilter } from './filter';
+import {
+  applyFilter,
+  httpFilter,
+  httpsFilter,
+  shadowsocksFilter,
+  shadowsocksrFilter,
+  snellFilter,
+  socks5Filter,
+  trojanFilter,
+  tuicFilter,
+  vmessFilter,
+} from './filter';
+import { getPortFromHost } from './index';
 
 const logger = createLogger({ service: 'surgio:utils:clash' });
 
@@ -32,6 +44,16 @@ export const getClashNodes = function (
 
       switch (nodeConfig.type) {
         case NodeTypeEnum.Shadowsocks:
+          if (
+            nodeConfig.shadowTls &&
+            !nodeConfig.clashConfig?.enableShadowTls
+          ) {
+            logger.warn(
+              `尚未开启 Clash 的 shadow-tls 支持，节点 ${nodeConfig.nodeName} 将被忽略。如需开启，请在配置文件中设置 clashConfig.enableShadowTls 为 true。`,
+            );
+            return null;
+          }
+
           return {
             type: 'ss',
             cipher: nodeConfig.method,
@@ -68,6 +90,21 @@ export const getClashNodes = function (
                         ? nodeConfig.mux
                         : false,
                     headers: _.omit(nodeConfig.wsHeaders || {}, ['host']),
+                  },
+                }
+              : null),
+            ...(nodeConfig.shadowTls && nodeConfig.clashConfig?.enableShadowTls
+              ? {
+                  plugin: 'shadow-tls',
+                  'client-fingerprint': 'chrome',
+                  'plugin-opts': {
+                    password: nodeConfig.shadowTls.password,
+                    ...(nodeConfig.shadowTls.version
+                      ? { version: nodeConfig.shadowTls.version }
+                      : null),
+                    ...(nodeConfig.shadowTls.sni
+                      ? { host: nodeConfig.shadowTls.sni }
+                      : null),
                   },
                 }
               : null),
@@ -211,7 +248,7 @@ export const getClashNodes = function (
         case NodeTypeEnum.Tuic:
           if (!nodeConfig.clashConfig?.enableTuic) {
             logger.warn(
-              `默认不为 Clash 生成 Tuic 节点，节点 ${nodeConfig.nodeName} 会被省略。如需开启，请在配置文件中设置 clashConfig.enableTuic 为 true。`,
+              `尚未开启 Clash 的 TUIC 支持，节点 ${nodeConfig.nodeName} 会被省略。如需开启，请在配置文件中设置 clashConfig.enableTuic 为 true。`,
             );
             return null;
           }
@@ -233,6 +270,24 @@ export const getClashNodes = function (
             ...(nodeConfig.alpn ? { alpn: nodeConfig.alpn } : null),
             ...(nodeConfig.sni ? { sni: nodeConfig.sni } : null),
             'skip-cert-verify': nodeConfig.skipCertVerify === true,
+          };
+
+        case NodeTypeEnum.Wireguard:
+          return {
+            type: 'wireguard',
+            name: nodeConfig.nodeName,
+            server: nodeConfig.endpoint,
+            port: getPortFromHost(nodeConfig.endpoint),
+            'private-key': nodeConfig.privateKey,
+            'public-key': nodeConfig.publicKey,
+            ip: nodeConfig.selfIp,
+            ...(nodeConfig.selfIpV6 ? { ipv6: nodeConfig.selfIpV6 } : null),
+            ...(nodeConfig.mtu ? { mtu: nodeConfig.mtu } : null),
+            ...(nodeConfig.presharedKey
+              ? { 'preshared-key': nodeConfig.presharedKey }
+              : null),
+            ...(nodeConfig.dnsServer ? { dns: nodeConfig.dnsServer } : null),
+            udp: true,
           };
 
         // istanbul ignore next
@@ -265,7 +320,21 @@ export const getClashNodeNames = function (
   }
 
   result = result.concat(
-    applyFilter(list, filter).map((item) => item.nodeName),
+    applyFilter(
+      list.filter(
+        (item) =>
+          shadowsocksFilter(item) ||
+          shadowsocksrFilter(item) ||
+          vmessFilter(item) ||
+          httpFilter(item) ||
+          httpsFilter(item) ||
+          trojanFilter(item) ||
+          snellFilter(item) ||
+          socks5Filter(item) ||
+          (item.clashConfig?.enableTuic && tuicFilter(item)),
+      ),
+      filter,
+    ).map((item) => item.nodeName),
   );
 
   return result;

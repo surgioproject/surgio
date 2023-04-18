@@ -1,20 +1,29 @@
 import { createLogger } from '@surgio/logger';
 import _ from 'lodash';
+
 import { ERR_INVALID_FILTER, OBFS_UA } from '../constant';
 import {
-  HttpNodeConfig,
-  HttpsNodeConfig,
   NodeFilterType,
+  NodeNameFilterType,
   NodeTypeEnum,
   PossibleNodeConfigType,
-  ShadowsocksNodeConfig,
-  ShadowsocksrNodeConfig,
-  SnellNodeConfig,
+  SimpleNodeConfig,
   SortedNodeNameFilterType,
-  VmessNodeConfig,
 } from '../types';
-import { isIp, pickAndFormatStringList } from './index';
-import { applyFilter } from './filter';
+import { isIp, pickAndFormatStringList } from './';
+import {
+  applyFilter,
+  httpFilter,
+  httpsFilter,
+  shadowsocksFilter,
+  shadowsocksrFilter,
+  snellFilter,
+  socks5Filter,
+  trojanFilter,
+  tuicFilter,
+  vmessFilter,
+  wireguardFilter,
+} from './filter';
 
 const logger = createLogger({ service: 'surgio:utils:surge' });
 
@@ -42,26 +51,22 @@ export const getSurgeNodes = function (
     .map((nodeConfig): string | undefined => {
       switch (nodeConfig.type) {
         case NodeTypeEnum.Shadowsocks: {
-          const config = nodeConfig as ShadowsocksNodeConfig;
-
-          if (config.obfs && ['ws', 'wss'].includes(config.obfs)) {
+          if (nodeConfig.obfs && ['ws', 'wss'].includes(nodeConfig.obfs)) {
             logger.warn(
-              `不支持为 Surge 生成 v2ray-plugin 的 Shadowsocks 节点，节点 ${
-                nodeConfig!.nodeName
-              } 会被省略`,
+              `不支持为 Surge 生成 v2ray-plugin 的 Shadowsocks 节点，节点 ${nodeConfig.nodeName} 会被省略`,
             );
             return void 0;
           }
 
           return [
-            config.nodeName,
+            nodeConfig.nodeName,
             [
               'ss',
-              config.hostname,
-              config.port,
-              'encrypt-method=' + config.method,
+              nodeConfig.hostname,
+              nodeConfig.port,
+              'encrypt-method=' + nodeConfig.method,
               ...pickAndFormatStringList(
-                config,
+                nodeConfig,
                 [
                   'password',
                   'udpRelay',
@@ -82,18 +87,16 @@ export const getSurgeNodes = function (
         }
 
         case NodeTypeEnum.HTTPS: {
-          const config = nodeConfig as HttpsNodeConfig;
-
           return [
-            config.nodeName,
+            nodeConfig.nodeName,
             [
               'https',
-              config.hostname,
-              config.port,
-              config.username,
-              config.password,
+              nodeConfig.hostname,
+              nodeConfig.port,
+              nodeConfig.username,
+              nodeConfig.password,
               ...pickAndFormatStringList(
-                config,
+                nodeConfig,
                 [
                   'sni',
                   'tfo',
@@ -114,18 +117,16 @@ export const getSurgeNodes = function (
         }
 
         case NodeTypeEnum.HTTP: {
-          const config = nodeConfig as HttpNodeConfig;
-
           return [
-            config.nodeName,
+            nodeConfig.nodeName,
             [
               'http',
-              config.hostname,
-              config.port,
-              config.username,
-              config.password,
+              nodeConfig.hostname,
+              nodeConfig.port,
+              nodeConfig.username,
+              nodeConfig.password,
               ...pickAndFormatStringList(
-                config,
+                nodeConfig,
                 ['tfo', 'mptcp', 'underlyingProxy', 'testUrl'],
                 {
                   keyFormat: 'kebabCase',
@@ -137,16 +138,14 @@ export const getSurgeNodes = function (
         }
 
         case NodeTypeEnum.Snell: {
-          const config = nodeConfig as SnellNodeConfig;
-
           return [
-            config.nodeName,
+            nodeConfig.nodeName,
             [
               'snell',
-              config.hostname,
-              config.port,
+              nodeConfig.hostname,
+              nodeConfig.port,
               ...pickAndFormatStringList(
-                config,
+                nodeConfig,
                 [
                   'psk',
                   'obfs',
@@ -168,10 +167,8 @@ export const getSurgeNodes = function (
         }
 
         case NodeTypeEnum.Shadowsocksr: {
-          const config = nodeConfig as ShadowsocksrNodeConfig;
-
           // istanbul ignore next
-          if (!config.binPath) {
+          if (!nodeConfig.binPath) {
             throw new Error(
               '请按照文档 https://url.royli.dev/vdGh2 添加 Shadowsocksr 二进制文件路径',
             );
@@ -179,104 +176,104 @@ export const getSurgeNodes = function (
 
           const args = [
             '-s',
-            config.hostname,
+            nodeConfig.hostname,
             '-p',
-            `${config.port}`,
+            `${nodeConfig.port}`,
             '-m',
-            config.method,
+            nodeConfig.method,
             '-o',
-            config.obfs,
+            nodeConfig.obfs,
             '-O',
-            config.protocol,
+            nodeConfig.protocol,
             '-k',
-            config.password,
+            nodeConfig.password,
             '-l',
-            `${config.localPort}`,
+            `${nodeConfig.localPort}`,
             '-b',
             '127.0.0.1',
           ];
 
-          if (config.protoparam) {
-            args.push('-G', config.protoparam);
+          if (nodeConfig.protoparam) {
+            args.push('-G', nodeConfig.protoparam);
           }
-          if (config.obfsparam) {
-            args.push('-g', config.obfsparam);
+          if (nodeConfig.obfsparam) {
+            args.push('-g', nodeConfig.obfsparam);
           }
 
-          const configString = [
+          const nodeConfigString = [
             'external',
-            `exec = ${JSON.stringify(config.binPath)}`,
+            `exec = ${JSON.stringify(nodeConfig.binPath)}`,
             ...args.map((arg) => `args = ${JSON.stringify(arg)}`),
-            `local-port = ${config.localPort}`,
+            `local-port = ${nodeConfig.localPort}`,
           ];
 
-          if (config.localPort === 0) {
+          if (nodeConfig.localPort === 0) {
             throw new Error(
-              `为 Surge 生成 SSR 配置时必须为 Provider ${config.provider?.name} 设置 startPort，参考 https://url.royli.dev/bWcpe`,
+              `为 Surge 生成 SSR 配置时必须为 Provider ${nodeConfig.provider?.name} 设置 startPort，参考 https://url.royli.dev/bWcpe`,
             );
           }
 
-          if (config.hostnameIp && config.hostnameIp.length) {
-            configString.push(
-              ...config.hostnameIp.map((item) => `addresses = ${item}`),
+          if (nodeConfig.hostnameIp && nodeConfig.hostnameIp.length) {
+            nodeConfigString.push(
+              ...nodeConfig.hostnameIp.map((item) => `addresses = ${item}`),
             );
           }
 
-          if (isIp(config.hostname)) {
-            configString.push(`addresses = ${config.hostname}`);
+          if (isIp(nodeConfig.hostname)) {
+            nodeConfigString.push(`addresses = ${nodeConfig.hostname}`);
           }
 
-          return [config.nodeName, configString.join(', ')].join(' = ');
+          return [nodeConfig.nodeName, nodeConfigString.join(', ')].join(' = ');
         }
 
         case NodeTypeEnum.Vmess: {
-          const config = nodeConfig as VmessNodeConfig;
-
-          const configList = [
+          const result = [
             'vmess',
-            config.hostname,
-            config.port,
-            `username=${config.uuid}`,
+            nodeConfig.hostname,
+            nodeConfig.port,
+            `username=${nodeConfig.uuid}`,
           ];
 
           if (
-            ['chacha20-ietf-poly1305', 'aes-128-gcm'].includes(config.method)
+            ['chacha20-ietf-poly1305', 'aes-128-gcm'].includes(
+              nodeConfig.method,
+            )
           ) {
-            configList.push(`encrypt-method=${config.method}`);
+            result.push(`encrypt-method=${nodeConfig.method}`);
           }
 
-          if (config.network === 'ws') {
-            configList.push('ws=true');
-            configList.push(`ws-path=${config.path}`);
-            configList.push(
+          if (nodeConfig.network === 'ws') {
+            result.push('ws=true');
+            result.push(`ws-path=${nodeConfig.path}`);
+            result.push(
               'ws-headers=' +
                 JSON.stringify(
                   getSurgeExtendHeaders({
-                    host: config.host || config.hostname,
+                    host: nodeConfig.host || nodeConfig.hostname,
                     'user-agent': OBFS_UA,
-                    ..._.omit(config.wsHeaders, ['host']), // host 本质上是一个头信息，所以可能存在冲突的情况。以 host 属性为准。
+                    ..._.omit(nodeConfig.wsHeaders, ['host']), // host 本质上是一个头信息，所以可能存在冲突的情况。以 host 属性为准。
                   }),
                 ),
             );
           }
 
-          if (config.tls) {
-            configList.push(
+          if (nodeConfig.tls) {
+            result.push(
               'tls=true',
               ...pickAndFormatStringList(
-                config,
+                nodeConfig,
                 ['tls13', 'skipCertVerify', 'serverCertFingerprintSha256'],
                 {
                   keyFormat: 'kebabCase',
                 },
               ),
-              ...(config.host ? [`sni=${config.host}`] : []),
+              ...(nodeConfig.host ? [`sni=${nodeConfig.host}`] : []),
             );
           }
 
-          configList.push(
+          result.push(
             ...pickAndFormatStringList(
-              config,
+              nodeConfig,
               ['tfo', 'mptcp', 'underlyingProxy', 'testUrl'],
               {
                 keyFormat: 'kebabCase',
@@ -285,18 +282,18 @@ export const getSurgeNodes = function (
           );
 
           if (nodeConfig?.surgeConfig?.vmessAEAD) {
-            configList.push('vmess-aead=true');
+            result.push('vmess-aead=true');
           } else {
-            configList.push('vmess-aead=false');
+            result.push('vmess-aead=false');
           }
 
-          configList.push(...parseShadowTlsConfig(nodeConfig));
+          result.push(...parseShadowTlsConfig(nodeConfig));
 
-          return [config.nodeName, configList.join(', ')].join(' = ');
+          return [nodeConfig.nodeName, result.join(', ')].join(' = ');
         }
 
         case NodeTypeEnum.Trojan: {
-          const configList: string[] = [
+          const result: string[] = [
             'trojan',
             nodeConfig.hostname,
             `${nodeConfig.port}`,
@@ -321,22 +318,22 @@ export const getSurgeNodes = function (
           ];
 
           if (nodeConfig.network === 'ws') {
-            configList.push('ws=true');
-            configList.push(`ws-path=${nodeConfig.wsPath}`);
+            result.push('ws=true');
+            result.push(`ws-path=${nodeConfig.wsPath}`);
 
             if (nodeConfig.wsHeaders) {
-              configList.push(
+              result.push(
                 'ws-headers=' +
                   JSON.stringify(getSurgeExtendHeaders(nodeConfig.wsHeaders)),
               );
             }
           }
 
-          return [nodeConfig.nodeName, configList.join(', ')].join(' = ');
+          return [nodeConfig.nodeName, result.join(', ')].join(' = ');
         }
 
         case NodeTypeEnum.Socks5: {
-          const config = [
+          const result = [
             nodeConfig.tls === true ? 'socks5-tls' : 'socks5',
             nodeConfig.hostname,
             nodeConfig.port,
@@ -362,7 +359,7 @@ export const getSurgeNodes = function (
           ];
 
           if (nodeConfig.tls === true) {
-            config.push(
+            result.push(
               ...(typeof nodeConfig.skipCertVerify === 'boolean'
                 ? [`skip-cert-verify=${nodeConfig.skipCertVerify}`]
                 : []),
@@ -372,11 +369,11 @@ export const getSurgeNodes = function (
             );
           }
 
-          return [nodeConfig.nodeName, config.join(', ')].join(' = ');
+          return [nodeConfig.nodeName, result.join(', ')].join(' = ');
         }
 
         case NodeTypeEnum.Tuic: {
-          const config = [
+          const result = [
             'tuic',
             nodeConfig.hostname,
             nodeConfig.port,
@@ -399,7 +396,7 @@ export const getSurgeNodes = function (
               : []),
           ];
 
-          return [nodeConfig.nodeName, config.join(', ')].join(' = ');
+          return [nodeConfig.nodeName, result.join(', ')].join(' = ');
         }
 
         case NodeTypeEnum.Wireguard:
@@ -432,7 +429,7 @@ export const getSurgeWireguardNodes = (
         return undefined;
       }
 
-      const configSection: string[] = [
+      const nodeConfigSection: string[] = [
         `[WireGuard ${nodeConfig.nodeName}]`,
         `self-ip=${nodeConfig.selfIp}`,
         `private-key=${nodeConfig.privateKey}`,
@@ -454,7 +451,7 @@ export const getSurgeWireguardNodes = (
 
       for (const key of optionalKeys) {
         if (nodeConfig[key] !== undefined) {
-          configSection.push(
+          nodeConfigSection.push(
             ...pickAndFormatStringList(nodeConfig, [key], {
               keyFormat: 'kebabCase',
             }),
@@ -476,23 +473,58 @@ export const getSurgeWireguardNodes = (
         peerConfig.push(`keepalive=${nodeConfig.keepAlive}`);
       }
 
-      configSection.push(`peer=(${peerConfig.join(', ')})`);
+      nodeConfigSection.push(`peer=(${peerConfig.join(', ')})`);
 
-      return configSection.join('\n');
+      return nodeConfigSection.join('\n');
     })
     .filter((item): item is string => item !== undefined);
 
   return result.join('\n\n');
 };
 
-function parseShadowTlsConfig(config: PossibleNodeConfigType) {
+export const getSurgeNodeNames = function (
+  list: ReadonlyArray<SimpleNodeConfig>,
+  filter?: NodeNameFilterType | SortedNodeNameFilterType,
+  separator?: string,
+): string {
+  // istanbul ignore next
+  if (arguments.length === 2 && typeof filter === 'undefined') {
+    throw new Error(ERR_INVALID_FILTER);
+  }
+
+  return applyFilter(
+    list.filter(
+      (item) =>
+        shadowsocksFilter(item) ||
+        shadowsocksrFilter(item) ||
+        vmessFilter(item) ||
+        snellFilter(item) ||
+        tuicFilter(item) ||
+        httpFilter(item) ||
+        httpsFilter(item) ||
+        trojanFilter(item) ||
+        socks5Filter(item) ||
+        wireguardFilter(item),
+    ),
+    filter,
+  )
+    .map((item) => item.nodeName)
+    .join(separator || ', ');
+};
+
+function parseShadowTlsConfig(nodeConfig: PossibleNodeConfigType) {
   const result: string[] = [];
 
-  if (config.shadowTls) {
-    result.push(`shadow-tls-password=${config.shadowTls.password}`);
+  if (nodeConfig.shadowTls) {
+    result.push(`shadow-tls-password=${nodeConfig.shadowTls.password}`);
 
-    if (config.shadowTls.sni) {
-      result.push(`shadow-tls-sni=${config.shadowTls.sni}`);
+    if (nodeConfig.shadowTls.sni) {
+      result.push(`shadow-tls-sni=${nodeConfig.shadowTls.sni}`);
+    }
+    if (nodeConfig.shadowTls.version && nodeConfig.shadowTls.version !== 2) {
+      logger.warning(
+        `Surge 目前可能不支持 shadow-tls v${nodeConfig.shadowTls.version}，请前往 https://manual.nssurge.com/policy/proxy.html#shadow-tls 查看最新支持版本`,
+      );
     }
   }
 

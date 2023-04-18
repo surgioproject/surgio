@@ -1,18 +1,30 @@
 import { createLogger } from '@surgio/logger';
 import _ from 'lodash';
+
 import { ERR_INVALID_FILTER, OBFS_UA } from '../constant';
 import {
   HttpNodeConfig,
   HttpsNodeConfig,
   NodeFilterType,
+  NodeNameFilterType,
   NodeTypeEnum,
   PossibleNodeConfigType,
   ShadowsocksNodeConfig,
+  SimpleNodeConfig,
   SortedNodeNameFilterType,
   VmessNodeConfig,
 } from '../types';
 import { pickAndFormatStringList } from './index';
-import { applyFilter } from './filter';
+import {
+  applyFilter,
+  httpFilter,
+  httpsFilter,
+  shadowsocksFilter,
+  shadowsocksrFilter,
+  socks5Filter,
+  trojanFilter,
+  vmessFilter,
+} from './filter';
 
 const logger = createLogger({ service: 'surgio:utils:surfboard' });
 
@@ -40,26 +52,22 @@ export const getSurfboardNodes = function (
     .map((nodeConfig): string | undefined => {
       switch (nodeConfig.type) {
         case NodeTypeEnum.Shadowsocks: {
-          const config = nodeConfig as ShadowsocksNodeConfig;
-
-          if (config.obfs && ['ws', 'wss'].includes(config.obfs)) {
+          if (nodeConfig.obfs && ['ws', 'wss'].includes(nodeConfig.obfs)) {
             logger.warn(
-              `不支持为 Surfboard 生成 v2ray-plugin 的 Shadowsocks 节点，节点 ${
-                nodeConfig!.nodeName
-              } 会被省略`,
+              `不支持为 Surfboard 生成 v2ray-plugin 的 Shadowsocks 节点，节点 ${nodeConfig.nodeName} 会被省略`,
             );
             return void 0;
           }
 
           return [
-            config.nodeName,
+            nodeConfig.nodeName,
             [
               'ss',
-              config.hostname,
-              config.port,
-              'encrypt-method=' + config.method,
+              nodeConfig.hostname,
+              nodeConfig.port,
+              'encrypt-method=' + nodeConfig.method,
               ...pickAndFormatStringList(
-                config,
+                nodeConfig,
                 ['password', 'udpRelay', 'obfs', 'obfsHost'],
                 {
                   keyFormat: 'kebabCase',
@@ -70,91 +78,87 @@ export const getSurfboardNodes = function (
         }
 
         case NodeTypeEnum.HTTPS: {
-          const config = nodeConfig as HttpsNodeConfig;
-
           return [
-            config.nodeName,
+            nodeConfig.nodeName,
             [
               'https',
-              config.hostname,
-              config.port,
-              config.username,
-              config.password,
-              ...(typeof config.skipCertVerify === 'boolean'
-                ? [`skip-cert-verify=${config.skipCertVerify}`]
+              nodeConfig.hostname,
+              nodeConfig.port,
+              nodeConfig.username,
+              nodeConfig.password,
+              ...(typeof nodeConfig.skipCertVerify === 'boolean'
+                ? [`skip-cert-verify=${nodeConfig.skipCertVerify}`]
                 : []),
-              ...pickAndFormatStringList(config, ['sni']),
+              ...pickAndFormatStringList(nodeConfig, ['sni']),
             ].join(', '),
           ].join(' = ');
         }
 
         case NodeTypeEnum.HTTP: {
-          const config = nodeConfig as HttpNodeConfig;
-
           return [
-            config.nodeName,
+            nodeConfig.nodeName,
             [
               'http',
-              config.hostname,
-              config.port,
-              config.username,
-              config.password,
+              nodeConfig.hostname,
+              nodeConfig.port,
+              nodeConfig.username,
+              nodeConfig.password,
             ].join(', '),
           ].join(' = ');
         }
 
         case NodeTypeEnum.Vmess: {
-          const config = nodeConfig as VmessNodeConfig;
-
-          const configList = [
+          const result = [
             'vmess',
-            config.hostname,
-            config.port,
-            `username=${config.uuid}`,
+            nodeConfig.hostname,
+            nodeConfig.port,
+            `username=${nodeConfig.uuid}`,
           ];
 
           if (
-            ['chacha20-ietf-poly1305', 'aes-128-gcm'].includes(config.method)
+            ['chacha20-ietf-poly1305', 'aes-128-gcm'].includes(
+              nodeConfig.method,
+            )
           ) {
-            configList.push(`encrypt-method=${config.method}`);
+            result.push(`encrypt-method=${nodeConfig.method}`);
           }
 
-          if (config.network === 'ws') {
-            configList.push('ws=true');
-            configList.push(`ws-path=${config.path}`);
-            configList.push(
+          if (nodeConfig.network === 'ws') {
+            result.push('ws=true');
+            result.push(`ws-path=${nodeConfig.path}`);
+            result.push(
               'ws-headers=' +
                 JSON.stringify(
                   getSurfboardExtendHeaders({
-                    host: config.host || config.hostname,
+                    host: nodeConfig.host || nodeConfig.hostname,
                     'user-agent': OBFS_UA,
-                    ..._.omit(config.wsHeaders, ['host']), // host 本质上是一个头信息，所以可能存在冲突的情况。以 host 属性为准。
+                    ..._.omit(nodeConfig.wsHeaders, ['host']), // host 本质上是一个头信息，所以可能存在冲突的情况。以 host 属性为准。
                   }),
                 ),
             );
           }
 
-          if (config.tls) {
-            configList.push(
+          if (nodeConfig.tls) {
+            result.push(
               'tls=true',
-              ...(typeof config.skipCertVerify === 'boolean'
-                ? [`skip-cert-verify=${config.skipCertVerify}`]
+              ...(typeof nodeConfig.skipCertVerify === 'boolean'
+                ? [`skip-cert-verify=${nodeConfig.skipCertVerify}`]
                 : []),
-              ...(config.host ? [`sni=${config.host}`] : []),
+              ...(nodeConfig.host ? [`sni=${nodeConfig.host}`] : []),
             );
           }
 
           if (nodeConfig?.surfboardConfig?.vmessAEAD) {
-            configList.push('vmess-aead=true');
+            result.push('vmess-aead=true');
           } else {
-            configList.push('vmess-aead=false');
+            result.push('vmess-aead=false');
           }
 
-          return [config.nodeName, configList.join(', ')].join(' = ');
+          return [nodeConfig.nodeName, result.join(', ')].join(' = ');
         }
 
         case NodeTypeEnum.Trojan: {
-          const configList: string[] = [
+          const result: string[] = [
             'trojan',
             nodeConfig.hostname,
             `${nodeConfig.port}`,
@@ -166,11 +170,11 @@ export const getSurfboardNodes = function (
           ];
 
           if (nodeConfig.network === 'ws') {
-            configList.push('ws=true');
-            configList.push(`ws-path=${nodeConfig.wsPath}`);
+            result.push('ws=true');
+            result.push(`ws-path=${nodeConfig.wsPath}`);
 
             if (nodeConfig.wsHeaders) {
-              configList.push(
+              result.push(
                 'ws-headers=' +
                   JSON.stringify(
                     getSurfboardExtendHeaders(nodeConfig.wsHeaders),
@@ -179,11 +183,11 @@ export const getSurfboardNodes = function (
             }
           }
 
-          return [nodeConfig.nodeName, configList.join(', ')].join(' = ');
+          return [nodeConfig.nodeName, result.join(', ')].join(' = ');
         }
 
         case NodeTypeEnum.Socks5: {
-          const config = [
+          const result = [
             nodeConfig.tls === true ? 'socks5-tls' : 'socks5',
             nodeConfig.hostname,
             nodeConfig.port,
@@ -195,7 +199,7 @@ export const getSurfboardNodes = function (
           ];
 
           if (nodeConfig.tls === true) {
-            config.push(
+            result.push(
               ...(typeof nodeConfig.skipCertVerify === 'boolean'
                 ? [`skip-cert-verify=${nodeConfig.skipCertVerify}`]
                 : []),
@@ -205,15 +209,13 @@ export const getSurfboardNodes = function (
             );
           }
 
-          return [nodeConfig.nodeName, config.join(', ')].join(' = ');
+          return [nodeConfig.nodeName, result.join(', ')].join(' = ');
         }
 
         // istanbul ignore next
         default:
           logger.warn(
-            `不支持为 Surfboard 生成 ${(nodeConfig as any).type} 的节点，节点 ${
-              (nodeConfig as any).nodeName
-            } 会被省略`,
+            `不支持为 Surfboard 生成 ${nodeConfig.type} 的节点，节点 ${nodeConfig.nodeName} 会被省略`,
           );
           return void 0;
       }
@@ -221,4 +223,31 @@ export const getSurfboardNodes = function (
     .filter((item): item is string => item !== undefined);
 
   return result.join('\n');
+};
+
+export const getSurfboardNodeNames = function (
+  list: ReadonlyArray<SimpleNodeConfig>,
+  filter?: NodeNameFilterType | SortedNodeNameFilterType,
+  separator?: string,
+): string {
+  // istanbul ignore next
+  if (arguments.length === 2 && typeof filter === 'undefined') {
+    throw new Error(ERR_INVALID_FILTER);
+  }
+
+  return applyFilter(
+    list.filter(
+      (item) =>
+        shadowsocksFilter(item) ||
+        shadowsocksrFilter(item) ||
+        vmessFilter(item) ||
+        httpFilter(item) ||
+        httpsFilter(item) ||
+        trojanFilter(item) ||
+        socks5Filter(item),
+    ),
+    filter,
+  )
+    .map((item) => item.nodeName)
+    .join(separator || ', ');
 };
