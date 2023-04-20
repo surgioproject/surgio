@@ -525,7 +525,7 @@ test('getSurgeNodes', async (t) => {
         shadowTls: {
           password: 'password',
           sni: 'sni.example.com',
-          version: 3,
+          version: '3',
         },
       },
     ]),

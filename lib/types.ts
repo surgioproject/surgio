@@ -293,7 +293,7 @@ export interface SimpleNodeConfig {
   shadowTls?: {
     password: string;
     sni?: string;
-    version?: number | string;
+    version?: string;
   };
 
   binPath?: string;
