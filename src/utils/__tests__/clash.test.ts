@@ -584,4 +584,33 @@ test('getClashNodes', async (t) => {
       },
     ],
   );
+
+  t.deepEqual(
+    clash.getClashNodes([
+      {
+        nodeName: 'wireguard',
+        type: NodeTypeEnum.Wireguard,
+        privateKey: 'privateKey',
+        selfIp: '127.0.0.1',
+        peers: [
+          {
+            endpoint: 'example.com:1234',
+            publicKey: 'publicKey',
+          },
+        ],
+      },
+    ]),
+    [
+      {
+        ip: '127.0.0.1',
+        name: 'wireguard',
+        port: 1234,
+        'private-key': 'privateKey',
+        'public-key': 'publicKey',
+        server: 'example.com:1234',
+        type: 'wireguard',
+        udp: true,
+      },
+    ],
+  );
 });

@@ -437,19 +437,11 @@ export const getSurgeWireguardNodes = (
         `self-ip=${nodeConfig.selfIp}`,
         `private-key=${nodeConfig.privateKey}`,
       ];
-      const peerConfig: string[] = [
-        `endpoint=${nodeConfig.endpoint}`,
-        `public-key=${nodeConfig.publicKey}`,
-      ];
       const optionalKeys: Array<keyof typeof nodeConfig> = [
         'mtu',
         'dnsServer',
         'preferIpv6',
         'selfIpV6',
-      ];
-      const optionalPeerConfigKeys: Array<keyof typeof nodeConfig> = [
-        'presharedKey',
-        'allowedIps',
       ];
 
       for (const key of optionalKeys) {
@@ -462,21 +454,32 @@ export const getSurgeWireguardNodes = (
         }
       }
 
-      for (const key of optionalPeerConfigKeys) {
-        if (nodeConfig[key] !== undefined) {
-          peerConfig.push(
-            ...pickAndFormatStringList(nodeConfig, [key], {
-              keyFormat: 'kebabCase',
-            }),
-          );
+      for (const peer of nodeConfig.peers) {
+        const peerConfig: string[] = [
+          `endpoint=${peer.endpoint}`,
+          `public-key=${peer.publicKey}`,
+        ];
+        const optionalPeerConfigKeys: Array<keyof typeof peer> = [
+          'presharedKey',
+          'allowedIps',
+        ];
+
+        for (const key of optionalPeerConfigKeys) {
+          if (nodeConfig[key] !== undefined) {
+            peerConfig.push(
+              ...pickAndFormatStringList(nodeConfig, [key], {
+                keyFormat: 'kebabCase',
+              }),
+            );
+          }
         }
-      }
 
-      if (nodeConfig.keepAlive) {
-        peerConfig.push(`keepalive=${nodeConfig.keepAlive}`);
-      }
+        if (peer.keepAlive) {
+          peerConfig.push(`keepalive=${peer.keepAlive}`);
+        }
 
-      nodeConfigSection.push(`peer=(${peerConfig.join(', ')})`);
+        nodeConfigSection.push(`peer=(${peerConfig.join(', ')})`);
+      }
 
       return nodeConfigSection.join('\n');
     })

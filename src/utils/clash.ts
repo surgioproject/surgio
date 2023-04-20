@@ -271,21 +271,30 @@ export const getClashNodes = function (
           };
 
         case NodeTypeEnum.Wireguard:
+          // istanbul ignore next
+          if (nodeConfig.peers.length > 1) {
+            logger.warn(
+              `节点 ${nodeConfig.nodeName} 有多个 WireGuard Peer，然而 Stash 或 Clash 仅支持一个 Peer，因此只会使用第一个 Peer。`,
+            );
+          }
+
           return {
             type: 'wireguard',
             name: nodeConfig.nodeName,
-            server: nodeConfig.endpoint,
-            port: getPortFromHost(nodeConfig.endpoint),
             'private-key': nodeConfig.privateKey,
-            'public-key': nodeConfig.publicKey,
             ip: nodeConfig.selfIp,
             ...(nodeConfig.selfIpV6 ? { ipv6: nodeConfig.selfIpV6 } : null),
             ...(nodeConfig.mtu ? { mtu: nodeConfig.mtu } : null),
-            ...(nodeConfig.presharedKey
-              ? { 'preshared-key': nodeConfig.presharedKey }
-              : null),
             ...(nodeConfig.dnsServer ? { dns: nodeConfig.dnsServer } : null),
             udp: true,
+
+            // Peer
+            server: nodeConfig.peers[0].endpoint,
+            port: getPortFromHost(nodeConfig.peers[0].endpoint),
+            'public-key': nodeConfig.peers[0].publicKey,
+            ...(nodeConfig.peers[0].presharedKey
+              ? { 'preshared-key': nodeConfig.peers[0].presharedKey }
+              : null),
           };
 
         // istanbul ignore next

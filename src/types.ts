@@ -175,9 +175,6 @@ export interface SurgioInternals {
   provider?: Provider;
 }
 
-export type SimpleNodeConfig = z.infer<typeof SimpleNodeConfigValidator> &
-  SurgioInternals;
-
 export interface SubscriptionUserinfo {
   readonly upload: number;
   readonly download: number;
