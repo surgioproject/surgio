@@ -22,7 +22,7 @@ test('CustomProvider should work', async (t) => {
   t.deepEqual(await provider.getNodeList(), []);
 });
 
-test('CustomProvider should throw error if udp-relay is a string', async (t) => {
+test('CustomProvider should throw error if udpRelay is a string', async (t) => {
   t.throws(
     () =>
       new CustomProvider('test', {
@@ -31,7 +31,7 @@ test('CustomProvider should throw error if udp-relay is a string', async (t) => 
           {
             type: NodeTypeEnum.Shadowsocks,
             nodeName: 'test',
-            udpRelay: 'true',
+            udpRelay: 'true' as any,
             hostname: 'example.com',
             port: 443,
             method: 'chacha20-ietf-poly1305',

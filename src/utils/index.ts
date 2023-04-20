@@ -12,12 +12,11 @@ import { camelCase, snakeCase, paramCase } from 'change-case';
 
 import {
   NodeFilterType,
-  NodeNameFilterType,
   NodeTypeEnum,
+  PossibleNodeConfigType,
   ShadowsocksNodeConfig,
   ShadowsocksrNodeConfig,
-  SimpleNodeConfig,
-  SortedNodeNameFilterType,
+  SortedNodeFilterType,
   VmessNodeConfig,
 } from '../types';
 import { ERR_INVALID_FILTER, OBFS_UA } from '../constant';
@@ -72,47 +71,6 @@ export const getUrl = (
     url.searchParams.set('access_token', accessToken);
   }
   return url.toString();
-};
-
-export const getMellowNodes = function (
-  list: ReadonlyArray<VmessNodeConfig | ShadowsocksNodeConfig>,
-  filter?: NodeFilterType | SortedNodeNameFilterType,
-): string {
-  // istanbul ignore next
-  if (arguments.length === 2 && typeof filter === 'undefined') {
-    throw new Error(ERR_INVALID_FILTER);
-  }
-
-  const result = applyFilter(list, filter)
-    .map((nodeConfig) => {
-      switch (nodeConfig.type) {
-        case NodeTypeEnum.Vmess: {
-          const uri = formatVmessUri(nodeConfig, { isMellow: true });
-          return [
-            nodeConfig.nodeName,
-            'vmess1',
-            uri.trim().replace('vmess://', 'vmess1://'),
-          ].join(', ');
-        }
-
-        case NodeTypeEnum.Shadowsocks: {
-          const uri = getShadowsocksNodes([nodeConfig]);
-          return [nodeConfig.nodeName, 'ss', uri.trim()].join(', ');
-        }
-
-        // istanbul ignore next
-        default:
-          logger.warn(
-            `不支持为 Mellow 生成 ${(nodeConfig as any).type} 的节点，节点 ${
-              (nodeConfig as any).nodeName
-            } 会被省略`,
-          );
-          return null;
-      }
-    })
-    .filter((item) => !!item);
-
-  return result.join('\n');
 };
 
 // istanbul ignore next
@@ -345,8 +303,8 @@ export const getShadowsocksNodesJSON = (
 };
 
 export const getNodeNames = function (
-  list: ReadonlyArray<SimpleNodeConfig>,
-  filter?: NodeNameFilterType | SortedNodeNameFilterType,
+  list: ReadonlyArray<PossibleNodeConfigType>,
+  filter?: NodeFilterType | SortedNodeFilterType,
   separator?: string,
 ): string {
   // istanbul ignore next

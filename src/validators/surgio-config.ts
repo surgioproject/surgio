@@ -1,11 +1,15 @@
 import { z } from 'zod';
 
 import { ArtifactValidator } from './artifact';
+import {
+  NodeFilterTypeValidator,
+  SortedNodeFilterTypeValidator,
+} from './filter';
 
 const isRegExp = (val: unknown): val is RegExp => {
   return val instanceof RegExp;
 };
-const regexValidatior = z.custom<RegExp>((val) => {
+const RegexValidatior = z.custom<RegExp>((val) => {
   return isRegExp(val);
 });
 
@@ -38,8 +42,8 @@ export const SurgioConfigValidator = z.object({
     .record(
       z.union([
         z.string(),
-        regexValidatior,
-        z.array(z.union([z.string(), regexValidatior])),
+        RegexValidatior,
+        z.array(z.union([z.string(), RegexValidatior])),
       ]),
     )
     .optional(),
@@ -77,7 +81,9 @@ export const SurgioConfigValidator = z.object({
   checkHostname: z.oboolean(),
   proxyTestUrl: z.string().url().optional(),
   proxyTestInterval: z.onumber(),
-  customFilters: z.record(z.function()).optional(),
+  customFilters: z
+    .record(z.union([NodeFilterTypeValidator, SortedNodeFilterTypeValidator]))
+    .optional(),
   customParams: z.record(z.unknown()).optional(),
   analytics: z.oboolean(),
   cache: z

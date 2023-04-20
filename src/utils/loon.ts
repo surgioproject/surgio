@@ -2,10 +2,10 @@ import { createLogger } from '@surgio/logger';
 import _ from 'lodash';
 
 import {
-  NodeNameFilterType,
+  NodeFilterType,
   NodeTypeEnum,
   PossibleNodeConfigType,
-  SortedNodeNameFilterType,
+  SortedNodeFilterType,
 } from '../types';
 import { ERR_INVALID_FILTER } from '../constant';
 import { applyFilter } from './filter';
@@ -15,7 +15,7 @@ const logger = createLogger({ service: 'surgio:utils:loon' });
 // @see https://www.notion.so/1-9809ce5acf524d868affee8dd5fc0a6e
 export const getLoonNodes = function (
   list: ReadonlyArray<PossibleNodeConfigType>,
-  filter?: NodeNameFilterType | SortedNodeNameFilterType,
+  filter?: NodeFilterType | SortedNodeFilterType,
 ): string {
   if (arguments.length === 2 && typeof filter === 'undefined') {
     throw new Error(ERR_INVALID_FILTER);

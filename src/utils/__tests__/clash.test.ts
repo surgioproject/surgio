@@ -1,28 +1,36 @@
 import test from 'ava';
 
-import {
-  NodeTypeEnum,
-  PossibleNodeConfigType,
-  SimpleNodeConfig,
-} from '../../types';
+import { NodeTypeEnum, PossibleNodeConfigType } from '../../types';
 import * as clash from '../clash';
 
 test('getClashNodeNames', async (t) => {
-  const nodeNameList: ReadonlyArray<SimpleNodeConfig> = [
+  const nodeNameList: ReadonlyArray<PossibleNodeConfigType> = [
     {
       type: NodeTypeEnum.Shadowsocks,
       enable: true,
       nodeName: 'Test Node 1',
+      hostname: 'example.com',
+      port: 443,
+      method: 'chacha20-ietf-poly1305',
+      password: 'password',
     },
     {
       type: NodeTypeEnum.Shadowsocks,
       enable: false,
       nodeName: 'Test Node 2',
+      hostname: 'example.com',
+      port: 443,
+      method: 'chacha20-ietf-poly1305',
+      password: 'password',
     },
     {
-      type: NodeTypeEnum.Snell,
+      type: NodeTypeEnum.Shadowsocks,
       enable: true,
       nodeName: 'Test Node 3',
+      hostname: 'example.com',
+      port: 443,
+      method: 'chacha20-ietf-poly1305',
+      password: 'password',
     },
   ];
   const result1 = clash.getClashNodeNames(nodeNameList);

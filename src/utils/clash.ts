@@ -4,11 +4,9 @@ import _ from 'lodash';
 import { ERR_INVALID_FILTER } from '../constant';
 import {
   NodeFilterType,
-  NodeNameFilterType,
   NodeTypeEnum,
   PossibleNodeConfigType,
-  SimpleNodeConfig,
-  SortedNodeNameFilterType,
+  SortedNodeFilterType,
 } from '../types';
 import {
   applyFilter,
@@ -28,7 +26,7 @@ const logger = createLogger({ service: 'surgio:utils:clash' });
 
 export const getClashNodes = function (
   list: ReadonlyArray<PossibleNodeConfigType>,
-  filter?: NodeFilterType | SortedNodeNameFilterType,
+  filter?: NodeFilterType | SortedNodeFilterType,
 ): ReadonlyArray<any> {
   // istanbul ignore next
   if (arguments.length === 2 && typeof filter === 'undefined') {
@@ -304,8 +302,8 @@ export const getClashNodes = function (
 };
 
 export const getClashNodeNames = function (
-  list: ReadonlyArray<SimpleNodeConfig>,
-  filter?: NodeNameFilterType | SortedNodeNameFilterType,
+  list: ReadonlyArray<PossibleNodeConfigType>,
+  filter?: NodeFilterType | SortedNodeFilterType,
   existingProxies?: ReadonlyArray<string>,
 ): ReadonlyArray<string> {
   // istanbul ignore next

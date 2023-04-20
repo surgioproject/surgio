@@ -3,11 +3,10 @@ import _ from 'lodash';
 
 import { ERR_INVALID_FILTER } from '../constant';
 import {
-  NodeNameFilterType,
+  NodeFilterType,
   NodeTypeEnum,
   PossibleNodeConfigType,
-  SimpleNodeConfig,
-  SortedNodeNameFilterType,
+  SortedNodeFilterType,
 } from '../types';
 import {
   applyFilter,
@@ -28,7 +27,7 @@ const logger = createLogger({ service: 'surgio:utils:quantumult' });
  */
 export const getQuantumultXNodes = function (
   list: ReadonlyArray<PossibleNodeConfigType>,
-  filter?: NodeNameFilterType | SortedNodeNameFilterType,
+  filter?: NodeFilterType | SortedNodeFilterType,
 ): string {
   // istanbul ignore next
   if (arguments.length === 2 && typeof filter === 'undefined') {
@@ -290,8 +289,8 @@ export const getQuantumultXNodes = function (
 };
 
 export const getQuantumultXNodeNames = function (
-  list: ReadonlyArray<SimpleNodeConfig>,
-  filter?: NodeNameFilterType | SortedNodeNameFilterType,
+  list: ReadonlyArray<PossibleNodeConfigType>,
+  filter?: NodeFilterType | SortedNodeFilterType,
   separator?: string,
 ): string {
   // istanbul ignore next

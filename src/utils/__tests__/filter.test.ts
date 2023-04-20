@@ -3,6 +3,13 @@ import test from 'ava';
 import { NodeTypeEnum, VmessNodeConfig } from '../../types';
 import * as filter from '../filter';
 
+const nodeConfigDefaults = {
+  hostname: 'example.com',
+  port: 443,
+  method: 'chacha20-ietf-poly1305',
+  password: 'password',
+};
+
 test('validateFilter', (t) => {
   t.false(filter.validateFilter(undefined));
   t.false(filter.validateFilter(null));
@@ -22,18 +29,21 @@ test('useKeywords', (t) => {
     fn1({
       nodeName: '测试',
       type: NodeTypeEnum.Shadowsocks,
+      ...nodeConfigDefaults,
     }),
   );
   t.false(
     fn2({
       nodeName: '测试',
       type: NodeTypeEnum.Shadowsocks,
+      ...nodeConfigDefaults,
     }),
   );
   t.true(
     fn2({
       nodeName: '测试 test',
       type: NodeTypeEnum.Shadowsocks,
+      ...nodeConfigDefaults,
     }),
   );
 });
@@ -46,30 +56,35 @@ test('discardKeywords', (t) => {
     fn1({
       nodeName: '测试',
       type: NodeTypeEnum.Shadowsocks,
+      ...nodeConfigDefaults,
     }),
   );
   t.true(
     fn1({
       nodeName: '美国',
       type: NodeTypeEnum.Shadowsocks,
+      ...nodeConfigDefaults,
     }),
   );
   t.true(
     fn2({
       nodeName: '测试',
       type: NodeTypeEnum.Shadowsocks,
+      ...nodeConfigDefaults,
     }),
   );
   t.true(
     fn2({
       nodeName: '美国测试',
       type: NodeTypeEnum.Shadowsocks,
+      ...nodeConfigDefaults,
     }),
   );
   t.false(
     fn2({
       nodeName: '测试 test',
       type: NodeTypeEnum.Shadowsocks,
+      ...nodeConfigDefaults,
     }),
   );
 });
@@ -81,12 +96,14 @@ test('useRegexp', (t) => {
     fn({
       nodeName: '测试',
       type: NodeTypeEnum.Shadowsocks,
+      ...nodeConfigDefaults,
     }),
   );
   t.false(
     fn({
       nodeName: '美国',
       type: NodeTypeEnum.Shadowsocks,
+      ...nodeConfigDefaults,
     }),
   );
 });
@@ -98,18 +115,21 @@ test('useGlob', (t) => {
     fn({
       nodeName: '测试',
       type: NodeTypeEnum.Shadowsocks,
+      ...nodeConfigDefaults,
     }),
   );
   t.true(
     fn({
       nodeName: '测试节点',
       type: NodeTypeEnum.Shadowsocks,
+      ...nodeConfigDefaults,
     }),
   );
   t.false(
     fn({
       nodeName: '美国',
       type: NodeTypeEnum.Shadowsocks,
+      ...nodeConfigDefaults,
     }),
   );
 
@@ -119,12 +139,14 @@ test('useGlob', (t) => {
     fn({
       nodeName: '两个汉堡',
       type: NodeTypeEnum.Shadowsocks,
+      ...nodeConfigDefaults,
     }),
   );
   t.true(
     fn({
       nodeName: '三个薯条',
       type: NodeTypeEnum.Shadowsocks,
+      ...nodeConfigDefaults,
     }),
   );
 });
@@ -136,18 +158,21 @@ test('discardGlob', (t) => {
     fn({
       nodeName: '测试',
       type: NodeTypeEnum.Shadowsocks,
+      ...nodeConfigDefaults,
     }),
   );
   t.false(
     fn({
       nodeName: '测试节点',
       type: NodeTypeEnum.Shadowsocks,
+      ...nodeConfigDefaults,
     }),
   );
   t.true(
     fn({
       nodeName: '美国',
       type: NodeTypeEnum.Shadowsocks,
+      ...nodeConfigDefaults,
     }),
   );
 
@@ -157,12 +182,14 @@ test('discardGlob', (t) => {
     fn({
       nodeName: '两个汉堡',
       type: NodeTypeEnum.Shadowsocks,
+      ...nodeConfigDefaults,
     }),
   );
   t.true(
     fn({
       nodeName: '无限堡薯',
       type: NodeTypeEnum.Shadowsocks,
+      ...nodeConfigDefaults,
     }),
   );
 });
@@ -172,30 +199,35 @@ test('netflixFilter', (t) => {
     filter.netflixFilter({
       nodeName: 'hkbn 1',
       type: NodeTypeEnum.Shadowsocks,
+      ...nodeConfigDefaults,
     }),
   );
   t.true(
     filter.netflixFilter({
       nodeName: 'HKBN 1',
       type: NodeTypeEnum.Shadowsocks,
+      ...nodeConfigDefaults,
     }),
   );
   t.false(
     filter.netflixFilter({
       nodeName: 'HK',
       type: NodeTypeEnum.Shadowsocks,
+      ...nodeConfigDefaults,
     }),
   );
   t.true(
     filter.netflixFilter({
       nodeName: 'HK NF',
       type: NodeTypeEnum.Shadowsocks,
+      ...nodeConfigDefaults,
     }),
   );
   t.true(
     filter.netflixFilter({
       nodeName: 'HK Netflix',
       type: NodeTypeEnum.Shadowsocks,
+      ...nodeConfigDefaults,
     }),
   );
 });
@@ -205,18 +237,21 @@ test('youtubePremiumFilter', (t) => {
     filter.youtubePremiumFilter({
       nodeName: '🇺🇸 美国',
       type: NodeTypeEnum.Shadowsocks,
+      ...nodeConfigDefaults,
     }),
   );
   t.true(
     filter.youtubePremiumFilter({
       nodeName: '韩国',
       type: NodeTypeEnum.Shadowsocks,
+      ...nodeConfigDefaults,
     }),
   );
   t.true(
     filter.youtubePremiumFilter({
       nodeName: 'HK',
       type: NodeTypeEnum.Shadowsocks,
+      ...nodeConfigDefaults,
     }),
   );
 });
@@ -226,12 +261,14 @@ test('usFilter', (t) => {
     filter.usFilter({
       nodeName: '🇺🇸 美国',
       type: NodeTypeEnum.Shadowsocks,
+      ...nodeConfigDefaults,
     }),
   );
   t.false(
     filter.usFilter({
       nodeName: 'HK',
       type: NodeTypeEnum.Shadowsocks,
+      ...nodeConfigDefaults,
     }),
   );
 });
@@ -241,18 +278,21 @@ test('hkFilter', (t) => {
     filter.hkFilter({
       nodeName: '🇭🇰',
       type: NodeTypeEnum.Shadowsocks,
+      ...nodeConfigDefaults,
     }),
   );
   t.true(
     filter.hkFilter({
       nodeName: 'HK',
       type: NodeTypeEnum.Shadowsocks,
+      ...nodeConfigDefaults,
     }),
   );
   t.false(
     filter.hkFilter({
       nodeName: 'US 1',
       type: NodeTypeEnum.Shadowsocks,
+      ...nodeConfigDefaults,
     }),
   );
 });
@@ -262,18 +302,21 @@ test('japanFilter', (t) => {
     filter.japanFilter({
       nodeName: '🇯🇵',
       type: NodeTypeEnum.Shadowsocks,
+      ...nodeConfigDefaults,
     }),
   );
   t.true(
     filter.japanFilter({
       nodeName: 'JP',
       type: NodeTypeEnum.Shadowsocks,
+      ...nodeConfigDefaults,
     }),
   );
   t.false(
     filter.japanFilter({
       nodeName: 'US 1',
       type: NodeTypeEnum.Shadowsocks,
+      ...nodeConfigDefaults,
     }),
   );
 });
@@ -283,18 +326,21 @@ test('koreaFilter', (t) => {
     filter.koreaFilter({
       nodeName: '🇰🇷',
       type: NodeTypeEnum.Shadowsocks,
+      ...nodeConfigDefaults,
     }),
   );
   t.true(
     filter.koreaFilter({
       nodeName: '韩国',
       type: NodeTypeEnum.Shadowsocks,
+      ...nodeConfigDefaults,
     }),
   );
   t.false(
     filter.koreaFilter({
       nodeName: 'US 1',
       type: NodeTypeEnum.Shadowsocks,
+      ...nodeConfigDefaults,
     }),
   );
 });
@@ -304,18 +350,21 @@ test('singaporeFilter', (t) => {
     filter.singaporeFilter({
       nodeName: '🇸🇬',
       type: NodeTypeEnum.Shadowsocks,
+      ...nodeConfigDefaults,
     }),
   );
   t.true(
     filter.singaporeFilter({
       nodeName: '新加坡',
       type: NodeTypeEnum.Shadowsocks,
+      ...nodeConfigDefaults,
     }),
   );
   t.false(
     filter.singaporeFilter({
       nodeName: 'US 1',
       type: NodeTypeEnum.Shadowsocks,
+      ...nodeConfigDefaults,
     }),
   );
 });
@@ -325,18 +374,21 @@ test('taiwanFilter', (t) => {
     filter.taiwanFilter({
       nodeName: '🇹🇼',
       type: NodeTypeEnum.Shadowsocks,
+      ...nodeConfigDefaults,
     }),
   );
   t.true(
     filter.taiwanFilter({
       nodeName: '台湾',
       type: NodeTypeEnum.Shadowsocks,
+      ...nodeConfigDefaults,
     }),
   );
   t.false(
     filter.taiwanFilter({
       nodeName: 'US 1',
       type: NodeTypeEnum.Shadowsocks,
+      ...nodeConfigDefaults,
     }),
   );
 });
@@ -346,18 +398,21 @@ test('chinaBackFilter', (t) => {
     filter.chinaBackFilter({
       nodeName: '回国',
       type: NodeTypeEnum.Shadowsocks,
+      ...nodeConfigDefaults,
     }),
   );
   t.true(
     filter.chinaBackFilter({
       nodeName: '中国上海',
       type: NodeTypeEnum.Shadowsocks,
+      ...nodeConfigDefaults,
     }),
   );
   t.false(
     filter.chinaBackFilter({
       nodeName: 'US 1',
       type: NodeTypeEnum.Shadowsocks,
+      ...nodeConfigDefaults,
     }),
   );
 });
@@ -367,18 +422,21 @@ test('chinaOutFilter', (t) => {
     filter.chinaOutFilter({
       nodeName: '回国',
       type: NodeTypeEnum.Shadowsocks,
+      ...nodeConfigDefaults,
     }),
   );
   t.false(
     filter.chinaOutFilter({
       nodeName: '中国上海',
       type: NodeTypeEnum.Shadowsocks,
+      ...nodeConfigDefaults,
     }),
   );
   t.true(
     filter.chinaOutFilter({
       nodeName: 'US 1',
       type: NodeTypeEnum.Shadowsocks,
+      ...nodeConfigDefaults,
     }),
   );
 });
@@ -464,6 +522,7 @@ test('complicated mergeFilters', (t) => {
       provider: { name: 'foo' } as any,
       type: NodeTypeEnum.Shadowsocks,
       nodeName: 'test',
+      ...nodeConfigDefaults,
     }),
     true,
   );
@@ -472,6 +531,7 @@ test('complicated mergeFilters', (t) => {
       provider: { name: 'foo2' } as any,
       type: NodeTypeEnum.Shadowsocks,
       nodeName: 'test',
+      ...nodeConfigDefaults,
     }),
     false,
   );
@@ -480,6 +540,7 @@ test('complicated mergeFilters', (t) => {
       provider: { name: 'foo' } as any,
       type: NodeTypeEnum.Shadowsocks,
       nodeName: 'should be false',
+      ...nodeConfigDefaults,
     }),
     false,
   );
@@ -488,6 +549,7 @@ test('complicated mergeFilters', (t) => {
       provider: { name: 'foo' } as any,
       type: NodeTypeEnum.Shadowsocks,
       nodeName: 'should be true test',
+      ...nodeConfigDefaults,
     }),
     true,
   );
@@ -496,6 +558,7 @@ test('complicated mergeFilters', (t) => {
       provider: { name: 'bar' } as any,
       type: NodeTypeEnum.Shadowsocks,
       nodeName: 'test',
+      ...nodeConfigDefaults,
     }),
     true,
   );
@@ -504,6 +567,7 @@ test('complicated mergeFilters', (t) => {
       provider: { name: 'bar2' } as any,
       type: NodeTypeEnum.Shadowsocks,
       nodeName: 'test',
+      ...nodeConfigDefaults,
     }),
     false,
   );

@@ -3,16 +3,10 @@ import _ from 'lodash';
 
 import { ERR_INVALID_FILTER, OBFS_UA } from '../constant';
 import {
-  HttpNodeConfig,
-  HttpsNodeConfig,
   NodeFilterType,
-  NodeNameFilterType,
   NodeTypeEnum,
   PossibleNodeConfigType,
-  ShadowsocksNodeConfig,
-  SimpleNodeConfig,
-  SortedNodeNameFilterType,
-  VmessNodeConfig,
+  SortedNodeFilterType,
 } from '../types';
 import { pickAndFormatStringList } from './index';
 import {
@@ -41,7 +35,7 @@ export const getSurfboardExtendHeaders = (
  */
 export const getSurfboardNodes = function (
   list: ReadonlyArray<PossibleNodeConfigType>,
-  filter?: NodeFilterType | SortedNodeNameFilterType,
+  filter?: NodeFilterType | SortedNodeFilterType,
 ): string {
   // istanbul ignore next
   if (arguments.length === 2 && typeof filter === 'undefined') {
@@ -226,8 +220,8 @@ export const getSurfboardNodes = function (
 };
 
 export const getSurfboardNodeNames = function (
-  list: ReadonlyArray<SimpleNodeConfig>,
-  filter?: NodeNameFilterType | SortedNodeNameFilterType,
+  list: ReadonlyArray<PossibleNodeConfigType>,
+  filter?: NodeFilterType | SortedNodeFilterType,
   separator?: string,
 ): string {
   // istanbul ignore next

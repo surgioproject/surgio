@@ -10,6 +10,7 @@ import SsdProvider from './SsdProvider';
 import TrojanProvider from './TrojanProvider';
 import V2rayNSubscribeProvider from './V2rayNSubscribeProvider';
 import { PossibleProviderType } from './types';
+import type Provider from './Provider';
 
 export {
   BlackSSLProvider,
@@ -23,7 +24,7 @@ export {
   V2rayNSubscribeProvider,
 };
 
-export type { PossibleProviderType };
+export type { PossibleProviderType, Provider };
 
 export async function getProvider(
   name: string,

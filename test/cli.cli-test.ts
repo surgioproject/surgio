@@ -83,11 +83,9 @@ describe('generate command', () => {
       .stdout({ print: false })
       .stderr({ print: false })
       .command(['generate', `--project=${resolve('template-error')}`])
-      .catch((err) => {
-        expect(err.message).to.contain('expected comma after expression');
-      })
+      .exit(1)
       .it('fails to run generate cmd', (ctx) => {
-        expect(ctx.stderr).to.contain('Template render error');
+        expect(ctx.stderr).to.contain('expected comma after expression');
       });
   });
 
@@ -96,10 +94,10 @@ describe('generate command', () => {
       .stdout({ print: false })
       .stderr({ print: false })
       .command(['generate', `--project=${resolve('not-specify-binPath')}`])
-      .catch((err) => {
-        expect(err.message).to.contain('添加 Shadowsocksr 二进制文件路径');
-      })
-      .it('fails to run generate cmd');
+      .exit(1)
+      .it('fails to run generate cmd', (ctx) => {
+        expect(ctx.stderr).to.contain('添加 Shadowsocksr 二进制文件路径');
+      });
   });
 
   describe('template variables and functions', () => {

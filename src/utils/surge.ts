@@ -4,11 +4,9 @@ import _ from 'lodash';
 import { ERR_INVALID_FILTER, OBFS_UA } from '../constant';
 import {
   NodeFilterType,
-  NodeNameFilterType,
   NodeTypeEnum,
   PossibleNodeConfigType,
-  SimpleNodeConfig,
-  SortedNodeNameFilterType,
+  SortedNodeFilterType,
 } from '../types';
 import { isIp, pickAndFormatStringList } from './';
 import {
@@ -40,7 +38,7 @@ export const getSurgeExtendHeaders = (
  */
 export const getSurgeNodes = function (
   list: ReadonlyArray<PossibleNodeConfigType>,
-  filter?: NodeFilterType | SortedNodeNameFilterType,
+  filter?: NodeFilterType | SortedNodeFilterType,
 ): string {
   // istanbul ignore next
   if (arguments.length === 2 && typeof filter === 'undefined') {
@@ -488,8 +486,8 @@ export const getSurgeWireguardNodes = (
 };
 
 export const getSurgeNodeNames = function (
-  list: ReadonlyArray<SimpleNodeConfig>,
-  filter?: NodeNameFilterType | SortedNodeNameFilterType,
+  list: ReadonlyArray<PossibleNodeConfigType>,
+  filter?: NodeFilterType | SortedNodeFilterType,
   separator?: string,
 ): string {
   // istanbul ignore next

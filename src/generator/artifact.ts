@@ -7,8 +7,7 @@ import { Environment } from 'nunjucks';
 import path from 'path';
 import { EventEmitter } from 'events';
 
-import { getProvider } from '../provider';
-import { PossibleProviderType } from '../provider/types';
+import { getProvider, PossibleProviderType } from '../provider';
 import {
   ArtifactConfig,
   CommandConfig,
@@ -16,13 +15,11 @@ import {
   PossibleNodeConfigType,
   ProviderConfig,
   RemoteSnippet,
-  SimpleNodeConfig,
 } from '../types';
 import {
   getClashNodeNames,
   getClashNodes,
   getDownloadUrl,
-  getMellowNodes,
   getNodeNames,
   getQuantumultXNodes,
   getShadowsocksNodes,
@@ -85,7 +82,6 @@ export class Artifact extends EventEmitter {
   public providerMap: Map<string, ThenArg<ReturnType<typeof getProvider>>> =
     new Map();
   public nodeList: PossibleNodeConfigType[] = [];
-  public nodeNameList: SimpleNodeConfig[] = [];
 
   private customFilters: NonNullable<ProviderConfig['customFilters']>;
   private netflixFilter: NonNullable<ProviderConfig['netflixFilter']>;
@@ -125,13 +121,8 @@ export class Artifact extends EventEmitter {
       gatewayConfig?.viewerToken || gatewayConfig?.accessToken;
     const { name: artifactName, customParams, downloadUrl } = this.artifact;
 
-    const {
-      nodeList,
-      nodeNameList,
-      netflixFilter,
-      youtubePremiumFilter,
-      customFilters,
-    } = this;
+    const { nodeList, netflixFilter, youtubePremiumFilter, customFilters } =
+      this;
     const remoteSnippets = _.keyBy(
       this.options.remoteSnippetList || [],
       (item) => item.name,
@@ -152,8 +143,6 @@ export class Artifact extends EventEmitter {
       snippet: (filePath: string): RemoteSnippet => {
         return loadLocalSnippet(config.templateDir, filePath);
       },
-      nodes: nodeList,
-      names: nodeNameList,
       remoteSnippets,
       nodeList,
       provider: this.artifact.provider,
@@ -173,7 +162,6 @@ export class Artifact extends EventEmitter {
       getShadowsocksrNodes,
       getV2rayNNodes,
       getQuantumultXNodes,
-      getMellowNodes,
       getLoonNodes,
       usFilter,
       hkFilter,
@@ -227,12 +215,6 @@ export class Artifact extends EventEmitter {
       if (nodeConfigList) {
         nodeConfigList.forEach((nodeConfig) => {
           if (nodeConfig) {
-            this.nodeNameList.push({
-              type: nodeConfig.type,
-              enable: nodeConfig.enable,
-              nodeName: nodeConfig.nodeName,
-              provider: nodeConfig.provider,
-            });
             this.nodeList.push(nodeConfig);
           }
         });

@@ -12,7 +12,9 @@ export const SimpleNodeConfigValidator = z.object({
   mptcp: z.boolean().optional(),
   shadowTls: z
     .object({
-      version: z.union([z.literal(1), z.literal(2), z.literal(3)]).optional(),
+      version: z
+        .union([z.literal('1'), z.literal('2'), z.literal('3')])
+        .optional(),
       password: z.string(),
       sni: z.string(),
     })

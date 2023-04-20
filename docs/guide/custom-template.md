@@ -242,24 +242,6 @@ ss://cmM0LW1kNTpwYXNzd29yZA@hk.com:1234/?group=subscribe_demo#%F0%9F%87%AD%F0%9F
 
 生成 QuantumulX 的节点配置。该配置能用于 [`server_local`](https://github.com/crossutility/Quantumult-X/blob/master/sample.conf#L88) 或者 [`server_remote`](https://github.com/crossutility/Quantumult-X/blob/master/server-complete.txt)。
 
-### getMellowNodes
-
-`getMellowNodes(nodeList, filter?)`
-
-:::tip 提示
-- 第二个参数可选，可传入标准的过滤器或自定义的过滤器
-- 支持输出 Vmess 和 Shadowsocks 节点
-:::
-
-该方法输出的数据结构如下：
-
-```
-Proxy-1, vmess1, vmess1://75da2e14-4d08-480b-b3cb-0079a0c51275@example.com:443/v2?network=ws&tls=true
-Proxy-2, vmess1, vmess1://75da2e14-4d08-480b-b3cb-0079a0c51275@example.com:10025?network=tcp
-```
-
-使用时请参考 [官方文档](https://github.com/mellow-io/mellow#%E6%9B%B4%E5%A4%9A%E9%85%8D%E7%BD%AE)。
-
 ### getClashNodes
 
 `getClashNodes(nodeList, filter?)`

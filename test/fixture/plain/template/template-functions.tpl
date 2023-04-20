@@ -13,9 +13,6 @@ getQuantumultXNodes
 getSurgeNodes
 {{ getSurgeNodes(nodeList, customFilters.globalFilter) }}
 ----
-getMellowNodes
-{{ getMellowNodes(nodeList) }}
-----
 getLoonNodes
 {{ getLoonNodes(nodeList) }}
 ----

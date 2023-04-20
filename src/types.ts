@@ -1,7 +1,6 @@
 import { z } from 'zod';
-import { PossibleProviderType } from './provider';
 
-import Provider from './provider/Provider';
+import type { Provider } from './provider';
 import {
   WireguardNodeConfigValidator,
   ProviderValidator,
@@ -18,6 +17,8 @@ import {
   SurgioConfigValidator,
   ArtifactValidator,
   RemoteSnippetValidator,
+  NodeFilterTypeValidator,
+  SortedNodeFilterTypeValidator,
 } from './validators';
 
 export enum NodeTypeEnum {
@@ -49,19 +50,13 @@ export type CommandConfigBeforeNormalize = z.infer<
   typeof SurgioConfigValidator
 >;
 
-export type CommandConfig = Omit<
-  CommandConfigBeforeNormalize,
-  'customFilters'
-> & {
+export type CommandConfig = CommandConfigBeforeNormalize & {
   publicUrl: string;
   output: string;
   urlBase: string;
   providerDir: string;
   templateDir: string;
   configDir: string;
-  customFilters?: {
-    [name: string]: NodeNameFilterType | SortedNodeNameFilterType;
-  };
 };
 
 export type RemoteSnippetConfig = z.infer<typeof RemoteSnippetValidator>;
@@ -75,17 +70,7 @@ export type ArtifactConfig = z.infer<typeof ArtifactValidator> & {
   readonly template: string | undefined;
 };
 
-export type ProviderConfig = Omit<
-  z.infer<typeof ProviderValidator>,
-  'nodeFilter' | 'netflixFilter' | 'youtubePremiumFilter' | 'customFilters'
-> & {
-  nodeFilter?: NodeFilterType | SortedNodeNameFilterType;
-  netflixFilter?: NodeNameFilterType | SortedNodeNameFilterType;
-  youtubePremiumFilter?: NodeNameFilterType | SortedNodeNameFilterType;
-  customFilters?: {
-    [name: string]: NodeNameFilterType | SortedNodeNameFilterType;
-  };
-};
+export type ProviderConfig = z.infer<typeof ProviderValidator>;
 
 export interface BlackSSLProviderConfig extends ProviderConfig {
   readonly type: SupportProviderEnum.BlackSSL;
@@ -200,18 +185,11 @@ export interface SubscriptionUserinfo {
   readonly expire: number;
 }
 
-export type NodeFilterType = (nodeConfig: PossibleNodeConfigType) => boolean;
+export type NodeFilterType = z.infer<typeof NodeFilterTypeValidator>;
 
-export type NodeNameFilterType = (
-  simpleNodeConfig: SimpleNodeConfig,
-) => boolean;
-
-export interface SortedNodeNameFilterType {
-  readonly filter: <T>(
-    nodeList: ReadonlyArray<T & SimpleNodeConfig>,
-  ) => ReadonlyArray<T & SimpleNodeConfig>;
-  readonly supportSort?: boolean;
-}
+export type SortedNodeFilterType = z.infer<
+  typeof SortedNodeFilterTypeValidator
+>;
 
 export type PossibleNodeConfigType =
   | HttpsNodeConfig

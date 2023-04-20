@@ -3,36 +3,47 @@ import test from 'ava';
 
 import {
   NodeTypeEnum,
+  PossibleNodeConfigType,
   ShadowsocksNodeConfig,
-  SimpleNodeConfig,
-  VmessNodeConfig,
 } from '../../types';
 import * as utils from '../index';
 import { ERR_INVALID_FILTER } from '../../constant';
 
 test('getNodeNames', async (t) => {
-  const nodeNameList: ReadonlyArray<SimpleNodeConfig> = [
+  const nodeList: ReadonlyArray<PossibleNodeConfigType> = [
     {
       type: NodeTypeEnum.Shadowsocks,
       enable: true,
       nodeName: 'Test Node 1',
+      hostname: 'example.com',
+      port: 443,
+      method: 'chacha20-ietf-poly1305',
+      password: 'password',
     },
     {
       type: NodeTypeEnum.Shadowsocks,
       enable: false,
       nodeName: 'Test Node 2',
+      hostname: 'example.com',
+      port: 443,
+      method: 'chacha20-ietf-poly1305',
+      password: 'password',
     },
     {
-      type: NodeTypeEnum.Snell,
+      type: NodeTypeEnum.Shadowsocks,
       enable: true,
       nodeName: 'Test Node 3',
+      hostname: 'example.com',
+      port: 443,
+      method: 'chacha20-ietf-poly1305',
+      password: 'password',
     },
-  ];
-  const txt1 = utils.getNodeNames(nodeNameList);
-  const txt2 = utils.getNodeNames(nodeNameList, undefined, ':');
+  ] as const;
+  const txt1 = utils.getNodeNames(nodeList);
+  const txt2 = utils.getNodeNames(nodeList, undefined, ':');
   const txt3 = utils.getNodeNames(
-    nodeNameList,
-    (simpleNodeConfig) => simpleNodeConfig.nodeName !== 'Test Node 3',
+    nodeList,
+    (nodeConfig) => nodeConfig.nodeName !== 'Test Node 3',
   );
 
   t.is(txt1, 'Test Node 1, Test Node 3');
@@ -59,87 +70,6 @@ test('getShadowsocksNodes', async (t) => {
   t.is(
     txt1,
     'ss://Y2hhY2hhMjAtaWV0Zi1wb2x5MTMwNTpwYXNzd29yZA@example.com:8443/?plugin=obfs-local%3Bobfs%3Dtls%3Bobfs-host%3Dgateway.icloud.com&group=GroupName#%F0%9F%87%AD%F0%9F%87%B0HK(Example)',
-  );
-});
-
-test('getMellowNodes', async (t) => {
-  const nodeList: ReadonlyArray<VmessNodeConfig | ShadowsocksNodeConfig> = [
-    {
-      alterId: '64',
-      host: 'example.com',
-      hostname: '1.1.1.1',
-      method: 'auto',
-      network: 'ws',
-      nodeName: 'Test Node 3',
-      path: '/',
-      port: 8080,
-      tls: false,
-      skipCertVerify: false,
-      type: NodeTypeEnum.Vmess,
-      uuid: '1386f85e-657b-4d6e-9d56-78badb75e1fd',
-    },
-    {
-      alterId: '64',
-      host: 'example.com',
-      hostname: '1.1.1.1',
-      method: 'auto',
-      network: 'ws',
-      nodeName: 'Test Node 3',
-      path: '/',
-      port: 8080,
-      tls: true,
-      skipCertVerify: true,
-      type: NodeTypeEnum.Vmess,
-      uuid: '1386f85e-657b-4d6e-9d56-78badb75e1fd',
-      wsHeaders: {
-        foo: 'bar',
-      },
-    },
-    {
-      alterId: '64',
-      host: '',
-      hostname: '1.1.1.1',
-      method: 'auto',
-      network: 'tcp',
-      nodeName: 'Test Node 4',
-      path: '/',
-      port: 8080,
-      tls: false,
-      type: NodeTypeEnum.Vmess,
-      uuid: '1386f85e-657b-4d6e-9d56-78badb75e1fd',
-    },
-    {
-      alterId: '64',
-      host: '',
-      hostname: '1.1.1.1',
-      method: 'auto',
-      network: 'tcp',
-      nodeName: 'Test Node 5',
-      path: '/',
-      port: 8080,
-      tls: true,
-      type: NodeTypeEnum.Vmess,
-      uuid: '1386f85e-657b-4d6e-9d56-78badb75e1fd',
-    },
-    {
-      nodeName: '🇭🇰HK(Example)',
-      type: NodeTypeEnum.Shadowsocks,
-      hostname: 'example.com',
-      port: '8443',
-      method: 'chacha20-ietf-poly1305',
-      password: 'password',
-      obfs: 'tls',
-      obfsHost: 'gateway.icloud.com',
-      udpRelay: true,
-    },
-  ];
-
-  t.snapshot(utils.getMellowNodes(nodeList));
-  t.snapshot(
-    utils.getMellowNodes(
-      nodeList,
-      (nodeConfig) => nodeConfig.nodeName === 'Test Node 5',
-    ),
   );
 });
 
@@ -388,13 +318,6 @@ test('output api should fail with invalid filter', (t) => {
   t.throws(
     () => {
       utils.getQuantumultXNodes([], undefined);
-    },
-    undefined,
-    ERR_INVALID_FILTER,
-  );
-  t.throws(
-    () => {
-      utils.getMellowNodes([], undefined);
     },
     undefined,
     ERR_INVALID_FILTER,

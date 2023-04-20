@@ -1,4 +1,5 @@
 import { createLogger } from '@surgio/logger';
+
 import { URL } from 'url';
 
 import { NodeTypeEnum, TrojanNodeConfig } from '../types';

@@ -11,3 +11,4 @@ export * from './provider';
 export * from './common';
 export * from './surgio-config';
 export * from './artifact';
+export * from './filter';
