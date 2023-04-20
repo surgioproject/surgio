@@ -1,3 +1,12 @@
+## [2.25.2](https://github.com/geekdada/surgio/compare/v2.25.1...v2.25.2) (2023-04-20)
+
+
+### Bug Fixes
+
+* surge snell.shadowTls.version ([0659cd0](https://github.com/geekdada/surgio/commit/0659cd041fec7ff9be48cc978760d88c3dd27965))
+
+
+
 ## [2.25.1](https://github.com/geekdada/surgio/compare/v2.25.0...v2.25.1) (2023-04-20)
 
 
