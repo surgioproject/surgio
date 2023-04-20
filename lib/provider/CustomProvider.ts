@@ -24,6 +24,7 @@ export default class CustomProvider extends Provider {
       shadowTls: Joi.object({
         password: Joi.string().required(),
         sni: Joi.string(),
+        version: Joi.string(),
       }),
       binPath: Joi.string(),
       localPort: Joi.number(),
