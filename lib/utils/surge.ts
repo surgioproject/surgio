@@ -520,6 +520,9 @@ function parseShadowTlsConfig(config: PossibleNodeConfigType) {
     if (config.shadowTls.sni) {
       result.push(`shadow-tls-sni=${config.shadowTls.sni}`);
     }
+    if (config.shadowTls.version) {
+      result.push(`shadow-tls-version=${config.shadowTls.version}`);
+    }
   }
 
   return result;

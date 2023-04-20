@@ -525,11 +525,12 @@ test('getSurgeNodes', async (t) => {
         shadowTls: {
           password: 'password',
           sni: 'sni.example.com',
+          version: 3,
         },
       },
     ]),
     [
-      '测试 Snell = snell, example.com, 443, psk=psk, shadow-tls-password=password, shadow-tls-sni=sni.example.com',
+      '测试 Snell = snell, example.com, 443, psk=psk, shadow-tls-password=password, shadow-tls-sni=sni.example.com, shadow-tls-version=3',
     ].join('\n'),
   );
 });
