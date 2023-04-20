@@ -14,7 +14,7 @@ export const SimpleNodeConfigValidator = z.object({
     .object({
       version: z.union([z.literal(1), z.literal(2), z.literal(3)]).optional(),
       password: z.string(),
-      sni: z.string().optional(),
+      sni: z.string(),
     })
     .optional(),
 

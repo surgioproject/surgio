@@ -401,9 +401,14 @@ export const getSurgeNodes = function (
 
         case NodeTypeEnum.Wireguard:
           logger.info(
-            'getSurgeNodes 不输出 Wireguard 节点，请配合使用 getSurgeWireguardNodes。',
+            '请配合使用 getSurgeWireguardNodes 生成 Wireguard 节点配置',
           );
-          return undefined;
+
+          return [
+            nodeConfig.nodeName,
+            ' = wireguard, section-name = ',
+            nodeConfig.nodeName,
+          ].join('');
 
         // istanbul ignore next
         default:
@@ -516,15 +521,13 @@ function parseShadowTlsConfig(nodeConfig: PossibleNodeConfigType) {
   const result: string[] = [];
 
   if (nodeConfig.shadowTls) {
-    result.push(`shadow-tls-password=${nodeConfig.shadowTls.password}`);
+    result.push(
+      `shadow-tls-password=${nodeConfig.shadowTls.password}`,
+      `shadow-tls-sni=${nodeConfig.shadowTls.sni}`,
+    );
 
-    if (nodeConfig.shadowTls.sni) {
-      result.push(`shadow-tls-sni=${nodeConfig.shadowTls.sni}`);
-    }
-    if (nodeConfig.shadowTls.version && nodeConfig.shadowTls.version !== 2) {
-      logger.warning(
-        `Surge 目前可能不支持 shadow-tls v${nodeConfig.shadowTls.version}，请前往 https://manual.nssurge.com/policy/proxy.html#shadow-tls 查看最新支持版本`,
-      );
+    if (nodeConfig.shadowTls.version) {
+      result.push(`shadow-tls-version=${nodeConfig.shadowTls.version}`);
     }
   }
 
