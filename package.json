@@ -2,16 +2,8 @@
   "name": "surgio",
   "description": "Generating rules for Surge, Clash, Quantumult like a PRO",
   "version": "2.25.0",
-  "exports": {
-    ".": {
-      "types": "./build/index.d.ts",
-      "require": "./build/index.js"
-    },
-    "./internal": {
-      "types": "./build/internal.d.ts",
-      "require": "./build/internal.js"
-    }
-  },
+  "main": "./build/index.js",
+  "types": "./build/index.d.ts",
   "bin": {
     "surgio": "bin/run"
   },

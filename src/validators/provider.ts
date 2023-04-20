@@ -12,4 +12,8 @@ export const ProviderValidator = z.object({
   relayUrl: z.union([z.boolean(), z.string().url()]).optional(),
   requestUserAgent: z.ostring(),
   renameNode: z.function().args(z.string()).returns(z.string()).optional(),
+  customFilters: z.record(z.function()).optional(),
+  nodeFilter: z.function().optional(),
+  netflixFilter: z.function().optional(),
+  youtubePremiumFilter: z.function().optional(),
 });

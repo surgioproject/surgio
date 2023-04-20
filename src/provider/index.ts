@@ -1,4 +1,5 @@
-import { SupportProviderEnum } from '../types';
+import { PossibleProviderConfigType, SupportProviderEnum } from '../types';
+import { defineProvider } from '../utils/configurables';
 import BlackSSLProvider from './BlackSSLProvider';
 import ClashProvider from './ClashProvider';
 import CustomProvider from './CustomProvider';
@@ -7,16 +8,29 @@ import ShadowsocksrSubscribeProvider from './ShadowsocksrSubscribeProvider';
 import ShadowsocksSubscribeProvider from './ShadowsocksSubscribeProvider';
 import SsdProvider from './SsdProvider';
 import TrojanProvider from './TrojanProvider';
-import { PossibleProviderType } from './types';
 import V2rayNSubscribeProvider from './V2rayNSubscribeProvider';
+import { PossibleProviderType } from './types';
+
+export {
+  BlackSSLProvider,
+  ClashProvider,
+  CustomProvider,
+  ShadowsocksJsonSubscribeProvider,
+  ShadowsocksrSubscribeProvider,
+  ShadowsocksSubscribeProvider,
+  SsdProvider,
+  TrojanProvider,
+  V2rayNSubscribeProvider,
+};
+
+export type { PossibleProviderType };
 
 export async function getProvider(
   name: string,
-  config: any,
+  config: ReturnType<typeof defineProvider> | PossibleProviderConfigType,
 ): Promise<PossibleProviderType> {
-  // 函数形式，需要先获取到返回值
   if (typeof config === 'function') {
-    config = await config();
+    config = await config({});
   }
 
   switch (config.type) {
@@ -32,9 +46,8 @@ export async function getProvider(
     case SupportProviderEnum.ShadowsocksrSubscribe:
       return new ShadowsocksrSubscribeProvider(name, config);
 
-    case SupportProviderEnum.Custom: {
+    case SupportProviderEnum.Custom:
       return new CustomProvider(name, config);
-    }
 
     case SupportProviderEnum.V2rayNSubscribe:
       return new V2rayNSubscribeProvider(name, config);
@@ -49,6 +62,6 @@ export async function getProvider(
       return new TrojanProvider(name, config);
 
     default:
-      throw new Error(`Unsupported provider type: ${config.type}`);
+      throw new Error(`Unsupported provider type: ${(config as any).type}`);
   }
 }

@@ -1,7 +1,8 @@
 import { loadConfig, setConfig, getConfig } from './utils/config';
 import { loadRemoteSnippetList } from './utils/remote-snippet';
 
-export * as types from './types';
+export * as redis from './redis';
+export * from './types';
 
 const utils = {
   loadRemoteSnippetList,

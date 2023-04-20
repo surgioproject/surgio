@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { PossibleProviderType } from './provider';
 
 import Provider from './provider/Provider';
 import {
@@ -48,7 +49,10 @@ export type CommandConfigBeforeNormalize = z.infer<
   typeof SurgioConfigValidator
 >;
 
-export type CommandConfig = CommandConfigBeforeNormalize & {
+export type CommandConfig = Omit<
+  CommandConfigBeforeNormalize,
+  'customFilters'
+> & {
   publicUrl: string;
   output: string;
   urlBase: string;
@@ -71,36 +75,44 @@ export type ArtifactConfig = z.infer<typeof ArtifactValidator> & {
   readonly template: string | undefined;
 };
 
-export type ProviderConfig = z.infer<typeof ProviderValidator> & {
-  readonly nodeFilter?: NodeFilterType | SortedNodeNameFilterType;
-  readonly netflixFilter?: NodeNameFilterType | SortedNodeNameFilterType;
-  readonly youtubePremiumFilter?: NodeNameFilterType | SortedNodeNameFilterType;
-  readonly customFilters?: {
-    readonly [name: string]: NodeNameFilterType | SortedNodeNameFilterType;
+export type ProviderConfig = Omit<
+  z.infer<typeof ProviderValidator>,
+  'nodeFilter' | 'netflixFilter' | 'youtubePremiumFilter' | 'customFilters'
+> & {
+  nodeFilter?: NodeFilterType | SortedNodeNameFilterType;
+  netflixFilter?: NodeNameFilterType | SortedNodeNameFilterType;
+  youtubePremiumFilter?: NodeNameFilterType | SortedNodeNameFilterType;
+  customFilters?: {
+    [name: string]: NodeNameFilterType | SortedNodeNameFilterType;
   };
 };
 
 export interface BlackSSLProviderConfig extends ProviderConfig {
+  readonly type: SupportProviderEnum.BlackSSL;
   readonly username: string;
   readonly password: string;
 }
 
 export interface ShadowsocksJsonSubscribeProviderConfig extends ProviderConfig {
+  readonly type: SupportProviderEnum.ShadowsocksJsonSubscribe;
   readonly url: string;
   readonly udpRelay?: boolean;
 }
 
 export interface ShadowsocksSubscribeProviderConfig extends ProviderConfig {
+  readonly type: SupportProviderEnum.ShadowsocksSubscribe;
   readonly url: string;
   readonly udpRelay?: boolean;
 }
 
 export interface ShadowsocksrSubscribeProviderConfig extends ProviderConfig {
+  readonly type: SupportProviderEnum.ShadowsocksrSubscribe;
   readonly url: string;
   readonly udpRelay?: boolean;
 }
 
 export interface V2rayNSubscribeProviderConfig extends ProviderConfig {
+  readonly type: SupportProviderEnum.V2rayNSubscribe;
   readonly url: string;
   readonly compatibleMode?: boolean;
   readonly skipCertVerify?: boolean;
@@ -109,21 +121,25 @@ export interface V2rayNSubscribeProviderConfig extends ProviderConfig {
 }
 
 export interface ClashProviderConfig extends ProviderConfig {
+  readonly type: SupportProviderEnum.Clash;
   readonly url: string;
   readonly udpRelay?: boolean;
   readonly tls13?: boolean;
 }
 
 export interface SsdProviderConfig extends ProviderConfig {
+  readonly type: SupportProviderEnum.Ssd;
   readonly url: string;
   readonly udpRelay?: boolean;
 }
 
 export interface CustomProviderConfig extends ProviderConfig {
-  readonly nodeList: ReadonlyArray<unknown>;
+  readonly type: SupportProviderEnum.Custom;
+  readonly nodeList: ReadonlyArray<PossibleNodeConfigType>;
 }
 
 export interface TrojanProviderConfig extends ProviderConfig {
+  readonly type: SupportProviderEnum.Trojan;
   readonly url: string;
   readonly udpRelay?: boolean;
   readonly tls13?: boolean;
@@ -208,3 +224,18 @@ export type PossibleNodeConfigType =
   | Socks5NodeConfig
   | TuicNodeConfig
   | WireguardNodeConfig;
+
+export type PossibleProviderConfigType =
+  | BlackSSLProviderConfig
+  | ClashProviderConfig
+  | CustomProviderConfig
+  | ShadowsocksJsonSubscribeProviderConfig
+  | ShadowsocksrSubscribeProviderConfig
+  | ShadowsocksSubscribeProviderConfig
+  | SsdProviderConfig
+  | TrojanProviderConfig
+  | V2rayNSubscribeProviderConfig;
+
+export type ProviderConfigFactory = (
+  options: Record<string, string>,
+) => Promise<PossibleProviderConfigType> | PossibleProviderConfigType;

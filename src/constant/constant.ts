@@ -7,9 +7,11 @@ export const OBFS_UA =
 
 export const PROXY_TEST_URL = 'http://cp.cloudflare.com/generate_204';
 
+export const INTERNET_TEST_URL = 'http://connect.rom.miui.com/generate_204';
+
 export const PROXY_TEST_INTERVAL = 1200; // 1200s
 
-export const CLASH_SUPPORTED_RULE: ReadonlyArray<string> = [
+export const CLASH_SUPPORTED_RULE = [
   'DOMAIN-SUFFIX',
   'DOMAIN-KEYWORD',
   'DOMAIN',
@@ -22,9 +24,9 @@ export const CLASH_SUPPORTED_RULE: ReadonlyArray<string> = [
   'MATCH',
   'FINAL',
   'PROCESS-NAME',
-];
+] as const;
 
-export const QUANTUMULT_X_SUPPORTED_RULE: ReadonlyArray<string> = [
+export const QUANTUMULT_X_SUPPORTED_RULE = [
   'USER-AGENT',
   'HOST',
   'HOST-KEYWORD',
@@ -36,10 +38,10 @@ export const QUANTUMULT_X_SUPPORTED_RULE: ReadonlyArray<string> = [
   'IP-CIDR6',
   'GEOIP',
   'FINAL',
-];
+] as const;
 
 // @see https://www.notion.so/2-967c1a07462c43ab88906162bec475a4
-export const LOON_SUPPORTED_RULE: ReadonlyArray<string> = [
+export const LOON_SUPPORTED_RULE = [
   'DOMAIN-SUFFIX',
   'DOMAIN',
   'DOMAIN-KEYWORD',
@@ -48,9 +50,9 @@ export const LOON_SUPPORTED_RULE: ReadonlyArray<string> = [
   'IP-CIDR',
   'GEOIP',
   'FINAL',
-];
+] as const;
 
-export const MELLOW_UNSUPPORTED_RULE: ReadonlyArray<string> = [
+export const MELLOW_UNSUPPORTED_RULE = [
   'URL-REGEX',
   'USER-AGENT',
   'AND',
@@ -60,10 +62,10 @@ export const MELLOW_UNSUPPORTED_RULE: ReadonlyArray<string> = [
   'IN-PORT',
   'SRC-IP',
   'RULE-SET',
-];
+] as const;
 
 // @see https://getsurfboard.com/docs/profile-format/rule/
-export const SURFBOARD_SUPPORTED_RULE: ReadonlyArray<string> = [
+export const SURFBOARD_SUPPORTED_RULE = [
   'DOMAIN-SUFFIX',
   'DOMAIN',
   'DOMAIN-KEYWORD',
@@ -74,7 +76,7 @@ export const SURFBOARD_SUPPORTED_RULE: ReadonlyArray<string> = [
   'PROCESS-NAME',
   'RULE-SET',
   'DOMAIN-SET',
-];
+] as const;
 
 export const CATEGORIES = {
   SNIPPET: 'Snippet',
@@ -86,7 +88,7 @@ export const CATEGORIES = {
   CLASH: 'Clash',
   LOON: 'Loon',
   SURFBOARD: 'Surfboard',
-};
+} as const;
 
 export const RELAY_SERVICE = 'https://surgio-cors.herokuapp.com/';
 
@@ -95,4 +97,4 @@ export const TMP_FOLDER_NAME = 'surgio-config';
 export const CACHE_KEYS = {
   RemoteSnippets: 'remote-snippets',
   Provider: 'provider',
-};
+} as const;

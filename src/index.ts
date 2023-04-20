@@ -1,5 +1,3 @@
-import fs from 'fs-extra';
-import { join } from 'path';
 import { PackageJson } from 'type-fest';
 
 import {
@@ -15,11 +13,13 @@ import {
   isVercel,
 } from './utils';
 import * as filter from './utils/filter';
-import * as caches from './utils/cache';
 import { CATEGORIES } from './constant';
-import redis from './redis';
 
-const pkg = fs.readJSONSync(join(__dirname, '../package.json')) as PackageJson;
+export type { CommandConfigBeforeNormalize as SurgioConfig } from './types';
+export * as caches from './utils/cache';
+export * from './utils/configurables';
+
+const pkg = require('../package.json') as PackageJson;
 
 export const utils = {
   ...filter,
@@ -39,4 +39,4 @@ export const categories = {
   ...CATEGORIES,
 };
 
-export { pkg, caches, redis };
+export { pkg };

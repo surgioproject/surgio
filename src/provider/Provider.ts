@@ -39,7 +39,7 @@ export default abstract class Provider {
     }
 
     this.supportGetSubscriptionUserInfo = false;
-    this.config = result.data;
+    this.config = result.data as ProviderConfig;
   }
 
   static async requestCacheableResource(
