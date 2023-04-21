@@ -1,10 +1,5 @@
 import { z } from 'zod';
 
-import {
-  INTERNET_TEST_URL,
-  PROXY_TEST_INTERVAL,
-  PROXY_TEST_URL,
-} from '../constant';
 import { ArtifactValidator } from './artifact';
 import {
   NodeFilterTypeValidator,
@@ -27,7 +22,7 @@ export const RemoteSnippetValidator = z.object({
 export const SurgioConfigValidator = z.object({
   artifacts: z.array(ArtifactValidator),
   remoteSnippets: z.array(RemoteSnippetValidator).optional(),
-  urlBase: z.string().default('/'),
+  urlBase: z.ostring(),
   upload: z
     .object({
       prefix: z.ostring(),
@@ -54,24 +49,24 @@ export const SurgioConfigValidator = z.object({
     .optional(),
   surgeConfig: z
     .object({
-      resolveHostname: z.boolean().default(false),
-      vmessAEAD: z.boolean().default(true),
+      resolveHostname: z.oboolean(),
+      vmessAEAD: z.oboolean(),
     })
     .optional(),
   surfboardConfig: z
     .object({
-      vmessAEAD: z.boolean().default(true),
+      vmessAEAD: z.oboolean(),
     })
     .optional(),
   quantumultXConfig: z
     .object({
-      vmessAEAD: z.boolean().default(true),
+      vmessAEAD: z.oboolean(),
     })
     .optional(),
   clashConfig: z
     .object({
-      enableTuic: z.boolean().default(false),
-      enableShadowTls: z.boolean().default(false),
+      enableTuic: z.oboolean(),
+      enableShadowTls: z.oboolean(),
     })
     .optional(),
   gateway: z
@@ -83,10 +78,10 @@ export const SurgioConfigValidator = z.object({
       useCacheOnError: z.oboolean(),
     })
     .optional(),
-  checkHostname: z.boolean().default(false),
-  proxyTestUrl: z.string().url().default(PROXY_TEST_URL),
-  proxyTestInterval: z.number().default(PROXY_TEST_INTERVAL),
-  internetTestUrl: z.string().url().default(INTERNET_TEST_URL),
+  checkHostname: z.oboolean(),
+  proxyTestUrl: z.string().url().optional(),
+  proxyTestInterval: z.onumber(),
+  internetTestUrl: z.string().url().optional(),
   customFilters: z
     .record(z.union([NodeFilterTypeValidator, SortedNodeFilterTypeValidator]))
     .optional(),
@@ -94,9 +89,7 @@ export const SurgioConfigValidator = z.object({
   analytics: z.oboolean(),
   cache: z
     .object({
-      type: z
-        .union([z.literal('redis'), z.literal('default')])
-        .default('default'),
+      type: z.union([z.literal('redis'), z.literal('default')]).optional(),
       redisUrl: z
         .string()
         .regex(/rediss?/)

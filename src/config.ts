@@ -2,6 +2,11 @@ import fs from 'fs-extra';
 import _ from 'lodash';
 import path from 'path';
 import { URL } from 'url';
+import {
+  INTERNET_TEST_URL,
+  PROXY_TEST_INTERVAL,
+  PROXY_TEST_URL,
+} from './constant';
 
 import redis from './redis';
 import { CommandConfig, CommandConfigBeforeNormalize } from './types';
@@ -89,10 +94,33 @@ export const normalizeConfig = (
   userConfig: Partial<CommandConfigBeforeNormalize>,
 ): CommandConfig => {
   const defaultConfig: Partial<CommandConfig> = {
+    artifacts: [],
+    urlBase: '/',
     output: path.join(cwd, './dist'),
     templateDir: path.join(cwd, './template'),
     providerDir: path.join(cwd, './provider'),
     configDir: ensureConfigFolder(),
+    surgeConfig: {
+      resolveHostname: false,
+      vmessAEAD: true,
+    },
+    clashConfig: {
+      enableShadowTls: false,
+      enableTuic: false,
+    },
+    quantumultXConfig: {
+      vmessAEAD: true,
+    },
+    surfboardConfig: {
+      vmessAEAD: true,
+    },
+    proxyTestUrl: PROXY_TEST_URL,
+    proxyTestInterval: PROXY_TEST_INTERVAL,
+    internetTestUrl: INTERNET_TEST_URL,
+    checkHostname: false,
+    cache: {
+      type: 'default',
+    },
   };
   const config: CommandConfig = _.defaultsDeep(userConfig, defaultConfig);
 
