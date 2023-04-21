@@ -22,12 +22,12 @@ import {
 import { ERR_INVALID_FILTER, OBFS_UA } from '../constant';
 import { getIsGFWFree } from './env-flag';
 import { applyFilter } from './filter';
-import { formatVmessUri } from './v2ray';
 
 export * from './surge';
 export * from './surfboard';
 export * from './clash';
 export * from './quantumult';
+export * from './loon';
 
 const logger = createLogger({ service: 'surgio:utils' });
 

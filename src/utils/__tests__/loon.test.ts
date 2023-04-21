@@ -120,6 +120,46 @@ test('getLoonNodes', (t) => {
     ]),
     'trojan = trojan,example.com,443,"password1",tls-name=sni.example.com,skip-cert-verify=true,transport=ws,path=/ws,host=example.com',
   );
+  t.is(
+    getLoonNodes([
+      {
+        type: NodeTypeEnum.Wireguard,
+        nodeName: 'wg node',
+        privateKey: 'privateKey',
+        selfIp: '10.0.0.1',
+        mtu: 1420,
+        peers: [
+          {
+            endpoint: 'wg.example.com:51820',
+            publicKey: 'publicKey',
+          },
+        ],
+      },
+      {
+        type: NodeTypeEnum.Wireguard,
+        nodeName: 'wg node',
+        privateKey: 'privateKey',
+        selfIp: '10.0.0.1',
+        mtu: 1420,
+        preferIpv6: true,
+        selfIpV6: '2001:db8:85a3::8a2e:370:7334',
+        dnsServers: ['1.1.1.1', '::1'],
+        peers: [
+          {
+            endpoint: 'wg.example.com:51820',
+            publicKey: 'publicKey',
+            allowedIps: '0.0.0.0/0',
+            presharedKey: 'presharedKey',
+            keepalive: 25,
+          },
+        ],
+      },
+    ]),
+    [
+      'wg node = wireguard,interface-ip=10.0.0.1,private-key="privateKey",mtu=1420,peers=[{public-key="publicKey",endpoint=wg.example.com:51820}]',
+      'wg node = wireguard,interface-ip=10.0.0.1,private-key="privateKey",interface-ipV6=2001:db8:85a3::8a2e:370:7334,mtu=1420,dns=1.1.1.1,dnsV6=::1,keepalive=25,peers=[allowed-ips="0.0.0.0/0"}},preshared-key="presharedKey"}},{public-key="publicKey",endpoint=wg.example.com:51820}]',
+    ].join('\n'),
+  );
 });
 
 test('getLoonNodes error', (t) => {

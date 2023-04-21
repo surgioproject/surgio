@@ -596,6 +596,7 @@ test('getClashNodes', async (t) => {
           {
             endpoint: 'example.com:1234',
             publicKey: 'publicKey',
+            reservedBits: [1, 2, 3],
           },
         ],
       },
@@ -610,6 +611,7 @@ test('getClashNodes', async (t) => {
         server: 'example.com:1234',
         type: 'wireguard',
         udp: true,
+        reserved: [1, 2, 3],
       },
     ],
   );

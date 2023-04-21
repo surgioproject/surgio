@@ -505,6 +505,25 @@ test('getSurgeNodes', async (t) => {
       '测试 Snell = snell, example.com, 443, psk=psk, shadow-tls-password=password, shadow-tls-sni=sni.example.com',
     ].join('\n'),
   );
+
+  t.is(
+    surge.getSurgeNodes([
+      {
+        type: NodeTypeEnum.Wireguard,
+        nodeName: 'wg node',
+        privateKey: 'privateKey',
+        selfIp: '10.0.0.1',
+        mtu: 1420,
+        peers: [
+          {
+            endpoint: 'wg.example.com:51820',
+            publicKey: 'publicKey',
+          },
+        ],
+      },
+    ]),
+    ['wg node = wireguard, section-name = wg node'].join('\n'),
+  );
 });
 
 test('getSurgeWireguardNodes', (t) => {
@@ -513,26 +532,34 @@ test('getSurgeWireguardNodes', (t) => {
       {
         type: NodeTypeEnum.Wireguard,
         nodeName: 'wg node',
-        endpoint: 'wg.example.com:51820',
-        publicKey: 'publicKey',
         privateKey: 'privateKey',
         selfIp: '10.0.0.1',
         mtu: 1420,
+        peers: [
+          {
+            endpoint: 'wg.example.com:51820',
+            publicKey: 'publicKey',
+          },
+        ],
       },
       {
         type: NodeTypeEnum.Wireguard,
         nodeName: 'wg node',
-        endpoint: 'wg.example.com:51820',
-        publicKey: 'publicKey',
         privateKey: 'privateKey',
         selfIp: '10.0.0.1',
         mtu: 1420,
         preferIpv6: true,
         selfIpV6: '2001:db8:85a3::8a2e:370:7334',
-        dnsServer: ['1.1.1.1'],
-        allowedIps: '0.0.0.0/0',
-        presharedKey: 'presharedKey',
-        keepAlive: 25,
+        dnsServers: ['1.1.1.1', '1.0.0.1'],
+        peers: [
+          {
+            endpoint: 'wg.example.com:51820',
+            publicKey: 'publicKey',
+            allowedIps: '0.0.0.0/0',
+            presharedKey: 'presharedKey',
+            keepalive: 25,
+          },
+        ],
       },
     ]),
   );

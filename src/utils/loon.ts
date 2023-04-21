@@ -1,5 +1,6 @@
 import { createLogger } from '@surgio/logger';
 import _ from 'lodash';
+import { isIPv4 } from 'net';
 
 import {
   NodeFilterType,
@@ -8,7 +9,16 @@ import {
   SortedNodeFilterType,
 } from '../types';
 import { ERR_INVALID_FILTER } from '../constant';
-import { applyFilter } from './filter';
+import {
+  applyFilter,
+  httpFilter,
+  httpsFilter,
+  shadowsocksFilter,
+  shadowsocksrFilter,
+  trojanFilter,
+  vmessFilter,
+  wireguardFilter,
+} from './filter';
 
 const logger = createLogger({ service: 'surgio:utils:loon' });
 
@@ -176,6 +186,60 @@ export const getLoonNodes = function (
             ),
           ].join(',');
 
+        case NodeTypeEnum.Wireguard: {
+          const config = [
+            `${nodeConfig.nodeName} = wireguard`,
+            `interface-ip=${nodeConfig.selfIp}`,
+            `private-key=${JSON.stringify(nodeConfig.privateKey)}`,
+          ];
+          const peers: Array<string> = [];
+
+          if (nodeConfig.selfIpV6) {
+            config.push(`interface-ipV6=${nodeConfig.selfIpV6}`);
+          }
+          if (nodeConfig.mtu) {
+            config.push(`mtu=${nodeConfig.mtu}`);
+          }
+          if (nodeConfig.dnsServers) {
+            for (const dns of nodeConfig.dnsServers) {
+              if (isIPv4(dns)) {
+                config.push(`dns=${dns}`);
+              } else {
+                config.push(`dnsV6=${dns}`);
+              }
+            }
+          }
+
+          for (const peer of nodeConfig.peers) {
+            const peerConfig = [
+              `public-key=${JSON.stringify(peer.publicKey)}`,
+              `endpoint=${peer.endpoint}`,
+            ];
+
+            if (peer.allowedIps) {
+              peers.push(`allowed-ips=${JSON.stringify(peer.allowedIps)}}}`);
+            }
+            if (peer.presharedKey) {
+              peers.push(
+                `preshared-key=${JSON.stringify(peer.presharedKey)}}}`,
+              );
+            }
+            if (peer.reservedBits) {
+              peers.push(`reserved=${JSON.stringify(peer.reservedBits)}}`);
+            }
+
+            peers.push(`{${peerConfig.join(',')}}`);
+          }
+
+          if (nodeConfig.peers[0].keepalive) {
+            config.push(`keepalive=${nodeConfig.peers[0].keepalive}`);
+          }
+
+          config.push(`peers=[${peers.join(',')}]`);
+
+          return config.join(',');
+        }
+
         // istanbul ignore next
         default:
           logger.warn(
@@ -187,4 +251,31 @@ export const getLoonNodes = function (
     .filter((item): item is string => item !== undefined);
 
   return result.join('\n');
+};
+
+export const getLoonNodeNames = function (
+  list: ReadonlyArray<PossibleNodeConfigType>,
+  filter?: NodeFilterType | SortedNodeFilterType,
+  separator?: string,
+): string {
+  // istanbul ignore next
+  if (arguments.length === 2 && typeof filter === 'undefined') {
+    throw new Error(ERR_INVALID_FILTER);
+  }
+
+  return applyFilter(
+    list.filter(
+      (item) =>
+        shadowsocksFilter(item) ||
+        shadowsocksrFilter(item) ||
+        vmessFilter(item) ||
+        httpFilter(item) ||
+        httpsFilter(item) ||
+        trojanFilter(item) ||
+        wireguardFilter(item),
+    ),
+    filter,
+  )
+    .map((item) => item.nodeName)
+    .join(separator || ', ');
 };

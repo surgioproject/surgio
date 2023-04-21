@@ -285,7 +285,7 @@ export const getClashNodes = function (
             ip: nodeConfig.selfIp,
             ...(nodeConfig.selfIpV6 ? { ipv6: nodeConfig.selfIpV6 } : null),
             ...(nodeConfig.mtu ? { mtu: nodeConfig.mtu } : null),
-            ...(nodeConfig.dnsServer ? { dns: nodeConfig.dnsServer } : null),
+            ...(nodeConfig.dnsServers ? { dns: nodeConfig.dnsServers } : null),
             udp: true,
 
             // Peer
@@ -294,6 +294,11 @@ export const getClashNodes = function (
             'public-key': nodeConfig.peers[0].publicKey,
             ...(nodeConfig.peers[0].presharedKey
               ? { 'preshared-key': nodeConfig.peers[0].presharedKey }
+              : null),
+            ...(nodeConfig.peers[0].reservedBits
+              ? {
+                  reserved: nodeConfig.peers[0].reservedBits,
+                }
               : null),
           };
 

@@ -439,7 +439,6 @@ export const getSurgeWireguardNodes = (
       ];
       const optionalKeys: Array<keyof typeof nodeConfig> = [
         'mtu',
-        'dnsServer',
         'preferIpv6',
         'selfIpV6',
       ];
@@ -454,6 +453,12 @@ export const getSurgeWireguardNodes = (
         }
       }
 
+      if (nodeConfig.dnsServers) {
+        nodeConfigSection.push(
+          `dns-server=${nodeConfig.dnsServers.join(', ')}`,
+        );
+      }
+
       for (const peer of nodeConfig.peers) {
         const peerConfig: string[] = [
           `endpoint=${peer.endpoint}`,
@@ -462,20 +467,21 @@ export const getSurgeWireguardNodes = (
         const optionalPeerConfigKeys: Array<keyof typeof peer> = [
           'presharedKey',
           'allowedIps',
+          'keepalive',
         ];
 
         for (const key of optionalPeerConfigKeys) {
-          if (nodeConfig[key] !== undefined) {
+          if (peer[key] !== undefined) {
             peerConfig.push(
-              ...pickAndFormatStringList(nodeConfig, [key], {
+              ...pickAndFormatStringList(peer, [key], {
                 keyFormat: 'kebabCase',
               }),
             );
           }
         }
 
-        if (peer.keepAlive) {
-          peerConfig.push(`keepalive=${peer.keepAlive}`);
+        if (peer.reservedBits) {
+          peerConfig.push(`client-id=${peer.reservedBits.join('/')}`);
         }
 
         nodeConfigSection.push(`peer=(${peerConfig.join(', ')})`);

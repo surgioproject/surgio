@@ -7,8 +7,9 @@ const WireguardPeerConfigValidator = z.object({
   publicKey: z.string(),
   endpoint: z.string().includes(':'),
   allowedIps: z.string().optional(),
-  keepAlive: z.number().optional(),
+  keepalive: z.number().optional(),
   presharedKey: z.string().optional(),
+  reservedBits: z.array(z.number()).optional(),
 });
 
 export const WireguardNodeConfigValidator = SimpleNodeConfigValidator.extend({
@@ -18,6 +19,7 @@ export const WireguardNodeConfigValidator = SimpleNodeConfigValidator.extend({
   preferIpv6: z.boolean().optional(),
   privateKey: z.string(),
   mtu: z.number().optional(),
-  dnsServer: z.array(z.string().ip()).optional(),
+  dnsServers: z.array(z.string().ip()).optional(),
   peers: z.array(WireguardPeerConfigValidator),
+  reservedBits: z.array(z.number()).optional(),
 });

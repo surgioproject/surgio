@@ -33,6 +33,11 @@ import {
   toBase64,
   toUrlSafeBase64,
   getSurgeWireguardNodes,
+  getLoonNodeNames,
+  getLoonNodes,
+  getSurgeNodeNames,
+  getSurfboardNodeNames,
+  getQuantumultXNodeNames,
 } from '../utils';
 import { resolveDomain } from '../utils/dns';
 import { getNetworkConcurrency } from '../utils/env-flag';
@@ -57,9 +62,9 @@ import {
   httpsFilter,
   trojanFilter,
   socks5Filter,
+  wireguardFilter,
 } from '../utils/filter';
 import { prependFlag, removeFlag } from '../utils/flag';
-import { getLoonNodes } from '../utils/loon';
 import { loadLocalSnippet } from './template';
 
 type ThenArg<T> = T extends PromiseLike<infer U> ? U : T;
@@ -137,6 +142,7 @@ export class Artifact extends EventEmitter {
 
     return {
       proxyTestUrl: config.proxyTestUrl,
+      internetTestUrl: config.internetTestUrl,
       downloadUrl: downloadUrl
         ? downloadUrl
         : getDownloadUrl(config.urlBase, artifactName, true, gatewayToken),
@@ -152,17 +158,21 @@ export class Artifact extends EventEmitter {
         getDownloadUrl(config.urlBase, name, true, gatewayToken),
       getUrl: (p: string) => getUrl(config.publicUrl, p, gatewayToken),
       getNodeNames,
-      getClashNodeNames,
       getClashNodes,
+      getClashNodeNames,
       getSurgeNodes,
+      getSurgeNodeNames,
       getSurgeWireguardNodes,
       getSurfboardNodes,
+      getSurfboardNodeNames,
       getShadowsocksNodes,
       getShadowsocksNodesJSON,
       getShadowsocksrNodes,
       getV2rayNNodes,
       getQuantumultXNodes,
+      getQuantumultXNodeNames,
       getLoonNodes,
+      getLoonNodeNames,
       usFilter,
       hkFilter,
       japanFilter,
@@ -180,6 +190,7 @@ export class Artifact extends EventEmitter {
       httpsFilter,
       trojanFilter,
       socks5Filter,
+      wireguardFilter,
       toUrlSafeBase64,
       toBase64,
       encodeURIComponent,
