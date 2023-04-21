@@ -50,7 +50,7 @@ test('SsdProvider.getSubscriptionUserInfo', async (t) => {
   });
   const userInfo = await provider.getSubscriptionUserInfo();
 
-  t.is(userInfo!.upload, 0);
-  t.is(userInfo!.download, 32212254720);
-  t.is(userInfo!.total, 429496729600);
+  t.is(userInfo?.upload, 0);
+  t.is(userInfo?.download, 32212254720);
+  t.is(userInfo?.total, 429496729600);
 });
