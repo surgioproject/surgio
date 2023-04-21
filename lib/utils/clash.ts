@@ -135,7 +135,7 @@ export const getClashNodes = function (
         case NodeTypeEnum.Snell:
           if (Number(nodeConfig.version) >= 4) {
             logger.warn(
-              `Clash尚不支持Snell v${nodeConfig.version}，节点 ${nodeConfig.nodeName} 会被省略。`,
+              `Clash 尚不支持 Snell v${nodeConfig.version}，节点 ${nodeConfig.nodeName} 会被省略。`,
             );
             return null;
           }
