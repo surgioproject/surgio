@@ -52,6 +52,13 @@ export const getClashNodes = function (
             return null;
           }
 
+          if (nodeConfig.shadowTls && nodeConfig.obfs) {
+            logger.warn(
+              `Clash 不支持同时开启 shadow-tls 和 obfs，节点 ${nodeConfig.nodeName} 将被忽略。`,
+            );
+            return null;
+          }
+
           return {
             type: 'ss',
             cipher: nodeConfig.method,

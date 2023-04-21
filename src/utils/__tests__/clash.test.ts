@@ -229,6 +229,81 @@ test('getClashNodes', async (t) => {
   t.deepEqual(
     clash.getClashNodes([
       {
+        nodeName: 'Test Node 1',
+        type: NodeTypeEnum.Shadowsocks,
+        hostname: 'example.com',
+        port: '443',
+        method: 'chacha20-ietf-poly1305',
+        password: 'password',
+        udpRelay: true,
+        shadowTls: {
+          password: 'password',
+          sni: 'example.com',
+          version: '3',
+        },
+      },
+      {
+        nodeName: 'Test Node 1',
+        type: NodeTypeEnum.Shadowsocks,
+        hostname: 'example.com',
+        port: '443',
+        method: 'chacha20-ietf-poly1305',
+        password: 'password',
+        udpRelay: true,
+        shadowTls: {
+          password: 'password',
+          sni: 'example.com',
+          version: '3',
+        },
+        clashConfig: {
+          enableTuic: false,
+          enableShadowTls: true,
+        },
+      },
+      {
+        nodeName: 'Test Node 1',
+        type: NodeTypeEnum.Shadowsocks,
+        hostname: 'example.com',
+        port: '443',
+        method: 'chacha20-ietf-poly1305',
+        password: 'password',
+        udpRelay: true,
+        obfs: 'tls',
+        obfsHost: 'example.com',
+        shadowTls: {
+          password: 'password',
+          sni: 'example.com',
+          version: '3',
+        },
+        clashConfig: {
+          enableTuic: false,
+          enableShadowTls: true,
+        },
+      },
+    ]),
+    [
+      {
+        cipher: 'chacha20-ietf-poly1305',
+        'client-fingerprint': 'chrome',
+        name: 'Test Node 1',
+        password: 'password',
+        plugin: 'shadow-tls',
+        'plugin-opts': {
+          host: 'example.com',
+          password: 'password',
+          version: '3',
+        },
+        port: '443',
+        server: 'example.com',
+        type: 'ss',
+        udp: true,
+      },
+    ],
+  );
+
+  t.deepEqual(
+    clash.getClashNodes([
+      {
         alterId: '64',
         host: '',
         hostname: '1.1.1.1',
@@ -544,6 +619,7 @@ test('getClashNodes', async (t) => {
         type: NodeTypeEnum.Tuic,
         clashConfig: {
           enableTuic: true,
+          enableShadowTls: false,
         },
         hostname: '1.1.1.1',
         port: 443,
@@ -554,6 +630,7 @@ test('getClashNodes', async (t) => {
         type: NodeTypeEnum.Tuic,
         clashConfig: {
           enableTuic: true,
+          enableShadowTls: false,
         },
         hostname: '1.1.1.1',
         port: 443,

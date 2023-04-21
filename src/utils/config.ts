@@ -5,7 +5,6 @@ import { URL } from 'url';
 
 import redis from '../redis';
 import { CommandConfig, CommandConfigBeforeNormalize } from '../types';
-import { PROXY_TEST_INTERVAL, PROXY_TEST_URL } from '../constant';
 import { SurgioConfigValidator } from '../validators';
 import { addFlagMap } from './flag';
 import { ensureConfigFolder } from './index';
