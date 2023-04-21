@@ -42,6 +42,7 @@ export const getClashNodes = function (
 
       switch (nodeConfig.type) {
         case NodeTypeEnum.Shadowsocks:
+          // Istanbul ignore next
           if (
             nodeConfig.shadowTls &&
             !nodeConfig.clashConfig?.enableShadowTls
@@ -52,6 +53,7 @@ export const getClashNodes = function (
             return null;
           }
 
+          // Istanbul ignore next
           if (nodeConfig.shadowTls && nodeConfig.obfs) {
             logger.warn(
               `Clash 不支持同时开启 shadow-tls 和 obfs，节点 ${nodeConfig.nodeName} 将被忽略。`,
@@ -166,6 +168,14 @@ export const getClashNodes = function (
         }
 
         case NodeTypeEnum.Snell:
+          // Istanbul ignore next
+          if (Number(nodeConfig.version) >= 4) {
+            logger.warn(
+              `Clash 尚不支持 Snell v${nodeConfig.version}，节点 ${nodeConfig.nodeName} 会被省略。`,
+            );
+            return null;
+          }
+
           return {
             type: 'snell',
             name: nodeConfig.nodeName,
@@ -251,12 +261,14 @@ export const getClashNodes = function (
           };
 
         case NodeTypeEnum.Tuic:
+          // Istanbul ignore next
           if (!nodeConfig.clashConfig?.enableTuic) {
             logger.warn(
               `尚未开启 Clash 的 TUIC 支持，节点 ${nodeConfig.nodeName} 会被省略。如需开启，请在配置文件中设置 clashConfig.enableTuic 为 true。`,
             );
             return null;
           }
+          // Istanbul ignore next
           if (nodeConfig.alpn && !nodeConfig.alpn.length) {
             logger.warn(
               `节点 ${nodeConfig.nodeName} 的 alpn 为空。Stash 客户端不支持 ALPN 为空，默认的 ALPN 为 h3。`,

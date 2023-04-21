@@ -13,7 +13,8 @@ export const SimpleNodeConfigValidator = z.object({
   shadowTls: z
     .object({
       version: z
-        .union([z.literal('1'), z.literal('2'), z.literal('3')])
+        .union([z.string(), z.number()])
+        .refine((v) => Number(v))
         .optional(),
       password: z.string(),
       sni: z.string(),
