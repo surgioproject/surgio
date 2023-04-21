@@ -2,7 +2,7 @@ import test from 'ava';
 import sinon from 'sinon';
 
 import { SupportProviderEnum } from '../../types';
-import * as config from '../../utils/config';
+import * as config from '../../config';
 import V2rayNSubscribeProvider, {
   getV2rayNSubscription,
 } from '../V2rayNSubscribeProvider';

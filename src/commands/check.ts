@@ -6,7 +6,7 @@ import inquirer from 'inquirer';
 
 import BaseCommand from '../base-command';
 import redis from '../redis';
-import { getConfig } from '../utils/config';
+import { getConfig } from '../config';
 import { getProvider } from '../provider';
 
 class CheckCommand extends BaseCommand<typeof CheckCommand> {

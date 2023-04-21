@@ -3,11 +3,11 @@ import _ from 'lodash';
 import path from 'path';
 import { URL } from 'url';
 
-import redis from '../redis';
-import { CommandConfig, CommandConfigBeforeNormalize } from '../types';
-import { SurgioConfigValidator } from '../validators';
-import { addFlagMap } from './flag';
-import { ensureConfigFolder } from './index';
+import redis from './redis';
+import { CommandConfig, CommandConfigBeforeNormalize } from './types';
+import { SurgioConfigValidator } from './validators';
+import { addFlagMap } from './utils/flag';
+import { ensureConfigFolder } from './utils';
 
 let finalConfig: CommandConfig | null = null;
 

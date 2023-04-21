@@ -1,6 +1,6 @@
 import test from 'ava';
 import { join } from 'path';
-import { loadConfig } from '../../utils/config';
+import { loadConfig } from '../../config';
 import { Artifact } from '../artifact';
 import { getEngine } from '../template';
 

@@ -2,7 +2,7 @@ import test from 'ava';
 import sinon from 'sinon';
 
 import { NodeTypeEnum } from '../../types';
-import * as config from '../../utils/config';
+import * as config from '../../config';
 import { getShadowsocksrSubscription } from '../ShadowsocksrSubscribeProvider';
 
 const sandbox = sinon.createSandbox();

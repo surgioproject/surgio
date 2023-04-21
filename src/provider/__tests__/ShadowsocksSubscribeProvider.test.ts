@@ -1,6 +1,6 @@
 import test from 'ava';
 import sinon from 'sinon';
-import * as config from '../../utils/config';
+import * as config from '../../config';
 
 import { getShadowsocksSubscription } from '../ShadowsocksSubscribeProvider';
 import { NodeTypeEnum } from '../../types';

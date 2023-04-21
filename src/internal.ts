@@ -1,4 +1,4 @@
-import { loadConfig, setConfig, getConfig } from './utils/config';
+import { loadConfig, setConfig, getConfig } from './config';
 import { loadRemoteSnippetList } from './utils/remote-snippet';
 
 export * as redis from './redis';

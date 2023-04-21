@@ -1,7 +1,7 @@
 import test from 'ava';
 import sinon from 'sinon';
 
-import * as config from '../config';
+import * as config from '../../config';
 import * as utils from '../remote-snippet';
 
 const sandbox = sinon.createSandbox();

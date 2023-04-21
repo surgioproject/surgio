@@ -12,7 +12,7 @@ import {
   SubsciptionCacheItem,
   SubscriptionCache,
 } from '../utils/cache';
-import { getConfig } from '../utils/config';
+import { getConfig } from '../config';
 import { getProviderCacheMaxage } from '../utils/env-flag';
 import httpClient, { getUserAgent } from '../utils/http-client';
 import { parseSubscriptionUserInfo } from '../utils/subscription';

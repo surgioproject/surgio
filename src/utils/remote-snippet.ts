@@ -7,9 +7,9 @@ import espree, { ExpressionStatementNode } from 'espree';
 import { CACHE_KEYS } from '../constant';
 import { RemoteSnippet, RemoteSnippetConfig } from '../types';
 import { ConfigCache } from './cache';
-import { getConfig } from './config';
 import { getNetworkConcurrency, getRemoteSnippetCacheMaxage } from './env-flag';
 import httpClient from './http-client';
+import { getConfig } from '../config';
 import { toMD5 } from './index';
 import { createTmpFactory } from './tmp-helper';
 

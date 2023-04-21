@@ -6,7 +6,7 @@ import fs from 'fs-extra';
 import dotenv from 'dotenv';
 
 import { CommandConfig } from './types';
-import { loadConfig } from './utils/config';
+import { loadConfig } from './config';
 import { errorHandler } from './utils/error-helper';
 
 export type Flags<T extends typeof Command> = Interfaces.InferredFlags<

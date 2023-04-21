@@ -3,7 +3,7 @@ import { ZodError } from 'zod';
 import sinon from 'sinon';
 
 import { NodeTypeEnum, SupportProviderEnum } from '../../types';
-import * as config from '../../utils/config';
+import * as config from '../../config';
 import CustomProvider from '../CustomProvider';
 
 const sandbox = sinon.createSandbox();

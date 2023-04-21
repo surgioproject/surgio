@@ -7,7 +7,7 @@ import path from 'path';
 
 import BaseCommand from '../base-command';
 import redis from '../redis';
-import { setConfig } from '../utils/config';
+import { setConfig } from '../config';
 
 class UploadCommand extends BaseCommand<typeof UploadCommand> {
   static description = '上传规则到阿里云 OSS';

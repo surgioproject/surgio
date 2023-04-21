@@ -9,7 +9,7 @@ import ClashProvider, {
   parseClashConfig,
 } from '../ClashProvider';
 import Provider from '../Provider';
-import * as config from '../../utils/config';
+import * as config from '../../config';
 
 const sandbox = sinon.createSandbox();
 

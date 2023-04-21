@@ -7,7 +7,7 @@ import { Artifact } from '../generator/artifact';
 import { getEngine } from '../generator/template';
 import redis from '../redis';
 import { ArtifactConfig } from '../types';
-import { setConfig } from '../utils/config';
+import { setConfig } from '../config';
 import { checkAndFix } from '../utils/linter';
 import { loadRemoteSnippetList } from '../utils/remote-snippet';
 
