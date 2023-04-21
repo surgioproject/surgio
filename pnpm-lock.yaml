@@ -289,8 +289,8 @@ devDependencies:
     specifier: 2.0.0-beta.61
     version: 2.0.0-beta.61(@types/node@16.18.24)(@vuepress/client@2.0.0-beta.61)(sass@1.62.0)(ts-node@10.9.1)(vue@3.2.47)
   vuepress-plugin-sitemap2:
-    specifier: 2.0.0-beta.197
-    version: 2.0.0-beta.197(@vuepress/client@2.0.0-beta.61)(vuepress@2.0.0-beta.61)
+    specifier: 2.0.0-beta.205
+    version: 2.0.0-beta.205(vuepress@2.0.0-beta.61)
 
 packages:
 
@@ -2200,6 +2200,18 @@ packages:
       - supports-color
     dev: true
 
+  /@vueuse/core@10.0.2(vue@3.2.47):
+    resolution: {integrity: sha512-/UGc2cXbxbeIFLDSJyHUjI9QZ4CJJkhiJe9TbKNPSofcWmYhhUgJ+7iw9njXTKu/Xc3Z6UeXVR9fosW1+cyrnQ==}
+    dependencies:
+      '@types/web-bluetooth': 0.0.16
+      '@vueuse/metadata': 10.0.2
+      '@vueuse/shared': 10.0.2(vue@3.2.47)
+      vue-demi: 0.14.0(vue@3.2.47)
+    transitivePeerDependencies:
+      - '@vue/composition-api'
+      - vue
+    dev: true
+
   /@vueuse/core@9.13.0(vue@3.2.47):
     resolution: {integrity: sha512-pujnclbeHWxxPRqXWmdkKV5OX4Wk4YeK7wusHqRwU0Q7EFusHoqNA/aPhB6KCh9hEqJkLAJo7bb0Lh9b+OIVzw==}
     dependencies:
@@ -2212,8 +2224,21 @@ packages:
       - vue
     dev: true
 
+  /@vueuse/metadata@10.0.2:
+    resolution: {integrity: sha512-APSjlABrV+Q74c+FR0kFETvcN9W2pAaT3XF3WwqWUuk4srmVxv7DY4WshZxK2KYk1+MVY0Fus6J1Hk/JXVm6Aw==}
+    dev: true
+
   /@vueuse/metadata@9.13.0:
     resolution: {integrity: sha512-gdU7TKNAUVlXXLbaF+ZCfte8BjRJQWPCa2J55+7/h+yDtzw3vOoGQDRXzI6pyKyo6bXFT5/QoPE4hAknExjRLQ==}
+    dev: true
+
+  /@vueuse/shared@10.0.2(vue@3.2.47):
+    resolution: {integrity: sha512-7W2l6qZaFvla3zAeEVo8hNHkNRKCezJa3JjZAKv3K4KsevXobHhVNr+RHaOVNK/6ETpFmtqiK+0pMIADbHjjag==}
+    dependencies:
+      vue-demi: 0.14.0(vue@3.2.47)
+    transitivePeerDependencies:
+      - '@vue/composition-api'
+      - vue
     dev: true
 
   /@vueuse/shared@9.13.0(vue@3.2.47):
@@ -9243,8 +9268,8 @@ packages:
       '@vue/shared': 3.2.47
     dev: true
 
-  /vuepress-plugin-sitemap2@2.0.0-beta.197(@vuepress/client@2.0.0-beta.61)(vuepress@2.0.0-beta.61):
-    resolution: {integrity: sha512-yhLTRG67Sm0esVJHp+niS6CGUFBMoucxD7ul4D29fI0GIkK6634z5UDLD3TiJXbsRH32pbvURNGAHeZrJ1kYnA==}
+  /vuepress-plugin-sitemap2@2.0.0-beta.205(vuepress@2.0.0-beta.61):
+    resolution: {integrity: sha512-suYQEYPnH0Ytqytq1oK0YTeh4ZC24FwPCGgMefg/jjXLa5fTSWVvOHzGWqfNCmnYzEiU52Txgju/RAbIFHmeHA==}
     engines: {node: ^14.18.0 || >=16.0.0, npm: '>=8', pnpm: '>=7'}
     peerDependencies:
       vuepress: 2.0.0-beta.61
@@ -9252,8 +9277,6 @@ packages:
       vuepress-webpack: 2.0.0-beta.61
     peerDependenciesMeta:
       vuepress:
-        optional: true
-      vuepress-shared:
         optional: true
       vuepress-vite:
         optional: true
@@ -9264,24 +9287,20 @@ packages:
       '@vuepress/utils': 2.0.0-beta.61
       sitemap: 7.1.1
       vuepress: 2.0.0-beta.61(@types/node@16.18.24)(@vuepress/client@2.0.0-beta.61)(sass@1.62.0)(ts-node@10.9.1)(vue@3.2.47)
-      vuepress-shared: 2.0.0-beta.197(@vuepress/client@2.0.0-beta.61)(vuepress@2.0.0-beta.61)
+      vuepress-shared: 2.0.0-beta.205(vuepress@2.0.0-beta.61)
     transitivePeerDependencies:
       - '@vue/composition-api'
-      - '@vuepress/client'
       - supports-color
     dev: true
 
-  /vuepress-shared@2.0.0-beta.197(@vuepress/client@2.0.0-beta.61)(vuepress@2.0.0-beta.61):
-    resolution: {integrity: sha512-eTs6AT9w0djzsxNPPXiWK6lHcsS5AVnwRdu90/YthGkpPY2pGarN9KrtGX7+qVr+G4HS8v4Qu43+X+iDInNBgg==}
+  /vuepress-shared@2.0.0-beta.205(vuepress@2.0.0-beta.61):
+    resolution: {integrity: sha512-DcfAsWZg9NstiYmagMeLEqqRMYAgSCA3GJtWRN3vVCZDUWRG7j64xKSsO3HlbGOtNST74O3HHEqoGu2pyRGQ1Q==}
     engines: {node: ^14.18.0 || >=16.0.0, npm: '>=8', pnpm: '>=7'}
     peerDependencies:
-      '@vuepress/client': 2.0.0-beta.61
       vuepress: 2.0.0-beta.61
       vuepress-vite: 2.0.0-beta.61
       vuepress-webpack: 2.0.0-beta.61
     peerDependenciesMeta:
-      '@vuepress/client':
-        optional: true
       vuepress:
         optional: true
       vuepress-vite:
@@ -9292,7 +9311,7 @@ packages:
       '@vuepress/client': 2.0.0-beta.61
       '@vuepress/shared': 2.0.0-beta.61
       '@vuepress/utils': 2.0.0-beta.61
-      '@vueuse/core': 9.13.0(vue@3.2.47)
+      '@vueuse/core': 10.0.2(vue@3.2.47)
       cheerio: 1.0.0-rc.12
       dayjs: 1.11.7
       execa: 7.1.1
