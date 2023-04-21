@@ -1,3 +1,13 @@
+## [2.25.3](https://github.com/geekdada/surgio/compare/v2.25.2...v2.25.3) (2023-04-21)
+
+
+### Bug Fixes
+
+* clash doesn't support snell v4 yet. ([25a5ea6](https://github.com/geekdada/surgio/commit/25a5ea69d4ece95ed7a4103aacc9423227cf9568))
+* Incorrect copy ([8fff83d](https://github.com/geekdada/surgio/commit/8fff83d5519988e6cb01b21274d27181c4ca0141))
+
+
+
 ## [2.25.2](https://github.com/geekdada/surgio/compare/v2.25.1...v2.25.2) (2023-04-20)
 
 
