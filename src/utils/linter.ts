@@ -1,7 +1,7 @@
 // istanbul ignore file
 
-import { ESLint } from 'eslint';
-import _ from 'lodash';
+import { ESLint } from 'eslint'
+import _ from 'lodash'
 
 export const createCli = (cliConfig?: ESLint.Options): ESLint => {
   const linterConfig = {
@@ -14,38 +14,38 @@ export const createCli = (cliConfig?: ESLint.Options): ESLint => {
         require.resolve,
       ),
     },
-  };
+  }
 
   return new ESLint({
     ...linterConfig,
     ...cliConfig,
-  });
-};
+  })
+}
 
 export const checkAndFix = async (cwd: string): Promise<boolean> => {
-  const cli = createCli({ fix: true, cwd });
-  const results = await cli.lintFiles(['.']);
-  const errorCount = _.sumBy(results, (curr) => curr.errorCount);
-  const fixableErrorCount = _.sumBy(results, (curr) => curr.fixableErrorCount);
+  const cli = createCli({ fix: true, cwd })
+  const results = await cli.lintFiles(['.'])
+  const errorCount = _.sumBy(results, (curr) => curr.errorCount)
+  const fixableErrorCount = _.sumBy(results, (curr) => curr.fixableErrorCount)
 
-  await ESLint.outputFixes(results);
+  await ESLint.outputFixes(results)
 
-  const formatter = await cli.loadFormatter('stylish');
-  const resultText = formatter.format(results);
+  const formatter = await cli.loadFormatter('stylish')
+  const resultText = formatter.format(results)
 
-  console.log(resultText);
+  console.log(resultText)
 
-  return errorCount - fixableErrorCount === 0;
-};
+  return errorCount - fixableErrorCount === 0
+}
 
 export const check = async (cwd: string): Promise<boolean> => {
-  const cli = createCli({ cwd });
-  const results = await cli.lintFiles(['.']);
-  const errorCount = _.sumBy(results, (curr) => curr.errorCount);
-  const formatter = await cli.loadFormatter('stylish');
-  const resultText = formatter.format(results);
+  const cli = createCli({ cwd })
+  const results = await cli.lintFiles(['.'])
+  const errorCount = _.sumBy(results, (curr) => curr.errorCount)
+  const formatter = await cli.loadFormatter('stylish')
+  const resultText = formatter.format(results)
 
-  console.log(resultText);
+  console.log(resultText)
 
-  return errorCount === 0;
-};
+  return errorCount === 0
+}

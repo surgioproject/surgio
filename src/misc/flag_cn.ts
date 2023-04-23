@@ -12,7 +12,7 @@ export const TAIWAN: ReadonlyArray<string> = [
   '彰化',
   'CHT',
   'HINET',
-];
+]
 
 export default {
   '🏳️‍🌈': ['流量', '时间', '过期', 'BANDWIDTH', 'EXPIRE'],
@@ -140,4 +140,4 @@ export default {
     '镇江',
     'BACK',
   ],
-};
+}

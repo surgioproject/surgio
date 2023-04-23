@@ -1,4 +1,4 @@
-'use strict';
+'use strict'
 
 module.exports = {
   type: 'custom',
@@ -41,4 +41,4 @@ module.exports = {
       tfo: true,
     },
   ],
-};
+}

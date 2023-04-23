@@ -1,6 +1,6 @@
-import { z } from 'zod';
+import { z } from 'zod'
 
-import type { Provider } from './provider';
+import type { Provider } from './provider'
 import {
   WireguardNodeConfigValidator,
   ProviderValidator,
@@ -19,7 +19,7 @@ import {
   RemoteSnippetValidator,
   NodeFilterTypeValidator,
   SortedNodeFilterTypeValidator,
-} from './validators';
+} from './validators'
 
 export enum NodeTypeEnum {
   HTTPS = 'https',
@@ -46,147 +46,143 @@ export enum SupportProviderEnum {
   Trojan = 'trojan',
 }
 
-export type CommandConfigBeforeNormalize = z.infer<
-  typeof SurgioConfigValidator
->;
+export type CommandConfigBeforeNormalize = z.infer<typeof SurgioConfigValidator>
 
 export type CommandConfig = CommandConfigBeforeNormalize & {
-  publicUrl: string;
-  output: string;
-  urlBase: string;
-  providerDir: string;
-  templateDir: string;
-  configDir: string;
-};
+  publicUrl: string
+  output: string
+  urlBase: string
+  providerDir: string
+  templateDir: string
+  configDir: string
+}
 
-export type RemoteSnippetConfig = z.infer<typeof RemoteSnippetValidator>;
+export type RemoteSnippetConfig = z.infer<typeof RemoteSnippetValidator>
 
 export interface RemoteSnippet extends RemoteSnippetConfig {
-  readonly main: (...args: string[]) => string;
-  readonly text: string;
+  readonly main: (...args: string[]) => string
+  readonly text: string
 }
 
 export type ArtifactConfig = z.infer<typeof ArtifactValidator> & {
-  readonly template: string | undefined;
-};
+  readonly template: string | undefined
+}
 
-export type ProviderConfig = z.infer<typeof ProviderValidator>;
+export type ProviderConfig = z.infer<typeof ProviderValidator>
 
 export interface BlackSSLProviderConfig extends ProviderConfig {
-  readonly type: SupportProviderEnum.BlackSSL;
-  readonly username: string;
-  readonly password: string;
+  readonly type: SupportProviderEnum.BlackSSL
+  readonly username: string
+  readonly password: string
 }
 
 export interface ShadowsocksJsonSubscribeProviderConfig extends ProviderConfig {
-  readonly type: SupportProviderEnum.ShadowsocksJsonSubscribe;
-  readonly url: string;
-  readonly udpRelay?: boolean;
+  readonly type: SupportProviderEnum.ShadowsocksJsonSubscribe
+  readonly url: string
+  readonly udpRelay?: boolean
 }
 
 export interface ShadowsocksSubscribeProviderConfig extends ProviderConfig {
-  readonly type: SupportProviderEnum.ShadowsocksSubscribe;
-  readonly url: string;
-  readonly udpRelay?: boolean;
+  readonly type: SupportProviderEnum.ShadowsocksSubscribe
+  readonly url: string
+  readonly udpRelay?: boolean
 }
 
 export interface ShadowsocksrSubscribeProviderConfig extends ProviderConfig {
-  readonly type: SupportProviderEnum.ShadowsocksrSubscribe;
-  readonly url: string;
-  readonly udpRelay?: boolean;
+  readonly type: SupportProviderEnum.ShadowsocksrSubscribe
+  readonly url: string
+  readonly udpRelay?: boolean
 }
 
 export interface V2rayNSubscribeProviderConfig extends ProviderConfig {
-  readonly type: SupportProviderEnum.V2rayNSubscribe;
-  readonly url: string;
-  readonly compatibleMode?: boolean;
-  readonly skipCertVerify?: boolean;
-  readonly udpRelay?: boolean;
-  readonly tls13?: boolean;
+  readonly type: SupportProviderEnum.V2rayNSubscribe
+  readonly url: string
+  readonly compatibleMode?: boolean
+  readonly skipCertVerify?: boolean
+  readonly udpRelay?: boolean
+  readonly tls13?: boolean
 }
 
 export interface ClashProviderConfig extends ProviderConfig {
-  readonly type: SupportProviderEnum.Clash;
-  readonly url: string;
-  readonly udpRelay?: boolean;
-  readonly tls13?: boolean;
+  readonly type: SupportProviderEnum.Clash
+  readonly url: string
+  readonly udpRelay?: boolean
+  readonly tls13?: boolean
 }
 
 export interface SsdProviderConfig extends ProviderConfig {
-  readonly type: SupportProviderEnum.Ssd;
-  readonly url: string;
-  readonly udpRelay?: boolean;
+  readonly type: SupportProviderEnum.Ssd
+  readonly url: string
+  readonly udpRelay?: boolean
 }
 
 export interface CustomProviderConfig extends ProviderConfig {
-  readonly type: SupportProviderEnum.Custom;
-  readonly nodeList: ReadonlyArray<PossibleNodeConfigType>;
+  readonly type: SupportProviderEnum.Custom
+  readonly nodeList: ReadonlyArray<PossibleNodeConfigType>
 }
 
 export interface TrojanProviderConfig extends ProviderConfig {
-  readonly type: SupportProviderEnum.Trojan;
-  readonly url: string;
-  readonly udpRelay?: boolean;
-  readonly tls13?: boolean;
+  readonly type: SupportProviderEnum.Trojan
+  readonly url: string
+  readonly udpRelay?: boolean
+  readonly tls13?: boolean
 }
 
 export type HttpNodeConfig = z.infer<typeof HttpNodeConfigValidator> &
-  SurgioInternals;
+  SurgioInternals
 
 export type HttpsNodeConfig = z.infer<typeof HttpsNodeConfigValidator> &
-  SurgioInternals;
+  SurgioInternals
 
 export type TrojanNodeConfig = z.infer<typeof TrojanNodeConfigValidator> &
-  SurgioInternals;
+  SurgioInternals
 
 export type ShadowsocksNodeConfig = z.infer<
   typeof ShadowsocksNodeConfigValidator
 > &
-  SurgioInternals;
+  SurgioInternals
 
 export type ShadowsocksrNodeConfig = z.infer<
   typeof ShadowsocksrNodeConfigValidator
 > &
-  SurgioInternals;
+  SurgioInternals
 
 export type Socks5NodeConfig = z.infer<typeof Socks5NodeConfigValidator> &
-  SurgioInternals;
+  SurgioInternals
 
 export type SnellNodeConfig = z.infer<typeof SnellNodeConfigValidator> &
-  SurgioInternals;
+  SurgioInternals
 
 export type VmessNodeConfig = z.infer<typeof VmessNodeConfigValidator> &
-  SurgioInternals;
+  SurgioInternals
 
 export type TuicNodeConfig = z.infer<typeof TuicNodeConfigValidator> &
-  SurgioInternals;
+  SurgioInternals
 
 export type WireguardNodeConfig = z.infer<typeof WireguardNodeConfigValidator> &
-  SurgioInternals;
+  SurgioInternals
 
 export interface SurgioInternals {
-  binPath?: string;
-  localPort?: number;
-  surgeConfig?: CommandConfig['surgeConfig'];
-  clashConfig?: CommandConfig['clashConfig'];
-  quantumultXConfig?: CommandConfig['quantumultXConfig'];
-  surfboardConfig?: CommandConfig['surfboardConfig'];
-  hostnameIp?: ReadonlyArray<string>;
-  provider?: Provider;
+  binPath?: string
+  localPort?: number
+  surgeConfig?: CommandConfig['surgeConfig']
+  clashConfig?: CommandConfig['clashConfig']
+  quantumultXConfig?: CommandConfig['quantumultXConfig']
+  surfboardConfig?: CommandConfig['surfboardConfig']
+  hostnameIp?: ReadonlyArray<string>
+  provider?: Provider
 }
 
 export interface SubscriptionUserinfo {
-  readonly upload: number;
-  readonly download: number;
-  readonly total: number;
-  readonly expire: number;
+  readonly upload: number
+  readonly download: number
+  readonly total: number
+  readonly expire: number
 }
 
-export type NodeFilterType = z.infer<typeof NodeFilterTypeValidator>;
+export type NodeFilterType = z.infer<typeof NodeFilterTypeValidator>
 
-export type SortedNodeFilterType = z.infer<
-  typeof SortedNodeFilterTypeValidator
->;
+export type SortedNodeFilterType = z.infer<typeof SortedNodeFilterTypeValidator>
 
 export type PossibleNodeConfigType =
   | HttpsNodeConfig
@@ -198,7 +194,7 @@ export type PossibleNodeConfigType =
   | TrojanNodeConfig
   | Socks5NodeConfig
   | TuicNodeConfig
-  | WireguardNodeConfig;
+  | WireguardNodeConfig
 
 export type PossibleProviderConfigType =
   | BlackSSLProviderConfig
@@ -209,8 +205,8 @@ export type PossibleProviderConfigType =
   | ShadowsocksSubscribeProviderConfig
   | SsdProviderConfig
   | TrojanProviderConfig
-  | V2rayNSubscribeProviderConfig;
+  | V2rayNSubscribeProviderConfig
 
 export type ProviderConfigFactory = (
   options: Record<string, string>,
-) => Promise<PossibleProviderConfigType> | PossibleProviderConfigType;
+) => Promise<PossibleProviderConfigType> | PossibleProviderConfigType

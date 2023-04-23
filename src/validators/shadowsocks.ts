@@ -1,7 +1,7 @@
-import { z } from 'zod';
+import { z } from 'zod'
 
-import { NodeTypeEnum } from '../types';
-import { PortValidator, SimpleNodeConfigValidator } from './common';
+import { NodeTypeEnum } from '../types'
+import { PortValidator, SimpleNodeConfigValidator } from './common'
 
 export const ShadowsocksNodeConfigValidator = SimpleNodeConfigValidator.extend({
   type: z.literal(NodeTypeEnum.Shadowsocks),
@@ -24,4 +24,4 @@ export const ShadowsocksNodeConfigValidator = SimpleNodeConfigValidator.extend({
   wsHeaders: z.record(z.string()).optional(),
   tls13: z.oboolean(),
   mux: z.oboolean(),
-});
+})

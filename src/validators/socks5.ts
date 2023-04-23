@@ -1,7 +1,7 @@
-import { z } from 'zod';
+import { z } from 'zod'
 
-import { NodeTypeEnum } from '../types';
-import { PortValidator, SimpleNodeConfigValidator } from './common';
+import { NodeTypeEnum } from '../types'
+import { PortValidator, SimpleNodeConfigValidator } from './common'
 
 export const Socks5NodeConfigValidator = SimpleNodeConfigValidator.extend({
   type: z.literal(NodeTypeEnum.Socks5),
@@ -14,4 +14,4 @@ export const Socks5NodeConfigValidator = SimpleNodeConfigValidator.extend({
   skipCertVerify: z.oboolean(),
   sni: z.ostring(),
   clientCert: z.ostring(),
-});
+})

@@ -1,23 +1,23 @@
-import { z } from 'zod';
+import { z } from 'zod'
 
-import { ArtifactValidator } from './artifact';
+import { ArtifactValidator } from './artifact'
 import {
   NodeFilterTypeValidator,
   SortedNodeFilterTypeValidator,
-} from './filter';
+} from './filter'
 
 const isRegExp = (val: unknown): val is RegExp => {
-  return val instanceof RegExp;
-};
+  return val instanceof RegExp
+}
 const RegexValidatior = z.custom<RegExp>((val) => {
-  return isRegExp(val);
-});
+  return isRegExp(val)
+})
 
 export const RemoteSnippetValidator = z.object({
   name: z.string(),
   url: z.string().url(),
   surgioSnippet: z.oboolean(),
-});
+})
 
 export const SurgioConfigValidator = z.object({
   artifacts: z.array(ArtifactValidator),
@@ -96,4 +96,4 @@ export const SurgioConfigValidator = z.object({
         .optional(),
     })
     .optional(),
-});
+})

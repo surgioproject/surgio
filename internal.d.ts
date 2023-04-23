@@ -1,1 +1,1 @@
-export * from './build/internal';
+export * from './build/internal'

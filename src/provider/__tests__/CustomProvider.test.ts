@@ -1,26 +1,26 @@
-import test from 'ava';
-import { ZodError } from 'zod';
-import sinon from 'sinon';
+import test from 'ava'
+import { ZodError } from 'zod'
+import sinon from 'sinon'
 
-import { NodeTypeEnum, SupportProviderEnum } from '../../types';
-import * as config from '../../config';
-import CustomProvider from '../CustomProvider';
+import { NodeTypeEnum, SupportProviderEnum } from '../../types'
+import * as config from '../../config'
+import CustomProvider from '../CustomProvider'
 
-const sandbox = sinon.createSandbox();
+const sandbox = sinon.createSandbox()
 
 test.beforeEach(() => {
-  sandbox.restore();
-  sandbox.stub(config, 'getConfig').returns({} as any);
-});
+  sandbox.restore()
+  sandbox.stub(config, 'getConfig').returns({} as any)
+})
 
 test('CustomProvider should work', async (t) => {
   const provider = new CustomProvider('test', {
     type: SupportProviderEnum.Custom,
     nodeList: [],
-  });
+  })
 
-  t.deepEqual(await provider.getNodeList(), []);
-});
+  t.deepEqual(await provider.getNodeList(), [])
+})
 
 test('CustomProvider should throw error if udpRelay is a string', async (t) => {
   t.throws(
@@ -42,8 +42,8 @@ test('CustomProvider should throw error if udpRelay is a string', async (t) => {
     {
       instanceOf: ZodError,
     },
-  );
-});
+  )
+})
 
 test('CustomProvider should format header keys to lowercase', async (t) => {
   const provider = new CustomProvider('test', {
@@ -61,7 +61,7 @@ test('CustomProvider should format header keys to lowercase', async (t) => {
         },
       },
     ],
-  });
+  })
 
   t.deepEqual(await provider.getNodeList(), [
     {
@@ -75,8 +75,8 @@ test('CustomProvider should format header keys to lowercase', async (t) => {
         host: 'Example.com',
       },
     },
-  ]);
-});
+  ])
+})
 
 test('CustomProvider underlying proxy', async (t) => {
   t.deepEqual(
@@ -107,7 +107,7 @@ test('CustomProvider underlying proxy', async (t) => {
         underlyingProxy: 'underlying-proxy',
       },
     ],
-  );
+  )
 
   t.deepEqual(
     await new CustomProvider('test', {
@@ -138,7 +138,7 @@ test('CustomProvider underlying proxy', async (t) => {
         underlyingProxy: 'underlying-proxy-2',
       },
     ],
-  );
+  )
 
   t.deepEqual(
     await new CustomProvider('test', {
@@ -169,5 +169,5 @@ test('CustomProvider underlying proxy', async (t) => {
         underlyingProxy: 'underlying-proxy-2',
       },
     ],
-  );
-});
+  )
+})

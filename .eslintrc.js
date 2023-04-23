@@ -1,4 +1,4 @@
-const { join } = require('path');
+const { join } = require('path')
 
 module.exports = {
   env: {
@@ -21,4 +21,4 @@ module.exports = {
     '@typescript-eslint/no-var-requires': 0,
     '@typescript-eslint/no-explicit-any': 0,
   },
-};
+}

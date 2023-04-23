@@ -1,6 +1,6 @@
-'use strict';
+'use strict'
 
-const { utils } = require('../../../');
+const { utils } = require('../../../')
 
 module.exports = {
   artifacts: [
@@ -30,4 +30,4 @@ module.exports = {
     ]),
     providerFilter: utils.useProviders(['custom']),
   },
-};
+}

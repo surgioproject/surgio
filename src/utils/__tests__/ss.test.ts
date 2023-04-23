@@ -1,7 +1,7 @@
-import test from 'ava';
+import test from 'ava'
 
-import { NodeTypeEnum } from '../../types';
-import { parseSSUri } from '../ss';
+import { NodeTypeEnum } from '../../types'
+import { parseSSUri } from '../ss'
 
 test('parseSSUri', (t) => {
   t.deepEqual(
@@ -18,5 +18,5 @@ test('parseSSUri', (t) => {
       obfs: 'http',
       obfsHost: 'example.com',
     },
-  );
-});
+  )
+})

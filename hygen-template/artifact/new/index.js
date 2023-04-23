@@ -1,14 +1,14 @@
-'use strict';
+'use strict'
 
-const { basename } = require('path');
-const { promises: fsp } = require('fs');
-const _ = require('lodash');
+const { basename } = require('path')
+const { promises: fsp } = require('fs')
+const _ = require('lodash')
 
-const internal = require('../../../build/internal');
+const internal = require('../../../build/internal')
 
 module.exports = {
   prompt: ({ prompter: inquirer }) => {
-    const config = internal.config.loadConfig(process.cwd());
+    const config = internal.config.loadConfig(process.cwd())
 
     return inquirer.prompt([
       {
@@ -22,12 +22,12 @@ module.exports = {
         name: 'provider',
         message: 'Provider 名称',
         choices: async () => {
-          const files = await listFolder(config.providerDir);
+          const files = await listFolder(config.providerDir)
 
           return _.chain(files)
             .filter((item) => item.endsWith('js'))
             .map((item) => basename(item, '.js'))
-            .value();
+            .value()
         },
       },
       {
@@ -35,12 +35,12 @@ module.exports = {
         name: 'template',
         message: 'Template 名称',
         choices: async () => {
-          const files = await listFolder(config.templateDir);
+          const files = await listFolder(config.templateDir)
 
           return _.chain(files)
             .filter((item) => item.endsWith('tpl'))
             .map((item) => basename(item, '.tpl'))
-            .value();
+            .value()
         },
       },
       {
@@ -48,21 +48,21 @@ module.exports = {
         name: 'combineProviders',
         message: '是否合并其它 Provider（不合并直接回车跳过）',
         choices: async (results) => {
-          const files = await listFolder(config.providerDir);
+          const files = await listFolder(config.providerDir)
 
           return _.chain(files)
             .filter((item) => item.endsWith('js'))
             .map((item) => basename(item, '.js'))
             .filter((item) => item !== results.provider)
-            .value();
+            .value()
         },
       },
-    ]);
+    ])
   },
-};
+}
 
 function listFolder(f) {
   return fsp.readdir(f, {
     encoding: 'utf8',
-  });
+  })
 }

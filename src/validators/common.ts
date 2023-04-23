@@ -1,6 +1,6 @@
-import { z } from 'zod';
+import { z } from 'zod'
 
-import { NodeTypeEnum } from '../types';
+import { NodeTypeEnum } from '../types'
 
 export const SimpleNodeConfigValidator = z.object({
   type: z.nativeEnum(NodeTypeEnum),
@@ -24,7 +24,7 @@ export const SimpleNodeConfigValidator = z.object({
   // Misc
   underlyingProxy: z.string().optional(),
   testUrl: z.string().optional(),
-});
+})
 
 export const TlsNodeConfigValidator = SimpleNodeConfigValidator.extend({
   hostname: z.string(),
@@ -34,9 +34,9 @@ export const TlsNodeConfigValidator = SimpleNodeConfigValidator.extend({
   sni: z.ostring(),
   alpn: z.array(z.string()).optional(),
   serverCertFingerprintSha256: z.ostring(),
-});
+})
 
 export const PortValidator = z.union([z.string(), z.number()]).refine((v) => {
-  const port = Number(v);
-  return port > 0 && port < 65536;
-});
+  const port = Number(v)
+  return port > 0 && port < 65536
+})

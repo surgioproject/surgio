@@ -1,13 +1,13 @@
-import got from 'got';
-import HttpAgent, { HttpsAgent } from 'agentkeepalive';
-import { HttpProxyAgent, HttpsProxyAgent } from 'hpagent';
+import got from 'got'
+import HttpAgent, { HttpsAgent } from 'agentkeepalive'
+import { HttpProxyAgent, HttpsProxyAgent } from 'hpagent'
 
-import { NETWORK_SURGIO_UA } from '../constant';
-import { getNetworkRetry, getNetworkTimeout } from './env-flag';
+import { NETWORK_SURGIO_UA } from '../constant'
+import { getNetworkRetry, getNetworkTimeout } from './env-flag'
 
-const httpProxy = hasHTTPProxy();
-const httpsProxy = hasHTTPSProxy();
-const pkg = require('../../package.json');
+const httpProxy = hasHTTPProxy()
+const httpsProxy = hasHTTPSProxy()
+const pkg = require('../../package.json')
 const agent =
   !!httpProxy || !!httpsProxy
     ? {
@@ -35,10 +35,10 @@ const agent =
     : {
         http: new HttpAgent(),
         https: new HttpsAgent(),
-      };
+      }
 
 export const getUserAgent = (str?: string): string =>
-  `${str ? str + ' ' : ''}${NETWORK_SURGIO_UA}/${pkg.version}`;
+  `${str ? str + ' ' : ''}${NETWORK_SURGIO_UA}/${pkg.version}`
 
 const httpClient = got.extend({
   timeout: getNetworkTimeout(),
@@ -47,14 +47,14 @@ const httpClient = got.extend({
     'user-agent': getUserAgent(),
   },
   agent,
-});
+})
 
 function hasHTTPProxy() {
-  return process.env.HTTP_PROXY || process.env.http_proxy;
+  return process.env.HTTP_PROXY || process.env.http_proxy
 }
 
 function hasHTTPSProxy() {
-  return process.env.HTTPS_PROXY || process.env.https_proxy;
+  return process.env.HTTPS_PROXY || process.env.https_proxy
 }
 
-export default httpClient;
+export default httpClient

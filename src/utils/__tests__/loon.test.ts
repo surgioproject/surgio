@@ -1,8 +1,8 @@
-import test from 'ava';
+import test from 'ava'
 
-import { NodeTypeEnum } from '../../types';
-import { ERR_INVALID_FILTER } from '../../constant';
-import { getLoonNodes } from '../loon';
+import { NodeTypeEnum } from '../../types'
+import { ERR_INVALID_FILTER } from '../../constant'
+import { getLoonNodes } from '../loon'
 
 test('getLoonNodes', (t) => {
   t.is(
@@ -22,7 +22,7 @@ test('getLoonNodes', (t) => {
       },
     ]),
     '测试 = vmess,1.1.1.1,443,method=chacha20-ietf-poly1305,"1386f85e-657b-4d6e-9d56-78badb75e1fd",transport=tcp,over-tls=true,tls-name=1.1.1.1,skip-cert-verify=false',
-  );
+  )
   t.is(
     getLoonNodes([
       {
@@ -39,7 +39,7 @@ test('getLoonNodes', (t) => {
       },
     ]),
     '🇭🇰HK = ShadowsocksR,hk.example.com,10000,chacha20-ietf,"password",protocol=auth_aes128_md5,protocol-param=,obfs=tls1.2_ticket_auth,obfs-param=music.163.com',
-  );
+  )
   t.is(
     getLoonNodes([
       {
@@ -53,7 +53,7 @@ test('getLoonNodes', (t) => {
       },
     ]),
     'test = https,a.com,443,snsms,"nndndnd",tls-name=a.com,skip-cert-verify=false',
-  );
+  )
   t.is(
     getLoonNodes([
       {
@@ -65,7 +65,7 @@ test('getLoonNodes', (t) => {
       },
     ]),
     'trojan = trojan,example.com,443,"password1",tls-name=example.com,skip-cert-verify=false',
-  );
+  )
   t.is(
     getLoonNodes([
       {
@@ -80,7 +80,7 @@ test('getLoonNodes', (t) => {
       },
     ]),
     'trojan = trojan,example.com,443,"password1",tls-name=example.com,skip-cert-verify=true',
-  );
+  )
   t.is(
     getLoonNodes([
       {
@@ -97,7 +97,7 @@ test('getLoonNodes', (t) => {
       },
     ]),
     'trojan = trojan,example.com,443,"password1",tls-name=sni.example.com,skip-cert-verify=true',
-  );
+  )
   t.is(
     getLoonNodes([
       {
@@ -119,7 +119,7 @@ test('getLoonNodes', (t) => {
       },
     ]),
     'trojan = trojan,example.com,443,"password1",tls-name=sni.example.com,skip-cert-verify=true,transport=ws,path=/ws,host=example.com',
-  );
+  )
   t.is(
     getLoonNodes([
       {
@@ -159,8 +159,8 @@ test('getLoonNodes', (t) => {
       'wg node = wireguard,interface-ip=10.0.0.1,private-key="privateKey",mtu=1420,peers=[{public-key="publicKey",endpoint=wg.example.com:51820}]',
       'wg node = wireguard,interface-ip=10.0.0.1,private-key="privateKey",interface-ipV6=2001:db8:85a3::8a2e:370:7334,mtu=1420,dns=1.1.1.1,dnsV6=::1,keepalive=25,peers=[allowed-ips="0.0.0.0/0"}},preshared-key="presharedKey"}},{public-key="publicKey",endpoint=wg.example.com:51820}]',
     ].join('\n'),
-  );
-});
+  )
+})
 
 test('getLoonNodes error', (t) => {
   t.throws(
@@ -181,9 +181,9 @@ test('getLoonNodes error', (t) => {
           },
         ],
         undefined,
-      );
+      )
     },
     undefined,
     ERR_INVALID_FILTER,
-  );
-});
+  )
+})

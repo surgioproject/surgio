@@ -1,7 +1,7 @@
-import test from 'ava';
+import test from 'ava'
 
-import { NodeTypeEnum, PossibleNodeConfigType } from '../../types';
-import * as surfboard from '../surfboard';
+import { NodeTypeEnum, PossibleNodeConfigType } from '../../types'
+import * as surfboard from '../surfboard'
 
 test('getSurfboardExtendHeaders', (t) => {
   t.is(
@@ -10,8 +10,8 @@ test('getSurfboardExtendHeaders', (t) => {
       'multi words key': 'multi words value',
     }),
     'foo:bar|multi words key:multi words value',
-  );
-});
+  )
+})
 
 test('getSurfboardNodes', async (t) => {
   const nodeList: ReadonlyArray<PossibleNodeConfigType> = [
@@ -120,49 +120,49 @@ test('getSurfboardNodes', async (t) => {
       tfo: true,
       mptcp: true,
     },
-  ];
-  const txt1 = surfboard.getSurfboardNodes(nodeList).split('\n');
+  ]
+  const txt1 = surfboard.getSurfboardNodes(nodeList).split('\n')
   const txt2 = surfboard.getSurfboardNodes(
     nodeList,
     (nodeConfig) => nodeConfig.nodeName === 'Test Node 1',
-  );
+  )
 
   t.is(
     txt1[0],
     'Test Node 1 = ss, example.com, 443, encrypt-method=chacha20-ietf-poly1305, password=password, udp-relay=true, obfs=tls, obfs-host=example.com',
-  );
+  )
   t.is(
     txt1[1],
     'Test Node 2 = ss, example2.com, 443, encrypt-method=chacha20-ietf-poly1305, password=password',
-  );
+  )
   t.is(
     txt1[2],
     'Test Node 4 = ss, example.com, 443, encrypt-method=chacha20-ietf-poly1305, password=password, udp-relay=true, obfs=tls, obfs-host=example.com',
-  );
+  )
   t.is(
     txt1[3],
     'Test Node 5 = ss, example2.com, 443, encrypt-method=chacha20-ietf-poly1305, password=password',
-  );
+  )
   t.is(
     txt1[4],
     'Test Node 6 = ss, example2.com, 443, encrypt-method=chacha20-ietf-poly1305, password=password',
-  );
+  )
   t.is(
     txt1[5],
     '测试 1 = vmess, 1.1.1.1, 8080, username=1386f85e-657b-4d6e-9d56-78badb75e1fd, ws=true, ws-path=/, ws-headers="host:1.1.1.1|user-agent:Mozilla/5.0 (iPhone; CPU iPhone OS 13_5 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/13.1.1 Mobile/15E148 Safari/604.1", tls=true, vmess-aead=true',
-  );
+  )
   t.is(
     txt1[6],
     '测试 2 = vmess, 1.1.1.1, 8080, username=1386f85e-657b-4d6e-9d56-78badb75e1fd, encrypt-method=aes-128-gcm, vmess-aead=false',
-  );
+  )
   t.is(
     txt1[7],
     '测试 3 = vmess, 1.1.1.1, 8080, username=1386f85e-657b-4d6e-9d56-78badb75e1fd, ws=true, ws-path=/, ws-headers="host:1.1.1.1|user-agent:Mozilla/5.0 (iPhone; CPU iPhone OS 13_5 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/13.1.1 Mobile/15E148 Safari/604.1", tls=true, skip-cert-verify=true, vmess-aead=false',
-  );
+  )
   t.is(
     txt2,
     'Test Node 1 = ss, example.com, 443, encrypt-method=chacha20-ietf-poly1305, password=password, udp-relay=true, obfs=tls, obfs-host=example.com',
-  );
+  )
 
   t.is(
     surfboard.getSurfboardNodes([
@@ -175,7 +175,7 @@ test('getSurfboardNodes', async (t) => {
       },
     ]),
     'trojan node 1 = trojan, example.com, 443, password=password1',
-  );
+  )
 
   t.is(
     surfboard.getSurfboardNodes([
@@ -192,7 +192,7 @@ test('getSurfboardNodes', async (t) => {
       },
     ]),
     'trojan node 2 = trojan, example.com, 443, password=password1, sni=sni.com, skip-cert-verify=true',
-  );
+  )
 
   t.is(
     surfboard.getSurfboardNodes([
@@ -207,7 +207,7 @@ test('getSurfboardNodes', async (t) => {
       },
     ]),
     'trojan node 1 = trojan, example.com, 443, password=password1, ws=true, ws-path=/ws',
-  );
+  )
 
   t.is(
     surfboard.getSurfboardNodes([
@@ -227,7 +227,7 @@ test('getSurfboardNodes', async (t) => {
       },
     ]),
     'trojan node 1 = trojan, example.com, 443, password=password1, sni=sni.example.com, ws=true, ws-path=/ws, ws-headers="host:ws.example.com|test-key:test-value"',
-  );
+  )
 
   t.is(
     surfboard.getSurfboardNodes([
@@ -240,7 +240,7 @@ test('getSurfboardNodes', async (t) => {
       },
     ]),
     'socks5-tls node 1 = socks5-tls, 1.1.1.1, 443',
-  );
+  )
 
   t.is(
     surfboard.getSurfboardNodes([
@@ -254,7 +254,7 @@ test('getSurfboardNodes', async (t) => {
       },
     ]),
     'socks5-tls node 2 = socks5-tls, 1.1.1.1, 443',
-  );
+  )
 
   t.is(
     surfboard.getSurfboardNodes([
@@ -269,7 +269,7 @@ test('getSurfboardNodes', async (t) => {
       },
     ]),
     'socks5-tls node 3 = socks5-tls, 1.1.1.1, 443, username=auto, password=auto',
-  );
+  )
 
   t.is(
     surfboard.getSurfboardNodes([
@@ -287,7 +287,7 @@ test('getSurfboardNodes', async (t) => {
       },
     ]),
     'socks5-tls node 4 = socks5-tls, 1.1.1.1, 443, username=auto, password=auto, sni=example.com, skip-cert-verify=true',
-  );
+  )
 
   t.is(
     surfboard.getSurfboardNodes([
@@ -306,7 +306,7 @@ test('getSurfboardNodes', async (t) => {
       },
     ]),
     'socks5-tls node 5 = socks5-tls, 1.1.1.1, 443, username=auto, password=auto, sni=example.com, skip-cert-verify=true, client-cert=item',
-  );
+  )
 
   t.is(
     surfboard.getSurfboardNodes([
@@ -318,7 +318,7 @@ test('getSurfboardNodes', async (t) => {
       },
     ]),
     'socks node 1 = socks5, 1.1.1.1, 80',
-  );
+  )
 
   t.is(
     surfboard.getSurfboardNodes([
@@ -331,7 +331,7 @@ test('getSurfboardNodes', async (t) => {
       },
     ]),
     'socks node 2 = socks5, 1.1.1.1, 80',
-  );
+  )
 
   t.is(
     surfboard.getSurfboardNodes([
@@ -346,7 +346,7 @@ test('getSurfboardNodes', async (t) => {
       },
     ]),
     'socks node 3 = socks5, 1.1.1.1, 80, username=auto, password=auto',
-  );
+  )
 
   t.is(
     surfboard.getSurfboardNodes([
@@ -370,5 +370,5 @@ test('getSurfboardNodes', async (t) => {
       },
     ]),
     '测试 6 = vmess, 1.1.1.1, 8080, username=1386f85e-657b-4d6e-9d56-78badb75e1fd, ws=true, ws-path=/, ws-headers="host:1.1.1.1|user-agent:Mozilla/5.0 (iPhone; CPU iPhone OS 13_5 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/13.1.1 Mobile/15E148 Safari/604.1", tls=true, skip-cert-verify=true, vmess-aead=false',
-  );
-});
+  )
+})

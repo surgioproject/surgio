@@ -1,75 +1,75 @@
-import { Command, Flags, Interfaces, Config } from '@oclif/core';
-import { transports } from '@surgio/logger';
-import ora from 'ora';
-import { resolve } from 'path';
-import fs from 'fs-extra';
-import dotenv from 'dotenv';
+import { Command, Flags, Interfaces, Config } from '@oclif/core'
+import { transports } from '@surgio/logger'
+import ora from 'ora'
+import { resolve } from 'path'
+import fs from 'fs-extra'
+import dotenv from 'dotenv'
 
-import { CommandConfig } from './types';
-import { loadConfig } from './config';
-import { errorHandler } from './utils/error-helper';
+import { CommandConfig } from './types'
+import { loadConfig } from './config'
+import { errorHandler } from './utils/error-helper'
 
 export type Flags<T extends typeof Command> = Interfaces.InferredFlags<
   (typeof BaseCommand)['baseFlags'] & T['flags']
->;
-export type Args<T extends typeof Command> = Interfaces.InferredArgs<T['args']>;
+>
+export type Args<T extends typeof Command> = Interfaces.InferredArgs<T['args']>
 
 abstract class BaseCommand<T extends typeof Command> extends Command {
-  protected flags!: Flags<T>;
-  protected args!: Args<T>;
-  protected surgioConfig!: CommandConfig;
+  protected flags!: Flags<T>
+  protected args!: Args<T>
+  protected surgioConfig!: CommandConfig
   public ora = ora({
     stream: process.stdout,
-  });
-  public projectDir!: string;
+  })
+  public projectDir!: string
 
   constructor(argv: string[], config: Config) {
-    super(argv, config);
+    super(argv, config)
   }
 
   public async init(): Promise<void> {
-    await super.init();
+    await super.init()
 
     const { args, flags } = await this.parse({
       flags: this.ctor.flags,
       baseFlags: (super.ctor as typeof BaseCommand).baseFlags,
       args: this.ctor.args,
       strict: this.ctor.strict,
-    });
+    })
 
-    this.flags = flags as Flags<T>;
-    this.args = args as Args<T>;
+    this.flags = flags as Flags<T>
+    this.args = args as Args<T>
 
     // istanbul ignore next
     if (flags.verbose) {
-      transports.console.level = 'debug';
+      transports.console.level = 'debug'
     }
 
     if (flags.project.startsWith('.')) {
-      flags.project = resolve(process.cwd(), flags.project);
+      flags.project = resolve(process.cwd(), flags.project)
     }
 
-    const envPath = resolve(flags.project, './.env');
+    const envPath = resolve(flags.project, './.env')
 
     // istanbul ignore next
     if (fs.existsSync(envPath)) {
-      dotenv.config({ path: envPath });
+      dotenv.config({ path: envPath })
     }
 
-    this.projectDir = flags.project;
-    this.surgioConfig = await loadConfig(this.projectDir);
+    this.projectDir = flags.project
+    this.surgioConfig = await loadConfig(this.projectDir)
   }
 
   protected async catch(err: Error & { exitCode?: number }): Promise<any> {
     if (this.ora.isSpinning) {
-      this.ora.fail();
+      this.ora.fail()
     }
-    await errorHandler.call(this, err);
-    this.exit(err.exitCode || 1);
+    await errorHandler.call(this, err)
+    this.exit(err.exitCode || 1)
   }
 }
 
-BaseCommand.enableJsonFlag = true;
+BaseCommand.enableJsonFlag = true
 BaseCommand.baseFlags = {
   project: Flags.string({
     char: 'p',
@@ -83,6 +83,6 @@ BaseCommand.baseFlags = {
     default: false,
     helpGroup: 'GLOBAL',
   }),
-};
+}
 
-export default BaseCommand;
+export default BaseCommand

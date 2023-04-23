@@ -1,7 +1,7 @@
-import { z } from 'zod';
+import { z } from 'zod'
 
-import { NodeTypeEnum } from '../types';
-import { PortValidator, SimpleNodeConfigValidator } from './common';
+import { NodeTypeEnum } from '../types'
+import { PortValidator, SimpleNodeConfigValidator } from './common'
 
 export const VmessNodeConfigValidator = SimpleNodeConfigValidator.extend({
   type: z.literal(NodeTypeEnum.Vmess),
@@ -24,4 +24,4 @@ export const VmessNodeConfigValidator = SimpleNodeConfigValidator.extend({
   skipCertVerify: z.oboolean(),
   wsHeaders: z.record(z.string()).optional(),
   serverCertFingerprintSha256: z.ostring(),
-});
+})

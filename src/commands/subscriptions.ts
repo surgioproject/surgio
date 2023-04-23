@@ -1,23 +1,23 @@
 // istanbul ignore file
-import { promises as fsp } from 'fs';
-import { basename, join } from 'path';
-import { createLogger } from '@surgio/logger';
+import { promises as fsp } from 'fs'
+import { basename, join } from 'path'
+import { createLogger } from '@surgio/logger'
 
-import BaseCommand from '../base-command';
-import BlackSSLProvider from '../provider/BlackSSLProvider';
-import ClashProvider from '../provider/ClashProvider';
-import CustomProvider from '../provider/CustomProvider';
-import ShadowsocksJsonSubscribeProvider from '../provider/ShadowsocksJsonSubscribeProvider';
-import ShadowsocksrSubscribeProvider from '../provider/ShadowsocksrSubscribeProvider';
-import ShadowsocksSubscribeProvider from '../provider/ShadowsocksSubscribeProvider';
-import V2rayNSubscribeProvider from '../provider/V2rayNSubscribeProvider';
-import redis from '../redis';
-import { getProvider } from '../provider';
-import { formatSubscriptionUserInfo } from '../utils/subscription';
+import BaseCommand from '../base-command'
+import BlackSSLProvider from '../provider/BlackSSLProvider'
+import ClashProvider from '../provider/ClashProvider'
+import CustomProvider from '../provider/CustomProvider'
+import ShadowsocksJsonSubscribeProvider from '../provider/ShadowsocksJsonSubscribeProvider'
+import ShadowsocksrSubscribeProvider from '../provider/ShadowsocksrSubscribeProvider'
+import ShadowsocksSubscribeProvider from '../provider/ShadowsocksSubscribeProvider'
+import V2rayNSubscribeProvider from '../provider/V2rayNSubscribeProvider'
+import redis from '../redis'
+import { getProvider } from '../provider'
+import { formatSubscriptionUserInfo } from '../utils/subscription'
 
 const logger = createLogger({
   service: 'surgio:SubscriptionsCommand',
-});
+})
 type PossibleProviderType =
   | BlackSSLProvider
   | ShadowsocksJsonSubscribeProvider
@@ -25,82 +25,82 @@ type PossibleProviderType =
   | CustomProvider
   | V2rayNSubscribeProvider
   | ShadowsocksrSubscribeProvider
-  | ClashProvider;
+  | ClashProvider
 
 class SubscriptionsCommand extends BaseCommand<typeof SubscriptionsCommand> {
-  static description = '查询订阅信息';
+  static description = '查询订阅信息'
 
   public async run(): Promise<void> {
-    const providerList = await this.listProviders();
+    const providerList = await this.listProviders()
 
     for (const provider of providerList) {
       if (provider.supportGetSubscriptionUserInfo) {
-        const userInfo = await provider.getSubscriptionUserInfo();
+        const userInfo = await provider.getSubscriptionUserInfo()
 
         if (userInfo) {
-          const format = formatSubscriptionUserInfo(userInfo);
+          const format = formatSubscriptionUserInfo(userInfo)
           console.log(
             '🤟 %s 已用流量：%s 剩余流量：%s 有效期至：%s',
             provider.name,
             format.used,
             format.left,
             format.expire,
-          );
+          )
         } else {
-          console.log('⚠️  无法查询 %s 的流量信息', provider.name);
+          console.log('⚠️  无法查询 %s 的流量信息', provider.name)
         }
       } else {
-        console.log('⚠️  无法查询 %s 的流量信息', provider.name);
+        console.log('⚠️  无法查询 %s 的流量信息', provider.name)
       }
     }
 
-    await redis.destroyRedis();
+    await redis.destroyRedis()
   }
 
   private async listProviders(): Promise<ReadonlyArray<PossibleProviderType>> {
     const files = await fsp.readdir(this.surgioConfig.providerDir, {
       encoding: 'utf8',
-    });
-    const providerList: PossibleProviderType[] = [];
+    })
+    const providerList: PossibleProviderType[] = []
 
     async function readProvider(
       path,
     ): Promise<PossibleProviderType | undefined> {
-      let provider;
+      let provider
 
       try {
-        const providerName = basename(path, '.js');
-        const module = await import(path);
+        const providerName = basename(path, '.js')
+        const module = await import(path)
 
-        logger.debug('read %s %s', providerName, path);
+        logger.debug('read %s %s', providerName, path)
 
         // eslint-disable-next-line prefer-const
-        provider = await getProvider(providerName, module.default);
+        provider = await getProvider(providerName, module.default)
       } catch (err) {
-        logger.debug(`${path} 不是一个合法的模块`);
-        return undefined;
+        logger.debug(`${path} 不是一个合法的模块`)
+        return undefined
       }
 
       if (!provider?.type) {
-        logger.debug(`${path} 不是一个 Provider`);
-        return undefined;
+        logger.debug(`${path} 不是一个 Provider`)
+        return undefined
       }
 
-      logger.debug('got provider %j', provider);
-      return provider;
+      logger.debug('got provider %j', provider)
+      return provider
     }
 
     for (const file of files) {
       const result = await readProvider(
         join(this.surgioConfig.providerDir, file),
-      );
+      )
       if (result) {
-        providerList.push(result);
+        providerList.push(result)
       }
     }
 
-    return providerList;
+    return providerList
   }
 }
 
-export default SubscriptionsCommand;
+export default SubscriptionsCommand

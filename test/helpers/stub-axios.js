@@ -1,10 +1,10 @@
-'use strict';
+'use strict'
 
-const nock = require('nock');
-const fs = require('fs');
-const path = require('path');
+const nock = require('nock')
+const fs = require('fs')
+const path = require('path')
 
-const toBase64 = (str) => Buffer.from(str, 'utf8').toString('base64');
+const toBase64 = (str) => Buffer.from(str, 'utf8').toString('base64')
 
 const scope = nock('http://example.com')
   .get(/\/gui-config\.json/)
@@ -117,6 +117,6 @@ const scope = nock('http://example.com')
     )}`,
   )
   .get(/\/error/)
-  .reply(500, '');
+  .reply(500, '')
 
-scope.persist();
+scope.persist()

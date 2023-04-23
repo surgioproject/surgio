@@ -1,4 +1,4 @@
-import { z } from 'zod';
+import { z } from 'zod'
 
 export const ArtifactValidator = z.object({
   name: z.string(),
@@ -11,4 +11,4 @@ export const ArtifactValidator = z.object({
   destDir: z.ostring(),
   downloadUrl: z.ostring(),
   templateString: z.ostring(),
-});
+})

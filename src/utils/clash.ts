@@ -1,17 +1,17 @@
-import { createLogger } from '@surgio/logger';
-import _ from 'lodash';
+import { createLogger } from '@surgio/logger'
+import _ from 'lodash'
 
-import { ERR_INVALID_FILTER } from '../constant';
+import { ERR_INVALID_FILTER } from '../constant'
 import {
   NodeFilterType,
   NodeTypeEnum,
   PossibleNodeConfigType,
   SortedNodeFilterType,
-} from '../types';
-import { applyFilter } from './filter';
-import { checkNotNullish, getPortFromHost } from './index';
+} from '../types'
+import { applyFilter } from './filter'
+import { checkNotNullish, getPortFromHost } from './index'
 
-const logger = createLogger({ service: 'surgio:utils:clash' });
+const logger = createLogger({ service: 'surgio:utils:clash' })
 
 export const getClashNodes = function (
   list: ReadonlyArray<PossibleNodeConfigType>,
@@ -21,8 +21,8 @@ export const getClashNodes = function (
     .map(nodeListMapper)
     .filter((item): item is NonNullable<ReturnType<typeof nodeListMapper>> =>
       checkNotNullish(item),
-    );
-};
+    )
+}
 
 export const getClashNodeNames = function (
   list: ReadonlyArray<PossibleNodeConfigType>,
@@ -31,19 +31,19 @@ export const getClashNodeNames = function (
 ): ReadonlyArray<string> {
   // istanbul ignore next
   if (arguments.length === 2 && typeof filter === 'undefined') {
-    throw new Error(ERR_INVALID_FILTER);
+    throw new Error(ERR_INVALID_FILTER)
   }
 
-  let result: string[] = [];
+  let result: string[] = []
 
   if (prependNodeNames) {
-    result = result.concat(prependNodeNames);
+    result = result.concat(prependNodeNames)
   }
 
-  result = result.concat(getClashNodes(list, filter).map((item) => item.name));
+  result = result.concat(getClashNodes(list, filter).map((item) => item.name))
 
-  return result;
-};
+  return result
+}
 
 function nodeListMapper(nodeConfig: PossibleNodeConfigType) {
   switch (nodeConfig.type) {
@@ -52,16 +52,16 @@ function nodeListMapper(nodeConfig: PossibleNodeConfigType) {
       if (nodeConfig.shadowTls && !nodeConfig.clashConfig?.enableShadowTls) {
         logger.warn(
           `尚未开启 Clash 的 shadow-tls 支持，节点 ${nodeConfig.nodeName} 将被忽略。如需开启，请在配置文件中设置 clashConfig.enableShadowTls 为 true。`,
-        );
-        return null;
+        )
+        return null
       }
 
       // Istanbul ignore next
       if (nodeConfig.shadowTls && nodeConfig.obfs) {
         logger.warn(
           `Clash 不支持同时开启 shadow-tls 和 obfs，节点 ${nodeConfig.nodeName} 将被忽略。`,
-        );
-        return null;
+        )
+        return null
       }
 
       return {
@@ -116,7 +116,7 @@ function nodeListMapper(nodeConfig: PossibleNodeConfigType) {
               },
             }
           : null),
-      } as const;
+      } as const
 
     case NodeTypeEnum.Vmess:
       return {
@@ -150,7 +150,7 @@ function nodeListMapper(nodeConfig: PossibleNodeConfigType) {
               },
             }
           : null),
-      } as const;
+      } as const
 
     case NodeTypeEnum.Shadowsocksr: {
       return {
@@ -165,7 +165,7 @@ function nodeListMapper(nodeConfig: PossibleNodeConfigType) {
         'obfs-param': nodeConfig.obfsparam ?? '',
         'protocol-param': nodeConfig.protoparam ?? '',
         udp: nodeConfig.udpRelay === true,
-      } as const;
+      } as const
     }
 
     case NodeTypeEnum.Snell:
@@ -173,8 +173,8 @@ function nodeListMapper(nodeConfig: PossibleNodeConfigType) {
       if (Number(nodeConfig.version) >= 4) {
         logger.warn(
           `Clash 尚不支持 Snell v${nodeConfig.version}，节点 ${nodeConfig.nodeName} 会被省略。`,
-        );
-        return null;
+        )
+        return null
       }
 
       return {
@@ -196,7 +196,7 @@ function nodeListMapper(nodeConfig: PossibleNodeConfigType) {
               version: nodeConfig.version,
             }
           : null),
-      } as const;
+      } as const
 
     case NodeTypeEnum.HTTPS:
       return {
@@ -208,7 +208,7 @@ function nodeListMapper(nodeConfig: PossibleNodeConfigType) {
         password: nodeConfig.password /* istanbul ignore next */ || '',
         tls: true,
         'skip-cert-verify': nodeConfig.skipCertVerify === true,
-      } as const;
+      } as const
 
     case NodeTypeEnum.HTTP:
       return {
@@ -218,7 +218,7 @@ function nodeListMapper(nodeConfig: PossibleNodeConfigType) {
         port: nodeConfig.port,
         username: nodeConfig.username /* istanbul ignore next */ || '',
         password: nodeConfig.password /* istanbul ignore next */ || '',
-      } as const;
+      } as const
 
     case NodeTypeEnum.Trojan:
       return {
@@ -240,7 +240,7 @@ function nodeListMapper(nodeConfig: PossibleNodeConfigType) {
               },
             }
           : null),
-      } as const;
+      } as const
 
     case NodeTypeEnum.Socks5:
       return {
@@ -259,21 +259,21 @@ function nodeListMapper(nodeConfig: PossibleNodeConfigType) {
         ...(typeof nodeConfig.udpRelay === 'boolean'
           ? { udp: nodeConfig.udpRelay }
           : null),
-      } as const;
+      } as const
 
     case NodeTypeEnum.Tuic:
       // Istanbul ignore next
       if (!nodeConfig.clashConfig?.enableTuic) {
         logger.warn(
           `尚未开启 Clash 的 TUIC 支持，节点 ${nodeConfig.nodeName} 会被省略。如需开启，请在配置文件中设置 clashConfig.enableTuic 为 true。`,
-        );
-        return null;
+        )
+        return null
       }
       // Istanbul ignore next
       if (nodeConfig.alpn && !nodeConfig.alpn.length) {
         logger.warn(
           `节点 ${nodeConfig.nodeName} 的 alpn 为空。Stash 客户端不支持 ALPN 为空，默认的 ALPN 为 h3。`,
-        );
+        )
       }
 
       return {
@@ -288,14 +288,14 @@ function nodeListMapper(nodeConfig: PossibleNodeConfigType) {
         ...(nodeConfig.alpn ? { alpn: nodeConfig.alpn } : null),
         ...(nodeConfig.sni ? { sni: nodeConfig.sni } : null),
         'skip-cert-verify': nodeConfig.skipCertVerify === true,
-      } as const;
+      } as const
 
     case NodeTypeEnum.Wireguard:
       // istanbul ignore next
       if (nodeConfig.peers.length > 1) {
         logger.warn(
           `节点 ${nodeConfig.nodeName} 有多个 WireGuard Peer，然而 Stash 或 Clash 仅支持一个 Peer，因此只会使用第一个 Peer。`,
-        );
+        )
       }
 
       return {
@@ -320,7 +320,7 @@ function nodeListMapper(nodeConfig: PossibleNodeConfigType) {
               reserved: nodeConfig.peers[0].reservedBits,
             }
           : null),
-      } as const;
+      } as const
 
     // istanbul ignore next
     default:
@@ -328,7 +328,7 @@ function nodeListMapper(nodeConfig: PossibleNodeConfigType) {
         `不支持为 Clash 生成 ${(nodeConfig as any).type} 的节点，节点 ${
           (nodeConfig as any).nodeName
         } 会被省略`,
-      );
-      return null;
+      )
+      return null
   }
 }

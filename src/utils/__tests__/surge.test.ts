@@ -1,7 +1,7 @@
-import test from 'ava';
+import test from 'ava'
 
-import { NodeTypeEnum, PossibleNodeConfigType } from '../../types';
-import * as surge from '../surge';
+import { NodeTypeEnum, PossibleNodeConfigType } from '../../types'
+import * as surge from '../surge'
 
 test('getSurgeExtendHeaders', (t) => {
   t.is(
@@ -10,8 +10,8 @@ test('getSurgeExtendHeaders', (t) => {
       'multi words key': 'multi words value',
     }),
     'foo:bar|multi words key:multi words value',
-  );
-});
+  )
+})
 
 test('getSurgeNodes', async (t) => {
   const nodeList: ReadonlyArray<PossibleNodeConfigType> = [
@@ -180,66 +180,66 @@ test('getSurgeNodes', async (t) => {
       mptcp: true,
       underlyingProxy: 'another-proxy',
     },
-  ];
-  const txt1 = surge.getSurgeNodes(nodeList).split('\n');
+  ]
+  const txt1 = surge.getSurgeNodes(nodeList).split('\n')
   const txt2 = surge.getSurgeNodes(
     nodeList,
     (nodeConfig) => nodeConfig.nodeName === 'Test Node 1',
-  );
+  )
 
   t.is(
     txt1[0],
     'Test Node 1 = ss, example.com, 443, encrypt-method=chacha20-ietf-poly1305, password=password, udp-relay=true, obfs=tls, obfs-host=example.com',
-  );
+  )
   t.is(
     txt1[1],
     'Test Node 2 = ss, example2.com, 443, encrypt-method=chacha20-ietf-poly1305, password=password',
-  );
+  )
   t.is(
     txt1[2],
     '测试中文 = external, exec = "/usr/local/bin/ssr-local", args = "-s", args = "127.0.0.1", args = "-p", args = "1234", args = "-m", args = "aes-128-cfb", args = "-o", args = "tls1.2_ticket_auth", args = "-O", args = "auth_aes128_md5", args = "-k", args = "aaabbb", args = "-l", args = "61100", args = "-b", args = "127.0.0.1", args = "-g", args = "breakwa11.moe", local-port = 61100, addresses = 127.0.0.1',
-  );
+  )
   t.is(
     txt1[3],
     '测试 3 = vmess, 1.1.1.1, 8080, username=1386f85e-657b-4d6e-9d56-78badb75e1fd, ws=true, ws-path=/, ws-headers="host:1.1.1.1|user-agent:Mozilla/5.0 (iPhone; CPU iPhone OS 13_5 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/13.1.1 Mobile/15E148 Safari/604.1", vmess-aead=false',
-  );
+  )
   t.is(
     txt1[4],
     '测试 4 = vmess, 1.1.1.1, 8080, username=1386f85e-657b-4d6e-9d56-78badb75e1fd, ws=true, ws-path=/, ws-headers="host:1.1.1.1|user-agent:Mozilla/5.0 (iPhone; CPU iPhone OS 13_5 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/13.1.1 Mobile/15E148 Safari/604.1", tls=true, vmess-aead=false',
-  );
+  )
   t.is(
     txt1[5],
     '测试 5 = vmess, 1.1.1.1, 8080, username=1386f85e-657b-4d6e-9d56-78badb75e1fd, encrypt-method=aes-128-gcm, vmess-aead=false',
-  );
+  )
   t.is(
     txt1[6],
     'Test Node 4 = ss, example.com, 443, encrypt-method=chacha20-ietf-poly1305, password=password, udp-relay=true, obfs=tls, obfs-host=example.com, mptcp=true',
-  );
+  )
   t.is(
     txt1[7],
     'Test Node 5 = ss, example2.com, 443, encrypt-method=chacha20-ietf-poly1305, password=password, mptcp=false',
-  );
+  )
   t.is(
     txt1[8],
     'Test Node 6 = ss, example2.com, 443, encrypt-method=chacha20-ietf-poly1305, password=password',
-  );
+  )
   t.is(
     txt1[9],
     'Test Node 7 = ss, example2.com, 443, encrypt-method=chacha20-ietf-poly1305, password=password, tfo=true, mptcp=true',
-  );
+  )
   t.is(
     txt1[10],
     '测试 6 = vmess, 1.1.1.1, 8080, username=1386f85e-657b-4d6e-9d56-78badb75e1fd, ws=true, ws-path=/, ws-headers="host:1.1.1.1|user-agent:Mozilla/5.0 (iPhone; CPU iPhone OS 13_5 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/13.1.1 Mobile/15E148 Safari/604.1", tls=true, tls13=true, skip-cert-verify=true, tfo=true, mptcp=true, vmess-aead=false',
-  );
+  )
   t.is(
     txt1[11],
     '测试 7 = vmess, 1.1.1.1, 8080, username=1386f85e-657b-4d6e-9d56-78badb75e1fd, ws=true, ws-path=/, ws-headers="host:1.1.1.1|user-agent:Mozilla/5.0 (iPhone; CPU iPhone OS 13_5 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/13.1.1 Mobile/15E148 Safari/604.1", tls=true, tls13=true, skip-cert-verify=true, tfo=true, mptcp=true, underlying-proxy=another-proxy, vmess-aead=false',
-  );
+  )
 
   t.is(
     txt2,
     'Test Node 1 = ss, example.com, 443, encrypt-method=chacha20-ietf-poly1305, password=password, udp-relay=true, obfs=tls, obfs-host=example.com',
-  );
+  )
 
   t.is(
     surge.getSurgeNodes([
@@ -252,7 +252,7 @@ test('getSurgeNodes', async (t) => {
       },
     ]),
     'trojan node 1 = trojan, example.com, 443, password=password1',
-  );
+  )
 
   t.is(
     surge.getSurgeNodes([
@@ -269,7 +269,7 @@ test('getSurgeNodes', async (t) => {
       },
     ]),
     'trojan node 2 = trojan, example.com, 443, password=password1, tfo=true, mptcp=true, sni=sni.com, skip-cert-verify=true',
-  );
+  )
 
   t.is(
     surge.getSurgeNodes([
@@ -284,7 +284,7 @@ test('getSurgeNodes', async (t) => {
       },
     ]),
     'trojan node 1 = trojan, example.com, 443, password=password1, ws=true, ws-path=/ws',
-  );
+  )
 
   t.is(
     surge.getSurgeNodes([
@@ -304,7 +304,7 @@ test('getSurgeNodes', async (t) => {
       },
     ]),
     'trojan node 1 = trojan, example.com, 443, password=password1, sni=sni.example.com, ws=true, ws-path=/ws, ws-headers="host:ws.example.com|test-key:test-value"',
-  );
+  )
 
   t.is(
     surge.getSurgeNodes([
@@ -317,7 +317,7 @@ test('getSurgeNodes', async (t) => {
       },
     ]),
     'socks5-tls node 1 = socks5-tls, 1.1.1.1, 443',
-  );
+  )
 
   t.is(
     surge.getSurgeNodes([
@@ -331,7 +331,7 @@ test('getSurgeNodes', async (t) => {
       },
     ]),
     'socks5-tls node 2 = socks5-tls, 1.1.1.1, 443, tfo=true',
-  );
+  )
 
   t.is(
     surge.getSurgeNodes([
@@ -346,7 +346,7 @@ test('getSurgeNodes', async (t) => {
       },
     ]),
     'socks5-tls node 3 = socks5-tls, 1.1.1.1, 443, username=auto, password=auto',
-  );
+  )
 
   t.is(
     surge.getSurgeNodes([
@@ -364,7 +364,7 @@ test('getSurgeNodes', async (t) => {
       },
     ]),
     'socks5-tls node 4 = socks5-tls, 1.1.1.1, 443, username=auto, password=auto, sni=example.com, tfo=true, skip-cert-verify=true',
-  );
+  )
 
   t.is(
     surge.getSurgeNodes([
@@ -383,7 +383,7 @@ test('getSurgeNodes', async (t) => {
       },
     ]),
     'socks5-tls node 5 = socks5-tls, 1.1.1.1, 443, username=auto, password=auto, sni=example.com, tfo=true, skip-cert-verify=true, client-cert=item',
-  );
+  )
 
   t.is(
     surge.getSurgeNodes([
@@ -395,7 +395,7 @@ test('getSurgeNodes', async (t) => {
       },
     ]),
     'socks node 1 = socks5, 1.1.1.1, 80',
-  );
+  )
 
   t.is(
     surge.getSurgeNodes([
@@ -408,7 +408,7 @@ test('getSurgeNodes', async (t) => {
       },
     ]),
     'socks node 2 = socks5, 1.1.1.1, 80, tfo=true',
-  );
+  )
 
   t.is(
     surge.getSurgeNodes([
@@ -423,7 +423,7 @@ test('getSurgeNodes', async (t) => {
       },
     ]),
     'socks node 3 = socks5, 1.1.1.1, 80, username=auto, password=auto, tfo=true',
-  );
+  )
 
   t.is(
     surge.getSurgeNodes([
@@ -449,7 +449,7 @@ test('getSurgeNodes', async (t) => {
       },
     ]),
     '测试 6 = vmess, 1.1.1.1, 8080, username=1386f85e-657b-4d6e-9d56-78badb75e1fd, ws=true, ws-path=/, ws-headers="host:1.1.1.1|user-agent:Mozilla/5.0 (iPhone; CPU iPhone OS 13_5 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/13.1.1 Mobile/15E148 Safari/604.1", tls=true, tls13=true, skip-cert-verify=true, tfo=true, mptcp=true, test-url=http://www.google.com, vmess-aead=false',
-  );
+  )
 
   t.is(
     surge.getSurgeNodes([
@@ -485,7 +485,7 @@ test('getSurgeNodes', async (t) => {
       '测试 Tuic = tuic, example.com, 443, token=token, alpn=h3',
       '测试 Tuic = tuic, example.com, 443, token=token, sni=sni.example.com, skip-cert-verify=true, alpn=h3',
     ].join('\n'),
-  );
+  )
 
   t.is(
     surge.getSurgeNodes([
@@ -504,7 +504,7 @@ test('getSurgeNodes', async (t) => {
     [
       '测试 Snell = snell, example.com, 443, psk=psk, shadow-tls-password=password, shadow-tls-sni=sni.example.com',
     ].join('\n'),
-  );
+  )
 
   t.is(
     surge.getSurgeNodes([
@@ -523,8 +523,8 @@ test('getSurgeNodes', async (t) => {
       },
     ]),
     ['wg node = wireguard, section-name = wg node'].join('\n'),
-  );
-});
+  )
+})
 
 test('getSurgeWireguardNodes', (t) => {
   t.snapshot(
@@ -562,8 +562,8 @@ test('getSurgeWireguardNodes', (t) => {
         ],
       },
     ]),
-  );
-});
+  )
+})
 
 test('getSurgeNodeNames', (t) => {
   t.deepEqual(
@@ -589,5 +589,5 @@ test('getSurgeNodeNames', (t) => {
       },
     ]),
     'Test Node 1, Test Node 2',
-  );
-});
+  )
+})

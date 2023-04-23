@@ -1,7 +1,7 @@
-import test from 'ava';
-import { NodeTypeEnum } from '../../types';
+import test from 'ava'
+import { NodeTypeEnum } from '../../types'
 
-import { parseTrojanUri } from '../trojan';
+import { parseTrojanUri } from '../trojan'
 
 test('parseTrojanUri', (t) => {
   t.deepEqual(
@@ -17,7 +17,7 @@ test('parseTrojanUri', (t) => {
       sni: 'sni.example.com',
       type: NodeTypeEnum.Trojan,
     },
-  );
+  )
 
   t.deepEqual(
     parseTrojanUri(
@@ -30,7 +30,7 @@ test('parseTrojanUri', (t) => {
       port: '443',
       type: NodeTypeEnum.Trojan,
     },
-  );
+  )
 
   t.deepEqual(
     parseTrojanUri(
@@ -45,13 +45,13 @@ test('parseTrojanUri', (t) => {
       sni: 'sni.example.com',
       type: NodeTypeEnum.Trojan,
     },
-  );
+  )
 
   t.throws(
     () => {
-      parseTrojanUri('ss://');
+      parseTrojanUri('ss://')
     },
     undefined,
     'Invalid Trojan URI.',
-  );
-});
+  )
+})

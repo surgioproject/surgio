@@ -1,14 +1,14 @@
-import { createLogger } from '@surgio/logger';
-import _ from 'lodash';
-import { isIPv4 } from 'net';
+import { createLogger } from '@surgio/logger'
+import _ from 'lodash'
+import { isIPv4 } from 'net'
 
 import {
   NodeFilterType,
   NodeTypeEnum,
   PossibleNodeConfigType,
   SortedNodeFilterType,
-} from '../types';
-import { ERR_INVALID_FILTER } from '../constant';
+} from '../types'
+import { ERR_INVALID_FILTER } from '../constant'
 import {
   applyFilter,
   httpFilter,
@@ -18,9 +18,9 @@ import {
   trojanFilter,
   vmessFilter,
   wireguardFilter,
-} from './filter';
+} from './filter'
 
-const logger = createLogger({ service: 'surgio:utils:loon' });
+const logger = createLogger({ service: 'surgio:utils:loon' })
 
 // @see https://www.notion.so/1-9809ce5acf524d868affee8dd5fc0a6e
 export const getLoonNodes = function (
@@ -28,7 +28,7 @@ export const getLoonNodes = function (
   filter?: NodeFilterType | SortedNodeFilterType,
 ): string {
   if (arguments.length === 2 && typeof filter === 'undefined') {
-    throw new Error(ERR_INVALID_FILTER);
+    throw new Error(ERR_INVALID_FILTER)
   }
 
   const result: ReadonlyArray<string> = applyFilter(list, filter)
@@ -41,31 +41,31 @@ export const getLoonNodes = function (
             nodeConfig.port,
             nodeConfig.method,
             JSON.stringify(nodeConfig.password),
-          ];
+          ]
 
           if (nodeConfig.obfs) {
             if (['http', 'tls'].includes(nodeConfig.obfs)) {
               config.push(
                 nodeConfig.obfs,
                 nodeConfig.obfsHost || nodeConfig.hostname,
-              );
+              )
             } else {
               logger.warn(
                 `不支持为 Loon 生成混淆为 ${nodeConfig.obfs} 的节点，节点 ${nodeConfig.nodeName} 会被省略`,
-              );
-              return void 0;
+              )
+              return void 0
             }
           }
 
           if (nodeConfig.tfo) {
-            config.push('fast-open=true');
+            config.push('fast-open=true')
           }
 
           if (nodeConfig.udpRelay) {
-            config.push('udp=true');
+            config.push('udp=true')
           }
 
-          return config.join(',');
+          return config.join(',')
         }
 
         case NodeTypeEnum.Shadowsocksr: {
@@ -79,17 +79,17 @@ export const getLoonNodes = function (
             `protocol-param=${nodeConfig.protoparam}`,
             `obfs=${nodeConfig.obfs}`,
             `obfs-param=${nodeConfig.obfsparam}`,
-          ];
+          ]
 
           if (nodeConfig.tfo) {
-            config.push('fast-open=true');
+            config.push('fast-open=true')
           }
 
           if (nodeConfig.udpRelay) {
-            config.push('udp=true');
+            config.push('udp=true')
           }
 
-          return config.join(',');
+          return config.join(',')
         }
 
         case NodeTypeEnum.Vmess: {
@@ -102,18 +102,18 @@ export const getLoonNodes = function (
               : `method=${nodeConfig.method}`,
             JSON.stringify(nodeConfig.uuid),
             `transport=${nodeConfig.network}`,
-          ];
+          ]
 
           if (nodeConfig.network === 'ws') {
             config.push(
               `path=${nodeConfig.path || '/'}`,
               `host=${nodeConfig.host || nodeConfig.hostname}`,
-            );
+            )
 
             if (Object.keys(_.omit(nodeConfig.wsHeaders, 'host')).length > 0) {
               logger.warn(
                 `Loon 不支持自定义额外的 Header 字段，节点 ${nodeConfig.nodeName} 可能不可用`,
-              );
+              )
             }
           }
 
@@ -122,10 +122,10 @@ export const getLoonNodes = function (
               `over-tls=${nodeConfig.tls}`,
               `tls-name=${nodeConfig.host || nodeConfig.hostname}`,
               `skip-cert-verify=${nodeConfig.skipCertVerify === true}`,
-            );
+            )
           }
 
-          return config.join(',');
+          return config.join(',')
         }
 
         case NodeTypeEnum.Trojan: {
@@ -136,14 +136,14 @@ export const getLoonNodes = function (
             JSON.stringify(nodeConfig.password),
             `tls-name=${nodeConfig.sni || nodeConfig.hostname}`,
             `skip-cert-verify=${nodeConfig.skipCertVerify === true}`,
-          ];
+          ]
 
           if (nodeConfig.network === 'ws') {
-            config.push('transport=ws', `path=${nodeConfig.wsPath || '/'}`);
+            config.push('transport=ws', `path=${nodeConfig.wsPath || '/'}`)
 
             if (nodeConfig.wsHeaders) {
               if (_.get(nodeConfig, 'wsHeaders.host')) {
-                config.push(`host=${nodeConfig.wsHeaders.host}`);
+                config.push(`host=${nodeConfig.wsHeaders.host}`)
               }
 
               if (
@@ -151,12 +151,12 @@ export const getLoonNodes = function (
               ) {
                 logger.warn(
                   `Loon 不支持自定义额外的 Header 字段，节点 ${nodeConfig.nodeName} 可能不可用`,
-                );
+                )
               }
             }
           }
 
-          return config.join(',');
+          return config.join(',')
         }
 
         case NodeTypeEnum.HTTPS: {
@@ -170,9 +170,9 @@ export const getLoonNodes = function (
             ),
             `tls-name=${nodeConfig.sni || nodeConfig.hostname}`,
             `skip-cert-verify=${nodeConfig.skipCertVerify === true}`,
-          ];
+          ]
 
-          return config.join(',');
+          return config.join(',')
         }
 
         case NodeTypeEnum.HTTP:
@@ -184,28 +184,28 @@ export const getLoonNodes = function (
             JSON.stringify(
               nodeConfig.password /* istanbul ignore next */ || '',
             ),
-          ].join(',');
+          ].join(',')
 
         case NodeTypeEnum.Wireguard: {
           const config = [
             `${nodeConfig.nodeName} = wireguard`,
             `interface-ip=${nodeConfig.selfIp}`,
             `private-key=${JSON.stringify(nodeConfig.privateKey)}`,
-          ];
-          const peers: Array<string> = [];
+          ]
+          const peers: Array<string> = []
 
           if (nodeConfig.selfIpV6) {
-            config.push(`interface-ipV6=${nodeConfig.selfIpV6}`);
+            config.push(`interface-ipV6=${nodeConfig.selfIpV6}`)
           }
           if (nodeConfig.mtu) {
-            config.push(`mtu=${nodeConfig.mtu}`);
+            config.push(`mtu=${nodeConfig.mtu}`)
           }
           if (nodeConfig.dnsServers) {
             for (const dns of nodeConfig.dnsServers) {
               if (isIPv4(dns)) {
-                config.push(`dns=${dns}`);
+                config.push(`dns=${dns}`)
               } else {
-                config.push(`dnsV6=${dns}`);
+                config.push(`dnsV6=${dns}`)
               }
             }
           }
@@ -214,44 +214,42 @@ export const getLoonNodes = function (
             const peerConfig = [
               `public-key=${JSON.stringify(peer.publicKey)}`,
               `endpoint=${peer.endpoint}`,
-            ];
+            ]
 
             if (peer.allowedIps) {
-              peers.push(`allowed-ips=${JSON.stringify(peer.allowedIps)}}}`);
+              peers.push(`allowed-ips=${JSON.stringify(peer.allowedIps)}}}`)
             }
             if (peer.presharedKey) {
-              peers.push(
-                `preshared-key=${JSON.stringify(peer.presharedKey)}}}`,
-              );
+              peers.push(`preshared-key=${JSON.stringify(peer.presharedKey)}}}`)
             }
             if (peer.reservedBits) {
-              peers.push(`reserved=${JSON.stringify(peer.reservedBits)}}`);
+              peers.push(`reserved=${JSON.stringify(peer.reservedBits)}}`)
             }
 
-            peers.push(`{${peerConfig.join(',')}}`);
+            peers.push(`{${peerConfig.join(',')}}`)
           }
 
           if (nodeConfig.peers[0].keepalive) {
-            config.push(`keepalive=${nodeConfig.peers[0].keepalive}`);
+            config.push(`keepalive=${nodeConfig.peers[0].keepalive}`)
           }
 
-          config.push(`peers=[${peers.join(',')}]`);
+          config.push(`peers=[${peers.join(',')}]`)
 
-          return config.join(',');
+          return config.join(',')
         }
 
         // istanbul ignore next
         default:
           logger.warn(
             `不支持为 Loon 生成 ${nodeConfig.type} 的节点，节点 ${nodeConfig.nodeName} 会被省略`,
-          );
-          return void 0;
+          )
+          return void 0
       }
     })
-    .filter((item): item is string => item !== undefined);
+    .filter((item): item is string => item !== undefined)
 
-  return result.join('\n');
-};
+  return result.join('\n')
+}
 
 export const getLoonNodeNames = function (
   list: ReadonlyArray<PossibleNodeConfigType>,
@@ -260,7 +258,7 @@ export const getLoonNodeNames = function (
 ): string {
   // istanbul ignore next
   if (arguments.length === 2 && typeof filter === 'undefined') {
-    throw new Error(ERR_INVALID_FILTER);
+    throw new Error(ERR_INVALID_FILTER)
   }
 
   return applyFilter(
@@ -277,5 +275,5 @@ export const getLoonNodeNames = function (
     filter,
   )
     .map((item) => item.nodeName)
-    .join(separator || ', ');
-};
+    .join(separator || ', ')
+}

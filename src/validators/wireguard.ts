@@ -1,7 +1,7 @@
-import { z } from 'zod';
+import { z } from 'zod'
 
-import { NodeTypeEnum } from '../types';
-import { SimpleNodeConfigValidator } from './common';
+import { NodeTypeEnum } from '../types'
+import { SimpleNodeConfigValidator } from './common'
 
 const WireguardPeerConfigValidator = z.object({
   publicKey: z.string(),
@@ -10,7 +10,7 @@ const WireguardPeerConfigValidator = z.object({
   keepalive: z.number().optional(),
   presharedKey: z.string().optional(),
   reservedBits: z.array(z.number()).optional(),
-});
+})
 
 export const WireguardNodeConfigValidator = SimpleNodeConfigValidator.extend({
   type: z.literal(NodeTypeEnum.Wireguard),
@@ -22,4 +22,4 @@ export const WireguardNodeConfigValidator = SimpleNodeConfigValidator.extend({
   dnsServers: z.array(z.string().ip()).optional(),
   peers: z.array(WireguardPeerConfigValidator),
   reservedBits: z.array(z.number()).optional(),
-});
+})

@@ -1,4 +1,4 @@
-'use strict';
+'use strict'
 
 module.exports = {
   remoteSnippets: [
@@ -33,4 +33,4 @@ module.exports = {
   urlBase: 'https://config.example.com/',
   // https://surgio.royli.dev/guide/custom-config.html#upload
   // upload: {},
-};
+}

@@ -1,10 +1,10 @@
-import { z } from 'zod';
+import { z } from 'zod'
 
-import { SupportProviderEnum } from '../types';
+import { SupportProviderEnum } from '../types'
 import {
   NodeFilterTypeValidator,
   SortedNodeFilterTypeValidator,
-} from './filter';
+} from './filter'
 
 export const ProviderValidator = z.object({
   type: z.nativeEnum(SupportProviderEnum),
@@ -29,4 +29,4 @@ export const ProviderValidator = z.object({
   youtubePremiumFilter: z
     .union([NodeFilterTypeValidator, SortedNodeFilterTypeValidator])
     .optional(),
-});
+})

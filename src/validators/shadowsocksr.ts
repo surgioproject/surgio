@@ -1,7 +1,7 @@
-import { z } from 'zod';
+import { z } from 'zod'
 
-import { NodeTypeEnum } from '../types';
-import { PortValidator, SimpleNodeConfigValidator } from './common';
+import { NodeTypeEnum } from '../types'
+import { PortValidator, SimpleNodeConfigValidator } from './common'
 
 export const ShadowsocksrNodeConfigValidator = SimpleNodeConfigValidator.extend(
   {
@@ -16,4 +16,4 @@ export const ShadowsocksrNodeConfigValidator = SimpleNodeConfigValidator.extend(
     protoparam: z.string(),
     udpRelay: z.oboolean(),
   },
-);
+)

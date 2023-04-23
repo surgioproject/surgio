@@ -1,14 +1,14 @@
-import { createLogger } from '@surgio/logger';
-import fs from 'fs-extra';
-import os from 'os';
-import { join } from 'path';
-import queryString from 'query-string';
-import { JsonObject } from 'type-fest';
-import { URL, URLSearchParams } from 'url';
-import URLSafeBase64 from 'urlsafe-base64';
-import net from 'net';
-import crypto from 'crypto';
-import { camelCase, snakeCase, paramCase } from 'change-case';
+import { createLogger } from '@surgio/logger'
+import fs from 'fs-extra'
+import os from 'os'
+import { join } from 'path'
+import queryString from 'query-string'
+import { JsonObject } from 'type-fest'
+import { URL, URLSearchParams } from 'url'
+import URLSafeBase64 from 'urlsafe-base64'
+import net from 'net'
+import crypto from 'crypto'
+import { camelCase, snakeCase, paramCase } from 'change-case'
 
 import {
   NodeFilterType,
@@ -18,18 +18,18 @@ import {
   ShadowsocksrNodeConfig,
   SortedNodeFilterType,
   VmessNodeConfig,
-} from '../types';
-import { ERR_INVALID_FILTER, OBFS_UA } from '../constant';
-import { getIsGFWFree } from './env-flag';
-import { applyFilter } from './filter';
+} from '../types'
+import { ERR_INVALID_FILTER, OBFS_UA } from '../constant'
+import { getIsGFWFree } from './env-flag'
+import { applyFilter } from './filter'
 
-export * from './surge';
-export * from './surfboard';
-export * from './clash';
-export * from './quantumult';
-export * from './loon';
+export * from './surge'
+export * from './surfboard'
+export * from './clash'
+export * from './quantumult'
+export * from './loon'
 
-const logger = createLogger({ service: 'surgio:utils' });
+const logger = createLogger({ service: 'surgio:utils' })
 
 export const getDownloadUrl = (
   baseUrl = '/',
@@ -37,65 +37,65 @@ export const getDownloadUrl = (
   inline = true,
   accessToken?: string,
 ): string => {
-  let urlSearchParams: URLSearchParams;
-  let name: string;
+  let urlSearchParams: URLSearchParams
+  let name: string
 
   if (artifactName.includes('?')) {
-    urlSearchParams = new URLSearchParams(artifactName.split('?')[1]);
-    name = artifactName.split('?')[0];
+    urlSearchParams = new URLSearchParams(artifactName.split('?')[1])
+    name = artifactName.split('?')[0]
   } else {
-    urlSearchParams = new URLSearchParams();
-    name = artifactName;
+    urlSearchParams = new URLSearchParams()
+    name = artifactName
   }
 
   if (accessToken) {
-    urlSearchParams.set('access_token', accessToken);
+    urlSearchParams.set('access_token', accessToken)
   }
   if (!inline) {
-    urlSearchParams.set('dl', '1');
+    urlSearchParams.set('dl', '1')
   }
 
-  const query = urlSearchParams.toString();
+  const query = urlSearchParams.toString()
 
-  return `${baseUrl}${name}${query ? '?' + query : ''}`;
-};
+  return `${baseUrl}${name}${query ? '?' + query : ''}`
+}
 
 export const getUrl = (
   baseUrl: string,
   path: string,
   accessToken?: string,
 ): string => {
-  path = path.replace(/^\//, '');
-  const url = new URL(path, baseUrl);
+  path = path.replace(/^\//, '')
+  const url = new URL(path, baseUrl)
   if (accessToken) {
-    url.searchParams.set('access_token', accessToken);
+    url.searchParams.set('access_token', accessToken)
   }
-  return url.toString();
-};
+  return url.toString()
+}
 
 // istanbul ignore next
 export const toUrlSafeBase64 = (str: string): string =>
-  URLSafeBase64.encode(Buffer.from(str, 'utf8'));
+  URLSafeBase64.encode(Buffer.from(str, 'utf8'))
 
 // istanbul ignore next
 export const fromUrlSafeBase64 = (str: string): string => {
   if (URLSafeBase64.validate(str)) {
-    return URLSafeBase64.decode(str).toString();
+    return URLSafeBase64.decode(str).toString()
   }
-  return fromBase64(str);
-};
+  return fromBase64(str)
+}
 
 // istanbul ignore next
 export const toBase64 = (str: string): string =>
-  Buffer.from(str, 'utf8').toString('base64');
+  Buffer.from(str, 'utf8').toString('base64')
 
 // istanbul ignore next
 export const fromBase64 = (str: string): string =>
-  Buffer.from(str, 'base64').toString('utf8');
+  Buffer.from(str, 'base64').toString('utf8')
 
 // istanbul ignore next
 export const toMD5 = (str: string): string =>
-  crypto.createHash('md5').update(str).digest('hex');
+  crypto.createHash('md5').update(str).digest('hex')
 
 /**
  * @see https://github.com/shadowsocks/shadowsocks-org/wiki/SIP002-URI-Scheme
@@ -108,14 +108,14 @@ export const getShadowsocksNodes = (
     .map((nodeConfig) => {
       // istanbul ignore next
       if (nodeConfig.enable === false) {
-        return null;
+        return null
       }
 
       switch (nodeConfig.type) {
         case NodeTypeEnum.Shadowsocks: {
           const query: {
-            readonly plugin?: string;
-            readonly group?: string;
+            readonly plugin?: string
+            readonly group?: string
           } = {
             ...(nodeConfig.obfs
               ? {
@@ -125,7 +125,7 @@ export const getShadowsocksNodes = (
                 }
               : null),
             ...(groupName ? { group: encodeURIComponent(groupName) } : null),
-          };
+          }
 
           return [
             'ss://',
@@ -141,21 +141,21 @@ export const getShadowsocksNodes = (
             }),
             '#',
             encodeURIComponent(nodeConfig.nodeName),
-          ].join('');
+          ].join('')
         }
 
         // istanbul ignore next
         default:
           logger.warn(
             `在生成 Shadowsocks 节点时出现了 ${nodeConfig.type} 节点，节点 ${nodeConfig.nodeName} 会被省略`,
-          );
-          return null;
+          )
+          return null
       }
     })
-    .filter((item) => !!item);
+    .filter((item) => !!item)
 
-  return result.join('\n');
-};
+  return result.join('\n')
+}
 
 export const getShadowsocksrNodes = (
   list: ReadonlyArray<ShadowsocksrNodeConfig>,
@@ -165,7 +165,7 @@ export const getShadowsocksrNodes = (
     .map((nodeConfig) => {
       // istanbul ignore next
       if (nodeConfig.enable === false) {
-        return void 0;
+        return void 0
       }
 
       switch (nodeConfig.type) {
@@ -177,7 +177,7 @@ export const getShadowsocksrNodes = (
             nodeConfig.method,
             nodeConfig.obfs,
             toUrlSafeBase64(nodeConfig.password),
-          ].join(':');
+          ].join(':')
           const query = {
             obfsparam: toUrlSafeBase64(nodeConfig.obfsparam),
             protoparam: toUrlSafeBase64(nodeConfig.protoparam),
@@ -185,7 +185,7 @@ export const getShadowsocksrNodes = (
             group: toUrlSafeBase64(groupName),
             udpport: 0,
             uot: 0,
-          };
+          }
 
           return (
             'ssr://' +
@@ -198,21 +198,21 @@ export const getShadowsocksrNodes = (
                 }),
               ].join(''),
             )
-          );
+          )
         }
 
         // istanbul ignore next
         default:
           logger.warn(
             `在生成 Shadowsocksr 节点时出现了 ${nodeConfig.type} 节点，节点 ${nodeConfig.nodeName} 会被省略`,
-          );
-          return void 0;
+          )
+          return void 0
       }
     })
-    .filter((item) => item !== undefined);
+    .filter((item) => item !== undefined)
 
-  return result.join('\n');
-};
+  return result.join('\n')
+}
 
 export const getV2rayNNodes = (
   list: ReadonlyArray<VmessNodeConfig>,
@@ -221,7 +221,7 @@ export const getV2rayNNodes = (
     .map((nodeConfig): string | undefined => {
       // istanbul ignore next
       if (nodeConfig.enable === false) {
-        return void 0;
+        return void 0
       }
 
       switch (nodeConfig.type) {
@@ -238,23 +238,23 @@ export const getV2rayNNodes = (
             host: nodeConfig.host,
             path: nodeConfig.path,
             tls: nodeConfig.tls ? 'tls' : '',
-          };
+          }
 
-          return 'vmess://' + toBase64(JSON.stringify(json));
+          return 'vmess://' + toBase64(JSON.stringify(json))
         }
 
         // istanbul ignore next
         default:
           logger.warn(
             `在生成 V2Ray 节点时出现了 ${nodeConfig.type} 节点，节点 ${nodeConfig.nodeName} 会被省略`,
-          );
-          return void 0;
+          )
+          return void 0
       }
     })
-    .filter((item): item is string => item !== undefined);
+    .filter((item): item is string => item !== undefined)
 
-  return result.join('\n');
-};
+  return result.join('\n')
+}
 
 // istanbul ignore next
 export const getShadowsocksNodesJSON = (
@@ -264,12 +264,12 @@ export const getShadowsocksNodesJSON = (
     .map((nodeConfig) => {
       // istanbul ignore next
       if (nodeConfig.enable === false) {
-        return null;
+        return null
       }
 
       switch (nodeConfig.type) {
         case NodeTypeEnum.Shadowsocks: {
-          const useObfs = Boolean(nodeConfig.obfs && nodeConfig.obfsHost);
+          const useObfs = Boolean(nodeConfig.obfs && nodeConfig.obfsHost)
           return {
             remarks: nodeConfig.nodeName,
             server: nodeConfig.hostname,
@@ -286,21 +286,21 @@ export const getShadowsocksNodesJSON = (
                   'plugin-opts': `obfs=${nodeConfig.obfs};obfs-host=${nodeConfig.obfsHost}`,
                 }
               : null),
-          };
+          }
         }
 
         // istanbul ignore next
         default:
           logger.warn(
             `在生成 Shadowsocks 节点时出现了 ${nodeConfig.type} 节点，节点 ${nodeConfig.nodeName} 会被省略`,
-          );
-          return undefined;
+          )
+          return undefined
       }
     })
-    .filter((item) => item !== undefined);
+    .filter((item) => item !== undefined)
 
-  return JSON.stringify(nodes, null, 2);
-};
+  return JSON.stringify(nodes, null, 2)
+}
 
 export const getNodeNames = function (
   list: ReadonlyArray<PossibleNodeConfigType>,
@@ -309,13 +309,13 @@ export const getNodeNames = function (
 ): string {
   // istanbul ignore next
   if (arguments.length === 2 && typeof filter === 'undefined') {
-    throw new Error(ERR_INVALID_FILTER);
+    throw new Error(ERR_INVALID_FILTER)
   }
 
   return applyFilter(list, filter)
     .map((item) => item.nodeName)
-    .join(separator || ', ');
-};
+    .join(separator || ', ')
+}
 
 // istanbul ignore next
 export const changeCase = (
@@ -324,74 +324,74 @@ export const changeCase = (
 ): string => {
   switch (format) {
     case 'camelCase':
-      return camelCase(str);
+      return camelCase(str)
     case 'snakeCase':
-      return snakeCase(str);
+      return snakeCase(str)
     case 'kebabCase':
-      return paramCase(str);
+      return paramCase(str)
   }
-};
+}
 
 export const pickAndFormatStringList = (
   obj: Record<string, any>,
   keyList: readonly string[],
   options: {
-    keyFormat?: 'camelCase' | 'snakeCase' | 'kebabCase';
+    keyFormat?: 'camelCase' | 'snakeCase' | 'kebabCase'
   } = {},
 ): readonly string[] => {
-  const result: string[] = [];
+  const result: string[] = []
 
   keyList.forEach((key) => {
     if (obj.hasOwnProperty(key)) {
       const propertyKey = options.keyFormat
         ? changeCase(key, options.keyFormat)
-        : key;
-      const propertyValue = obj[key];
+        : key
+      const propertyValue = obj[key]
 
       if (Array.isArray(propertyValue)) {
-        result.push(`${propertyKey}=${propertyValue.join(',')}`);
+        result.push(`${propertyKey}=${propertyValue.join(',')}`)
       } else {
-        result.push(`${propertyKey}=${propertyValue}`);
+        result.push(`${propertyKey}=${propertyValue}`)
       }
     }
-  });
+  })
 
-  return result;
-};
+  return result
+}
 
 export const decodeStringList = <T = Record<string, string | boolean>>(
   stringList: ReadonlyArray<string>,
 ): T => {
-  const result = {};
+  const result = {}
   stringList.forEach((item) => {
     if (item.includes('=')) {
-      const match = item.match(/^(.*?)=(.*?)$/);
+      const match = item.match(/^(.*?)=(.*?)$/)
       if (match) {
-        result[match[1].trim()] = match[2].trim() || true;
+        result[match[1].trim()] = match[2].trim() || true
       }
     } else {
-      result[item.trim()] = true;
+      result[item.trim()] = true
     }
-  });
-  return result as T;
-};
+  })
+  return result as T
+}
 
 export const ensureConfigFolder = (dir: string = os.homedir()): string => {
-  let baseDir;
+  let baseDir
 
   try {
-    fs.accessSync(dir, fs.constants.W_OK);
-    baseDir = dir;
+    fs.accessSync(dir, fs.constants.W_OK)
+    baseDir = dir
   } catch (err) {
     // if the user do not have write permission
     // istanbul ignore next
-    baseDir = '/tmp';
+    baseDir = '/tmp'
   }
 
-  const configDir = join(baseDir, '.config/surgio');
-  fs.mkdirpSync(configDir);
-  return configDir;
-};
+  const configDir = join(baseDir, '.config/surgio')
+  fs.mkdirpSync(configDir)
+  return configDir
+}
 
 export const formatV2rayConfig = (
   localPort: number,
@@ -431,7 +431,7 @@ export const formatV2rayConfig = (
         security: 'none',
       },
     },
-  };
+  }
 
   if (nodeConfig.tls) {
     config.outbound.streamSettings = {
@@ -450,7 +450,7 @@ export const formatV2rayConfig = (
             }
           : null),
       },
-    };
+    }
   }
 
   if (nodeConfig.network === 'ws') {
@@ -464,70 +464,69 @@ export const formatV2rayConfig = (
           'User-Agent': OBFS_UA,
         },
       },
-    };
+    }
   }
 
-  return config;
-};
+  return config
+}
 
 export const lowercaseHeaderKeys = (
   headers: Record<string, string>,
 ): Record<string, string> => {
-  const wsHeaders = {};
+  const wsHeaders = {}
 
   Object.keys(headers).forEach((key) => {
-    wsHeaders[key.toLowerCase()] = headers[key];
-  });
+    wsHeaders[key.toLowerCase()] = headers[key]
+  })
 
-  return wsHeaders;
-};
+  return wsHeaders
+}
 
-export const msToSeconds = (ms: number): number => Math.floor(ms / 1000);
+export const msToSeconds = (ms: number): number => Math.floor(ms / 1000)
 
 // istanbul ignore next
-export const isIp = (str: string): boolean =>
-  net.isIPv4(str) || net.isIPv6(str);
+export const isIp = (str: string): boolean => net.isIPv4(str) || net.isIPv6(str)
 
 // istanbul ignore next
 export const isNow = (): boolean =>
   typeof process.env.NOW_REGION !== 'undefined' ||
-  typeof process.env.VERCEL_REGION !== 'undefined';
+  typeof process.env.VERCEL_REGION !== 'undefined'
 
 // istanbul ignore next
-export const isVercel = (): boolean => isNow();
+export const isVercel = (): boolean => isNow()
 
 // istanbul ignore next
-export const isHeroku = (): boolean => typeof process.env.DYNO !== 'undefined';
+export const isHeroku = (): boolean => typeof process.env.DYNO !== 'undefined'
 
 // istanbul ignore next
 export const isGitHubActions = (): boolean =>
-  typeof process.env.GITHUB_ACTIONS !== 'undefined';
+  typeof process.env.GITHUB_ACTIONS !== 'undefined'
 
 // istanbul ignore next
 export const isGitLabCI = (): boolean =>
-  typeof process.env.GITLAB_CI !== 'undefined';
+  typeof process.env.GITLAB_CI !== 'undefined'
 
 // istanbul ignore next
 export const isRailway = (): boolean =>
-  typeof process.env.RAILWAY_STATIC_URL !== 'undefined';
+  typeof process.env.RAILWAY_STATIC_URL !== 'undefined'
 
 // istanbul ignore next
 export const isNetlify = (): boolean =>
-  typeof process.env.NETLIFY !== 'undefined';
+  typeof process.env.NETLIFY !== 'undefined'
 
 // istanbul ignore next
 export const isAWSLambda = (): boolean =>
-  typeof process.env.AWS_LAMBDA_FUNCTION_NAME !== 'undefined';
+  typeof process.env.AWS_LAMBDA_FUNCTION_NAME !== 'undefined'
 
 // istanbul ignore next
 export const isAWS = (): boolean =>
   isAWSLambda() ||
   typeof process.env.AWS_EXECUTION_ENV !== 'undefined' ||
-  typeof process.env.AWS_REGION !== 'undefined';
+  typeof process.env.AWS_REGION !== 'undefined'
 
 // istanbul ignore next
 export const isFlyIO = (): boolean =>
-  typeof process.env.FLY_REGION !== 'undefined';
+  typeof process.env.FLY_REGION !== 'undefined'
 
 // istanbul ignore next
 export const isGFWFree = (): boolean =>
@@ -540,20 +539,20 @@ export const isGFWFree = (): boolean =>
   isGitLabCI() ||
   isRailway() ||
   isNetlify() ||
-  isFlyIO();
+  isFlyIO()
 
 // istanbul ignore next
 export const assertNever = (x: never): never => {
-  throw new TypeError(`Unexpected object: ${x}`);
-};
+  throw new TypeError(`Unexpected object: ${x}`)
+}
 
 export const checkNotNullish = (val: unknown): boolean =>
-  val !== null && val !== undefined;
+  val !== null && val !== undefined
 
 export const getPortFromHost = (host: string): number => {
-  const match = host.match(/:(\d+)$/);
+  const match = host.match(/:(\d+)$/)
   if (match) {
-    return Number(match[1]);
+    return Number(match[1])
   }
-  throw new Error(`Invalid host: ${host}`);
-};
+  throw new Error(`Invalid host: ${host}`)
+}

@@ -1,7 +1,7 @@
-import test from 'ava';
+import test from 'ava'
 
-import { NodeTypeEnum, PossibleNodeConfigType } from '../../types';
-import * as clash from '../clash';
+import { NodeTypeEnum, PossibleNodeConfigType } from '../../types'
+import * as clash from '../clash'
 
 test('getClashNodeNames', async (t) => {
   const nodeNameList: ReadonlyArray<PossibleNodeConfigType> = [
@@ -32,17 +32,17 @@ test('getClashNodeNames', async (t) => {
       method: 'chacha20-ietf-poly1305',
       password: 'password',
     },
-  ];
-  const result1 = clash.getClashNodeNames(nodeNameList);
-  const result2 = clash.getClashNodeNames(nodeNameList, undefined, ['TEST']);
+  ]
+  const result1 = clash.getClashNodeNames(nodeNameList)
+  const result2 = clash.getClashNodeNames(nodeNameList, undefined, ['TEST'])
   const result3 = clash.getClashNodeNames(
     nodeNameList,
     (nodeConfig) => nodeConfig.nodeName !== 'Test Node 3',
-  );
+  )
 
-  t.deepEqual(result1, ['Test Node 1', 'Test Node 3']);
-  t.deepEqual(result2, ['TEST', 'Test Node 1', 'Test Node 3']);
-  t.deepEqual(result3, ['Test Node 1']);
+  t.deepEqual(result1, ['Test Node 1', 'Test Node 3'])
+  t.deepEqual(result2, ['TEST', 'Test Node 1', 'Test Node 3'])
+  t.deepEqual(result3, ['Test Node 1'])
 
   t.deepEqual(
     clash.getClashNodeNames([
@@ -57,8 +57,8 @@ test('getClashNodeNames', async (t) => {
       },
     ]),
     [],
-  );
-});
+  )
+})
 
 test('getClashNodes', async (t) => {
   const nodeList: ReadonlyArray<PossibleNodeConfigType> = [
@@ -149,10 +149,10 @@ test('getClashNodes', async (t) => {
       type: NodeTypeEnum.Vmess,
       uuid: '1386f85e-657b-4d6e-9d56-78badb75e1fd',
     },
-  ];
-  const array = clash.getClashNodes(nodeList);
+  ]
+  const array = clash.getClashNodes(nodeList)
 
-  t.is(array.length, nodeList.length);
+  t.is(array.length, nodeList.length)
   t.deepEqual(array[0], {
     name: 'Test Node 1',
     type: 'ss',
@@ -166,7 +166,7 @@ test('getClashNodes', async (t) => {
       mode: 'tls',
       host: 'example.com',
     },
-  });
+  })
   t.deepEqual(array[1], {
     name: 'Test Node 2',
     type: 'ss',
@@ -175,7 +175,7 @@ test('getClashNodes', async (t) => {
     cipher: 'chacha20-ietf-poly1305',
     password: 'password',
     udp: false,
-  });
+  })
   t.deepEqual(array[2], {
     cipher: 'auto',
     name: 'Test Node 3',
@@ -193,7 +193,7 @@ test('getClashNodes', async (t) => {
       },
       path: '/',
     },
-  });
+  })
   t.deepEqual(array[3], {
     cipher: 'auto',
     name: 'Test Node 4',
@@ -204,7 +204,7 @@ test('getClashNodes', async (t) => {
     type: 'vmess',
     udp: false,
     uuid: '1386f85e-657b-4d6e-9d56-78badb75e1fd',
-  });
+  })
   t.deepEqual(array[4], {
     cipher: 'auto',
     name: 'Test Node 5',
@@ -215,7 +215,7 @@ test('getClashNodes', async (t) => {
     type: 'vmess',
     udp: false,
     uuid: '1386f85e-657b-4d6e-9d56-78badb75e1fd',
-  });
+  })
   t.deepEqual(array[5], {
     cipher: 'auto',
     name: 'Test Node 6',
@@ -227,7 +227,7 @@ test('getClashNodes', async (t) => {
     'skip-cert-verify': false,
     type: 'vmess',
     uuid: '1386f85e-657b-4d6e-9d56-78badb75e1fd',
-  });
+  })
   t.deepEqual(array[6], {
     cipher: 'auto',
     name: 'Test Node 7',
@@ -239,7 +239,7 @@ test('getClashNodes', async (t) => {
     'skip-cert-verify': true,
     type: 'vmess',
     uuid: '1386f85e-657b-4d6e-9d56-78badb75e1fd',
-  });
+  })
 
   t.deepEqual(
     clash.getClashNodes([
@@ -314,7 +314,7 @@ test('getClashNodes', async (t) => {
         udp: true,
       },
     ],
-  );
+  )
 
   t.deepEqual(
     clash.getClashNodes([
@@ -348,7 +348,7 @@ test('getClashNodes', async (t) => {
         uuid: '1386f85e-657b-4d6e-9d56-78badb75e1fd',
       },
     ],
-  );
+  )
 
   t.deepEqual(
     clash.getClashNodes([
@@ -373,7 +373,7 @@ test('getClashNodes', async (t) => {
         },
       },
     ],
-  );
+  )
   t.deepEqual(
     clash.getClashNodes([
       {
@@ -401,7 +401,7 @@ test('getClashNodes', async (t) => {
         version: '2',
       },
     ],
-  );
+  )
   t.deepEqual(
     clash.getClashNodes([
       {
@@ -415,7 +415,7 @@ test('getClashNodes', async (t) => {
       },
     ]),
     [],
-  );
+  )
 
   t.deepEqual(
     clash.getClashNodes([
@@ -437,7 +437,7 @@ test('getClashNodes', async (t) => {
         'skip-cert-verify': false,
       },
     ],
-  );
+  )
   t.deepEqual(
     clash.getClashNodes([
       {
@@ -465,7 +465,7 @@ test('getClashNodes', async (t) => {
         'skip-cert-verify': true,
       },
     ],
-  );
+  )
   t.deepEqual(
     clash.getClashNodes([
       {
@@ -498,7 +498,7 @@ test('getClashNodes', async (t) => {
         },
       },
     ],
-  );
+  )
   t.deepEqual(
     clash.getClashNodes([
       {
@@ -535,7 +535,7 @@ test('getClashNodes', async (t) => {
         },
       },
     ],
-  );
+  )
 
   t.deepEqual(
     clash.getClashNodes([
@@ -554,7 +554,7 @@ test('getClashNodes', async (t) => {
         port: 443,
       },
     ],
-  );
+  )
 
   t.deepEqual(
     clash.getClashNodes([
@@ -583,7 +583,7 @@ test('getClashNodes', async (t) => {
         udp: false,
       },
     ],
-  );
+  )
 
   t.deepEqual(
     clash.getClashNodes([
@@ -612,7 +612,7 @@ test('getClashNodes', async (t) => {
         udp: false,
       },
     ],
-  );
+  )
 
   t.deepEqual(
     clash.getClashNodes([
@@ -625,7 +625,7 @@ test('getClashNodes', async (t) => {
       },
     ]),
     [],
-  );
+  )
 
   t.deepEqual(
     clash.getClashNodes([
@@ -675,7 +675,7 @@ test('getClashNodes', async (t) => {
         alpn: ['h3'],
       },
     ],
-  );
+  )
 
   t.deepEqual(
     clash.getClashNodes([
@@ -706,5 +706,5 @@ test('getClashNodes', async (t) => {
         reserved: [1, 2, 3],
       },
     ],
-  );
-});
+  )
+})

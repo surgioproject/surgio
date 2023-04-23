@@ -1,9 +1,9 @@
-'use strict';
+'use strict'
 
-const { utils } = require('../../../../');
+const { utils } = require('../../../../')
 
-exports.keywordFilter = utils.useKeywords(['US 1', 'US 2']);
-exports.strictKeywordFilter = utils.useKeywords(['US', 'Netflix'], true);
+exports.keywordFilter = utils.useKeywords(['US 1', 'US 2'])
+exports.strictKeywordFilter = utils.useKeywords(['US', 'Netflix'], true)
 
 module.exports = {
   url: 'http://example.com/test-ss-sub.txt',
@@ -12,4 +12,4 @@ module.exports = {
     keywordFilter: exports.keywordFilter,
     strictKeywordFilter: exports.strictKeywordFilter,
   },
-};
+}

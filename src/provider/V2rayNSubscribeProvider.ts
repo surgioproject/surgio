@@ -1,28 +1,28 @@
-import { logger } from '@surgio/logger';
-import assert from 'assert';
-import { z } from 'zod';
+import { logger } from '@surgio/logger'
+import assert from 'assert'
+import { z } from 'zod'
 
 import {
   NodeTypeEnum,
   ShadowsocksNodeConfig,
   V2rayNSubscribeProviderConfig,
   VmessNodeConfig,
-} from '../types';
-import { fromBase64 } from '../utils';
-import relayableUrl from '../utils/relayable-url';
-import { parseSSUri } from '../utils/ss';
-import Provider from './Provider';
+} from '../types'
+import { fromBase64 } from '../utils'
+import relayableUrl from '../utils/relayable-url'
+import { parseSSUri } from '../utils/ss'
+import Provider from './Provider'
 
 export default class V2rayNSubscribeProvider extends Provider {
-  public readonly compatibleMode?: boolean;
-  public readonly skipCertVerify?: boolean;
-  public readonly udpRelay?: boolean;
-  public readonly tls13?: boolean;
+  public readonly compatibleMode?: boolean
+  public readonly skipCertVerify?: boolean
+  public readonly udpRelay?: boolean
+  public readonly tls13?: boolean
 
-  readonly #originalUrl: string;
+  readonly #originalUrl: string
 
   constructor(name: string, config: V2rayNSubscribeProviderConfig) {
-    super(name, config);
+    super(name, config)
 
     const schema = z.object({
       url: z.string().url(),
@@ -30,24 +30,24 @@ export default class V2rayNSubscribeProvider extends Provider {
       tls13: z.boolean().optional(),
       compatibleMode: z.boolean().optional(),
       skipCertVerify: z.boolean().optional(),
-    });
-    const result = schema.safeParse(config);
+    })
+    const result = schema.safeParse(config)
 
     // istanbul ignore next
     if (!result.success) {
-      throw result.error;
+      throw result.error
     }
 
-    this.#originalUrl = result.data.url;
-    this.compatibleMode = result.data.compatibleMode;
-    this.skipCertVerify = result.data.skipCertVerify;
-    this.tls13 = result.data.tls13;
-    this.udpRelay = result.data.udpRelay;
+    this.#originalUrl = result.data.url
+    this.compatibleMode = result.data.compatibleMode
+    this.skipCertVerify = result.data.skipCertVerify
+    this.tls13 = result.data.tls13
+    this.udpRelay = result.data.udpRelay
   }
 
   // istanbul ignore next
   public get url(): string {
-    return relayableUrl(this.#originalUrl, this.config.relayUrl);
+    return relayableUrl(this.#originalUrl, this.config.relayUrl)
   }
 
   public getNodeList({
@@ -62,7 +62,7 @@ export default class V2rayNSubscribeProvider extends Provider {
       udpRelay: this.udpRelay,
       isCompatibleMode: this.compatibleMode,
       requestUserAgent: requestUserAgent || this.config.requestUserAgent,
-    });
+    })
   }
 }
 
@@ -77,17 +77,17 @@ export const getV2rayNSubscription = async ({
   udpRelay,
   requestUserAgent,
 }: {
-  url: string;
-  isCompatibleMode?: boolean;
-  skipCertVerify?: boolean;
-  udpRelay?: boolean;
-  tls13?: boolean;
-  requestUserAgent?: string;
+  url: string
+  isCompatibleMode?: boolean
+  skipCertVerify?: boolean
+  udpRelay?: boolean
+  tls13?: boolean
+  requestUserAgent?: string
 }): Promise<ReadonlyArray<VmessNodeConfig | ShadowsocksNodeConfig>> => {
-  assert(url, '未指定订阅地址 url');
+  assert(url, '未指定订阅地址 url')
 
   if (isCompatibleMode) {
-    logger.warn('运行在兼容模式，请注意生成的节点是否正确。');
+    logger.warn('运行在兼容模式，请注意生成的节点是否正确。')
   }
 
   async function requestConfigFromRemote(): Promise<
@@ -95,23 +95,23 @@ export const getV2rayNSubscription = async ({
   > {
     const response = await Provider.requestCacheableResource(url, {
       requestUserAgent,
-    });
-    const configString = response.body;
+    })
+    const configString = response.body
 
     const configList = fromBase64(configString)
       .split('\n')
       .filter((item) => !!item)
       .filter((item) => {
-        const pick = item.startsWith('vmess://') || item.startsWith('ss://');
+        const pick = item.startsWith('vmess://') || item.startsWith('ss://')
 
         if (!pick) {
           logger.warn(
             `不支持读取 V2rayN 订阅中的节点 ${item}，该节点会被省略。`,
-          );
+          )
         }
 
-        return pick;
-      });
+        return pick
+      })
 
     return configList
       .map((item): VmessNodeConfig | ShadowsocksNodeConfig | undefined => {
@@ -122,7 +122,7 @@ export const getV2rayNSubscription = async ({
             skipCertVerify,
             udpRelay,
             tls13,
-          );
+          )
         }
 
         if (item.startsWith('ss://')) {
@@ -131,18 +131,16 @@ export const getV2rayNSubscription = async ({
             udpRelay: udpRelay,
             skipCertVerify: skipCertVerify,
             tls13: tls13,
-          };
+          }
         }
 
-        return undefined;
+        return undefined
       })
-      .filter(
-        (item): item is VmessNodeConfig | ShadowsocksNodeConfig => !!item,
-      );
+      .filter((item): item is VmessNodeConfig | ShadowsocksNodeConfig => !!item)
   }
 
-  return await requestConfigFromRemote();
-};
+  return await requestConfigFromRemote()
+}
 
 export const parseJSONConfig = (
   json: string,
@@ -151,20 +149,20 @@ export const parseJSONConfig = (
   udpRelay?: boolean | undefined,
   tls13?: boolean | undefined,
 ): VmessNodeConfig | undefined => {
-  const config = JSON.parse(json);
+  const config = JSON.parse(json)
 
   // istanbul ignore next
   if (!isCompatibleMode && (!config.v || Number(config.v) !== 2)) {
     throw new Error(
       `该节点 ${config.ps} 可能不是一个有效的 V2rayN 节点。请参考 https://url.royli.dev/Qtrci 进行排查, 或者将解析模式改为兼容模式`,
-    );
+    )
   }
   // istanbul ignore next
   if (['kcp', 'http'].indexOf(config.net) > -1) {
     logger.warn(
       `不支持读取 network 类型为 ${config.net} 的 Vmess 节点，节点 ${config.ps} 会被省略。`,
-    );
-    return undefined;
+    )
+    return undefined
   }
 
   return {
@@ -186,5 +184,5 @@ export const parseJSONConfig = (
           tls13: tls13 ?? false,
         }
       : null),
-  };
-};
+  }
+}

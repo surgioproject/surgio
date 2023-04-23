@@ -1,48 +1,48 @@
-import { createLogger } from '@surgio/logger';
-import assert from 'assert';
-import bytes from 'bytes';
-import { z } from 'zod';
+import { createLogger } from '@surgio/logger'
+import assert from 'assert'
+import bytes from 'bytes'
+import { z } from 'zod'
 
 import {
   NodeTypeEnum,
   ShadowsocksNodeConfig,
   SsdProviderConfig,
   SubscriptionUserinfo,
-} from '../types';
-import { decodeStringList, fromBase64 } from '../utils';
-import relayableUrl from '../utils/relayable-url';
-import Provider from './Provider';
+} from '../types'
+import { decodeStringList, fromBase64 } from '../utils'
+import relayableUrl from '../utils/relayable-url'
+import Provider from './Provider'
 
 const logger = createLogger({
   service: 'surgio:SsdProvider',
-});
+})
 
 export default class SsdProvider extends Provider {
-  readonly #originalUrl: string;
-  public readonly udpRelay?: boolean;
+  readonly #originalUrl: string
+  public readonly udpRelay?: boolean
 
   constructor(name: string, config: SsdProviderConfig) {
-    super(name, config);
+    super(name, config)
 
     const schema = z.object({
       url: z.string().url(),
       udpRelay: z.boolean().optional(),
-    });
-    const result = schema.safeParse(config);
+    })
+    const result = schema.safeParse(config)
 
     // istanbul ignore next
     if (!result.success) {
-      throw result.error;
+      throw result.error
     }
 
-    this.#originalUrl = result.data.url;
-    this.udpRelay = result.data.udpRelay;
-    this.supportGetSubscriptionUserInfo = true;
+    this.#originalUrl = result.data.url
+    this.udpRelay = result.data.udpRelay
+    this.supportGetSubscriptionUserInfo = true
   }
 
   // istanbul ignore next
   public get url(): string {
-    return relayableUrl(this.#originalUrl, this.config.relayUrl);
+    return relayableUrl(this.#originalUrl, this.config.relayUrl)
   }
 
   public async getSubscriptionUserInfo({
@@ -54,12 +54,12 @@ export default class SsdProvider extends Provider {
       this.url,
       this.udpRelay,
       requestUserAgent || this.config.requestUserAgent,
-    );
+    )
 
     if (subscriptionUserinfo) {
-      return subscriptionUserinfo;
+      return subscriptionUserinfo
     }
-    return void 0;
+    return void 0
   }
 
   public async getNodeList({
@@ -71,9 +71,9 @@ export default class SsdProvider extends Provider {
       this.url,
       this.udpRelay,
       requestUserAgent || this.config.requestUserAgent,
-    );
+    )
 
-    return nodeList;
+    return nodeList
   }
 }
 
@@ -83,27 +83,27 @@ export const getSsdSubscription = async (
   udpRelay?: boolean,
   requestUserAgent?: string,
 ): Promise<{
-  readonly nodeList: ReadonlyArray<ShadowsocksNodeConfig>;
-  readonly subscriptionUserinfo?: SubscriptionUserinfo;
+  readonly nodeList: ReadonlyArray<ShadowsocksNodeConfig>
+  readonly subscriptionUserinfo?: SubscriptionUserinfo
 }> => {
-  assert(url, '未指定订阅地址 url');
+  assert(url, '未指定订阅地址 url')
 
   const response = await Provider.requestCacheableResource(url, {
     requestUserAgent,
-  });
+  })
 
   // istanbul ignore next
   if (!response.body.startsWith('ssd://')) {
-    throw new Error(`暂仅支持 ssd:// 开头的订阅地址，${url} 无法处理`);
+    throw new Error(`暂仅支持 ssd:// 开头的订阅地址，${url} 无法处理`)
   }
 
-  const base64 = response.body.replace('ssd://', '');
-  const data = JSON.parse(fromBase64(base64)) as SsdSubscription;
-  const { servers, traffic_used, traffic_total, expiry } = data;
+  const base64 = response.body.replace('ssd://', '')
+  const data = JSON.parse(fromBase64(base64)) as SsdSubscription
+  const { servers, traffic_used, traffic_total, expiry } = data
   const nodeList: ReadonlyArray<ShadowsocksNodeConfig | undefined> =
     servers.map((server): ShadowsocksNodeConfig | undefined =>
       parseSsdConfig(data, server, udpRelay),
-    );
+    )
 
   if (
     !response.subscriptionUserinfo &&
@@ -116,7 +116,7 @@ export const getSsdSubscription = async (
       download: bytes.parse(`${traffic_used}GB`),
       total: bytes.parse(`${traffic_total}GB`),
       expire: Math.floor(new Date(expiry).getTime() / 1000),
-    } as SubscriptionUserinfo;
+    } as SubscriptionUserinfo
   }
 
   return {
@@ -124,27 +124,27 @@ export const getSsdSubscription = async (
       (item): item is ShadowsocksNodeConfig => item !== undefined,
     ),
     subscriptionUserinfo: response.subscriptionUserinfo,
-  };
-};
+  }
+}
 
 export const parseSsdConfig = (
   globalConfig: SsdSubscription,
   server: SsdServer,
   udpRelay?: boolean,
 ): ShadowsocksNodeConfig | undefined => {
-  const { airport, port, encryption, password } = globalConfig;
-  const plugin = server.plugin ?? globalConfig.plugin;
-  const pluginOptsString = server.plugin_options ?? globalConfig.plugin_options;
+  const { airport, port, encryption, password } = globalConfig
+  const plugin = server.plugin ?? globalConfig.plugin
+  const pluginOptsString = server.plugin_options ?? globalConfig.plugin_options
   const pluginOpts = pluginOptsString
     ? decodeStringList(pluginOptsString.split(';'))
-    : {};
+    : {}
 
   // istanbul ignore next
   if (plugin && !['simple-obfs', 'v2ray-plugin'].includes(plugin)) {
     logger.warn(
       `不支持从 SSD 订阅中读取 ${plugin} 类型的 Shadowsocks 节点，节点 ${server.remarks} 会被省略`,
-    );
-    return void 0;
+    )
+    return void 0
   }
   // istanbul ignore next
   if (
@@ -153,8 +153,8 @@ export const parseSsdConfig = (
   ) {
     logger.warn(
       `不支持从 SSD 订阅中读取 QUIC 模式的 Shadowsocks 节点，节点 ${server.remarks} 会被省略`,
-    );
-    return void 0;
+    )
+    return void 0
   }
 
   return {
@@ -182,30 +182,30 @@ export const parseSsdConfig = (
           obfsHost: pluginOpts.host as string,
         }
       : null),
-  };
-};
+  }
+}
 
 export interface SsdSubscription {
-  airport: string;
-  port: number;
-  encryption: string;
-  password: string;
-  servers: ReadonlyArray<SsdServer>;
-  plugin?: string;
-  plugin_options?: string;
-  traffic_used?: number;
-  traffic_total?: number;
-  expiry?: string;
+  airport: string
+  port: number
+  encryption: string
+  password: string
+  servers: ReadonlyArray<SsdServer>
+  plugin?: string
+  plugin_options?: string
+  traffic_used?: number
+  traffic_total?: number
+  expiry?: string
 }
 
 export interface SsdServer {
-  server: string;
-  port?: number;
-  encryption?: string;
-  password?: string;
-  plugin?: string;
-  plugin_options?: string;
-  id?: number;
-  remarks?: string;
-  ratio?: number;
+  server: string
+  port?: number
+  encryption?: string
+  password?: string
+  plugin?: string
+  plugin_options?: string
+  id?: number
+  remarks?: string
+  ratio?: number
 }

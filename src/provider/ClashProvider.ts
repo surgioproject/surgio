@@ -1,8 +1,8 @@
-import assert from 'assert';
-import yaml from 'yaml';
-import _ from 'lodash';
-import { createLogger } from '@surgio/logger';
-import { z } from 'zod';
+import assert from 'assert'
+import yaml from 'yaml'
+import _ from 'lodash'
+import { createLogger } from '@surgio/logger'
+import { z } from 'zod'
 
 import {
   ClashProviderConfig,
@@ -16,11 +16,11 @@ import {
   TrojanNodeConfig,
   TuicNodeConfig,
   VmessNodeConfig,
-} from '../types';
-import { lowercaseHeaderKeys } from '../utils';
-import { getNetworkClashUA } from '../utils/env-flag';
-import relayableUrl from '../utils/relayable-url';
-import Provider from './Provider';
+} from '../types'
+import { lowercaseHeaderKeys } from '../utils'
+import { getNetworkClashUA } from '../utils/env-flag'
+import relayableUrl from '../utils/relayable-url'
+import Provider from './Provider'
 
 type SupportConfigTypes =
   | ShadowsocksNodeConfig
@@ -30,41 +30,41 @@ type SupportConfigTypes =
   | ShadowsocksrNodeConfig
   | SnellNodeConfig
   | TrojanNodeConfig
-  | TuicNodeConfig;
+  | TuicNodeConfig
 
 const logger = createLogger({
   service: 'surgio:ClashProvider',
-});
+})
 
 export default class ClashProvider extends Provider {
-  readonly #originalUrl: string;
-  public readonly udpRelay?: boolean;
-  public readonly tls13?: boolean;
+  readonly #originalUrl: string
+  public readonly udpRelay?: boolean
+  public readonly tls13?: boolean
 
   constructor(name: string, config: ClashProviderConfig) {
-    super(name, config);
+    super(name, config)
 
     const schema = z.object({
       url: z.string().url(),
       udpRelay: z.boolean().optional(),
       tls13: z.boolean().optional(),
-    });
-    const result = schema.safeParse(config);
+    })
+    const result = schema.safeParse(config)
 
     // istanbul ignore next
     if (!result.success) {
-      throw result.error;
+      throw result.error
     }
 
-    this.#originalUrl = result.data.url;
-    this.udpRelay = result.data.udpRelay;
-    this.tls13 = result.data.tls13;
-    this.supportGetSubscriptionUserInfo = true;
+    this.#originalUrl = result.data.url
+    this.udpRelay = result.data.udpRelay
+    this.tls13 = result.data.tls13
+    this.supportGetSubscriptionUserInfo = true
   }
 
   // istanbul ignore next
   public get url(): string {
-    return relayableUrl(this.#originalUrl, this.config.relayUrl);
+    return relayableUrl(this.#originalUrl, this.config.relayUrl)
   }
 
   public async getSubscriptionUserInfo({
@@ -77,12 +77,12 @@ export default class ClashProvider extends Provider {
       udpRelay: this.udpRelay,
       tls13: this.tls13,
       requestUserAgent: requestUserAgent || this.config.requestUserAgent,
-    });
+    })
 
     if (subscriptionUserinfo) {
-      return subscriptionUserinfo;
+      return subscriptionUserinfo
     }
-    return void 0;
+    return void 0
   }
 
   public async getNodeList({
@@ -95,9 +95,9 @@ export default class ClashProvider extends Provider {
       udpRelay: this.udpRelay,
       tls13: this.tls13,
       requestUserAgent: requestUserAgent || this.config.requestUserAgent,
-    });
+    })
 
-    return nodeList;
+    return nodeList
   }
 }
 
@@ -107,47 +107,47 @@ export const getClashSubscription = async ({
   tls13,
   requestUserAgent,
 }: {
-  url: string;
-  udpRelay?: boolean;
-  tls13?: boolean;
-  requestUserAgent?: string;
+  url: string
+  udpRelay?: boolean
+  tls13?: boolean
+  requestUserAgent?: string
 }): Promise<{
-  readonly nodeList: ReadonlyArray<SupportConfigTypes>;
-  readonly subscriptionUserinfo?: SubscriptionUserinfo;
+  readonly nodeList: ReadonlyArray<SupportConfigTypes>
+  readonly subscriptionUserinfo?: SubscriptionUserinfo
 }> => {
-  assert(url, '未指定订阅地址 url');
+  assert(url, '未指定订阅地址 url')
 
   const response = await Provider.requestCacheableResource(url, {
     requestUserAgent: requestUserAgent || getNetworkClashUA(),
-  });
-  let clashConfig;
+  })
+  let clashConfig
 
   try {
     // eslint-disable-next-line prefer-const
-    clashConfig = yaml.parse(response.body);
+    clashConfig = yaml.parse(response.body)
   } catch (err) /* istanbul ignore next */ {
-    throw new Error(`${url} 不是一个合法的 YAML 文件`);
+    throw new Error(`${url} 不是一个合法的 YAML 文件`)
   }
 
   if (
     !_.isPlainObject(clashConfig) ||
     (!('Proxy' in clashConfig) && !('proxies' in clashConfig))
   ) {
-    throw new Error(`${url} 订阅内容有误，请检查后重试`);
+    throw new Error(`${url} 订阅内容有误，请检查后重试`)
   }
 
-  const proxyList: any[] = clashConfig.Proxy || clashConfig.proxies;
+  const proxyList: any[] = clashConfig.Proxy || clashConfig.proxies
 
   // istanbul ignore next
   if (!Array.isArray(proxyList)) {
-    throw new Error(`${url} 订阅内容有误，请检查后重试`);
+    throw new Error(`${url} 订阅内容有误，请检查后重试`)
   }
 
   return {
     nodeList: parseClashConfig(proxyList, udpRelay, tls13),
     subscriptionUserinfo: response.subscriptionUserinfo,
-  };
-};
+  }
+}
 
 export const parseClashConfig = (
   proxyList: ReadonlyArray<any>,
@@ -162,8 +162,8 @@ export const parseClashConfig = (
           if (item.plugin && !['obfs', 'v2ray-plugin'].includes(item.plugin)) {
             logger.warn(
               `不支持从 Clash 订阅中读取 ${item.plugin} 类型的 Shadowsocks 节点，节点 ${item.name} 会被省略`,
-            );
-            return void 0;
+            )
+            return void 0
           }
           // istanbul ignore next
           if (
@@ -172,13 +172,13 @@ export const parseClashConfig = (
           ) {
             logger.warn(
               `不支持从 Clash 订阅中读取 QUIC 模式的 Shadowsocks 节点，节点 ${item.name} 会被省略`,
-            );
-            return void 0;
+            )
+            return void 0
           }
 
           const wsHeaders = lowercaseHeaderKeys(
             _.get(item, 'plugin-opts.headers', {}),
-          );
+          )
 
           return {
             type: NodeTypeEnum.Shadowsocks,
@@ -228,7 +228,7 @@ export const parseClashConfig = (
                     : null),
                 }
               : null),
-          } as ShadowsocksNodeConfig;
+          } as ShadowsocksNodeConfig
         }
 
         case 'vmess': {
@@ -236,22 +236,22 @@ export const parseClashConfig = (
           if (item.network && !['tcp', 'ws'].includes(item.network)) {
             logger.warn(
               `不支持从 Clash 订阅中读取 network 类型为 ${item.network} 的 Vmess 节点，节点 ${item.name} 会被省略`,
-            );
-            return void 0;
+            )
+            return void 0
           }
 
-          const isNewConfig = 'ws-opts' in item;
+          const isNewConfig = 'ws-opts' in item
           const wsHeaders = isNewConfig
             ? lowercaseHeaderKeys(_.get(item, 'ws-opts.headers', {}))
-            : lowercaseHeaderKeys(_.get(item, 'ws-headers', {}));
+            : lowercaseHeaderKeys(_.get(item, 'ws-headers', {}))
           const wsHost =
-            item.servername || _.get(wsHeaders, 'host', item.server);
+            item.servername || _.get(wsHeaders, 'host', item.server)
           const wsOpts = isNewConfig
             ? _.get(item, 'ws-opts', {})
             : {
                 path: _.get(item, 'ws-path', '/'),
                 headers: wsHeaders,
-              };
+              }
 
           return {
             type: NodeTypeEnum.Vmess,
@@ -277,7 +277,7 @@ export const parseClashConfig = (
                   tls13: tls13 ?? false,
                 }
               : null),
-          } as VmessNodeConfig;
+          } as VmessNodeConfig
         }
 
         case 'http':
@@ -289,7 +289,7 @@ export const parseClashConfig = (
               port: item.port,
               username: item.username /* istanbul ignore next */ || '',
               password: item.password /* istanbul ignore next */ || '',
-            } as HttpNodeConfig;
+            } as HttpNodeConfig
           }
 
           return {
@@ -301,7 +301,7 @@ export const parseClashConfig = (
             password: item.password || '',
             tls13: tls13 ?? false,
             skipCertVerify: item['skip-cert-verify'] === true,
-          } as HttpsNodeConfig;
+          } as HttpsNodeConfig
 
         case 'snell':
           return {
@@ -315,7 +315,7 @@ export const parseClashConfig = (
               ? { obfsHost: item['obfs-opts'].host }
               : null),
             ...('version' in item ? { version: item.version } : null),
-          } as SnellNodeConfig;
+          } as SnellNodeConfig
 
         // istanbul ignore next
         case 'ssr':
@@ -331,12 +331,12 @@ export const parseClashConfig = (
             protoparam: item['protocol-param'] ?? item.protocolparam,
             method: item.cipher,
             udpRelay: resolveUdpRelay(item.udp, udpRelay),
-          } as ShadowsocksrNodeConfig;
+          } as ShadowsocksrNodeConfig
 
         case 'trojan': {
-          const network = item.network;
-          const wsOpts = _.get(item, 'ws-opts', {});
-          const wsHeaders = lowercaseHeaderKeys(_.get(wsOpts, 'headers', {}));
+          const network = item.network
+          const wsOpts = _.get(item, 'ws-opts', {})
+          const wsHeaders = lowercaseHeaderKeys(_.get(wsOpts, 'headers', {}))
 
           return {
             type: NodeTypeEnum.Trojan,
@@ -354,7 +354,7 @@ export const parseClashConfig = (
             ...(network === 'ws'
               ? { network: 'ws', wsPath: _.get(wsOpts, 'path', '/'), wsHeaders }
               : null),
-          } as TrojanNodeConfig;
+          } as TrojanNodeConfig
         }
 
         case 'tuic': {
@@ -371,26 +371,26 @@ export const parseClashConfig = (
             tls13: tls13 ?? false,
             ...('sni' in item ? { sni: item.sni } : null),
             ...('alpn' in item ? { alpn: item.alpn } : null),
-          } as TuicNodeConfig;
+          } as TuicNodeConfig
         }
 
         default:
           logger.warn(
             `不支持从 Clash 订阅中读取 ${item.type} 的节点，节点 ${item.name} 会被省略`,
-          );
-          return void 0;
+          )
+          return void 0
       }
     },
-  );
+  )
 
   return nodeList.filter(
     (item): item is SupportConfigTypes => item !== undefined,
-  );
-};
+  )
+}
 
 function resolveUdpRelay(val?: boolean, defaultVal = false): boolean {
   if (val !== void 0) {
-    return val;
+    return val
   }
-  return defaultVal;
+  return defaultVal
 }

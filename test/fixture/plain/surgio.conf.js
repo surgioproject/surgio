@@ -1,6 +1,6 @@
-'use strict';
+'use strict'
 
-const path = require('path');
+const path = require('path')
 
 module.exports = {
   artifacts: [
@@ -95,4 +95,4 @@ module.exports = {
   },
   proxyTestUrl: 'http://www.google.com/generate_204',
   proxyTestInterval: 2400,
-};
+}

@@ -1,7 +1,7 @@
-import { z } from 'zod';
+import { z } from 'zod'
 
-import { NodeTypeEnum } from '../types';
-import { PortValidator, SimpleNodeConfigValidator } from './common';
+import { NodeTypeEnum } from '../types'
+import { PortValidator, SimpleNodeConfigValidator } from './common'
 
 export const SnellNodeConfigValidator = SimpleNodeConfigValidator.extend({
   type: z.literal(NodeTypeEnum.Snell),
@@ -15,4 +15,4 @@ export const SnellNodeConfigValidator = SimpleNodeConfigValidator.extend({
     .union([z.string(), z.number()])
     .refine((v) => Number(v))
     .optional(),
-});
+})

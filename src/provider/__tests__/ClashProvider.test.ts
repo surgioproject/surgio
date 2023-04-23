@@ -1,33 +1,33 @@
-import test from 'ava';
-import nock from 'nock';
-import sinon from 'sinon';
+import test from 'ava'
+import nock from 'nock'
+import sinon from 'sinon'
 
-import { NodeTypeEnum, SupportProviderEnum } from '../../types';
-import { RELAY_SERVICE } from '../../constant';
+import { NodeTypeEnum, SupportProviderEnum } from '../../types'
+import { RELAY_SERVICE } from '../../constant'
 import ClashProvider, {
   getClashSubscription,
   parseClashConfig,
-} from '../ClashProvider';
-import Provider from '../Provider';
-import * as config from '../../config';
+} from '../ClashProvider'
+import Provider from '../Provider'
+import * as config from '../../config'
 
-const sandbox = sinon.createSandbox();
+const sandbox = sinon.createSandbox()
 
 test.beforeEach(() => {
-  sandbox.restore();
-  sandbox.stub(config, 'getConfig').returns({} as any);
-});
+  sandbox.restore()
+  sandbox.stub(config, 'getConfig').returns({} as any)
+})
 
 test('ClashProvider', async (t) => {
   const provider = new ClashProvider('test', {
     type: SupportProviderEnum.Clash,
     url: 'http://example.com/clash-sample.yaml',
-  });
+  })
 
   await t.notThrowsAsync(async () => {
-    await provider.getNodeList();
-  });
-});
+    await provider.getNodeList()
+  })
+})
 
 test('ClashProvider new format', async (t) => {
   const scope = nock('http://local')
@@ -37,44 +37,44 @@ test('ClashProvider new format', async (t) => {
       `
 proxies: []
     `,
-    );
+    )
 
   const provider = new ClashProvider('test', {
     type: SupportProviderEnum.Clash,
     url: 'http://local/success-1',
-  });
+  })
 
-  t.deepEqual(await provider.getNodeList(), []);
+  t.deepEqual(await provider.getNodeList(), [])
 
-  scope.done();
-});
+  scope.done()
+})
 
 test('ClashProvider.getSubscriptionUserInfo', async (t) => {
   let provider = new ClashProvider('test', {
     type: SupportProviderEnum.Clash,
     url: 'http://example.com/clash-sample-with-user-info.yaml',
-  });
-  let userInfo = await provider.getSubscriptionUserInfo();
+  })
+  let userInfo = await provider.getSubscriptionUserInfo()
   t.deepEqual(userInfo, {
     upload: 891332010,
     download: 29921186546,
     total: 322122547200,
     expire: 1586330887,
-  });
+  })
 
   provider = new ClashProvider('test', {
     type: SupportProviderEnum.Clash,
     url: 'http://example.com/clash-sample.yaml',
-  });
-  userInfo = await provider.getSubscriptionUserInfo();
-  t.is(userInfo, void 0);
-});
+  })
+  userInfo = await provider.getSubscriptionUserInfo()
+  t.is(userInfo, void 0)
+})
 
 test('getClashSubscription', async (t) => {
   const { nodeList } = await getClashSubscription({
     url: 'http://example.com/clash-sample.yaml',
-  });
-  const config = [...nodeList];
+  })
+  const config = [...nodeList]
 
   t.deepEqual(
     config.map((item) => item.nodeName).join(', '),
@@ -91,7 +91,7 @@ test('getClashSubscription', async (t) => {
       'ss4',
       'ss-wss',
     ].join(', '),
-  );
+  )
 
   t.deepEqual(config.shift(), {
     type: NodeTypeEnum.Shadowsocks,
@@ -101,7 +101,7 @@ test('getClashSubscription', async (t) => {
     method: 'chacha20-ietf-poly1305',
     password: 'password',
     udpRelay: true,
-  });
+  })
   t.deepEqual(config.shift(), {
     type: NodeTypeEnum.Shadowsocks,
     nodeName: 'ss2',
@@ -112,7 +112,7 @@ test('getClashSubscription', async (t) => {
     udpRelay: false,
     obfs: 'tls',
     obfsHost: 'www.bing.com',
-  });
+  })
   t.deepEqual(config.shift(), {
     type: NodeTypeEnum.Shadowsocks,
     nodeName: 'ss3',
@@ -125,7 +125,7 @@ test('getClashSubscription', async (t) => {
     obfsHost: 'server',
     obfsUri: '/',
     wsHeaders: {},
-  });
+  })
   t.deepEqual(config.shift(), {
     type: NodeTypeEnum.Vmess,
     nodeName: 'vmess',
@@ -137,7 +137,7 @@ test('getClashSubscription', async (t) => {
     tls: false,
     network: 'tcp',
     udpRelay: false,
-  });
+  })
   t.deepEqual(config.shift(), {
     type: NodeTypeEnum.Vmess,
     nodeName: 'vmess new format',
@@ -156,7 +156,7 @@ test('getClashSubscription', async (t) => {
     wsHeaders: {
       host: 'v2ray.com',
     },
-  });
+  })
   t.deepEqual(config.shift(), {
     type: NodeTypeEnum.Vmess,
     nodeName: 'vmess custom header',
@@ -175,7 +175,7 @@ test('getClashSubscription', async (t) => {
     wsHeaders: {
       edge: 'www.baidu.com',
     },
-  });
+  })
   t.deepEqual(config.shift(), {
     type: NodeTypeEnum.HTTPS,
     nodeName: 'http 1',
@@ -185,7 +185,7 @@ test('getClashSubscription', async (t) => {
     password: 'password',
     skipCertVerify: false,
     tls13: false,
-  });
+  })
   t.deepEqual(config.shift(), {
     type: NodeTypeEnum.HTTP,
     nodeName: 'http 2',
@@ -193,7 +193,7 @@ test('getClashSubscription', async (t) => {
     port: 443,
     username: 'username',
     password: 'password',
-  });
+  })
   t.deepEqual(config.shift(), {
     type: NodeTypeEnum.Snell,
     nodeName: 'snell',
@@ -201,7 +201,7 @@ test('getClashSubscription', async (t) => {
     port: 44046,
     psk: 'yourpsk',
     obfs: 'http',
-  });
+  })
   t.deepEqual(config.shift(), {
     type: NodeTypeEnum.Shadowsocks,
     nodeName: 'ss4',
@@ -212,7 +212,7 @@ test('getClashSubscription', async (t) => {
     udpRelay: false,
     obfs: 'tls',
     obfsHost: 'example.com',
-  });
+  })
   t.deepEqual(config.shift(), {
     type: NodeTypeEnum.Shadowsocks,
     nodeName: 'ss-wss',
@@ -227,14 +227,14 @@ test('getClashSubscription', async (t) => {
     skipCertVerify: false,
     tls13: false,
     wsHeaders: {},
-  });
-});
+  })
+})
 
 test('getClashSubscription udpRelay', async (t) => {
   const { nodeList: config } = await getClashSubscription({
     url: 'http://example.com/clash-sample.yaml',
     udpRelay: true,
-  });
+  })
 
   t.deepEqual(config[0], {
     type: NodeTypeEnum.Shadowsocks,
@@ -244,7 +244,7 @@ test('getClashSubscription udpRelay', async (t) => {
     method: 'chacha20-ietf-poly1305',
     password: 'password',
     udpRelay: true,
-  });
+  })
   t.deepEqual(config[1], {
     type: NodeTypeEnum.Shadowsocks,
     nodeName: 'ss2',
@@ -255,7 +255,7 @@ test('getClashSubscription udpRelay', async (t) => {
     udpRelay: true,
     obfs: 'tls',
     obfsHost: 'www.bing.com',
-  });
+  })
   t.deepEqual(config[2], {
     type: NodeTypeEnum.Shadowsocks,
     nodeName: 'ss3',
@@ -268,7 +268,7 @@ test('getClashSubscription udpRelay', async (t) => {
     obfsHost: 'server',
     obfsUri: '/',
     wsHeaders: {},
-  });
+  })
   t.deepEqual(config[3], {
     type: NodeTypeEnum.Vmess,
     nodeName: 'vmess',
@@ -280,8 +280,8 @@ test('getClashSubscription udpRelay', async (t) => {
     tls: false,
     network: 'tcp',
     udpRelay: true,
-  });
-});
+  })
+})
 
 test('getClashSubscription - invalid yaml', async (t) => {
   const scope = nock('http://local')
@@ -293,43 +293,43 @@ test('getClashSubscription - invalid yaml', async (t) => {
       `
 foo: bar
     `,
-    );
+    )
 
   await t.throwsAsync(
     async () => {
       await getClashSubscription({
         url: 'http://example.com/test-v2rayn-sub.txt',
-      });
+      })
     },
     {
       instanceOf: Error,
       message:
         'http://example.com/test-v2rayn-sub.txt 订阅内容有误，请检查后重试',
     },
-  );
+  )
 
   await t.throwsAsync(
     async () => {
-      await getClashSubscription({ url: 'http://local/fail-1' });
+      await getClashSubscription({ url: 'http://local/fail-1' })
     },
     {
       instanceOf: Error,
       message: 'http://local/fail-1 订阅内容有误，请检查后重试',
     },
-  );
+  )
 
   await t.throwsAsync(
     async () => {
-      await getClashSubscription({ url: 'http://local/fail-2' });
+      await getClashSubscription({ url: 'http://local/fail-2' })
     },
     {
       instanceOf: Error,
       message: 'http://local/fail-2 订阅内容有误，请检查后重试',
     },
-  );
+  )
 
-  scope.done();
-});
+  scope.done()
+})
 
 test('snell Configurations', (t) => {
   t.deepEqual(
@@ -359,8 +359,8 @@ test('snell Configurations', (t) => {
         version: '2',
       },
     ],
-  );
-});
+  )
+})
 
 test('trojan configurations', (t) => {
   t.deepEqual(
@@ -384,7 +384,7 @@ test('trojan configurations', (t) => {
         udpRelay: false,
       },
     ],
-  );
+  )
   t.deepEqual(
     parseClashConfig([
       {
@@ -413,7 +413,7 @@ test('trojan configurations', (t) => {
         tls13: false,
       },
     ],
-  );
+  )
   t.deepEqual(
     parseClashConfig(
       [
@@ -446,8 +446,8 @@ test('trojan configurations', (t) => {
         tls13: true,
       },
     ],
-  );
-});
+  )
+})
 
 test('ssr', async (t) => {
   t.deepEqual(
@@ -481,7 +481,7 @@ test('ssr', async (t) => {
         udpRelay: false,
       },
     ],
-  );
+  )
   t.deepEqual(
     parseClashConfig([
       {
@@ -513,8 +513,8 @@ test('ssr', async (t) => {
         udpRelay: true,
       },
     ],
-  );
-});
+  )
+})
 
 test('shadowsocks v2ray mux', async (t) => {
   t.deepEqual(
@@ -558,34 +558,34 @@ test('shadowsocks v2ray mux', async (t) => {
         },
       },
     ],
-  );
-});
+  )
+})
 
 test('ClashProvider relayUrl', async (t) => {
   const provider = new ClashProvider('test', {
     type: SupportProviderEnum.Clash,
     url: 'http://example.com/clash-sample.yaml',
     relayUrl: true,
-  });
+  })
 
-  t.is(provider.url, `${RELAY_SERVICE}http://example.com/clash-sample.yaml`);
-});
+  t.is(provider.url, `${RELAY_SERVICE}http://example.com/clash-sample.yaml`)
+})
 
 test('ClashProvider requestUserAgent', async (t) => {
-  const mock = sandbox.spy(Provider, 'requestCacheableResource');
+  const mock = sandbox.spy(Provider, 'requestCacheableResource')
 
-  const requestUserAgent = 'test useragent';
+  const requestUserAgent = 'test useragent'
   const provider = new ClashProvider('test', {
     type: SupportProviderEnum.Clash,
     url: 'http://example.com/clash-sample.yaml',
     requestUserAgent,
-  });
+  })
 
-  t.is(provider.config.requestUserAgent, requestUserAgent);
+  t.is(provider.config.requestUserAgent, requestUserAgent)
 
   await t.notThrowsAsync(async () => {
-    await provider.getNodeList();
-  });
+    await provider.getNodeList()
+  })
 
   sandbox.assert.calledWithExactly(
     mock,
@@ -593,5 +593,5 @@ test('ClashProvider requestUserAgent', async (t) => {
     {
       requestUserAgent: 'test useragent',
     },
-  );
-});
+  )
+})

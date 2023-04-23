@@ -1,17 +1,17 @@
-import { loadConfig, setConfig, getConfig } from './config';
-import { loadRemoteSnippetList } from './utils/remote-snippet';
+import { loadConfig, setConfig, getConfig } from './config'
+import { loadRemoteSnippetList } from './utils/remote-snippet'
 
-export * as redis from './redis';
-export * from './types';
+export * as redis from './redis'
+export * from './types'
 
 const utils = {
   loadRemoteSnippetList,
-} as const;
+} as const
 
 const config = {
   loadConfig,
   setConfig,
   getConfig,
-} as const;
+} as const
 
-export { utils, config };
+export { utils, config }

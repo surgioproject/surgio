@@ -1,4 +1,4 @@
-'use strict';
+'use strict'
 
 module.exports = {
   type: 'custom',
@@ -59,8 +59,8 @@ module.exports = {
   ],
   renameNode: (name) => {
     if (name === 'rename to HTTPS') {
-      return 'HTTPS';
+      return 'HTTPS'
     }
-    return name;
+    return name
   },
-};
+}

@@ -1,9 +1,9 @@
-import { CommandConfigBeforeNormalize, ProviderConfigFactory } from '../types';
-import { PossibleProviderConfigType } from '../types';
+import { CommandConfigBeforeNormalize, ProviderConfigFactory } from '../types'
+import { PossibleProviderConfigType } from '../types'
 
 export const defineSurgioConfig = (config: CommandConfigBeforeNormalize) =>
-  config;
+  config
 
 export const defineProvider = (
   config: PossibleProviderConfigType | ProviderConfigFactory,
-) => config;
+) => config

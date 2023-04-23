@@ -1,4 +1,4 @@
-'use strict';
+'use strict'
 
 module.exports = {
   prompt: ({ prompter: inquirer }) => {
@@ -8,6 +8,6 @@ module.exports = {
         name: 'name',
         message: 'Template 名称',
       },
-    ]);
+    ])
   },
-};
+}

@@ -1,4 +1,4 @@
-'use strict';
+'use strict'
 
 module.exports = {
   artifacts: [
@@ -9,4 +9,4 @@ module.exports = {
     },
   ],
   urlBase: 'http://example.com/',
-};
+}

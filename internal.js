@@ -1,1 +1,1 @@
-module.exports = require('./build/internal.js');
+module.exports = require('./build/internal.js')
