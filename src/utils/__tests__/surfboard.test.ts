@@ -372,3 +372,39 @@ test('getSurfboardNodes', async (t) => {
     '测试 6 = vmess, 1.1.1.1, 8080, username=1386f85e-657b-4d6e-9d56-78badb75e1fd, ws=true, ws-path=/, ws-headers="host:1.1.1.1|user-agent:Mozilla/5.0 (iPhone; CPU iPhone OS 13_5 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/13.1.1 Mobile/15E148 Safari/604.1", tls=true, skip-cert-verify=true, vmess-aead=false',
   )
 })
+
+test('getSurfboardNodeNames', (t) => {
+  t.is(
+    surfboard.getSurfboardNodeNames([
+      {
+        nodeName: 'Test Node 1',
+        type: NodeTypeEnum.Shadowsocks,
+        hostname: 'example.com',
+        port: '443',
+        method: 'chacha20-ietf-poly1305',
+        password: 'password',
+        obfs: 'tls',
+        obfsHost: 'example.com',
+        udpRelay: true,
+      },
+      {
+        nodeName: 'Test Node 2',
+        type: NodeTypeEnum.Shadowsocks,
+        hostname: 'example2.com',
+        port: '443',
+        method: 'chacha20-ietf-poly1305',
+        password: 'password',
+      },
+      {
+        enable: false,
+        nodeName: 'Test Node 3',
+        type: NodeTypeEnum.Shadowsocks,
+        hostname: 'example2.com',
+        port: '443',
+        method: 'chacha20-ietf-poly1305',
+        password: 'password',
+      },
+    ]),
+    ['Test Node 1', 'Test Node 2'].join(', '),
+  )
+})

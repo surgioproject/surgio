@@ -2,7 +2,7 @@ import test from 'ava'
 
 import { NodeTypeEnum } from '../../types'
 import { ERR_INVALID_FILTER } from '../../constant'
-import { getLoonNodes } from '../loon'
+import { getLoonNodeNames, getLoonNodes } from '../loon'
 
 test('getLoonNodes', (t) => {
   t.is(
@@ -185,5 +185,41 @@ test('getLoonNodes error', (t) => {
     },
     undefined,
     ERR_INVALID_FILTER,
+  )
+})
+
+test('getLoonNodeNames', (t) => {
+  t.is(
+    getLoonNodeNames([
+      {
+        nodeName: 'Test Node 1',
+        type: NodeTypeEnum.Shadowsocks,
+        hostname: 'example.com',
+        port: '443',
+        method: 'chacha20-ietf-poly1305',
+        password: 'password',
+        obfs: 'tls',
+        obfsHost: 'example.com',
+        udpRelay: true,
+      },
+      {
+        nodeName: 'Test Node 2',
+        type: NodeTypeEnum.Shadowsocks,
+        hostname: 'example2.com',
+        port: '443',
+        method: 'chacha20-ietf-poly1305',
+        password: 'password',
+      },
+      {
+        enable: false,
+        nodeName: 'Test Node 3',
+        type: NodeTypeEnum.Shadowsocks,
+        hostname: 'example2.com',
+        port: '443',
+        method: 'chacha20-ietf-poly1305',
+        password: 'password',
+      },
+    ]),
+    ['Test Node 1, Test Node 2'].join(', '),
   )
 })

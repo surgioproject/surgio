@@ -341,3 +341,39 @@ test('getQuantumultXNodes', (t) => {
     'shadowsocks=hk.example.com:10000, method=chacha20-ietf, password=password, ssr-protocol=auth_aes128_md5, ssr-protocol-param=, obfs=tls1.2_ticket_auth, obfs-host=music.163.com, server_check_url=http://example.com, tag=🇭🇰HK',
   )
 })
+
+test('getQuantumultXNodeNames', (t) => {
+  t.is(
+    quantumult.getQuantumultXNodeNames([
+      {
+        nodeName: 'Test Node 1',
+        type: NodeTypeEnum.Shadowsocks,
+        hostname: 'example.com',
+        port: '443',
+        method: 'chacha20-ietf-poly1305',
+        password: 'password',
+        obfs: 'tls',
+        obfsHost: 'example.com',
+        udpRelay: true,
+      },
+      {
+        nodeName: 'Test Node 2',
+        type: NodeTypeEnum.Shadowsocks,
+        hostname: 'example2.com',
+        port: '443',
+        method: 'chacha20-ietf-poly1305',
+        password: 'password',
+      },
+      {
+        enable: false,
+        nodeName: 'Test Node 3',
+        type: NodeTypeEnum.Shadowsocks,
+        hostname: 'example2.com',
+        port: '443',
+        method: 'chacha20-ietf-poly1305',
+        password: 'password',
+      },
+    ]),
+    ['Test Node 1', 'Test Node 2'].join(', '),
+  )
+})

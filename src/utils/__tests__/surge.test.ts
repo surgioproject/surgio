@@ -566,7 +566,7 @@ test('getSurgeWireguardNodes', (t) => {
 })
 
 test('getSurgeNodeNames', (t) => {
-  t.deepEqual(
+  t.is(
     surge.getSurgeNodeNames([
       {
         nodeName: 'Test Node 1',

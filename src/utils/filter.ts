@@ -77,13 +77,14 @@ export const applyFilter = <T extends PossibleNodeConfigType>(
   }
 
   let newNodeList: ReadonlyArray<T> = nodeList.filter((item) => {
-    const result = item.enable !== false
+    // Only checks the enable property when it's present, default to true
+    const isEnabled = item.enable !== false
 
     if (filter && typeof filter === 'function') {
-      return filter(item) && result
+      return filter(item) && isEnabled
     }
 
-    return result
+    return isEnabled
   })
 
   if (
