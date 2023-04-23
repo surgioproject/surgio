@@ -7,7 +7,6 @@ import {
   ShadowsocksNodeConfig,
 } from '../../types';
 import * as utils from '../index';
-import { ERR_INVALID_FILTER } from '../../constant';
 
 test('getNodeNames', async (t) => {
   const nodeList: ReadonlyArray<PossibleNodeConfigType> = [
@@ -277,51 +276,6 @@ test('formatV2rayConfig', (t) => {
       },
     },
   });
-});
-
-test('output api should fail with invalid filter', (t) => {
-  t.throws(
-    () => {
-      utils.getSurgeNodes([], undefined);
-    },
-    undefined,
-    ERR_INVALID_FILTER,
-  );
-  t.throws(
-    () => {
-      utils.getSurfboardNodes([], undefined);
-    },
-    undefined,
-    ERR_INVALID_FILTER,
-  );
-  t.throws(
-    () => {
-      utils.getClashNodes([], undefined);
-    },
-    undefined,
-    ERR_INVALID_FILTER,
-  );
-  t.throws(
-    () => {
-      utils.getClashNodeNames([], undefined);
-    },
-    undefined,
-    ERR_INVALID_FILTER,
-  );
-  t.throws(
-    () => {
-      utils.getNodeNames([], undefined);
-    },
-    undefined,
-    ERR_INVALID_FILTER,
-  );
-  t.throws(
-    () => {
-      utils.getQuantumultXNodes([], undefined);
-    },
-    undefined,
-    ERR_INVALID_FILTER,
-  );
 });
 
 test('isIp', (t) => {

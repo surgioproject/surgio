@@ -547,6 +547,9 @@ export const assertNever = (x: never): never => {
   throw new TypeError(`Unexpected object: ${x}`);
 };
 
+export const checkNotNullish = (val: unknown): boolean =>
+  val !== null && val !== undefined;
+
 export const getPortFromHost = (host: string): number => {
   const match = host.match(/:(\d+)$/);
   if (match) {

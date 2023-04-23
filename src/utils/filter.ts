@@ -53,8 +53,8 @@ export class SortFilterWithSortedKeywords implements SortedNodeFilterType {
   }
 }
 
-export const validateFilter = (filter: any): boolean => {
-  if (filter === null || filter === void 0) {
+export const validateFilter = (filter: unknown): boolean => {
+  if (filter === null || filter === undefined) {
     return false;
   }
   if (typeof filter === 'function') {
@@ -62,7 +62,9 @@ export const validateFilter = (filter: any): boolean => {
   }
   return (
     typeof filter === 'object' &&
-    filter.supportSort &&
+    'supportSort' in filter &&
+    'filter' in filter &&
+    typeof filter.supportSort === 'boolean' &&
     typeof filter.filter === 'function'
   );
 };

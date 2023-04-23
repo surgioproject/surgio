@@ -564,3 +564,30 @@ test('getSurgeWireguardNodes', (t) => {
     ]),
   );
 });
+
+test('getSurgeNodeNames', (t) => {
+  t.deepEqual(
+    surge.getSurgeNodeNames([
+      {
+        nodeName: 'Test Node 1',
+        type: NodeTypeEnum.Shadowsocks,
+        hostname: 'example.com',
+        port: '443',
+        method: 'chacha20-ietf-poly1305',
+        password: 'password',
+        obfs: 'tls',
+        obfsHost: 'example.com',
+        udpRelay: true,
+      },
+      {
+        nodeName: 'Test Node 2',
+        type: NodeTypeEnum.Shadowsocks,
+        hostname: 'example2.com',
+        port: '443',
+        method: 'chacha20-ietf-poly1305',
+        password: 'password',
+      },
+    ]),
+    'Test Node 1, Test Node 2',
+  );
+});

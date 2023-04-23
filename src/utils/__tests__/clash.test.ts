@@ -37,12 +37,27 @@ test('getClashNodeNames', async (t) => {
   const result2 = clash.getClashNodeNames(nodeNameList, undefined, ['TEST']);
   const result3 = clash.getClashNodeNames(
     nodeNameList,
-    (simpleNodeConfig) => simpleNodeConfig.nodeName !== 'Test Node 3',
+    (nodeConfig) => nodeConfig.nodeName !== 'Test Node 3',
   );
 
   t.deepEqual(result1, ['Test Node 1', 'Test Node 3']);
   t.deepEqual(result2, ['TEST', 'Test Node 1', 'Test Node 3']);
   t.deepEqual(result3, ['Test Node 1']);
+
+  t.deepEqual(
+    clash.getClashNodeNames([
+      {
+        nodeName: 'snell',
+        enable: false,
+        type: NodeTypeEnum.Snell,
+        hostname: '1.1.1.1',
+        port: 443,
+        psk: 'psk',
+        obfs: 'tls',
+      },
+    ]),
+    [],
+  );
 });
 
 test('getClashNodes', async (t) => {
