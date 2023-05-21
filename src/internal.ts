@@ -1,17 +1,6 @@
-import { loadConfig, setConfig, getConfig } from './config'
-import { loadRemoteSnippetList } from './utils/remote-snippet'
+import { PackageJson } from 'type-fest'
 
-export * as redis from './redis'
+export * from './utils/cache'
 export * from './types'
 
-const utils = {
-  loadRemoteSnippetList,
-} as const
-
-const config = {
-  loadConfig,
-  setConfig,
-  getConfig,
-} as const
-
-export { utils, config }
+export const packageJson = require('../package.json') as PackageJson

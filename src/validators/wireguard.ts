@@ -19,7 +19,7 @@ export const WireguardNodeConfigValidator = SimpleNodeConfigValidator.extend({
   preferIpv6: z.boolean().optional(),
   privateKey: z.string(),
   mtu: z.number().optional(),
-  dnsServers: z.array(z.string().ip()).optional(),
-  peers: z.array(WireguardPeerConfigValidator),
+  dnsServers: z.array(z.string().ip()).nonempty().optional(),
+  peers: z.array(WireguardPeerConfigValidator).nonempty(),
   reservedBits: z.array(z.number()).optional(),
 })

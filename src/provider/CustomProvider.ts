@@ -5,7 +5,6 @@ import {
   NodeTypeEnum,
   PossibleNodeConfigType,
 } from '../types'
-import { assertNever } from '../utils'
 import Provider from './Provider'
 import {
   WireguardNodeConfigValidator,
@@ -19,116 +18,131 @@ import {
   SnellNodeConfigValidator,
   TuicNodeConfigValidator,
 } from '../validators'
+import { GetNodeListFunction, GetNodeListParams } from './types'
 
 export default class CustomProvider extends Provider {
-  public readonly nodeList: ReadonlyArray<PossibleNodeConfigType>
+  public readonly nodeList:
+    | unknown[]
+    | ((params: GetNodeListParams) => Promise<unknown[]>)
   public readonly underlyingProxy?: string
 
   constructor(name: string, config: CustomProviderConfig) {
     super(name, config)
 
     const schema = z.object({
-      nodeList: z.array(z.unknown()),
+      nodeList: z.union([
+        z.array(z.any()),
+        z.function().args(z.any()).returns(z.any()),
+      ]),
       underlyingProxy: z.ostring(),
     })
     const result = schema.safeParse(config)
-    const nodeList: PossibleNodeConfigType[] = []
 
     // istanbul ignore next
     if (!result.success) {
       throw result.error
     }
 
-    for (const node of result.data.nodeList) {
-      if (typeof node !== 'object' || node === null || !('type' in node)) {
-        throw new Error('Invalid node type')
-      }
-
-      const type = node.type as NodeTypeEnum
-
-      switch (type) {
-        case NodeTypeEnum.Shadowsocks:
-          nodeList.push(ShadowsocksNodeConfigValidator.parse(node))
-          break
-
-        case NodeTypeEnum.Shadowsocksr:
-          nodeList.push(ShadowsocksrNodeConfigValidator.parse(node))
-          break
-
-        case NodeTypeEnum.Vmess:
-          nodeList.push(VmessNodeConfigValidator.parse(node))
-          break
-
-        case NodeTypeEnum.Trojan:
-          nodeList.push(TrojanNodeConfigValidator.parse(node))
-          break
-
-        case NodeTypeEnum.Socks5:
-          nodeList.push(Socks5NodeConfigValidator.parse(node))
-          break
-
-        case NodeTypeEnum.HTTP:
-          nodeList.push(HttpNodeConfigValidator.parse(node))
-          break
-
-        case NodeTypeEnum.HTTPS:
-          nodeList.push(HttpsNodeConfigValidator.parse(node))
-          break
-
-        case NodeTypeEnum.Snell:
-          nodeList.push(SnellNodeConfigValidator.parse(node))
-          break
-
-        case NodeTypeEnum.Tuic:
-          nodeList.push(TuicNodeConfigValidator.parse(node))
-          break
-
-        case NodeTypeEnum.Wireguard:
-          nodeList.push(WireguardNodeConfigValidator.parse(node))
-          break
-
-        default:
-          assertNever(type)
-      }
-    }
-
-    this.nodeList = nodeList
+    this.nodeList = result.data.nodeList
     this.underlyingProxy = result.data.underlyingProxy
   }
 
-  public async getNodeList(): Promise<ReadonlyArray<PossibleNodeConfigType>> {
-    return this.nodeList.map((item) => {
-      const propertyKeysMustBeLowercase = ['wsHeaders']
+  public getNodeList: GetNodeListFunction = async (
+    params = {},
+  ): Promise<Array<PossibleNodeConfigType>> => {
+    let nodeList: any[]
+    const parsedNodeList: PossibleNodeConfigType[] = []
 
-      if (this.underlyingProxy && !item.underlyingProxy) {
-        item.underlyingProxy = this.underlyingProxy
-      }
+    if (typeof this.nodeList === 'function') {
+      nodeList = await this.nodeList(params)
+    } else {
+      nodeList = this.nodeList
+    }
+
+    for (const node of nodeList) {
+      const type = node.type as NodeTypeEnum
 
       // istanbul ignore next
-      if (item['udp-relay']) {
+      if (node['udp-relay']) {
         throw new Error('udp-relay is abandoned, please use udpRelay instead')
       }
 
       // istanbul ignore next
-      if (item['obfs-host']) {
+      if (node['obfs-host']) {
         throw new Error('obfs-host is abandoned, please use obfsHost instead')
       }
 
       // istanbul ignore next
-      if (item['udp-relay']) {
+      if (node['obfs-uri']) {
         throw new Error('obfs-uri is abandoned, please use obfsUri instead')
       }
 
+      const parsedNode = (() => {
+        switch (type) {
+          case NodeTypeEnum.Shadowsocks:
+            return ShadowsocksNodeConfigValidator.parse(node)
+
+          case NodeTypeEnum.Shadowsocksr:
+            return ShadowsocksrNodeConfigValidator.parse(node)
+
+          case NodeTypeEnum.Vmess:
+            return VmessNodeConfigValidator.parse(node)
+
+          case NodeTypeEnum.Trojan:
+            return TrojanNodeConfigValidator.parse(node)
+
+          case NodeTypeEnum.Socks5:
+            return Socks5NodeConfigValidator.parse(node)
+
+          case NodeTypeEnum.HTTP:
+            return HttpNodeConfigValidator.parse(node)
+
+          case NodeTypeEnum.HTTPS:
+            return HttpsNodeConfigValidator.parse(node)
+
+          case NodeTypeEnum.Snell:
+            return SnellNodeConfigValidator.parse(node)
+
+          case NodeTypeEnum.Tuic:
+            return TuicNodeConfigValidator.parse(node)
+
+          case NodeTypeEnum.Wireguard:
+            return WireguardNodeConfigValidator.parse(node)
+
+          default:
+            throw new TypeError(`Unexpected object: ${type}`)
+        }
+      })()
+
+      const propertyKeysMustBeLowercase = ['wsHeaders']
+
+      if (this.underlyingProxy && !parsedNode.underlyingProxy) {
+        parsedNode.underlyingProxy = this.underlyingProxy
+      }
+
       propertyKeysMustBeLowercase.forEach((key) => {
-        if (item[key]) {
-          item[key] = Object.keys(item[key]).reduce((acc, curr) => {
-            acc[curr.toLowerCase()] = item[key][curr]
+        if (parsedNode[key]) {
+          parsedNode[key] = Object.keys(parsedNode[key]).reduce((acc, curr) => {
+            acc[curr.toLowerCase()] = parsedNode[key][curr]
             return acc
           }, {})
         }
       })
 
-      return item
-    })
+      parsedNodeList.push(parsedNode)
+    }
+
+    if (this.config.hooks?.afterFetchNodeList) {
+      const newList = await this.config.hooks.afterFetchNodeList(
+        parsedNodeList,
+        params,
+      )
+
+      if (newList) {
+        return newList
+      }
+    }
+
+    return parsedNodeList
   }
 }

@@ -10,6 +10,7 @@ import { fromBase64 } from '../utils'
 import relayableUrl from '../utils/relayable-url'
 import { parseSSUri } from '../utils/ss'
 import Provider from './Provider'
+import { GetNodeListFunction, GetSubscriptionUserInfoFunction } from './types'
 
 export default class ShadowsocksSubscribeProvider extends Provider {
   public readonly udpRelay?: boolean
@@ -39,11 +40,9 @@ export default class ShadowsocksSubscribeProvider extends Provider {
     return relayableUrl(this.#originalUrl, this.config.relayUrl)
   }
 
-  public async getSubscriptionUserInfo({
+  public getSubscriptionUserInfo: GetSubscriptionUserInfoFunction = async ({
     requestUserAgent,
-  }: { requestUserAgent?: string } = {}): Promise<
-    SubscriptionUserinfo | undefined
-  > {
+  } = {}) => {
     const { subscriptionUserinfo } = await getShadowsocksSubscription(
       this.url,
       this.udpRelay,
@@ -56,16 +55,26 @@ export default class ShadowsocksSubscribeProvider extends Provider {
     return undefined
   }
 
-  public async getNodeList({
-    requestUserAgent,
-  }: { requestUserAgent?: string } = {}): Promise<
-    ReadonlyArray<ShadowsocksNodeConfig>
-  > {
+  public getNodeList: GetNodeListFunction = async (
+    params = {},
+  ): Promise<Array<ShadowsocksNodeConfig>> => {
+    const { requestUserAgent } = params
     const { nodeList } = await getShadowsocksSubscription(
       this.url,
       this.udpRelay,
       requestUserAgent || this.config.requestUserAgent,
     )
+
+    if (this.config.hooks?.afterFetchNodeList) {
+      const newList = await this.config.hooks.afterFetchNodeList(
+        nodeList,
+        params,
+      )
+
+      if (newList) {
+        return newList
+      }
+    }
 
     return nodeList
   }
@@ -79,7 +88,7 @@ export const getShadowsocksSubscription = async (
   udpRelay?: boolean,
   requestUserAgent?: string,
 ): Promise<{
-  readonly nodeList: ReadonlyArray<ShadowsocksNodeConfig>
+  readonly nodeList: Array<ShadowsocksNodeConfig>
   readonly subscriptionUserinfo?: SubscriptionUserinfo
 }> => {
   assert(url, '未指定订阅地址 url')

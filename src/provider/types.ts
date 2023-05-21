@@ -1,3 +1,4 @@
+import { PossibleNodeConfigType, SubscriptionUserinfo } from '../types'
 import BlackSSLProvider from './BlackSSLProvider'
 import ClashProvider from './ClashProvider'
 import CustomProvider from './CustomProvider'
@@ -18,3 +19,18 @@ export type PossibleProviderType =
   | ClashProvider
   | SsdProvider
   | TrojanProvider
+
+export type GetNodeListParams = Record<
+  string,
+  string | string[] | undefined
+> & {
+  requestUserAgent?: string
+}
+
+export type GetNodeListFunction = (
+  params?: GetNodeListParams,
+) => Promise<ReadonlyArray<PossibleNodeConfigType>>
+
+export type GetSubscriptionUserInfoFunction = (params?: {
+  requestUserAgent?: string
+}) => Promise<SubscriptionUserinfo | undefined>

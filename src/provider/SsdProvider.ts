@@ -12,6 +12,7 @@ import {
 import { decodeStringList, fromBase64 } from '../utils'
 import relayableUrl from '../utils/relayable-url'
 import Provider from './Provider'
+import { GetNodeListFunction, GetSubscriptionUserInfoFunction } from './types'
 
 const logger = createLogger({
   service: 'surgio:SsdProvider',
@@ -45,11 +46,9 @@ export default class SsdProvider extends Provider {
     return relayableUrl(this.#originalUrl, this.config.relayUrl)
   }
 
-  public async getSubscriptionUserInfo({
+  public getSubscriptionUserInfo: GetSubscriptionUserInfoFunction = async ({
     requestUserAgent,
-  }: { requestUserAgent?: string } = {}): Promise<
-    SubscriptionUserinfo | undefined
-  > {
+  } = {}) => {
     const { subscriptionUserinfo } = await getSsdSubscription(
       this.url,
       this.udpRelay,
@@ -59,19 +58,29 @@ export default class SsdProvider extends Provider {
     if (subscriptionUserinfo) {
       return subscriptionUserinfo
     }
-    return void 0
+    return undefined
   }
 
-  public async getNodeList({
-    requestUserAgent,
-  }: { requestUserAgent?: string } = {}): Promise<
-    ReadonlyArray<ShadowsocksNodeConfig>
-  > {
+  public getNodeList: GetNodeListFunction = async (
+    params = {},
+  ): Promise<Array<ShadowsocksNodeConfig>> => {
+    const { requestUserAgent } = params
     const { nodeList } = await getSsdSubscription(
       this.url,
       this.udpRelay,
       requestUserAgent || this.config.requestUserAgent,
     )
+
+    if (this.config.hooks?.afterFetchNodeList) {
+      const newList = await this.config.hooks.afterFetchNodeList(
+        nodeList,
+        params,
+      )
+
+      if (newList) {
+        return newList
+      }
+    }
 
     return nodeList
   }
@@ -83,7 +92,7 @@ export const getSsdSubscription = async (
   udpRelay?: boolean,
   requestUserAgent?: string,
 ): Promise<{
-  readonly nodeList: ReadonlyArray<ShadowsocksNodeConfig>
+  readonly nodeList: Array<ShadowsocksNodeConfig>
   readonly subscriptionUserinfo?: SubscriptionUserinfo
 }> => {
   assert(url, '未指定订阅地址 url')
@@ -144,7 +153,7 @@ export const parseSsdConfig = (
     logger.warn(
       `不支持从 SSD 订阅中读取 ${plugin} 类型的 Shadowsocks 节点，节点 ${server.remarks} 会被省略`,
     )
-    return void 0
+    return undefined
   }
   // istanbul ignore next
   if (
@@ -154,7 +163,7 @@ export const parseSsdConfig = (
     logger.warn(
       `不支持从 SSD 订阅中读取 QUIC 模式的 Shadowsocks 节点，节点 ${server.remarks} 会被省略`,
     )
-    return void 0
+    return undefined
   }
 
   return {

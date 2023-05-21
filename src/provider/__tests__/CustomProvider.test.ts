@@ -22,29 +22,6 @@ test('CustomProvider should work', async (t) => {
   t.deepEqual(await provider.getNodeList(), [])
 })
 
-test('CustomProvider should throw error if udpRelay is a string', async (t) => {
-  t.throws(
-    () =>
-      new CustomProvider('test', {
-        type: SupportProviderEnum.Custom,
-        nodeList: [
-          {
-            type: NodeTypeEnum.Shadowsocks,
-            nodeName: 'test',
-            udpRelay: 'true' as any,
-            hostname: 'example.com',
-            port: 443,
-            method: 'chacha20-ietf-poly1305',
-            password: 'password',
-          },
-        ],
-      }),
-    {
-      instanceOf: ZodError,
-    },
-  )
-})
-
 test('CustomProvider should format header keys to lowercase', async (t) => {
   const provider = new CustomProvider('test', {
     type: SupportProviderEnum.Custom,
@@ -170,4 +147,36 @@ test('CustomProvider underlying proxy', async (t) => {
       },
     ],
   )
+})
+
+test('CustomProvider with hooks', async (t) => {
+  const nodeList = [
+    {
+      type: NodeTypeEnum.Shadowsocks,
+      nodeName: 'test',
+      hostname: 'example.com',
+      port: 443,
+      method: 'chacha20-ietf-poly1305',
+      password: 'password',
+    } as const,
+  ]
+  const afterFetchNodeList = sinon.spy((nodeList) => {
+    // @ts-ignore
+    nodeList[0].hostname = 'example.org'
+  })
+  const provider = new CustomProvider('test', {
+    type: SupportProviderEnum.Custom,
+    nodeList,
+    hooks: {
+      afterFetchNodeList,
+    },
+  })
+
+  t.deepEqual(await provider.getNodeList(), [
+    {
+      ...nodeList[0],
+      hostname: 'example.org',
+    },
+  ])
+  t.true(afterFetchNodeList.calledOnce)
 })

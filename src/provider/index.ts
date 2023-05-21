@@ -10,7 +10,7 @@ import SsdProvider from './SsdProvider'
 import TrojanProvider from './TrojanProvider'
 import V2rayNSubscribeProvider from './V2rayNSubscribeProvider'
 import { PossibleProviderType } from './types'
-import type Provider from './Provider'
+import Provider from './Provider'
 
 export {
   BlackSSLProvider,
@@ -24,14 +24,15 @@ export {
   V2rayNSubscribeProvider,
 }
 
-export type { PossibleProviderType, Provider }
+export type { Provider }
+export type * from './types'
 
 export async function getProvider(
   name: string,
   config: ReturnType<typeof defineProvider> | PossibleProviderConfigType,
 ): Promise<PossibleProviderType> {
   if (typeof config === 'function') {
-    config = await config({})
+    config = await config()
   }
 
   switch (config.type) {

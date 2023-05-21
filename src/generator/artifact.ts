@@ -1,5 +1,4 @@
 import { logger } from '@surgio/logger'
-import assert from 'assert'
 import Bluebird from 'bluebird'
 import fs from 'fs-extra'
 import _ from 'lodash'
@@ -8,6 +7,7 @@ import path from 'path'
 import { EventEmitter } from 'events'
 
 import { getProvider, PossibleProviderType } from '../provider'
+import { GetNodeListParams } from '../provider/types'
 import {
   ArtifactConfig,
   CommandConfig,
@@ -15,6 +15,7 @@ import {
   PossibleNodeConfigType,
   ProviderConfig,
   RemoteSnippet,
+  ThenArg,
 } from '../types'
 import {
   getClashNodeNames,
@@ -67,16 +68,12 @@ import {
 import { prependFlag, removeFlag } from '../utils/flag'
 import { loadLocalSnippet } from './template'
 
-type ThenArg<T> = T extends PromiseLike<infer U> ? U : T
-
 export interface ArtifactOptions {
   readonly remoteSnippetList?: ReadonlyArray<RemoteSnippet>
   readonly templateEngine?: Environment
 }
 
-export interface ExtendableRenderContext {
-  readonly urlParams?: Record<string, string>
-}
+export type ExtendableRenderContext = Record<string, string>
 
 export class Artifact extends EventEmitter {
   public initProgress = 0
@@ -100,14 +97,6 @@ export class Artifact extends EventEmitter {
     private options: ArtifactOptions = {},
   ) {
     super()
-
-    const { name: artifactName, template, templateString } = artifact
-
-    assert(artifactName, '必须指定 artifact 的 name 属性')
-    assert(artifact.provider, '必须指定 artifact 的 provider 属性')
-    if (!templateString) {
-      assert(template, '必须指定 artifact 的 template 属性')
-    }
 
     const mainProviderName = artifact.provider
     const combineProviders = artifact.combineProviders || []
@@ -137,7 +126,7 @@ export class Artifact extends EventEmitter {
       {},
       globalCustomParams,
       customParams,
-      extendRenderContext?.urlParams,
+      extendRenderContext,
     )
 
     return {
@@ -198,12 +187,14 @@ export class Artifact extends EventEmitter {
       youtubePremiumFilter,
       customFilters,
       customParams: mergedCustomParams,
-    }
+    } as const
   }
 
-  public async init({
-    requestUserAgent,
-  }: { requestUserAgent?: string } = {}): Promise<this> {
+  public async init(
+    params: {
+      getNodeListParams?: GetNodeListParams
+    } = {},
+  ): Promise<this> {
     if (this.isReady) {
       throw new Error('Artifact 已经初始化完成')
     }
@@ -213,7 +204,7 @@ export class Artifact extends EventEmitter {
     await Bluebird.map(
       this.providerNameList,
       async (providerName) => {
-        await this.providerMapper(providerName, { requestUserAgent })
+        await this.providerMapper(providerName, params.getNodeListParams)
       },
       {
         concurrency: getNetworkConcurrency(),
@@ -270,7 +261,7 @@ export class Artifact extends EventEmitter {
 
   private async providerMapper(
     providerName: string,
-    { requestUserAgent }: { requestUserAgent?: string } = {},
+    getNodeListParams: GetNodeListParams = {},
   ): Promise<void> {
     const config = this.surgioConfig
     const mainProviderName = this.artifact.provider
@@ -302,7 +293,7 @@ export class Artifact extends EventEmitter {
     }
 
     try {
-      nodeConfigList = await provider.getNodeList({ requestUserAgent })
+      nodeConfigList = await provider.getNodeList(getNodeListParams)
     } catch (err) /* istanbul ignore next */ {
       throw new Error(
         `获取 Provider ${providerName} 节点时出现错误\n文件地址: ${filePath}`,

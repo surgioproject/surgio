@@ -15,9 +15,9 @@ import {
 import { getConfig } from '../config'
 import { getProviderCacheMaxage } from '../utils/env-flag'
 import httpClient, { getUserAgent } from '../utils/http-client'
-import { parseSubscriptionUserInfo } from '../utils/subscription'
-import { msToSeconds, toMD5 } from '../utils'
+import { msToSeconds, toMD5, parseSubscriptionUserInfo } from '../utils'
 import { ProviderValidator } from '../validators'
+import { GetNodeListFunction, GetSubscriptionUserInfoFunction } from './types'
 
 const logger = createLogger({
   service: 'surgio:Provider',
@@ -40,6 +40,7 @@ export default abstract class Provider {
 
     this.supportGetSubscriptionUserInfo = false
     this.config = result.data as ProviderConfig
+    this.type = result.data.type
   }
 
   static async requestCacheableResource(
@@ -116,16 +117,13 @@ export default abstract class Provider {
   }
 
   // istanbul ignore next
-  public async getSubscriptionUserInfo({}: {
-    requestUserAgent?: string
-  } = {}): Promise<SubscriptionUserinfo | undefined> {
-    throw new Error('此 Provider 不支持该功能')
-  }
+  public getSubscriptionUserInfo: GetSubscriptionUserInfoFunction =
+    async () => {
+      throw new Error('此 Provider 不支持该功能')
+    }
 
   // istanbul ignore next
-  public getNodeList({}: { requestUserAgent?: string } = {}): Promise<
-    ReadonlyArray<PossibleNodeConfigType>
-  > {
+  public getNodeList: GetNodeListFunction = () => {
     return Promise.resolve([])
   }
 }

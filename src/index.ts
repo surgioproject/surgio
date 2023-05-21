@@ -1,5 +1,3 @@
-import { PackageJson } from 'type-fest'
-
 import {
   isAWS,
   isAWSLambda,
@@ -16,10 +14,7 @@ import * as filter from './utils/filter'
 import { CATEGORIES } from './constant'
 
 export type { CommandConfigBeforeNormalize as SurgioConfig } from './types'
-export * as caches from './utils/cache'
 export * from './utils/configurables'
-
-const pkg = require('../package.json') as PackageJson
 
 export const utils = {
   ...filter,
@@ -38,5 +33,3 @@ export const utils = {
 export const categories = {
   ...CATEGORIES,
 }
-
-export { pkg }

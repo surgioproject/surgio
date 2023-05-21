@@ -32,7 +32,7 @@ export const TlsNodeConfigValidator = SimpleNodeConfigValidator.extend({
   tls13: z.oboolean(),
   skipCertVerify: z.oboolean(),
   sni: z.ostring(),
-  alpn: z.array(z.string()).optional(),
+  alpn: z.array(z.string()).nonempty().optional(),
   serverCertFingerprintSha256: z.ostring(),
 })
 

@@ -1,6 +1,7 @@
 import { z } from 'zod'
+import { Promisable } from 'type-fest'
 
-import type { Provider } from './provider'
+import type { Provider, GetNodeListParams } from './provider'
 import {
   WireguardNodeConfigValidator,
   ProviderValidator,
@@ -13,7 +14,6 @@ import {
   VmessNodeConfigValidator,
   SnellNodeConfigValidator,
   TuicNodeConfigValidator,
-  SimpleNodeConfigValidator,
   SurgioConfigValidator,
   ArtifactValidator,
   RemoteSnippetValidator,
@@ -64,9 +64,7 @@ export interface RemoteSnippet extends RemoteSnippetConfig {
   readonly text: string
 }
 
-export type ArtifactConfig = z.infer<typeof ArtifactValidator> & {
-  readonly template: string | undefined
-}
+export type ArtifactConfig = z.infer<typeof ArtifactValidator>
 
 export type ProviderConfig = z.infer<typeof ProviderValidator>
 
@@ -116,9 +114,15 @@ export interface SsdProviderConfig extends ProviderConfig {
   readonly udpRelay?: boolean
 }
 
+export type AsyncCustomProviderNodeList = (
+  params: GetNodeListParams,
+) => Promise<ReadonlyArray<PossibleNodeConfigType>>
+
 export interface CustomProviderConfig extends ProviderConfig {
   readonly type: SupportProviderEnum.Custom
-  readonly nodeList: ReadonlyArray<PossibleNodeConfigType>
+  readonly nodeList:
+    | ReadonlyArray<PossibleNodeConfigType>
+    | AsyncCustomProviderNodeList
 }
 
 export interface TrojanProviderConfig extends ProviderConfig {
@@ -207,6 +211,6 @@ export type PossibleProviderConfigType =
   | TrojanProviderConfig
   | V2rayNSubscribeProviderConfig
 
-export type ProviderConfigFactory = (
-  options: Record<string, string>,
-) => Promise<PossibleProviderConfigType> | PossibleProviderConfigType
+export type ProviderConfigFactory = () => Promisable<PossibleProviderConfigType>
+
+export type ThenArg<T> = T extends PromiseLike<infer U> ? U : T

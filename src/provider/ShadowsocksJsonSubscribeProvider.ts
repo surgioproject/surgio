@@ -8,6 +8,7 @@ import {
 } from '../types'
 import relayableUrl from '../utils/relayable-url'
 import Provider from './Provider'
+import { GetNodeListFunction, GetNodeListParams } from './types'
 
 export default class ShadowsocksJsonSubscribeProvider extends Provider {
   readonly #originalUrl: string
@@ -36,16 +37,28 @@ export default class ShadowsocksJsonSubscribeProvider extends Provider {
     return relayableUrl(this.#originalUrl, this.config.relayUrl)
   }
 
-  public getNodeList({
-    requestUserAgent,
-  }: { requestUserAgent?: string } = {}): ReturnType<
-    typeof getShadowsocksJSONConfig
-  > {
-    return getShadowsocksJSONConfig(
+  public getNodeList: GetNodeListFunction = async (
+    params = {},
+  ): Promise<Array<ShadowsocksNodeConfig>> => {
+    const { requestUserAgent } = params || {}
+    const nodeList = await getShadowsocksJSONConfig(
       this.url,
       this.udpRelay,
       requestUserAgent || this.config.requestUserAgent,
     )
+
+    if (this.config.hooks?.afterFetchNodeList) {
+      const newList = await this.config.hooks.afterFetchNodeList(
+        nodeList,
+        params,
+      )
+
+      if (newList) {
+        return newList
+      }
+    }
+
+    return nodeList
   }
 }
 
@@ -53,11 +66,11 @@ export const getShadowsocksJSONConfig = async (
   url: string,
   udpRelay?: boolean,
   requestUserAgent?: string,
-): Promise<ReadonlyArray<ShadowsocksNodeConfig>> => {
+): Promise<Array<ShadowsocksNodeConfig>> => {
   assert(url, '未指定订阅地址 url')
 
   async function requestConfigFromRemote(): Promise<
-    ReadonlyArray<ShadowsocksNodeConfig>
+    Array<ShadowsocksNodeConfig>
   > {
     const response = await Provider.requestCacheableResource(url, {
       requestUserAgent: requestUserAgent || 'shadowrocket',

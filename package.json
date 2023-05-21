@@ -13,13 +13,28 @@
   "files": [
     "bin",
     "build",
-    "hygen-template"
+    "hygen-template",
+    "index.js",
+    "index.d.ts",
+    "internal.js",
+    "internal.d.ts",
+    "generator.js",
+    "generator.d.ts",
+    "provider.js",
+    "provider.d.ts",
+    "constant.js",
+    "constant.d.ts",
+    "utils.js",
+    "utils.d.ts",
+    "config.js",
+    "config.d.ts"
   ],
   "bugs": {
     "url": "https://github.com/geekdada/surgio/issues"
   },
   "homepage": "https://surgio.royli.dev",
   "scripts": {
+    "dev": "pnpm build --watch",
     "test": "run-s build test:*",
     "test:types": "tsc --noEmit",
     "test:lint": "eslint -c .eslintrc.js --ext .js,.ts .",

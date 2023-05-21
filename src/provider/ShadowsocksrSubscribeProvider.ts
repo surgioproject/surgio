@@ -12,6 +12,7 @@ import relayableUrl from '../utils/relayable-url'
 import { parseSubscriptionNode } from '../utils/subscription'
 import { parseSSRUri } from '../utils/ssr'
 import Provider from './Provider'
+import { GetNodeListFunction, GetSubscriptionUserInfoFunction } from './types'
 
 const logger = createLogger({
   service: 'surgio:ShadowsocksrSubscribeProvider',
@@ -45,11 +46,9 @@ export default class ShadowsocksrSubscribeProvider extends Provider {
     return relayableUrl(this.#originalUrl, this.config.relayUrl)
   }
 
-  public async getSubscriptionUserInfo({
+  public getSubscriptionUserInfo: GetSubscriptionUserInfoFunction = async ({
     requestUserAgent,
-  }: { requestUserAgent?: string } = {}): Promise<
-    SubscriptionUserinfo | undefined
-  > {
+  } = {}) => {
     const { subscriptionUserinfo } = await getShadowsocksrSubscription(
       this.url,
       this.udpRelay,
@@ -62,16 +61,26 @@ export default class ShadowsocksrSubscribeProvider extends Provider {
     return undefined
   }
 
-  public async getNodeList({
-    requestUserAgent,
-  }: { requestUserAgent?: string } = {}): Promise<
-    ReadonlyArray<ShadowsocksrNodeConfig>
-  > {
+  public getNodeList: GetNodeListFunction = async (
+    params = {},
+  ): Promise<Array<ShadowsocksrNodeConfig>> => {
+    const { requestUserAgent } = params
     const { nodeList } = await getShadowsocksrSubscription(
       this.url,
       this.udpRelay,
       requestUserAgent || this.config.requestUserAgent,
     )
+
+    if (this.config.hooks?.afterFetchNodeList) {
+      const newList = await this.config.hooks.afterFetchNodeList(
+        nodeList,
+        params,
+      )
+
+      if (newList) {
+        return newList
+      }
+    }
 
     return nodeList
   }
@@ -82,7 +91,7 @@ export const getShadowsocksrSubscription = async (
   udpRelay?: boolean,
   requestUserAgent?: string,
 ): Promise<{
-  readonly nodeList: ReadonlyArray<ShadowsocksrNodeConfig>
+  readonly nodeList: Array<ShadowsocksrNodeConfig>
   readonly subscriptionUserinfo?: SubscriptionUserinfo
 }> => {
   assert(url, '未指定订阅地址 url')

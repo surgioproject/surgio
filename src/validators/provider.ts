@@ -5,6 +5,7 @@ import {
   NodeFilterTypeValidator,
   SortedNodeFilterTypeValidator,
 } from './filter'
+import { AfterFetchNodeListHookValidator } from './hooks'
 
 export const ProviderValidator = z.object({
   type: z.nativeEnum(SupportProviderEnum),
@@ -16,7 +17,11 @@ export const ProviderValidator = z.object({
   startPort: z.number().min(1024).max(65535).optional(),
   relayUrl: z.union([z.boolean(), z.string().url()]).optional(),
   requestUserAgent: z.ostring(),
-  renameNode: z.function().args(z.string()).returns(z.string()).optional(),
+  renameNode: z
+    .function()
+    .args(z.string())
+    .returns(z.union([z.string(), z.undefined(), z.void()]))
+    .optional(),
   customFilters: z
     .record(z.union([NodeFilterTypeValidator, SortedNodeFilterTypeValidator]))
     .optional(),
@@ -28,5 +33,10 @@ export const ProviderValidator = z.object({
     .optional(),
   youtubePremiumFilter: z
     .union([NodeFilterTypeValidator, SortedNodeFilterTypeValidator])
+    .optional(),
+  hooks: z
+    .object({
+      afterFetchNodeList: AfterFetchNodeListHookValidator.optional(),
+    })
     .optional(),
 })

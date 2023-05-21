@@ -12,6 +12,7 @@ import {
 import { ConfigCache } from '../utils/cache'
 import httpClient from '../utils/http-client'
 import Provider from './Provider'
+import { GetNodeListFunction, GetSubscriptionUserInfoFunction } from './types'
 
 export default class BlackSSLProvider extends Provider {
   public readonly username: string
@@ -36,25 +37,35 @@ export default class BlackSSLProvider extends Provider {
     this.supportGetSubscriptionUserInfo = true
   }
 
-  public async getSubscriptionUserInfo(): Promise<
-    SubscriptionUserinfo | undefined
-  > {
-    const { subscriptionUserinfo } = await this.getBlackSSLConfig(
-      this.username,
-      this.password,
-    )
+  public getSubscriptionUserInfo: GetSubscriptionUserInfoFunction =
+    async () => {
+      const { subscriptionUserinfo } = await this.getBlackSSLConfig(
+        this.username,
+        this.password,
+      )
 
-    if (subscriptionUserinfo) {
-      return subscriptionUserinfo
+      if (subscriptionUserinfo) {
+        return subscriptionUserinfo
+      }
+      return undefined
     }
-    return void 0
-  }
 
-  public async getNodeList(): Promise<ReadonlyArray<HttpsNodeConfig>> {
+  public getNodeList: GetNodeListFunction = async (): Promise<
+    Array<HttpsNodeConfig>
+  > => {
     const { nodeList } = await this.getBlackSSLConfig(
       this.username,
       this.password,
     )
+
+    if (this.config.hooks?.afterFetchNodeList) {
+      const newList = await this.config.hooks.afterFetchNodeList(nodeList, {})
+
+      if (newList) {
+        return newList
+      }
+    }
+
     return nodeList
   }
 
@@ -63,7 +74,7 @@ export default class BlackSSLProvider extends Provider {
     username: string,
     password: string,
   ): Promise<{
-    readonly nodeList: ReadonlyArray<HttpsNodeConfig>
+    readonly nodeList: Array<HttpsNodeConfig>
     readonly subscriptionUserinfo?: SubscriptionUserinfo
   }> {
     assert(username, '未指定 BlackSSL username.')

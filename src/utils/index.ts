@@ -28,6 +28,10 @@ export * from './surfboard'
 export * from './clash'
 export * from './quantumult'
 export * from './loon'
+export * from './remote-snippet'
+export * from './subscription'
+export * from './time'
+export { default as httpClient } from './http-client'
 
 const logger = createLogger({ service: 'surgio:utils' })
 
@@ -481,8 +485,6 @@ export const lowercaseHeaderKeys = (
 
   return wsHeaders
 }
-
-export const msToSeconds = (ms: number): number => Math.floor(ms / 1000)
 
 // istanbul ignore next
 export const isIp = (str: string): boolean => net.isIPv4(str) || net.isIPv6(str)

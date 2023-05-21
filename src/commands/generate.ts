@@ -3,13 +3,12 @@ import fs from 'fs-extra'
 import path from 'path'
 
 import BaseCommand from '../base-command'
-import { Artifact } from '../generator/artifact'
-import { getEngine } from '../generator/template'
+import { Artifact, getEngine } from '../generator'
 import redis from '../redis'
 import { ArtifactConfig } from '../types'
 import { setConfig } from '../config'
 import { checkAndFix } from '../utils/linter'
-import { loadRemoteSnippetList } from '../utils/remote-snippet'
+import { loadRemoteSnippetList } from '../utils'
 
 class GenerateCommand extends BaseCommand<typeof GenerateCommand> {
   static description = '生成规则'

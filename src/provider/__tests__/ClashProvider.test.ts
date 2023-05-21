@@ -24,6 +24,7 @@ test('ClashProvider', async (t) => {
     url: 'http://example.com/clash-sample.yaml',
   })
 
+  t.is(provider.type, SupportProviderEnum.Clash)
   await t.notThrowsAsync(async () => {
     await provider.getNodeList()
   })
@@ -594,4 +595,25 @@ test('ClashProvider requestUserAgent', async (t) => {
       requestUserAgent: 'test useragent',
     },
   )
+})
+
+test('ClashProvider with hooks', async (t) => {
+  const afterFetchNodeList = sinon.spy((nodeList) => {
+    nodeList.froEach((node) => {
+      node.nodeName = 'override'
+    })
+  })
+  const provider = new ClashProvider('test', {
+    type: SupportProviderEnum.Clash,
+    url: 'http://example.com/clash-sample.yaml',
+    hooks: {
+      afterFetchNodeList,
+    },
+  })
+
+  const nodeList = await provider.getNodeList()
+  for (const node of nodeList) {
+    t.is(node.nodeName, 'override')
+  }
+  t.true(afterFetchNodeList.calledOnce)
 })

@@ -13,7 +13,7 @@ import ShadowsocksSubscribeProvider from '../provider/ShadowsocksSubscribeProvid
 import V2rayNSubscribeProvider from '../provider/V2rayNSubscribeProvider'
 import redis from '../redis'
 import { getProvider } from '../provider'
-import { formatSubscriptionUserInfo } from '../utils/subscription'
+import { formatSubscriptionUserInfo } from '../utils'
 
 const logger = createLogger({
   service: 'surgio:SubscriptionsCommand',

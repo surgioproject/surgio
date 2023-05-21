@@ -2,7 +2,7 @@
 
 import { Environment } from 'nunjucks'
 
-import { Artifact } from './generator/artifact'
+import { Artifact } from './generator'
 import { ArtifactConfig, CommandConfig, RemoteSnippet } from './types'
 
 export async function generate(

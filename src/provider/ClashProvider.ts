@@ -21,6 +21,11 @@ import { lowercaseHeaderKeys } from '../utils'
 import { getNetworkClashUA } from '../utils/env-flag'
 import relayableUrl from '../utils/relayable-url'
 import Provider from './Provider'
+import {
+  GetNodeListFunction,
+  GetNodeListParams,
+  GetSubscriptionUserInfoFunction,
+} from './types'
 
 type SupportConfigTypes =
   | ShadowsocksNodeConfig
@@ -67,11 +72,9 @@ export default class ClashProvider extends Provider {
     return relayableUrl(this.#originalUrl, this.config.relayUrl)
   }
 
-  public async getSubscriptionUserInfo({
+  public getSubscriptionUserInfo: GetSubscriptionUserInfoFunction = async ({
     requestUserAgent,
-  }: { requestUserAgent?: string } = {}): Promise<
-    SubscriptionUserinfo | undefined
-  > {
+  } = {}) => {
     const { subscriptionUserinfo } = await getClashSubscription({
       url: this.url,
       udpRelay: this.udpRelay,
@@ -82,20 +85,31 @@ export default class ClashProvider extends Provider {
     if (subscriptionUserinfo) {
       return subscriptionUserinfo
     }
-    return void 0
+
+    return undefined
   }
 
-  public async getNodeList({
-    requestUserAgent,
-  }: { requestUserAgent?: string } = {}): Promise<
-    ReadonlyArray<SupportConfigTypes>
-  > {
+  public getNodeList: GetNodeListFunction = async (
+    params = {},
+  ): Promise<SupportConfigTypes[]> => {
+    const { requestUserAgent } = params
     const { nodeList } = await getClashSubscription({
       url: this.url,
       udpRelay: this.udpRelay,
       tls13: this.tls13,
       requestUserAgent: requestUserAgent || this.config.requestUserAgent,
     })
+
+    if (this.config.hooks?.afterFetchNodeList) {
+      const newList = await this.config.hooks.afterFetchNodeList(
+        nodeList,
+        params,
+      )
+
+      if (newList) {
+        return newList
+      }
+    }
 
     return nodeList
   }
@@ -112,7 +126,7 @@ export const getClashSubscription = async ({
   tls13?: boolean
   requestUserAgent?: string
 }): Promise<{
-  readonly nodeList: ReadonlyArray<SupportConfigTypes>
+  readonly nodeList: Array<SupportConfigTypes>
   readonly subscriptionUserinfo?: SubscriptionUserinfo
 }> => {
   assert(url, '未指定订阅地址 url')
@@ -150,11 +164,11 @@ export const getClashSubscription = async ({
 }
 
 export const parseClashConfig = (
-  proxyList: ReadonlyArray<any>,
+  proxyList: Array<any>,
   udpRelay?: boolean,
   tls13?: boolean,
-): ReadonlyArray<SupportConfigTypes> => {
-  const nodeList: ReadonlyArray<SupportConfigTypes | undefined> = proxyList.map(
+): Array<SupportConfigTypes> => {
+  const nodeList: Array<SupportConfigTypes | undefined> = proxyList.map(
     (item) => {
       switch (item.type) {
         case 'ss': {
@@ -163,7 +177,7 @@ export const parseClashConfig = (
             logger.warn(
               `不支持从 Clash 订阅中读取 ${item.plugin} 类型的 Shadowsocks 节点，节点 ${item.name} 会被省略`,
             )
-            return void 0
+            return undefined
           }
           // istanbul ignore next
           if (
@@ -173,7 +187,7 @@ export const parseClashConfig = (
             logger.warn(
               `不支持从 Clash 订阅中读取 QUIC 模式的 Shadowsocks 节点，节点 ${item.name} 会被省略`,
             )
-            return void 0
+            return undefined
           }
 
           const wsHeaders = lowercaseHeaderKeys(
@@ -237,7 +251,7 @@ export const parseClashConfig = (
             logger.warn(
               `不支持从 Clash 订阅中读取 network 类型为 ${item.network} 的 Vmess 节点，节点 ${item.name} 会被省略`,
             )
-            return void 0
+            return undefined
           }
 
           const isNewConfig = 'ws-opts' in item
@@ -378,7 +392,7 @@ export const parseClashConfig = (
           logger.warn(
             `不支持从 Clash 订阅中读取 ${item.type} 的节点，节点 ${item.name} 会被省略`,
           )
-          return void 0
+          return undefined
       }
     },
   )

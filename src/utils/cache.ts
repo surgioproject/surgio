@@ -3,8 +3,8 @@ import NodeCache from 'node-cache'
 
 import { SubscriptionUserinfo } from '../types'
 import { getProviderCacheMaxage } from './env-flag'
-import { msToSeconds } from './index'
 import redis from '../redis'
+import { msToSeconds } from './time'
 
 export interface SubsciptionCacheItem {
   readonly body: string

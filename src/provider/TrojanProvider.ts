@@ -10,6 +10,7 @@ import { fromBase64 } from '../utils'
 import relayableUrl from '../utils/relayable-url'
 import { parseTrojanUri } from '../utils/trojan'
 import Provider from './Provider'
+import { GetNodeListFunction, GetSubscriptionUserInfoFunction } from './types'
 
 export default class TrojanProvider extends Provider {
   readonly #originalUrl: string
@@ -42,11 +43,9 @@ export default class TrojanProvider extends Provider {
     return relayableUrl(this.#originalUrl, this.config.relayUrl)
   }
 
-  public async getSubscriptionUserInfo({
+  public getSubscriptionUserInfo: GetSubscriptionUserInfoFunction = async ({
     requestUserAgent,
-  }: { requestUserAgent?: string } = {}): Promise<
-    SubscriptionUserinfo | undefined
-  > {
+  } = {}) => {
     const { subscriptionUserinfo } = await getTrojanSubscription({
       url: this.url,
       udpRelay: this.udpRelay,
@@ -57,20 +56,30 @@ export default class TrojanProvider extends Provider {
     if (subscriptionUserinfo) {
       return subscriptionUserinfo
     }
-    return void 0
+    return undefined
   }
 
-  public async getNodeList({
-    requestUserAgent,
-  }: { requestUserAgent?: string } = {}): Promise<
-    ReadonlyArray<TrojanNodeConfig>
-  > {
+  public getNodeList: GetNodeListFunction = async (
+    params = {},
+  ): Promise<Array<TrojanNodeConfig>> => {
+    const { requestUserAgent } = params
     const { nodeList } = await getTrojanSubscription({
       url: this.url,
       udpRelay: this.udpRelay,
       tls13: this.tls13,
       requestUserAgent: requestUserAgent || this.config.requestUserAgent,
     })
+
+    if (this.config.hooks?.afterFetchNodeList) {
+      const newList = await this.config.hooks.afterFetchNodeList(
+        nodeList,
+        params,
+      )
+
+      if (newList) {
+        return newList
+      }
+    }
 
     return nodeList
   }
@@ -90,7 +99,7 @@ export const getTrojanSubscription = async ({
   tls13?: boolean
   requestUserAgent?: string
 }): Promise<{
-  readonly nodeList: ReadonlyArray<TrojanNodeConfig>
+  readonly nodeList: Array<TrojanNodeConfig>
   readonly subscriptionUserinfo?: SubscriptionUserinfo
 }> => {
   assert(url, '未指定订阅地址 url')

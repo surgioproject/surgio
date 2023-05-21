@@ -12,6 +12,7 @@ import { fromBase64 } from '../utils'
 import relayableUrl from '../utils/relayable-url'
 import { parseSSUri } from '../utils/ss'
 import Provider from './Provider'
+import { GetNodeListFunction } from './types'
 
 export default class V2rayNSubscribeProvider extends Provider {
   public readonly compatibleMode?: boolean
@@ -50,12 +51,11 @@ export default class V2rayNSubscribeProvider extends Provider {
     return relayableUrl(this.#originalUrl, this.config.relayUrl)
   }
 
-  public getNodeList({
-    requestUserAgent,
-  }: { requestUserAgent?: string } = {}): ReturnType<
-    typeof getV2rayNSubscription
-  > {
-    return getV2rayNSubscription({
+  public getNodeList: GetNodeListFunction = async (
+    params = {},
+  ): ReturnType<typeof getV2rayNSubscription> => {
+    const { requestUserAgent } = params
+    const nodeList = await getV2rayNSubscription({
       url: this.url,
       skipCertVerify: this.skipCertVerify,
       tls13: this.tls13,
@@ -63,6 +63,19 @@ export default class V2rayNSubscribeProvider extends Provider {
       isCompatibleMode: this.compatibleMode,
       requestUserAgent: requestUserAgent || this.config.requestUserAgent,
     })
+
+    if (this.config.hooks?.afterFetchNodeList) {
+      const newList = await this.config.hooks.afterFetchNodeList(
+        nodeList,
+        params,
+      )
+
+      if (newList) {
+        return newList
+      }
+    }
+
+    return nodeList
   }
 }
 
@@ -83,7 +96,7 @@ export const getV2rayNSubscription = async ({
   udpRelay?: boolean
   tls13?: boolean
   requestUserAgent?: string
-}): Promise<ReadonlyArray<VmessNodeConfig | ShadowsocksNodeConfig>> => {
+}): Promise<Array<VmessNodeConfig | ShadowsocksNodeConfig>> => {
   assert(url, '未指定订阅地址 url')
 
   if (isCompatibleMode) {
@@ -91,7 +104,7 @@ export const getV2rayNSubscription = async ({
   }
 
   async function requestConfigFromRemote(): Promise<
-    ReadonlyArray<VmessNodeConfig | ShadowsocksNodeConfig>
+    Array<VmessNodeConfig | ShadowsocksNodeConfig>
   > {
     const response = await Provider.requestCacheableResource(url, {
       requestUserAgent,

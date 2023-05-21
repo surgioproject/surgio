@@ -5,7 +5,7 @@ import { JsonObject } from 'type-fest'
 import YAML from 'yaml'
 
 import { RemoteSnippet } from '../types'
-import { decodeStringList, toBase64 } from '../utils'
+import { decodeStringList, toBase64, addProxyToSurgeRuleSet } from '../utils'
 import {
   MELLOW_UNSUPPORTED_RULE,
   QUANTUMULT_X_SUPPORTED_RULE,
@@ -13,7 +13,6 @@ import {
   LOON_SUPPORTED_RULE,
   SURFBOARD_SUPPORTED_RULE,
 } from '../constant'
-import { addProxyToSurgeRuleSet } from '../utils/remote-snippet'
 
 export function getEngine(templateDir: string): nunjucks.Environment {
   const engine = nunjucks.configure(templateDir, {

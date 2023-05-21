@@ -2,12 +2,12 @@ import fs from 'fs-extra'
 import _ from 'lodash'
 import path from 'path'
 import { URL } from 'url'
+
 import {
   INTERNET_TEST_URL,
   PROXY_TEST_INTERVAL,
   PROXY_TEST_URL,
 } from './constant'
-
 import redis from './redis'
 import { CommandConfig, CommandConfigBeforeNormalize } from './types'
 import { SurgioConfigValidator } from './validators'
@@ -120,6 +120,9 @@ export const normalizeConfig = (
     checkHostname: false,
     cache: {
       type: 'default',
+    },
+    gateway: {
+      passRequestUserAgent: false,
     },
   }
   const config: CommandConfig = _.defaultsDeep(userConfig, defaultConfig)
