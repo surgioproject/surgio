@@ -1,12 +1,7 @@
 import { createLogger } from '@surgio/logger'
 
 import { CACHE_KEYS } from '../constant'
-import {
-  ProviderConfig,
-  SupportProviderEnum,
-  PossibleNodeConfigType,
-  SubscriptionUserinfo,
-} from '../types'
+import { ProviderConfig, SupportProviderEnum } from '../types'
 import {
   RedisCache,
   SubsciptionCacheItem,
