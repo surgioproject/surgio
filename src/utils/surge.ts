@@ -483,11 +483,14 @@ function nodeListMapper(
           nodeConfig,
           [
             'token',
+            'password',
+            'uuid',
             'sni',
             'underlyingProxy',
             'testUrl',
             'skipCertVerify',
             'serverCertFingerprintSha256',
+            'version',
           ],
           {
             keyFormat: 'kebabCase',

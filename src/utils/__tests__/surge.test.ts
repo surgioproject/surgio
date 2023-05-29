@@ -454,42 +454,6 @@ test('getSurgeNodes', async (t) => {
   t.is(
     surge.getSurgeNodes([
       {
-        type: NodeTypeEnum.Tuic,
-        nodeName: '测试 Tuic',
-        hostname: 'example.com',
-        port: 443,
-        token: 'token',
-        serverCertFingerprintSha256: 'sha256',
-      },
-      {
-        type: NodeTypeEnum.Tuic,
-        nodeName: '测试 Tuic',
-        hostname: 'example.com',
-        port: 443,
-        token: 'token',
-        alpn: ['h3'],
-      },
-      {
-        type: NodeTypeEnum.Tuic,
-        nodeName: '测试 Tuic',
-        hostname: 'example.com',
-        port: 443,
-        token: 'token',
-        alpn: ['h3'],
-        sni: 'sni.example.com',
-        skipCertVerify: true,
-      },
-    ]),
-    [
-      '测试 Tuic = tuic, example.com, 443, token=token, server-cert-fingerprint-sha256=sha256',
-      '测试 Tuic = tuic, example.com, 443, token=token, alpn=h3',
-      '测试 Tuic = tuic, example.com, 443, token=token, sni=sni.example.com, skip-cert-verify=true, alpn=h3',
-    ].join('\n'),
-  )
-
-  t.is(
-    surge.getSurgeNodes([
-      {
         type: NodeTypeEnum.Snell,
         nodeName: '测试 Snell',
         hostname: 'example.com',
@@ -523,6 +487,57 @@ test('getSurgeNodes', async (t) => {
       },
     ]),
     ['wg node = wireguard, section-name = wg node'].join('\n'),
+  )
+})
+
+test('getSurgeNodes - Tuic', (t) => {
+  t.is(
+    surge.getSurgeNodes([
+      {
+        type: NodeTypeEnum.Tuic,
+        nodeName: '测试 Tuic',
+        hostname: 'example.com',
+        port: 443,
+        token: 'token',
+        serverCertFingerprintSha256: 'sha256',
+      },
+      {
+        type: NodeTypeEnum.Tuic,
+        nodeName: '测试 Tuic',
+        hostname: 'example.com',
+        port: 443,
+        token: 'token',
+        alpn: ['h3'],
+      },
+      {
+        type: NodeTypeEnum.Tuic,
+        nodeName: '测试 Tuic',
+        hostname: 'example.com',
+        port: 443,
+        token: 'token',
+        alpn: ['h3'],
+        sni: 'sni.example.com',
+        skipCertVerify: true,
+      },
+      {
+        type: NodeTypeEnum.Tuic,
+        nodeName: '测试 Tuic',
+        hostname: 'example.com',
+        port: 443,
+        password: 'password',
+        uuid: 'uuid',
+        alpn: ['h3'],
+        sni: 'sni.example.com',
+        skipCertVerify: true,
+        version: 5,
+      },
+    ]),
+    [
+      '测试 Tuic = tuic, example.com, 443, token=token, server-cert-fingerprint-sha256=sha256',
+      '测试 Tuic = tuic, example.com, 443, token=token, alpn=h3',
+      '测试 Tuic = tuic, example.com, 443, token=token, sni=sni.example.com, skip-cert-verify=true, alpn=h3',
+      '测试 Tuic = tuic, example.com, 443, password=password, uuid=uuid, sni=sni.example.com, skip-cert-verify=true, version=5, alpn=h3',
+    ].join('\n'),
   )
 })
 

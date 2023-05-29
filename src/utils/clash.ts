@@ -9,7 +9,11 @@ import {
   SortedNodeFilterType,
 } from '../types'
 import { applyFilter } from './filter'
-import { checkNotNullish, getPortFromHost } from './index'
+import {
+  checkNotNullish,
+  getPortFromHost,
+  pickAndFormatStringList,
+} from './index'
 
 const logger = createLogger({ service: 'surgio:utils:clash' })
 
@@ -276,18 +280,38 @@ function nodeListMapper(nodeConfig: PossibleNodeConfigType) {
         )
       }
 
+      if ('version' in nodeConfig && nodeConfig.version >= 5) {
+        return {
+          type: 'tuic',
+          name: nodeConfig.nodeName,
+          server: nodeConfig.hostname,
+          port: nodeConfig.port,
+          udp: true,
+          ...pickAndFormatStringList(
+            nodeConfig,
+            ['password', 'uuid', 'sni', 'skipCertVerify', 'version'],
+            {
+              keyFormat: 'kebabCase',
+            },
+          ),
+          ...(nodeConfig.alpn ? { alpn: nodeConfig.alpn } : null),
+        } as const
+      }
+
       return {
         type: 'tuic',
         name: nodeConfig.nodeName,
         server: nodeConfig.hostname,
         port: nodeConfig.port,
-        token: nodeConfig.token,
-        ...(typeof nodeConfig.udpRelay === 'boolean'
-          ? { udp: nodeConfig.udpRelay }
-          : null),
+        udp: true,
+        ...pickAndFormatStringList(
+          nodeConfig,
+          ['token', 'sni', 'skipCertVerify', 'version'],
+          {
+            keyFormat: 'kebabCase',
+          },
+        ),
         ...(nodeConfig.alpn ? { alpn: nodeConfig.alpn } : null),
-        ...(nodeConfig.sni ? { sni: nodeConfig.sni } : null),
-        'skip-cert-verify': nodeConfig.skipCertVerify === true,
       } as const
 
     case NodeTypeEnum.Wireguard:

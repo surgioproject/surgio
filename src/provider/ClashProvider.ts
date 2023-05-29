@@ -372,13 +372,30 @@ export const parseClashConfig = (
         }
 
         case 'tuic': {
+          if (item.version >= 5) {
+            return {
+              type: NodeTypeEnum.Tuic,
+              version: item.version,
+              nodeName: item.name,
+              hostname: item.server,
+              port: item.port,
+              password: item.password,
+              uuid: item.uuid,
+              ...('skip-cert-verify' in item
+                ? { skipCertVerify: item['skip-cert-verify'] === true }
+                : null),
+              tls13: tls13 ?? false,
+              ...('sni' in item ? { sni: item.sni } : null),
+              ...('alpn' in item ? { alpn: item.alpn } : null),
+            } as TuicNodeConfig
+          }
+
           return {
             type: NodeTypeEnum.Tuic,
             nodeName: item.name,
             hostname: item.server,
             port: item.port,
             token: item.token,
-            udpRelay: resolveUdpRelay(item.udp, udpRelay),
             ...('skip-cert-verify' in item
               ? { skipCertVerify: item['skip-cert-verify'] === true }
               : null),

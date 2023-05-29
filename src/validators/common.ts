@@ -2,6 +2,14 @@ import { z } from 'zod'
 
 import { NodeTypeEnum } from '../types'
 
+export const IntegersVersionValidator = z.custom<number>((value) => {
+  if (typeof value === 'number') {
+    return true
+  }
+  const version = Number(value)
+  return !Number.isNaN(version)
+})
+
 export const SimpleNodeConfigValidator = z.object({
   type: z.nativeEnum(NodeTypeEnum),
   nodeName: z.string(),
@@ -12,10 +20,7 @@ export const SimpleNodeConfigValidator = z.object({
   mptcp: z.boolean().optional(),
   shadowTls: z
     .object({
-      version: z
-        .union([z.string(), z.number()])
-        .refine((v) => Number(v))
-        .optional(),
+      version: IntegersVersionValidator.optional(),
       password: z.string(),
       sni: z.string(),
     })
