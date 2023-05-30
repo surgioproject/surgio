@@ -40,11 +40,13 @@ export default class ShadowsocksJsonSubscribeProvider extends Provider {
   public getNodeList: GetNodeListFunction = async (
     params = {},
   ): Promise<Array<ShadowsocksNodeConfig>> => {
-    const { requestUserAgent } = params || {}
+    const requestUserAgent = this.determineRequestUserAgent(
+      params.requestUserAgent,
+    )
     const nodeList = await getShadowsocksJSONConfig(
       this.url,
       this.udpRelay,
-      requestUserAgent || this.config.requestUserAgent,
+      requestUserAgent,
     )
 
     if (this.config.hooks?.afterFetchNodeList) {

@@ -572,7 +572,7 @@ test('ClashProvider relayUrl', async (t) => {
   t.is(provider.url, `${RELAY_SERVICE}http://example.com/clash-sample.yaml`)
 })
 
-test('ClashProvider requestUserAgent', async (t) => {
+test.serial('ClashProvider requestUserAgent', async (t) => {
   const mock = sandbox.spy(Provider, 'requestCacheableResource')
 
   const requestUserAgent = 'test useragent'
@@ -597,9 +597,65 @@ test('ClashProvider requestUserAgent', async (t) => {
   )
 })
 
+test.serial(
+  'ClashProvider requestUserAgent with passGatewayRequestUserAgent',
+  async (t) => {
+    const mock = sandbox.spy(Provider, 'requestCacheableResource')
+
+    const requestUserAgent = 'test useragent'
+    const provider = new ClashProvider('test', {
+      type: SupportProviderEnum.Clash,
+      url: 'http://example.com/clash-sample.yaml',
+    })
+    provider.passGatewayRequestUserAgent = true
+
+    await t.notThrowsAsync(async () => {
+      await provider.getNodeList({
+        requestUserAgent,
+      })
+    })
+
+    sandbox.assert.calledWithExactly(
+      mock,
+      'http://example.com/clash-sample.yaml',
+      {
+        requestUserAgent: 'test useragent',
+      },
+    )
+  },
+)
+
+test.serial(
+  'ClashProvider requestUserAgent without passGatewayRequestUserAgent',
+  async (t) => {
+    const mock = sandbox.spy(Provider, 'requestCacheableResource')
+
+    const requestUserAgent = 'test useragent'
+    const provider = new ClashProvider('test', {
+      type: SupportProviderEnum.Clash,
+      url: 'http://example.com/clash-sample.yaml',
+    })
+    provider.passGatewayRequestUserAgent = false
+
+    await t.notThrowsAsync(async () => {
+      await provider.getNodeList({
+        requestUserAgent,
+      })
+    })
+
+    sandbox.assert.calledWithExactly(
+      mock,
+      'http://example.com/clash-sample.yaml',
+      {
+        requestUserAgent: 'clash',
+      },
+    )
+  },
+)
+
 test('ClashProvider with hooks', async (t) => {
   const afterFetchNodeList = sinon.spy((nodeList) => {
-    nodeList.froEach((node) => {
+    nodeList.forEach((node) => {
       node.nodeName = 'override'
     })
   })

@@ -120,9 +120,7 @@ test('render with extendRenderContext', async (t) => {
 
     t.snapshot(
       artifact.render(undefined, {
-        urlParams: {
-          foo: 'foo',
-        },
+        foo: 'foo',
       }),
     )
   }

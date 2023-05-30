@@ -40,13 +40,16 @@ export default class ShadowsocksSubscribeProvider extends Provider {
     return relayableUrl(this.#originalUrl, this.config.relayUrl)
   }
 
-  public getSubscriptionUserInfo: GetSubscriptionUserInfoFunction = async ({
-    requestUserAgent,
-  } = {}) => {
+  public getSubscriptionUserInfo: GetSubscriptionUserInfoFunction = async (
+    params = {},
+  ) => {
+    const requestUserAgent = this.determineRequestUserAgent(
+      params.requestUserAgent,
+    )
     const { subscriptionUserinfo } = await getShadowsocksSubscription(
       this.url,
       this.udpRelay,
-      requestUserAgent || this.config.requestUserAgent,
+      requestUserAgent,
     )
 
     if (subscriptionUserinfo) {
@@ -58,11 +61,13 @@ export default class ShadowsocksSubscribeProvider extends Provider {
   public getNodeList: GetNodeListFunction = async (
     params = {},
   ): Promise<Array<ShadowsocksNodeConfig>> => {
-    const { requestUserAgent } = params
+    const requestUserAgent = this.determineRequestUserAgent(
+      params.requestUserAgent,
+    )
     const { nodeList } = await getShadowsocksSubscription(
       this.url,
       this.udpRelay,
-      requestUserAgent || this.config.requestUserAgent,
+      requestUserAgent,
     )
 
     if (this.config.hooks?.afterFetchNodeList) {

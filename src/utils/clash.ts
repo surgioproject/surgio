@@ -12,6 +12,7 @@ import { applyFilter } from './filter'
 import {
   checkNotNullish,
   getPortFromHost,
+  pickAndFormatKeys,
   pickAndFormatStringList,
 } from './index'
 
@@ -287,7 +288,7 @@ function nodeListMapper(nodeConfig: PossibleNodeConfigType) {
           server: nodeConfig.hostname,
           port: nodeConfig.port,
           udp: true,
-          ...pickAndFormatStringList(
+          ...pickAndFormatKeys(
             nodeConfig,
             ['password', 'uuid', 'sni', 'skipCertVerify', 'version'],
             {
@@ -304,7 +305,7 @@ function nodeListMapper(nodeConfig: PossibleNodeConfigType) {
         server: nodeConfig.hostname,
         port: nodeConfig.port,
         udp: true,
-        ...pickAndFormatStringList(
+        ...pickAndFormatKeys(
           nodeConfig,
           ['token', 'sni', 'skipCertVerify', 'version'],
           {

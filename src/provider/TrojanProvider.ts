@@ -43,9 +43,12 @@ export default class TrojanProvider extends Provider {
     return relayableUrl(this.#originalUrl, this.config.relayUrl)
   }
 
-  public getSubscriptionUserInfo: GetSubscriptionUserInfoFunction = async ({
-    requestUserAgent,
-  } = {}) => {
+  public getSubscriptionUserInfo: GetSubscriptionUserInfoFunction = async (
+    params = {},
+  ) => {
+    const requestUserAgent = this.determineRequestUserAgent(
+      params.requestUserAgent,
+    )
     const { subscriptionUserinfo } = await getTrojanSubscription({
       url: this.url,
       udpRelay: this.udpRelay,
@@ -62,12 +65,14 @@ export default class TrojanProvider extends Provider {
   public getNodeList: GetNodeListFunction = async (
     params = {},
   ): Promise<Array<TrojanNodeConfig>> => {
-    const { requestUserAgent } = params
+    const requestUserAgent = this.determineRequestUserAgent(
+      params.requestUserAgent,
+    )
     const { nodeList } = await getTrojanSubscription({
       url: this.url,
       udpRelay: this.udpRelay,
       tls13: this.tls13,
-      requestUserAgent: requestUserAgent || this.config.requestUserAgent,
+      requestUserAgent: requestUserAgent,
     })
 
     if (this.config.hooks?.afterFetchNodeList) {

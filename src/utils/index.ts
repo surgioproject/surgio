@@ -363,6 +363,27 @@ export const pickAndFormatStringList = (
   return result
 }
 
+export const pickAndFormatKeys = (
+  obj: Record<string, any>,
+  keyList: readonly string[],
+  options: {
+    keyFormat?: 'camelCase' | 'snakeCase' | 'kebabCase'
+  } = {},
+): Record<string, any> => {
+  const result: Record<string, any> = {}
+
+  keyList.forEach((key) => {
+    if (obj.hasOwnProperty(key)) {
+      const propertyKey = options.keyFormat
+        ? changeCase(key, options.keyFormat)
+        : key
+      result[propertyKey] = obj[key]
+    }
+  })
+
+  return result
+}
+
 export const decodeStringList = <T = Record<string, string | boolean>>(
   stringList: ReadonlyArray<string>,
 ): T => {

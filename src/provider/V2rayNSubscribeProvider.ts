@@ -54,14 +54,16 @@ export default class V2rayNSubscribeProvider extends Provider {
   public getNodeList: GetNodeListFunction = async (
     params = {},
   ): ReturnType<typeof getV2rayNSubscription> => {
-    const { requestUserAgent } = params
+    const requestUserAgent = this.determineRequestUserAgent(
+      params.requestUserAgent,
+    )
     const nodeList = await getV2rayNSubscription({
       url: this.url,
       skipCertVerify: this.skipCertVerify,
       tls13: this.tls13,
       udpRelay: this.udpRelay,
       isCompatibleMode: this.compatibleMode,
-      requestUserAgent: requestUserAgent || this.config.requestUserAgent,
+      requestUserAgent: requestUserAgent,
     })
 
     if (this.config.hooks?.afterFetchNodeList) {

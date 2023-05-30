@@ -254,7 +254,7 @@ test('getClashNodes', async (t) => {
         shadowTls: {
           password: 'password',
           sni: 'example.com',
-          version: '3',
+          version: 3,
         },
       },
       {
@@ -268,7 +268,7 @@ test('getClashNodes', async (t) => {
         shadowTls: {
           password: 'password',
           sni: 'example.com',
-          version: '3',
+          version: 3,
         },
         clashConfig: {
           enableTuic: false,
@@ -288,7 +288,7 @@ test('getClashNodes', async (t) => {
         shadowTls: {
           password: 'password',
           sni: 'example.com',
-          version: '3',
+          version: 3,
         },
         clashConfig: {
           enableTuic: false,
@@ -306,7 +306,7 @@ test('getClashNodes', async (t) => {
         'plugin-opts': {
           host: 'example.com',
           password: 'password',
-          version: '3',
+          version: 3,
         },
         port: '443',
         server: 'example.com',
@@ -650,7 +650,6 @@ test('getClashNodes', async (t) => {
         hostname: '1.1.1.1',
         port: 443,
         token: 'password',
-        udpRelay: false,
         skipCertVerify: true,
         alpn: ['h3'],
       },
@@ -662,7 +661,7 @@ test('getClashNodes', async (t) => {
         server: '1.1.1.1',
         port: 443,
         token: 'password',
-        'skip-cert-verify': false,
+        udp: true,
       },
       {
         type: 'tuic',
@@ -671,7 +670,7 @@ test('getClashNodes', async (t) => {
         port: 443,
         token: 'password',
         'skip-cert-verify': true,
-        udp: false,
+        udp: true,
         alpn: ['h3'],
       },
     ],

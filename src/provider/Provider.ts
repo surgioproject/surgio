@@ -24,6 +24,8 @@ export default abstract class Provider {
 
   // 是否支持在订阅中获取用户流量信息
   public supportGetSubscriptionUserInfo: boolean
+  // 是否传递 Gateway 请求的 User-Agent
+  public passGatewayRequestUserAgent: boolean
 
   protected constructor(public name: string, config: ProviderConfig) {
     const result = ProviderValidator.safeParse(config)
@@ -36,6 +38,8 @@ export default abstract class Provider {
     this.supportGetSubscriptionUserInfo = false
     this.config = result.data as ProviderConfig
     this.type = result.data.type
+    this.passGatewayRequestUserAgent =
+      getConfig()?.gateway?.passRequestUserAgent ?? false
   }
 
   static async requestCacheableResource(
@@ -46,7 +50,7 @@ export default abstract class Provider {
   ): Promise<SubsciptionCacheItem> {
     const cacheType = getConfig()?.cache?.type || 'default'
     const cacheKey = `${CACHE_KEYS.Provider}:${toMD5(
-      getUserAgent(options.requestUserAgent || '') + url,
+      getUserAgent(options.requestUserAgent) + url,
     )}`
     const requestResource = async () => {
       const headers = {}
@@ -102,6 +106,14 @@ export default abstract class Provider {
             return subsciptionCacheItem
           })()
     }
+  }
+
+  public determineRequestUserAgent(
+    requestUserAgent?: string | undefined,
+  ): string | undefined {
+    return this.passGatewayRequestUserAgent
+      ? requestUserAgent || this.config.requestUserAgent
+      : this.config.requestUserAgent
   }
 
   public get nextPort(): number {

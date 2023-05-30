@@ -46,13 +46,16 @@ export default class SsdProvider extends Provider {
     return relayableUrl(this.#originalUrl, this.config.relayUrl)
   }
 
-  public getSubscriptionUserInfo: GetSubscriptionUserInfoFunction = async ({
-    requestUserAgent,
-  } = {}) => {
+  public getSubscriptionUserInfo: GetSubscriptionUserInfoFunction = async (
+    params = {},
+  ) => {
+    const requestUserAgent = this.determineRequestUserAgent(
+      params.requestUserAgent,
+    )
     const { subscriptionUserinfo } = await getSsdSubscription(
       this.url,
       this.udpRelay,
-      requestUserAgent || this.config.requestUserAgent,
+      requestUserAgent,
     )
 
     if (subscriptionUserinfo) {
@@ -64,11 +67,13 @@ export default class SsdProvider extends Provider {
   public getNodeList: GetNodeListFunction = async (
     params = {},
   ): Promise<Array<ShadowsocksNodeConfig>> => {
-    const { requestUserAgent } = params
+    const requestUserAgent = this.determineRequestUserAgent(
+      params.requestUserAgent,
+    )
     const { nodeList } = await getSsdSubscription(
       this.url,
       this.udpRelay,
-      requestUserAgent || this.config.requestUserAgent,
+      requestUserAgent,
     )
 
     if (this.config.hooks?.afterFetchNodeList) {

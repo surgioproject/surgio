@@ -21,11 +21,7 @@ import { lowercaseHeaderKeys } from '../utils'
 import { getNetworkClashUA } from '../utils/env-flag'
 import relayableUrl from '../utils/relayable-url'
 import Provider from './Provider'
-import {
-  GetNodeListFunction,
-  GetNodeListParams,
-  GetSubscriptionUserInfoFunction,
-} from './types'
+import { GetNodeListFunction, GetSubscriptionUserInfoFunction } from './types'
 
 type SupportConfigTypes =
   | ShadowsocksNodeConfig
@@ -72,14 +68,17 @@ export default class ClashProvider extends Provider {
     return relayableUrl(this.#originalUrl, this.config.relayUrl)
   }
 
-  public getSubscriptionUserInfo: GetSubscriptionUserInfoFunction = async ({
-    requestUserAgent,
-  } = {}) => {
+  public getSubscriptionUserInfo: GetSubscriptionUserInfoFunction = async (
+    params = {},
+  ) => {
+    const requestUserAgent = this.determineRequestUserAgent(
+      params.requestUserAgent,
+    )
     const { subscriptionUserinfo } = await getClashSubscription({
       url: this.url,
       udpRelay: this.udpRelay,
       tls13: this.tls13,
-      requestUserAgent: requestUserAgent || this.config.requestUserAgent,
+      requestUserAgent,
     })
 
     if (subscriptionUserinfo) {
@@ -92,12 +91,14 @@ export default class ClashProvider extends Provider {
   public getNodeList: GetNodeListFunction = async (
     params = {},
   ): Promise<SupportConfigTypes[]> => {
-    const { requestUserAgent } = params
+    const requestUserAgent = this.determineRequestUserAgent(
+      params.requestUserAgent,
+    )
     const { nodeList } = await getClashSubscription({
       url: this.url,
       udpRelay: this.udpRelay,
       tls13: this.tls13,
-      requestUserAgent: requestUserAgent || this.config.requestUserAgent,
+      requestUserAgent,
     })
 
     if (this.config.hooks?.afterFetchNodeList) {
