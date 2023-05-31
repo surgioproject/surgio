@@ -1,6 +1,7 @@
 import test from 'ava'
 
 import { NodeTypeEnum, VmessNodeConfig } from '../../types'
+import { mergeReversedFilters } from '../filter'
 import * as filter from '../filter'
 
 const nodeConfigDefaults = {
@@ -668,6 +669,91 @@ test('discardProviders', (t) => {
       provider: { name: 'other' },
     } as any),
     true,
+  )
+})
+
+test('reverseFilter', (t) => {
+  const notUS = filter.reverseFilter(filter.usFilter)
+  const notUSAndNotBGP = filter.mergeReversedFilters(
+    [notUS, filter.discardKeywords(['BGP'])],
+    true,
+  )
+  const notUSOrNotBGP = filter.mergeReversedFilters(
+    [notUS, filter.discardKeywords(['BGP'])],
+    false,
+  )
+
+  t.true(
+    notUS({
+      nodeName: '台湾',
+      type: NodeTypeEnum.Shadowsocks,
+      ...nodeConfigDefaults,
+    }),
+  )
+  t.false(
+    notUS({
+      nodeName: '美国',
+      type: NodeTypeEnum.Shadowsocks,
+      ...nodeConfigDefaults,
+    }),
+  )
+
+  t.true(
+    notUSAndNotBGP({
+      nodeName: '香港BGP',
+      type: NodeTypeEnum.Shadowsocks,
+      ...nodeConfigDefaults,
+    }),
+  )
+  t.false(
+    notUSAndNotBGP({
+      nodeName: '芝加哥BGP',
+      type: NodeTypeEnum.Shadowsocks,
+      ...nodeConfigDefaults,
+    }),
+  )
+  t.true(
+    notUSAndNotBGP({
+      nodeName: '芝加哥IPLC',
+      type: NodeTypeEnum.Shadowsocks,
+      ...nodeConfigDefaults,
+    }),
+  )
+  t.true(
+    notUSAndNotBGP({
+      nodeName: '韩国',
+      type: NodeTypeEnum.Shadowsocks,
+      ...nodeConfigDefaults,
+    }),
+  )
+
+  t.false(
+    notUSOrNotBGP({
+      nodeName: '香港BGP',
+      type: NodeTypeEnum.Shadowsocks,
+      ...nodeConfigDefaults,
+    }),
+  )
+  t.false(
+    notUSOrNotBGP({
+      nodeName: '芝加哥BGP',
+      type: NodeTypeEnum.Shadowsocks,
+      ...nodeConfigDefaults,
+    }),
+  )
+  t.false(
+    notUSOrNotBGP({
+      nodeName: '芝加哥IPLC',
+      type: NodeTypeEnum.Shadowsocks,
+      ...nodeConfigDefaults,
+    }),
+  )
+  t.true(
+    notUSOrNotBGP({
+      nodeName: '韩国',
+      type: NodeTypeEnum.Shadowsocks,
+      ...nodeConfigDefaults,
+    }),
   )
 })
 

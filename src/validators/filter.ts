@@ -12,7 +12,7 @@ type SortedNodeFilterType = {
   readonly filter: <T extends PossibleNodeConfigType>(
     nodeList: ReadonlyArray<T>,
   ) => ReadonlyArray<T>
-  readonly supportSort?: boolean
+  readonly supportSort: true
 }
 
 export const SortedNodeFilterTypeValidator = z.custom<SortedNodeFilterType>(

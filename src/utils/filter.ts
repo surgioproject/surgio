@@ -11,7 +11,7 @@ import {
 
 // tslint:disable-next-line:max-classes-per-file
 export class SortFilterWithSortedFilters implements SortedNodeFilterType {
-  public supportSort = true
+  public readonly supportSort = true
 
   constructor(public _filters: Array<NodeFilterType>) {
     this.filter.bind(this)
@@ -32,7 +32,7 @@ export class SortFilterWithSortedFilters implements SortedNodeFilterType {
 
 // tslint:disable-next-line:max-classes-per-file
 export class SortFilterWithSortedKeywords implements SortedNodeFilterType {
-  public supportSort = true
+  public readonly supportSort = true
 
   constructor(public _keywords: Array<string>) {
     this.filter.bind(this)
@@ -103,7 +103,7 @@ export const mergeFilters = (
   isStrict?: boolean,
 ): NodeFilterType => {
   filters.forEach((filter) => {
-    if (filter.hasOwnProperty('supportSort') && (filter as any).supportSort) {
+    if ('supportSort' in filter && filter.supportSort) {
       throw new Error('mergeFilters 不支持包含排序功能的过滤器')
     }
 
@@ -214,7 +214,7 @@ export const mergeSortedFilters = (
   filters: Array<NodeFilterType>,
 ): SortedNodeFilterType => {
   filters.forEach((filter) => {
-    if (filter.hasOwnProperty('supportSort') && (filter as any).supportSort) {
+    if ('supportSort' in filter && filter.supportSort) {
       throw new Error('mergeSortedFilters 不支持包含排序功能的过滤器')
     }
 
@@ -225,6 +225,33 @@ export const mergeSortedFilters = (
   })
 
   return new SortFilterWithSortedFilters(filters)
+}
+
+export const reverseFilter = (filter: NodeFilterType): NodeFilterType => {
+  if ('supportSort' in filter && filter.supportSort) {
+    throw new Error('reverseFilter 不支持包含排序功能的过滤器')
+  }
+  return (item) => !filter(item)
+}
+
+export const mergeReversedFilters = (
+  filters: Array<NodeFilterType>,
+  isStrict?: boolean,
+): NodeFilterType => {
+  filters.forEach((filter) => {
+    if ('supportSort' in filter && filter.supportSort) {
+      throw new Error('mergeReversedFilters 不支持包含排序功能的过滤器')
+    }
+
+    // istanbul ignore next
+    if (typeof filter !== 'function') {
+      throw new Error('mergeReversedFilters 传入了无效的过滤器')
+    }
+  })
+
+  return (item) => {
+    return filters[isStrict ? 'some' : 'every']((filter) => filter(item))
+  }
 }
 
 export const netflixFilter: NodeFilterType = (item) => {
@@ -285,9 +312,7 @@ export const chinaBackFilter: NodeFilterType = (item) => {
   ].some((key) => item.nodeName.includes(key))
 }
 
-export const chinaOutFilter: NodeFilterType = (item) => {
-  return !chinaBackFilter(item)
-}
+export const chinaOutFilter: NodeFilterType = reverseFilter(chinaBackFilter)
 
 export const youtubePremiumFilter: NodeFilterType = mergeFilters([
   usFilter,
