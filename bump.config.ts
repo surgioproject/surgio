@@ -1,5 +1,6 @@
 import { defineConfig } from 'bumpp'
 
 export default defineConfig({
-  // ...options
+  execute: 'npm run changelog',
+  all: true,
 })

@@ -34,7 +34,7 @@
   },
   "homepage": "https://surgio.royli.dev",
   "scripts": {
-    "dev": "pnpm build --watch",
+    "dev": "npm run build -- --watch",
     "test": "run-s build test:*",
     "test:types": "tsc --noEmit",
     "test:lint": "eslint -c .eslintrc.js --ext .js,.ts .",
@@ -42,10 +42,9 @@
     "test:cli": "mocha",
     "coverage": "TS_NODE_FILES=true nyc ava",
     "clean": "rimraf build",
-    "build": "run-s clean && tsc -p tsconfig.build.json",
-    "prepublishOnly": "run-s build",
+    "build": "tsc -p tsconfig.build.json",
+    "prepublishOnly": "npm run clean && npm run build",
     "changelog": "conventional-changelog -p angular -i CHANGELOG.md -s -r 0",
-    "version": "npm run changelog && git add .",
     "prepare": "husky install",
     "docs:dev": "vuepress dev docs",
     "docs:build": "vuepress build docs"
