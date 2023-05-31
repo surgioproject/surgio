@@ -1,3 +1,28 @@
+# [3.0.0-alpha.0](https://github.com/geekdada/surgio/compare/v2.25.0...v3.0.0-alpha.0) (2023-05-31)
+
+
+### Features
+
+* 细化 getNodeNames；增加 Clash 的 shadow-tls 和 Wireguard 支持 ([1d477e6](https://github.com/geekdada/surgio/commit/1d477e6fe104ad1f23d6159eafedfc4530f26113))
+* 新的模板方法 ([dd8cc7b](https://github.com/geekdada/surgio/commit/dd8cc7b55cd036b7f82639efc54443593e711f8c))
+* 新增 getSurgeWireguardNodes ([ac68299](https://github.com/geekdada/surgio/commit/ac682993daf572fcb7ec77613b626c731c22b50f))
+* 优化 filter ([31c6fb2](https://github.com/geekdada/surgio/commit/31c6fb2bdfd0970a0cbf60fbb9c2475cd3537dd5))
+* 优化 get*NodeNames ([53672ca](https://github.com/geekdada/surgio/commit/53672ca9c379d83843e501150f3263860d99ce5f))
+* 支持多 Peer 配置 ([9756a73](https://github.com/geekdada/surgio/commit/9756a73f37f0371449f58785de42fc167adb78cc))
+* 支持新版 Surge ([1103933](https://github.com/geekdada/surgio/commit/11039337a97b209323ec759bf132c958beda93b5))
+* add tuic v5 support ([39b5c94](https://github.com/geekdada/surgio/commit/39b5c940bd93c5a99537324eea03556c70bebdd3))
+* address compatibility issues ([ceaecb4](https://github.com/geekdada/surgio/commit/ceaecb48082c60928f4b3a8f45611fcdb922806f))
+* apply changes in [#226](https://github.com/geekdada/surgio/issues/226) ([3dd0135](https://github.com/geekdada/surgio/commit/3dd01358f0b1685f24ee397653eab70b16afb4c7))
+* defineProvider 和 defineSurgioConfig ([ac81dc4](https://github.com/geekdada/surgio/commit/ac81dc4722f906dd0594d11ec5b0c3c5fb412e34))
+* nodeConfig no longer has kebab naming properties ([43ea656](https://github.com/geekdada/surgio/commit/43ea656c5f53ff45776d76b620ee2e2547577ab6))
+* re-organize package ([ea60904](https://github.com/geekdada/surgio/commit/ea60904554efa5d4560c397f60fdf8d567cadd13))
+* remove all deprecated features ([7d76184](https://github.com/geekdada/surgio/commit/7d7618488bd83f719fbd2b63de078037df4b1981))
+* reverseFilter and mergeReversedFilters ([5f643f6](https://github.com/geekdada/surgio/commit/5f643f684ef7311c8c0898343347f3e6ff1237d1))
+* use mocha to test the CLI ([6ee4f93](https://github.com/geekdada/surgio/commit/6ee4f9331901c7874958a7d6194eecd7999e40e4))
+* use zod to validate node configurations ([ab1d7fe](https://github.com/geekdada/surgio/commit/ab1d7fe1274ec3842b4d20dbe5a2b6be23396c2d))
+
+
+
 # [2.25.0](https://github.com/geekdada/surgio/compare/v2.24.1...v2.25.0) (2023-02-12)
 
 
