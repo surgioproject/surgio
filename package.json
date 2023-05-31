@@ -32,7 +32,7 @@
   "bugs": {
     "url": "https://github.com/geekdada/surgio/issues"
   },
-  "homepage": "https://surgio.royli.dev",
+  "homepage": "https://surgio.js.org",
   "scripts": {
     "dev": "npm run build -- --watch",
     "test": "run-s build test:*",
