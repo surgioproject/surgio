@@ -14,7 +14,7 @@ import * as filter from './utils/filter'
 import { CATEGORIES } from './constant'
 
 export type { CommandConfigBeforeNormalize as SurgioConfig } from './types'
-export * from './utils/configurables'
+export * from './configurables'
 
 export const utils = {
   ...filter,

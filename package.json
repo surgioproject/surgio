@@ -8,7 +8,7 @@
     "surgio": "bin/run"
   },
   "repository": "https://github.com/geekdada/surgio",
-  "author": "Yihang Li <me@royli.dev>",
+  "author": "Roy Li <me@royli.dev>",
   "license": "MIT",
   "files": [
     "bin",

@@ -1,5 +1,5 @@
 import { PossibleProviderConfigType, SupportProviderEnum } from '../types'
-import { defineProvider } from '../utils/configurables'
+import { defineProvider } from '../configurables'
 import BlackSSLProvider from './BlackSSLProvider'
 import ClashProvider from './ClashProvider'
 import CustomProvider from './CustomProvider'
