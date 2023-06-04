@@ -4,11 +4,12 @@ import { NodeTypeEnum } from '../types'
 
 export const IntegersVersionValidator = z
   .union([z.string(), z.number()])
-  .transform((v, ctx): number => {
+  .transform((v, ctx): string | number => {
     const version = Number(v)
+    const isInputString = typeof v === 'string'
 
     if (version > 0 && Number.isInteger(version)) {
-      return version
+      return isInputString ? `${version}` : version
     } else {
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
@@ -52,11 +53,12 @@ export const TlsNodeConfigValidator = SimpleNodeConfigValidator.extend({
 
 export const PortValidator = z
   .union([z.string(), z.number()])
-  .transform((v, ctx): number => {
-    const version = Number(v)
+  .transform((v, ctx): string | number => {
+    const port = Number(v)
+    const isInputString = typeof v === 'string'
 
-    if (version > 0 && version < 65536 && Number.isInteger(version)) {
-      return version
+    if (port > 0 && port < 65536 && Number.isInteger(port)) {
+      return isInputString ? `${port}` : port
     } else {
       ctx.addIssue({
         code: z.ZodIssueCode.custom,

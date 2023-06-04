@@ -281,7 +281,7 @@ function nodeListMapper(nodeConfig: PossibleNodeConfigType) {
         )
       }
 
-      if ('version' in nodeConfig && nodeConfig.version >= 5) {
+      if ('version' in nodeConfig && Number(nodeConfig.version) >= 5) {
         return {
           type: 'tuic',
           name: nodeConfig.nodeName,
