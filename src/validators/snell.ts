@@ -1,7 +1,11 @@
 import { z } from 'zod'
 
 import { NodeTypeEnum } from '../types'
-import { PortValidator, SimpleNodeConfigValidator } from './common'
+import {
+  IntegersVersionValidator,
+  PortValidator,
+  SimpleNodeConfigValidator,
+} from './common'
 
 export const SnellNodeConfigValidator = SimpleNodeConfigValidator.extend({
   type: z.literal(NodeTypeEnum.Snell),
@@ -11,8 +15,5 @@ export const SnellNodeConfigValidator = SimpleNodeConfigValidator.extend({
   obfs: z.union([z.literal('http'), z.literal('tls')]).optional(),
   obfsHost: z.ostring(),
   reuse: z.oboolean(),
-  version: z
-    .union([z.string(), z.number()])
-    .refine((v) => Number(v))
-    .optional(),
+  version: IntegersVersionValidator.optional(),
 })
