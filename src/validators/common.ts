@@ -7,12 +7,12 @@ export const IntegersVersionValidator = z
   .transform((v, ctx): number => {
     const version = Number(v)
 
-    if (version > 0 && version < 65536) {
+    if (version > 0 && Number.isInteger(version)) {
       return version
     } else {
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
-        message: '版本号必须为 0 ~ 65535 之间的整数',
+        message: '版本号必须为大于 0 的整数',
       })
 
       return z.NEVER
@@ -50,7 +50,19 @@ export const TlsNodeConfigValidator = SimpleNodeConfigValidator.extend({
   serverCertFingerprintSha256: z.ostring(),
 })
 
-export const PortValidator = z.union([z.string(), z.number()]).refine((v) => {
-  const port = Number(v)
-  return port > 0 && port < 65536
-})
+export const PortValidator = z
+  .union([z.string(), z.number()])
+  .transform((v, ctx): number => {
+    const version = Number(v)
+
+    if (version > 0 && version < 65536 && Number.isInteger(version)) {
+      return version
+    } else {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: '端口号必须为 0 ~ 65535 之间的整数',
+      })
+
+      return z.NEVER
+    }
+  })
