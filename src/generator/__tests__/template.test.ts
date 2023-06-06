@@ -148,36 +148,6 @@ test('quantumultx filter 2', (t) => {
   t.snapshot(result)
 })
 
-test('mellow filter 1', (t) => {
-  const body = `{{ str | mellow }}`
-  const str = `IP-CIDR,67.198.55.0/24,Proxy,no-resolve // test rule`
-  const result = templateEngine.renderString(body, {
-    str,
-  })
-
-  t.is(result, 'IP-CIDR,67.198.55.0/24,Proxy')
-})
-
-test('mellow filter 2', (t) => {
-  const body = `{{ str | mellow }}`
-  const str = `URL-REGEX,xxxxxxxxxxxx`
-  const result = templateEngine.renderString(body, {
-    str,
-  })
-
-  t.is(result, '')
-})
-
-test('mellow filter 3', (t) => {
-  const body = `{{ str | mellow }}`
-  const str = `# Comment`
-  const result = templateEngine.renderString(body, {
-    str,
-  })
-
-  t.is(result, '# Comment')
-})
-
 test('loon filter 1', (t) => {
   const body = `{{ str | loon }}`
   const str = `# Comment`
@@ -289,7 +259,6 @@ test('surfboard filter 6', (t) => {
 test('spaces in string', (t) => {
   const str = `    `
 
-  t.is(templateEngine.renderString(`{{ str | mellow }}`, { str }), '    ')
   t.is(templateEngine.renderString(`{{ str | quantumultx }}`, { str }), '    ')
   t.is(templateEngine.renderString(`{{ str | clash }}`, { str }), '    ')
 })
@@ -306,11 +275,6 @@ test('ForeignMedia', (t) => {
   )
   t.snapshot(
     templateEngine.renderString(`{{ str | clash }}`, {
-      str,
-    }),
-  )
-  t.snapshot(
-    templateEngine.renderString(`{{ str | mellow }}`, {
       str,
     }),
   )

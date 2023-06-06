@@ -7,7 +7,6 @@ import YAML from 'yaml'
 import { RemoteSnippet } from '../types'
 import { decodeStringList, toBase64, addProxyToSurgeRuleSet } from '../utils'
 import {
-  MELLOW_UNSUPPORTED_RULE,
   QUANTUMULT_X_SUPPORTED_RULE,
   CLASH_SUPPORTED_RULE,
   LOON_SUPPORTED_RULE,
@@ -99,33 +98,6 @@ export function getEngine(templateDir: string): nunjucks.Environment {
         return null
       })
       .filter((item) => !!item)
-      .join('\n')
-  })
-
-  engine.addFilter('mellow', (str?: string): string => {
-    // istanbul ignore next
-    if (!str) {
-      return ''
-    }
-
-    const array = str.split('\n')
-
-    return array
-      .filter((item) => {
-        const testString: string =
-          !!item && item.trim() !== '' ? item.toUpperCase() : ''
-
-        return MELLOW_UNSUPPORTED_RULE.every((s) => !testString.startsWith(s))
-      })
-      .map((item: string) => {
-        if (item.startsWith('#') || str.trim() === '') {
-          return item
-        }
-        return item
-          .replace(/,no-resolve/, '')
-          .replace(/\/\/.*$/, '')
-          .trim()
-      })
       .join('\n')
   })
 

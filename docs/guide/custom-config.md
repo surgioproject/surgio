@@ -6,6 +6,19 @@ sidebarDepth: 2
 
 Surgio 的配置文件位于目录内的 `surgio.conf.js`。
 
+Surgio 内置了 `defineSurgioConfig` 方法，可以让 IDE 智能提示配置项，不过你也可以不使用这样的语法糖。下面两种写法都是可以的。
+
+```js
+const { defineSurgioConfig } = require('surgio');
+
+module.exports = defineSurgioConfig({
+  artifacts: [],
+  urlBase: 'https://example.com/',
+  upload: {},
+  binPath: {},
+});
+```
+
 ```js
 module.exports = {
   artifacts: [],
@@ -143,14 +156,7 @@ module.exports = {
 
 ### binPath
 
-如果需要生成针对 Surge 的 V2Ray 或 SSR 订阅，需要额外配置此项。
-
-#### binPath.v2ray
-
-- 类型: `string`
-- 默认值: `undefined`
-
-V2Ray 的可执行文件地址，通常是 `/usr/local/bin/v2ray`。
+如果需要生成针对 Surge 的 SSR 订阅，需要额外配置此项。
 
 #### binPath.shadowsocksr
 
@@ -167,10 +173,7 @@ SSR 的可执行文件地址。请使用 libev 版本的二进制文件，可以
 ```js
 // surgio.conf.js
 module.exports = {
-  surgeConfig: {
-    v2ray: 'native',
-    resolveHostname: true,
-  },
+  surgeConfig: {},
 };
 ```
 
@@ -225,12 +228,19 @@ module.exports = {
 
 #### clashConfig.enableTuic
 
-> <Badge text="v2.23.0" vertical="middle" />
+- 类型: `boolean`
+- 默认值: `false`
+
+目前仅 Stash 支持 Tuic，如果你希望在 Clash 订阅中输出 Tuic 节点请开启此项。
+
+#### clashConfig.enableShadowTls
+
+> <Badge text="v3.0.0" vertical="middle" />
 
 - 类型: `boolean`
 - 默认值: `false`
 
-目前仅 Stash 支持 Tuic，如果你希望在 Clash 节点中输出 Tuic 请开启此项。
+目前仅 Stash 支持 shadow-tls，如果你希望在 Shadowsocks 节点中使用 shadow-tls 请开启此项。
 
 ### surfboardConfig
 
@@ -256,6 +266,13 @@ module.exports = {
 - 类型: `object`
 - 默认值: `undefined`
 
+```js
+// surgio.conf.js
+module.exports = {
+  gateway: {},
+};
+```
+
 托管 API 相关配置
 
 #### gateway.auth
@@ -274,8 +291,6 @@ module.exports = {
 
 #### gateway.viewerToken
 
-> <Badge text="Gateway: v1.7.0" vertical="middle" />
-
 - 类型: `string`
 - 默认值: `undefined`
 
@@ -287,10 +302,8 @@ module.exports = {
 
 #### gateway.useCacheOnError
 
-> <Badge text="Gateway: v1.2.0" vertical="middle" />
-
 - 类型: `boolean`
-- 默认值: `undefined`
+- 默认值: `false`
 
 是否在 Artifact 生成错误时使用缓存（上一次正确请求的结果）。
 
@@ -300,6 +313,16 @@ module.exports = {
 1. 应用重启后缓存会失效。
 2. 适用缓存的接口有 `/get-artifact` 和 `/export-providers`。
 :::
+
+#### gateway.passRequestUserAgent
+
+> <Badge text="Gateway: v2.0.0" vertical="middle" /><br />
+> <Badge text="Surgio v3.0.0" vertical="middle" />
+
+- 类型: `boolean`
+- 默认值: `false`
+
+是否将 `/get-artifact` 请求中的 `User-Agent` 传递给上游机场的订阅服务器。这个选项主要用于解决某些机场的订阅服务器对 `User-Agent` 有特殊处理的问题。
 
 ### customFilters
 
@@ -338,7 +361,7 @@ Clash 规则中的 `interval`。
 2. 在合并全局、局部模板变量和面板 URL 参数时的优先级为：URL 参数 > 局部 > 全局；
 :::
 
-### checkHostname <Badge text="v2.3.0" vertical="middle" />
+### checkHostname
 
 - 类型: `boolean`
 - 默认值: `false`
@@ -347,7 +370,7 @@ Clash 规则中的 `interval`。
 
 某些机场的节点域名 TTL 非常小，在某些情况下可能会导致 DNS 回溯解析超时，这样会导致节点本身可用但是被抛弃，所以建议谨慎开启该选项。
 
-### flags <Badge text="v2.5.0" vertical="middle" />
+### flags
 
 - 类型: `object`
 - 默认值: `undefined`
@@ -372,7 +395,7 @@ module.exports = {
 2. 英文字母请使用大写；
 :::
 
-### cache <Badge text="v2.19.0" vertical="middle" />
+### cache
 
 - 类型: `object`
 - 默认值: `undefined`

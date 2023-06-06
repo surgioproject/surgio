@@ -46,8 +46,8 @@
     "prepublishOnly": "npm run clean && npm run build",
     "changelog": "conventional-changelog -p angular -i CHANGELOG.md -s -r 0",
     "prepare": "husky install",
-    "docs:dev": "vuepress dev docs",
-    "docs:build": "vuepress build docs"
+    "docs:dev": "NODE_ENV=development vuepress dev docs",
+    "docs:build": "NODE_ENV=production vuepress build docs"
   },
   "oclif": {
     "bin": "surgio",
@@ -163,6 +163,7 @@
     "sinon": "^15.1.0",
     "ts-node": "^10.9.1",
     "typescript": "^5.0.4",
+    "vue": "^3.3.4",
     "vuepress": "2.0.0-beta.62",
     "vuepress-plugin-sitemap2": "2.0.0-beta.205"
   },

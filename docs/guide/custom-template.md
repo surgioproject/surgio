@@ -153,6 +153,8 @@ Surgio 内置多个节点名国别/地区过滤器。除非是火星文，Surgio
 - httpsFilter
 - trojanFilter
 - socks5Filter
+- tuicFilter
+- wireguardFilter
 
 ### netflixFilter
 
@@ -208,6 +210,36 @@ Youtube Premium 节点过滤器。Surgio 默认会将名称中包含 *日*, *美
 🇭🇰HK(Netflix) = custom, hk.example.com, 10000, chacha20-ietf-poly1305, password, https://raw.githubusercontent.com/ConnersHua/SSEncrypt/master/SSEncrypt.module, udp-relay=true
 ```
 
+### getSurgeWireguardNodes
+
+> <Badge text="v3.0.0" vertical="middle" />
+
+`getSurgeWireguardNodes(nodeList, filter?)`
+
+`getSurgeNodes` 仅输出 `[Proxy]` 部分的配置，剩余的节点配置需要在模板中使用 `getSurgeWireguardNodes` 输出。
+
+```txt
+[Proxy]
+{{ getSurgeNodes(nodeList) }}
+
+[Proxy Group]
+Proxy = select, {{ getSurgeNodeNames(nodeList) }}
+
+{{ getSurgeWireguardNodes(nodeList) }}
+```
+
+:::tip 提示
+[Surge - WireGuard 官方文档](https://manual.nssurge.com/policy/wireguard.html)
+:::
+
+### getSurgeNodeNames
+
+> <Badge text="v3.0.0" vertical="middle" />
+
+`getSurgeNodes(nodeList, filter?)`
+
+和 `getSurgeNodes` 一样，只不过输出的是节点名称列表。
+
 ### getShadowsocksNodes
 
 `getShadowsocksNodes(nodeList, providerName)`
@@ -242,6 +274,14 @@ ss://cmM0LW1kNTpwYXNzd29yZA@hk.com:1234/?group=subscribe_demo#%F0%9F%87%AD%F0%9F
 
 生成 QuantumulX 的节点配置。该配置能用于 [`server_local`](https://github.com/crossutility/Quantumult-X/blob/master/sample.conf#L88) 或者 [`server_remote`](https://github.com/crossutility/Quantumult-X/blob/master/server-complete.txt)。
 
+### getQuantumultXNodeNames
+
+> <Badge text="v3.0.0" vertical="middle" />
+
+`getQuantumultXNodeNames(nodeList, filter?)`
+
+和 `getQuantumultXNodes` 一样，只不过输出的是节点名称列表。
+
 ### getClashNodes
 
 `getClashNodes(nodeList, filter?)`
@@ -252,73 +292,6 @@ ss://cmM0LW1kNTpwYXNzd29yZA@hk.com:1234/?group=subscribe_demo#%F0%9F%87%AD%F0%9F
 - [Clash 规则维护指南](/guide/client/clash.md)
 - 支持输出 Shadowsocks, Shadowsocksr, HTTPS, Snell, Vmess, Trojan 节点
 :::
-
-### getLoonNodes
-
-> <Badge text="v2.6.0" vertical="middle" />
-
-`getLoonNodes(nodeList, filter?)`
-
-:::tip 提示
-- 第二个参数可选，可传入标准的过滤器或自定义的过滤器
-- 支持输出 Shadowsocks, Shadowsocksr, HTTPS, HTTP, Vmess, Trojan 节点
-:::
-
-生成符合 `[Proxy]` 规范的节点信息，使用时请参考 [文档](https://www.notion.so/1-9809ce5acf524d868affee8dd5fc0a6e)。
-
-示例：
-
-```
-[Proxy]
-{{ getLoonNodes(nodeList) }}
-```
-
-### getSurfboardNodes
-
-> <Badge text="v2.22.1" vertical="middle" />
-
-`getSurfboardNodes(nodeList, filter?)`
-
-:::tip 提示
-- `filter` 为可选参数，可传入标准的过滤器或自定义的过滤器
-- 支持输出 Shadowsocks, HTTPS, HTTP, Vmess, Trojan 节点
-:::
-
-使用时请参考 [官方文档](https://getsurfboard.com/docs/profile-format/overview)。
-
-示例：
-
-```
-[Proxy]
-{{ getSurfboardNodes(nodeList) }}
-```
-
-### getNodeNames
-
-`getNodeNames(nodeList, filter?, separator?)`
-
-:::tip 提示
-- `filter` 为可选参数
-- `separator` 为可选参数。可以通过这个参数修改节点名的分隔符，你可能会在编写 Mellow 配置时传入 `:`
-:::
-
-生成一段逗号分隔的名称字符串，例如：
-
-```
-🇺🇸US, 🇭🇰HK(Netflix)
-```
-
-若需要过滤 Netflix 节点则传入：
-
-```js
-getNodeNames(nodeList, netflixFilter);
-```
-
-如果只需要更改分隔符则这样写：
-
-```js
-getNodeNames(nodeList, undefined, ':');
-```
 
 ### getClashNodeNames
 
@@ -342,6 +315,86 @@ getClashNodeNames(nodeList, netflixFilter);
 
 ```js
 getClashNodeNames(nodeList, netflixFilter, ['测试节点']);
+```
+
+### getLoonNodes
+
+`getLoonNodes(nodeList, filter?)`
+
+:::tip 提示
+- 第二个参数可选，可传入标准的过滤器或自定义的过滤器
+- 支持输出 Shadowsocks, Shadowsocksr, HTTPS, HTTP, Vmess, Trojan 节点
+:::
+
+生成符合 `[Proxy]` 规范的节点信息，使用时请参考 [文档](https://www.notion.so/1-9809ce5acf524d868affee8dd5fc0a6e)。
+
+示例：
+
+```
+[Proxy]
+{{ getLoonNodes(nodeList) }}
+```
+
+### getLoonNodeNames
+
+> <Badge text="v3.0.0" vertical="middle" />
+
+`getLoonNodeNames(nodeList, filter?)`
+
+和 `getLoonNodes` 一样，只不过输出的是节点名称列表。
+
+### getSurfboardNodes
+
+`getSurfboardNodes(nodeList, filter?)`
+
+:::tip 提示
+- `filter` 为可选参数，可传入标准的过滤器或自定义的过滤器
+- 支持输出 Shadowsocks, HTTPS, HTTP, Vmess, Trojan 节点
+:::
+
+使用时请参考 [官方文档](https://getsurfboard.com/docs/profile-format/overview)。
+
+示例：
+
+```
+[Proxy]
+{{ getSurfboardNodes(nodeList) }}
+```
+
+### getSurfboardNodeNames
+
+> <Badge text="v3.0.0" vertical="middle" />
+
+`getSurfboardNodeNames(nodeList, filter?)`
+
+和 `getSurfboardNodes` 一样，只不过输出的是节点名称列表。
+
+### getNodeNames
+
+`getNodeNames(nodeList, filter?, separator?)`
+
+:::tip 提示
+- 不同于 `getXxxxNodeNames` 方法，该方法不会根据节点类型进行过滤
+- `filter` 为可选参数
+- `separator` 为可选参数。可以通过这个参数修改节点名的分隔符
+:::
+
+生成一段逗号分隔的名称字符串，例如：
+
+```
+🇺🇸US, 🇭🇰HK(Netflix)
+```
+
+若需要过滤 Netflix 节点则传入：
+
+```js
+getNodeNames(nodeList, netflixFilter);
+```
+
+如果只需要更改分隔符则这样写：
+
+```js
+getNodeNames(nodeList, undefined, ':');
 ```
 
 ### getDownloadUrl
@@ -374,7 +427,7 @@ getDownloadUrl('example.conf?foo=bar'); // https://example.com/example.conf?foo=
 getUrl('/export-provider?format=surge-policy');
 ```
 
-### snippet <Badge text="v2.1.0" vertical="middle" />
+### snippet
 
 `snippet(path)`
 
@@ -455,12 +508,16 @@ DOMAIN-SUFFIX,ytimg.com,🚀 Proxy
 <!-- .tpl 文件 -->
 {% import './snippet/blocked_rules.tpl' as blocked_rules %}
 
-{{ blocked_rules.main('🚀 Proxy') | clash }}
+[rules]
+{% filter clash %}
+  {{ blocked_rules.main('🚀 Proxy') }}
+{% endfilter %}
 ```
 
 最终得到的规则是：
 
 ```
+[rules]
 - DOMAIN-KEYWORD,bitly,🚀 Proxy
 - DOMAIN-KEYWORD,blogspot,🚀 Proxy
 - DOMAIN-KEYWORD,dropbox,🚀 Proxy
@@ -527,20 +584,7 @@ _for Quantumult X_
 Surgio 不会处理类似 `[rewrite_local]` 这样的标题，所以请 **不要** 将它们也放到片段中。
 :::
 
-### Mellow 规则处理
-
-由于 Mellow 目前不支持 `URL-REGEX`, `USER-AGENT` 和 `no-resolve` 关键词，如果你需要引入 Surge 的远程片段则需要在引入时加入这个处理器。
-
-```html
-<!-- .tpl 文件 -->
-{% import './snippet/blocked_rules.tpl' as blocked_rules %}
-
-{{ blocked_rules.main('🚀 Proxy') | mellow }}
-```
-
 ### Loon 规则处理
-
-> <Badge text="v2.6.0" vertical="middle" />
 
 处理后的规则仅包含 [这里](https://www.notion.so/2-967c1a07462c43ab88906162bec475a4) 列出的几种规则类型。
 

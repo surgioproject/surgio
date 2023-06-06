@@ -52,18 +52,6 @@ export const LOON_SUPPORTED_RULE = [
   'FINAL',
 ] as const
 
-export const MELLOW_UNSUPPORTED_RULE = [
-  'URL-REGEX',
-  'USER-AGENT',
-  'AND',
-  'OR',
-  'NOT',
-  'DEST-PORT',
-  'IN-PORT',
-  'SRC-IP',
-  'RULE-SET',
-] as const
-
 // @see https://getsurfboard.com/docs/profile-format/rule/
 export const SURFBOARD_SUPPORTED_RULE = [
   'DOMAIN-SUFFIX',
