@@ -20,10 +20,7 @@ export type PossibleProviderType =
   | SsdProvider
   | TrojanProvider
 
-export type GetNodeListParams = Record<
-  string,
-  string | string[] | undefined
-> & {
+export type GetNodeListParams = Record<string, unknown> & {
   requestUserAgent?: string
 }
 

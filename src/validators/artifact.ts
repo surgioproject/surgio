@@ -6,7 +6,7 @@ export const ArtifactValidator = z.object({
   provider: z.string(),
   categories: z.array(z.string()).optional(),
   combineProviders: z.array(z.string()).optional(),
-  customParams: z.record(z.unknown()).optional(),
+  customParams: z.record(z.any()).optional(),
   customFilters: z.record(z.function()).optional(),
   destDir: z.ostring(),
   downloadUrl: z.ostring(),

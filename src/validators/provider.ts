@@ -5,7 +5,7 @@ import {
   NodeFilterTypeValidator,
   SortedNodeFilterTypeValidator,
 } from './filter'
-import { AfterFetchNodeListHookValidator } from './hooks'
+import { AfterNodeListResponseHookValidator } from './hooks'
 
 export const ProviderValidator = z.object({
   type: z.nativeEnum(SupportProviderEnum),
@@ -36,7 +36,7 @@ export const ProviderValidator = z.object({
     .optional(),
   hooks: z
     .object({
-      afterFetchNodeList: AfterFetchNodeListHookValidator.optional(),
+      afterNodeListResponse: AfterNodeListResponseHookValidator.optional(),
     })
     .optional(),
 })

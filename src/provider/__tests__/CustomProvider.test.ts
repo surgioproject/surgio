@@ -160,7 +160,7 @@ test('CustomProvider with hooks', async (t) => {
       password: 'password',
     } as const,
   ]
-  const afterFetchNodeList = sinon.spy((nodeList) => {
+  const afterNodeListResponse = sinon.spy((nodeList) => {
     // @ts-ignore
     nodeList[0].hostname = 'example.org'
   })
@@ -168,7 +168,7 @@ test('CustomProvider with hooks', async (t) => {
     type: SupportProviderEnum.Custom,
     nodeList,
     hooks: {
-      afterFetchNodeList,
+      afterNodeListResponse,
     },
   })
 
@@ -178,5 +178,5 @@ test('CustomProvider with hooks', async (t) => {
       hostname: 'example.org',
     },
   ])
-  t.true(afterFetchNodeList.calledOnce)
+  t.true(afterNodeListResponse.calledOnce)
 })

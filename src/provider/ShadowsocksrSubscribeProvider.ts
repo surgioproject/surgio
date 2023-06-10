@@ -76,8 +76,8 @@ export default class ShadowsocksrSubscribeProvider extends Provider {
       requestUserAgent,
     )
 
-    if (this.config.hooks?.afterFetchNodeList) {
-      const newList = await this.config.hooks.afterFetchNodeList(
+    if (this.config.hooks?.afterNodeListResponse) {
+      const newList = await this.config.hooks.afterNodeListResponse(
         nodeList,
         params,
       )

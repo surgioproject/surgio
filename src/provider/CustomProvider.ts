@@ -132,8 +132,8 @@ export default class CustomProvider extends Provider {
       parsedNodeList.push(parsedNode)
     }
 
-    if (this.config.hooks?.afterFetchNodeList) {
-      const newList = await this.config.hooks.afterFetchNodeList(
+    if (this.config.hooks?.afterNodeListResponse) {
+      const newList = await this.config.hooks.afterNodeListResponse(
         parsedNodeList,
         params,
       )

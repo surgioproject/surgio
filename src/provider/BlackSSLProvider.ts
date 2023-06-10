@@ -58,8 +58,11 @@ export default class BlackSSLProvider extends Provider {
       this.password,
     )
 
-    if (this.config.hooks?.afterFetchNodeList) {
-      const newList = await this.config.hooks.afterFetchNodeList(nodeList, {})
+    if (this.config.hooks?.afterNodeListResponse) {
+      const newList = await this.config.hooks.afterNodeListResponse(
+        nodeList,
+        {},
+      )
 
       if (newList) {
         return newList

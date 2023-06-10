@@ -654,7 +654,7 @@ test.serial(
 )
 
 test('ClashProvider with hooks', async (t) => {
-  const afterFetchNodeList = sinon.spy((nodeList) => {
+  const afterNodeListResponse = sinon.spy((nodeList) => {
     nodeList.forEach((node) => {
       node.nodeName = 'override'
     })
@@ -663,7 +663,7 @@ test('ClashProvider with hooks', async (t) => {
     type: SupportProviderEnum.Clash,
     url: 'http://example.com/clash-sample.yaml',
     hooks: {
-      afterFetchNodeList,
+      afterNodeListResponse,
     },
   })
 
@@ -671,5 +671,5 @@ test('ClashProvider with hooks', async (t) => {
   for (const node of nodeList) {
     t.is(node.nodeName, 'override')
   }
-  t.true(afterFetchNodeList.calledOnce)
+  t.true(afterNodeListResponse.calledOnce)
 })

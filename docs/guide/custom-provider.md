@@ -825,9 +825,9 @@ module.exports = {
 
 钩子函数是 Surgio v3 新增的特性，用于在获取远程订阅内容时执行一些操作。你可以在所有类型的 Provider 中定义钩子函数。
 
-### hooks.afterFetchNodeList
+### hooks.afterNodeListResponse
 
-`afterFetchNodeList(nodeList: NodeConfig[], customParams: {}): NodeConfig[] | Promise<NodeConfig[]>`
+`afterNodeListResponse(nodeList: NodeConfig[], customParams: {}): NodeConfig[] | Promise<NodeConfig[]>`
 
 该钩子函数会在成功获取到远程订阅内容后执行。你可以自由修改节点的内容，甚至是像维护自定义类型 Provider 那样追加自己的节点。
 
@@ -842,7 +842,7 @@ module.exports = defineProvider({
   type: 'clash',
   url: 'https://example.com/clash.yaml',
   hooks: {
-    afterFetchNodeList: async (nodeList, customParams) => {
+    afterNodeListResponse: async (nodeList, customParams) => {
       // nodeList: NodeConfig[]
       // customerParams: {}
       return nodeList;

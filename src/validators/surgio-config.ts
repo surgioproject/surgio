@@ -86,7 +86,7 @@ export const SurgioConfigValidator = z.object({
   customFilters: z
     .record(z.union([NodeFilterTypeValidator, SortedNodeFilterTypeValidator]))
     .optional(),
-  customParams: z.record(z.unknown()).optional(),
+  customParams: z.record(z.any()).optional(),
   analytics: z.oboolean(),
   cache: z
     .object({

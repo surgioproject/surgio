@@ -4,13 +4,12 @@ import { z } from 'zod'
 import { GetNodeListParams } from '../provider'
 import { PossibleNodeConfigType } from '../types'
 
-type AfterFetchNodeListHook = <T extends PossibleNodeConfigType>(
+type AfterNodeListResponse = <T extends PossibleNodeConfigType>(
   nodeList: T[],
   customParams: GetNodeListParams,
 ) => Promisable<T[] | undefined | void>
 
-export const AfterFetchNodeListHookValidator = z.custom<AfterFetchNodeListHook>(
-  (val) => {
+export const AfterNodeListResponseHookValidator =
+  z.custom<AfterNodeListResponse>((val) => {
     return typeof val === 'function'
-  },
-)
+  })

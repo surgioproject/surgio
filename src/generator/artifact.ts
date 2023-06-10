@@ -1,13 +1,16 @@
 import { logger } from '@surgio/logger'
 import Bluebird from 'bluebird'
+import { EventEmitter } from 'events'
 import fs from 'fs-extra'
 import _ from 'lodash'
 import { Environment } from 'nunjucks'
 import path from 'path'
-import { EventEmitter } from 'events'
 
-import { getProvider, PossibleProviderType } from '../provider'
-import { GetNodeListParams } from '../provider/types'
+import {
+  getProvider,
+  PossibleProviderType,
+  GetNodeListParams,
+} from '../provider'
 import {
   ArtifactConfig,
   CommandConfig,
@@ -21,49 +24,49 @@ import {
   getClashNodeNames,
   getClashNodes,
   getDownloadUrl,
+  getLoonNodeNames,
+  getLoonNodes,
   getNodeNames,
+  getQuantumultXNodeNames,
   getQuantumultXNodes,
   getShadowsocksNodes,
   getShadowsocksNodesJSON,
   getShadowsocksrNodes,
-  getSurgeNodes,
+  getSurfboardNodeNames,
   getSurfboardNodes,
+  getSurgeNodeNames,
+  getSurgeNodes,
+  getSurgeWireguardNodes,
   getUrl,
   getV2rayNNodes,
   isIp,
   toBase64,
   toUrlSafeBase64,
-  getSurgeWireguardNodes,
-  getLoonNodeNames,
-  getLoonNodes,
-  getSurgeNodeNames,
-  getSurfboardNodeNames,
-  getQuantumultXNodeNames,
 } from '../utils'
 import { resolveDomain } from '../utils/dns'
 import { getNetworkConcurrency } from '../utils/env-flag'
 import {
+  chinaBackFilter,
+  chinaOutFilter,
   hkFilter,
+  httpFilter,
+  httpsFilter,
   japanFilter,
   koreaFilter,
   netflixFilter as defaultNetflixFilter,
-  singaporeFilter,
-  taiwanFilter,
-  usFilter,
-  chinaBackFilter,
-  chinaOutFilter,
-  validateFilter,
-  youtubePremiumFilter as defaultYoutubePremiumFilter,
   shadowsocksFilter,
   shadowsocksrFilter,
-  vmessFilter,
-  v2rayFilter,
+  singaporeFilter,
   snellFilter,
-  httpFilter,
-  httpsFilter,
-  trojanFilter,
   socks5Filter,
+  taiwanFilter,
+  trojanFilter,
+  usFilter,
+  v2rayFilter,
+  validateFilter,
+  vmessFilter,
   wireguardFilter,
+  youtubePremiumFilter as defaultYoutubePremiumFilter,
 } from '../utils/filter'
 import { prependFlag, removeFlag } from '../utils/flag'
 import { loadLocalSnippet } from './template'
@@ -113,21 +116,14 @@ export class Artifact extends EventEmitter {
     const gatewayConfig = config.gateway
     const gatewayToken =
       gatewayConfig?.viewerToken || gatewayConfig?.accessToken
-    const { name: artifactName, customParams, downloadUrl } = this.artifact
-
+    const { name: artifactName, downloadUrl } = this.artifact
     const { nodeList, netflixFilter, youtubePremiumFilter, customFilters } =
       this
     const remoteSnippets = _.keyBy(
       this.options.remoteSnippetList || [],
       (item) => item.name,
     )
-    const globalCustomParams = config.customParams
-    const mergedCustomParams = _.merge(
-      {},
-      globalCustomParams,
-      customParams,
-      extendRenderContext,
-    )
+    const mergedCustomParams = this.getMergedCustomParams(extendRenderContext)
 
     return {
       proxyTestUrl: config.proxyTestUrl,
@@ -228,6 +224,22 @@ export class Artifact extends EventEmitter {
     return this
   }
 
+  public getMergedCustomParams(
+    extendableCustomParams: Record<string, any> = {},
+  ): Readonly<Record<string, any>> {
+    const globalCustomParams = this.surgioConfig.customParams
+    const { customParams: artifactCustomParams } = this.artifact
+
+    const merged = _.merge(
+      {},
+      globalCustomParams,
+      artifactCustomParams,
+      extendableCustomParams,
+    )
+
+    return Object.freeze(merged)
+  }
+
   public render(
     templateEngine?: Environment,
     extendRenderContext?: ExtendableRenderContext,
@@ -293,7 +305,9 @@ export class Artifact extends EventEmitter {
     }
 
     try {
-      nodeConfigList = await provider.getNodeList(getNodeListParams)
+      nodeConfigList = await provider.getNodeList(
+        this.getMergedCustomParams(getNodeListParams),
+      )
     } catch (err) /* istanbul ignore next */ {
       throw new Error(
         `获取 Provider ${providerName} 节点时出现错误\n文件地址: ${filePath}`,
