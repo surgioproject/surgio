@@ -7,6 +7,7 @@ import { Environment } from 'nunjucks'
 import path from 'path'
 
 import {
+  CustomProvider,
   GetNodeListParams,
   getProvider,
   PossibleProviderType,
@@ -18,7 +19,7 @@ import {
   PossibleNodeConfigType,
   ProviderConfig,
   RemoteSnippet,
-  ThenArg,
+  SupportProviderEnum,
 } from '../types'
 import {
   getClashNodeNames,
@@ -39,7 +40,10 @@ import {
   getSurgeWireguardNodes,
   getUrl,
   getV2rayNNodes,
+  isError,
   isIp,
+  isSurgioError,
+  SurgioError,
   toBase64,
   toUrlSafeBase64,
 } from '../utils'
@@ -84,8 +88,7 @@ export class Artifact extends EventEmitter {
   public providerNameList: ReadonlyArray<string>
   public nodeConfigListMap: Map<string, ReadonlyArray<PossibleNodeConfigType>> =
     new Map()
-  public providerMap: Map<string, ThenArg<ReturnType<typeof getProvider>>> =
-    new Map()
+  public providerMap: Map<string, PossibleProviderType> = new Map()
   public nodeList: PossibleNodeConfigType[] = []
 
   private customFilters: NonNullable<ProviderConfig['customFilters']> = {}
@@ -297,25 +300,60 @@ export class Artifact extends EventEmitter {
       provider = await getProvider(providerName, require(filePath))
       this.providerMap.set(providerName, provider)
     } catch (err) /* istanbul ignore next */ {
-      throw new Error(
-        `处理 Provider ${providerName} 时出现错误\n文件地址: ${filePath}`,
-        {
-          cause: err,
-        },
-      )
+      if (isSurgioError(err)) {
+        err.providerName = providerName
+        err.providerPath = filePath
+        throw err
+      } else {
+        throw new SurgioError(
+          isError(err) ? err.message : '处理 Provider 失败',
+          {
+            cause: err,
+            providerName,
+            providerPath: filePath,
+          },
+        )
+      }
     }
 
     try {
-      nodeConfigList = await provider.getNodeList(
-        this.getMergedCustomParams(getNodeListParams),
-      )
+      try {
+        nodeConfigList = await provider.getNodeList(
+          this.getMergedCustomParams(getNodeListParams),
+        )
+      } catch (err) {
+        if (provider.config.hooks?.onError) {
+          const result = await provider.config.hooks.onError(err)
+
+          if (Array.isArray(result)) {
+            const adHocProvider = new CustomProvider('ad-hoc', {
+              type: SupportProviderEnum.Custom,
+              nodeList: result,
+            })
+
+            nodeConfigList = await adHocProvider.getNodeList()
+          } else {
+            nodeConfigList = []
+          }
+        } else {
+          throw err
+        }
+      }
     } catch (err) /* istanbul ignore next */ {
-      throw new Error(
-        `获取 Provider ${providerName} 节点时出现错误\n文件地址: ${filePath}`,
-        {
-          cause: err,
-        },
-      )
+      if (isSurgioError(err)) {
+        err.providerName = providerName
+        err.providerPath = filePath
+        throw err
+      } else {
+        throw new SurgioError(
+          isError(err) ? err.message : '处理 Provider 失败',
+          {
+            cause: err,
+            providerName,
+            providerPath: filePath,
+          },
+        )
+      }
     }
 
     // Filter 仅使用第一个 Provider 中的定义

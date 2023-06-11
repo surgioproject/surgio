@@ -10,7 +10,12 @@ import {
 import { getConfig } from '../config'
 import { getProviderCacheMaxage } from '../utils/env-flag'
 import httpClient, { getUserAgent } from '../utils/http-client'
-import { msToSeconds, toMD5, parseSubscriptionUserInfo } from '../utils'
+import {
+  msToSeconds,
+  toMD5,
+  parseSubscriptionUserInfo,
+  SurgioError,
+} from '../utils'
 import { ProviderValidator } from '../validators'
 import { GetNodeListFunction, GetSubscriptionUserInfoFunction } from './types'
 
@@ -32,7 +37,10 @@ export default abstract class Provider {
 
     // istanbul ignore next
     if (!result.success) {
-      throw result.error
+      throw new SurgioError('Provider 配置校验失败', {
+        cause: result.error,
+        providerName: name,
+      })
     }
 
     this.supportGetSubscriptionUserInfo = false

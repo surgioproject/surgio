@@ -11,6 +11,7 @@
     "allowSyntheticDefaultImports": true, // https://zhuanlan.zhihu.com/p/29022311
     "resolveJsonModule": true,
     "skipLibCheck": true,
+    "noEmit": true,
 
     "strict": true /* Enable all strict type-checking options. */,
     /* Strict Type-Checking Options */

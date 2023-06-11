@@ -9,7 +9,7 @@ import {
   SsdProviderConfig,
   SubscriptionUserinfo,
 } from '../types'
-import { decodeStringList, fromBase64 } from '../utils'
+import { decodeStringList, fromBase64, SurgioError } from '../utils'
 import relayableUrl from '../utils/relayable-url'
 import Provider from './Provider'
 import { GetNodeListFunction, GetSubscriptionUserInfoFunction } from './types'
@@ -33,7 +33,10 @@ export default class SsdProvider extends Provider {
 
     // istanbul ignore next
     if (!result.success) {
-      throw result.error
+      throw new SurgioError('SsdProvider 配置校验失败', {
+        cause: result.error,
+        providerName: name,
+      })
     }
 
     this.#originalUrl = result.data.url

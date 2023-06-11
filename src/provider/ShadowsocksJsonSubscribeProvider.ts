@@ -6,9 +6,10 @@ import {
   ShadowsocksJsonSubscribeProviderConfig,
   ShadowsocksNodeConfig,
 } from '../types'
+import { SurgioError } from '../utils'
 import relayableUrl from '../utils/relayable-url'
 import Provider from './Provider'
-import { GetNodeListFunction, GetNodeListParams } from './types'
+import { GetNodeListFunction } from './types'
 
 export default class ShadowsocksJsonSubscribeProvider extends Provider {
   readonly #originalUrl: string
@@ -25,7 +26,10 @@ export default class ShadowsocksJsonSubscribeProvider extends Provider {
 
     // istanbul ignore next
     if (!result.success) {
-      throw result.error
+      throw new SurgioError('ShadowsocksJsonSubscribeProvider 配置校验失败', {
+        cause: result.error,
+        providerName: name,
+      })
     }
 
     this.#originalUrl = result.data.url

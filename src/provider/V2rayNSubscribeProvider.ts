@@ -8,7 +8,7 @@ import {
   V2rayNSubscribeProviderConfig,
   VmessNodeConfig,
 } from '../types'
-import { fromBase64 } from '../utils'
+import { fromBase64, SurgioError } from '../utils'
 import relayableUrl from '../utils/relayable-url'
 import { parseSSUri } from '../utils/ss'
 import Provider from './Provider'
@@ -36,7 +36,10 @@ export default class V2rayNSubscribeProvider extends Provider {
 
     // istanbul ignore next
     if (!result.success) {
-      throw result.error
+      throw new SurgioError('V2rayNSubscribeProvider 配置校验失败', {
+        cause: result.error,
+        providerName: name,
+      })
     }
 
     this.#originalUrl = result.data.url

@@ -1,7 +1,6 @@
 import test from 'ava'
 
 import { NodeTypeEnum, VmessNodeConfig } from '../../types'
-import { mergeReversedFilters } from '../filter'
 import * as filter from '../filter'
 
 const nodeConfigDefaults = {

@@ -2,6 +2,24 @@ import { z } from 'zod'
 
 import { NodeTypeEnum } from '../types'
 
+export const PortValidator = z
+  .union([z.string(), z.number()])
+  .transform((v, ctx): string | number => {
+    const port = Number(v)
+    const isInputString = typeof v === 'string'
+
+    if (port > 0 && port < 65536 && Number.isInteger(port)) {
+      return isInputString ? `${port}` : port
+    } else {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: '端口号必须为 0 ~ 65535 之间的整数',
+      })
+
+      return z.NEVER
+    }
+  })
+
 export const IntegersVersionValidator = z
   .union([z.string(), z.number()])
   .transform((v, ctx): string | number => {
@@ -43,28 +61,10 @@ export const SimpleNodeConfigValidator = z.object({
 
 export const TlsNodeConfigValidator = SimpleNodeConfigValidator.extend({
   hostname: z.string(),
-  port: z.union([z.string(), z.number()]),
+  port: PortValidator,
   tls13: z.oboolean(),
   skipCertVerify: z.oboolean(),
   sni: z.ostring(),
   alpn: z.array(z.string()).nonempty().optional(),
   serverCertFingerprintSha256: z.ostring(),
 })
-
-export const PortValidator = z
-  .union([z.string(), z.number()])
-  .transform((v, ctx): string | number => {
-    const port = Number(v)
-    const isInputString = typeof v === 'string'
-
-    if (port > 0 && port < 65536 && Number.isInteger(port)) {
-      return isInputString ? `${port}` : port
-    } else {
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        message: '端口号必须为 0 ~ 65535 之间的整数',
-      })
-
-      return z.NEVER
-    }
-  })

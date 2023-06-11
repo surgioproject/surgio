@@ -1,5 +1,4 @@
 import test from 'ava'
-import { ZodError } from 'zod'
 import sinon from 'sinon'
 
 import { NodeTypeEnum, SupportProviderEnum } from '../../types'

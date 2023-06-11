@@ -28,8 +28,6 @@ export const utils = {
   isAWS,
   isFlyIO,
   isAWSLambda,
-}
+} as const
 
-export const categories = {
-  ...CATEGORIES,
-}
+export const categories = CATEGORIES

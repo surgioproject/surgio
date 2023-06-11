@@ -1,3 +1,4 @@
+import 'source-map-support/register'
 import { Command, Flags, Interfaces, Config } from '@oclif/core'
 import { transports } from '@surgio/logger'
 import ora from 'ora'

@@ -6,7 +6,7 @@ import {
   TrojanNodeConfig,
   TrojanProviderConfig,
 } from '../types'
-import { fromBase64 } from '../utils'
+import { fromBase64, SurgioError } from '../utils'
 import relayableUrl from '../utils/relayable-url'
 import { parseTrojanUri } from '../utils/trojan'
 import Provider from './Provider'
@@ -29,7 +29,10 @@ export default class TrojanProvider extends Provider {
 
     // istanbul ignore next
     if (!result.success) {
-      throw result.error
+      throw new SurgioError('TrojanProvider 配置校验失败', {
+        cause: result.error,
+        providerName: name,
+      })
     }
 
     this.#originalUrl = result.data.url

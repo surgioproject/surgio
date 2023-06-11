@@ -9,12 +9,7 @@ import {
   SortedNodeFilterType,
 } from '../types'
 import { applyFilter } from './filter'
-import {
-  checkNotNullish,
-  getPortFromHost,
-  pickAndFormatKeys,
-  pickAndFormatStringList,
-} from './index'
+import { checkNotNullish, getPortFromHost, pickAndFormatKeys } from './index'
 
 const logger = createLogger({ service: 'surgio:utils:clash' })
 

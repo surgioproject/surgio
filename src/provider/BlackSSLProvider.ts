@@ -9,6 +9,7 @@ import {
   NodeTypeEnum,
   SubscriptionUserinfo,
 } from '../types'
+import { SurgioError } from '../utils'
 import { ConfigCache } from '../utils/cache'
 import httpClient from '../utils/http-client'
 import Provider from './Provider'
@@ -29,7 +30,10 @@ export default class BlackSSLProvider extends Provider {
 
     // istanbul ignore next
     if (!result.success) {
-      throw result.error
+      throw new SurgioError('BlackSSLProvider 配置校验失败', {
+        cause: result.error,
+        providerName: name,
+      })
     }
 
     this.username = result.data.username

@@ -7,7 +7,7 @@ import {
   ShadowsocksrSubscribeProviderConfig,
   SubscriptionUserinfo,
 } from '../types'
-import { fromBase64 } from '../utils'
+import { fromBase64, SurgioError } from '../utils'
 import relayableUrl from '../utils/relayable-url'
 import { parseSubscriptionNode } from '../utils/subscription'
 import { parseSSRUri } from '../utils/ssr'
@@ -33,7 +33,10 @@ export default class ShadowsocksrSubscribeProvider extends Provider {
 
     // istanbul ignore next
     if (!result.success) {
-      throw result.error
+      throw new SurgioError('ShadowsocksrSubscribeProvider 配置校验失败', {
+        cause: result.error,
+        providerName: name,
+      })
     }
 
     this.#originalUrl = result.data.url

@@ -17,7 +17,7 @@ import {
   TuicNodeConfig,
   VmessNodeConfig,
 } from '../types'
-import { lowercaseHeaderKeys } from '../utils'
+import { lowercaseHeaderKeys, SurgioError } from '../utils'
 import { getNetworkClashUA } from '../utils/env-flag'
 import relayableUrl from '../utils/relayable-url'
 import Provider from './Provider'
@@ -54,7 +54,10 @@ export default class ClashProvider extends Provider {
 
     // istanbul ignore next
     if (!result.success) {
-      throw result.error
+      throw new SurgioError('ClashProvider 配置校验失败', {
+        cause: result.error,
+        providerName: name,
+      })
     }
 
     this.#originalUrl = result.data.url

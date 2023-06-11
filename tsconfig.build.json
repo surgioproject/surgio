@@ -3,6 +3,7 @@
   "compilerOptions": {
     "outDir": "build/",
     "sourceMap": true,
+    "noEmit": false,
   },
   "include": [
     "src/**/*.ts",

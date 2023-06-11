@@ -1,9 +1,9 @@
 import chalk from 'chalk'
 import { fromZodError } from 'zod-validation-error'
-import { ZodError } from 'zod'
 
 import BaseCommand from '../base-command'
 import { generateDoctorInfo } from './doctor'
+import { isError, isSurgioError, isZodError } from './errors'
 
 export const errorHandler = async function (
   this: BaseCommand<any>,
@@ -17,15 +17,35 @@ export const errorHandler = async function (
   console.error()
   console.error(chalk.bgRed(' 发生错误 '))
 
-  if (err.cause && err.cause instanceof ZodError) {
+  if (isSurgioError(err)) {
     console.error(chalk.red(err.message))
-    console.error(
-      chalk.red(
-        fromZodError(err.cause, {
-          prefix: '参数校验错误',
-        }).message,
-      ),
-    )
+
+    if (err.providerName) {
+      console.error(chalk.red(`Provider 名称: ${err.providerName}`))
+    }
+    if (err.providerPath) {
+      console.error(chalk.red(`文件地址: ${err.providerPath}`))
+    }
+    if (typeof err.nodeIndex === 'number') {
+      console.error(chalk.red(`错误发生在第 ${err.nodeIndex + 1} 个节点`))
+    }
+    if (isZodError(err.cause)) {
+      console.error(
+        chalk.red(
+          fromZodError(err.cause, {
+            prefix: '原因',
+          }).message,
+        ),
+      )
+    } else if (isError(err.cause)) {
+      console.error()
+      console.error(chalk.bgRed(' 原因 '))
+      console.error(chalk.red(err.cause.stack || err.cause))
+    } else {
+      console.error()
+      console.error(chalk.bgRed(' 错误堆栈 '))
+      console.error(chalk.yellow(err.stack))
+    }
   } else {
     console.error(chalk.red(err.message))
     console.error()
