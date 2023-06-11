@@ -88,7 +88,6 @@
     "dotenv": "^16.1.2",
     "emoji-regex": "^10.2.1",
     "eslint": "^8.41.0",
-    "espree": "^7.3.1",
     "execa": "^4.1.0",
     "filesize": "^10.0.7",
     "fs-extra": "^11.1.1",
@@ -127,8 +126,10 @@
     "@types/inquirer": "^8.2.6",
     "@types/ioredis-mock": "^8.2.2",
     "@types/lodash": "^4.14.195",
+    "@types/micromatch": "^4.0.2",
     "@types/mocha": "^10.0.1",
-    "@types/node": "^16.18.34",
+    "@types/ms": "^0.7.31",
+    "@types/node": "^18",
     "@types/nunjucks": "^3.2.2",
     "@types/sinon": "^10.0.15",
     "@types/urlsafe-base64": "^1.0.28",
@@ -192,7 +193,8 @@
     ]
   },
   "engines": {
-    "node": ">=16.9.0"
+    "node": ">=18.0.0",
+    "pnpm": "^8"
   },
   "lint-staged": {
     "*.js": "eslint",

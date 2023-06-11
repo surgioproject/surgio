@@ -14,7 +14,7 @@ export const TAIWAN: ReadonlyArray<string> = [
   'HINET',
 ]
 
-export default {
+export const FLAGS = {
   '🏳️‍🌈': ['流量', '时间', '过期', 'BANDWIDTH', 'EXPIRE'],
   '🇸🇱': ['应急', '测试节点'],
   '🇦🇷': ['ARGENTINA', '阿根廷'],
@@ -140,4 +140,4 @@ export default {
     '镇江',
     'BACK',
   ],
-}
+} as const

@@ -1,5 +1,6 @@
 {
   "compilerOptions": {
+    "rootDir": "./src",
     // https://github.com/microsoft/TypeScript/wiki/Node-Target-Mapping
     "target": "ES2022",
     "module": "Node16",
@@ -11,10 +12,10 @@
     "resolveJsonModule": true,
     "skipLibCheck": true,
 
-    // "strict": true /* Enable all strict type-checking options. */,
+    "strict": true /* Enable all strict type-checking options. */,
     /* Strict Type-Checking Options */
     // "noImplicitAny": true /* Raise error on expressions and declarations with an implied 'any' type. */,
-    "strictNullChecks": true /* Enable strict null checks. */,
+    // "strictNullChecks": true /* Enable strict null checks. */,
     // "strictFunctionTypes": true /* Enable strict checking of function types. */,
     // "strictPropertyInitialization": true /* Enable strict checking of property initialization in classes. */,
     // "noImplicitThis": true /* Raise error on 'this' expressions with an implied 'any' type. */,
@@ -47,6 +48,6 @@
     "src/**/*.ts",
     "test/**/*.ts",
   ],
-  "exclude": ["node_modules/**"],
+  "exclude": ["./node_modules/**"],
   "compileOnSave": false,
 }

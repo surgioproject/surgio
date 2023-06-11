@@ -53,7 +53,7 @@ export default abstract class Provider {
       getUserAgent(options.requestUserAgent) + url,
     )}`
     const requestResource = async () => {
-      const headers = {}
+      const headers: Record<string, string> = {}
 
       if (options.requestUserAgent) {
         headers['user-agent'] = getUserAgent(options.requestUserAgent)

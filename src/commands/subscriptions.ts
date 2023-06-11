@@ -4,28 +4,13 @@ import { basename, join } from 'path'
 import { createLogger } from '@surgio/logger'
 
 import BaseCommand from '../base-command'
-import BlackSSLProvider from '../provider/BlackSSLProvider'
-import ClashProvider from '../provider/ClashProvider'
-import CustomProvider from '../provider/CustomProvider'
-import ShadowsocksJsonSubscribeProvider from '../provider/ShadowsocksJsonSubscribeProvider'
-import ShadowsocksrSubscribeProvider from '../provider/ShadowsocksrSubscribeProvider'
-import ShadowsocksSubscribeProvider from '../provider/ShadowsocksSubscribeProvider'
-import V2rayNSubscribeProvider from '../provider/V2rayNSubscribeProvider'
 import redis from '../redis'
-import { getProvider } from '../provider'
+import { getProvider, PossibleProviderType } from '../provider'
 import { formatSubscriptionUserInfo } from '../utils'
 
 const logger = createLogger({
   service: 'surgio:SubscriptionsCommand',
 })
-type PossibleProviderType =
-  | BlackSSLProvider
-  | ShadowsocksJsonSubscribeProvider
-  | ShadowsocksSubscribeProvider
-  | CustomProvider
-  | V2rayNSubscribeProvider
-  | ShadowsocksrSubscribeProvider
-  | ClashProvider
 
 class SubscriptionsCommand extends BaseCommand<typeof SubscriptionsCommand> {
   static description = '查询订阅信息'
@@ -64,7 +49,7 @@ class SubscriptionsCommand extends BaseCommand<typeof SubscriptionsCommand> {
     const providerList: PossibleProviderType[] = []
 
     async function readProvider(
-      path,
+      path: string,
     ): Promise<PossibleProviderType | undefined> {
       let provider
 

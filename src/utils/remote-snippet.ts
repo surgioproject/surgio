@@ -2,7 +2,7 @@ import Bluebird from 'bluebird'
 import { logger } from '@surgio/logger'
 import detectNewline from 'detect-newline'
 import nunjucks from 'nunjucks'
-import espree, { ExpressionStatementNode } from 'espree'
+import * as parser from '@typescript-eslint/parser'
 
 import { CACHE_KEYS } from '../constant'
 import { RemoteSnippet, RemoteSnippetConfig } from '../types'
@@ -26,8 +26,8 @@ export const parseMacro = (
     throw new Error('该片段不包含可用的宏')
   }
 
-  const ast = espree.parse(match[1], { ecmaVersion: 6 })
-  let statement: ExpressionStatementNode | undefined
+  const ast = parser.parse(match[1], { ecmaVersion: 6 })
+  let statement
 
   for (const node of ast.body) {
     if (node.type === 'ExpressionStatement') {
@@ -37,17 +37,18 @@ export const parseMacro = (
   }
 
   if (
-    !statement ||
-    statement.expression.type !== 'CallExpression' ||
-    statement.expression.callee.name !== 'main'
+    statement &&
+    statement.expression.type === 'CallExpression' &&
+    'name' in statement.expression.callee &&
+    statement.expression.callee.name === 'main'
   ) {
-    throw new Error('该片段不包含可用的宏')
+    return {
+      functionName: statement.expression.callee.name,
+      arguments: statement.expression.arguments.map((item: any) => item.name),
+    }
   }
 
-  return {
-    functionName: statement.expression.callee.name,
-    arguments: statement.expression.arguments.map((item) => item.name),
-  }
+  throw new Error('该片段不包含可用的宏')
 }
 
 export const addProxyToSurgeRuleSet = (

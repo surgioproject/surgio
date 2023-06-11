@@ -1,7 +1,7 @@
 import _ from 'lodash'
 import micromatch from 'micromatch'
 
-import flag, { TAIWAN } from '../misc/flag_cn'
+import { FLAGS, TAIWAN } from '../misc/flag_cn'
 import {
   NodeFilterType,
   NodeTypeEnum,
@@ -261,31 +261,31 @@ export const netflixFilter: NodeFilterType = (item) => {
 }
 
 export const usFilter: NodeFilterType = (item) => {
-  return ['🇺🇸', ...flag['🇺🇸']].some((key) =>
+  return ['🇺🇸', ...FLAGS['🇺🇸']].some((key) =>
     item.nodeName.toUpperCase().includes(key),
   )
 }
 
 export const hkFilter: NodeFilterType = (item) => {
-  return ['🇭🇰', ...flag['🇭🇰']].some((key) =>
+  return ['🇭🇰', ...FLAGS['🇭🇰']].some((key) =>
     item.nodeName.toUpperCase().includes(key),
   )
 }
 
 export const japanFilter: NodeFilterType = (item) => {
-  return ['🇯🇵', ...flag['🇯🇵']].some((key) =>
+  return ['🇯🇵', ...FLAGS['🇯🇵']].some((key) =>
     item.nodeName.toUpperCase().includes(key),
   )
 }
 
 export const koreaFilter: NodeFilterType = (item) => {
-  return ['🇰🇷', ...flag['🇰🇷']].some((key) =>
+  return ['🇰🇷', ...FLAGS['🇰🇷']].some((key) =>
     item.nodeName.toUpperCase().includes(key),
   )
 }
 
 export const singaporeFilter: NodeFilterType = (item) => {
-  return ['🇸🇬', ...flag['🇸🇬']].some((key) =>
+  return ['🇸🇬', ...FLAGS['🇸🇬']].some((key) =>
     item.nodeName.toUpperCase().includes(key),
   )
 }

@@ -1,16 +1,16 @@
 import EmojiRegex from 'emoji-regex'
 import _ from 'lodash'
 
-import flag from '../misc/flag_cn'
+import { FLAGS } from '../misc/flag_cn'
 
 const flagMap: Map<string | RegExp, string> = new Map()
 const customFlagMap: Map<string | RegExp, string> = new Map()
 
-Object.keys(flag).forEach((emoji) => {
-  flag[emoji].forEach((name: string) => {
-    flagMap.set(name, emoji)
+for (const [key, value] of Object.entries(FLAGS)) {
+  value.forEach((name: string) => {
+    flagMap.set(name, key)
   })
-})
+}
 
 export const addFlagMap = (name: string | RegExp, emoji: string): void => {
   if (flagMap.has(name)) {

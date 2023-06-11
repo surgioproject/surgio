@@ -7,9 +7,9 @@ import { Environment } from 'nunjucks'
 import path from 'path'
 
 import {
+  GetNodeListParams,
   getProvider,
   PossibleProviderType,
-  GetNodeListParams,
 } from '../provider'
 import {
   ArtifactConfig,
@@ -88,11 +88,12 @@ export class Artifact extends EventEmitter {
     new Map()
   public nodeList: PossibleNodeConfigType[] = []
 
-  private customFilters: NonNullable<ProviderConfig['customFilters']>
-  private netflixFilter: NonNullable<ProviderConfig['netflixFilter']>
+  private customFilters: NonNullable<ProviderConfig['customFilters']> = {}
+  private netflixFilter: NonNullable<ProviderConfig['netflixFilter']> =
+    defaultNetflixFilter
   private youtubePremiumFilter: NonNullable<
     ProviderConfig['youtubePremiumFilter']
-  >
+  > = defaultYoutubePremiumFilter
 
   constructor(
     public surgioConfig: CommandConfig,
@@ -319,19 +320,16 @@ export class Artifact extends EventEmitter {
 
     // Filter 仅使用第一个 Provider 中的定义
     if (providerName === mainProviderName) {
-      if (!this.netflixFilter) {
-        this.netflixFilter =
-          provider.config.netflixFilter || defaultNetflixFilter
+      if (provider.config.netflixFilter !== undefined) {
+        this.netflixFilter = provider.config.netflixFilter
       }
-      if (!this.youtubePremiumFilter) {
-        this.youtubePremiumFilter =
-          provider.config.youtubePremiumFilter || defaultYoutubePremiumFilter
+      if (provider.config.youtubePremiumFilter !== undefined) {
+        this.youtubePremiumFilter = provider.config.youtubePremiumFilter
       }
-      if (!this.customFilters) {
-        this.customFilters = {
-          ...config.customFilters,
-          ...provider.config.customFilters,
-        }
+      this.customFilters = {
+        ...this.customFilters,
+        ...config.customFilters,
+        ...provider.config.customFilters,
       }
     }
 
@@ -361,7 +359,11 @@ export class Artifact extends EventEmitter {
         }
 
         if (isValid) {
-          if (config.binPath && config.binPath[nodeConfig.type]) {
+          if (
+            config.binPath &&
+            nodeConfig.type === NodeTypeEnum.Shadowsocksr &&
+            config.binPath[nodeConfig.type]
+          ) {
             nodeConfig.binPath = config.binPath[nodeConfig.type]
             nodeConfig.localPort = provider.nextPort
           }

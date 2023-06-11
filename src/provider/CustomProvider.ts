@@ -114,18 +114,21 @@ export default class CustomProvider extends Provider {
         }
       })()
 
-      const propertyKeysMustBeLowercase = ['wsHeaders']
+      const propertyKeysMustBeLowercase = ['wsHeaders'] as const
 
       if (this.underlyingProxy && !parsedNode.underlyingProxy) {
         parsedNode.underlyingProxy = this.underlyingProxy
       }
 
       propertyKeysMustBeLowercase.forEach((key) => {
-        if (parsedNode[key]) {
-          parsedNode[key] = Object.keys(parsedNode[key]).reduce((acc, curr) => {
-            acc[curr.toLowerCase()] = parsedNode[key][curr]
-            return acc
-          }, {})
+        if (key in parsedNode && parsedNode[key] !== undefined) {
+          parsedNode[key] = Object.keys(parsedNode[key] as any).reduce(
+            (acc: any, curr) => {
+              acc[curr.toLowerCase()] = (parsedNode[key] as any)[curr]
+              return acc
+            },
+            {},
+          )
         }
       })
 

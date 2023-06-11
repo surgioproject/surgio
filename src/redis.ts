@@ -48,7 +48,7 @@ const prepareRedis = () => {
         Object.keys(CACHE_KEYS).map((key) => {
           if (!client) return
 
-          return client.keys(`${CACHE_KEYS[key]}:*`)
+          return client.keys(`${CACHE_KEYS[key as keyof typeof CACHE_KEYS]}:*`)
         }),
       )
 

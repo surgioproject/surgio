@@ -80,7 +80,7 @@ class GenerateCommand extends BaseCommand<typeof GenerateCommand> {
         this.ora.fail(`规则 ${artifact.name} 生成失败`)
 
         // istanbul ignore next
-        if (skipFail) {
+        if (skipFail && err instanceof Error) {
           console.error(err.stack || err)
         } else {
           throw err

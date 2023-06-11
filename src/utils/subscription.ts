@@ -19,10 +19,11 @@ export const parseSubscriptionUserInfo = (
       return
     }
     const pair = item.split('=')
+    const key = pair[0].trim()
     const value = Number(pair[1].trim())
 
-    if (!Number.isNaN(value)) {
-      res[pair[0].trim()] = Number(pair[1].trim())
+    if (key in res && !Number.isNaN(value)) {
+      res[key as keyof typeof res] = value
     }
   })
 

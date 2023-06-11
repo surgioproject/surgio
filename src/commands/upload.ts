@@ -1,7 +1,9 @@
 // istanbul ignore file
 import { Flags } from '@oclif/core'
+// @ts-ignore
 import OSS from 'ali-oss'
 import fs from 'fs-extra'
+// @ts-ignore
 import dir from 'node-dir'
 import path from 'path'
 
@@ -33,15 +35,15 @@ class UploadCommand extends BaseCommand<typeof UploadCommand> {
     })
     const prefix = config?.upload?.prefix || '/'
     const fileList = await dir.promiseFiles(config.output)
-    const files = fileList.map((filePath) => ({
+    const files = fileList.map((filePath: any) => ({
       fileName: path.basename(filePath),
       filePath,
     }))
-    const fileNameList = files.map((file) => file.fileName)
+    const fileNameList = files.map((file: any) => file.fileName)
 
     const upload = () => {
       return Promise.all(
-        files.map((file) => {
+        files.map((file: any) => {
           const { fileName, filePath } = file
           const objectName = `${prefix}${fileName}`
           const readStream = fs.createReadStream(filePath)

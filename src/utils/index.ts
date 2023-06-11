@@ -387,12 +387,16 @@ export const pickAndFormatKeys = (
 export const decodeStringList = <T = Record<string, string | boolean>>(
   stringList: ReadonlyArray<string>,
 ): T => {
-  const result = {}
+  const result: Record<string, any> = {}
+
   stringList.forEach((item) => {
     if (item.includes('=')) {
       const match = item.match(/^(.*?)=(.*?)$/)
+
       if (match) {
-        result[match[1].trim()] = match[2].trim() || true
+        const key = match[1].trim()
+        const value = match[2].trim()
+        result[key] = value || true
       }
     } else {
       result[item.trim()] = true
@@ -498,7 +502,7 @@ export const formatV2rayConfig = (
 export const lowercaseHeaderKeys = (
   headers: Record<string, string>,
 ): Record<string, string> => {
-  const wsHeaders = {}
+  const wsHeaders: Record<string, string> = {}
 
   Object.keys(headers).forEach((key) => {
     wsHeaders[key.toLowerCase()] = headers[key]
