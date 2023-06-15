@@ -1,3 +1,20 @@
+# [3.0.0-alpha.1](https://github.com/geekdada/surgio/compare/v3.0.0-alpha.0...v3.0.0-alpha.1) (2023-06-15)
+
+
+### Bug Fixes
+
+* port and version validation ([9c6c516](https://github.com/geekdada/surgio/commit/9c6c51684e6ec7ecd2ac9c1fda96ffb94bde5d6c))
+* port validation ([0183428](https://github.com/geekdada/surgio/commit/0183428e830dd4899a3e2b93b221be5b51081d8d))
+* snell version validation ([8af5aaf](https://github.com/geekdada/surgio/commit/8af5aaf5318f67c12d212165f81d93e170e5333a))
+
+
+### Features
+
+* improve error logs ([a695a5e](https://github.com/geekdada/surgio/commit/a695a5ea0bef53a32e32aed6d3b77a83e27b3f30))
+* make sure properties of customParams are consistent ([e39692c](https://github.com/geekdada/surgio/commit/e39692c2417e2e1a3c6ca5adcdc2d3e5a64d8f3e))
+
+
+
 # [3.0.0-alpha.0](https://github.com/geekdada/surgio/compare/v2.25.0...v3.0.0-alpha.0) (2023-05-31)
 
 
