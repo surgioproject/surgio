@@ -1,3 +1,12 @@
+# [3.0.0-alpha.4](https://github.com/geekdada/surgio/compare/v3.0.0-alpha.3...v3.0.0-alpha.4) (2023-06-15)
+
+
+### Features
+
+* support Surge tuic-v5 format ([bedff82](https://github.com/geekdada/surgio/commit/bedff827094fdc68e106967be4237ed22afbcf5e))
+
+
+
 # [3.0.0-alpha.3](https://github.com/geekdada/surgio/compare/v3.0.0-alpha.2...v3.0.0-alpha.3) (2023-06-15)
 
 
