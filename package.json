@@ -166,7 +166,8 @@
     "typescript": "^5.0.4",
     "vue": "^3.3.4",
     "vuepress": "2.0.0-beta.62",
-    "vuepress-plugin-sitemap2": "2.0.0-beta.205"
+    "vuepress-plugin-sitemap2": "2.0.0-beta.205",
+    "vuepress-plugin-umami-analytics": "^1.2.0"
   },
   "ava": {
     "failFast": false,

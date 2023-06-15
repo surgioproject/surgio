@@ -1,8 +1,9 @@
-import { defineUserConfig, HeadConfig, PluginConfig } from 'vuepress';
+import { defineUserConfig, HeadConfig, PluginConfig } from 'vuepress'
 import { path } from '@vuepress/utils'
-import docsearchPlugin from  '@vuepress/plugin-docsearch'
+import docsearchPlugin from '@vuepress/plugin-docsearch'
 import registerComponentsPlugin from '@vuepress/plugin-register-components'
-import { sitemapPlugin } from "vuepress-plugin-sitemap2";
+import { sitemapPlugin } from 'vuepress-plugin-sitemap2'
+import { umamiAnalyticsPlugin } from 'vuepress-plugin-umami-analytics'
 
 import customTheme from './theme'
 
@@ -12,14 +13,13 @@ const meta = {
   url: 'https://surgio.js.org',
   icon: 'https://surgio.js.org/surgio-square.png',
   favicon: 'https://surgio.js.org/favicon-96x96.png',
-};
+}
 
 const head: HeadConfig[] = [
   [
     'link',
     {
-      href:
-        'https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,600|Roboto Mono',
+      href: 'https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,600|Roboto Mono',
       rel: 'stylesheet',
       type: 'text/css',
     },
@@ -30,7 +30,7 @@ const head: HeadConfig[] = [
       src: 'https://buttons.github.io/buttons.js',
       async: true,
       defer: true,
-    }
+    },
   ],
   ['link', { rel: 'icon', href: '/favicon-96x96.png' }],
   ['link', { rel: 'icon', href: meta.favicon, type: 'image/png' }],
@@ -45,18 +45,12 @@ const head: HeadConfig[] = [
 ]
 
 const plugins: PluginConfig = [
-    registerComponentsPlugin({
-      componentsDir: path.resolve(__dirname, './components'),
-    }),
-  ]
+  registerComponentsPlugin({
+    componentsDir: path.resolve(__dirname, './components'),
+  }),
+]
 
 if (process.env.NODE_ENV === 'production') {
-  head.push(['script', {
-    async: true,
-    'data-website-id': '444a5a25-af75-4c30-b7a4-6aaba520daf6',
-    src: 'https://sashimi.royli.dev/sashimi.js',
-  }])
-
   plugins.push(
     docsearchPlugin({
       appId: 'AXEPS6U765',
@@ -65,6 +59,10 @@ if (process.env.NODE_ENV === 'production') {
     }),
     sitemapPlugin({
       hostname: 'https://surgio.js.org',
+    }),
+    umamiAnalyticsPlugin({
+      id: '444a5a25-af75-4c30-b7a4-6aaba520daf6',
+      src: 'https://sashimi.royli.dev/sashimi.js',
     }),
   )
 }

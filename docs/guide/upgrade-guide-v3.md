@@ -10,6 +10,14 @@
 
 新版 Surgio 不再支持 Node v12，请使用 v18.0.0 以上版本。
 
+## 如何升级 Surgio？
+
+目前 Surgio 处于公测阶段，你可以通过下面的步骤来升级 Surgio。
+
+```bash
+npm i surgio@beta @surgio/gateway@beta --save
+```
+
 ## 废弃功能
 
 请在你的仓库中搜索以下内容，然后根据提示进行修改。
