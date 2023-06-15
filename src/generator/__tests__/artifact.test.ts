@@ -4,7 +4,7 @@ import { loadConfig } from '../../config'
 import { Artifact } from '../artifact'
 import { getEngine } from '../template'
 
-const resolve = (p) => join(__dirname, '../../../test/fixture/', p)
+const resolve = (p: string) => join(__dirname, '../../../test/fixture/', p)
 
 test('new Artifact()', async (t) => {
   const fixture = resolve('plain')

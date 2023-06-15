@@ -655,7 +655,7 @@ test.serial(
 
 test('ClashProvider with hooks', async (t) => {
   const afterNodeListResponse = sinon.spy((nodeList) => {
-    nodeList.forEach((node) => {
+    nodeList.forEach((node: any) => {
       node.nodeName = 'override'
     })
   })

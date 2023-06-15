@@ -1,6 +1,5 @@
 {
   "compilerOptions": {
-    "rootDir": "./src",
     // https://github.com/microsoft/TypeScript/wiki/Node-Target-Mapping
     "target": "ES2022",
     "module": "Node16",

@@ -536,7 +536,7 @@ test('getSurgeNodes - Tuic', (t) => {
       '测试 Tuic = tuic, example.com, 443, token=token, server-cert-fingerprint-sha256=sha256',
       '测试 Tuic = tuic, example.com, 443, token=token, alpn=h3',
       '测试 Tuic = tuic, example.com, 443, token=token, sni=sni.example.com, skip-cert-verify=true, alpn=h3',
-      '测试 Tuic = tuic, example.com, 443, password=password, uuid=uuid, sni=sni.example.com, skip-cert-verify=true, version=5, alpn=h3',
+      '测试 Tuic = tuic-v5, example.com, 443, password=password, uuid=uuid, sni=sni.example.com, skip-cert-verify=true, alpn=h3',
     ].join('\n'),
   )
 })

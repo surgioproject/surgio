@@ -475,6 +475,37 @@ function nodeListMapper(
     }
 
     case NodeTypeEnum.Tuic: {
+      if ('version' in nodeConfig && Number(nodeConfig.version) === 5) {
+        const result = [
+          'tuic-v5',
+          nodeConfig.hostname,
+          nodeConfig.port,
+          ...pickAndFormatStringList(
+            nodeConfig,
+            [
+              'password',
+              'uuid',
+              'sni',
+              'underlyingProxy',
+              'testUrl',
+              'skipCertVerify',
+              'serverCertFingerprintSha256',
+            ],
+            {
+              keyFormat: 'kebabCase',
+            },
+          ),
+          ...(Array.isArray(nodeConfig.alpn)
+            ? [`alpn=${nodeConfig.alpn.join(',')}`]
+            : []),
+        ]
+
+        return [
+          nodeConfig.nodeName,
+          [nodeConfig.nodeName, result.join(', ')].join(' = '),
+        ]
+      }
+
       const result = [
         'tuic',
         nodeConfig.hostname,
@@ -483,14 +514,11 @@ function nodeListMapper(
           nodeConfig,
           [
             'token',
-            'password',
-            'uuid',
             'sni',
             'underlyingProxy',
             'testUrl',
             'skipCertVerify',
             'serverCertFingerprintSha256',
-            'version',
           ],
           {
             keyFormat: 'kebabCase',

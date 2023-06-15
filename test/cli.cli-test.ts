@@ -5,7 +5,7 @@ import ini from 'ini'
 import { test, expect } from '@oclif/test'
 
 const fixture = join(__dirname, './fixture')
-const resolve = (p) => join(fixture, p)
+const resolve = (p: string) => join(fixture, p)
 
 afterEach(async () => {
   process.env.ENV_SURGIO_PROJECT_DIR = undefined
