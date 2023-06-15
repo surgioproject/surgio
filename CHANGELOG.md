@@ -1,3 +1,12 @@
+# [3.0.0-alpha.3](https://github.com/geekdada/surgio/compare/v3.0.0-alpha.2...v3.0.0-alpha.3) (2023-06-15)
+
+
+### Bug Fixes
+
+* dependency ([3636a4c](https://github.com/geekdada/surgio/commit/3636a4c27e46280c9ed6ea785b9e05f1bfd8f8dc))
+
+
+
 # [3.0.0-alpha.2](https://github.com/geekdada/surgio/compare/v3.0.0-alpha.1...v3.0.0-alpha.2) (2023-06-15)
 
 
