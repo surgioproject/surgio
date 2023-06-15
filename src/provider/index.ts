@@ -1,5 +1,5 @@
 import { PossibleProviderConfigType, SupportProviderEnum } from '../types'
-import { defineProvider } from '../configurables'
+import { ProviderDefineFunction } from '../configurables'
 import BlackSSLProvider from './BlackSSLProvider'
 import ClashProvider from './ClashProvider'
 import CustomProvider from './CustomProvider'
@@ -29,7 +29,7 @@ export type * from './types'
 
 export async function getProvider(
   name: string,
-  config: ReturnType<typeof defineProvider> | PossibleProviderConfigType,
+  config: ReturnType<ProviderDefineFunction<any>> | PossibleProviderConfigType,
 ): Promise<PossibleProviderType> {
   if (typeof config === 'function') {
     config = await config()

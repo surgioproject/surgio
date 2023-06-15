@@ -6,7 +6,6 @@ import {
   CommandConfigBeforeNormalize,
   CustomProviderConfig,
   PossibleProviderConfigType,
-  ProviderConfigFactory,
   ShadowsocksJsonSubscribeProviderConfig,
   ShadowsocksrSubscribeProviderConfig,
   ShadowsocksSubscribeProviderConfig,
@@ -19,11 +18,7 @@ import {
 export const defineSurgioConfig = (config: CommandConfigBeforeNormalize) =>
   config
 
-export const defineProvider = (
-  config: PossibleProviderConfigType | ProviderConfigFactory,
-) => config
-
-type ProviderDefineFunction<
+export type ProviderDefineFunction<
   T extends PossibleProviderConfigType,
   U = Omit<T, 'type'>,
 > = (config: U) => T | Promisable<T>

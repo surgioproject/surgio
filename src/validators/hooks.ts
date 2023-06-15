@@ -14,7 +14,7 @@ export const AfterNodeListResponseHookValidator =
     return typeof val === 'function'
   })
 
-type OnError = (error: unknown) => Promisable<unknown>
+type OnError = (error: Error) => Promisable<unknown>
 
 export const OnErrorHookValidator = z.custom<OnError>((val) => {
   return typeof val === 'function'

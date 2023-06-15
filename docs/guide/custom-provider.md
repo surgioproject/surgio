@@ -9,13 +9,13 @@ sidebarDepth: 2
 
 需要注意的是文件名即为该 Provider 的名称，后面在定义 Artifact 时会用到。
 
-Surgio 内置了 `defineProvider` 方法，可以让 IDE 智能提示配置项，不过你也可以不使用这样的语法糖。下面两种写法都是可以的。
+Surgio 内置了 `defineXxxProvider` 方法，`Xxx` 对应下面所列的类型，可以让 IDE 智能提示配置项，不过你也可以不使用这样的语法糖。下面两种写法都是可以的。
 
 ```js
-const { defineProvider } = require('surgio');
+const { defineClashProvider } = require('surgio');
 
-module.exports = defineProvider({
-  type: 'clash',
+module.exports = defineClashProvider({
+  url: 'https://example.com/clash.yaml',
   // ...
 });
 ```
@@ -31,12 +31,12 @@ module.exports = {
 为了满足更多定制化的场景，支持通过异步函数的模式挂载 `Provider`
 
 ```js
-const { defineProvider } = require('surgio');
+const { defineCustomProvider } = require('surgio');
 
-module.exports = defineProvider(async function() {
+module.exports = defineCustomProvider(async function() {
   const myNodeList = await someAsyncFunction();
+
   return {
-    type: 'custom',
     nodeList: myNodeList,
   };
 });
@@ -90,10 +90,9 @@ module.exports = defineProvider(async function() {
 #### 普通模式
 
 ```js
-const { defineProvider } = require('surgio');
+const { defineCustomProvider } = require('surgio');
 
-module.exports = defineProvider({
-  type: 'custom',
+module.exports = defineCustomProvider({
   nodeList: [
     {
       type: 'shadowsocks',
@@ -112,12 +111,12 @@ module.exports = defineProvider({
 
 `customParams` 是一个对象，包含了所有在 Artifact 和全局定义的自定义参数。假如你使用了 Gateway，则里面还包含所有请求 URL 中的参数。需要注意的是，URL 参数中所有的值都是字符串类型，例如 `mobile=true`，那么 `customParams.mobile` 的值就是 `'true'`。
 
+`customParams` 默认会包含 `requestUserAgent`，方便你根据不同的客户端返回不同的节点列表。
 
 ```js
-const { defineProvider } = require('surgio');
+const { defineCustomProvider } = require('surgio');
 
-module.exports = defineProvider({
-  type: 'custom',
+module.exports = defineCustomProvider({
   nodeList: async (customParams) => {
     if (customParams.mobile === 'true') {
       return [
@@ -823,29 +822,58 @@ module.exports = {
 
 ## 钩子函数 (hooks)
 
-钩子函数是 Surgio v3 新增的特性，用于在获取远程订阅内容时执行一些操作。你可以在所有类型的 Provider 中定义钩子函数。
+钩子函数是 Surgio v3 新增的特性，用于在获取远程订阅内容时执行一些操作。你可以在所有类型的 Provider 中定义钩子函数。所有的钩子函数都会在 `renameNode`, `addFlag`, `removeExistingFlag`, `nodeFilter` 等原有用来修改节点的方法之前执行。
 
 ### hooks.afterNodeListResponse
 
-`afterNodeListResponse(nodeList: NodeConfig[], customParams: {}): NodeConfig[] | Promise<NodeConfig[]>`
+`async afterNodeListResponse(nodeList: NodeConfig[], customParams: {}): Promise<NodeConfig[]>`
 
 该钩子函数会在成功获取到远程订阅内容后执行。你可以自由修改节点的内容，甚至是像维护自定义类型 Provider 那样追加自己的节点。
 
 这个方法要求最后需要返回一个 `NodeConfig[]`，否则你的操作可能不会生效。
 
-`customParams` 是一个对象，包含了所有在 Artifact 和全局定义的自定义参数。假如你使用了 Gateway，则里面还包含所有请求 URL 中的参数。
+`customParams` 是一个对象，包含了所有在 Artifact 和全局定义的自定义参数。假如你使用了 Gateway，则里面还包含所有请求 URL 中的参数和 `requestUserAgent`，方便你根据不同的客户端返回不同的节点列表。
 
 ```ts
-const { defineProvider } = require('surgio');
+const { defineClashProvider } = require('surgio');
 
-module.exports = defineProvider({
-  type: 'clash',
+module.exports = defineClashProvider({
   url: 'https://example.com/clash.yaml',
   hooks: {
     afterNodeListResponse: async (nodeList, customParams) => {
       // nodeList: NodeConfig[]
       // customerParams: {}
       return nodeList;
+    },
+  },
+  }
+})
+```
+
+### hooks.onError
+
+`async onError(error: Error): Promise<NodeConfig[] | undefined>`
+
+该钩子函数会在获取远程订阅内容失败时执行。你可以在这里进行错误处理，或者返回一个 `NodeConfig[]` 以继续执行，格式类似 `CustomProvider` 里的节点列表。
+
+```ts
+const { defineClashProvider } = require('surgio');
+
+module.exports = defineClashProvider({
+  url: 'https://example.com/clash.yaml',
+  hooks: {
+    onError: async error => {
+      // error: Error
+      return [
+        {
+          nodeName: 'Fallback',
+          type: 'shadowsocks',
+          hostname: 'fallback.example.com',
+          port: 443,
+          method: 'chacha20-ietf-poly1305',
+          password: 'password',
+        },
+      ];
     },
   },
   }

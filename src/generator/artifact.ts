@@ -322,7 +322,7 @@ export class Artifact extends EventEmitter {
           this.getMergedCustomParams(getNodeListParams),
         )
       } catch (err) {
-        if (provider.config.hooks?.onError) {
+        if (provider.config.hooks?.onError && isError(err)) {
           const result = await provider.config.hooks.onError(err)
 
           if (Array.isArray(result)) {

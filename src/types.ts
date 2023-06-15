@@ -1,5 +1,4 @@
 import { z } from 'zod'
-import { Promisable } from 'type-fest'
 
 import type { Provider, GetNodeListParams } from './provider'
 import {
@@ -210,7 +209,3 @@ export type PossibleProviderConfigType =
   | SsdProviderConfig
   | TrojanProviderConfig
   | V2rayNSubscribeProviderConfig
-
-export type ProviderConfigFactory = () => Promisable<PossibleProviderConfigType>
-
-export type ThenArg<T> = T extends PromiseLike<infer U> ? U : T

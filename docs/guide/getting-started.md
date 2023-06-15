@@ -5,7 +5,7 @@ title: 快速上手
 # 快速上手
 
 :::warning 注意
-- 目前 Surgio 仅支持 Node.js 版本 >= 16.9.0
+- 目前 Surgio 仅支持 Node.js 版本 >= 18.0.0
 - 文档中出现的命令如无特殊说明都只能运行在 macOS, Linux 或者 WSL 上
 :::
 

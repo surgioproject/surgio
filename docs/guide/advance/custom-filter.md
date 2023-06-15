@@ -203,7 +203,7 @@ module.exports = {
 2. 默认开启严格模式；
 :::
 
-### useGlob <Badge text="v2.19.0" vertical="middle" />
+### useGlob
 
 能够使用 glob 语法筛选出节点。
 
@@ -220,7 +220,7 @@ module.exports = {
 }
 ```
 
-### discardGlob <Badge text="v2.19.0" vertical="middle" />
+### discardGlob
 
 能够使用 glob 语法移出节点。
 
@@ -236,6 +236,33 @@ module.exports = {
   },
 }
 ```
+
+### reverseFilter
+
+你可以使用 `reverseFilter` 来反转过滤器的结果。
+
+```js
+const notUSFilter = reverseFilter(usFilter)
+```
+
+### mergeReversedFilters
+
+你可以使用 `mergeReversedFilters` 来合并多个反转过滤器，`discardKeywords`, `discardProviders`, `discardGlob` 过滤器。
+
+
+```js
+// 丢弃 US 和包含 BGP 关键字的节点
+const notUSAndNotBGP = mergeReversedFilters(
+  [notUSFilter, discardKeywords(['BGP'])],
+  true, // 严格模式
+)
+
+// 香港 BGP ✅
+// 香港 IPLC ✅
+// 洛杉矶 BGP 🚫
+// 洛杉矶 IPLC ✅
+```
+
 
 ## 如何在自定义过滤器时引用内置的过滤器
 
