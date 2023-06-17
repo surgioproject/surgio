@@ -66,6 +66,11 @@ export class UnifiedCache {
     return cache.reset(...args)
   }
 
+  wrap: CacheType['wrap'] = async (...args) => {
+    const cache = await this.prepare()
+    return cache.wrap(...args)
+  }
+
   keys: StoreType['keys'] = async (...args) => {
     const cache = await this.prepare()
     return cache.store.keys(...args)
