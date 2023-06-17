@@ -297,7 +297,6 @@ module.exports = defineCustomProvider({
 {
    type: 'wireguard',
    nodeName: 'Wireguard',
-   port: 54321,
    selfIp: '172.16.0.2',
    privateKey: 'eOyyaXrwVTHwo62x98Is6v5Fo=',
    peers: [

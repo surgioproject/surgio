@@ -699,7 +699,7 @@ test('getClashNodes', async (t) => {
         port: 1234,
         'private-key': 'privateKey',
         'public-key': 'publicKey',
-        server: 'example.com:1234',
+        server: 'example.com',
         type: 'wireguard',
         udp: true,
         reserved: [1, 2, 3],

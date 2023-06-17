@@ -584,3 +584,11 @@ export const getPortFromHost = (host: string): number => {
   }
   throw new Error(`Invalid host: ${host}`)
 }
+
+export const getHostnameFromHost = (host: string): string => {
+  const match = host.match(/^(.*?):/)
+  if (match) {
+    return match[1]
+  }
+  throw new Error(`Invalid host: ${host}`)
+}

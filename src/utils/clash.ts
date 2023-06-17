@@ -9,7 +9,12 @@ import {
   SortedNodeFilterType,
 } from '../types'
 import { applyFilter } from './filter'
-import { checkNotNullish, getPortFromHost, pickAndFormatKeys } from './index'
+import {
+  checkNotNullish,
+  getHostnameFromHost,
+  getPortFromHost,
+  pickAndFormatKeys,
+} from './index'
 
 const logger = createLogger({ service: 'surgio:utils:clash' })
 
@@ -329,7 +334,7 @@ function nodeListMapper(nodeConfig: PossibleNodeConfigType) {
         udp: true,
 
         // Peer
-        server: nodeConfig.peers[0].endpoint,
+        server: getHostnameFromHost(nodeConfig.peers[0].endpoint),
         port: getPortFromHost(nodeConfig.peers[0].endpoint),
         'public-key': nodeConfig.peers[0].publicKey,
         ...(nodeConfig.peers[0].presharedKey
