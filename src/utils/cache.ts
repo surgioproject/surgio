@@ -1,80 +1,108 @@
-import Redis from 'ioredis'
-import NodeCache from 'node-cache'
+import ms from 'ms'
+import { caching, MemoryCache, MemoryStore } from 'cache-manager'
+import {
+  redisInsStore,
+  RedisCache,
+  RedisStore,
+} from 'cache-manager-ioredis-yet'
+import { getConfig } from '../config'
 
-import { SubscriptionUserinfo } from '../types'
-import { getProviderCacheMaxage } from './env-flag'
 import redis from '../redis'
-import { msToSeconds } from './time'
 
-export interface SubsciptionCacheItem {
-  readonly body: string
-  subscriptionUserinfo?: SubscriptionUserinfo
-}
+type CacheType = MemoryCache | RedisCache
+type StoreType = MemoryStore | RedisStore
 
-export const ConfigCache = new NodeCache({
-  stdTTL: msToSeconds(getProviderCacheMaxage()),
-  maxKeys: 300,
-  useClones: false,
-})
+export class UnifiedCache {
+  #type: 'redis' | 'default' | undefined
+  #backend: Promise<CacheType> | undefined
 
-export const SubscriptionCache = new NodeCache({
-  stdTTL: msToSeconds(getProviderCacheMaxage()),
-  maxKeys: 300,
-  useClones: false,
-})
+  async prepare(): Promise<CacheType> {
+    if (!this.#type) {
+      this.#type = getConfig()?.cache?.type || 'default'
+    }
 
-export class RedisCache {
-  private redisClient: Redis
-
-  constructor(public namespace?: string) {
-    this.redisClient = redis.getRedis()
-  }
-
-  getCacheKey(key: string) {
-    return this.namespace ? `${this.namespace}:${key}` : key
-  }
-
-  setCache = async (
-    key: string,
-    value: unknown,
-    { ttl }: { ttl?: number } = {},
-  ) => {
-    const storeValue: string = JSON.stringify(value)
-
-    if (typeof ttl === 'undefined') {
-      await this.redisClient.set(this.getCacheKey(key), storeValue)
+    if (this.#backend) {
+      return this.#backend
     } else {
-      await this.redisClient.set(this.getCacheKey(key), storeValue, 'EX', ttl)
+      switch (this.#type) {
+        case 'redis':
+          this.#backend = caching(redisInsStore(redis.getRedis()))
+          break
+        default:
+          this.#backend = caching('memory', {
+            ttl: ms('1d'),
+          })
+      }
+      return this.#backend
     }
   }
 
-  getCache = async <T>(key: string): Promise<T | undefined> => {
-    const value = await this.redisClient.get(this.getCacheKey(key))
+  async getType() {
+    await this.prepare()
+    return this.#type as 'redis' | 'default'
+  }
 
-    if (!value) {
-      return undefined
+  async getBackend() {
+    return this.prepare()
+  }
+
+  get: CacheType['get'] = async (...args) => {
+    const cache = await this.prepare()
+    return cache.get(...args)
+  }
+
+  set: CacheType['set'] = async (...args) => {
+    const cache = await this.prepare()
+    return cache.set(...args)
+  }
+
+  del: CacheType['del'] = async (...args) => {
+    const cache = await this.prepare()
+    return cache.del(...args)
+  }
+
+  reset: CacheType['reset'] = async (...args) => {
+    const cache = await this.prepare()
+    return cache.reset(...args)
+  }
+
+  keys: StoreType['keys'] = async (...args) => {
+    const cache = await this.prepare()
+    return cache.store.keys(...args)
+  }
+
+  mset: StoreType['mset'] = async (...args) => {
+    const cache = await this.prepare()
+    return cache.store.mset(...args)
+  }
+
+  mget: StoreType['mget'] = async (...args) => {
+    const cache = await this.prepare()
+    return cache.store.mget(...args)
+  }
+
+  mdel: StoreType['mdel'] = async (...args) => {
+    const cache = await this.prepare()
+    return cache.store.mdel(...args)
+  }
+
+  async has(key: string): Promise<boolean> {
+    await this.prepare()
+
+    if (this.#type === 'redis') {
+      const keys = await this.keys()
+      return keys.includes(key)
+    } else {
+      const redisClient = redis.getRedis()
+      const value = await redisClient.exists(key)
+      return value === 1
     }
-
-    return JSON.parse(value) as T
-  }
-
-  hasCache = async (key: string): Promise<boolean> => {
-    const value = await this.redisClient.exists(this.getCacheKey(key))
-
-    return !!value
-  }
-
-  deleteCache = async (key: string) => {
-    await this.redisClient.del(this.getCacheKey(key))
   }
 }
+
+export const unifiedCache = new UnifiedCache()
 
 // istanbul ignore next
 export const cleanCaches = async () => {
-  ConfigCache.flushAll()
-  SubscriptionCache.flushAll()
-
-  if (redis.hasRedis()) {
-    await redis.cleanCache()
-  }
+  await unifiedCache.reset()
 }

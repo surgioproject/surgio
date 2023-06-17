@@ -183,6 +183,11 @@ export interface SubscriptionUserinfo {
   readonly expire: number
 }
 
+export interface SubsciptionCacheItem {
+  readonly body: string
+  subscriptionUserinfo?: SubscriptionUserinfo
+}
+
 export type NodeFilterType = z.infer<typeof NodeFilterTypeValidator>
 
 export type SortedNodeFilterType = z.infer<typeof SortedNodeFilterTypeValidator>

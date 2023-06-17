@@ -2,13 +2,20 @@ import sinon from 'sinon'
 import test from 'ava'
 import MockRedis from 'ioredis-mock'
 
-import { RedisCache } from '../cache'
+import * as config from '../../config'
 import redis from '../../redis'
+import { unifiedCache } from '../cache'
 
 const sandbox = sinon.createSandbox()
 
-test.before(() => {
+test.beforeEach(() => {
+  sandbox.restore()
   sandbox.stub(redis, 'getRedis').returns(new MockRedis())
+  sandbox.stub(config, 'getConfig').returns({
+    cache: {
+      type: 'redis',
+    },
+  } as any)
 })
 
 test.after(() => {
@@ -16,14 +23,10 @@ test.after(() => {
 })
 
 test('RedisCache should work', async (t) => {
-  const cache = new RedisCache('test')
+  await unifiedCache.set('key', 'value')
+  t.is(await unifiedCache.get('key'), 'value')
+  t.is(await unifiedCache.has('key'), true)
 
-  t.is(cache.getCacheKey('test'), 'test:test')
-
-  await cache.setCache('key', 'value')
-  t.is(await cache.getCache('key'), 'value')
-  t.is(await cache.hasCache('key'), true)
-
-  await cache.deleteCache('key')
-  t.is(await cache.hasCache('key'), false)
+  await unifiedCache.del('key')
+  t.is(await unifiedCache.has('key'), false)
 })

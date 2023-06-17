@@ -10,7 +10,8 @@ import {
   SubscriptionUserinfo,
 } from '../types'
 import { SurgioError } from '../utils'
-import { ConfigCache } from '../utils/cache'
+import { unifiedCache } from '../utils/cache'
+import { getProviderCacheMaxage } from '../utils/env-flag'
 import httpClient from '../utils/http-client'
 import Provider from './Provider'
 import { GetNodeListFunction, GetSubscriptionUserInfoFunction } from './types'
@@ -88,9 +89,10 @@ export default class BlackSSLProvider extends Provider {
     assert(password, '未指定 BlackSSL password.')
 
     const key = `blackssl_${username}`
+    const cachedConfig = await unifiedCache.get<string>(key)
 
-    const response = ConfigCache.has(key)
-      ? JSON.parse(ConfigCache.get(key) as string)
+    const response = cachedConfig
+      ? JSON.parse(cachedConfig)
       : await (async () => {
           const res = await httpClient.get(
             'https://api.darkssl.com/v1/service/ssl_info',
@@ -106,7 +108,7 @@ export default class BlackSSLProvider extends Provider {
             },
           )
 
-          ConfigCache.set(key, res.body)
+          await unifiedCache.set(key, res.body, getProviderCacheMaxage())
 
           return JSON.parse(res.body)
         })()

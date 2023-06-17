@@ -3,8 +3,6 @@ import { Command, Flags, Interfaces, Config } from '@oclif/core'
 import { transports } from '@surgio/logger'
 import ora from 'ora'
 import { resolve } from 'path'
-import fs from 'fs-extra'
-import dotenv from 'dotenv'
 
 import { CommandConfig } from './types'
 import { loadConfig } from './config'
@@ -48,13 +46,6 @@ abstract class BaseCommand<T extends typeof Command> extends Command {
 
     if (flags.project.startsWith('.')) {
       flags.project = resolve(process.cwd(), flags.project)
-    }
-
-    const envPath = resolve(flags.project, './.env')
-
-    // istanbul ignore next
-    if (fs.existsSync(envPath)) {
-      dotenv.config({ path: envPath })
     }
 
     this.projectDir = flags.project

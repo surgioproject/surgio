@@ -1,15 +1,15 @@
 import Bluebird from 'bluebird'
 import { logger } from '@surgio/logger'
 import detectNewline from 'detect-newline'
+import ms from 'ms'
 import nunjucks from 'nunjucks'
 import * as babelParser from '@babel/parser'
 
 import { CACHE_KEYS } from '../constant'
 import { RemoteSnippet, RemoteSnippetConfig } from '../types'
-import { ConfigCache } from './cache'
+import { unifiedCache } from './cache'
 import { getNetworkConcurrency, getRemoteSnippetCacheMaxage } from './env-flag'
 import httpClient from './http-client'
-import { getConfig } from '../config'
 import { toMD5 } from './index'
 import { createTmpFactory } from './tmp-helper'
 
@@ -124,12 +124,12 @@ export const renderSurgioSnippet = (str: string, args: string[]): string => {
   return nunjucks.renderString(template, {}).trim()
 }
 
-export const loadRemoteSnippetList = (
+export const loadRemoteSnippetList = async (
   remoteSnippetList: ReadonlyArray<RemoteSnippetConfig>,
   cacheSnippet = true,
 ): Promise<ReadonlyArray<RemoteSnippet>> => {
-  const cacheType = getConfig()?.cache?.type || 'default'
-  const tmpFactory = createTmpFactory(CACHE_KEYS.RemoteSnippets, cacheType)
+  const cacheType = await unifiedCache.getType()
+  const useLocalFile = cacheSnippet && cacheType === 'default'
 
   function load(url: string): Promise<string> {
     return httpClient
@@ -146,51 +146,63 @@ export const loadRemoteSnippetList = (
 
   return Bluebird.map(
     remoteSnippetList,
-    (item) => {
+    async (item) => {
       const fileMd5 = toMD5(item.url)
       const isSurgioSnippet = item.surgioSnippet
 
-      return (async () => {
-        if (cacheSnippet) {
-          const tmp = tmpFactory(fileMd5, getRemoteSnippetCacheMaxage())
-          const tmpContent = await tmp.getContent()
-          let snippet: string
+      if (useLocalFile) {
+        const tmpFactory = createTmpFactory(
+          CACHE_KEYS.RemoteSnippets,
+          'default',
+        )
+        const tmp = tmpFactory(fileMd5, getRemoteSnippetCacheMaxage())
+        const tmpContent = await tmp.getContent()
+        let snippet: string
 
-          if (tmpContent) {
-            snippet = tmpContent
-          } else {
-            snippet = await load(item.url)
-            await tmp.setContent(snippet)
-          }
-
-          return {
-            main: (...args: string[]) =>
-              isSurgioSnippet
-                ? renderSurgioSnippet(snippet, args)
-                : addProxyToSurgeRuleSet(snippet, args[0]),
-            name: item.name,
-            url: item.url,
-            text: snippet, // 原始内容
-          }
+        if (tmpContent) {
+          snippet = tmpContent
         } else {
-          const snippet: string = ConfigCache.has(item.url)
-            ? (ConfigCache.get(item.url) as string)
-            : await load(item.url).then((res) => {
-                ConfigCache.set(item.url, res, getRemoteSnippetCacheMaxage())
-                return res
-              })
-
-          return {
-            main: (...args: string[]) =>
-              isSurgioSnippet
-                ? renderSurgioSnippet(snippet, args)
-                : addProxyToSurgeRuleSet(snippet, args[0]),
-            name: item.name,
-            url: item.url,
-            text: snippet, // 原始内容
-          }
+          snippet = await load(item.url)
+          await tmp.setContent(snippet)
         }
-      })()
+
+        return {
+          main: (...args: string[]) =>
+            isSurgioSnippet
+              ? renderSurgioSnippet(snippet, args)
+              : addProxyToSurgeRuleSet(snippet, args[0]),
+          name: item.name,
+          url: item.url,
+          text: snippet, // 原始内容
+        }
+      } else {
+        const cacheKey = `${CACHE_KEYS.RemoteSnippets}:${fileMd5}`
+        const cachedSnippet = await unifiedCache.get<string>(cacheKey)
+        const snippet: string = cachedSnippet
+          ? cachedSnippet
+          : await load(item.url)
+              .then((res) => {
+                return Promise.all([
+                  unifiedCache.set(
+                    cacheKey,
+                    res,
+                    cacheSnippet ? getRemoteSnippetCacheMaxage() : ms('1m'),
+                  ),
+                  res,
+                ])
+              })
+              .then(([, res]) => res)
+
+        return {
+          main: (...args: string[]) =>
+            isSurgioSnippet
+              ? renderSurgioSnippet(snippet, args)
+              : addProxyToSurgeRuleSet(snippet, args[0]),
+          name: item.name,
+          url: item.url,
+          text: snippet, // 原始内容
+        }
+      }
     },
     {
       concurrency: getNetworkConcurrency(),

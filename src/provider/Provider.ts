@@ -1,21 +1,16 @@
 import { createLogger } from '@surgio/logger'
 
 import { CACHE_KEYS } from '../constant'
-import { ProviderConfig, SupportProviderEnum } from '../types'
 import {
-  RedisCache,
+  ProviderConfig,
   SubsciptionCacheItem,
-  SubscriptionCache,
-} from '../utils/cache'
+  SupportProviderEnum,
+} from '../types'
+import { unifiedCache } from '../utils/cache'
 import { getConfig } from '../config'
 import { getProviderCacheMaxage } from '../utils/env-flag'
 import httpClient, { getUserAgent } from '../utils/http-client'
-import {
-  msToSeconds,
-  toMD5,
-  parseSubscriptionUserInfo,
-  SurgioError,
-} from '../utils'
+import { toMD5, parseSubscriptionUserInfo, SurgioError } from '../utils'
 import { ProviderValidator } from '../validators'
 import { GetNodeListFunction, GetSubscriptionUserInfoFunction } from './types'
 
@@ -56,7 +51,6 @@ export default abstract class Provider {
       requestUserAgent?: string
     } = {},
   ): Promise<SubsciptionCacheItem> {
-    const cacheType = getConfig()?.cache?.type || 'default'
     const cacheKey = `${CACHE_KEYS.Provider}:${toMD5(
       getUserAgent(options.requestUserAgent) + url,
     )}`
@@ -90,30 +84,19 @@ export default abstract class Provider {
       return subsciptionCacheItem
     }
 
-    if (cacheType === 'default') {
-      return SubscriptionCache.has(cacheKey)
-        ? (SubscriptionCache.get(cacheKey) as SubsciptionCacheItem)
-        : await (async () => {
-            const subsciptionCacheItem = await requestResource()
-            SubscriptionCache.set(cacheKey, subsciptionCacheItem)
-            return subsciptionCacheItem
-          })()
-    } else {
-      const redisCache = new RedisCache()
-      const cachedValue = await redisCache.getCache<SubsciptionCacheItem>(
-        cacheKey,
-      )
+    const cachedValue = await unifiedCache.get<SubsciptionCacheItem>(cacheKey)
 
-      return cachedValue
-        ? cachedValue
-        : await (async () => {
-            const subsciptionCacheItem = await requestResource()
-            await redisCache.setCache(cacheKey, subsciptionCacheItem, {
-              ttl: msToSeconds(getProviderCacheMaxage()),
-            })
-            return subsciptionCacheItem
-          })()
-    }
+    return cachedValue
+      ? cachedValue
+      : await (async () => {
+          const subsciptionCacheItem = await requestResource()
+          await unifiedCache.set(
+            cacheKey,
+            subsciptionCacheItem,
+            getProviderCacheMaxage(),
+          )
+          return subsciptionCacheItem
+        })()
   }
 
   public determineRequestUserAgent(

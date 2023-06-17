@@ -6,7 +6,6 @@ import Redis from 'ioredis'
 
 import { TMP_FOLDER_NAME } from '../constant'
 import redis from '../redis'
-import { msToSeconds } from './index'
 
 const logger = createLogger({ service: 'surgio:utils:tmp-helper' })
 const tmpDir = path.join(os.tmpdir(), TMP_FOLDER_NAME)
@@ -75,12 +74,7 @@ export class TmpRedis implements TmpHelper {
 
   public async setContent(content: string): Promise<void> {
     if (this.maxAge) {
-      await this.redisClient.set(
-        this.cacheKey,
-        content,
-        'EX',
-        msToSeconds(this.maxAge),
-      )
+      await this.redisClient.set(this.cacheKey, content, 'PX', this.maxAge)
     } else {
       await this.redisClient.set(this.cacheKey, content)
     }
