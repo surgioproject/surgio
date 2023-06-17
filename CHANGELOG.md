@@ -1,3 +1,17 @@
+# [3.0.0-alpha.5](https://github.com/geekdada/surgio/compare/v3.0.0-alpha.4...v3.0.0-alpha.5) (2023-06-17)
+
+
+### Bug Fixes
+
+* wireguard for clash ([68e3e98](https://github.com/geekdada/surgio/commit/68e3e98af878ede032f85caa1499eea1e843bcb6))
+
+
+### Features
+
+* unify cache interface ([dc24a9b](https://github.com/geekdada/surgio/commit/dc24a9b6db50d70698243a17740f0a001b2bdb28))
+
+
+
 # [3.0.0-alpha.4](https://github.com/geekdada/surgio/compare/v3.0.0-alpha.3...v3.0.0-alpha.4) (2023-06-15)
 
 
