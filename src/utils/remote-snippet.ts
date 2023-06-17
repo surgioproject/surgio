@@ -2,7 +2,7 @@ import Bluebird from 'bluebird'
 import { logger } from '@surgio/logger'
 import detectNewline from 'detect-newline'
 import nunjucks from 'nunjucks'
-import * as parser from '@typescript-eslint/parser'
+import * as babelParser from '@babel/parser'
 
 import { CACHE_KEYS } from '../constant'
 import { RemoteSnippet, RemoteSnippetConfig } from '../types'
@@ -26,10 +26,14 @@ export const parseMacro = (
     throw new Error('该片段不包含可用的宏')
   }
 
-  const ast = parser.parse(match[1], { ecmaVersion: 6 })
+  const ast = babelParser.parse(match[1], {})
   let statement
 
-  for (const node of ast.body) {
+  if (ast.errors.length) {
+    throw new Error('该片段不包含可用的宏')
+  }
+
+  for (const node of ast.program.body) {
     if (node.type === 'ExpressionStatement') {
       statement = node
       break
@@ -44,7 +48,13 @@ export const parseMacro = (
   ) {
     return {
       functionName: statement.expression.callee.name,
-      arguments: statement.expression.arguments.map((item: any) => item.name),
+      arguments: statement.expression.arguments.map((item) => {
+        if (item.type === 'Identifier') {
+          return item.name
+        } else {
+          throw new Error('该片段不包含可用的宏')
+        }
+      }),
     }
   }
 

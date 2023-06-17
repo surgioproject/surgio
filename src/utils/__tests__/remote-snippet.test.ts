@@ -167,7 +167,8 @@ test('parseMacro', (t) => {
   t.throws(
     () => {
       utils.parseMacro(`
-{% macro wrong(rule1, rule2) %}{% endmacro %}
+{% macro wrong_function_name(rule1, rule2) %}
+{% endmacro %}
     `)
     },
     undefined,
@@ -176,7 +177,8 @@ test('parseMacro', (t) => {
   t.throws(
     () => {
       utils.parseMacro(`
-{% macro main %}{% endmacro %}
+{% macro main %}
+{% endmacro %}
     `)
     },
     undefined,
@@ -190,4 +192,10 @@ test('parseMacro', (t) => {
     undefined,
     '该片段不包含可用的宏',
   )
+  t.notThrows(() => {
+    utils.parseMacro(`
+{% macro main(rule1, rule2) %}
+{% endmacro %}
+    `)
+  })
 })
