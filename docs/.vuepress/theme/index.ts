@@ -54,7 +54,7 @@ export default {
           '/guide/advance/api-gateway',
           '/guide/advance/redis-cache',
           {
-            link: 'https://blog.dada.li/2019/better-proxy-rules-for-apple-services',
+            link: 'https://royli.dev/blog/2019/better-proxy-rules-for-apple-services',
             text: '苹果服务的连接策略推荐'
           }
         ],

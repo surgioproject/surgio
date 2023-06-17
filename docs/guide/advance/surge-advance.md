@@ -1,9 +1,9 @@
 ---
-title: Surge 进阶 - 生成 SSR 和 V2Ray 订阅
+title: Surge 进阶 - 生成 SSR 订阅
 sidebarDepth: 2
 ---
 
-# Surge 进阶 - 生成 SSR 和 V2Ray 订阅
+# Surge 进阶 - 生成 SSR 订阅
 
 :::warning 注意
 - 本文仅针对 Surge for Mac
@@ -28,7 +28,6 @@ module.exports = {
   // ...
   binPath: {
     shadowsocksr: '/usr/local/bin/ssr-local',
-    v2ray: '/usr/local/bin/v2ray',
   },
   surgeConfig: {
     resolveHostname: true,
@@ -42,12 +41,10 @@ module.exports = {
 
 ## 生成
 
-1. 确保模板中会调用 `getSurgeNodes` 方法。
-2. Provider 中包含 V2Ray 的订阅。
+1. 确保模板中调用 `getSurgeNodes` 方法。
+2. Provider 中包含 SSR 的订阅。
 
 ## 注意事项
 
-1. 同样的一份 Surge 托管配置，其中的 SSR 节点能够在其它有二进制文件的电脑中启动，但是 V2Ray 节点不可。
-2. V2Ray 节点仅能在运行 generate 命令的电脑上启动，因为在生成 Surge 配置的同时，Surgio 会把所有 V2Ray 节点的配置写入到 `~/.config/surgio` 目录下。
-
-P.S. 如果你能让 `~/.config/surgio` 同步起来，可以把二进制文件也放里面，那订阅对于这两种节点都是有意义的。注意 Surge 不能识别 `~/` 但是能识别 `$HOME/`。恕不提供更多支持。
+1. 同样的一份 Surge 托管配置，其中的 SSR 节点能够在其它有二进制文件的电脑中启动。
+2. 如果你能让 `~/.config/surgio` 同步起来，可以把二进制文件也放里面，那订阅对于这两种节点都是有意义的。注意 Surge 不能识别 `~/` 但是能识别 `$HOME/`。恕不提供更多支持。
