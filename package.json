@@ -47,7 +47,9 @@
     "changelog": "conventional-changelog -p angular -i CHANGELOG.md -s -r 0",
     "prepare": "husky install",
     "docs:dev": "NODE_ENV=development vuepress dev docs",
-    "docs:build": "NODE_ENV=production vuepress build docs"
+    "docs:build": "NODE_ENV=production vuepress build docs",
+    "release": "bumpp && npm publish",
+    "release:alpha": "bumpp --preid alpha --no-push && npm publish"
   },
   "oclif": {
     "bin": "surgio",
