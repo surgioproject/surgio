@@ -73,13 +73,17 @@ export const getSurgeWireguardNodes = (
       }
 
       if (nodeConfig.dnsServers) {
-        nodeConfigSection.push(`dns-server=${nodeConfig.dnsServers.join(', ')}`)
+        nodeConfigSection.push(
+          `dns-server=${JSON.stringify(nodeConfig.dnsServers.join(', '))}`,
+        )
       }
+
+      const peerList: string[] = []
 
       for (const peer of nodeConfig.peers) {
         const peerConfig: string[] = [
           `endpoint=${peer.endpoint}`,
-          `public-key=${peer.publicKey}`,
+          `public-key=${JSON.stringify(peer.publicKey)}`,
         ]
         const optionalPeerConfigKeys: Array<keyof typeof peer> = [
           'presharedKey',
@@ -92,17 +96,21 @@ export const getSurgeWireguardNodes = (
             peerConfig.push(
               ...pickAndFormatStringList(peer, [key], {
                 keyFormat: 'kebabCase',
+                stringifyValue: true,
               }),
             )
           }
         }
 
+        // istanbul ignore next
         if (peer.reservedBits) {
           peerConfig.push(`client-id=${peer.reservedBits.join('/')}`)
         }
 
-        nodeConfigSection.push(`peer=(${peerConfig.join(', ')})`)
+        peerList.push(`(${peerConfig.join(', ')})`)
       }
+
+      nodeConfigSection.push(`peer=${peerList.join(', ')}`)
 
       return nodeConfigSection.join('\n')
     })

@@ -576,6 +576,32 @@ test('getSurgeWireguardNodes', (t) => {
           },
         ],
       },
+      {
+        type: NodeTypeEnum.Wireguard,
+        nodeName: 'wg node',
+        privateKey: 'privateKey',
+        selfIp: '10.0.0.1',
+        mtu: 1420,
+        preferIpv6: true,
+        selfIpV6: '2001:db8:85a3::8a2e:370:7334',
+        dnsServers: ['1.1.1.1', '1.0.0.1'],
+        peers: [
+          {
+            endpoint: 'wg.example.com:51821',
+            publicKey: 'publicKey',
+            allowedIps: '0.0.0.0/0, ::/0',
+            presharedKey: 'presharedKey',
+            keepalive: 25,
+          },
+          {
+            endpoint: 'wg.example.com:51821',
+            publicKey: 'publicKey',
+            allowedIps: '0.0.0.0/0, ::/0',
+            presharedKey: 'presharedKey',
+            keepalive: 25,
+          },
+        ],
+      },
     ]),
   )
 })

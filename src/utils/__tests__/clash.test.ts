@@ -691,8 +691,37 @@ test('getClashNodes', async (t) => {
           },
         ],
       },
+      {
+        nodeName: 'wireguard',
+        type: NodeTypeEnum.Wireguard,
+        privateKey: 'privateKey',
+        selfIp: '127.0.0.1',
+        peers: [
+          {
+            endpoint: 'example.com:1234',
+            publicKey: 'publicKey',
+            reservedBits: [1, 2, 3],
+          },
+          {
+            endpoint: 'example.com:1235',
+            publicKey: 'publicKey',
+            reservedBits: [1, 2, 3],
+          },
+        ],
+      },
     ]),
     [
+      {
+        ip: '127.0.0.1',
+        name: 'wireguard',
+        port: 1234,
+        'private-key': 'privateKey',
+        'public-key': 'publicKey',
+        server: 'example.com',
+        type: 'wireguard',
+        udp: true,
+        reserved: [1, 2, 3],
+      },
       {
         ip: '127.0.0.1',
         name: 'wireguard',
