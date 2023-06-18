@@ -1,3 +1,17 @@
+# [3.0.0-alpha.6](https://github.com/geekdada/surgio/compare/v3.0.0-alpha.5...v3.0.0-alpha.6) (2023-06-18)
+
+
+### Bug Fixes
+
+* 多个 peer 的 Wireguard 节点在 Surge 上的格式问题 ([17ec9c9](https://github.com/geekdada/surgio/commit/17ec9c93f3fa0b52acc1628f27c086dbb9e66bec))
+
+
+### Features
+
+* cache.wrap ([c34d661](https://github.com/geekdada/surgio/commit/c34d661903c913a473beb1a60ee02077ca8328d9))
+
+
+
 # [3.0.0-alpha.5](https://github.com/geekdada/surgio/compare/v3.0.0-alpha.4...v3.0.0-alpha.5) (2023-06-17)
 
 
