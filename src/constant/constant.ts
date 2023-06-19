@@ -11,6 +11,8 @@ export const INTERNET_TEST_URL = 'http://connect.rom.miui.com/generate_204'
 
 export const PROXY_TEST_INTERVAL = 1200 // 1200s
 
+export const INTERNET_TEST_INTERVAL = 1200 // 1200s
+
 export const CLASH_SUPPORTED_RULE = [
   'DOMAIN-SUFFIX',
   'DOMAIN-KEYWORD',

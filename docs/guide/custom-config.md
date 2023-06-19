@@ -338,14 +338,28 @@ module.exports = {
 - 类型: `string`
 - 默认值: `http://cp.cloudflare.com/generate_204`
 
-Clash 规则中的 `url`。
+模板中可以直接引用 `{{ proxyTestUrl }}` 来获取推荐的代理测试 URL。
 
 ## proxyTestInterval
 
 - 类型: `number`
 - 默认值: `1200`
 
-Clash 规则中的 `interval`。
+模板中可以直接引用 `{{ proxyTestInterval }}` 来获取推荐的测试间隔。
+
+## internetTestUrl
+
+- 类型: `string`
+- 默认值: `http://connect.rom.miui.com/generate_204`
+
+模板中可以直接引用 `{{ internetTestUrl }}` 来获取推荐的联网测试 URL（检测设备是否联网而非梯子是否可用）。
+
+## internetTestInterval
+
+- 类型: `number`
+- 默认值: `1200`
+
+模板中可以直接引用 `{{ internetTestInterval }}` 来获取推荐的测试间隔。
 
 ## customParams
 

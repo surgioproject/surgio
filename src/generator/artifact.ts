@@ -131,7 +131,9 @@ export class Artifact extends EventEmitter {
 
     return {
       proxyTestUrl: config.proxyTestUrl,
+      proxyTestInterval: config.proxyTestInterval,
       internetTestUrl: config.internetTestUrl,
+      internetTestInterval: config.internetTestInterval,
       downloadUrl: downloadUrl
         ? downloadUrl
         : getDownloadUrl(config.urlBase, artifactName, true, gatewayToken),

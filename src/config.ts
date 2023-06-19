@@ -4,6 +4,7 @@ import path from 'path'
 import { URL } from 'url'
 
 import {
+  INTERNET_TEST_INTERVAL,
   INTERNET_TEST_URL,
   PROXY_TEST_INTERVAL,
   PROXY_TEST_URL,
@@ -117,6 +118,7 @@ export const normalizeConfig = (
     proxyTestUrl: PROXY_TEST_URL,
     proxyTestInterval: PROXY_TEST_INTERVAL,
     internetTestUrl: INTERNET_TEST_URL,
+    internetTestInterval: INTERNET_TEST_INTERVAL,
     checkHostname: false,
     cache: {
       type: 'default',

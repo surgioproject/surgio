@@ -83,6 +83,7 @@ export const SurgioConfigValidator = z.object({
   proxyTestUrl: z.string().url().optional(),
   proxyTestInterval: z.onumber(),
   internetTestUrl: z.string().url().optional(),
+  internetTestInterval: z.onumber(),
   customFilters: z
     .record(z.union([NodeFilterTypeValidator, SortedNodeFilterTypeValidator]))
     .optional(),
