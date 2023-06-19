@@ -1,3 +1,13 @@
+# [3.0.0-alpha.7](https://github.com/geekdada/surgio/compare/v3.0.0-alpha.6...v3.0.0-alpha.7) (2023-06-19)
+
+
+### Bug Fixes
+
+* 在模板中提供以下： ([6a4a728](https://github.com/geekdada/surgio/commit/6a4a728d7be3b9ca05dde8fea147b1dd511e9cc2))
+* alterId shoud accept a number ([866b6cf](https://github.com/geekdada/surgio/commit/866b6cf2062d698f5c9911e9a07f33612b910cf8))
+
+
+
 # [3.0.0-alpha.6](https://github.com/geekdada/surgio/compare/v3.0.0-alpha.5...v3.0.0-alpha.6) (2023-06-18)
 
 
