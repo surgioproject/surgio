@@ -1,7 +1,11 @@
 import { z } from 'zod'
 
 import { NodeTypeEnum } from '../types'
-import { PortValidator, SimpleNodeConfigValidator } from './common'
+import {
+  PortValidator,
+  SimpleNodeConfigValidator,
+  AlterIdValiator,
+} from './common'
 
 export const VmessNodeConfigValidator = SimpleNodeConfigValidator.extend({
   type: z.literal(NodeTypeEnum.Vmess),
@@ -14,7 +18,7 @@ export const VmessNodeConfigValidator = SimpleNodeConfigValidator.extend({
     z.literal('auto'),
   ]),
   uuid: z.string().uuid(),
-  alterId: z.string(),
+  alterId: AlterIdValiator,
   network: z.union([z.literal('tcp'), z.literal('ws')]),
   tls: z.boolean(),
   host: z.ostring(),

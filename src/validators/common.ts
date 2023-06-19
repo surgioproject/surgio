@@ -2,6 +2,26 @@ import { z } from 'zod'
 
 import { NodeTypeEnum } from '../types'
 
+export const getPositiveIntegersNumberValidatior = (
+  validator: (n: number) => boolean,
+  message: string,
+) =>
+  z.union([z.string(), z.number()]).transform((v, ctx): string | number => {
+    const num = Number(v)
+    const isInputString = typeof v === 'string'
+
+    if (validator(num) && Number.isInteger(num)) {
+      return isInputString ? `${num}` : num
+    } else {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message,
+      })
+
+      return z.NEVER
+    }
+  })
+
 export const PortValidator = z
   .union([z.string(), z.number()])
   .transform((v, ctx): string | number => {
@@ -20,23 +40,15 @@ export const PortValidator = z
     }
   })
 
-export const IntegersVersionValidator = z
-  .union([z.string(), z.number()])
-  .transform((v, ctx): string | number => {
-    const version = Number(v)
-    const isInputString = typeof v === 'string'
+export const AlterIdValiator = getPositiveIntegersNumberValidatior(
+  (n) => n >= 0,
+  'alterId 必须为大于等于 0 的整数',
+)
 
-    if (version > 0 && Number.isInteger(version)) {
-      return isInputString ? `${version}` : version
-    } else {
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        message: '版本号必须为大于 0 的整数',
-      })
-
-      return z.NEVER
-    }
-  })
+export const IntegersVersionValidator = getPositiveIntegersNumberValidatior(
+  (n) => n > 0,
+  '版本号必须为大于 0 的整数',
+)
 
 export const SimpleNodeConfigValidator = z.object({
   type: z.nativeEnum(NodeTypeEnum),
