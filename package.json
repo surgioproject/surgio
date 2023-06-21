@@ -49,7 +49,7 @@
     "docs:dev": "NODE_ENV=development vuepress dev docs",
     "docs:build": "NODE_ENV=production vuepress build docs",
     "release": "bumpp && npm publish",
-    "release:alpha": "bumpp --preid alpha --no-push && npm publish --tag beta"
+    "release:beta": "bumpp --preid beta --no-push && npm publish --tag beta"
   },
   "oclif": {
     "bin": "surgio",
