@@ -87,4 +87,5 @@ export const TMP_FOLDER_NAME = 'surgio-config'
 export const CACHE_KEYS = {
   RemoteSnippets: 'remote-snippets-v2',
   Provider: 'provider-v2',
+  RenderedArtifact: 'rendered-artifact',
 } as const
