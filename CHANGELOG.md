@@ -1,3 +1,18 @@
+# [3.0.0-beta.1](https://github.com/geekdada/surgio/compare/v3.0.0-alpha.7...v3.0.0-beta.1) (2023-06-21)
+
+
+### Bug Fixes
+
+* use new cache prefix ([2a5fa34](https://github.com/geekdada/surgio/commit/2a5fa34cf5116b923ece09ca0c264014f98207fd))
+
+
+### Features
+
+* add new cache key ([4eec1b6](https://github.com/geekdada/surgio/commit/4eec1b6a5832a7fc80c8c1c6910906909a5a0982))
+* new env SURGIO_RENDERED_ARTIFACT_CACHE_MAXAGE ([0be992d](https://github.com/geekdada/surgio/commit/0be992dcfb727ea7d4d7f7e9ba4a8385bd787a0b))
+
+
+
 # [3.0.0-alpha.7](https://github.com/geekdada/surgio/compare/v3.0.0-alpha.6...v3.0.0-alpha.7) (2023-06-19)
 
 
