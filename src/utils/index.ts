@@ -32,6 +32,7 @@ export * from './remote-snippet'
 export * from './subscription'
 export * from './time'
 export * from './errors'
+export * from './env-flag'
 export { default as httpClient } from './http-client'
 
 const logger = createLogger({ service: 'surgio:utils' })

@@ -9,6 +9,7 @@ import {
   ENV_SURGIO_NETWORK_RETRY,
   ENV_SURGIO_PROVIDER_CACHE_MAXAGE,
   ENV_SURGIO_REMOTE_SNIPPET_CACHE_MAXAGE,
+  SURGIO_RENDERED_ARTIFACT_CACHE_MAXAGE,
 } from '../constant'
 
 export const getNetworkTimeout = (): number =>
@@ -46,3 +47,8 @@ export const getProviderCacheMaxage = (): number =>
 
 export const getIsGFWFree = (): boolean =>
   typeof process.env[ENV_SURGIO_GFW_FREE] !== 'undefined'
+
+export const getRenderedArtifactCacheMaxage = (): number =>
+  process.env[SURGIO_RENDERED_ARTIFACT_CACHE_MAXAGE]
+    ? Number(process.env[SURGIO_RENDERED_ARTIFACT_CACHE_MAXAGE])
+    : ms('7d')
