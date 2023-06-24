@@ -1,4 +1,4 @@
-'use strict';
+'use strict'
 
 module.exports = {
   url: 'http://example.com/test-ssr-sub.txt?v=2',
@@ -6,4 +6,4 @@ module.exports = {
   udpRelay: true,
   tfo: true,
   startPort: 61100,
-};
+}

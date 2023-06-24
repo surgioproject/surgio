@@ -1,4 +1,4 @@
-const { join } = require('path');
+const { join } = require('path')
 
 module.exports = {
   env: {
@@ -19,5 +19,7 @@ module.exports = {
   rules: {
     '@typescript-eslint/ban-ts-comment': 0,
     '@typescript-eslint/no-var-requires': 0,
+    '@typescript-eslint/no-explicit-any': 0,
+    '@typescript-eslint/no-unused-vars': ['error', { argsIgnorePattern: '^_' }],
   },
-};
+}

@@ -1,4 +1,4 @@
-'use strict';
+'use strict'
 
 module.exports = {
   artifacts: [
@@ -18,4 +18,4 @@ module.exports = {
     shadowsocksr: '/usr/local/bin/ssr-local',
     v2ray: '/usr/local/bin/v2ray',
   },
-};
+}

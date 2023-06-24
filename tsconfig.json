@@ -1,22 +1,21 @@
 {
   "compilerOptions": {
-    "target": "es2017",
-    "outDir": "build/",
-    "moduleResolution": "node",
-    "module": "commonjs",
+    // https://github.com/microsoft/TypeScript/wiki/Node-Target-Mapping
+    "target": "ES2022",
+    "module": "Node16",
+    "moduleResolution": "Node",
     "declaration": true,
-    "inlineSourceMap": true,
+    "sourceMap": false,
     "esModuleInterop": true /* Enables emit interoperability between CommonJS and ES Modules via creation of namespace objects for all imports. Implies 'allowSyntheticDefaultImports'. */,
     "allowSyntheticDefaultImports": true, // https://zhuanlan.zhihu.com/p/29022311
     "resolveJsonModule": true,
-    "experimentalDecorators": true,
     "skipLibCheck": true,
+    "noEmit": true,
 
-    // "strict": true /* Enable all strict type-checking options. */,
-
+    "strict": true /* Enable all strict type-checking options. */,
     /* Strict Type-Checking Options */
     // "noImplicitAny": true /* Raise error on expressions and declarations with an implied 'any' type. */,
-    "strictNullChecks": true /* Enable strict null checks. */,
+    // "strictNullChecks": true /* Enable strict null checks. */,
     // "strictFunctionTypes": true /* Enable strict checking of function types. */,
     // "strictPropertyInitialization": true /* Enable strict checking of property initialization in classes. */,
     // "noImplicitThis": true /* Raise error on 'this' expressions with an implied 'any' type. */,
@@ -34,22 +33,21 @@
     "listFiles": false /* Print names of files part of the compilation. */,
     "pretty": true /* Stylize errors and messages using color and context. */,
 
-    /* Experimental Options */
-    // "experimentalDecorators": true /* Enables experimental support for ES7 decorators. */,
-    // "emitDecoratorMetadata": true /* Enables experimental support for emitting type metadata for decorators. */,
-
     "lib": [
-      "es2017"
+      "ES2022"
     ],
     "types": [
       "node"
     ],
     "typeRoots": [
-      "node_modules/@types",
-      "types"
+      "./node_modules/@types",
+      "./types"
     ]
   },
-  "include": ["lib/**/*.ts", "test/**/*.ts", "types/**/*.ts"],
-  "exclude": ["node_modules/**", "**/*.test.ts"],
-  "compileOnSave": false
+  "include": [
+    "src/**/*.ts",
+    "test/**/*.ts",
+  ],
+  "exclude": ["./node_modules/**"],
+  "compileOnSave": false,
 }

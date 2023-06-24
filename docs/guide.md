@@ -34,13 +34,13 @@ Surgio 还包括了一个实用工具 —— 上传到阿里云 OSS，能够快�
 - 同时生成针对不同客户端的配置
 - 同样的规则可写成「可复用片段」，减少重复劳作
 - 读取符合 Surge Ruleset 规范的远程片段
-- 让 Surge 能够订阅 V2Ray 和 SSR
+- 让 Surge 能够订阅 SSR
 
 ## 劝退
 
 目前很多核心功能对动手能力不强的小白和不了解 JavaScript 的朋友来说还有一些门槛。如果你在使用过程中感到吃力，推荐使用以下工具：
 
-- [lhie1/Rules](https://github.com/lhie1/Rules)
+- [Hackl0us/SS-Rule-Snippet](https://github.com/Hackl0us/SS-Rule-Snippet)
 
 ## Code of Conduct
 

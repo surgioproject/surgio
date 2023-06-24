@@ -1,4 +1,4 @@
-'use strict';
+'use strict'
 
 module.exports = {
   type: 'custom',
@@ -11,9 +11,9 @@ module.exports = {
       port: '443',
       method: 'chacha20-ietf-poly1305',
       password: 'password',
-      'udp-relay': true,
+      udpRelay: true,
       obfs: 'tls',
-      'obfs-host': 'gateway-carry.icloud.com',
+      obfsHost: 'gateway-carry.icloud.com',
       tfo: true,
     },
     {
@@ -23,9 +23,9 @@ module.exports = {
       port: '443',
       method: 'chacha20-ietf-poly1305',
       password: 'password',
-      'udp-relay': true,
+      udpRelay: true,
       obfs: 'tls',
-      'obfs-host': 'gateway-carry.icloud.com',
+      obfsHost: 'gateway-carry.icloud.com',
       tfo: true,
     },
     {
@@ -35,10 +35,10 @@ module.exports = {
       port: '443',
       method: 'chacha20-ietf-poly1305',
       password: 'password',
-      'udp-relay': true,
+      udpRelay: true,
       obfs: 'tls',
-      'obfs-host': 'gateway-carry.icloud.com',
+      obfsHost: 'gateway-carry.icloud.com',
       tfo: true,
     },
   ],
-};
+}

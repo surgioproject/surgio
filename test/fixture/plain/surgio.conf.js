@@ -1,6 +1,6 @@
-'use strict';
+'use strict'
 
-const path = require('path');
+const path = require('path')
 
 module.exports = {
   artifacts: [
@@ -68,18 +68,6 @@ module.exports = {
           anotherVariableWillBeRewritten: 'another-value',
         },
       },
-      proxyGroupModifier() {
-        return [
-          {
-            name: 'auto all',
-            type: 'url-test',
-          },
-          {
-            name: 'select all',
-            type: 'select',
-          },
-        ];
-      },
     },
   ],
   urlBase: 'https://example.com/',
@@ -94,9 +82,6 @@ module.exports = {
   gateway: {
     accessToken: 'abcd',
   },
-  surgeConfig: {
-    v2ray: 'native',
-  },
   customFilters: {
     globalFilter: (node) => node.nodeName === '测试中文',
     unused: () => true,
@@ -110,4 +95,4 @@ module.exports = {
   },
   proxyTestUrl: 'http://www.google.com/generate_204',
   proxyTestInterval: 2400,
-};
+}

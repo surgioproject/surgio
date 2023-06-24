@@ -1,4 +1,4 @@
-'use strict';
+'use strict'
 
 module.exports = {
   url: 'http://example.com/test-ss-sub.txt',
@@ -6,4 +6,4 @@ module.exports = {
   tfo: true,
   mptcp: true,
   underlyingProxy: 'underlying-proxy',
-};
+}

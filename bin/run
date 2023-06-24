@@ -1,0 +1,17 @@
+#!/usr/bin/env node
+
+const oclif = require('@oclif/core');
+const dotenv = require('dotenv');
+const { resolve } = require('path');
+const fs = require('fs-extra');
+
+const envPath = resolve(process.cwd(), './.env')
+
+if (fs.existsSync(envPath)) {
+  dotenv.config({ path: envPath })
+}
+
+oclif
+  .run()
+  .then(require('@oclif/core/flush'))
+  .catch(require('@oclif/core/handle'));

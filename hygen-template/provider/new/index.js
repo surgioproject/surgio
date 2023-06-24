@@ -1,6 +1,7 @@
-'use strict';
+'use strict'
 
-const { SupportProviderEnum } = require('../../../build/types');
+const { types } = require('../../../build/internal')
+const { SupportProviderEnum } = types
 
 module.exports = {
   prompt: ({ prompter: inquirer }) => {
@@ -30,7 +31,7 @@ module.exports = {
             SupportProviderEnum.ShadowsocksrSubscribe,
             SupportProviderEnum.ShadowsocksSubscribe,
             SupportProviderEnum.Trojan,
-          ].includes(results.type);
+          ].includes(results.type)
         },
         validate: (str) => /^https?:\/{2}/.test(str),
       },
@@ -51,7 +52,7 @@ module.exports = {
             SupportProviderEnum.ShadowsocksrSubscribe,
             SupportProviderEnum.ShadowsocksSubscribe,
             SupportProviderEnum.Trojan,
-          ].includes(results.type);
+          ].includes(results.type)
         },
       },
       {
@@ -67,9 +68,9 @@ module.exports = {
             SupportProviderEnum.ShadowsocksrSubscribe,
             SupportProviderEnum.ShadowsocksSubscribe,
             SupportProviderEnum.Trojan,
-          ].includes(results.type);
+          ].includes(results.type)
         },
       },
-    ]);
+    ])
   },
-};
+}

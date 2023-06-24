@@ -1,4 +1,4 @@
-'use strict';
+'use strict'
 
 module.exports = {
   type: 'custom',
@@ -11,9 +11,9 @@ module.exports = {
       port: '443',
       method: 'chacha20-ietf-poly1305',
       password: 'password',
-      'udp-relay': true,
+      udpRelay: true,
       obfs: 'tls',
-      'obfs-host': 'gateway-carry.icloud.com',
+      obfsHost: 'gateway-carry.icloud.com',
       tfo: true,
       mptcp: true,
     },
@@ -59,8 +59,8 @@ module.exports = {
   ],
   renameNode: (name) => {
     if (name === 'rename to HTTPS') {
-      return 'HTTPS';
+      return 'HTTPS'
     }
-    return name;
+    return name
   },
-};
+}
