@@ -1,3 +1,7 @@
+# [3.0.0](https://github.com/geekdada/surgio/compare/v3.0.0-beta.1...v3.0.0) (2023-06-24)
+
+
+
 # [3.0.0-beta.1](https://github.com/geekdada/surgio/compare/v3.0.0-alpha.7...v3.0.0-beta.1) (2023-06-21)
 
 
