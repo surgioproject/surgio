@@ -12,10 +12,8 @@
 
 ## 如何升级 Surgio？
 
-目前 Surgio 处于公测阶段，你可以通过下面的步骤来升级 Surgio。
-
 ```bash
-npm i surgio@beta @surgio/gateway@beta --save
+npm i surgio@latest @surgio/gateway@latest --save
 ```
 
 ## 废弃功能
@@ -152,3 +150,24 @@ Surgio 提供了下面的方法来支持 IDE 类型提示。他们的使用是�
 
 - `defineSurgioConfig`
 - `defineXxxxProvider` (例如 `defineClashProvider`)
+
+### 内置工具
+
+#### httpClient
+
+`httpClient` 是一个 [Got](https://github.com/sindresorhus/got) 实例，你可以使用它来发起 HTTP 请求。Surgio 内置了代理环境变量识别，如果你已经设置了 `http_proxy` 或 `https_proxy` 环境变量，那么 `httpClient` 会自动使用代理。
+
+#### cache
+
+`cache` 是一个 [cache-manager](https://github.com/node-cache-manager/node-cache-manager) 实例，你可以使用它来缓存数据。假如你开启了 Redis 缓存，那么 `cache` 会自动使用 Redis，否则会使用内存缓存。
+
+- `cache.get`
+- `cache.set`
+- `cache.del`
+- `cache.reset`
+- `cache.wrap`
+- `cache.keys`
+- `cache.mset`
+- `cache.mget`
+- `cache.mdel`
+- `cache.has`
