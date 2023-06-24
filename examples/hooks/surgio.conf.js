@@ -1,6 +1,8 @@
 'use strict'
 
-module.exports = {
+const { defineSurgioConfig } = require('surgio')
+
+module.exports = defineSurgioConfig({
   remoteSnippets: [
     {
       name: 'youtube',
@@ -20,17 +22,10 @@ module.exports = {
       name: 'Clash.yaml',
       template: 'clash',
       provider: 'demo',
-    },
-    {
-      name: 'Clash_enhanced_mode.yaml',
-      template: 'clash',
-      provider: 'demo',
-      customParams: {
-        enhancedMode: true,
-      },
+      combineProviders: ['error'],
     },
   ],
   urlBase: 'https://config.example.com/',
   // https://surgio.js.org/guide/custom-config.html#upload
   // upload: {},
-}
+})

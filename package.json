@@ -40,6 +40,7 @@
     "test:lint": "eslint -c .eslintrc.js --ext .js,.ts .",
     "test:unit": "ava",
     "test:cli": "mocha",
+    "run-example": "node ./scripts/run-example.js",
     "coverage": "TS_NODE_FILES=true nyc ava",
     "clean": "rimraf build",
     "build": "tsc -p tsconfig.build.json",
