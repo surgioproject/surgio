@@ -1,3 +1,12 @@
+## [3.0.1](https://github.com/geekdada/surgio/compare/v3.0.0...v3.0.1) (2023-06-26)
+
+
+### Bug Fixes
+
+* forgot to include tuicFilter in template rendering context ([e141c0a](https://github.com/geekdada/surgio/commit/e141c0a27b7278515bc2db5876e4fa821fc74dfc))
+
+
+
 # [3.0.0](https://github.com/geekdada/surgio/compare/v3.0.0-beta.1...v3.0.0) (2023-06-24)
 
 
