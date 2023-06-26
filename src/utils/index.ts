@@ -21,7 +21,7 @@ import {
 } from '../types'
 import { ERR_INVALID_FILTER, OBFS_UA } from '../constant'
 import { getIsGFWFree } from './env-flag'
-import { applyFilter } from './filter'
+import { applyFilter } from '../filters'
 
 export * from './surge'
 export * from './surfboard'

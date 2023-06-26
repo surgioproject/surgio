@@ -9,7 +9,7 @@ import {
   SortedNodeFilterType,
 } from '../types'
 import { isIp, pickAndFormatStringList } from './'
-import { applyFilter } from './filter'
+import { applyFilter } from '../filters'
 
 const logger = createLogger({ service: 'surgio:utils:surge' })
 

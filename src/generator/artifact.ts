@@ -46,32 +46,10 @@ import {
   SurgioError,
   toBase64,
   toUrlSafeBase64,
+  getNetworkConcurrency,
 } from '../utils'
 import { resolveDomain } from '../utils/dns'
-import { getNetworkConcurrency } from '../utils/env-flag'
-import {
-  chinaBackFilter,
-  chinaOutFilter,
-  hkFilter,
-  httpFilter,
-  httpsFilter,
-  japanFilter,
-  koreaFilter,
-  netflixFilter as defaultNetflixFilter,
-  shadowsocksFilter,
-  shadowsocksrFilter,
-  singaporeFilter,
-  snellFilter,
-  socks5Filter,
-  taiwanFilter,
-  trojanFilter,
-  usFilter,
-  v2rayFilter,
-  validateFilter,
-  vmessFilter,
-  wireguardFilter,
-  youtubePremiumFilter as defaultYoutubePremiumFilter,
-} from '../utils/filter'
+import { internalFilters, validateFilter } from '../filters'
 import { prependFlag, removeFlag } from '../utils/flag'
 import { loadLocalSnippet } from './template'
 
@@ -93,10 +71,10 @@ export class Artifact extends EventEmitter {
 
   private customFilters: NonNullable<ProviderConfig['customFilters']> = {}
   private netflixFilter: NonNullable<ProviderConfig['netflixFilter']> =
-    defaultNetflixFilter
+    internalFilters.netflixFilter
   private youtubePremiumFilter: NonNullable<
     ProviderConfig['youtubePremiumFilter']
-  > = defaultYoutubePremiumFilter
+  > = internalFilters.youtubePremiumFilter
 
   constructor(
     public surgioConfig: CommandConfig,
@@ -164,27 +142,10 @@ export class Artifact extends EventEmitter {
       getQuantumultXNodeNames,
       getLoonNodes,
       getLoonNodeNames,
-      usFilter,
-      hkFilter,
-      japanFilter,
-      koreaFilter,
-      singaporeFilter,
-      taiwanFilter,
-      chinaBackFilter,
-      chinaOutFilter,
-      shadowsocksFilter,
-      shadowsocksrFilter,
-      vmessFilter,
-      v2rayFilter,
-      snellFilter,
-      httpFilter,
-      httpsFilter,
-      trojanFilter,
-      socks5Filter,
-      wireguardFilter,
       toUrlSafeBase64,
       toBase64,
       encodeURIComponent,
+      ...internalFilters,
       netflixFilter,
       youtubePremiumFilter,
       customFilters,

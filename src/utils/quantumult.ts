@@ -7,7 +7,7 @@ import {
   PossibleNodeConfigType,
   SortedNodeFilterType,
 } from '../types'
-import { applyFilter } from './filter'
+import { applyFilter } from '../filters'
 import { pickAndFormatStringList } from './index'
 
 const logger = createLogger({ service: 'surgio:utils:quantumult' })

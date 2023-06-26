@@ -8,7 +8,7 @@ import {
   PossibleNodeConfigType,
   SortedNodeFilterType,
 } from '../types'
-import { applyFilter } from './filter'
+import { applyFilter } from '../filters'
 import {
   checkNotNullish,
   getHostnameFromHost,

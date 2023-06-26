@@ -49,11 +49,11 @@ const httpClient = got.extend({
   agent,
 })
 
-function hasHTTPProxy() {
+function hasHTTPProxy(): string | undefined {
   return process.env.HTTP_PROXY || process.env.http_proxy
 }
 
-function hasHTTPSProxy() {
+function hasHTTPSProxy(): string | undefined {
   return process.env.HTTPS_PROXY || process.env.https_proxy
 }
 

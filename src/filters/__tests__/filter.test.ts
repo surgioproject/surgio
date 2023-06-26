@@ -1,7 +1,8 @@
 import test from 'ava'
 
 import { NodeTypeEnum, VmessNodeConfig } from '../../types'
-import * as filter from '../filter'
+import * as filters from '../'
+import { internalFilters } from '../'
 
 const nodeConfigDefaults = {
   hostname: 'example.com',
@@ -11,19 +12,19 @@ const nodeConfigDefaults = {
 }
 
 test('validateFilter', (t) => {
-  t.false(filter.validateFilter(undefined))
-  t.false(filter.validateFilter(null))
+  t.false(filters.validateFilter(undefined))
+  t.false(filters.validateFilter(null))
   t.true(
-    filter.validateFilter(() => {
+    filters.validateFilter(() => {
       return true
     }),
   )
-  t.true(filter.validateFilter(filter.useSortedKeywords(['US'])))
+  t.true(filters.validateFilter(filters.useSortedKeywords(['US'])))
 })
 
 test('useKeywords', (t) => {
-  const fn1 = filter.useKeywords(['测试', 'test'])
-  const fn2 = filter.useKeywords(['测试', 'test'], true)
+  const fn1 = filters.useKeywords(['测试', 'test'])
+  const fn2 = filters.useKeywords(['测试', 'test'], true)
 
   t.true(
     fn1({
@@ -49,8 +50,8 @@ test('useKeywords', (t) => {
 })
 
 test('discardKeywords', (t) => {
-  const fn1 = filter.discardKeywords(['测试', 'test'])
-  const fn2 = filter.discardKeywords(['测试', 'test'], true)
+  const fn1 = filters.discardKeywords(['测试', 'test'])
+  const fn2 = filters.discardKeywords(['测试', 'test'], true)
 
   t.false(
     fn1({
@@ -90,7 +91,7 @@ test('discardKeywords', (t) => {
 })
 
 test('useRegexp', (t) => {
-  const fn = filter.useRegexp(/(测试|test)/i)
+  const fn = filters.useRegexp(/(测试|test)/i)
 
   t.true(
     fn({
@@ -109,7 +110,7 @@ test('useRegexp', (t) => {
 })
 
 test('useGlob', (t) => {
-  let fn = filter.useGlob('测试*')
+  let fn = filters.useGlob('测试*')
 
   t.true(
     fn({
@@ -133,7 +134,7 @@ test('useGlob', (t) => {
     }),
   )
 
-  fn = filter.useGlob('(汉堡|薯条)')
+  fn = filters.useGlob('(汉堡|薯条)')
 
   t.true(
     fn({
@@ -152,7 +153,7 @@ test('useGlob', (t) => {
 })
 
 test('discardGlob', (t) => {
-  let fn = filter.discardGlob('测试*')
+  let fn = filters.discardGlob('测试*')
 
   t.false(
     fn({
@@ -176,7 +177,7 @@ test('discardGlob', (t) => {
     }),
   )
 
-  fn = filter.discardGlob('(汉堡|薯条)')
+  fn = filters.discardGlob('(汉堡|薯条)')
 
   t.false(
     fn({
@@ -196,35 +197,35 @@ test('discardGlob', (t) => {
 
 test('netflixFilter', (t) => {
   t.true(
-    filter.netflixFilter({
+    internalFilters.netflixFilter({
       nodeName: 'hkbn 1',
       type: NodeTypeEnum.Shadowsocks,
       ...nodeConfigDefaults,
     }),
   )
   t.true(
-    filter.netflixFilter({
+    internalFilters.netflixFilter({
       nodeName: 'HKBN 1',
       type: NodeTypeEnum.Shadowsocks,
       ...nodeConfigDefaults,
     }),
   )
   t.false(
-    filter.netflixFilter({
+    internalFilters.netflixFilter({
       nodeName: 'HK',
       type: NodeTypeEnum.Shadowsocks,
       ...nodeConfigDefaults,
     }),
   )
   t.true(
-    filter.netflixFilter({
+    internalFilters.netflixFilter({
       nodeName: 'HK NF',
       type: NodeTypeEnum.Shadowsocks,
       ...nodeConfigDefaults,
     }),
   )
   t.true(
-    filter.netflixFilter({
+    internalFilters.netflixFilter({
       nodeName: 'HK Netflix',
       type: NodeTypeEnum.Shadowsocks,
       ...nodeConfigDefaults,
@@ -234,21 +235,21 @@ test('netflixFilter', (t) => {
 
 test('youtubePremiumFilter', (t) => {
   t.true(
-    filter.youtubePremiumFilter({
+    internalFilters.youtubePremiumFilter({
       nodeName: '🇺🇸 美国',
       type: NodeTypeEnum.Shadowsocks,
       ...nodeConfigDefaults,
     }),
   )
   t.true(
-    filter.youtubePremiumFilter({
+    internalFilters.youtubePremiumFilter({
       nodeName: '韩国',
       type: NodeTypeEnum.Shadowsocks,
       ...nodeConfigDefaults,
     }),
   )
   t.true(
-    filter.youtubePremiumFilter({
+    internalFilters.youtubePremiumFilter({
       nodeName: 'HK',
       type: NodeTypeEnum.Shadowsocks,
       ...nodeConfigDefaults,
@@ -258,14 +259,14 @@ test('youtubePremiumFilter', (t) => {
 
 test('usFilter', (t) => {
   t.true(
-    filter.usFilter({
+    internalFilters.usFilter({
       nodeName: '🇺🇸 美国',
       type: NodeTypeEnum.Shadowsocks,
       ...nodeConfigDefaults,
     }),
   )
   t.false(
-    filter.usFilter({
+    internalFilters.usFilter({
       nodeName: 'HK',
       type: NodeTypeEnum.Shadowsocks,
       ...nodeConfigDefaults,
@@ -275,21 +276,21 @@ test('usFilter', (t) => {
 
 test('hkFilter', (t) => {
   t.true(
-    filter.hkFilter({
+    internalFilters.hkFilter({
       nodeName: '🇭🇰',
       type: NodeTypeEnum.Shadowsocks,
       ...nodeConfigDefaults,
     }),
   )
   t.true(
-    filter.hkFilter({
+    internalFilters.hkFilter({
       nodeName: 'HK',
       type: NodeTypeEnum.Shadowsocks,
       ...nodeConfigDefaults,
     }),
   )
   t.false(
-    filter.hkFilter({
+    internalFilters.hkFilter({
       nodeName: 'US 1',
       type: NodeTypeEnum.Shadowsocks,
       ...nodeConfigDefaults,
@@ -299,21 +300,21 @@ test('hkFilter', (t) => {
 
 test('japanFilter', (t) => {
   t.true(
-    filter.japanFilter({
+    internalFilters.japanFilter({
       nodeName: '🇯🇵',
       type: NodeTypeEnum.Shadowsocks,
       ...nodeConfigDefaults,
     }),
   )
   t.true(
-    filter.japanFilter({
+    internalFilters.japanFilter({
       nodeName: 'JP',
       type: NodeTypeEnum.Shadowsocks,
       ...nodeConfigDefaults,
     }),
   )
   t.false(
-    filter.japanFilter({
+    internalFilters.japanFilter({
       nodeName: 'US 1',
       type: NodeTypeEnum.Shadowsocks,
       ...nodeConfigDefaults,
@@ -323,21 +324,21 @@ test('japanFilter', (t) => {
 
 test('koreaFilter', (t) => {
   t.true(
-    filter.koreaFilter({
+    internalFilters.koreaFilter({
       nodeName: '🇰🇷',
       type: NodeTypeEnum.Shadowsocks,
       ...nodeConfigDefaults,
     }),
   )
   t.true(
-    filter.koreaFilter({
+    internalFilters.koreaFilter({
       nodeName: '韩国',
       type: NodeTypeEnum.Shadowsocks,
       ...nodeConfigDefaults,
     }),
   )
   t.false(
-    filter.koreaFilter({
+    internalFilters.koreaFilter({
       nodeName: 'US 1',
       type: NodeTypeEnum.Shadowsocks,
       ...nodeConfigDefaults,
@@ -347,45 +348,45 @@ test('koreaFilter', (t) => {
 
 test('singaporeFilter', (t) => {
   t.true(
-    filter.singaporeFilter({
+    internalFilters.singaporeFilter({
       nodeName: '🇸🇬',
       type: NodeTypeEnum.Shadowsocks,
       ...nodeConfigDefaults,
     }),
   )
   t.true(
-    filter.singaporeFilter({
+    internalFilters.singaporeFilter({
       nodeName: '新加坡',
       type: NodeTypeEnum.Shadowsocks,
       ...nodeConfigDefaults,
     }),
   )
   t.false(
-    filter.singaporeFilter({
+    internalFilters.singaporeFilter({
       nodeName: 'US 1',
       type: NodeTypeEnum.Shadowsocks,
       ...nodeConfigDefaults,
     }),
   )
 })
-333333333
+
 test('taiwanFilter', (t) => {
   t.true(
-    filter.taiwanFilter({
+    internalFilters.taiwanFilter({
       nodeName: '🇹🇼',
       type: NodeTypeEnum.Shadowsocks,
       ...nodeConfigDefaults,
     }),
   )
   t.true(
-    filter.taiwanFilter({
+    internalFilters.taiwanFilter({
       nodeName: '台湾',
       type: NodeTypeEnum.Shadowsocks,
       ...nodeConfigDefaults,
     }),
   )
   t.false(
-    filter.taiwanFilter({
+    internalFilters.taiwanFilter({
       nodeName: 'US 1',
       type: NodeTypeEnum.Shadowsocks,
       ...nodeConfigDefaults,
@@ -395,21 +396,21 @@ test('taiwanFilter', (t) => {
 
 test('chinaBackFilter', (t) => {
   t.true(
-    filter.chinaBackFilter({
+    internalFilters.chinaBackFilter({
       nodeName: '回国',
       type: NodeTypeEnum.Shadowsocks,
       ...nodeConfigDefaults,
     }),
   )
   t.true(
-    filter.chinaBackFilter({
+    internalFilters.chinaBackFilter({
       nodeName: '中国上海',
       type: NodeTypeEnum.Shadowsocks,
       ...nodeConfigDefaults,
     }),
   )
   t.false(
-    filter.chinaBackFilter({
+    internalFilters.chinaBackFilter({
       nodeName: 'US 1',
       type: NodeTypeEnum.Shadowsocks,
       ...nodeConfigDefaults,
@@ -419,21 +420,21 @@ test('chinaBackFilter', (t) => {
 
 test('chinaOutFilter', (t) => {
   t.false(
-    filter.chinaOutFilter({
+    internalFilters.chinaOutFilter({
       nodeName: '回国',
       type: NodeTypeEnum.Shadowsocks,
       ...nodeConfigDefaults,
     }),
   )
   t.false(
-    filter.chinaOutFilter({
+    internalFilters.chinaOutFilter({
       nodeName: '中国上海',
       type: NodeTypeEnum.Shadowsocks,
       ...nodeConfigDefaults,
     }),
   )
   t.true(
-    filter.chinaOutFilter({
+    internalFilters.chinaOutFilter({
       nodeName: 'US 1',
       type: NodeTypeEnum.Shadowsocks,
       ...nodeConfigDefaults,
@@ -442,7 +443,7 @@ test('chinaOutFilter', (t) => {
 })
 
 test('useSortedKeywords', (t) => {
-  const fn = filter.useSortedKeywords(['test', '测试'])
+  const fn = filters.useSortedKeywords(['test', '测试'])
   const result = fn.filter([
     generateVmessNode('测试 1'),
     generateVmessNode('测试 2'),
@@ -463,7 +464,10 @@ test('useSortedKeywords', (t) => {
 })
 
 test('mergeSortedFilters 1', (t) => {
-  const fn = filter.mergeSortedFilters([filter.hkFilter, filter.usFilter])
+  const fn = filters.mergeSortedFilters([
+    internalFilters.hkFilter,
+    internalFilters.usFilter,
+  ])
   const result = fn.filter([
     generateVmessNode('US 1'),
     generateVmessNode('US 2'),
@@ -483,36 +487,36 @@ test('mergeSortedFilters 1', (t) => {
 
 test('mergeSortedFilters 2', (t) => {
   t.throws(() => {
-    const fn = filter.useSortedKeywords(['1'])
-    filter.mergeSortedFilters([fn as any])
+    const fn = filters.useSortedKeywords(['1'])
+    filters.mergeSortedFilters([fn as any])
   })
 
   t.throws(() => {
     // @ts-ignore
-    filter.mergeSortedFilters([undefined])
+    filters.mergeSortedFilters([undefined])
   })
 })
 
 test('mergeFilters', (t) => {
   t.throws(() => {
-    const fn = filter.useSortedKeywords(['1'])
-    filter.mergeFilters([fn as any])
+    const fn = filters.useSortedKeywords(['1'])
+    filters.mergeFilters([fn as any])
   })
 
   t.throws(() => {
     // @ts-ignore
-    filter.mergeFilters([undefined])
+    filters.mergeFilters([undefined])
   })
 })
 
 test('complicated mergeFilters', (t) => {
-  const fn = filter.mergeFilters([
-    filter.mergeFilters(
-      [filter.useKeywords(['test']), filter.useProviders(['foo'], true)],
+  const fn = filters.mergeFilters([
+    filters.mergeFilters(
+      [filters.useKeywords(['test']), filters.useProviders(['foo'], true)],
       true,
     ),
-    filter.mergeFilters(
-      [filter.useKeywords(['test']), filter.useProviders(['bar'], true)],
+    filters.mergeFilters(
+      [filters.useKeywords(['test']), filters.useProviders(['bar'], true)],
       true,
     ),
   ])
@@ -574,8 +578,8 @@ test('complicated mergeFilters', (t) => {
 })
 
 test('useProviders', (t) => {
-  const fn = filter.useProviders(['测试', 'test'], false)
-  const fn2 = filter.useProviders(['测试', 'test'])
+  const fn = filters.useProviders(['测试', 'test'], false)
+  const fn2 = filters.useProviders(['测试', 'test'])
 
   t.is(
     fn({
@@ -623,8 +627,8 @@ test('useProviders', (t) => {
 })
 
 test('discardProviders', (t) => {
-  const fn = filter.discardProviders(['测试', 'test'], false)
-  const fn2 = filter.discardProviders(['测试', 'test'])
+  const fn = filters.discardProviders(['测试', 'test'], false)
+  const fn2 = filters.discardProviders(['测试', 'test'])
 
   t.is(
     fn({
@@ -672,13 +676,13 @@ test('discardProviders', (t) => {
 })
 
 test('reverseFilter', (t) => {
-  const notUS = filter.reverseFilter(filter.usFilter)
-  const notUSAndNotBGP = filter.mergeReversedFilters(
-    [notUS, filter.discardKeywords(['BGP'])],
+  const notUS = filters.reverseFilter(internalFilters.usFilter)
+  const notUSAndNotBGP = filters.mergeReversedFilters(
+    [notUS, filters.discardKeywords(['BGP'])],
     true,
   )
-  const notUSOrNotBGP = filter.mergeReversedFilters(
-    [notUS, filter.discardKeywords(['BGP'])],
+  const notUSOrNotBGP = filters.mergeReversedFilters(
+    [notUS, filters.discardKeywords(['BGP'])],
     false,
   )
 

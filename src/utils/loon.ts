@@ -9,8 +9,9 @@ import {
   SortedNodeFilterType,
 } from '../types'
 import { ERR_INVALID_FILTER } from '../constant'
-import {
-  applyFilter,
+import { applyFilter, internalFilters } from '../filters'
+
+const {
   httpFilter,
   httpsFilter,
   shadowsocksFilter,
@@ -18,8 +19,7 @@ import {
   trojanFilter,
   vmessFilter,
   wireguardFilter,
-} from './filter'
-
+} = internalFilters
 const logger = createLogger({ service: 'surgio:utils:loon' })
 
 // @see https://www.notion.so/1-9809ce5acf524d868affee8dd5fc0a6e
