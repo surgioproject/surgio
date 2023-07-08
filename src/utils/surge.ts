@@ -549,10 +549,16 @@ function nodeListMapper(
       return [
         nodeConfig.nodeName,
         [
-          nodeConfig.nodeName,
-          ' = wireguard, section-name = ',
-          nodeConfig.nodeName,
-        ].join(''),
+          `${nodeConfig.nodeName} = wireguard`,
+          `section-name = ${nodeConfig.nodeName}`,
+          ...pickAndFormatStringList(
+            nodeConfig,
+            ['underlyingProxy', 'testUrl'],
+            {
+              keyFormat: 'kebabCase',
+            },
+          ),
+        ].join(', '),
       ]
 
     // istanbul ignore next

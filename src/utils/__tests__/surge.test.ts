@@ -469,7 +469,9 @@ test('getSurgeNodes', async (t) => {
       '测试 Snell = snell, example.com, 443, psk=psk, shadow-tls-password=password, shadow-tls-sni=sni.example.com',
     ].join('\n'),
   )
+})
 
+test('getSurgeNodes - Wireguard', (t) => {
   t.is(
     surge.getSurgeNodes([
       {
@@ -485,8 +487,26 @@ test('getSurgeNodes', async (t) => {
           },
         ],
       },
+      {
+        type: NodeTypeEnum.Wireguard,
+        nodeName: 'wg node',
+        privateKey: 'privateKey',
+        selfIp: '10.0.0.1',
+        mtu: 1420,
+        peers: [
+          {
+            endpoint: 'wg.example.com:51820',
+            publicKey: 'publicKey',
+          },
+        ],
+        underlyingProxy: 'UnderlyingProxy',
+        testUrl: 'http://www.google.com',
+      },
     ]),
-    ['wg node = wireguard, section-name = wg node'].join('\n'),
+    [
+      'wg node = wireguard, section-name = wg node',
+      'wg node = wireguard, section-name = wg node, underlying-proxy=UnderlyingProxy, test-url=http://www.google.com',
+    ].join('\n'),
   )
 })
 
