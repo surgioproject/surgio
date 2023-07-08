@@ -1,3 +1,12 @@
+## [3.0.2](https://github.com/geekdada/surgio/compare/v3.0.1...v3.0.2) (2023-07-08)
+
+
+### Bug Fixes
+
+* Surge Wireguard 节点某些配置不生效的问题 ([30df8f9](https://github.com/geekdada/surgio/commit/30df8f945f0dc1f206e56c0aa3c5cf541665453d))
+
+
+
 ## [3.0.1](https://github.com/geekdada/surgio/compare/v3.0.0...v3.0.1) (2023-06-26)
 
 
