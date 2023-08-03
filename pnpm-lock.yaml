@@ -1,7 +1,7 @@
 lockfileVersion: '6.0'
 
 settings:
-  autoInstallPeers: false
+  autoInstallPeers: true
   excludeLinksFromLockfile: false
 
 dependencies:
@@ -216,7 +216,7 @@ devDependencies:
     version: 2.0.0-beta.62
   '@vuepress/plugin-docsearch':
     specifier: 2.0.0-beta.62
-    version: 2.0.0-beta.62(@algolia/client-search@4.17.2)
+    version: 2.0.0-beta.62(@algolia/client-search@4.17.2)(search-insights@2.7.0)
   '@vuepress/plugin-google-analytics':
     specifier: 2.0.0-beta.62
     version: 2.0.0-beta.62
@@ -313,10 +313,10 @@ devDependencies:
 
 packages:
 
-  /@algolia/autocomplete-core@1.9.3(@algolia/client-search@4.17.2)(algoliasearch@4.17.2):
+  /@algolia/autocomplete-core@1.9.3(@algolia/client-search@4.17.2)(algoliasearch@4.17.2)(search-insights@2.7.0):
     resolution: {integrity: sha512-009HdfugtGCdC4JdXUbVJClA0q0zh24yyePn+KUGk3rP7j8FEe/m5Yo/z65gn6nP/cM39PxpzqKrL7A6fP6PPw==}
     dependencies:
-      '@algolia/autocomplete-plugin-algolia-insights': 1.9.3(@algolia/client-search@4.17.2)(algoliasearch@4.17.2)
+      '@algolia/autocomplete-plugin-algolia-insights': 1.9.3(@algolia/client-search@4.17.2)(algoliasearch@4.17.2)(search-insights@2.7.0)
       '@algolia/autocomplete-shared': 1.9.3(@algolia/client-search@4.17.2)(algoliasearch@4.17.2)
     transitivePeerDependencies:
       - '@algolia/client-search'
@@ -324,12 +324,13 @@ packages:
       - search-insights
     dev: true
 
-  /@algolia/autocomplete-plugin-algolia-insights@1.9.3(@algolia/client-search@4.17.2)(algoliasearch@4.17.2):
+  /@algolia/autocomplete-plugin-algolia-insights@1.9.3(@algolia/client-search@4.17.2)(algoliasearch@4.17.2)(search-insights@2.7.0):
     resolution: {integrity: sha512-a/yTUkcO/Vyy+JffmAnTWbr4/90cLzw+CC3bRbhnULr/EM0fGNvM13oQQ14f2moLMcVDyAx/leczLlAOovhSZg==}
     peerDependencies:
       search-insights: '>= 1 < 3'
     dependencies:
       '@algolia/autocomplete-shared': 1.9.3(@algolia/client-search@4.17.2)(algoliasearch@4.17.2)
+      search-insights: 2.7.0
     transitivePeerDependencies:
       - '@algolia/client-search'
       - algoliasearch
@@ -852,10 +853,10 @@ packages:
     resolution: {integrity: sha512-2Pu9HDg/uP/IT10rbQ+4OrTQuxIWdKVUEdcw9/w7kZJv9NeHS6skJx1xuRiFyoGKwAzcHXnLp7csE99sj+O1YA==}
     dev: true
 
-  /@docsearch/js@3.5.1(@algolia/client-search@4.17.2):
+  /@docsearch/js@3.5.1(@algolia/client-search@4.17.2)(search-insights@2.7.0):
     resolution: {integrity: sha512-EXi8de5njxgP6TV3N9ytnGRLG9zmBNTEZjR4VzwPcpPLbZxxTLG2gaFyJyKiFVQxHW/DPlMrDJA3qoRRGEkgZw==}
     dependencies:
-      '@docsearch/react': 3.5.1(@algolia/client-search@4.17.2)
+      '@docsearch/react': 3.5.1(@algolia/client-search@4.17.2)(search-insights@2.7.0)
       preact: 10.15.1
     transitivePeerDependencies:
       - '@algolia/client-search'
@@ -865,7 +866,7 @@ packages:
       - search-insights
     dev: true
 
-  /@docsearch/react@3.5.1(@algolia/client-search@4.17.2):
+  /@docsearch/react@3.5.1(@algolia/client-search@4.17.2)(search-insights@2.7.0):
     resolution: {integrity: sha512-t5mEODdLzZq4PTFAm/dvqcvZFdPDMdfPE5rJS5SC8OUq9mPzxEy6b+9THIqNM9P0ocCb4UC5jqBrxKclnuIbzQ==}
     peerDependencies:
       '@types/react': '>= 16.8.0 < 19.0.0'
@@ -879,7 +880,7 @@ packages:
       react-dom:
         optional: true
     dependencies:
-      '@algolia/autocomplete-core': 1.9.3(@algolia/client-search@4.17.2)(algoliasearch@4.17.2)
+      '@algolia/autocomplete-core': 1.9.3(@algolia/client-search@4.17.2)(algoliasearch@4.17.2)(search-insights@2.7.0)
       '@algolia/autocomplete-preset-algolia': 1.9.3(@algolia/client-search@4.17.2)(algoliasearch@4.17.2)
       '@docsearch/css': 3.5.1
       algoliasearch: 4.17.2
@@ -2104,12 +2105,12 @@ packages:
       - supports-color
     dev: true
 
-  /@vuepress/plugin-docsearch@2.0.0-beta.62(@algolia/client-search@4.17.2):
+  /@vuepress/plugin-docsearch@2.0.0-beta.62(@algolia/client-search@4.17.2)(search-insights@2.7.0):
     resolution: {integrity: sha512-XdY4o15CKLqTEn485/pjWLdfV3fsm9JkoDJ97b9Cv0I9T/oW8NV3BFVezdX1d06vxB/doqoGj+JFEJH7t1lEuw==}
     dependencies:
       '@docsearch/css': 3.5.1
-      '@docsearch/js': 3.5.1(@algolia/client-search@4.17.2)
-      '@docsearch/react': 3.5.1(@algolia/client-search@4.17.2)
+      '@docsearch/js': 3.5.1(@algolia/client-search@4.17.2)(search-insights@2.7.0)
+      '@docsearch/react': 3.5.1(@algolia/client-search@4.17.2)(search-insights@2.7.0)
       '@vuepress/client': 2.0.0-beta.62
       '@vuepress/core': 2.0.0-beta.62
       '@vuepress/shared': 2.0.0-beta.62
@@ -2243,6 +2244,8 @@ packages:
 
   /@vuepress/theme-default@2.0.0-beta.62:
     resolution: {integrity: sha512-J6wLH4tevMnn/2y+MrTpZEVDWf5yvikx0S9TIfpcxjR/nN4XD9eSZrMB3Lt8JqTW/lwFze5MVBdTtVafZs4b3g==}
+    peerDependencies:
+      sass-loader: ^13.2.1
     peerDependenciesMeta:
       sass-loader:
         optional: true
@@ -2268,11 +2271,7 @@ packages:
       vue-router: 4.2.2(vue@3.3.4)
     transitivePeerDependencies:
       - '@vue/composition-api'
-      - fibers
-      - node-sass
-      - sass-embedded
       - supports-color
-      - webpack
     dev: true
 
   /@vuepress/utils@2.0.0-beta.61:
@@ -3769,7 +3768,7 @@ packages:
     dependencies:
       nice-try: 1.0.5
       path-key: 2.0.1
-      semver: 5.7.1
+      semver: 5.7.2
       shebang-command: 1.2.0
       which: 1.3.1
 
@@ -7035,7 +7034,7 @@ packages:
     dependencies:
       hosted-git-info: 2.8.9
       resolve: 1.22.2
-      semver: 5.7.1
+      semver: 5.7.2
       validate-npm-package-license: 3.0.4
     dev: true
 
@@ -8446,6 +8445,11 @@ packages:
       get-ready: 1.0.0
     dev: false
 
+  /search-insights@2.7.0:
+    resolution: {integrity: sha512-GLbVaGgzYEKMvuJbHRhLi1qoBFnjXZGZ6l4LxOYPCp4lI2jDRB3jPU9/XNhMwv6kvnA9slTreq6pvK+b3o3aqg==}
+    engines: {node: '>=8.16.0'}
+    dev: true
+
   /section-matter@1.0.0:
     resolution: {integrity: sha512-vfD3pmTzGpufjScBh50YHKzEu2lxBWhVEHsNGoEXmCmn2hKGfeNLYMzCJpe8cD7gqX7TJluOVpBkAequ6dgMmA==}
     engines: {node: '>=4'}
@@ -8460,8 +8464,8 @@ packages:
     dependencies:
       semver: 6.3.0
 
-  /semver@5.7.1:
-    resolution: {integrity: sha512-sauaDf/PZdVgrLTNYHRtpXa1iRiKcaebiKQ1BJdpQlWH2lCvexQdX55snPFyK7QzpudqbCI0qXFfOasHdyNDGQ==}
+  /semver@5.7.2:
+    resolution: {integrity: sha512-cBznnQ9KjJqU67B52RMC65CMarK2600WFnbkcaiwWq3xy/5haFJlshgnpjovMVJ+Hff49d8GEn0b87C5pDQ10g==}
     hasBin: true
 
   /semver@6.3.0:
@@ -9700,17 +9704,14 @@ packages:
     transitivePeerDependencies:
       - '@types/node'
       - '@vue/composition-api'
-      - fibers
       - less
-      - node-sass
       - sass
-      - sass-embedded
+      - sass-loader
       - stylus
       - sugarss
       - supports-color
       - terser
       - ts-node
-      - webpack
     dev: true
 
   /vuepress@2.0.0-beta.62(@types/node@18.16.18)(@vuepress/client@2.0.0-beta.62)(sass@1.63.4)(ts-node@10.9.1)(vue@3.3.4):
@@ -9723,18 +9724,15 @@ packages:
       - '@types/node'
       - '@vue/composition-api'
       - '@vuepress/client'
-      - fibers
       - less
-      - node-sass
       - sass
-      - sass-embedded
+      - sass-loader
       - stylus
       - sugarss
       - supports-color
       - terser
       - ts-node
       - vue
-      - webpack
     dev: true
 
   /wcwidth@1.0.1:
@@ -9796,7 +9794,7 @@ packages:
     resolution: {integrity: sha512-iCRnKVvGxOQdsKhcQId2PXV1vV3J/sDPXKA4Oe9+Eti2nb2ESEsYHRYls/UjoUW3bIc5ZDO8dTH50A/5iVN+bw==}
     engines: {node: '>=0.10.0'}
     dependencies:
-      semver: 5.7.1
+      semver: 5.7.2
     dev: false
 
   /winston-transport@4.5.0:
