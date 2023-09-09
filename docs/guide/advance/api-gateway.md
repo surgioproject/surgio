@@ -11,7 +11,7 @@ sidebarDepth: 1
 
 相信很多人都用过网络上处理规则的 API 接口，也有人在使用过 Surgio 后觉得更新规则不太灵活。虽然我们已经能够通过自动化的方法每隔一段时间更新一次规则，但还是无法做到实时更新。这篇文章就是想教大家，利用现成的 SAAS(Software as a Service) 服务，来实现一个 Surgio 规则仓库的 API。
 
-目前 Surgio 支持两个部署平台，Vercel（推荐）和 Heroku。你也可以部署在自己的主机上，不过没有技术支持。
+目前 Surgio 多个部署平台，推荐 Railway 和 Netlify。你也可以部署在自己的主机上，不过没有技术支持。
 
 需要保证 Surgio 版本号大于 `v1.20.0`。
 
@@ -20,6 +20,7 @@ sidebarDepth: 1
 :::tip 提示
 1. 该方法不要求代码托管平台，可为私有仓库（文章以 GitHub 为例）
 2. 已经部署其它平台的仓库可以修改之后增加部署到 Netlify Functions，互不影响
+3. 我们有一个运行的示例供你参考：[netlify-demo](https://github.com/surgioproject/netlify-demo)
 :::
 
 ### 准备
@@ -46,6 +47,8 @@ sidebarDepth: 1
 
 [functions]
   included_files = [
+    "node_modules/surgio/**",
+    "node_modules/@surgio/**",
     "provider/**",
     "template/**",
     "*.js",
@@ -112,6 +115,7 @@ https://surgio-demo.netlify.app/get-artifact/
 1. 该方法要求代码仓库由 GitHub 托管，可为私有仓库
 2. 已经部署 Vercel 的项目可以经过简单修改部署至 Railway
 3. 已经部署 Heroku 的项目可以直接部署至 Railway
+4. 我们有一个运行的示例供你参考：[railway-demo](https://github.com/surgioproject/railway-demo)
 :::
 
 ### 准备
@@ -147,7 +151,7 @@ const PORT = process.env.PORT || 3000
 })()
 ```
 
-参照 [这里](https://github.com/surgioproject/heroku_demo/blob/master/package.json) 在 `scripts` 下补充 `start` 脚本。
+参照 [这里](https://github.com/surgioproject/railway-demo/blob/master/package.json) 在 `scripts` 下补充 `start` 脚本。
 
 ```json
 {
@@ -213,47 +217,6 @@ https://surgio-demo.railway.app/get-artifact/
 :::tip 移步至
 [托管 API 的功能介绍](/guide/api.md)
 :::
-
-## 部署 - Heroku
-
-你可以在 [这里](https://github.com/surgioproject/heroku_demo) 找到完整的运行 Demo。
-
-把你的规则仓库同步至 GitHub 后，到 Heroku 关联该项目。
-
-![](../images/heroku_1.png)
-
-关联项目后，开启 `master` 分支自动部署。你可以不开启这一项，后续如果需要更新服务代码则进行手动更新。
-
-![](../images/heroku_2.png)
-
-最后，手动触发一次部署。
-
-![](../images/heroku_3.png)
-
-你可能还需要更新 _surgio.conf.js_ 内 `urlBase` 的值。以这个 Demo 为例，它应该是：
-
-```
-https://surgio-demo.herokuapp.com/get-artifact/
-```
-
-## 部署 - 自有服务器
-
-新建文件 `gateway.js`，内容如下：
-
-```js
-const gateway = require('@surgio/gateway')
-const PORT = process.env.PORT || 3000
-
-;(async () => {
-   const app = await gateway.bootstrapServer()
-   await app.listen(PORT, '0.0.0.0')
-   console.log('> Your app is ready at http://0.0.0.0:' + PORT)
-})()
-```
-
-```bash
-node gateway.js
-```
 
 ## 部署 - Vercel
 
