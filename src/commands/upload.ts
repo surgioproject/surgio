@@ -1,9 +1,7 @@
 // istanbul ignore file
 import { Flags } from '@oclif/core'
-// @ts-ignore
 import OSS from 'ali-oss'
 import fs from 'fs-extra'
-// @ts-ignore
 import dir from 'node-dir'
 import path from 'path'
 
@@ -21,17 +19,27 @@ class UploadCommand extends BaseCommand<typeof UploadCommand> {
       setConfig('output', this.flags.output)
     }
 
-    const ossConfig = {
-      region: config?.upload?.region,
-      bucket: config?.upload?.bucket,
-      endpoint: config?.upload?.endpoint,
-      accessKeyId: process.env.OSS_ACCESS_KEY_ID || config?.upload?.accessKeyId,
-      accessKeySecret:
-        process.env.OSS_ACCESS_KEY_SECRET || config?.upload?.accessKeySecret,
+    const region = config?.upload?.region
+    const bucket = config?.upload?.bucket
+    const endpoint = config?.upload?.endpoint
+    const accessKeyId =
+      process.env.OSS_ACCESS_KEY_ID ?? config?.upload?.accessKeyId
+    const accessKeySecret =
+      process.env.OSS_ACCESS_KEY_SECRET ?? config?.upload?.accessKeySecret
+
+    if (!accessKeyId || !accessKeySecret) {
+      throw new Error(
+        '请在配置文件中配置 OSS 的 accessKeyId 和 accessKeySecret',
+      )
     }
+
     const client = new OSS({
       secure: true,
-      ...ossConfig,
+      region,
+      bucket,
+      endpoint,
+      accessKeyId,
+      accessKeySecret,
     })
     const prefix = config?.upload?.prefix || '/'
     const fileList = await dir.promiseFiles(config.output)
@@ -58,10 +66,14 @@ class UploadCommand extends BaseCommand<typeof UploadCommand> {
       )
     }
     const deleteUnwanted = async () => {
-      const list = await client.list({
-        prefix,
-        delimiter: '/',
-      })
+      const list = await client.list(
+        {
+          prefix,
+          delimiter: '/',
+          'max-keys': 100,
+        },
+        {},
+      )
       const deleteList: string[] = []
 
       for (const key in list.objects) {
