@@ -1,3 +1,12 @@
+# [3.1.0](https://github.com/geekdada/surgio/compare/v3.0.2...v3.1.0) (2023-10-14)
+
+
+### Features
+
+* 支持 Hysteria 2 ([0603add](https://github.com/geekdada/surgio/commit/0603add012d07a37afb82dcb38f54a978a8395f6))
+
+
+
 ## [3.0.2](https://github.com/geekdada/surgio/compare/v3.0.1...v3.0.2) (2023-07-08)
 
 
