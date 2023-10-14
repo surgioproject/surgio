@@ -91,6 +91,7 @@ test('getClashSubscription', async (t) => {
       'snell',
       'ss4',
       'ss-wss',
+      'hysteria2',
     ].join(', '),
   )
 
@@ -228,6 +229,20 @@ test('getClashSubscription', async (t) => {
     skipCertVerify: false,
     tls13: false,
     wsHeaders: {},
+  })
+  t.deepEqual(config.shift(), {
+    type: NodeTypeEnum.Hysteria2,
+    downloadBandwidth: 200,
+    uploadBandwidth: 30,
+    hostname: 'server.com',
+    nodeName: 'hysteria2',
+    password: 'yourpassword',
+    port: 443,
+    obfs: 'salamander',
+    obfsPassword: 'yourpassword',
+    alpn: ['h3'],
+    skipCertVerify: false,
+    sni: 'server.com',
   })
 })
 

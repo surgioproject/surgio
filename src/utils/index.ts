@@ -350,7 +350,7 @@ export const pickAndFormatStringList = (
   const { keyFormat, stringifyValue } = options
 
   keyList.forEach((key) => {
-    if (obj.hasOwnProperty(key)) {
+    if (obj.hasOwnProperty(key) && obj[key] !== undefined) {
       const propertyKey = keyFormat ? changeCase(key, keyFormat) : key
       const propertyValue = obj[key]
 
@@ -385,7 +385,7 @@ export const pickAndFormatKeys = (
   const result: Record<string, any> = {}
 
   keyList.forEach((key) => {
-    if (obj.hasOwnProperty(key)) {
+    if (obj.hasOwnProperty(key) && obj[key] !== undefined) {
       const propertyKey = options.keyFormat
         ? changeCase(key, options.keyFormat)
         : key
@@ -580,11 +580,6 @@ export const isGFWFree = (): boolean =>
   isNetlify() ||
   isFlyIO()
 
-// istanbul ignore next
-export const assertNever = (x: never): never => {
-  throw new TypeError(`Unexpected object: ${x}`)
-}
-
 export const checkNotNullish = (val: unknown): boolean =>
   val !== null && val !== undefined
 
@@ -602,4 +597,38 @@ export const getHostnameFromHost = (host: string): string => {
     return match[1]
   }
   throw new Error(`Invalid host: ${host}`)
+}
+
+/**
+ * Returned value must be in Mbps
+ *
+ * Input value can be:
+ * - 1.2 Mbps
+ * - 1.2
+ * - 1200
+ * - 1200 Kbps
+ * - 1.2 Gbps
+ * Return value will be:
+ * - 1.2
+ * - 1.2
+ * - 1.2
+ * - 1.2
+ * - 1200
+ */
+export const parseBitrate = (str: string): number => {
+  const match = str.match(/^(\d+(?:\.\d+)?)\s*(?:Mbps|Kbps|Gbps)?$/)
+
+  if (!match) {
+    throw new Error(`Invalid bitrate: ${str}`)
+  }
+
+  const bitrate = Number(match[1])
+
+  if (str.includes('Gbps')) {
+    return bitrate * 1000
+  } else if (str.includes('Kbps')) {
+    return bitrate / 1000
+  } else {
+    return bitrate
+  }
 }

@@ -735,4 +735,58 @@ test('getClashNodes', async (t) => {
       },
     ],
   )
+
+  t.deepEqual(
+    clash.getClashNodes([
+      {
+        type: NodeTypeEnum.Hysteria2,
+        nodeName: '测试 Hysteria2',
+        hostname: 'example.com',
+        port: 443,
+        password: 'password',
+        downloadBandwidth: 100,
+        uploadBandwidth: 100,
+        clashConfig: {
+          enableHysteria2: true,
+        },
+      },
+      {
+        type: NodeTypeEnum.Hysteria2,
+        nodeName: '测试 Hysteria2',
+        hostname: 'example.com',
+        port: 443,
+        password: 'password',
+        downloadBandwidth: 100,
+        uploadBandwidth: 100,
+        ecn: true,
+        sni: 'sni.example.com',
+        skipCertVerify: true,
+        clashConfig: {
+          enableHysteria2: true,
+        },
+      },
+    ]),
+    [
+      {
+        down: 100,
+        name: '测试 Hysteria2',
+        password: 'password',
+        port: 443,
+        server: 'example.com',
+        type: 'hysteria2',
+        up: 100,
+      },
+      {
+        down: 100,
+        name: '测试 Hysteria2',
+        password: 'password',
+        port: 443,
+        server: 'example.com',
+        'skip-cert-verify': true,
+        sni: 'sni.example.com',
+        type: 'hysteria2',
+        up: 100,
+      },
+    ],
+  )
 })

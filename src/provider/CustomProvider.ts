@@ -18,6 +18,7 @@ import {
   VmessNodeConfigValidator,
   SnellNodeConfigValidator,
   TuicNodeConfigValidator,
+  Hysteria2NodeConfigValidator,
 } from '../validators'
 import { GetNodeListFunction, GetNodeListParams } from './types'
 
@@ -113,6 +114,9 @@ export default class CustomProvider extends Provider {
 
             case NodeTypeEnum.Wireguard:
               return WireguardNodeConfigValidator.parse(node)
+
+            case NodeTypeEnum.Hysteria2:
+              return Hysteria2NodeConfigValidator.parse(node)
 
             default:
               throw new TypeError(`无法识别的节点类型：${type}`)

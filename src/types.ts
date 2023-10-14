@@ -19,6 +19,7 @@ import {
   NodeFilterTypeValidator,
   SortedNodeFilterTypeValidator,
 } from './validators'
+import { Hysteria2NodeConfigValidator } from './validators/hysteria2'
 
 export enum NodeTypeEnum {
   HTTPS = 'https',
@@ -31,6 +32,7 @@ export enum NodeTypeEnum {
   Socks5 = 'socks5',
   Tuic = 'tuic',
   Wireguard = 'wireguard',
+  Hysteria2 = 'hysteria2',
 }
 
 export enum SupportProviderEnum {
@@ -165,6 +167,9 @@ export type TuicNodeConfig = z.infer<typeof TuicNodeConfigValidator> &
 export type WireguardNodeConfig = z.infer<typeof WireguardNodeConfigValidator> &
   SurgioInternals
 
+export type Hysteria2NodeConfig = z.infer<typeof Hysteria2NodeConfigValidator> &
+  SurgioInternals
+
 export interface SurgioInternals {
   binPath?: string
   localPort?: number
@@ -203,6 +208,7 @@ export type PossibleNodeConfigType =
   | Socks5NodeConfig
   | TuicNodeConfig
   | WireguardNodeConfig
+  | Hysteria2NodeConfig
 
 export type PossibleProviderConfigType =
   | BlackSSLProviderConfig

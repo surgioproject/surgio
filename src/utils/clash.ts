@@ -315,6 +315,33 @@ function nodeListMapper(nodeConfig: PossibleNodeConfigType) {
         ...(nodeConfig.alpn ? { alpn: nodeConfig.alpn } : null),
       } as const
 
+    case NodeTypeEnum.Hysteria2:
+      // Istanbul ignore next
+      if (!nodeConfig.clashConfig?.enableHysteria2) {
+        logger.warn(
+          `尚未开启 Clash 的 Hysteria2 支持，节点 ${nodeConfig.nodeName} 会被省略。如需开启，请在配置文件中设置 clashConfig.enableHysteria2 为 true。`,
+        )
+        return null
+      }
+
+      return {
+        type: 'hysteria2',
+        name: nodeConfig.nodeName,
+        server: nodeConfig.hostname,
+        port: nodeConfig.port,
+        password: nodeConfig.password,
+        up: nodeConfig.uploadBandwidth || 0,
+        down: nodeConfig.downloadBandwidth || 0,
+        ...pickAndFormatKeys(
+          nodeConfig,
+          ['obfs', 'obfsPassword', 'sni', 'skipCertVerify'],
+          {
+            keyFormat: 'kebabCase',
+          },
+        ),
+        ...(nodeConfig.alpn ? { alpn: nodeConfig.alpn } : null),
+      } as const
+
     case NodeTypeEnum.Wireguard:
       // istanbul ignore next
       if (nodeConfig.peers.length > 1) {

@@ -178,11 +178,12 @@ describe('generate command', () => {
     test
       .stdout({ print: false })
       .stderr({ print: false })
+      .env({
+        TEST_TLS13_ENABLE: 'true',
+        TEST_SKIP_CERT_VERIFY_ENABLE: 'true',
+      })
       .command(['generate', `--project=${resolve('plain')}`])
       .it('runs generate cmd', () => {
-        process.env.TEST_TLS13_ENABLE = 'true'
-        process.env.TEST_SKIP_CERT_VERIFY_ENABLE = 'true'
-
         const confString1 = fs.readFileSync(resolve('plain/dist/v2rayn.conf'), {
           encoding: 'utf8',
         })
@@ -195,9 +196,6 @@ describe('generate command', () => {
 
         ;(expect(confString1).to as any).matchSnapshot()
         ;(expect(confString2).to as any).matchSnapshot()
-
-        process.env.TEST_TLS13_ENABLE = undefined
-        process.env.TEST_SKIP_CERT_VERIFY_ENABLE = undefined
       })
   })
 })

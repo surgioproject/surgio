@@ -229,11 +229,11 @@ test('getSurgeNodes', async (t) => {
   )
   t.is(
     txt1[10],
-    '测试 6 = vmess, 1.1.1.1, 8080, username=1386f85e-657b-4d6e-9d56-78badb75e1fd, ws=true, ws-path=/, ws-headers="host:1.1.1.1|user-agent:Mozilla/5.0 (iPhone; CPU iPhone OS 13_5 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/13.1.1 Mobile/15E148 Safari/604.1", tls=true, tls13=true, skip-cert-verify=true, tfo=true, mptcp=true, vmess-aead=false',
+    '测试 6 = vmess, 1.1.1.1, 8080, username=1386f85e-657b-4d6e-9d56-78badb75e1fd, ws=true, ws-path=/, ws-headers="host:1.1.1.1|user-agent:Mozilla/5.0 (iPhone; CPU iPhone OS 13_5 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/13.1.1 Mobile/15E148 Safari/604.1", tls=true, vmess-aead=false, tfo=true, mptcp=true, tls13=true, skip-cert-verify=true',
   )
   t.is(
     txt1[11],
-    '测试 7 = vmess, 1.1.1.1, 8080, username=1386f85e-657b-4d6e-9d56-78badb75e1fd, ws=true, ws-path=/, ws-headers="host:1.1.1.1|user-agent:Mozilla/5.0 (iPhone; CPU iPhone OS 13_5 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/13.1.1 Mobile/15E148 Safari/604.1", tls=true, tls13=true, skip-cert-verify=true, tfo=true, mptcp=true, underlying-proxy=another-proxy, vmess-aead=false',
+    '测试 7 = vmess, 1.1.1.1, 8080, username=1386f85e-657b-4d6e-9d56-78badb75e1fd, ws=true, ws-path=/, ws-headers="host:1.1.1.1|user-agent:Mozilla/5.0 (iPhone; CPU iPhone OS 13_5 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/13.1.1 Mobile/15E148 Safari/604.1", tls=true, vmess-aead=false, tfo=true, mptcp=true, underlying-proxy=another-proxy, tls13=true, skip-cert-verify=true',
   )
 
   t.is(
@@ -268,7 +268,7 @@ test('getSurgeNodes', async (t) => {
         skipCertVerify: true,
       },
     ]),
-    'trojan node 2 = trojan, example.com, 443, password=password1, tfo=true, mptcp=true, sni=sni.com, skip-cert-verify=true',
+    'trojan node 2 = trojan, example.com, 443, password=password1, tfo=true, mptcp=true, skip-cert-verify=true, sni=sni.com',
   )
 
   t.is(
@@ -303,7 +303,7 @@ test('getSurgeNodes', async (t) => {
         },
       },
     ]),
-    'trojan node 1 = trojan, example.com, 443, password=password1, sni=sni.example.com, ws=true, ws-path=/ws, ws-headers="host:ws.example.com|test-key:test-value"',
+    'trojan node 1 = trojan, example.com, 443, password=password1, ws=true, ws-path=/ws, ws-headers="host:ws.example.com|test-key:test-value", sni=sni.example.com',
   )
 
   t.is(
@@ -363,7 +363,7 @@ test('getSurgeNodes', async (t) => {
         tls: true,
       },
     ]),
-    'socks5-tls node 4 = socks5-tls, 1.1.1.1, 443, username=auto, password=auto, sni=example.com, tfo=true, skip-cert-verify=true',
+    'socks5-tls node 4 = socks5-tls, 1.1.1.1, 443, username=auto, password=auto, tfo=true, skip-cert-verify=true, sni=example.com',
   )
 
   t.is(
@@ -382,7 +382,7 @@ test('getSurgeNodes', async (t) => {
         tls: true,
       },
     ]),
-    'socks5-tls node 5 = socks5-tls, 1.1.1.1, 443, username=auto, password=auto, sni=example.com, tfo=true, skip-cert-verify=true, client-cert=item',
+    'socks5-tls node 5 = socks5-tls, 1.1.1.1, 443, username=auto, password=auto, client-cert=item, tfo=true, skip-cert-verify=true, sni=example.com',
   )
 
   t.is(
@@ -448,7 +448,7 @@ test('getSurgeNodes', async (t) => {
         testUrl: 'http://www.google.com',
       },
     ]),
-    '测试 6 = vmess, 1.1.1.1, 8080, username=1386f85e-657b-4d6e-9d56-78badb75e1fd, ws=true, ws-path=/, ws-headers="host:1.1.1.1|user-agent:Mozilla/5.0 (iPhone; CPU iPhone OS 13_5 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/13.1.1 Mobile/15E148 Safari/604.1", tls=true, tls13=true, skip-cert-verify=true, tfo=true, mptcp=true, test-url=http://www.google.com, vmess-aead=false',
+    '测试 6 = vmess, 1.1.1.1, 8080, username=1386f85e-657b-4d6e-9d56-78badb75e1fd, ws=true, ws-path=/, ws-headers="host:1.1.1.1|user-agent:Mozilla/5.0 (iPhone; CPU iPhone OS 13_5 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/13.1.1 Mobile/15E148 Safari/604.1", tls=true, vmess-aead=false, tfo=true, mptcp=true, test-url=http://www.google.com, tls13=true, skip-cert-verify=true',
   )
 
   t.is(
@@ -550,13 +550,46 @@ test('getSurgeNodes - Tuic', (t) => {
         sni: 'sni.example.com',
         skipCertVerify: true,
         version: 5,
+        ecn: true,
       },
     ]),
     [
       '测试 Tuic = tuic, example.com, 443, token=token, server-cert-fingerprint-sha256=sha256',
       '测试 Tuic = tuic, example.com, 443, token=token, alpn=h3',
-      '测试 Tuic = tuic, example.com, 443, token=token, sni=sni.example.com, skip-cert-verify=true, alpn=h3',
-      '测试 Tuic = tuic-v5, example.com, 443, password=password, uuid=uuid, sni=sni.example.com, skip-cert-verify=true, alpn=h3',
+      '测试 Tuic = tuic, example.com, 443, token=token, skip-cert-verify=true, sni=sni.example.com, alpn=h3',
+      '测试 Tuic = tuic-v5, example.com, 443, password=password, uuid=uuid, ecn=true, skip-cert-verify=true, sni=sni.example.com, alpn=h3',
+    ].join('\n'),
+  )
+})
+
+test('getSurgeNodes - Hysteria2', (t) => {
+  t.is(
+    surge.getSurgeNodes([
+      {
+        type: NodeTypeEnum.Hysteria2,
+        nodeName: '测试 Hysteria2',
+        hostname: 'example.com',
+        port: 443,
+        password: 'password',
+        downloadBandwidth: 100,
+        uploadBandwidth: 100,
+      },
+      {
+        type: NodeTypeEnum.Hysteria2,
+        nodeName: '测试 Hysteria2',
+        hostname: 'example.com',
+        port: 443,
+        password: 'password',
+        downloadBandwidth: 100,
+        uploadBandwidth: 100,
+        ecn: true,
+        sni: 'sni.example.com',
+        skipCertVerify: true,
+      },
+    ]),
+    [
+      '测试 Hysteria2 = hysteria2, example.com, 443, password=password, download-bandwidth=100',
+      '测试 Hysteria2 = hysteria2, example.com, 443, password=password, download-bandwidth=100, ecn=true, skip-cert-verify=true, sni=sni.example.com',
     ].join('\n'),
   )
 })

@@ -29,7 +29,17 @@ export const getSurgeNodes = function (
   filter?: NodeFilterType | SortedNodeFilterType,
 ): string {
   const result: string[] = applyFilter(nodeList, filter)
-    .map(nodeListMapper)
+    .map((nodeConfig) => {
+      const result = nodeListMapper(nodeConfig)
+
+      if (!result) {
+        return undefined
+      }
+
+      const [nodeName, nodeConfigString] = result
+
+      return [nodeName, appendCommonConfig(nodeConfigString, nodeConfig)]
+    })
     .filter(
       (item): item is NonNullable<ReturnType<typeof nodeListMapper>> =>
         item !== undefined,
@@ -157,21 +167,11 @@ function nodeListMapper(
             'encrypt-method=' + nodeConfig.method,
             ...pickAndFormatStringList(
               nodeConfig,
-              [
-                'password',
-                'udpRelay',
-                'obfs',
-                'obfsHost',
-                'tfo',
-                'mptcp',
-                'testUrl',
-                'underlyingProxy',
-              ],
+              ['password', 'udpRelay', 'obfs', 'obfsHost'],
               {
                 keyFormat: 'kebabCase',
               },
             ),
-            ...parseShadowTlsConfig(nodeConfig),
           ].join(', '),
         ].join(' = '),
       ]
@@ -188,23 +188,6 @@ function nodeListMapper(
             nodeConfig.port,
             nodeConfig.username,
             nodeConfig.password,
-            ...pickAndFormatStringList(
-              nodeConfig,
-              [
-                'sni',
-                'tfo',
-                'mptcp',
-                'tls13',
-                'testUrl',
-                'skipCertVerify',
-                'underlyingProxy',
-                'serverCertFingerprintSha256',
-              ],
-              {
-                keyFormat: 'kebabCase',
-              },
-            ),
-            ...parseShadowTlsConfig(nodeConfig),
           ].join(', '),
         ].join(' = '),
       ]
@@ -221,14 +204,6 @@ function nodeListMapper(
             nodeConfig.port,
             nodeConfig.username,
             nodeConfig.password,
-            ...pickAndFormatStringList(
-              nodeConfig,
-              ['tfo', 'mptcp', 'underlyingProxy', 'testUrl'],
-              {
-                keyFormat: 'kebabCase',
-              },
-            ),
-            ...parseShadowTlsConfig(nodeConfig),
           ].join(', '),
         ].join(' = '),
       ]
@@ -245,22 +220,11 @@ function nodeListMapper(
             nodeConfig.port,
             ...pickAndFormatStringList(
               nodeConfig,
-              [
-                'psk',
-                'obfs',
-                'obfsHost',
-                'version',
-                'reuse',
-                'tfo',
-                'mptcp',
-                'testUrl',
-                'underlyingProxy',
-              ],
+              ['psk', 'obfs', 'obfsHost', 'version', 'reuse'],
               {
                 keyFormat: 'kebabCase',
               },
             ),
-            ...parseShadowTlsConfig(nodeConfig),
           ].join(', '),
         ].join(' = '),
       ]
@@ -361,34 +325,15 @@ function nodeListMapper(
       if (nodeConfig.tls) {
         result.push(
           'tls=true',
-          ...pickAndFormatStringList(
-            nodeConfig,
-            ['tls13', 'skipCertVerify', 'serverCertFingerprintSha256'],
-            {
-              keyFormat: 'kebabCase',
-            },
-          ),
           ...(nodeConfig.host ? [`sni=${nodeConfig.host}`] : []),
         )
       }
-
-      result.push(
-        ...pickAndFormatStringList(
-          nodeConfig,
-          ['tfo', 'mptcp', 'underlyingProxy', 'testUrl'],
-          {
-            keyFormat: 'kebabCase',
-          },
-        ),
-      )
 
       if (nodeConfig?.surgeConfig?.vmessAEAD) {
         result.push('vmess-aead=true')
       } else {
         result.push('vmess-aead=false')
       }
-
-      result.push(...parseShadowTlsConfig(nodeConfig))
 
       return [
         nodeConfig.nodeName,
@@ -402,23 +347,6 @@ function nodeListMapper(
         nodeConfig.hostname,
         `${nodeConfig.port}`,
         `password=${nodeConfig.password}`,
-        ...pickAndFormatStringList(
-          nodeConfig,
-          [
-            'tfo',
-            'mptcp',
-            'sni',
-            'tls13',
-            'testUrl',
-            'underlyingProxy',
-            'skipCertVerify',
-            'serverCertFingerprintSha256',
-          ],
-          {
-            keyFormat: 'kebabCase',
-          },
-        ),
-        ...parseShadowTlsConfig(nodeConfig),
       ]
 
       if (nodeConfig.network === 'ws') {
@@ -446,30 +374,15 @@ function nodeListMapper(
         nodeConfig.port,
         ...pickAndFormatStringList(
           nodeConfig,
-          [
-            'username',
-            'password',
-            'sni',
-            'tfo',
-            'mptcp',
-            'tls13',
-            'udpRelay',
-            'testUrl',
-            'underlyingProxy',
-            'serverCertFingerprintSha256',
-          ],
+          ['username', 'password', 'udpRelay'],
           {
             keyFormat: 'kebabCase',
           },
         ),
-        ...parseShadowTlsConfig(nodeConfig),
       ]
 
       if (nodeConfig.tls === true) {
         result.push(
-          ...(typeof nodeConfig.skipCertVerify === 'boolean'
-            ? [`skip-cert-verify=${nodeConfig.skipCertVerify}`]
-            : []),
           ...(typeof nodeConfig.clientCert === 'string'
             ? [`client-cert=${nodeConfig.clientCert}`]
             : []),
@@ -488,24 +401,9 @@ function nodeListMapper(
           'tuic-v5',
           nodeConfig.hostname,
           nodeConfig.port,
-          ...pickAndFormatStringList(
-            nodeConfig,
-            [
-              'password',
-              'uuid',
-              'sni',
-              'underlyingProxy',
-              'testUrl',
-              'skipCertVerify',
-              'serverCertFingerprintSha256',
-            ],
-            {
-              keyFormat: 'kebabCase',
-            },
-          ),
-          ...(Array.isArray(nodeConfig.alpn)
-            ? [`alpn=${nodeConfig.alpn.join(',')}`]
-            : []),
+          ...pickAndFormatStringList(nodeConfig, ['password', 'uuid'], {
+            keyFormat: 'kebabCase',
+          }),
         ]
 
         return [
@@ -518,23 +416,9 @@ function nodeListMapper(
         'tuic',
         nodeConfig.hostname,
         nodeConfig.port,
-        ...pickAndFormatStringList(
-          nodeConfig,
-          [
-            'token',
-            'sni',
-            'underlyingProxy',
-            'testUrl',
-            'skipCertVerify',
-            'serverCertFingerprintSha256',
-          ],
-          {
-            keyFormat: 'kebabCase',
-          },
-        ),
-        ...(Array.isArray(nodeConfig.alpn)
-          ? [`alpn=${nodeConfig.alpn.join(',')}`]
-          : []),
+        ...pickAndFormatStringList(nodeConfig, ['token'], {
+          keyFormat: 'kebabCase',
+        }),
       ]
 
       return [
@@ -543,21 +427,50 @@ function nodeListMapper(
       ]
     }
 
+    case NodeTypeEnum.Hysteria2:
+      // istanbul ignore next
+      if (nodeConfig.uploadBandwidth) {
+        logger.info(
+          `Surge 不支持为 Hysteria2 节点配置 uploadBandwidth，节点 ${nodeConfig.nodeName} 将不包含此字段`,
+        )
+      }
+      // istanbul ignore next
+      if (nodeConfig.obfs) {
+        logger.warn(
+          `Surge 不支持为 Hysteria2 节点配置 obfs，节点 ${nodeConfig.nodeName} 将被忽略`,
+        )
+        return undefined
+      }
+
+      return [
+        nodeConfig.nodeName,
+        [
+          `${nodeConfig.nodeName} = hysteria2`,
+          nodeConfig.hostname,
+          nodeConfig.port,
+          ...pickAndFormatStringList(
+            nodeConfig,
+            ['password', 'downloadBandwidth'],
+            {
+              keyFormat: 'kebabCase',
+            },
+          ),
+          ...(Array.isArray(nodeConfig.alpn)
+            ? [`alpn=${nodeConfig.alpn.join(',')}`]
+            : []),
+        ].join(', '),
+      ]
+
     case NodeTypeEnum.Wireguard:
-      logger.info('请配合使用 getSurgeWireguardNodes 生成 Wireguard 节点配置')
+      logger.info(
+        `请配合使用 getSurgeWireguardNodes 生成 ${nodeConfig.nodeName} 节点配置`,
+      )
 
       return [
         nodeConfig.nodeName,
         [
           `${nodeConfig.nodeName} = wireguard`,
           `section-name = ${nodeConfig.nodeName}`,
-          ...pickAndFormatStringList(
-            nodeConfig,
-            ['underlyingProxy', 'testUrl'],
-            {
-              keyFormat: 'kebabCase',
-            },
-          ),
         ].join(', '),
       ]
 
@@ -570,6 +483,41 @@ function nodeListMapper(
       )
       return undefined
   }
+}
+
+function appendCommonConfig(
+  original: string,
+  nodeConfig: PossibleNodeConfigType,
+): string {
+  const appendConfig = [
+    ...pickAndFormatStringList(
+      nodeConfig,
+      [
+        'tfo',
+        'mptcp',
+        'ecn',
+        'underlyingProxy',
+        'testUrl',
+        'tls13',
+        'skipCertVerify',
+        'sni',
+        'serverCertFingerprintSha256',
+      ],
+      {
+        keyFormat: 'kebabCase',
+      },
+    ),
+    ...parseShadowTlsConfig(nodeConfig),
+    ...('alpn' in nodeConfig && Array.isArray(nodeConfig.alpn)
+      ? [`alpn=${nodeConfig.alpn.join(',')}`]
+      : []),
+  ]
+
+  if (!appendConfig.length) {
+    return original
+  }
+
+  return original + ', ' + appendConfig.join(', ')
 }
 
 function parseShadowTlsConfig(nodeConfig: PossibleNodeConfigType) {

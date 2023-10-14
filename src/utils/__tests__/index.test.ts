@@ -284,3 +284,11 @@ test('isIp', (t) => {
   t.false(utils.isIp('256.256.256.256'))
   t.false(utils.isIp('example.com'))
 })
+
+test('parseBitrate', (t) => {
+  t.is(utils.parseBitrate('1Kbps'), 0.001)
+  t.is(utils.parseBitrate('1 Kbps'), 0.001)
+  t.is(utils.parseBitrate('1 Mbps'), 1)
+  t.is(utils.parseBitrate('1000 Kbps'), 1)
+  t.is(utils.parseBitrate('1Gbps'), 1000)
+})

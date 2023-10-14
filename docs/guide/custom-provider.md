@@ -355,6 +355,28 @@ module.exports = defineCustomProvider({
 }
 ```
 
+### Hysteria
+
+> <Badge text="Surgio v3.1.0" vertical="middle" />
+
+Surgio 只支持 Hysteria v2 协议。请注意，Hysteria v2 协议和 v1 协议完全不兼容。当前可以为 Clash 和 Surge 生成此节点。
+
+Clash 需要在配置中开启 `clashConfig.enableHysteria2`。
+
+```json5
+{
+  type: 'hysteria2',
+  nodeName: 'Hysteria',
+  hostname: 'hysteria.example.com',
+  port: 443,
+  password: 'password',
+  sni: 'sni.example.com', // 可选
+  skipCertVerify: true, // 可选
+  alpn: ['h3'], // 可选，Stash 不支持空值
+  udpRelay: false, // 可选, 仅 Clash 支持更改，Surge 默认开启
+}
+```
+
 ## SSD 订阅
 
 ```js
@@ -651,6 +673,13 @@ Surgio 不会验证名称是否有效
 - 默认值: `undefined`
 
 用于验证服务器证书的 SHA256 指纹。目前仅 Surge 支持该特性。
+
+### nodeConfig.ecn
+
+- 类型: `boolean`
+- 默认值: `false`
+
+是否为该节点开启 [ECN（Explicit Congestion Notification）](https://yach.me/2023/10/14/ccn-and-ecn/)。目前仅 Surge 支持这一特性。
 
 ### provider.nodeFilter
 

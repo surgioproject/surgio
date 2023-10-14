@@ -67,6 +67,7 @@ export const SurgioConfigValidator = z.object({
     .object({
       enableTuic: z.oboolean(),
       enableShadowTls: z.oboolean(),
+      enableHysteria2: z.oboolean(),
     })
     .optional(),
   gateway: z

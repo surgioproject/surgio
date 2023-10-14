@@ -8,6 +8,7 @@ import {
   ClashProviderConfig,
   HttpNodeConfig,
   HttpsNodeConfig,
+  Hysteria2NodeConfig,
   NodeTypeEnum,
   ShadowsocksNodeConfig,
   ShadowsocksrNodeConfig,
@@ -17,8 +18,12 @@ import {
   TuicNodeConfig,
   VmessNodeConfig,
 } from '../types'
-import { lowercaseHeaderKeys, SurgioError } from '../utils'
-import { getNetworkClashUA } from '../utils/env-flag'
+import {
+  lowercaseHeaderKeys,
+  SurgioError,
+  getNetworkClashUA,
+  parseBitrate,
+} from '../utils'
 import relayableUrl from '../utils/relayable-url'
 import Provider from './Provider'
 import { GetNodeListFunction, GetSubscriptionUserInfoFunction } from './types'
@@ -32,6 +37,7 @@ type SupportConfigTypes =
   | SnellNodeConfig
   | TrojanNodeConfig
   | TuicNodeConfig
+  | Hysteria2NodeConfig
 
 const logger = createLogger({
   service: 'surgio:ClashProvider',
@@ -408,6 +414,35 @@ export const parseClashConfig = (
             ...('alpn' in item ? { alpn: item.alpn } : null),
           } as TuicNodeConfig
         }
+
+        case 'hysteria2':
+          // istanbul ignore next
+          if (item.obfs && item.obfs !== 'salamander') {
+            throw new Error(
+              '不支持从 Clash 订阅中读取 Hysteria2 节点，因为其 obfs 不是 salamander',
+            )
+          }
+
+          return {
+            type: NodeTypeEnum.Hysteria2,
+            nodeName: item.name,
+            hostname: item.server,
+            port: item.port,
+            password: item.password,
+            ...(item.down
+              ? { downloadBandwidth: parseBitrate(item.down) }
+              : null),
+            ...(item.up ? { uploadBandwidth: parseBitrate(item.up) } : null),
+            ...(item.obfs ? { obfs: item.obfs } : null),
+            ...(item['obfs-password']
+              ? { obfsPassword: item['obfs-password'] }
+              : null),
+            ...(item.sni ? { sni: item.sni } : null),
+            ...('alpn' in item ? { alpn: item.alpn } : null),
+            ...('skip-cert-verify' in item
+              ? { skipCertVerify: item['skip-cert-verify'] === true }
+              : null),
+          } as Hysteria2NodeConfig
 
         default:
           logger.warn(

@@ -146,9 +146,9 @@ export const getV2rayNSubscription = async ({
         if (item.startsWith('ss://')) {
           return {
             ...parseSSUri(item),
-            udpRelay: udpRelay,
-            skipCertVerify: skipCertVerify,
-            tls13: tls13,
+            udpRelay,
+            skipCertVerify,
+            tls13,
           }
         }
 

@@ -240,6 +240,15 @@ module.exports = {
 
 目前仅 Stash 支持 shadow-tls，如果你希望在 Shadowsocks 节点中使用 shadow-tls 请开启此项。
 
+### clashConfig.enableHysteria2
+
+> <Badge text="v3.1.0" vertical="middle" />
+
+- 类型: `boolean`
+- 默认值: `false`
+
+目前仅 Clash Meta 内核支持 Hysteria v2，如果你希望在 Clash 订阅中输出 Hysteria v2 节点请开启此项。
+
 ## surfboardConfig
 
 - 类型: `object`
