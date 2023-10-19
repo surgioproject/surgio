@@ -15,7 +15,7 @@ sidebarDepth: 1
 
 上面这两个地方服务提供了额免费的 Redis 实例，性能已经完全满足 Surgio 的需求。你可以使用你自己的 Redis 数据库，只要能够从外网访问即可。
 
-需要注意，假如你的 Surgio 服务部署在美西，那 Redis 也最好在美西。Netlify 和 Railway 默认的部署区域是 `us-west-1`，Vercel 的默认部署区域是 `us-east-1`。
+需要注意，假如你的 Surgio 服务部署在美西，那 Redis 也最好在美西。Railway 默认的部署区域是 `us-west-1`，Vercel 的默认部署区域是 `us-east-1`，Netlify 的默认部署区域是 `us-east-2`。
 
 新建成功之后，上面的平台应该会提供一个连接地址，格式类似：
 
