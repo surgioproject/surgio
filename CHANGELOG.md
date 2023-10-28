@@ -1,3 +1,12 @@
+# [3.2.0](https://github.com/geekdada/surgio/compare/v3.1.0...v3.2.0) (2023-10-28)
+
+
+### Features
+
+* 新增判断 UserAgent 的工具方法 ([9a8d0f0](https://github.com/geekdada/surgio/commit/9a8d0f026cd72e3ce3aeee3f9566d19dd5c01733))
+
+
+
 # [3.1.0](https://github.com/geekdada/surgio/compare/v3.0.2...v3.1.0) (2023-10-14)
 
 
