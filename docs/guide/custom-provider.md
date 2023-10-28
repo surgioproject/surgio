@@ -113,6 +113,10 @@ module.exports = defineCustomProvider({
 
 `customParams` 默认会包含 `requestUserAgent`，方便你根据不同的客户端返回不同的节点列表。
 
+:::tip 提示
+如果你想了解如何编写更复杂的 Provider 请看 [这里](/guide/advance/advanced-provider.md)。
+   :::
+
 ```js
 const { defineCustomProvider } = require('surgio');
 
@@ -369,11 +373,11 @@ Clash 需要在配置中开启 `clashConfig.enableHysteria2`。
   nodeName: 'Hysteria',
   hostname: 'hysteria.example.com',
   port: 443,
-  password: 'password',
+  password: 'password', 
+  downloadBandwidth: 40, // 可选, Mbps
+  uploadBandwidth: 40, // 可选, Mbps
   sni: 'sni.example.com', // 可选
   skipCertVerify: true, // 可选
-  alpn: ['h3'], // 可选，Stash 不支持空值
-  udpRelay: false, // 可选, 仅 Clash 支持更改，Surge 默认开启
 }
 ```
 

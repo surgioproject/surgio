@@ -10,6 +10,7 @@ import {
   isRailway,
   isVercel,
 } from './utils'
+import * as useragentUtils from './utils/useragent'
 import * as filters from './filters'
 import { CATEGORIES } from './constant'
 
@@ -23,6 +24,7 @@ const { internalFilters, ...filtersUtils } = filters
 export const utils = {
   ...internalFilters,
   ...filtersUtils,
+  ...useragentUtils,
   isHeroku,
   isNow,
   isVercel,

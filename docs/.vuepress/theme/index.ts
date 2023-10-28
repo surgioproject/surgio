@@ -50,6 +50,7 @@ export default {
         children: [
           '/guide/advance/surge-advance',
           '/guide/advance/custom-filter',
+          '/guide/advance/advanced-provider',
           '/guide/advance/automation',
           '/guide/advance/api-gateway',
           '/guide/advance/redis-cache',

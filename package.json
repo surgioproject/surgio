@@ -90,6 +90,7 @@
     "chalk": "^4.1.2",
     "change-case": "^4.1.2",
     "check-node-version": "^4.2.1",
+    "compare-versions": "^6.1.0",
     "date-fns": "^2.30.0",
     "detect-newline": "^3.1.0",
     "dotenv": "^16.3.1",
