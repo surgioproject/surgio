@@ -80,8 +80,6 @@ export const CATEGORIES = {
   SURFBOARD: 'Surfboard',
 } as const
 
-export const RELAY_SERVICE = 'https://surgio-cors.herokuapp.com/'
-
 export const TMP_FOLDER_NAME = 'surgio-config'
 
 export const CACHE_KEYS = {

@@ -4,10 +4,6 @@ import relayableUrl from '../relayable-url'
 
 test('relayableUrl', (t) => {
   t.is(
-    relayableUrl('http://example.com', true),
-    'https://surgio-cors.herokuapp.com/http://example.com',
-  )
-  t.is(
     relayableUrl('http://example.com', 'http://proxy.example.com/%URL%'),
     'http://proxy.example.com/http://example.com',
   )

@@ -3,7 +3,6 @@ import nock from 'nock'
 import sinon from 'sinon'
 
 import { NodeTypeEnum, SupportProviderEnum } from '../../types'
-import { RELAY_SERVICE } from '../../constant'
 import ClashProvider, {
   getClashSubscription,
   parseClashConfig,
@@ -578,13 +577,24 @@ test('shadowsocks v2ray mux', async (t) => {
 })
 
 test('ClashProvider relayUrl', async (t) => {
-  const provider = new ClashProvider('test', {
+  const provider1 = new ClashProvider('test', {
     type: SupportProviderEnum.Clash,
     url: 'http://example.com/clash-sample.yaml',
-    relayUrl: true,
+    relayUrl: 'http://relay.com/%URL%',
   })
 
-  t.is(provider.url, `${RELAY_SERVICE}http://example.com/clash-sample.yaml`)
+  t.is(provider1.url, `http://relay.com/http://example.com/clash-sample.yaml`)
+
+  const provider2 = new ClashProvider('test', {
+    type: SupportProviderEnum.Clash,
+    url: 'http://example.com/clash-sample.yaml',
+    relayUrl: 'http://relay.com/%%URL%%',
+  })
+
+  t.is(
+    provider2.url,
+    `http://relay.com/http%3A%2F%2Fexample.com%2Fclash-sample.yaml`,
+  )
 })
 
 test.serial('ClashProvider requestUserAgent', async (t) => {

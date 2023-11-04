@@ -18,7 +18,7 @@ export const ProviderValidator = z.object({
   tfo: z.oboolean(),
   underlyingProxy: z.ostring(),
   startPort: z.number().min(1024).max(65535).optional(),
-  relayUrl: z.union([z.boolean(), z.string().url()]).optional(),
+  relayUrl: z.string().url().optional(),
   requestUserAgent: z.ostring(),
   renameNode: z
     .function()
