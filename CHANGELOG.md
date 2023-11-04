@@ -1,3 +1,13 @@
+## [3.2.1](https://github.com/geekdada/surgio/compare/v3.2.0...v3.2.1) (2023-11-04)
+
+
+### Features
+
+* 优化了不同 Clash 核心的 Hysteria 密码兼容性问题 ([6f95489](https://github.com/geekdada/surgio/commit/6f954892b912ee5c50eaf8b7785a6d262c159cc9))
+* remove internal relay service ([88227d0](https://github.com/geekdada/surgio/commit/88227d0cba40296640997f8856b7155eb0ec6258))
+
+
+
 # [3.2.0](https://github.com/geekdada/surgio/compare/v3.1.0...v3.2.0) (2023-10-28)
 
 
