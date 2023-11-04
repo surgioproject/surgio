@@ -247,7 +247,29 @@ module.exports = {
 - 类型: `boolean`
 - 默认值: `false`
 
-目前仅 Clash Meta 内核支持 Hysteria v2，如果你希望在 Clash 订阅中输出 Hysteria v2 节点请开启此项。
+目前仅 Clash Meta 内核和 Stash 支持 Hysteria v2，如果你希望在 Clash 订阅中输出 Hysteria v2 节点请开启此项。
+
+### clashConfig.clashCore
+
+> <Badge text="v3.2.0" vertical="middle" />
+
+- 类型: `string`
+- 默认值: `clash`
+- 可选值: `clash`, `clash.meta`, `stash`
+
+Clash 核心版本。默认使用 Clash 核心，如果你希望输出针对 Clash Meta 内核或 Stash 的配置请修改此项。
+
+下面是目前支持的变化：
+
+| 核心 | 变化                                                                               |
+| --- |----------------------------------------------------------------------------------|
+| `clash` | 默认值，不输出任何变化                                                                      |
+| `clash.meta` | 不输出任何变化                                                        |
+| `stash` | - Hysteria 协议的密码字段改为 `auth` |
+
+:::warning 注意
+`enableTuic`, `enableShadowTls`, `enableHysteria2` 这三个配置项和 `clashCore` 目前互不影响，但是将来会合并到 `clashCore` 中。
+:::
 
 ## surfboardConfig
 

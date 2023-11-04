@@ -370,10 +370,22 @@ export class Artifact extends EventEmitter {
           }
 
           nodeConfig.provider = provider
-          nodeConfig.surgeConfig = config.surgeConfig
-          nodeConfig.clashConfig = config.clashConfig
-          nodeConfig.quantumultXConfig = config.quantumultXConfig
-          nodeConfig.surfboardConfig = config.surfboardConfig
+          nodeConfig.surgeConfig = Object.freeze({
+            ...config.surgeConfig,
+            ...nodeConfig.surgeConfig,
+          })
+          nodeConfig.clashConfig = Object.freeze({
+            ...config.clashConfig,
+            ...nodeConfig.clashConfig,
+          })
+          nodeConfig.quantumultXConfig = Object.freeze({
+            ...config.quantumultXConfig,
+            ...nodeConfig.quantumultXConfig,
+          })
+          nodeConfig.surfboardConfig = Object.freeze({
+            ...config.surfboardConfig,
+            ...nodeConfig.surfboardConfig,
+          })
 
           if (provider.config.renameNode) {
             const newName = provider.config.renameNode(nodeConfig.nodeName)

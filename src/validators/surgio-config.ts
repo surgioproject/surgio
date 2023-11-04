@@ -68,6 +68,13 @@ export const SurgioConfigValidator = z.object({
       enableTuic: z.oboolean(),
       enableShadowTls: z.oboolean(),
       enableHysteria2: z.oboolean(),
+      clashCore: z
+        .union([
+          z.literal('clash'),
+          z.literal('clash.meta'),
+          z.literal('stash'),
+        ])
+        .optional(),
     })
     .optional(),
   gateway: z

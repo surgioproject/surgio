@@ -270,7 +270,7 @@ function nodeListMapper(nodeConfig: PossibleNodeConfigType) {
       // Istanbul ignore next
       if (!nodeConfig.clashConfig?.enableTuic) {
         logger.warn(
-          `尚未开启 Clash 的 TUIC 支持，节点 ${nodeConfig.nodeName} 会被省略。如需开启，请在配置文件中设置 clashConfig.enableTuic 为 true。`,
+          `尚未开启 Clash 的 Tuic 支持，节点 ${nodeConfig.nodeName} 会被省略。如需开启，请在配置文件中设置 clashConfig.enableTuic 为 true。`,
         )
         return null
       }
@@ -329,7 +329,8 @@ function nodeListMapper(nodeConfig: PossibleNodeConfigType) {
         name: nodeConfig.nodeName,
         server: nodeConfig.hostname,
         port: nodeConfig.port,
-        password: nodeConfig.password,
+        [nodeConfig.clashConfig.clashCore === 'stash' ? 'auth' : 'password']:
+          nodeConfig.password,
         up: nodeConfig.uploadBandwidth || 0,
         down: nodeConfig.downloadBandwidth || 0,
         ...pickAndFormatKeys(

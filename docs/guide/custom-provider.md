@@ -562,7 +562,7 @@ module.exports = {
 
 强制开启节点的 TLS 1.3。
 
-## 公共属性
+## nodeConfig 公共属性
 
 :::tip 提示
 - 公共属性可以定义在任何一种 Provider 中；
@@ -684,6 +684,21 @@ Surgio 不会验证名称是否有效
 - 默认值: `false`
 
 是否为该节点开启 [ECN（Explicit Congestion Notification）](https://yach.me/2023/10/14/ccn-and-ecn/)。目前仅 Surge 支持这一特性。
+
+### 客户端特殊配置
+
+> <Badge text="v3.2.0" vertical="middle" />
+
+- `nodeConfig.clashConfig`
+- `nodeConfig.surgeConfig`
+- `nodeConfig.quantumultXConfig`
+- `nodeConfig.surfboardConfig`
+
+你可以单独为某一个节点配置单独更改客户端的配置，Surgio 会将这些配置合并到最终的配置中。
+
+比如 Hysteria 配置的密码字段默认是 `password` 但是 Stash 使用的是 `auth` 字段，你可以借助订阅请求的 UserAgent 动态地修改 `nodeConfig.clashConfig.clashCore` 这个字段，返回不同的订阅。
+
+## Provider 公共属性
 
 ### provider.nodeFilter
 

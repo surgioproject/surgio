@@ -428,7 +428,7 @@ export const parseClashConfig = (
             nodeName: item.name,
             hostname: item.server,
             port: item.port,
-            password: item.password,
+            password: item.auth || item.password,
             ...(item.down
               ? { downloadBandwidth: parseBitrate(item.down) }
               : null),
