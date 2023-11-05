@@ -1,6 +1,12 @@
 import { z } from 'zod'
 
 import { NodeTypeEnum } from '../types'
+import {
+  ClashConfigValidator,
+  QuantumultXConfigValidator,
+  SurfboardConfigValidator,
+  SurgeConfigValidator,
+} from './surgio-config'
 
 export const getPositiveIntegersNumberValidatior = (
   validator: (n: number) => boolean,
@@ -70,6 +76,10 @@ export const SimpleNodeConfigValidator = z.object({
   // Misc
   underlyingProxy: z.string().optional(),
   testUrl: z.string().optional(),
+  surgeConfig: SurgeConfigValidator.optional(),
+  surfboardConfig: SurfboardConfigValidator.optional(),
+  quantumultXConfig: QuantumultXConfigValidator.optional(),
+  clashConfig: ClashConfigValidator.optional(),
 })
 
 export const TlsNodeConfigValidator = SimpleNodeConfigValidator.extend({

@@ -19,6 +19,28 @@ export const RemoteSnippetValidator = z.object({
   surgioSnippet: z.oboolean(),
 })
 
+export const ClashConfigValidator = z.object({
+  enableTuic: z.oboolean(),
+  enableShadowTls: z.oboolean(),
+  enableHysteria2: z.oboolean(),
+  clashCore: z
+    .union([z.literal('clash'), z.literal('clash.meta'), z.literal('stash')])
+    .optional(),
+})
+
+export const SurgeConfigValidator = z.object({
+  resolveHostname: z.oboolean(),
+  vmessAEAD: z.oboolean(),
+})
+
+export const SurfboardConfigValidator = z.object({
+  vmessAEAD: z.oboolean(),
+})
+
+export const QuantumultXConfigValidator = z.object({
+  vmessAEAD: z.oboolean(),
+})
+
 export const SurgioConfigValidator = z.object({
   artifacts: z.array(ArtifactValidator),
   remoteSnippets: z.array(RemoteSnippetValidator).optional(),
@@ -47,36 +69,10 @@ export const SurgioConfigValidator = z.object({
       ]),
     )
     .optional(),
-  surgeConfig: z
-    .object({
-      resolveHostname: z.oboolean(),
-      vmessAEAD: z.oboolean(),
-    })
-    .optional(),
-  surfboardConfig: z
-    .object({
-      vmessAEAD: z.oboolean(),
-    })
-    .optional(),
-  quantumultXConfig: z
-    .object({
-      vmessAEAD: z.oboolean(),
-    })
-    .optional(),
-  clashConfig: z
-    .object({
-      enableTuic: z.oboolean(),
-      enableShadowTls: z.oboolean(),
-      enableHysteria2: z.oboolean(),
-      clashCore: z
-        .union([
-          z.literal('clash'),
-          z.literal('clash.meta'),
-          z.literal('stash'),
-        ])
-        .optional(),
-    })
-    .optional(),
+  surgeConfig: SurgeConfigValidator.optional(),
+  surfboardConfig: SurfboardConfigValidator.optional(),
+  quantumultXConfig: QuantumultXConfigValidator.optional(),
+  clashConfig: ClashConfigValidator.optional(),
   gateway: z
     .object({
       accessToken: z.ostring(),
