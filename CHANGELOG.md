@@ -1,3 +1,12 @@
+## [3.2.2](https://github.com/geekdada/surgio/compare/v3.2.1...v3.2.2) (2023-11-05)
+
+
+### Bug Fixes
+
+* 上一个版本节点层级的客户端配置不生效 ([392d090](https://github.com/geekdada/surgio/commit/392d0904657d7b32af57ccca75fcc79bf3b4e809))
+
+
+
 ## [3.2.1](https://github.com/geekdada/surgio/compare/v3.2.0...v3.2.1) (2023-11-04)
 
 
