@@ -156,6 +156,14 @@ export const getLoonNodes = function (
             }
           }
 
+          if (nodeConfig.tfo) {
+            config.push('fast-open=true')
+          }
+
+          if (nodeConfig.udpRelay) {
+            config.push('udp=true')
+          }
+
           return config.join(',')
         }
 
