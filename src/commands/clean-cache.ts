@@ -6,7 +6,6 @@ import fs from 'fs-extra'
 
 import BaseCommand from '../base-command'
 import { TMP_FOLDER_NAME } from '../constant'
-import redis from '../redis'
 import { cleanCaches } from '../utils/cache'
 
 class CleanCacheCommand extends BaseCommand<typeof CleanCacheCommand> {
@@ -25,7 +24,7 @@ class CleanCacheCommand extends BaseCommand<typeof CleanCacheCommand> {
 
     ux.action.stop()
 
-    await redis.destroyRedis()
+    await this.cleanup()
   }
 }
 

@@ -24,6 +24,8 @@ class LintCommand extends BaseCommand<typeof LintCommand> {
     } else {
       console.log('✅  JS 语法检查通过')
     }
+
+    await this.cleanup()
   }
 }
 

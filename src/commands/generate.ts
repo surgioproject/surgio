@@ -4,7 +4,6 @@ import path from 'path'
 
 import BaseCommand from '../base-command'
 import { Artifact, getEngine } from '../generator'
-import redis from '../redis'
 import { ArtifactConfig } from '../types'
 import { setConfig } from '../config'
 import { checkAndFix } from '../utils/linter'
@@ -30,7 +29,7 @@ class GenerateCommand extends BaseCommand<typeof GenerateCommand> {
 
     await this.generate(this.flags['skip-fail'], this.flags['cache-snippet'])
 
-    await redis.destroyRedis()
+    await this.cleanup()
   }
 
   private async generate(

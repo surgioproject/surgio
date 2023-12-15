@@ -3,6 +3,7 @@ import { Command, Flags, Interfaces, Config } from '@oclif/core'
 import { transports } from '@surgio/logger'
 import ora from 'ora'
 import { resolve } from 'path'
+import redis from './redis'
 
 import { CommandConfig } from './types'
 import { loadConfig } from './config'
@@ -49,7 +50,7 @@ abstract class BaseCommand<T extends typeof Command> extends Command {
     }
 
     this.projectDir = flags.project
-    this.surgioConfig = await loadConfig(this.projectDir)
+    this.surgioConfig = loadConfig(this.projectDir)
   }
 
   protected async catch(err: Error & { exitCode?: number }): Promise<any> {
@@ -58,6 +59,13 @@ abstract class BaseCommand<T extends typeof Command> extends Command {
     }
     await errorHandler.call(this, err)
     this.exit(err.exitCode || 1)
+  }
+
+  protected async cleanup(): Promise<void> {
+    await redis.destroyRedis()
+    if (this.ora.isSpinning) {
+      this.ora.succeed()
+    }
   }
 }
 

@@ -4,7 +4,6 @@ import { basename, join } from 'path'
 import { createLogger } from '@surgio/logger'
 
 import BaseCommand from '../base-command'
-import redis from '../redis'
 import { getProvider, PossibleProviderType } from '../provider'
 import { formatSubscriptionUserInfo } from '../utils'
 
@@ -39,7 +38,7 @@ class SubscriptionsCommand extends BaseCommand<typeof SubscriptionsCommand> {
       }
     }
 
-    await redis.destroyRedis()
+    await this.cleanup()
   }
 
   private async listProviders(): Promise<ReadonlyArray<PossibleProviderType>> {

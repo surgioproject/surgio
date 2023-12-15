@@ -5,7 +5,6 @@ import path from 'path'
 import inquirer from 'inquirer'
 
 import BaseCommand from '../base-command'
-import redis from '../redis'
 import { getConfig } from '../config'
 import { getProvider } from '../provider'
 
@@ -48,7 +47,7 @@ class CheckCommand extends BaseCommand<typeof CheckCommand> {
 
     console.log(JSON.stringify(answers.node, null, 2))
 
-    await redis.destroyRedis()
+    await this.cleanup()
   }
 
   private async getNodeList(providerName: string) {

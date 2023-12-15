@@ -17,11 +17,13 @@ class NewCommand extends BaseCommand<typeof NewCommand> {
       cwd: this.projectDir,
       logger: new Logger(console.log.bind(console)),
       createPrompter: () => require('inquirer'),
-      exec: (action, body) => {
+      exec: async (action, body) => {
         const opts = body && body.length > 0 ? { input: body } : {}
-        return require('execa').shell(action, opts)
+        await require('execa')(action, opts)
       },
     })
+
+    await this.cleanup()
   }
 }
 

@@ -6,7 +6,6 @@ import dir from 'node-dir'
 import path from 'path'
 
 import BaseCommand from '../base-command'
-import redis from '../redis'
 import { setConfig } from '../config'
 
 class UploadCommand extends BaseCommand<typeof UploadCommand> {
@@ -96,8 +95,8 @@ class UploadCommand extends BaseCommand<typeof UploadCommand> {
     this.ora.start('开始上传到阿里云 OSS')
     await upload()
     await deleteUnwanted()
-    await redis.destroyRedis()
-    this.ora.succeed()
+
+    await this.cleanup()
   }
 }
 
