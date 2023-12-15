@@ -1,3 +1,18 @@
+## [3.2.3](https://github.com/geekdada/surgio/compare/v3.2.2...v3.2.3) (2023-12-15)
+
+
+### Bug Fixes
+
+* command hangs ([398a07b](https://github.com/geekdada/surgio/commit/398a07bc1682955cd864853da9f214ed91223364))
+* remote snippets containing `IP-ASN` with `no-resolve` ([1b00a6c](https://github.com/geekdada/surgio/commit/1b00a6cc06f2d6b327551d2ab2e45142debc228d))
+
+
+### Features
+
+* **getLoonNodes:**  trojan support tfo and upd params ([c70581a](https://github.com/geekdada/surgio/commit/c70581a69be02c42ba078cfdb7dd0726086f9734))
+
+
+
 ## [3.2.2](https://github.com/geekdada/surgio/compare/v3.2.1...v3.2.2) (2023-11-05)
 
 
