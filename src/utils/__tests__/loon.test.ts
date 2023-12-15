@@ -79,7 +79,7 @@ test('getLoonNodes', (t) => {
         tfo: true,
       },
     ]),
-    'trojan = trojan,example.com,443,"password1",tls-name=example.com,skip-cert-verify=true',
+    'trojan = trojan,example.com,443,"password1",tls-name=example.com,skip-cert-verify=true,fast-open=true,udp=true',
   )
   t.is(
     getLoonNodes([
@@ -96,7 +96,7 @@ test('getLoonNodes', (t) => {
         tls13: true,
       },
     ]),
-    'trojan = trojan,example.com,443,"password1",tls-name=sni.example.com,skip-cert-verify=true',
+    'trojan = trojan,example.com,443,"password1",tls-name=sni.example.com,skip-cert-verify=true,fast-open=true,udp=true',
   )
   t.is(
     getLoonNodes([
@@ -118,7 +118,7 @@ test('getLoonNodes', (t) => {
         },
       },
     ]),
-    'trojan = trojan,example.com,443,"password1",tls-name=sni.example.com,skip-cert-verify=true,transport=ws,path=/ws,host=example.com',
+    'trojan = trojan,example.com,443,"password1",tls-name=sni.example.com,skip-cert-verify=true,transport=ws,path=/ws,host=example.com,fast-open=true,udp=true',
   )
   t.is(
     getLoonNodes([
