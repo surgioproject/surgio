@@ -455,9 +455,6 @@ function nodeListMapper(
               keyFormat: 'kebabCase',
             },
           ),
-          ...(Array.isArray(nodeConfig.alpn)
-            ? [`alpn=${nodeConfig.alpn.join(',')}`]
-            : []),
         ].join(', '),
       ]
 
@@ -508,10 +505,15 @@ function appendCommonConfig(
       },
     ),
     ...parseShadowTlsConfig(nodeConfig),
-    ...('alpn' in nodeConfig && Array.isArray(nodeConfig.alpn)
-      ? [`alpn=${nodeConfig.alpn.join(',')}`]
-      : []),
   ]
+
+  if (nodeConfig.type === NodeTypeEnum.Tuic) {
+    appendConfig.push(
+      ...('alpn' in nodeConfig && Array.isArray(nodeConfig.alpn)
+        ? [`alpn=${nodeConfig.alpn.join(',')}`]
+        : []),
+    )
+  }
 
   if (!appendConfig.length) {
     return original

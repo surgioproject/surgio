@@ -585,6 +585,7 @@ test('getSurgeNodes - Hysteria2', (t) => {
         ecn: true,
         sni: 'sni.example.com',
         skipCertVerify: true,
+        alpn: ['h2', 'h3'],
       },
     ]),
     [
