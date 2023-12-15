@@ -4,11 +4,11 @@ const { basename } = require('path')
 const { promises: fsp } = require('fs')
 const _ = require('lodash')
 
-const internal = require('../../../build/internal')
+const { loadConfig } = require('../../../build/config')
 
 module.exports = {
   prompt: ({ prompter: inquirer }) => {
-    const config = internal.config.loadConfig(process.cwd())
+    const config = loadConfig(process.cwd())
 
     return inquirer.prompt([
       {
