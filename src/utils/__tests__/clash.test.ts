@@ -39,10 +39,16 @@ test('getClashNodeNames', async (t) => {
     nodeNameList,
     (nodeConfig) => nodeConfig.nodeName !== 'Test Node 3',
   )
-
+  const result4 = clash.getClashNodeNames(
+    nodeNameList,
+    (nodeConfig) => nodeConfig.nodeName !== 'Test Node 4',
+    [],
+    ['DIRECT'],
+  )
   t.deepEqual(result1, ['Test Node 1', 'Test Node 3'])
   t.deepEqual(result2, ['TEST', 'Test Node 1', 'Test Node 3'])
   t.deepEqual(result3, ['Test Node 1'])
+  t.deepEqual(result4, ['DIRECT'])
 
   t.deepEqual(
     clash.getClashNodeNames([

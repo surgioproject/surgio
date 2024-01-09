@@ -48,7 +48,7 @@ export const getClashNodeNames = function (
 
   result = result.concat(getClashNodes(list, filter).map((item) => item.name))
 
-  if(result.length === 0 && defaultNodeNames) {
+  if (result.length === 0 && defaultNodeNames) {
     result = result.concat(defaultNodeNames)
   }
 
