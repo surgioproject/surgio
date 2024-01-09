@@ -33,6 +33,7 @@ export const getClashNodeNames = function (
   list: ReadonlyArray<PossibleNodeConfigType>,
   filter?: NodeFilterType | SortedNodeFilterType,
   prependNodeNames?: ReadonlyArray<string>,
+  defaultNodeNames?: ReadonlyArray<string>,
 ): ReadonlyArray<string> {
   // istanbul ignore next
   if (arguments.length === 2 && typeof filter === 'undefined') {
@@ -46,6 +47,10 @@ export const getClashNodeNames = function (
   }
 
   result = result.concat(getClashNodes(list, filter).map((item) => item.name))
+
+  if(result.length === 0 && defaultNodeNames) {
+    result = result.concat(defaultNodeNames)
+  }
 
   return result
 }
