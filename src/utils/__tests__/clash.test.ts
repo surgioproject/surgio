@@ -41,7 +41,7 @@ test('getClashNodeNames', async (t) => {
   )
   const result4 = clash.getClashNodeNames(
     nodeNameList,
-    (nodeConfig) => nodeConfig.nodeName !== 'Test Node 4',
+    (nodeConfig) => nodeConfig.nodeName === 'Test Node 4',
     [],
     ['DIRECT'],
   )
