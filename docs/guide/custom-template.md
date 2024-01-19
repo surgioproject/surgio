@@ -295,11 +295,12 @@ ss://cmM0LW1kNTpwYXNzd29yZA@hk.com:1234/?group=subscribe_demo#%F0%9F%87%AD%F0%9F
 
 ### getClashNodeNames
 
-`getClashNodeNames(nodeList, filter?, prependNodeNames?)`
+`getClashNodeNames(nodeList, filter?, prependNodeNames?, defaultNodeNames?)`
 
 :::tip 提示
 - `filter` 为可选参数
 - `prependNodeNames` 为可选参数。可以通过这个参数在过滤结果前加入自定义节点名
+- `defaultNodeNames` 为可选参数。可以通过这个参数实现在过滤结果为空的情况下，使用默认的自定义节点名
 - [Clash 规则维护指南](/guide/client/clash.md)
 :::
 
@@ -315,6 +316,12 @@ getClashNodeNames(nodeList, netflixFilter);
 
 ```js
 getClashNodeNames(nodeList, netflixFilter, ['测试节点']);
+```
+
+需要过滤 Netflix 节点，如果没有 Netflix 相关节点，则使用 `默认节点`
+
+```js
+getClashNodeNames(nodeList, netflixFilter, [], ['默认节点']);
 ```
 
 ### getLoonNodes
