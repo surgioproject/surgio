@@ -1,3 +1,12 @@
+# [3.3.0](https://github.com/geekdada/surgio/compare/v3.2.3...v3.3.0) (2024-01-21)
+
+
+### Features
+
+* getClashNodeNames 增加默认节点 ([97b710a](https://github.com/geekdada/surgio/commit/97b710a4351e2846831dbad00cf28f2581972945))
+
+
+
 ## [3.2.3](https://github.com/geekdada/surgio/compare/v3.2.2...v3.2.3) (2023-12-15)
 
 
