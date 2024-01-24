@@ -11,4 +11,5 @@ export const ArtifactValidator = z.object({
   destDir: z.ostring(),
   downloadUrl: z.ostring(),
   templateString: z.ostring(),
+  subscriptionUserInfoProvider: z.ostring(),
 })
