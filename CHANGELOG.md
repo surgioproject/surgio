@@ -1,3 +1,12 @@
+# [3.4.0](https://github.com/geekdada/surgio/compare/v3.3.0...v3.4.0) (2024-02-03)
+
+
+### Features
+
+* **types:** ArtifactConfig add subscriptionUserInfoProvider ([ec18a1d](https://github.com/geekdada/surgio/commit/ec18a1d7a98e25f551cf60094a70025aa691a34e))
+
+
+
 # [3.3.0](https://github.com/geekdada/surgio/compare/v3.2.3...v3.3.0) (2024-01-21)
 
 
