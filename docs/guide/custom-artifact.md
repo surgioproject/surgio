@@ -70,7 +70,7 @@ Surgio 会根据 Artifact 的值来生成配置文件。你可以一次性配置
 - 类型: `string`
 - 默认值: `undefined`
 
-subscriptionUserInfo 供应 Provider。默认情况下，仅当 `combineProviders` 为空（Provider只有一个）时才会生成 subscriptionUserInfo，定义此参数可以指定 subscriptionUserInfo 供应者。
+默认情况下，仅当 `combineProviders` 为空（Provider只有一个）时才会生成 `subscriptionUserInfo`，即客户端能够识别的流量信息。定义此参数可以指定由哪个 Provider 提供 `subscriptionUserInfo`。
 
 ### customParams
 
