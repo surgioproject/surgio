@@ -4,6 +4,7 @@ import {
   isSurgeIOS,
   isSurgeMac,
   isClash,
+  isClashVerge,
   isStash,
   isQuantumultX,
   isShadowrocket,
@@ -33,9 +34,19 @@ test('isClash', (t) => {
   t.is(isClash('Surge iOS/2920'), false)
   t.is(isClash('clash'), true)
   t.is(isClash('Clash'), true)
+  t.is(isClash('clash-verge/v1.4.11'), true)
   t.is(isClash('Stash/2.4.7 Clash/1.9.0'), true)
   t.is(isClash('Stash/2.4.7 Clash/1.9.0', '>=1.9.0'), true)
   t.is(isClash('Stash/2.4.7 Clash/1.9.0', '>=2.0.0'), false)
+})
+
+test('isClashVerge', (t) => {
+  t.is(isClashVerge('Surge iOS/2920'), false)
+  t.is(isClashVerge('clash'), false)
+  t.is(isClashVerge('Clash'), false)
+  t.is(isClashVerge('clash-verge/v1.4.11'), true)
+  t.is(isClashVerge('clash-verge/v1.4.11', '>=1.4.0'), true)
+  t.is(isClashVerge('clash-verge/v1.4.11', '>=1.5.0'), false)
 })
 
 test('isStash', (t) => {

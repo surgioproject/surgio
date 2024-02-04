@@ -82,9 +82,37 @@ export const isClash = (ua: string | undefined, version?: string): boolean => {
     return true
   }
 
-  const matcher = /(clash)\/([\w\.]+)/i
+  const matcher = /clash\/([\w\.]+)/i
   const result = matcher.exec(ua.toLowerCase())
-  const clientVersion = result ? result[2] : ''
+  const clientVersion = result ? result[1] : ''
+
+  try {
+    return satisfies(clientVersion, version)
+  } catch {
+    return false
+  }
+}
+
+export const isClashVerge = (
+  ua: string | undefined,
+  version?: string,
+): boolean => {
+  if (!ua) {
+    return false
+  }
+
+  const matcher = /\bclash-verge\/v([0-9.]+)\b/i
+  const isClient = matcher.exec(ua)
+
+  if (!isClient) {
+    return false
+  }
+
+  if (!version) {
+    return true
+  }
+
+  const clientVersion = isClient ? isClient[1] : ''
 
   try {
     return satisfies(clientVersion, version)
