@@ -129,6 +129,7 @@ module.exports = defineCustomProvider({
 utils.isSurgeIOS(useragent)
 utils.isSurgeMac(useragent)
 utils.isClash(useragent)
+utils.isClashVerge(useragent)
 utils.isStash(useragent)
 utils.isQuantumultX(useragent)
 utils.isShadowrocket(useragent)
@@ -148,6 +149,7 @@ utils.isLoon(useragent)
 - Surge: 1000
 - Stash: 1.2.3
 - Clash: 1.2.3（原版 Clash 不传版本号）
+- Clash Verge: 1.2.3
 - Loon: 1000
 - Quantumult X: 1.2.3
 - Shadowrocket: 1000
