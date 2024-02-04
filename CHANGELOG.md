@@ -1,3 +1,12 @@
+## [3.4.1](https://github.com/geekdada/surgio/compare/v3.4.0...v3.4.1) (2024-02-04)
+
+
+### Features
+
+* add isClashVerge ([f371d55](https://github.com/geekdada/surgio/commit/f371d55d9f087245159825f2558e5a3a80535802))
+
+
+
 # [3.4.0](https://github.com/geekdada/surgio/compare/v3.3.0...v3.4.0) (2024-02-03)
 
 
