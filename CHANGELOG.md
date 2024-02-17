@@ -1,3 +1,12 @@
+## [3.4.3](https://github.com/geekdada/surgio/compare/v3.4.2...v3.4.3) (2024-02-17)
+
+
+### Bug Fixes
+
+* isClashMetaForAndroid ([9cd1b5d](https://github.com/geekdada/surgio/commit/9cd1b5de78df1bfb83061e6d54db2a51ae531005))
+
+
+
 ## [3.4.2](https://github.com/geekdada/surgio/compare/v3.4.1...v3.4.2) (2024-02-17)
 
 
