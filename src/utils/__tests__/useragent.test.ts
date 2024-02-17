@@ -69,10 +69,13 @@ test('isClashMetaForAndroid', (t) => {
     isClashMetaForAndroid('ClashMetaForAndroid/2.8.8.Meta-Alpha', '>=3.0.0'),
     false,
   )
-  t.is(isClashMetaForAndroid('ClashMetaForAndroid/2.8.8.Meta'), true)
-  t.is(isClashMetaForAndroid('ClashMetaForAndroid/2.8.8.Meta', '>=2.8.0'), true)
+  t.is(isClashMetaForAndroid('ClashMetaForAndroid/2.18.8.Meta'), true)
   t.is(
-    isClashMetaForAndroid('ClashMetaForAndroid/2.8.8.Meta', '>=3.0.0'),
+    isClashMetaForAndroid('ClashMetaForAndroid/2.18.8.Meta', '>=2.8.0'),
+    true,
+  )
+  t.is(
+    isClashMetaForAndroid('ClashMetaForAndroid/2.18.8.Meta', '>=3.0.0'),
     false,
   )
   t.is(isClashMetaForAndroid('clash'), false)

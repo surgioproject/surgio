@@ -129,7 +129,7 @@ export const isClashMetaForAndroid = (
     return false
   }
 
-  const matcher = /\bClashMetaForAndroid\/([0-9.]{5})\b/i
+  const matcher = /\bClashMetaForAndroid\/(.+)\b/i
   const isClient = matcher.exec(ua)
 
   if (!isClient) {
@@ -140,7 +140,7 @@ export const isClashMetaForAndroid = (
     return true
   }
 
-  const clientVersion = isClient ? isClient[1] : ''
+  const clientVersion = isClient ? isClient[1].replace(/\.Meta.*/gi, '') : ''
 
   try {
     return satisfies(clientVersion, version)
