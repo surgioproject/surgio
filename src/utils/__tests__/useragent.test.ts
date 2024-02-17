@@ -5,6 +5,7 @@ import {
   isSurgeMac,
   isClash,
   isClashVerge,
+  isClashMetaForAndroid,
   isStash,
   isQuantumultX,
   isShadowrocket,
@@ -56,6 +57,26 @@ test('isStash', (t) => {
   t.is(isStash('Stash/2.4.7 Clash/1.9.0', '>=1.9.0'), true)
   t.is(isStash('Stash/2.4.7 Clash/1.9.0', '>=2.0.0'), true)
   t.is(isStash('Stash/2.4.7 Clash/1.9.0', '>=3.0.0'), false)
+})
+
+test('isClashMetaForAndroid', (t) => {
+  t.is(isClashMetaForAndroid('ClashMetaForAndroid/2.8.8.Meta-Alpha'), true)
+  t.is(
+    isClashMetaForAndroid('ClashMetaForAndroid/2.8.8.Meta-Alpha', '>=2.8.0'),
+    true,
+  )
+  t.is(
+    isClashMetaForAndroid('ClashMetaForAndroid/2.8.8.Meta-Alpha', '>=3.0.0'),
+    false,
+  )
+  t.is(isClashMetaForAndroid('ClashMetaForAndroid/2.8.8.Meta'), true)
+  t.is(isClashMetaForAndroid('ClashMetaForAndroid/2.8.8.Meta', '>=2.8.0'), true)
+  t.is(
+    isClashMetaForAndroid('ClashMetaForAndroid/2.8.8.Meta', '>=3.0.0'),
+    false,
+  )
+  t.is(isClashMetaForAndroid('clash'), false)
+  t.is(isClashMetaForAndroid('Stash/2.4.7 Clash/1.9.0'), false)
 })
 
 test('isQuantumultX', (t) => {
