@@ -4,51 +4,77 @@ import path from 'path'
 import { JsonObject } from 'type-fest'
 import YAML from 'yaml'
 
-import { RemoteSnippet } from '../types'
+import { ClashCoreType, RemoteSnippet } from '../types'
 import { decodeStringList, toBase64, addProxyToSurgeRuleSet } from '../utils'
 import {
   QUANTUMULT_X_SUPPORTED_RULE,
   CLASH_SUPPORTED_RULE,
+  CLASH_META_SUPPORTED_RULE,
+  STASH_SUPPORTED_RULE,
   LOON_SUPPORTED_RULE,
   SURFBOARD_SUPPORTED_RULE,
 } from '../constant'
 
-export function getEngine(templateDir: string): nunjucks.Environment {
+export function getEngine(
+  templateDir: string,
+  options: {
+    clashCore?: ClashCoreType
+  } = {},
+): nunjucks.Environment {
   const engine = nunjucks.configure(templateDir, {
     autoescape: false,
   })
 
-  const clashFilter = (str?: string): string => {
-    // istanbul ignore next
-    if (!str) {
-      return ''
+  const getClashFilter = (clashCore: ClashCoreType) => {
+    const supportedRule = (() => {
+      switch (clashCore) {
+        case 'stash':
+          return STASH_SUPPORTED_RULE
+        case 'clash.meta':
+          return CLASH_META_SUPPORTED_RULE
+        default:
+          return CLASH_SUPPORTED_RULE
+      }
+    })()
+
+    return (str?: string): string => {
+      // istanbul ignore next
+      if (!str) {
+        return ''
+      }
+
+      const array = str.split('\n')
+
+      return array
+        .map((item) => {
+          const testString: string =
+            !!item && item.trim() !== '' ? item.toUpperCase() : ''
+
+          if (testString.startsWith('#') || testString === '') {
+            return item
+          }
+
+          const matched = testString.match(/^([\w-]+),/)
+
+          if (matched && supportedRule.some((s) => matched[1] === s)) {
+            // 过滤出支持的规则类型
+            return `- ${item}`.replace(/\/\/.*$/, '').trim()
+          }
+
+          return null
+        })
+        .filter((item) => !!item)
+        .join('\n')
     }
-
-    const array = str.split('\n')
-
-    return array
-      .map((item) => {
-        const testString: string =
-          !!item && item.trim() !== '' ? item.toUpperCase() : ''
-
-        if (testString.startsWith('#') || testString === '') {
-          return item
-        }
-
-        const matched = testString.match(/^([\w-]+),/)
-
-        if (matched && CLASH_SUPPORTED_RULE.some((s) => matched[1] === s)) {
-          // 过滤出支持的规则类型
-          return `- ${item}`.replace(/\/\/.*$/, '').trim()
-        }
-
-        return null
-      })
-      .filter((item) => !!item)
-      .join('\n')
   }
 
-  engine.addFilter('clash', clashFilter)
+  if (options.clashCore) {
+    engine.addFilter('clash', getClashFilter(options.clashCore))
+  } else {
+    engine.addFilter('clash', getClashFilter('clash'))
+  }
+  engine.addFilter('clashMeta', getClashFilter('clash.meta'))
+  engine.addFilter('stash', getClashFilter('stash'))
 
   engine.addFilter('quantumultx', (str?: string): string => {
     // istanbul ignore next

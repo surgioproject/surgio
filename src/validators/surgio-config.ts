@@ -13,6 +13,12 @@ const RegexValidatior = z.custom<RegExp>((val) => {
   return isRegExp(val)
 })
 
+export const ClashCoreValidator = z.union([
+  z.literal('clash'),
+  z.literal('clash.meta'),
+  z.literal('stash'),
+])
+
 export const RemoteSnippetValidator = z.object({
   name: z.string(),
   url: z.string().url(),
@@ -23,9 +29,7 @@ export const ClashConfigValidator = z.object({
   enableTuic: z.oboolean(),
   enableShadowTls: z.oboolean(),
   enableHysteria2: z.oboolean(),
-  clashCore: z
-    .union([z.literal('clash'), z.literal('clash.meta'), z.literal('stash')])
-    .optional(),
+  clashCore: ClashCoreValidator.optional(),
 })
 
 export const SurgeConfigValidator = z.object({

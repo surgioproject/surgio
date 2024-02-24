@@ -46,7 +46,9 @@ class GenerateCommand extends BaseCommand<typeof GenerateCommand> {
       remoteSnippetsConfig,
       cacheSnippet,
     )
-    const templateEngine = getEngine(config.templateDir)
+    const templateEngine = getEngine(config.templateDir, {
+      clashCore: config.clashConfig?.clashCore,
+    })
 
     await fs.mkdirp(distPath)
 

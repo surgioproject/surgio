@@ -18,8 +18,9 @@ import {
   RemoteSnippetValidator,
   NodeFilterTypeValidator,
   SortedNodeFilterTypeValidator,
+  Hysteria2NodeConfigValidator,
+  ClashCoreValidator,
 } from './validators'
-import { Hysteria2NodeConfigValidator } from './validators/hysteria2'
 
 export enum NodeTypeEnum {
   HTTPS = 'https',
@@ -220,3 +221,5 @@ export type PossibleProviderConfigType =
   | SsdProviderConfig
   | TrojanProviderConfig
   | V2rayNSubscribeProviderConfig
+
+export type ClashCoreType = z.infer<typeof ClashCoreValidator>

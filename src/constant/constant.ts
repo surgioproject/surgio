@@ -59,6 +59,23 @@ export const CLASH_META_SUPPORTED_RULE = [
   'MATCH',
 ] as const
 
+// https://stash.wiki/rules/rule-types
+export const STASH_SUPPORTED_RULE = [
+  'DOMAIN',
+  'DOMAIN-SUFFIX',
+  'DOMAIN-KEYWORD',
+  'GEOIP',
+  'IP-ASN',
+  'IP-CIDR',
+  'IP-CIDR6',
+  'DST-PORT',
+  'RULE-SET',
+  'GEOSITE',
+  'PROCESS-NAME',
+  'PROCESS-PATH',
+  'SCRIPT',
+] as const
+
 export const QUANTUMULT_X_SUPPORTED_RULE = [
   'USER-AGENT',
   'HOST',

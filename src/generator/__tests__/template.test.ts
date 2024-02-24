@@ -13,100 +13,119 @@ import {
 const templateEngine = getEngine(__dirname)
 const assetDir = join(__dirname, '../../../test/asset/')
 
-test('clash #1', (t) => {
-  const body = `{{ str | clash }}`
-  const str = `IP-CIDR,67.198.55.0/24,Proxy,no-resolve`
-  const result = templateEngine.renderString(body, {
-    str,
+for (const [expression, result] of [
+  [
+    'IP-CIDR,67.198.55.0/24,Proxy,no-resolve',
+    '- IP-CIDR,67.198.55.0/24,Proxy,no-resolve',
+  ],
+  [
+    'IP-CIDR,67.198.55.0/24,Proxy,no-resolve // test rule',
+    '- IP-CIDR,67.198.55.0/24,Proxy,no-resolve',
+  ],
+  [
+    'PROCESS-NAME,Telegram,Proxy,no-resolve // test rule',
+    '- PROCESS-NAME,Telegram,Proxy,no-resolve',
+  ],
+  ['# Comment', '# Comment'],
+  ['URL-REGEX,xxxxxxxxxxxx', ''],
+  ['# test', '# test'],
+  ['  ', '  '],
+  [
+    'IP-CIDR6,2011:dab8:3456:82a0::/50,DIRECT',
+    '- IP-CIDR6,2011:dab8:3456:82a0::/50,DIRECT',
+  ],
+  [
+    'IP-CIDR6,2011:dab8:3456:82a0::/50,DIRECT,no-resolve',
+    '- IP-CIDR6,2011:dab8:3456:82a0::/50,DIRECT,no-resolve',
+  ],
+  ['GEOIP,HK,DIRECT,no-resolve', '- GEOIP,HK,DIRECT,no-resolve'],
+  ['UID,123,DIRECT', ''],
+] as Array<[string, string]>) {
+  test(`clash - ${expression} => ${result}`, (t) => {
+    t.is(
+      templateEngine.renderString('{{ expression | clash }}', {
+        expression,
+      }),
+      result,
+    )
   })
+}
 
-  t.is(result, `- IP-CIDR,67.198.55.0/24,Proxy,no-resolve`)
-})
-
-test('clash #2', (t) => {
-  const body = `{{ str | clash }}`
-  const str = `IP-CIDR,67.198.55.0/24,Proxy,no-resolve // test rule`
-  const result = templateEngine.renderString(body, {
-    str,
+for (const [expression, result] of [
+  [
+    'IP-CIDR,67.198.55.0/24,Proxy,no-resolve',
+    '- IP-CIDR,67.198.55.0/24,Proxy,no-resolve',
+  ],
+  [
+    'IP-CIDR,67.198.55.0/24,Proxy,no-resolve // test rule',
+    '- IP-CIDR,67.198.55.0/24,Proxy,no-resolve',
+  ],
+  [
+    'PROCESS-NAME,Telegram,Proxy,no-resolve // test rule',
+    '- PROCESS-NAME,Telegram,Proxy,no-resolve',
+  ],
+  ['# Comment', '# Comment'],
+  ['URL-REGEX,xxxxxxxxxxxx', ''],
+  ['# test', '# test'],
+  ['  ', '  '],
+  [
+    'IP-CIDR6,2011:dab8:3456:82a0::/50,DIRECT',
+    '- IP-CIDR6,2011:dab8:3456:82a0::/50,DIRECT',
+  ],
+  [
+    'IP-CIDR6,2011:dab8:3456:82a0::/50,DIRECT,no-resolve',
+    '- IP-CIDR6,2011:dab8:3456:82a0::/50,DIRECT,no-resolve',
+  ],
+  ['GEOIP,HK,DIRECT,no-resolve', '- GEOIP,HK,DIRECT,no-resolve'],
+  ['FOO,BAR,DIRECT', ''],
+] as Array<[string, string]>) {
+  test(`clashMeta - ${expression} => ${result}`, (t) => {
+    t.is(
+      templateEngine.renderString('{{ expression | clashMeta }}', {
+        expression,
+      }),
+      result,
+    )
   })
+}
 
-  t.is(result, `- IP-CIDR,67.198.55.0/24,Proxy,no-resolve`)
-})
-
-test('clash #3', (t) => {
-  const body = `{{ str | clash }}`
-  const str = `PROCESS-NAME,Telegram,Proxy,no-resolve // test rule`
-  const result = templateEngine.renderString(body, {
-    str,
+for (const [expression, result] of [
+  [
+    'IP-CIDR,67.198.55.0/24,Proxy,no-resolve',
+    '- IP-CIDR,67.198.55.0/24,Proxy,no-resolve',
+  ],
+  [
+    'IP-CIDR,67.198.55.0/24,Proxy,no-resolve // test rule',
+    '- IP-CIDR,67.198.55.0/24,Proxy,no-resolve',
+  ],
+  [
+    'PROCESS-NAME,Telegram,Proxy,no-resolve // test rule',
+    '- PROCESS-NAME,Telegram,Proxy,no-resolve',
+  ],
+  ['# Comment', '# Comment'],
+  ['URL-REGEX,xxxxxxxxxxxx', ''],
+  ['# test', '# test'],
+  ['  ', '  '],
+  [
+    'IP-CIDR6,2011:dab8:3456:82a0::/50,DIRECT',
+    '- IP-CIDR6,2011:dab8:3456:82a0::/50,DIRECT',
+  ],
+  [
+    'IP-CIDR6,2011:dab8:3456:82a0::/50,DIRECT,no-resolve',
+    '- IP-CIDR6,2011:dab8:3456:82a0::/50,DIRECT,no-resolve',
+  ],
+  ['GEOIP,HK,DIRECT,no-resolve', '- GEOIP,HK,DIRECT,no-resolve'],
+  ['FOO,BAR,DIRECT', ''],
+] as Array<[string, string]>) {
+  test(`stash - ${expression} => ${result}`, (t) => {
+    t.is(
+      templateEngine.renderString('{{ expression | stash }}', {
+        expression,
+      }),
+      result,
+    )
   })
-
-  t.is(result, '- PROCESS-NAME,Telegram,Proxy,no-resolve')
-})
-
-test('clash #4', (t) => {
-  const body = `{{ str | clash }}`
-  const str = `# Comment`
-  const result = templateEngine.renderString(body, {
-    str,
-  })
-
-  t.is(result, '# Comment')
-})
-
-test('clash #5', (t) => {
-  const body = `{{ str | clash }}`
-  const str = `# Comment`
-  const result = templateEngine.renderString(body, {
-    str,
-  })
-
-  t.is(result, '# Comment')
-})
-
-test('clash #6', (t) => {
-  const body = `{{ str | clash }}`
-  const str = `URL-REGEX,xxxxxxxxxxxx`
-  const result = templateEngine.renderString(body, {
-    str,
-  })
-
-  t.is(result, '')
-})
-
-test('clash #7', (t) => {
-  const body = `{{ str | clash }}`
-
-  t.is(templateEngine.renderString(body, { str: '# test' }), '# test')
-  t.is(templateEngine.renderString(body, { str: '  ' }), '  ')
-})
-
-test('clash #8', (t) => {
-  const body = `{{ str | clash }}`
-
-  t.is(
-    templateEngine.renderString(body, {
-      str: 'IP-CIDR6,2011:dab8:3456:82a0::/50,DIRECT',
-    }),
-    `- IP-CIDR6,2011:dab8:3456:82a0::/50,DIRECT`,
-  )
-  t.is(
-    templateEngine.renderString(body, {
-      str: 'IP-CIDR6,2011:dab8:3456:82a0::/50,DIRECT,no-resolve',
-    }),
-    `- IP-CIDR6,2011:dab8:3456:82a0::/50,DIRECT,no-resolve`,
-  )
-})
-
-test('clash #9', (t) => {
-  const body = `{{ str | clash }}`
-
-  t.is(
-    templateEngine.renderString(body, {
-      str: 'GEOIP,HK,DIRECT,no-resolve',
-    }),
-    `- GEOIP,HK,DIRECT,no-resolve`,
-  )
-})
+}
 
 test('base64', (t) => {
   const body = `{{ str | base64 }}`
