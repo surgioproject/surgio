@@ -28,6 +28,37 @@ export const CLASH_SUPPORTED_RULE = [
   'PROCESS-NAME',
 ] as const
 
+// CLASH_META_SUPPORTED_RULE generate by `curl -sf https://raw.githubusercontent.com/MetaCubeX/mihomo/Meta/rules/parser.go | grep case | sed 's/://' | sed 's/case//' | tr '\n' ',' | python3 -c 'print(eval(input()))' | sed 's/, /  \n/g' | sed 's/[()]//' | sed 's/[ ]*$/,/'`
+export const CLASH_META_SUPPORTED_RULE = [
+  'DOMAIN',
+  'DOMAIN-SUFFIX',
+  'DOMAIN-KEYWORD',
+  'GEOSITE',
+  'GEOIP',
+  'IP-CIDR',
+  'IP-CIDR6',
+  'SRC-IP-CIDR',
+  'IP-SUFFIX',
+  'SRC-IP-SUFFIX',
+  'SRC-PORT',
+  'DST-PORT',
+  'IN-PORT',
+  'DSCP',
+  'PROCESS-NAME',
+  'PROCESS-PATH',
+  'NETWORK',
+  'UID',
+  'IN-TYPE',
+  'IN-USER',
+  'IN-NAME',
+  'SUB-RULE',
+  'AND',
+  'OR',
+  'NOT',
+  'RULE-SET',
+  'MATCH',
+] as const
+
 export const QUANTUMULT_X_SUPPORTED_RULE = [
   'USER-AGENT',
   'HOST',
