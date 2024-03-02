@@ -21,39 +21,6 @@ test('CustomProvider should work', async (t) => {
   t.deepEqual(await provider.getNodeList(), [])
 })
 
-test('CustomProvider should format header keys to lowercase', async (t) => {
-  const provider = new CustomProvider('test', {
-    type: SupportProviderEnum.Custom,
-    nodeList: [
-      {
-        type: NodeTypeEnum.Shadowsocks,
-        nodeName: 'test',
-        hostname: 'example.com',
-        port: 443,
-        method: 'chacha20-ietf-poly1305',
-        password: 'password',
-        wsHeaders: {
-          Host: 'Example.com',
-        },
-      },
-    ],
-  })
-
-  t.deepEqual(await provider.getNodeList(), [
-    {
-      type: NodeTypeEnum.Shadowsocks,
-      nodeName: 'test',
-      hostname: 'example.com',
-      port: 443,
-      method: 'chacha20-ietf-poly1305',
-      password: 'password',
-      wsHeaders: {
-        host: 'Example.com',
-      },
-    },
-  ])
-})
-
 test('CustomProvider underlying proxy', async (t) => {
   t.deepEqual(
     await new CustomProvider('test', {

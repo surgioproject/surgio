@@ -229,7 +229,7 @@ module.exports = {
 - 类型: `boolean`
 - 默认值: `false`
 
-目前仅 Stash 支持 Tuic，如果你希望在 Clash 订阅中输出 Tuic 节点请开启此项。
+目前仅 Clash Meta 内核和 Stash 支持 Tuic，如果你希望在 Clash 订阅中输出 Tuic 节点请开启此项。
 
 ### clashConfig.enableShadowTls
 
@@ -261,11 +261,11 @@ Clash 核心版本。默认使用 Clash 核心，如果你希望输出针对 Cla
 
 下面是目前支持的变化：
 
-| 核心 | 变化                                                                               |
-| --- |----------------------------------------------------------------------------------|
-| `clash` | 默认值，不输出任何变化                                                                      |
-| `clash.meta` | 不输出任何变化                                                        |
-| `stash` | - Hysteria 协议的密码字段改为 `auth` |
+| 核心 | 变化                                                           |
+| --- |--------------------------------------------------------------|
+| `clash` | 默认值                                                          |
+| `clash.meta` | 模板 `clash` 过滤器会改为过滤 Clash Meta 不支持的规则                        |
+| `stash` | - Hysteria 协议的密码字段改为 `auth`；模板 `clash` 过滤器会改为过滤 Stash 不支持的规则 |
 
 :::warning 注意
 `enableTuic`, `enableShadowTls`, `enableHysteria2` 这三个配置项和 `clashCore` 目前互不影响，但是将来会合并到 `clashCore` 中。

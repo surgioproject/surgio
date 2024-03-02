@@ -187,24 +187,109 @@ module.exports = defineCustomProvider({
 
 ### Vmess
 
+从 v3.5.0 开始 Surgio 支持了更多 Vmess 协议。为了更好地区分不同协议的参数，原有的 `host`, `path`, `wsHeaders` 将会在后面的版本中废弃，请使用下面列出的新属性。 Surgio 会忽略代理客户端不支持的协议类型。
+
+#### `network: 'tcp'`
+
 ```json5
 {
   nodeName: '🇭🇰HK',
   type: 'vmess',
   hostname: 'hk.example.com',
   method: 'auto', // 仅支持 auto/aes-128-gcm/chacha20-ietf-poly1305/none
-  network: 'ws', // 仅支持 tcp/ws
+  network: 'tcp',
   alterId: '64',
-  path: '/',
   port: 8080,
   tls: false,
-  host: 'example.com', // 此属性相当于 wsHeaders.host，但推荐配置在 wsHeaders.host 上
   uuid: '1386f85e-657b-4d6e-9d56-78badb75e1fd',
-  tfo: false, // TCP Fast Open
-  tls13: false, // TLS 1.3, TLS 开启时有效
   udpRelay: true, // 开启 UDP 转发
-  wsHeaders: {
-    key: 'value',
+}
+```
+
+#### `network: 'http'`
+
+```json5
+{
+   nodeName: '🇭🇰HK',
+   type: 'vmess',
+   hostname: 'hk.example.com',
+   method: 'auto',
+   network: 'http',
+   alterId: '64',
+   port: 8080,
+   tls: false,
+   uuid: '1386f85e-657b-4d6e-9d56-78badb75e1fd',
+   udpRelay: true,
+   httpOpts: {
+     method: 'GET',
+     path: ['/', '/video'],
+     headers: {
+       'x-key': 'x-value',
+     },
+   },
+}
+```
+
+#### `network: 'ws'`
+
+```json5
+{
+  nodeName: '🇭🇰HK',
+  type: 'vmess',
+  hostname: 'hk.example.com',
+  method: 'auto',
+  network: 'ws',
+  alterId: '64',
+  port: 8080,
+  tls: false,
+  uuid: '1386f85e-657b-4d6e-9d56-78badb75e1fd',
+  udpRelay: true,
+  wsOpts: {
+    path: '/',
+    headers: {
+      'Host': 'www.example.com',
+    },
+  },
+}
+```
+
+#### `network: 'grpc'`
+
+```json5
+{
+  nodeName: '🇭🇰HK',
+  type: 'vmess',
+  hostname: 'hk.example.com',
+  method: 'auto',
+  network: 'grpc',
+  alterId: '64',
+  port: 8080,
+  tls: false,
+  uuid: '1386f85e-657b-4d6e-9d56-78badb75e1fd',
+  udpRelay: true,
+  grpcOpts: {
+    serviceName: 'example',
+  },
+}
+```
+
+#### `network: 'h2'`
+
+```json5
+{
+  nodeName: '🇭🇰HK',
+  type: 'vmess',
+  hostname: 'hk.example.com',
+  method: 'auto',
+  network: 'h2',
+  alterId: '64',
+  port: 8080,
+  tls: false,
+  uuid: '1386f85e-657b-4d6e-9d56-78badb75e1fd',
+  udpRelay: true,
+  h2Opts: {
+    path: '/',
+    host: ['www.example.com'],
   },
 }
 ```

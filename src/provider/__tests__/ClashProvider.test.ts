@@ -143,8 +143,6 @@ test('getClashSubscription', async (t) => {
     type: NodeTypeEnum.Vmess,
     nodeName: 'vmess new format',
     hostname: 'server',
-    host: 'v2ray.com',
-    path: '/path',
     port: 443,
     uuid: 'uuid',
     alterId: '32',
@@ -154,16 +152,19 @@ test('getClashSubscription', async (t) => {
     tls: true,
     tls13: false,
     skipCertVerify: true,
-    wsHeaders: {
-      host: 'v2ray.com',
+    wsOpts: {
+      headers: {
+        Host: 'v2ray.com',
+      },
+      path: '/path',
+      'early-data-header-name': 'Sec-WebSocket-Protocol',
+      'max-early-data': 2048,
     },
   })
   t.deepEqual(config.shift(), {
     type: NodeTypeEnum.Vmess,
     nodeName: 'vmess custom header',
     hostname: 'server',
-    host: 'server',
-    path: '/path',
     port: 443,
     uuid: 'uuid',
     alterId: '32',
@@ -173,8 +174,11 @@ test('getClashSubscription', async (t) => {
     tls: true,
     tls13: false,
     skipCertVerify: false,
-    wsHeaders: {
-      edge: 'www.baidu.com',
+    wsOpts: {
+      headers: {
+        edge: 'www.baidu.com',
+      },
+      path: '/path',
     },
   })
   t.deepEqual(config.shift(), {

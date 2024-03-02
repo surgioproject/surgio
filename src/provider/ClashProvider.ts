@@ -3,6 +3,10 @@ import yaml from 'yaml'
 import _ from 'lodash'
 import { createLogger } from '@surgio/logger'
 import { z } from 'zod'
+import {
+  CLASH_META_SUPPORTED_VMESS_NETWORK,
+  STASH_SUPPORTED_VMESS_NETWORK,
+} from '../constant'
 
 import {
   ClashProviderConfig,
@@ -257,27 +261,20 @@ export const parseClashConfig = (
 
         case 'vmess': {
           // istanbul ignore next
-          if (item.network && !['tcp', 'ws'].includes(item.network)) {
+          if (
+            item.network &&
+            ![
+              ...CLASH_META_SUPPORTED_VMESS_NETWORK,
+              ...STASH_SUPPORTED_VMESS_NETWORK,
+            ].includes(item.network)
+          ) {
             logger.warn(
               `不支持从 Clash 订阅中读取 network 类型为 ${item.network} 的 Vmess 节点，节点 ${item.name} 会被省略`,
             )
             return undefined
           }
 
-          const isNewConfig = 'ws-opts' in item
-          const wsHeaders = isNewConfig
-            ? lowercaseHeaderKeys(_.get(item, 'ws-opts.headers', {}))
-            : lowercaseHeaderKeys(_.get(item, 'ws-headers', {}))
-          const wsHost =
-            item.servername || _.get(wsHeaders, 'host', item.server)
-          const wsOpts = isNewConfig
-            ? _.get(item, 'ws-opts', {})
-            : {
-                path: _.get(item, 'ws-path', '/'),
-                headers: wsHeaders,
-              }
-
-          return {
+          const vmessNode: VmessNodeConfig = {
             type: NodeTypeEnum.Vmess,
             nodeName: item.name,
             hostname: item.server,
@@ -286,22 +283,54 @@ export const parseClashConfig = (
             alterId: item.alterId ? `${item.alterId}` : '0',
             method: item.cipher || 'auto',
             udpRelay: resolveUdpRelay(item.udp, udpRelay),
-            tls: item.tls ?? false,
+            tls: item.tls === true,
             network: item.network || 'tcp',
-            ...(item.network === 'ws'
-              ? {
-                  host: wsHost,
-                  path: _.get(wsOpts, 'path', '/'),
-                  wsHeaders,
-                }
-              : null),
-            ...(item.tls
-              ? {
-                  skipCertVerify: item['skip-cert-verify'] === true,
-                  tls13: tls13 ?? false,
-                }
-              : null),
-          } as VmessNodeConfig
+          }
+
+          if (vmessNode.tls) {
+            if (typeof item.servername === 'string') {
+              vmessNode.sni = item.servername
+            }
+            if (typeof item.sni === 'string') {
+              vmessNode.sni = item.sni
+            }
+
+            vmessNode.skipCertVerify = item['skip-cert-verify'] === true
+            vmessNode.tls13 = tls13 === true
+          }
+
+          switch (vmessNode.network) {
+            case 'ws':
+              vmessNode.wsOpts = item['ws-opts'] || {
+                path: '/',
+              }
+
+              if (item['ws-path']) {
+                vmessNode.wsOpts!.path = item['ws-path']
+              }
+
+              if (item['ws-headers']) {
+                vmessNode.wsOpts!.headers = item['ws-headers']
+              }
+
+              break
+            case 'h2':
+              vmessNode.h2Opts = item['h2-opts']
+
+              break
+            case 'http':
+              vmessNode.httpOpts = item['http-opts']
+
+              break
+            case 'grpc':
+              vmessNode.grpcOpts = {
+                serviceName: item['grpc-opts']['grpc-service-name'],
+              }
+
+              break
+          }
+
+          return vmessNode
         }
 
         case 'http':

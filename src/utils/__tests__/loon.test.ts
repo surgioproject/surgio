@@ -21,7 +21,54 @@ test('getLoonNodes', (t) => {
         uuid: '1386f85e-657b-4d6e-9d56-78badb75e1fd',
       },
     ]),
-    '测试 = vmess,1.1.1.1,443,method=chacha20-ietf-poly1305,"1386f85e-657b-4d6e-9d56-78badb75e1fd",transport=tcp,over-tls=true,tls-name=1.1.1.1,skip-cert-verify=false',
+    '测试 = vmess,1.1.1.1,443,method=chacha20-ietf-poly1305,"1386f85e-657b-4d6e-9d56-78badb75e1fd",transport=tcp,over-tls=true',
+  )
+  t.is(
+    getLoonNodes([
+      {
+        type: NodeTypeEnum.Vmess,
+        alterId: '64',
+        hostname: '1.1.1.1',
+        method: 'auto',
+        network: 'http',
+        nodeName: '测试',
+        port: 443,
+        tls: true,
+        tls13: true,
+        udpRelay: true,
+        uuid: '1386f85e-657b-4d6e-9d56-78badb75e1fd',
+        httpOpts: {
+          path: ['/test'],
+          method: 'POST',
+          headers: {
+            Host: 'example.com',
+          },
+        },
+      },
+    ]),
+    '测试 = vmess,1.1.1.1,443,method=chacha20-ietf-poly1305,"1386f85e-657b-4d6e-9d56-78badb75e1fd",transport=http,path=/test,host=example.com,over-tls=true',
+  )
+  t.is(
+    getLoonNodes([
+      {
+        type: NodeTypeEnum.Vmess,
+        alterId: '64',
+        hostname: '1.1.1.1',
+        method: 'auto',
+        network: 'ws',
+        nodeName: '测试',
+        port: 443,
+        tls: true,
+        tls13: true,
+        udpRelay: true,
+        uuid: '1386f85e-657b-4d6e-9d56-78badb75e1fd',
+        wsOpts: {
+          path: '/test',
+          headers: {},
+        },
+      },
+    ]),
+    '测试 = vmess,1.1.1.1,443,method=chacha20-ietf-poly1305,"1386f85e-657b-4d6e-9d56-78badb75e1fd",transport=ws,path=/test,over-tls=true',
   )
   t.is(
     getLoonNodes([

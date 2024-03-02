@@ -89,17 +89,21 @@ test('getClashNodes', async (t) => {
     },
     {
       alterId: '64',
-      host: 'example.com',
       hostname: '1.1.1.1',
       method: 'auto',
       network: 'ws',
       nodeName: 'Test Node 3',
-      path: '/',
       port: 8080,
       tls: false,
       skipCertVerify: true,
       type: NodeTypeEnum.Vmess,
       uuid: '1386f85e-657b-4d6e-9d56-78badb75e1fd',
+      wsOpts: {
+        headers: {
+          host: 'example.com',
+        },
+        path: '/',
+      },
     },
     {
       alterId: '64',
@@ -189,7 +193,6 @@ test('getClashNodes', async (t) => {
     server: '1.1.1.1',
     network: 'ws',
     port: 8080,
-    tls: false,
     udp: false,
     type: 'vmess',
     uuid: '1386f85e-657b-4d6e-9d56-78badb75e1fd',
@@ -204,9 +207,9 @@ test('getClashNodes', async (t) => {
     cipher: 'auto',
     name: 'Test Node 4',
     alterId: '64',
+    network: 'tcp',
     server: '1.1.1.1',
     port: 8080,
-    tls: false,
     type: 'vmess',
     udp: false,
     uuid: '1386f85e-657b-4d6e-9d56-78badb75e1fd',
@@ -215,6 +218,7 @@ test('getClashNodes', async (t) => {
     cipher: 'auto',
     name: 'Test Node 5',
     alterId: '64',
+    network: 'tcp',
     server: '1.1.1.1',
     port: 8080,
     tls: true,
@@ -227,10 +231,10 @@ test('getClashNodes', async (t) => {
     name: 'Test Node 6',
     alterId: '64',
     server: '1.1.1.1',
+    network: 'tcp',
     port: 8080,
     tls: true,
     udp: false,
-    'skip-cert-verify': false,
     type: 'vmess',
     uuid: '1386f85e-657b-4d6e-9d56-78badb75e1fd',
   })
@@ -239,6 +243,7 @@ test('getClashNodes', async (t) => {
     name: 'Test Node 7',
     alterId: '64',
     server: '1.1.1.1',
+    network: 'tcp',
     port: 8080,
     tls: true,
     udp: false,
@@ -326,12 +331,10 @@ test('getClashNodes', async (t) => {
     clash.getClashNodes([
       {
         alterId: '64',
-        host: '',
         hostname: '1.1.1.1',
         method: 'auto',
         network: 'tcp',
         nodeName: 'Test',
-        path: '/',
         port: 8080,
         tls: true,
         udpRelay: true,
@@ -347,11 +350,130 @@ test('getClashNodes', async (t) => {
         name: 'Test',
         port: 8080,
         server: '1.1.1.1',
+        network: 'tcp',
         'skip-cert-verify': true,
         tls: true,
         type: 'vmess',
         udp: true,
         uuid: '1386f85e-657b-4d6e-9d56-78badb75e1fd',
+      },
+    ],
+  )
+
+  t.deepEqual(
+    clash.getClashNodes([
+      {
+        alterId: '64',
+        hostname: '1.1.1.1',
+        method: 'auto',
+        network: 'grpc',
+        nodeName: 'Test Node 3',
+        port: 8080,
+        tls: false,
+        skipCertVerify: true,
+        type: NodeTypeEnum.Vmess,
+        uuid: '1386f85e-657b-4d6e-9d56-78badb75e1fd',
+        grpcOpts: {
+          serviceName: 'test',
+        },
+      },
+    ]),
+    [
+      {
+        alterId: '64',
+        cipher: 'auto',
+        name: 'Test Node 3',
+        network: 'grpc',
+        port: 8080,
+        server: '1.1.1.1',
+        type: 'vmess',
+        udp: false,
+        uuid: '1386f85e-657b-4d6e-9d56-78badb75e1fd',
+        'grpc-opts': {
+          'grpc-service-name': 'test',
+        },
+      },
+    ],
+  )
+
+  t.deepEqual(
+    clash.getClashNodes([
+      {
+        alterId: '64',
+        hostname: '1.1.1.1',
+        method: 'auto',
+        network: 'http',
+        nodeName: 'Test Node 3',
+        port: 8080,
+        tls: false,
+        skipCertVerify: true,
+        type: NodeTypeEnum.Vmess,
+        uuid: '1386f85e-657b-4d6e-9d56-78badb75e1fd',
+        httpOpts: {
+          headers: {
+            host: 'example.com',
+          },
+          method: 'GET',
+          path: ['/'],
+        },
+      },
+    ]),
+    [
+      {
+        alterId: '64',
+        cipher: 'auto',
+        name: 'Test Node 3',
+        network: 'http',
+        port: 8080,
+        server: '1.1.1.1',
+        type: 'vmess',
+        udp: false,
+        uuid: '1386f85e-657b-4d6e-9d56-78badb75e1fd',
+        'http-opts': {
+          headers: {
+            host: 'example.com',
+          },
+          method: 'GET',
+          path: ['/'],
+        },
+      },
+    ],
+  )
+
+  t.deepEqual(
+    clash.getClashNodes([
+      {
+        alterId: '64',
+        hostname: '1.1.1.1',
+        method: 'auto',
+        network: 'h2',
+        nodeName: 'Test Node 3',
+        port: 8080,
+        tls: false,
+        skipCertVerify: true,
+        type: NodeTypeEnum.Vmess,
+        uuid: '1386f85e-657b-4d6e-9d56-78badb75e1fd',
+        h2Opts: {
+          path: '/h2',
+          host: ['host.com', 'example.com'],
+        },
+      },
+    ]),
+    [
+      {
+        alterId: '64',
+        cipher: 'auto',
+        name: 'Test Node 3',
+        network: 'h2',
+        port: 8080,
+        server: '1.1.1.1',
+        type: 'vmess',
+        udp: false,
+        uuid: '1386f85e-657b-4d6e-9d56-78badb75e1fd',
+        'h2-opts': {
+          path: '/h2',
+          host: ['host.com', 'example.com'],
+        },
       },
     ],
   )

@@ -1,7 +1,6 @@
 import { createLogger } from '@surgio/logger'
-import _ from 'lodash'
 
-import { OBFS_UA } from '../constant'
+import { OBFS_UA, SURGE_SUPPORTED_VMESS_NETWORK } from '../constant'
 import {
   NodeFilterType,
   NodeTypeEnum,
@@ -14,10 +13,10 @@ import { applyFilter } from '../filters'
 const logger = createLogger({ service: 'surgio:utils:surge' })
 
 export const getSurgeExtendHeaders = (
-  wsHeaders: Record<string, string>,
+  headers: Record<string, string>,
 ): string => {
-  return Object.keys(wsHeaders)
-    .map((headerKey) => `${headerKey.toLowerCase()}:${wsHeaders[headerKey]}`)
+  return Object.keys(headers)
+    .map((headerKey) => `${headerKey.toLowerCase()}:${headers[headerKey]}`)
     .join('|')
 }
 
@@ -294,6 +293,13 @@ function nodeListMapper(
     }
 
     case NodeTypeEnum.Vmess: {
+      if (!SURGE_SUPPORTED_VMESS_NETWORK.includes(nodeConfig.network as any)) {
+        logger.warn(
+          `Surge 不支持 Vmess ${nodeConfig.network} 节点，节点 ${nodeConfig.nodeName} 会被省略`,
+        )
+        return undefined
+      }
+
       const result = [
         'vmess',
         nodeConfig.hostname,
@@ -302,31 +308,32 @@ function nodeListMapper(
       ]
 
       if (
-        ['chacha20-ietf-poly1305', 'aes-128-gcm'].includes(nodeConfig.method)
+        ['chacha20-ietf-poly1305', 'aes-128-gcm', 'chacha20-poly1305'].includes(
+          nodeConfig.method,
+        )
       ) {
         result.push(`encrypt-method=${nodeConfig.method}`)
       }
 
       if (nodeConfig.network === 'ws') {
         result.push('ws=true')
-        result.push(`ws-path=${nodeConfig.path}`)
-        result.push(
-          'ws-headers=' +
-            JSON.stringify(
-              getSurgeExtendHeaders({
-                host: nodeConfig.host || nodeConfig.hostname,
-                'user-agent': OBFS_UA,
-                ..._.omit(nodeConfig.wsHeaders, ['host']), // host 本质上是一个头信息，所以可能存在冲突的情况。以 host 属性为准。
-              }),
-            ),
-        )
+
+        if (nodeConfig.wsOpts) {
+          result.push(`ws-path=${nodeConfig.wsOpts.path}`)
+          result.push(
+            'ws-headers=' +
+              JSON.stringify(
+                getSurgeExtendHeaders({
+                  'user-agent': OBFS_UA,
+                  ...nodeConfig.wsOpts.headers,
+                }),
+              ),
+          )
+        }
       }
 
       if (nodeConfig.tls) {
-        result.push(
-          'tls=true',
-          ...(nodeConfig.host ? [`sni=${nodeConfig.host}`] : []),
-        )
+        result.push('tls=true')
       }
 
       if (nodeConfig?.surgeConfig?.vmessAEAD) {

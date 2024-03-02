@@ -1,6 +1,7 @@
 import { createLogger } from '@surgio/logger'
 import _ from 'lodash'
 
+import { QUANTUMULT_X_SUPPORTED_VMESS_NETWORK } from '../constant'
 import {
   NodeFilterType,
   NodeTypeEnum,
@@ -8,7 +9,7 @@ import {
   SortedNodeFilterType,
 } from '../types'
 import { applyFilter } from '../filters'
-import { pickAndFormatStringList } from './index'
+import { getHeader, pickAndFormatStringList } from './index'
 
 const logger = createLogger({ service: 'surgio:utils:quantumult' })
 
@@ -43,6 +44,17 @@ function nodeListMapper(
 ): [string, string] | undefined {
   switch (nodeConfig.type) {
     case NodeTypeEnum.Vmess: {
+      if (
+        !QUANTUMULT_X_SUPPORTED_VMESS_NETWORK.includes(
+          nodeConfig.network as any,
+        )
+      ) {
+        logger.warn(
+          `Quantumult X 不支持 ${nodeConfig.network} 的 Vmess 节点，节点 ${nodeConfig.nodeName} 会被省略`,
+        )
+        return void 0
+      }
+
       const config = [
         `${nodeConfig.hostname}:${nodeConfig.port}`,
         // method 为 auto 时 qx 会无法识别
@@ -52,9 +64,7 @@ function nodeListMapper(
         `password=${nodeConfig.uuid}`,
         ...(nodeConfig.udpRelay ? ['udp-relay=true'] : []),
         ...(nodeConfig.tfo ? ['fast-open=true'] : []),
-        ...(nodeConfig.quantumultXConfig?.vmessAEAD
-          ? ['aead=true']
-          : ['aead=false']),
+        ...(nodeConfig.quantumultXConfig?.vmessAEAD ? ['aead=true'] : []),
       ]
 
       switch (nodeConfig.network) {
@@ -62,10 +72,9 @@ function nodeListMapper(
           if (nodeConfig.tls) {
             config.push(`obfs=wss`)
 
+            // istanbul ignore next
             if (nodeConfig.skipCertVerify) {
               config.push('tls-verification=false')
-            } else {
-              config.push('tls-verification=true')
             }
 
             // istanbul ignore next
@@ -75,8 +84,16 @@ function nodeListMapper(
           } else {
             config.push(`obfs=ws`)
           }
-          config.push(`obfs-uri=${nodeConfig.path || '/'}`)
-          config.push(`obfs-host=${nodeConfig.host || nodeConfig.hostname}`)
+
+          if (nodeConfig.wsOpts) {
+            const obfsHost = getHeader(nodeConfig.wsOpts.headers, 'Host')
+
+            config.push(`obfs-uri=${nodeConfig.wsOpts.path || '/'}`)
+
+            if (obfsHost) {
+              config.push(`obfs-host=${obfsHost}`)
+            }
+          }
 
           break
         case 'tcp':
@@ -96,8 +113,19 @@ function nodeListMapper(
           }
 
           break
-        default:
-        // do nothing
+        case 'http':
+          if (nodeConfig.httpOpts) {
+            const obfsHost = getHeader(nodeConfig.httpOpts.headers, 'Host')
+
+            config.push(
+              'obfs=http',
+              `obfs-uri=${nodeConfig.httpOpts.path || '/'}`,
+            )
+
+            if (obfsHost) {
+              config.push(`obfs-host=${obfsHost}`)
+            }
+          }
       }
 
       if (typeof nodeConfig.testUrl === 'string') {
@@ -108,8 +136,8 @@ function nodeListMapper(
 
       // istanbul ignore next
       if (
-        nodeConfig.wsHeaders &&
-        Object.keys(nodeConfig.wsHeaders).length > 1
+        nodeConfig.wsOpts?.headers &&
+        Object.keys(nodeConfig.wsOpts.headers).length > 1
       ) {
         logger.warn(
           `Quantumult X 不支持自定义额外的 Header 字段，节点 ${nodeConfig.nodeName} 可能不可用`,

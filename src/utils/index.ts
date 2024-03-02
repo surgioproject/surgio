@@ -3,7 +3,6 @@ import fs from 'fs-extra'
 import os from 'os'
 import { join } from 'path'
 import queryString from 'query-string'
-import { JsonObject } from 'type-fest'
 import { URL, URLSearchParams } from 'url'
 import URLSafeBase64 from 'urlsafe-base64'
 import net from 'net'
@@ -19,7 +18,7 @@ import {
   SortedNodeFilterType,
   VmessNodeConfig,
 } from '../types'
-import { ERR_INVALID_FILTER, OBFS_UA } from '../constant'
+import { ERR_INVALID_FILTER, V2RAYN_SUPPORTED_VMESS_NETWORK } from '../constant'
 import { getIsGFWFree } from './env-flag'
 import { applyFilter } from '../filters'
 
@@ -220,6 +219,7 @@ export const getShadowsocksrNodes = (
   return result.join('\n')
 }
 
+// https://github.com/2dust/v2rayN/wiki/%E5%88%86%E4%BA%AB%E9%93%BE%E6%8E%A5%E6%A0%BC%E5%BC%8F%E8%AF%B4%E6%98%8E(ver-2)
 export const getV2rayNNodes = (
   list: ReadonlyArray<VmessNodeConfig>,
 ): string => {
@@ -230,20 +230,75 @@ export const getV2rayNNodes = (
         return void 0
       }
 
+      if (!V2RAYN_SUPPORTED_VMESS_NETWORK.includes(nodeConfig.network as any)) {
+        logger.warn(
+          `在生成 V2Ray 节点时出现了不被支持的 ${nodeConfig.network} 协议，节点 ${nodeConfig.nodeName} 会被省略`,
+        )
+        return void 0
+      }
+
       switch (nodeConfig.type) {
         case NodeTypeEnum.Vmess: {
-          const json = {
+          const json: Record<string, string> = {
             v: '2',
             ps: nodeConfig.nodeName,
             add: nodeConfig.hostname,
             port: `${nodeConfig.port}`,
             id: nodeConfig.uuid,
-            aid: nodeConfig.alterId,
-            net: nodeConfig.network,
-            type: 'none',
-            host: nodeConfig.host,
-            path: nodeConfig.path,
-            tls: nodeConfig.tls ? 'tls' : '',
+            aid: `${nodeConfig.alterId}` || '0',
+            scy: nodeConfig.method,
+            net: nodeConfig.network === 'http' ? 'tcp' : nodeConfig.network,
+            type: nodeConfig.network === 'http' ? 'http' : 'none',
+          }
+
+          if (nodeConfig.tls) {
+            json.tls = 'tls'
+
+            if (nodeConfig.sni) {
+              json.sni = nodeConfig.sni
+            }
+            if (nodeConfig.alpn) {
+              json.alpn = nodeConfig.alpn.join(',')
+            }
+          }
+
+          switch (nodeConfig.network) {
+            case 'ws':
+              if (nodeConfig.wsOpts) {
+                const obfsHost = getHeader(nodeConfig.wsOpts.headers, 'host')
+                json.path = nodeConfig.wsOpts.path
+
+                if (obfsHost) {
+                  json.host = obfsHost
+                }
+              }
+
+              break
+            case 'http':
+              if (nodeConfig.httpOpts) {
+                const obfsHost = getHeader(nodeConfig.httpOpts.headers, 'host')
+
+                json.path = nodeConfig.httpOpts.path[0]
+
+                if (obfsHost) {
+                  json.host = obfsHost
+                }
+              }
+
+              break
+            case 'h2':
+              if (nodeConfig.h2Opts) {
+                json.path = nodeConfig.h2Opts.path
+                json.host = nodeConfig.h2Opts.host[0]
+              }
+
+              break
+            case 'grpc':
+              if (nodeConfig.grpcOpts) {
+                json.path = nodeConfig.grpcOpts.serviceName
+              }
+
+              break
           }
 
           return 'vmess://' + toBase64(JSON.stringify(json))
@@ -434,83 +489,6 @@ export const ensureConfigFolder = (dir: string = os.homedir()): string => {
   return configDir
 }
 
-export const formatV2rayConfig = (
-  localPort: number,
-  nodeConfig: VmessNodeConfig,
-): JsonObject => {
-  const config: any = {
-    log: {
-      loglevel: 'warning',
-    },
-    inbound: {
-      port: Number(localPort),
-      listen: '127.0.0.1',
-      protocol: 'socks',
-      settings: {
-        auth: 'noauth',
-      },
-    },
-    outbound: {
-      protocol: 'vmess',
-      settings: {
-        vnext: [
-          {
-            address: nodeConfig.hostname,
-            port: Number(nodeConfig.port),
-            users: [
-              {
-                id: nodeConfig.uuid,
-                alterId: Number(nodeConfig.alterId),
-                security: nodeConfig.method,
-                level: 0,
-              },
-            ],
-          },
-        ],
-      },
-      streamSettings: {
-        security: 'none',
-      },
-    },
-  }
-
-  if (nodeConfig.tls) {
-    config.outbound.streamSettings = {
-      ...config.outbound.streamSettings,
-      security: 'tls',
-      tlsSettings: {
-        serverName: nodeConfig.host || nodeConfig.hostname,
-        ...(typeof nodeConfig.skipCertVerify === 'boolean'
-          ? {
-              allowInsecure: nodeConfig.skipCertVerify,
-            }
-          : null),
-        ...(typeof nodeConfig.tls13 === 'boolean'
-          ? {
-              allowInsecureCiphers: !nodeConfig.tls13,
-            }
-          : null),
-      },
-    }
-  }
-
-  if (nodeConfig.network === 'ws') {
-    config.outbound.streamSettings = {
-      ...config.outbound.streamSettings,
-      network: nodeConfig.network,
-      wsSettings: {
-        path: nodeConfig.path,
-        headers: {
-          Host: nodeConfig.host,
-          'User-Agent': OBFS_UA,
-        },
-      },
-    }
-  }
-
-  return config
-}
-
 export const lowercaseHeaderKeys = (
   headers: Record<string, string>,
 ): Record<string, string> => {
@@ -631,4 +609,19 @@ export const parseBitrate = (str: string): number => {
   } else {
     return bitrate
   }
+}
+
+export const getHeader = (
+  headers: Record<string, string> | undefined,
+  key: string,
+): string | undefined => {
+  if (!headers) {
+    return undefined
+  }
+
+  const lowerCaseKey = key.toLowerCase()
+  const headerKey = Object.keys(headers).find(
+    (k) => k.toLowerCase() === lowerCaseKey,
+  )
+  return headerKey ? headers[headerKey] : undefined
 }

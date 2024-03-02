@@ -81,13 +81,14 @@ test('getSurfboardNodes', async (t) => {
       method: 'auto',
       network: 'ws',
       nodeName: '测试 1',
-      path: '/',
       port: 8080,
       tls: true,
-      host: '',
       uuid: '1386f85e-657b-4d6e-9d56-78badb75e1fd',
       surfboardConfig: {
         vmessAEAD: true,
+      },
+      wsOpts: {
+        path: '/',
       },
     },
     {
@@ -97,7 +98,6 @@ test('getSurfboardNodes', async (t) => {
       method: 'aes-128-gcm',
       network: 'tcp',
       nodeName: '测试 2',
-      path: '/',
       port: 8080,
       tls: false,
       host: '',
@@ -110,57 +110,26 @@ test('getSurfboardNodes', async (t) => {
       method: 'auto',
       network: 'ws',
       nodeName: '测试 3',
-      path: '/',
       port: 8080,
       tls: true,
       tls13: true,
       skipCertVerify: true,
-      host: '',
       uuid: '1386f85e-657b-4d6e-9d56-78badb75e1fd',
       tfo: true,
       mptcp: true,
+      wsOpts: {
+        path: '/',
+      },
     },
   ]
-  const txt1 = surfboard.getSurfboardNodes(nodeList).split('\n')
-  const txt2 = surfboard.getSurfboardNodes(
-    nodeList,
-    (nodeConfig) => nodeConfig.nodeName === 'Test Node 1',
-  )
+
+  t.snapshot(surfboard.getSurfboardNodes(nodeList))
 
   t.is(
-    txt1[0],
-    'Test Node 1 = ss, example.com, 443, encrypt-method=chacha20-ietf-poly1305, password=password, udp-relay=true, obfs=tls, obfs-host=example.com',
-  )
-  t.is(
-    txt1[1],
-    'Test Node 2 = ss, example2.com, 443, encrypt-method=chacha20-ietf-poly1305, password=password',
-  )
-  t.is(
-    txt1[2],
-    'Test Node 4 = ss, example.com, 443, encrypt-method=chacha20-ietf-poly1305, password=password, udp-relay=true, obfs=tls, obfs-host=example.com',
-  )
-  t.is(
-    txt1[3],
-    'Test Node 5 = ss, example2.com, 443, encrypt-method=chacha20-ietf-poly1305, password=password',
-  )
-  t.is(
-    txt1[4],
-    'Test Node 6 = ss, example2.com, 443, encrypt-method=chacha20-ietf-poly1305, password=password',
-  )
-  t.is(
-    txt1[5],
-    '测试 1 = vmess, 1.1.1.1, 8080, username=1386f85e-657b-4d6e-9d56-78badb75e1fd, ws=true, ws-path=/, ws-headers="host:1.1.1.1|user-agent:Mozilla/5.0 (iPhone; CPU iPhone OS 13_5 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/13.1.1 Mobile/15E148 Safari/604.1", tls=true, vmess-aead=true',
-  )
-  t.is(
-    txt1[6],
-    '测试 2 = vmess, 1.1.1.1, 8080, username=1386f85e-657b-4d6e-9d56-78badb75e1fd, encrypt-method=aes-128-gcm, vmess-aead=false',
-  )
-  t.is(
-    txt1[7],
-    '测试 3 = vmess, 1.1.1.1, 8080, username=1386f85e-657b-4d6e-9d56-78badb75e1fd, ws=true, ws-path=/, ws-headers="host:1.1.1.1|user-agent:Mozilla/5.0 (iPhone; CPU iPhone OS 13_5 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/13.1.1 Mobile/15E148 Safari/604.1", tls=true, skip-cert-verify=true, vmess-aead=false',
-  )
-  t.is(
-    txt2,
+    surfboard.getSurfboardNodes(
+      nodeList,
+      (nodeConfig) => nodeConfig.nodeName === 'Test Node 1',
+    ),
     'Test Node 1 = ss, example.com, 443, encrypt-method=chacha20-ietf-poly1305, password=password, udp-relay=true, obfs=tls, obfs-host=example.com',
   )
 
@@ -357,19 +326,20 @@ test('getSurfboardNodes', async (t) => {
         method: 'auto',
         network: 'ws',
         nodeName: '测试 6',
-        path: '/',
         port: 8080,
         tls: true,
         tls13: true,
         skipCertVerify: true,
-        host: '',
         uuid: '1386f85e-657b-4d6e-9d56-78badb75e1fd',
         tfo: true,
         mptcp: true,
         testUrl: 'http://www.google.com',
+        wsOpts: {
+          path: '/',
+        },
       },
     ]),
-    '测试 6 = vmess, 1.1.1.1, 8080, username=1386f85e-657b-4d6e-9d56-78badb75e1fd, ws=true, ws-path=/, ws-headers="host:1.1.1.1|user-agent:Mozilla/5.0 (iPhone; CPU iPhone OS 13_5 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/13.1.1 Mobile/15E148 Safari/604.1", tls=true, skip-cert-verify=true, vmess-aead=false',
+    '测试 6 = vmess, 1.1.1.1, 8080, username=1386f85e-657b-4d6e-9d56-78badb75e1fd, ws=true, ws-path=/, ws-headers="user-agent:Mozilla/5.0 (iPhone; CPU iPhone OS 13_5 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/13.1.1 Mobile/15E148 Safari/604.1", tls=true, skip-cert-verify=true, vmess-aead=false',
   )
 })
 

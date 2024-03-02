@@ -6,6 +6,7 @@ import {
   PossibleNodeConfigType,
   ShadowsocksNodeConfig,
 } from '../../types'
+import { fromBase64 } from '../index'
 import * as utils from '../index'
 
 test('getNodeNames', async (t) => {
@@ -104,11 +105,15 @@ test('getV2rayNNodes', (t) => {
         method: 'auto',
         network: 'ws',
         nodeName: '测试 1',
-        path: '/',
         port: 8080,
         tls: false,
-        host: 'example.com',
         uuid: '1386f85e-657b-4d6e-9d56-78badb75e1fd',
+        wsOpts: {
+          path: '/',
+          headers: {
+            Host: 'example.com',
+          },
+        },
       },
       {
         type: NodeTypeEnum.Vmess,
@@ -117,10 +122,8 @@ test('getV2rayNNodes', (t) => {
         method: 'auto',
         network: 'tcp',
         nodeName: '测试 2',
-        path: '/',
         port: 8080,
         tls: true,
-        host: '',
         uuid: '1386f85e-657b-4d6e-9d56-78badb75e1fd',
       },
       {
@@ -130,152 +133,72 @@ test('getV2rayNNodes', (t) => {
         method: 'auto',
         network: 'ws',
         nodeName: '测试 3',
-        path: '/',
         port: 8080,
         tls: false,
-        host: '',
         uuid: '1386f85e-657b-4d6e-9d56-78badb75e1fd',
+        wsOpts: {
+          path: '/',
+          headers: {
+            Host: 'example.com',
+          },
+        },
+      },
+      {
+        type: NodeTypeEnum.Vmess,
+        alterId: '64',
+        hostname: '1.1.1.1',
+        method: 'auto',
+        network: 'http',
+        nodeName: '测试 4',
+        port: 8080,
+        tls: false,
+        uuid: '1386f85e-657b-4d6e-9d56-78badb75e1fd',
+        httpOpts: {
+          path: ['/'],
+          method: 'GET',
+          headers: {
+            Host: 'example.com',
+          },
+        },
+      },
+      {
+        type: NodeTypeEnum.Vmess,
+        alterId: '64',
+        hostname: '1.1.1.1',
+        method: 'auto',
+        network: 'h2',
+        nodeName: '测试 5',
+        port: 8080,
+        tls: false,
+        uuid: '1386f85e-657b-4d6e-9d56-78badb75e1fd',
+        h2Opts: {
+          path: '/',
+          host: ['example.com'],
+        },
+      },
+      {
+        type: NodeTypeEnum.Vmess,
+        alterId: '64',
+        hostname: '1.1.1.1',
+        method: 'auto',
+        network: 'grpc',
+        nodeName: '测试 6',
+        port: 8080,
+        tls: false,
+        uuid: '1386f85e-657b-4d6e-9d56-78badb75e1fd',
+        grpcOpts: {
+          serviceName: 'example',
+        },
       },
     ])
     .split('\n')
 
-  t.is(
-    schemeList[0],
-    'vmess://eyJ2IjoiMiIsInBzIjoi5rWL6K+VIDEiLCJhZGQiOiIxLjEuMS4xIiwicG9ydCI6IjgwODAiLCJpZCI6IjEzODZmODVlLTY1N2ItNGQ2ZS05ZDU2LTc4YmFkYjc1ZTFmZCIsImFpZCI6IjY0IiwibmV0Ijoid3MiLCJ0eXBlIjoibm9uZSIsImhvc3QiOiJleGFtcGxlLmNvbSIsInBhdGgiOiIvIiwidGxzIjoiIn0=',
-  )
-  t.is(
-    schemeList[1],
-    'vmess://eyJ2IjoiMiIsInBzIjoi5rWL6K+VIDIiLCJhZGQiOiIxLjEuMS4xIiwicG9ydCI6IjgwODAiLCJpZCI6IjEzODZmODVlLTY1N2ItNGQ2ZS05ZDU2LTc4YmFkYjc1ZTFmZCIsImFpZCI6IjY0IiwibmV0IjoidGNwIiwidHlwZSI6Im5vbmUiLCJob3N0IjoiIiwicGF0aCI6Ii8iLCJ0bHMiOiJ0bHMifQ==',
-  )
-  t.is(
-    schemeList[2],
-    'vmess://eyJ2IjoiMiIsInBzIjoi5rWL6K+VIDMiLCJhZGQiOiIxLjEuMS4xIiwicG9ydCI6IjgwODAiLCJpZCI6IjEzODZmODVlLTY1N2ItNGQ2ZS05ZDU2LTc4YmFkYjc1ZTFmZCIsImFpZCI6IjY0IiwibmV0Ijoid3MiLCJ0eXBlIjoibm9uZSIsImhvc3QiOiIiLCJwYXRoIjoiLyIsInRscyI6IiJ9',
-  )
-})
-
-test('formatV2rayConfig', (t) => {
-  const json = utils.formatV2rayConfig(100, {
-    type: NodeTypeEnum.Vmess,
-    alterId: '64',
-    hostname: '1.1.1.1',
-    method: 'auto',
-    network: 'ws',
-    nodeName: '测试 3',
-    path: '/',
-    port: 8080,
-    tls: false,
-    host: '',
-    uuid: '1386f85e-657b-4d6e-9d56-78badb75e1fd',
-  })
-  const json2 = utils.formatV2rayConfig(100, {
-    type: NodeTypeEnum.Vmess,
-    alterId: '64',
-    hostname: '1.1.1.1',
-    method: 'auto',
-    network: 'ws',
-    nodeName: '测试 4',
-    path: '/',
-    port: 8080,
-    tls: true,
-    tls13: true,
-    skipCertVerify: true,
-    host: '',
-    uuid: '1386f85e-657b-4d6e-9d56-78badb75e1fd',
-  })
-
-  t.deepEqual(json, {
-    log: {
-      loglevel: 'warning',
-    },
-    inbound: {
-      port: 100,
-      listen: '127.0.0.1',
-      protocol: 'socks',
-      settings: {
-        auth: 'noauth',
-      },
-    },
-    outbound: {
-      protocol: 'vmess',
-      settings: {
-        vnext: [
-          {
-            address: '1.1.1.1',
-            port: 8080,
-            users: [
-              {
-                id: '1386f85e-657b-4d6e-9d56-78badb75e1fd',
-                alterId: 64,
-                security: 'auto',
-                level: 0,
-              },
-            ],
-          },
-        ],
-      },
-      streamSettings: {
-        network: 'ws',
-        security: 'none',
-        wsSettings: {
-          headers: {
-            Host: '',
-            'User-Agent':
-              'Mozilla/5.0 (iPhone; CPU iPhone OS 13_5 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/13.1.1 Mobile/15E148 Safari/604.1',
-          },
-          path: '/',
-        },
-      },
-    },
-  })
-  t.deepEqual(json2, {
-    log: {
-      loglevel: 'warning',
-    },
-    inbound: {
-      port: 100,
-      listen: '127.0.0.1',
-      protocol: 'socks',
-      settings: {
-        auth: 'noauth',
-      },
-    },
-    outbound: {
-      protocol: 'vmess',
-      settings: {
-        vnext: [
-          {
-            address: '1.1.1.1',
-            port: 8080,
-            users: [
-              {
-                id: '1386f85e-657b-4d6e-9d56-78badb75e1fd',
-                alterId: 64,
-                security: 'auto',
-                level: 0,
-              },
-            ],
-          },
-        ],
-      },
-      streamSettings: {
-        security: 'tls',
-        network: 'ws',
-        tlsSettings: {
-          serverName: '1.1.1.1',
-          allowInsecure: true,
-          allowInsecureCiphers: false,
-        },
-        wsSettings: {
-          headers: {
-            Host: '',
-            'User-Agent':
-              'Mozilla/5.0 (iPhone; CPU iPhone OS 13_5 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/13.1.1 Mobile/15E148 Safari/604.1',
-          },
-          path: '/',
-        },
-      },
-    },
-  })
+  t.snapshot(fromBase64(schemeList[0].replace('vmess://', '')))
+  t.snapshot(fromBase64(schemeList[1].replace('vmess://', '')))
+  t.snapshot(fromBase64(schemeList[2].replace('vmess://', '')))
+  t.snapshot(fromBase64(schemeList[3].replace('vmess://', '')))
+  t.snapshot(fromBase64(schemeList[4].replace('vmess://', '')))
+  t.snapshot(fromBase64(schemeList[5].replace('vmess://', '')))
 })
 
 test('isIp', (t) => {

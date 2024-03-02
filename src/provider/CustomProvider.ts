@@ -4,6 +4,7 @@ import {
   CustomProviderConfig,
   NodeTypeEnum,
   PossibleNodeConfigType,
+  VmessNodeConfig,
 } from '../types'
 import { SurgioError } from '../utils'
 import Provider from './Provider'
@@ -83,7 +84,7 @@ export default class CustomProvider extends Provider {
           throw new Error('obfs-uri 已废弃, 请使用 obfsUri')
         }
 
-        const parsedNode = (() => {
+        let parsedNode = (() => {
           switch (type) {
             case NodeTypeEnum.Shadowsocks:
               return ShadowsocksNodeConfigValidator.parse(node)
@@ -122,23 +123,14 @@ export default class CustomProvider extends Provider {
               throw new TypeError(`无法识别的节点类型：${type}`)
           }
         })()
-        const propertyKeysMustBeLowercase = ['wsHeaders'] as const
 
         if (this.underlyingProxy && !parsedNode.underlyingProxy) {
           parsedNode.underlyingProxy = this.underlyingProxy
         }
 
-        propertyKeysMustBeLowercase.forEach((key) => {
-          if (key in parsedNode && parsedNode[key] !== undefined) {
-            parsedNode[key] = Object.keys(parsedNode[key] as any).reduce(
-              (acc: any, curr) => {
-                acc[curr.toLowerCase()] = (parsedNode[key] as any)[curr]
-                return acc
-              },
-              {},
-            )
-          }
-        })
+        if (parsedNode.type === NodeTypeEnum.Vmess) {
+          parsedNode = this.prepareVmessNodeConfig(parsedNode)
+        }
 
         parsedNodeList.push(parsedNode)
       } catch (err) {
@@ -162,5 +154,38 @@ export default class CustomProvider extends Provider {
     }
 
     return parsedNodeList
+  }
+
+  public prepareVmessNodeConfig(node: VmessNodeConfig): VmessNodeConfig {
+    if (node.host) {
+      node.sni = node.host
+    }
+
+    if (node.wsHeaders) {
+      if (!node.wsOpts) {
+        node.wsOpts = {
+          headers: node.wsHeaders,
+          path: node.path || '/',
+        }
+      } else if (node.wsOpts.headers) {
+        throw new Error('wsOpts.headers 和 wsHeaders 不能同时存在')
+      } else {
+        node.wsOpts.headers = node.wsHeaders
+      }
+    }
+
+    if (node.network === 'ws' && node.path) {
+      throw new Error('请将 path 移动到 wsOpts.path')
+    }
+
+    if (node.network === 'h2' && node.path) {
+      throw new Error('请将 path 移动到 h2Opts.path')
+    }
+
+    if (node.network === 'http' && node.path) {
+      throw new Error('请将 path 移动到 httpOpts.path')
+    }
+
+    return node
   }
 }

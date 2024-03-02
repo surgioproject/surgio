@@ -8,8 +8,9 @@ import {
   PossibleNodeConfigType,
   SortedNodeFilterType,
 } from '../types'
-import { ERR_INVALID_FILTER } from '../constant'
+import { ERR_INVALID_FILTER, LOON_SUPPORTED_VMESS_NETWORK } from '../constant'
 import { applyFilter, internalFilters } from '../filters'
+import { getHeader } from './index'
 
 const {
   httpFilter,
@@ -22,7 +23,7 @@ const {
 } = internalFilters
 const logger = createLogger({ service: 'surgio:utils:loon' })
 
-// @see https://www.notion.so/1-9809ce5acf524d868affee8dd5fc0a6e
+// https://loon0x00.github.io/LoonManual/#/cn/node
 export const getLoonNodes = function (
   list: ReadonlyArray<PossibleNodeConfigType>,
   filter?: NodeFilterType | SortedNodeFilterType,
@@ -93,6 +94,15 @@ export const getLoonNodes = function (
         }
 
         case NodeTypeEnum.Vmess: {
+          if (
+            !LOON_SUPPORTED_VMESS_NETWORK.includes(nodeConfig.network as any)
+          ) {
+            logger.warn(
+              `Loon 不支持 ${nodeConfig.network} 的 Vmess 节点，节点 ${nodeConfig.nodeName} 会被省略`,
+            )
+            return void 0
+          }
+
           const config: Array<string | number> = [
             `${nodeConfig.nodeName} = vmess`,
             nodeConfig.hostname,
@@ -104,25 +114,43 @@ export const getLoonNodes = function (
             `transport=${nodeConfig.network}`,
           ]
 
-          if (nodeConfig.network === 'ws') {
-            config.push(
-              `path=${nodeConfig.path || '/'}`,
-              `host=${nodeConfig.host || nodeConfig.hostname}`,
-            )
+          if (nodeConfig.network === 'ws' && nodeConfig.wsOpts) {
+            const obfsHost = getHeader(nodeConfig.wsOpts.headers, 'Host')
 
-            if (Object.keys(_.omit(nodeConfig.wsHeaders, 'host')).length > 0) {
+            config.push(`path=${nodeConfig.wsOpts.path || '/'}`)
+
+            if (obfsHost) {
+              config.push(`host=${obfsHost}`)
+            }
+          }
+
+          if (nodeConfig.network === 'http' && nodeConfig.httpOpts) {
+            const obfsHost = getHeader(nodeConfig.httpOpts.headers, 'Host')
+
+            config.push(`path=${nodeConfig.httpOpts.path || '/'}`)
+
+            if (obfsHost) {
+              config.push(`host=${obfsHost}`)
+            }
+
+            // istanbul ignore next
+            if (nodeConfig.httpOpts.method !== 'GET') {
               logger.warn(
-                `Loon 不支持自定义额外的 Header 字段，节点 ${nodeConfig.nodeName} 可能不可用`,
+                `Loon 不支持自定义 VMESS+HTTP 节点的 method 属性，节点 ${nodeConfig.nodeName} 可能不可用`,
               )
             }
           }
 
           if (nodeConfig.tls) {
-            config.push(
-              `over-tls=${nodeConfig.tls}`,
-              `tls-name=${nodeConfig.host || nodeConfig.hostname}`,
-              `skip-cert-verify=${nodeConfig.skipCertVerify === true}`,
-            )
+            config.push(`over-tls=true`)
+
+            if (nodeConfig.sni) {
+              config.push(`tls-name=${nodeConfig.sni}`)
+            }
+
+            if (nodeConfig.skipCertVerify) {
+              config.push(`skip-cert-verify=true`)
+            }
           }
 
           return config.join(',')

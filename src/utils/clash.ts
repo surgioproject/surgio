@@ -55,11 +55,17 @@ export const getClashNodeNames = function (
   return result
 }
 
+/**
+ * @see https://wiki.metacubex.one/config/proxies/
+ * @see https://stash.wiki/proxy-protocols/proxy-types
+ */
 function nodeListMapper(nodeConfig: PossibleNodeConfigType) {
+  const clashConfig = nodeConfig.clashConfig || {}
+
   switch (nodeConfig.type) {
     case NodeTypeEnum.Shadowsocks:
       // Istanbul ignore next
-      if (nodeConfig.shadowTls && !nodeConfig.clashConfig?.enableShadowTls) {
+      if (nodeConfig.shadowTls && !clashConfig.enableShadowTls) {
         logger.warn(
           `尚未开启 Clash 的 shadow-tls 支持，节点 ${nodeConfig.nodeName} 将被忽略。如需开启，请在配置文件中设置 clashConfig.enableShadowTls 为 true。`,
         )
@@ -128,8 +134,8 @@ function nodeListMapper(nodeConfig: PossibleNodeConfigType) {
           : null),
       } as const
 
-    case NodeTypeEnum.Vmess:
-      return {
+    case NodeTypeEnum.Vmess: {
+      const vmessNode: Record<string, any> = {
         type: 'vmess',
         cipher: nodeConfig.method,
         name: nodeConfig.nodeName,
@@ -137,32 +143,57 @@ function nodeListMapper(nodeConfig: PossibleNodeConfigType) {
         port: nodeConfig.port,
         udp: nodeConfig.udpRelay === true,
         uuid: nodeConfig.uuid,
-        alterId: nodeConfig.alterId,
-        ...(nodeConfig.network === 'tcp'
-          ? null
-          : {
-              network: nodeConfig.network,
-            }),
-        tls: nodeConfig.tls,
-        ...(typeof nodeConfig.skipCertVerify === 'boolean' && nodeConfig.tls
-          ? {
-              'skip-cert-verify': nodeConfig.skipCertVerify,
-            }
-          : null),
-        ...(nodeConfig.network === 'ws'
-          ? {
-              'ws-opts': {
-                path: nodeConfig.path,
-                headers: {
-                  ...(nodeConfig.host ? { host: nodeConfig.host } : null),
-                  ..._.omit(nodeConfig.wsHeaders, ['host']),
-                },
-              },
-            }
-          : null),
-      } as const
+        alterId: nodeConfig.alterId || '0',
+        network: nodeConfig.network || 'tcp',
+      }
 
-    case NodeTypeEnum.Shadowsocksr: {
+      switch (nodeConfig.network) {
+        case 'tcp':
+          break
+
+        case 'ws':
+          vmessNode['ws-opts'] = nodeConfig.wsOpts
+          break
+
+        case 'h2':
+          vmessNode['h2-opts'] = nodeConfig.h2Opts
+          break
+
+        case 'http':
+          vmessNode['http-opts'] = nodeConfig.httpOpts
+          break
+
+        case 'grpc':
+          if (nodeConfig.grpcOpts) {
+            vmessNode['grpc-opts'] = {
+              'grpc-service-name': nodeConfig.grpcOpts.serviceName,
+            }
+          }
+          break
+      }
+
+      if (nodeConfig.tls) {
+        vmessNode.tls = true
+
+        if (nodeConfig.skipCertVerify) {
+          vmessNode['skip-cert-verify'] = nodeConfig.skipCertVerify
+        }
+        if (clashConfig.clashCore === 'clash' && nodeConfig.sni) {
+          vmessNode.servername = nodeConfig.sni
+        }
+        if (clashConfig.clashCore === 'stash' && nodeConfig.sni) {
+          vmessNode.sni = nodeConfig.sni
+          vmessNode.servername = nodeConfig.sni
+        }
+        if (clashConfig.clashCore === 'clash.meta' && nodeConfig.sni) {
+          vmessNode.servername = nodeConfig.sni
+        }
+      }
+
+      return vmessNode
+    }
+
+    case NodeTypeEnum.Shadowsocksr:
       return {
         type: 'ssr',
         name: nodeConfig.nodeName,
@@ -176,7 +207,6 @@ function nodeListMapper(nodeConfig: PossibleNodeConfigType) {
         'protocol-param': nodeConfig.protoparam ?? '',
         udp: nodeConfig.udpRelay === true,
       } as const
-    }
 
     case NodeTypeEnum.Snell:
       // Istanbul ignore next
@@ -273,12 +303,13 @@ function nodeListMapper(nodeConfig: PossibleNodeConfigType) {
 
     case NodeTypeEnum.Tuic:
       // Istanbul ignore next
-      if (!nodeConfig.clashConfig?.enableTuic) {
+      if (!clashConfig.enableTuic) {
         logger.warn(
           `尚未开启 Clash 的 Tuic 支持，节点 ${nodeConfig.nodeName} 会被省略。如需开启，请在配置文件中设置 clashConfig.enableTuic 为 true。`,
         )
         return null
       }
+
       // Istanbul ignore next
       if (nodeConfig.alpn && !nodeConfig.alpn.length) {
         logger.warn(
@@ -322,7 +353,7 @@ function nodeListMapper(nodeConfig: PossibleNodeConfigType) {
 
     case NodeTypeEnum.Hysteria2:
       // Istanbul ignore next
-      if (!nodeConfig.clashConfig?.enableHysteria2) {
+      if (!clashConfig.enableHysteria2) {
         logger.warn(
           `尚未开启 Clash 的 Hysteria2 支持，节点 ${nodeConfig.nodeName} 会被省略。如需开启，请在配置文件中设置 clashConfig.enableHysteria2 为 true。`,
         )
@@ -334,7 +365,7 @@ function nodeListMapper(nodeConfig: PossibleNodeConfigType) {
         name: nodeConfig.nodeName,
         server: nodeConfig.hostname,
         port: nodeConfig.port,
-        [nodeConfig.clashConfig.clashCore === 'stash' ? 'auth' : 'password']:
+        [clashConfig.clashCore === 'stash' ? 'auth' : 'password']:
           nodeConfig.password,
         up: nodeConfig.uploadBandwidth || 0,
         down: nodeConfig.downloadBandwidth || 0,

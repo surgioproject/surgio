@@ -768,10 +768,8 @@ function generateVmessNode(nodeName: string): VmessNodeConfig {
     method: 'auto',
     network: 'tcp',
     nodeName,
-    path: '/',
     port: 8080,
     tls: false,
-    host: '',
     uuid: '1386f85e-657b-4d6e-9d56-78badb75e1fd',
   }
 }

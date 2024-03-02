@@ -49,7 +49,7 @@ export const PortValidator = z
 export const AlterIdValiator = getPositiveIntegersNumberValidatior(
   (n) => n >= 0,
   'alterId 必须为大于等于 0 的整数',
-)
+).default('0')
 
 export const IntegersVersionValidator = getPositiveIntegersNumberValidatior(
   (n) => n > 0,

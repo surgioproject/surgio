@@ -1,7 +1,6 @@
 import { createLogger } from '@surgio/logger'
-import _ from 'lodash'
 
-import { OBFS_UA } from '../constant'
+import { OBFS_UA, SURFBOARD_SUPPORTED_VMESS_NETWORK } from '../constant'
 import {
   NodeFilterType,
   NodeTypeEnum,
@@ -22,7 +21,7 @@ export const getSurfboardExtendHeaders = (
 }
 
 /**
- * @see https://manual.nssurge.com/policy/proxy.html
+ * @see https://getsurfboard.com/docs/profile-format/proxy/
  */
 export const getSurfboardNodes = function (
   list: ReadonlyArray<PossibleNodeConfigType>,
@@ -117,6 +116,15 @@ function nodeListMapper(
     }
 
     case NodeTypeEnum.Vmess: {
+      if (
+        !SURFBOARD_SUPPORTED_VMESS_NETWORK.includes(nodeConfig.network as any)
+      ) {
+        logger.warn(
+          `Surfboard 不支持 ${nodeConfig.network} 的 Vmess 节点，节点 ${nodeConfig.nodeName} 会被省略`,
+        )
+        return void 0
+      }
+
       const result = [
         'vmess',
         nodeConfig.hostname,
@@ -132,27 +140,32 @@ function nodeListMapper(
 
       if (nodeConfig.network === 'ws') {
         result.push('ws=true')
-        result.push(`ws-path=${nodeConfig.path}`)
+
+        if (nodeConfig.wsOpts) {
+          result.push(`ws-path=${nodeConfig.wsOpts.path}`)
+        }
+
         result.push(
           'ws-headers=' +
             JSON.stringify(
               getSurfboardExtendHeaders({
-                host: nodeConfig.host || nodeConfig.hostname,
                 'user-agent': OBFS_UA,
-                ..._.omit(nodeConfig.wsHeaders, ['host']), // host 本质上是一个头信息，所以可能存在冲突的情况。以 host 属性为准。
+                ...nodeConfig.wsOpts?.headers,
               }),
             ),
         )
       }
 
       if (nodeConfig.tls) {
-        result.push(
-          'tls=true',
-          ...(typeof nodeConfig.skipCertVerify === 'boolean'
-            ? [`skip-cert-verify=${nodeConfig.skipCertVerify}`]
-            : []),
-          ...(nodeConfig.host ? [`sni=${nodeConfig.host}`] : []),
-        )
+        result.push('tls=true')
+
+        if (nodeConfig.skipCertVerify) {
+          result.push('skip-cert-verify=true')
+        }
+
+        if (nodeConfig.sni) {
+          result.push(`sni=${nodeConfig.sni}`)
+        }
       }
 
       if (nodeConfig?.surfboardConfig?.vmessAEAD) {
