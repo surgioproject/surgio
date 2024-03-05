@@ -537,6 +537,8 @@ DOMAIN-SUFFIX,ytimg.com,🚀 Proxy
 
 - USER-AGENT
 
+从 v3.5.0 开始，Surgio 还内置了两个新的 Clash 规则格式处理器 `stash` 和 `clashMeta`，他们会依据不同内核的支持情况进行处理。需要注意的是，假如你设定了 `clashConfig.clashCore`，`clash` 处理器会被自动替换为 `clashConfig.clashCore`。 
+
 ### Quantumult X 规则处理
 
 处理后的规则仅包含 [这里](https://github.com/crossutility/Quantumult-X/blob/master/sample.conf#L103) 列出的几种 Quantumult X 支持的规则类型，以及 `DOMAIN`, `DOMAIN-SUFFIX`, `DOMAIN-KEYWORD`。
