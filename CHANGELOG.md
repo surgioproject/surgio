@@ -1,3 +1,12 @@
+## [3.5.1](https://github.com/geekdada/surgio/compare/v3.5.0...v3.5.1) (2024-03-05)
+
+
+### Bug Fixes
+
+* discard more than one HTTP headers from Vmess+HTTP when reading or outputting a Clash subscription ([ebed482](https://github.com/geekdada/surgio/commit/ebed482e38835e130e6f9c0fc7a4474b634811d7))
+
+
+
 # [3.5.0](https://github.com/geekdada/surgio/compare/v3.4.3...v3.5.0) (2024-03-05)
 
 
