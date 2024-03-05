@@ -141,9 +141,7 @@ function nodeListMapper(
       if (nodeConfig.network === 'ws') {
         result.push('ws=true')
 
-        if (nodeConfig.wsOpts) {
-          result.push(`ws-path=${nodeConfig.wsOpts.path}`)
-        }
+        result.push(`ws-path=${nodeConfig.wsOpts?.path || '/'}`)
 
         result.push(
           'ws-headers=' +

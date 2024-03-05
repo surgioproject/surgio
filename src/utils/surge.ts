@@ -318,18 +318,16 @@ function nodeListMapper(
       if (nodeConfig.network === 'ws') {
         result.push('ws=true')
 
-        if (nodeConfig.wsOpts) {
-          result.push(`ws-path=${nodeConfig.wsOpts.path}`)
-          result.push(
-            'ws-headers=' +
-              JSON.stringify(
-                getSurgeExtendHeaders({
-                  'user-agent': OBFS_UA,
-                  ...nodeConfig.wsOpts.headers,
-                }),
-              ),
-          )
-        }
+        result.push(`ws-path=${nodeConfig.wsOpts?.path || '/'}`)
+        result.push(
+          'ws-headers=' +
+            JSON.stringify(
+              getSurgeExtendHeaders({
+                'user-agent': OBFS_UA,
+                ...nodeConfig.wsOpts?.headers,
+              }),
+            ),
+        )
       }
 
       if (nodeConfig.tls) {
