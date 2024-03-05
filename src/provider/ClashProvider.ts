@@ -319,7 +319,11 @@ export const parseClashConfig = (
 
               break
             case 'http':
-              vmessNode.httpOpts = item['http-opts']
+              vmessNode.httpOpts = {
+                ...item['http-opts'],
+                headers:
+                  resolveVmessHttpHeaders(item['http-opts'].headers) || {},
+              }
 
               break
             case 'grpc':
@@ -492,4 +496,15 @@ function resolveUdpRelay(val?: boolean, defaultVal = false): boolean {
     return val
   }
   return defaultVal
+}
+
+function resolveVmessHttpHeaders(
+  headers: Record<string, string[]>,
+): Record<string, string> {
+  return Object.keys(headers).reduce((acc, key) => {
+    if (headers[key].length) {
+      acc[key] = headers[key][0]
+    }
+    return acc
+  }, {} as Record<string, string>)
 }

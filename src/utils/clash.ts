@@ -160,7 +160,12 @@ function nodeListMapper(nodeConfig: PossibleNodeConfigType) {
           break
 
         case 'http':
-          vmessNode['http-opts'] = nodeConfig.httpOpts
+          vmessNode['http-opts'] = {
+            ...nodeConfig.httpOpts,
+            headers: resolveVmessHttpHeadersFromSurgioConfig(
+              nodeConfig.httpOpts?.headers || {},
+            ),
+          }
           break
 
         case 'grpc':
@@ -420,4 +425,13 @@ function nodeListMapper(nodeConfig: PossibleNodeConfigType) {
       )
       return null
   }
+}
+
+function resolveVmessHttpHeadersFromSurgioConfig(
+  headers: Record<string, string>,
+): Record<string, string[]> {
+  return Object.keys(headers).reduce((acc, key) => {
+    acc[key] = [headers[key]]
+    return acc
+  }, {} as Record<string, string[]>)
 }

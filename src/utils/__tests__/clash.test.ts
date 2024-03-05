@@ -431,7 +431,7 @@ test('getClashNodes', async (t) => {
         uuid: '1386f85e-657b-4d6e-9d56-78badb75e1fd',
         'http-opts': {
           headers: {
-            host: 'example.com',
+            host: ['example.com'],
           },
           method: 'GET',
           path: ['/'],

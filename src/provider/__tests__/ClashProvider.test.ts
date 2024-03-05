@@ -350,6 +350,121 @@ foo: bar
   scope.done()
 })
 
+test('vmess Configurations', (t) => {
+  t.deepEqual(
+    parseClashConfig([
+      {
+        type: 'vmess',
+        name: 'vmess',
+        server: 'server',
+        port: 443,
+        uuid: 'uuid',
+        alterId: 32,
+        cipher: 'auto',
+        network: 'http',
+        'http-opts': {
+          path: ['/path'],
+          headers: {
+            host: ['v2ray.com'],
+          },
+        },
+      },
+    ]),
+    [
+      {
+        type: NodeTypeEnum.Vmess,
+        nodeName: 'vmess',
+        hostname: 'server',
+        port: 443,
+        uuid: 'uuid',
+        alterId: '32',
+        method: 'auto',
+        network: 'http',
+        tls: false,
+        udpRelay: false,
+        httpOpts: {
+          path: ['/path'],
+          headers: {
+            host: 'v2ray.com',
+          },
+        },
+      },
+    ],
+  )
+
+  t.deepEqual(
+    parseClashConfig([
+      {
+        type: 'vmess',
+        name: 'vmess',
+        server: 'server',
+        port: 443,
+        uuid: 'uuid',
+        alterId: 32,
+        cipher: 'auto',
+        network: 'grpc',
+        'grpc-opts': {
+          'grpc-service-name': 'service',
+        },
+      },
+    ]),
+    [
+      {
+        type: NodeTypeEnum.Vmess,
+        nodeName: 'vmess',
+        hostname: 'server',
+        port: 443,
+        uuid: 'uuid',
+        alterId: '32',
+        method: 'auto',
+        network: 'grpc',
+        tls: false,
+        udpRelay: false,
+        grpcOpts: {
+          serviceName: 'service',
+        },
+      },
+    ],
+  )
+
+  t.deepEqual(
+    parseClashConfig([
+      {
+        type: 'vmess',
+        name: 'vmess',
+        server: 'server',
+        port: 443,
+        uuid: 'uuid',
+        alterId: 32,
+        cipher: 'auto',
+        network: 'h2',
+        'h2-opts': {
+          path: '/path',
+          host: ['v2ray.com'],
+        },
+      },
+    ]),
+    [
+      {
+        type: NodeTypeEnum.Vmess,
+        nodeName: 'vmess',
+        hostname: 'server',
+        port: 443,
+        uuid: 'uuid',
+        alterId: '32',
+        method: 'auto',
+        network: 'h2',
+        tls: false,
+        udpRelay: false,
+        h2Opts: {
+          path: '/path',
+          host: ['v2ray.com'],
+        },
+      },
+    ],
+  )
+})
+
 test('snell Configurations', (t) => {
   t.deepEqual(
     parseClashConfig([

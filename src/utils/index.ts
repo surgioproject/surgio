@@ -623,5 +623,6 @@ export const getHeader = (
   const headerKey = Object.keys(headers).find(
     (k) => k.toLowerCase() === lowerCaseKey,
   )
+
   return headerKey ? headers[headerKey] : undefined
 }
