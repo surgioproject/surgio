@@ -253,6 +253,6 @@ export const parseJSONConfig = (
 
       break
   }
-  console.log(vmessNode)
+
   return vmessNode
 }
