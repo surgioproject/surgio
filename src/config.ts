@@ -109,6 +109,7 @@ export const normalizeConfig = (
       enableShadowTls: false,
       enableTuic: false,
       enableHysteria2: false,
+      enableVless: false,
       clashCore: 'clash',
     },
     quantumultXConfig: {

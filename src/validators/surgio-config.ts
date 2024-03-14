@@ -29,6 +29,7 @@ export const ClashConfigValidator = z.object({
   enableTuic: z.oboolean(),
   enableShadowTls: z.oboolean(),
   enableHysteria2: z.oboolean(),
+  enableVless: z.oboolean(),
   clashCore: ClashCoreValidator.optional(),
 })
 

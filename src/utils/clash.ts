@@ -136,6 +136,13 @@ function nodeListMapper(nodeConfig: PossibleNodeConfigType) {
 
     case NodeTypeEnum.Vless:
     case NodeTypeEnum.Vmess: {
+      if (nodeConfig.type === 'vless' && !clashConfig.enableVless) {
+        logger.warn(
+          `尚未开启 Clash 的 VLESS 支持，节点 ${nodeConfig.nodeName} 会被省略。如需开启，请在配置文件中设置 clashConfig.enableVless 为 true。`,
+        )
+        return null
+      }
+
       const vmessNode: Record<string, any> = {
         type: nodeConfig.type,
         cipher: nodeConfig.method,
