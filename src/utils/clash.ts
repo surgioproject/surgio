@@ -134,17 +134,25 @@ function nodeListMapper(nodeConfig: PossibleNodeConfigType) {
           : null),
       } as const
 
+    case NodeTypeEnum.Vless:
     case NodeTypeEnum.Vmess: {
       const vmessNode: Record<string, any> = {
-        type: 'vmess',
+        type: nodeConfig.type,
         cipher: nodeConfig.method,
         name: nodeConfig.nodeName,
         server: nodeConfig.hostname,
         port: nodeConfig.port,
         udp: nodeConfig.udpRelay === true,
         uuid: nodeConfig.uuid,
-        alterId: nodeConfig.alterId || '0',
         network: nodeConfig.network || 'tcp',
+      }
+
+      if (nodeConfig.type === NodeTypeEnum.Vmess) {
+        vmessNode.alertId = nodeConfig.alterId || '0'
+      }
+
+      if (nodeConfig.type === NodeTypeEnum.Vless) {
+        vmessNode.flow = nodeConfig.flow
       }
 
       switch (nodeConfig.network) {
@@ -177,7 +185,10 @@ function nodeListMapper(nodeConfig: PossibleNodeConfigType) {
           break
       }
 
-      if (nodeConfig.tls) {
+      if (
+        (nodeConfig.type === NodeTypeEnum.Vmess && nodeConfig.tls) ||
+        nodeConfig.type === NodeTypeEnum.Vless
+      ) {
         vmessNode.tls = true
 
         if (nodeConfig.skipCertVerify) {

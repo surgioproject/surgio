@@ -21,6 +21,7 @@ import {
   Hysteria2NodeConfigValidator,
   ClashCoreValidator,
 } from './validators'
+import { VlessNodeConfigValidator } from './validators/vless'
 
 export enum NodeTypeEnum {
   HTTPS = 'https',
@@ -29,6 +30,7 @@ export enum NodeTypeEnum {
   Shadowsocksr = 'shadowsocksr',
   Snell = 'snell',
   Vmess = 'vmess',
+  Vless = 'vless',
   Trojan = 'trojan',
   Socks5 = 'socks5',
   Tuic = 'tuic',
@@ -162,6 +164,9 @@ export type SnellNodeConfig = z.infer<typeof SnellNodeConfigValidator> &
 export type VmessNodeConfig = z.infer<typeof VmessNodeConfigValidator> &
   SurgioInternals
 
+export type VlessNodeConfig = z.infer<typeof VlessNodeConfigValidator> &
+  SurgioInternals
+
 export type TuicNodeConfig = z.infer<typeof TuicNodeConfigValidator> &
   SurgioInternals
 
@@ -205,6 +210,7 @@ export type PossibleNodeConfigType =
   | ShadowsocksrNodeConfig
   | SnellNodeConfig
   | VmessNodeConfig
+  | VlessNodeConfig
   | TrojanNodeConfig
   | Socks5NodeConfig
   | TuicNodeConfig

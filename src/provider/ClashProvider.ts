@@ -20,7 +20,9 @@ import {
   SubscriptionUserinfo,
   TrojanNodeConfig,
   TuicNodeConfig,
+  VlessNodeConfig,
   VmessNodeConfig,
+  Socks5NodeConfig,
 } from '../types'
 import {
   lowercaseHeaderKeys,
@@ -35,6 +37,7 @@ import { GetNodeListFunction, GetSubscriptionUserInfoFunction } from './types'
 type SupportConfigTypes =
   | ShadowsocksNodeConfig
   | VmessNodeConfig
+  | VlessNodeConfig
   | HttpsNodeConfig
   | HttpNodeConfig
   | ShadowsocksrNodeConfig
@@ -42,6 +45,7 @@ type SupportConfigTypes =
   | TrojanNodeConfig
   | TuicNodeConfig
   | Hysteria2NodeConfig
+  | Socks5NodeConfig
 
 const logger = createLogger({
   service: 'surgio:ClashProvider',
@@ -259,6 +263,7 @@ export const parseClashConfig = (
           } as ShadowsocksNodeConfig
         }
 
+        case 'vless':
         case 'vmess': {
           // istanbul ignore next
           if (
@@ -274,20 +279,36 @@ export const parseClashConfig = (
             return undefined
           }
 
-          const vmessNode: VmessNodeConfig = {
-            type: NodeTypeEnum.Vmess,
+          type NodeConfig = VlessNodeConfig | VmessNodeConfig
+          const nodeType =
+            item.type === 'vless' ? NodeTypeEnum.Vless : NodeTypeEnum.Vmess
+          const fallbackCipherMethod = item.type === 'vless' ? 'none' : 'auto'
+
+          const vmessNode = {
+            type: nodeType,
             nodeName: item.name,
             hostname: item.server,
             port: item.port,
             uuid: item.uuid,
             alterId: item.alterId ? `${item.alterId}` : '0',
-            method: item.cipher || 'auto',
+            method: item.cipher || fallbackCipherMethod,
             udpRelay: resolveUdpRelay(item.udp, udpRelay),
             tls: item.tls === true,
             network: item.network || 'tcp',
+          } as NodeConfig
+
+          if (vmessNode.type === NodeTypeEnum.Vless && item.tls !== true) {
+            logger.warn(
+              `未经 TLS 传输的 Vless 协议不安全并且不被 Surgio 支持，节点 ${item.name} 会被省略`,
+            )
+            return undefined
           }
 
-          if (vmessNode.tls) {
+          if (vmessNode.type === NodeTypeEnum.Vless) {
+            vmessNode.flow = item.flow
+          }
+
+          if (vmessNode.type === NodeTypeEnum.Vmess && vmessNode.tls) {
             if (typeof item.servername === 'string') {
               vmessNode.sni = item.servername
             }
@@ -476,6 +497,33 @@ export const parseClashConfig = (
               ? { skipCertVerify: item['skip-cert-verify'] === true }
               : null),
           } as Hysteria2NodeConfig
+
+        case 'socks5': {
+          const socks5Node = {
+            type: NodeTypeEnum.Socks5,
+            nodeName: item.name,
+            hostname: item.server,
+            port: item.port,
+          } as Socks5NodeConfig
+
+          if (item.username) {
+            socks5Node.username = item.username
+          }
+          if (item.password) {
+            socks5Node.password = item.password
+          }
+          if (item.udp) {
+            socks5Node.udpRelay = item.udp
+          }
+          if (item.tls) {
+            socks5Node.tls = item.tls
+          }
+          if (item['skip-cert-verify']) {
+            socks5Node.skipCertVerify = item['skip-cert-verify']
+          }
+
+          return socks5Node
+        }
 
         default:
           logger.warn(

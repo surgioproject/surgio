@@ -43,6 +43,7 @@ function nodeListMapper(
   nodeConfig: PossibleNodeConfigType,
 ): [string, string] | undefined {
   switch (nodeConfig.type) {
+    case NodeTypeEnum.Vless:
     case NodeTypeEnum.Vmess: {
       if (
         !QUANTUMULT_X_SUPPORTED_VMESS_NETWORK.includes(
@@ -69,7 +70,10 @@ function nodeListMapper(
 
       switch (nodeConfig.network) {
         case 'ws':
-          if (nodeConfig.tls) {
+          if (
+            (nodeConfig.type === NodeTypeEnum.Vmess && nodeConfig.tls) ||
+            nodeConfig.type === NodeTypeEnum.Vless
+          ) {
             config.push(`obfs=wss`)
 
             // istanbul ignore next
@@ -97,7 +101,10 @@ function nodeListMapper(
 
           break
         case 'tcp':
-          if (nodeConfig.tls) {
+          if (
+            (nodeConfig.type === NodeTypeEnum.Vmess && nodeConfig.tls) ||
+            nodeConfig.type === NodeTypeEnum.Vless
+          ) {
             config.push(`obfs=over-tls`)
 
             if (nodeConfig.skipCertVerify) {
@@ -144,7 +151,7 @@ function nodeListMapper(
         )
       }
 
-      return [nodeConfig.nodeName, `vmess=${config.join(', ')}`]
+      return [nodeConfig.nodeName, `${nodeConfig.type}=${config.join(', ')}`]
     }
 
     case NodeTypeEnum.Shadowsocks: {

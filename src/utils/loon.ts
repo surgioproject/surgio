@@ -93,6 +93,7 @@ export const getLoonNodes = function (
           return config.join(',')
         }
 
+        case NodeTypeEnum.Vless:
         case NodeTypeEnum.Vmess: {
           if (
             !LOON_SUPPORTED_VMESS_NETWORK.includes(nodeConfig.network as any)
@@ -104,7 +105,7 @@ export const getLoonNodes = function (
           }
 
           const config: Array<string | number> = [
-            `${nodeConfig.nodeName} = vmess`,
+            `${nodeConfig.nodeName} = ${nodeConfig.type}`,
             nodeConfig.hostname,
             nodeConfig.port,
             nodeConfig.method === 'auto'
@@ -141,7 +142,7 @@ export const getLoonNodes = function (
             }
           }
 
-          if (nodeConfig.tls) {
+          if (nodeConfig.type === NodeTypeEnum.Vmess && nodeConfig.tls) {
             config.push(`over-tls=true`)
 
             if (nodeConfig.sni) {
