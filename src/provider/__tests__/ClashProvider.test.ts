@@ -509,6 +509,8 @@ test('vmess Configurations', (t) => {
           path: '/path',
           host: ['v2ray.com'],
         },
+        skipCertVerify: false,
+        tls13: false,
         realityOpts: {
           publicKey: 'publicKey',
           shortId: 'shortId',
