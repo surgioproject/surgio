@@ -484,6 +484,7 @@ test('vmess Configurations', (t) => {
         udp: true,
         tls: true,
         network: 'h2',
+        'client-fingerprint': 'chrome',
         'h2-opts': {
           path: '/path',
           host: ['v2ray.com'],
@@ -505,6 +506,7 @@ test('vmess Configurations', (t) => {
         network: 'h2',
         udpRelay: true,
         flow: 'xtls-rprx-direct',
+        clientFingerprint: 'chrome',
         h2Opts: {
           path: '/path',
           host: ['v2ray.com'],
@@ -514,6 +516,7 @@ test('vmess Configurations', (t) => {
         realityOpts: {
           publicKey: 'publicKey',
           shortId: 'shortId',
+          spiderX: undefined,
         },
       },
     ],

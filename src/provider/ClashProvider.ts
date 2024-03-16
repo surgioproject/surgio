@@ -302,20 +302,9 @@ export const parseClashConfig = (
 
           if (vmessNode.type === NodeTypeEnum.Vless && item.tls !== true) {
             logger.warn(
-              `未经 TLS 传输的 Vless 协议不安全并且不被 Surgio 支持，节点 ${item.name} 会被省略`,
+              `未经 TLS 传输的 VLESS 协议不安全并且不被 Surgio 支持，节点 ${item.name} 会被省略`,
             )
             return undefined
-          }
-
-          if (vmessNode.type === NodeTypeEnum.Vless) {
-            vmessNode.flow = item.flow
-
-            if (item['reality-opts']) {
-              vmessNode.realityOpts = {
-                publicKey: item['reality-opts']['public-key'],
-                shortId: item['reality-opts']['short-id'],
-              }
-            }
           }
 
           if (
@@ -328,9 +317,31 @@ export const parseClashConfig = (
             if (typeof item.sni === 'string') {
               vmessNode.sni = item.sni
             }
+            if (typeof item['client-fingerprint'] === 'string') {
+              vmessNode.clientFingerprint = item['client-fingerprint']
+            }
 
             vmessNode.skipCertVerify = item['skip-cert-verify'] === true
             vmessNode.tls13 = tls13 === true
+          }
+
+          if (vmessNode.type === NodeTypeEnum.Vless) {
+            vmessNode.flow = item.flow
+
+            if (item['reality-opts']) {
+              vmessNode.realityOpts = {
+                publicKey: item['reality-opts']['public-key'],
+                shortId: item['reality-opts']['short-id'],
+                spiderX: item['reality-opts']['spider-x'],
+              }
+
+              if (!vmessNode.clientFingerprint) {
+                logger.warn(
+                  `VLESS + Reality 协议需要设置 clientFingerprint 字段，节点 ${item.name} 会被省略`,
+                )
+                return undefined
+              }
+            }
           }
 
           switch (vmessNode.network) {

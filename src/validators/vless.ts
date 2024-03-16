@@ -13,6 +13,7 @@ import {
 export const VlessRealityOptsValidator = z.object({
   publicKey: z.string(),
   shortId: z.ostring(),
+  spiderX: z.ostring(),
 })
 
 export const VlessNodeConfigValidator = TlsNodeConfigValidator.extend({

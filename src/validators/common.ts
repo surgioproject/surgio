@@ -90,4 +90,5 @@ export const TlsNodeConfigValidator = SimpleNodeConfigValidator.extend({
   sni: z.ostring(),
   alpn: z.array(z.string()).nonempty().optional(),
   serverCertFingerprintSha256: z.ostring(),
+  clientFingerprint: z.ostring(),
 })

@@ -170,6 +170,10 @@ function nodeListMapper(nodeConfig: PossibleNodeConfigType) {
             vmessNode['reality-opts']['short-id'] =
               nodeConfig.realityOpts.shortId
           }
+          if (nodeConfig.realityOpts.spiderX) {
+            vmessNode['reality-opts']['spider-x'] =
+              nodeConfig.realityOpts.spiderX
+          }
         }
       }
 
@@ -191,6 +195,9 @@ function nodeListMapper(nodeConfig: PossibleNodeConfigType) {
         }
         if (clashConfig.clashCore === 'clash.meta' && nodeConfig.sni) {
           vmessNode.servername = nodeConfig.sni
+        }
+        if (nodeConfig.clientFingerprint) {
+          vmessNode['client-fingerprint'] = nodeConfig.clientFingerprint
         }
       }
 

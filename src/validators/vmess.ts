@@ -67,6 +67,7 @@ export const VmessNodeConfigValidator = SimpleNodeConfigValidator.extend({
   skipCertVerify: z.oboolean(),
   serverCertFingerprintSha256: z.ostring(),
   alpn: z.array(z.string()).nonempty().optional(),
+  clientFingerprint: z.ostring(),
 
   /**
    * @deprecated
