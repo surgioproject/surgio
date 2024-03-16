@@ -318,7 +318,10 @@ export const parseClashConfig = (
             }
           }
 
-          if (vmessNode.type === NodeTypeEnum.Vmess && vmessNode.tls) {
+          if (
+            (vmessNode.type === NodeTypeEnum.Vmess && vmessNode.tls) ||
+            vmessNode.type === NodeTypeEnum.Vless
+          ) {
             if (typeof item.servername === 'string') {
               vmessNode.sni = item.servername
             }
