@@ -1,3 +1,12 @@
+## [3.6.2](https://github.com/geekdada/surgio/compare/v3.6.1...v3.6.2) (2024-03-16)
+
+
+### Bug Fixes
+
+* vless + reality config lacks of client fingerprint ([7c66c01](https://github.com/geekdada/surgio/commit/7c66c01934c050db6097680226b7eb351cfe0cf0))
+
+
+
 ## [3.6.1](https://github.com/geekdada/surgio/compare/v3.6.0...v3.6.1) (2024-03-16)
 
 
