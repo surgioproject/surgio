@@ -21,7 +21,7 @@ test('getLoonNodes', (t) => {
         uuid: '1386f85e-657b-4d6e-9d56-78badb75e1fd',
       },
     ]),
-    '测试 = vmess,1.1.1.1,443,method=chacha20-ietf-poly1305,"1386f85e-657b-4d6e-9d56-78badb75e1fd",transport=tcp,over-tls=true',
+    '测试 = vmess,1.1.1.1,443,method=chacha20-poly1305,"1386f85e-657b-4d6e-9d56-78badb75e1fd",transport=tcp,over-tls=true',
   )
   t.is(
     getLoonNodes([
@@ -46,7 +46,7 @@ test('getLoonNodes', (t) => {
         },
       },
     ]),
-    '测试 = vmess,1.1.1.1,443,method=chacha20-ietf-poly1305,"1386f85e-657b-4d6e-9d56-78badb75e1fd",transport=http,path=/test,host=example.com,over-tls=true',
+    '测试 = vmess,1.1.1.1,443,method=chacha20-poly1305,"1386f85e-657b-4d6e-9d56-78badb75e1fd",transport=http,path=/test,host=example.com,over-tls=true',
   )
   t.is(
     getLoonNodes([
