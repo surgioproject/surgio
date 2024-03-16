@@ -49,7 +49,7 @@ module.exports = defineCustomProvider(async function() {
 |                       类型                       | 描述                               | 备注                                                                                                                       |
 |:----------------------------------------------:|----------------------------------|--------------------------------------------------------------------------------------------------------------------------|
 | `custom` <Badge text="推荐" vertical="middle" /> | 自己维护的节点                          | 支持 Shadowsocks, Shadowsocksr, Snell, HTTPS, HTTP, Vmess, Socks5, Tuic                                                    |
-| `clash` <Badge text="推荐" vertical="middle" />  | Clash 配置                         | 支持 Shadowsocks, Shadowsocksr, Snell, HTTPS, HTTP, Vmess, Socks5, Tuic                                                    |
+| `clash` <Badge text="推荐" vertical="middle" />  | Clash 配置                         | 支持 Shadowsocks, Shadowsocksr, Snell, HTTPS, HTTP, Vmess, Vless, Hysteria 2, Socks5, Tuic                                 |
 |                    `trojan`                    | Trojan 订阅                        | Shadowrocket 支持的 Trojan 订阅格式                                                                                             |
 |          `shadowsocks_json_subscribe`          | 针对 Windows 客户端的 Shadowsocks 订阅地址 | 通常命名为 *gui-config.json*                                                                                                  |
 |            `shadowsocks_subscribe`             | 通用的 Shadowsocks 订阅地址             |                                                                                                                          |
@@ -293,6 +293,31 @@ module.exports = defineCustomProvider({
   },
 }
 ```
+
+### Vless
+
+Vless 节点遵循和 Vmess 类似的配置规则，除了以下几个差异：
+
+1. Surgio 默认所有的 Vless 节点都已开启 TLS，因为这是安全的做法
+2. 你可以设置 `flow` 属性，但是支持与否取决于客户端的支持情况
+3. 你可以额外配置 `realityOpts` 用于控制 Reality，比如
+   ```json5
+   {
+     nodeName: '🇭🇰HK',
+     type: 'vless',
+     hostname: 'hk.example.com',
+     method: 'none',
+     network: 'tcp',
+     port: 8080,
+     uuid: '1386f85e-657b-4d6e-9d56-78badb75e1fd',
+     udpRelay: true,
+     realityOpts: {
+       publicKey: 'public-key',
+       shortId: 'short-id', // 可选   
+     },
+   }
+   ```
+4. `method` 有且仅有 `none` 一个选项 
 
 ### Snell
 
