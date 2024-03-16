@@ -100,15 +100,15 @@ test('getQuantumultXNodes', (t) => {
 
   t.is(
     schemeList[0],
-    'vmess=1.1.1.1:8080, method=chacha20-ietf-poly1305, password=1386f85e-657b-4d6e-9d56-78badb75e1fd, obfs=ws, obfs-uri=/, obfs-host=example.com, tag=测试 1',
+    'vmess=1.1.1.1:8080, method=chacha20-poly1305, password=1386f85e-657b-4d6e-9d56-78badb75e1fd, obfs=ws, obfs-uri=/, obfs-host=example.com, tag=测试 1',
   )
   t.is(
     schemeList[1],
-    'vmess=1.1.1.1:8080, method=chacha20-ietf-poly1305, password=1386f85e-657b-4d6e-9d56-78badb75e1fd, tag=测试 2',
+    'vmess=1.1.1.1:8080, method=chacha20-poly1305, password=1386f85e-657b-4d6e-9d56-78badb75e1fd, tag=测试 2',
   )
   t.is(
     schemeList[2],
-    'vmess=1.1.1.1:8080, method=chacha20-ietf-poly1305, password=1386f85e-657b-4d6e-9d56-78badb75e1fd, udp-relay=true, obfs=ws, obfs-uri=/, tag=测试 3',
+    'vmess=1.1.1.1:8080, method=chacha20-poly1305, password=1386f85e-657b-4d6e-9d56-78badb75e1fd, udp-relay=true, obfs=ws, obfs-uri=/, tag=测试 3',
   )
   t.is(
     schemeList[3],
@@ -124,7 +124,7 @@ test('getQuantumultXNodes', (t) => {
   )
   t.is(
     schemeList[6],
-    'vmess=1.1.1.1:443, method=chacha20-ietf-poly1305, password=1386f85e-657b-4d6e-9d56-78badb75e1fd, obfs=over-tls, tls-verification=true, tag=测试 4',
+    'vmess=1.1.1.1:443, method=chacha20-poly1305, password=1386f85e-657b-4d6e-9d56-78badb75e1fd, obfs=over-tls, tls-verification=true, tag=测试 4',
   )
 
   t.is(
@@ -143,7 +143,7 @@ test('getQuantumultXNodes', (t) => {
         uuid: '1386f85e-657b-4d6e-9d56-78badb75e1fd',
       },
     ]),
-    'vmess=1.1.1.1:443, method=chacha20-ietf-poly1305, password=1386f85e-657b-4d6e-9d56-78badb75e1fd, udp-relay=true, obfs=over-tls, tls-verification=true, tls13=true, tag=测试',
+    'vmess=1.1.1.1:443, method=chacha20-poly1305, password=1386f85e-657b-4d6e-9d56-78badb75e1fd, udp-relay=true, obfs=over-tls, tls-verification=true, tls13=true, tag=测试',
   )
 
   t.is(
@@ -165,7 +165,7 @@ test('getQuantumultXNodes', (t) => {
         },
       },
     ]),
-    'vmess=1.1.1.1:443, method=chacha20-ietf-poly1305, password=1386f85e-657b-4d6e-9d56-78badb75e1fd, udp-relay=true, aead=true, obfs=over-tls, tls-verification=true, tls13=true, tag=测试',
+    'vmess=1.1.1.1:443, method=chacha20-poly1305, password=1386f85e-657b-4d6e-9d56-78badb75e1fd, udp-relay=true, aead=true, obfs=over-tls, tls-verification=true, tls13=true, tag=测试',
   )
   t.is(
     quantumult.getQuantumultXNodes([
@@ -294,8 +294,27 @@ test('getQuantumultXNodes', (t) => {
         testUrl: 'http://example.com',
       },
     ]),
-    'vmess=1.1.1.1:443, method=chacha20-ietf-poly1305, password=1386f85e-657b-4d6e-9d56-78badb75e1fd, udp-relay=true, aead=true, obfs=over-tls, tls-verification=true, tls13=true, server_check_url=http://example.com, tag=测试',
+    'vmess=1.1.1.1:443, method=chacha20-poly1305, password=1386f85e-657b-4d6e-9d56-78badb75e1fd, udp-relay=true, aead=true, obfs=over-tls, tls-verification=true, tls13=true, server_check_url=http://example.com, tag=测试',
   )
+
+  t.is(
+    quantumult.getQuantumultXNodes([
+      {
+        type: NodeTypeEnum.Vless,
+        hostname: '1.1.1.1',
+        network: 'tcp',
+        nodeName: '测试',
+        method: 'none',
+        port: 443,
+        tls13: true,
+        udpRelay: true,
+        uuid: '1386f85e-657b-4d6e-9d56-78badb75e1fd',
+        testUrl: 'http://example.com',
+      },
+    ]),
+    'vless=1.1.1.1:443, method=none, password=1386f85e-657b-4d6e-9d56-78badb75e1fd, udp-relay=true, obfs=over-tls, tls-verification=true, tls13=true, server_check_url=http://example.com, tag=测试',
+  )
+
   t.is(
     quantumult.getQuantumultXNodes([
       {

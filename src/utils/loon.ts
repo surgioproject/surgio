@@ -116,7 +116,7 @@ export const getLoonNodes = function (
             nodeConfig.hostname,
             nodeConfig.port,
             nodeConfig.method === 'auto'
-              ? `method=chacha20-ietf-poly1305`
+              ? `method=chacha20-poly1305`
               : `method=${nodeConfig.method}`,
             JSON.stringify(nodeConfig.uuid),
             `transport=${nodeConfig.network}`,

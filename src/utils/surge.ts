@@ -307,12 +307,12 @@ function nodeListMapper(
         `username=${nodeConfig.uuid}`,
       ]
 
-      if (
-        ['chacha20-ietf-poly1305', 'aes-128-gcm', 'chacha20-poly1305'].includes(
-          nodeConfig.method,
-        )
-      ) {
-        result.push(`encrypt-method=${nodeConfig.method}`)
+      if (['chacha20-poly1305', 'aes-128-gcm'].includes(nodeConfig.method)) {
+        if (nodeConfig.method === 'chacha20-poly1305') {
+          result.push(`encrypt-method=chacha20-ietf-poly1305`)
+        } else {
+          result.push(`encrypt-method=${nodeConfig.method}`)
+        }
       }
 
       if (nodeConfig.network === 'ws') {

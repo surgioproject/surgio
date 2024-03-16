@@ -18,7 +18,6 @@ export const VmessNetworkValidator = z.union([
 export const VmessMethodValidator = z.union([
   z.literal('none'),
   z.literal('aes-128-gcm'),
-  z.literal('chacha20-ietf-poly1305'),
   z.literal('chacha20-poly1305'),
   z.literal('auto'),
 ])
