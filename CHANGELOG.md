@@ -1,3 +1,12 @@
+## [3.6.1](https://github.com/geekdada/surgio/compare/v3.6.0...v3.6.1) (2024-03-16)
+
+
+### Bug Fixes
+
+* Expand condition check to include Vless nodes in ClashProvider ([e2f54fc](https://github.com/geekdada/surgio/commit/e2f54fc33307386fc2dd48209a92c74a06754490))
+
+
+
 # [3.6.0](https://github.com/geekdada/surgio/compare/v3.5.1...v3.6.0) (2024-03-16)
 
 
