@@ -20,6 +20,7 @@ const {
   trojanFilter,
   vmessFilter,
   wireguardFilter,
+  vlessFilter,
 } = internalFilters
 const logger = createLogger({ service: 'surgio:utils:loon' })
 
@@ -99,13 +100,19 @@ export const getLoonNodes = function (
             !LOON_SUPPORTED_VMESS_NETWORK.includes(nodeConfig.network as any)
           ) {
             logger.warn(
-              `Loon 不支持 ${nodeConfig.network} 的 Vmess 节点，节点 ${nodeConfig.nodeName} 会被省略`,
+              `Loon 不支持 ${
+                nodeConfig.network
+              } 的 ${nodeConfig.type.toUpperCase()} 节点，节点 ${
+                nodeConfig.nodeName
+              } 会被省略`,
             )
             return void 0
           }
 
           const config: Array<string | number> = [
-            `${nodeConfig.nodeName} = ${nodeConfig.type}`,
+            `${nodeConfig.nodeName} = ${
+              nodeConfig.type === NodeTypeEnum.Vmess ? 'vmess' : 'VLESS'
+            }`,
             nodeConfig.hostname,
             nodeConfig.port,
             nodeConfig.method === 'auto'
@@ -142,7 +149,10 @@ export const getLoonNodes = function (
             }
           }
 
-          if (nodeConfig.type === NodeTypeEnum.Vmess && nodeConfig.tls) {
+          if (
+            (nodeConfig.type === NodeTypeEnum.Vmess && nodeConfig.tls) ||
+            nodeConfig.type === NodeTypeEnum.Vless
+          ) {
             config.push(`over-tls=true`)
 
             if (nodeConfig.sni) {
@@ -307,7 +317,8 @@ export const getLoonNodeNames = function (
         httpFilter(item) ||
         httpsFilter(item) ||
         trojanFilter(item) ||
-        wireguardFilter(item),
+        wireguardFilter(item) ||
+        vlessFilter(item),
     ),
     filter,
   )

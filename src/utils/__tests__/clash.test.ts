@@ -481,6 +481,55 @@ test('getClashNodes', async (t) => {
   t.deepEqual(
     clash.getClashNodes([
       {
+        type: NodeTypeEnum.Vless,
+        nodeName: 'vless',
+        hostname: 'server',
+        port: 443,
+        uuid: 'uuid',
+        method: 'none',
+        network: 'h2',
+        udpRelay: true,
+        flow: 'xtls-rprx-direct',
+        h2Opts: {
+          path: '/path',
+          host: ['v2ray.com'],
+        },
+        realityOpts: {
+          publicKey: 'publicKey',
+          shortId: 'shortId',
+        },
+        clashConfig: {
+          enableVless: true,
+        },
+      },
+    ]),
+    [
+      {
+        type: 'vless',
+        name: 'vless',
+        server: 'server',
+        port: 443,
+        uuid: 'uuid',
+        cipher: 'none',
+        flow: 'xtls-rprx-direct',
+        udp: true,
+        tls: true,
+        network: 'h2',
+        'h2-opts': {
+          path: '/path',
+          host: ['v2ray.com'],
+        },
+        'reality-opts': {
+          'public-key': 'publicKey',
+          'short-id': 'shortId',
+        },
+      },
+    ],
+  )
+
+  t.deepEqual(
+    clash.getClashNodes([
+      {
         nodeName: 'snell',
         type: NodeTypeEnum.Snell,
         hostname: '1.1.1.1',

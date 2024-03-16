@@ -7,15 +7,13 @@ import {
   AlterIdValiator,
 } from './common'
 
-export const VmessNetworkValidator = z
-  .union([
-    z.literal('tcp'),
-    z.literal('ws'),
-    z.literal('h2'),
-    z.literal('http'),
-    z.literal('grpc'),
-  ])
-  .default('tcp')
+export const VmessNetworkValidator = z.union([
+  z.literal('tcp'),
+  z.literal('ws'),
+  z.literal('h2'),
+  z.literal('http'),
+  z.literal('grpc'),
+])
 
 export const VmessMethodValidator = z.union([
   z.literal('none'),
@@ -56,7 +54,7 @@ export const VmessNodeConfigValidator = SimpleNodeConfigValidator.extend({
   method: VmessMethodValidator,
   uuid: z.string().uuid(),
   alterId: AlterIdValiator.optional(),
-  network: VmessNetworkValidator,
+  network: VmessNetworkValidator.default('tcp'),
   udpRelay: z.oboolean(),
 
   wsOpts: VmessWSOptsValidator.optional(),

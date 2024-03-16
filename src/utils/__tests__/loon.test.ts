@@ -73,6 +73,21 @@ test('getLoonNodes', (t) => {
   t.is(
     getLoonNodes([
       {
+        type: NodeTypeEnum.Vless,
+        nodeName: 'vless',
+        hostname: 'server',
+        port: 443,
+        uuid: 'uuid',
+        method: 'none',
+        udpRelay: true,
+        network: 'tcp',
+      },
+    ]),
+    'vless = VLESS,server,443,method=none,"uuid",transport=tcp,over-tls=true',
+  )
+  t.is(
+    getLoonNodes([
+      {
         type: NodeTypeEnum.Shadowsocksr,
         nodeName: '🇭🇰HK',
         hostname: 'hk.example.com',

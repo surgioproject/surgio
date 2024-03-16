@@ -104,3 +104,9 @@ export const socks5Filter: NodeFilterType = (item) =>
 // istanbul ignore next
 export const wireguardFilter: NodeFilterType = (item) =>
   item.type === NodeTypeEnum.Wireguard
+// istanbul ignore next
+export const hysteria2Filter: NodeFilterType = (item) =>
+  item.type === NodeTypeEnum.Hysteria2
+// istanbul ignore next
+export const vlessFilter: NodeFilterType = (item) =>
+  item.type === NodeTypeEnum.Vless

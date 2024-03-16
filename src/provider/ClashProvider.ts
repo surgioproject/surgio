@@ -290,12 +290,15 @@ export const parseClashConfig = (
             hostname: item.server,
             port: item.port,
             uuid: item.uuid,
-            alterId: item.alterId ? `${item.alterId}` : '0',
             method: item.cipher || fallbackCipherMethod,
             udpRelay: resolveUdpRelay(item.udp, udpRelay),
-            tls: item.tls === true,
             network: item.network || 'tcp',
           } as NodeConfig
+
+          if (vmessNode.type === NodeTypeEnum.Vmess) {
+            vmessNode.tls = item.tls === true
+            vmessNode.alterId = item.alterId ? `${item.alterId}` : '0'
+          }
 
           if (vmessNode.type === NodeTypeEnum.Vless && item.tls !== true) {
             logger.warn(
@@ -306,6 +309,13 @@ export const parseClashConfig = (
 
           if (vmessNode.type === NodeTypeEnum.Vless) {
             vmessNode.flow = item.flow
+
+            if (item['reality-opts']) {
+              vmessNode.realityOpts = {
+                publicKey: item['reality-opts']['public-key'],
+                shortId: item['reality-opts']['short-id'],
+              }
+            }
           }
 
           if (vmessNode.type === NodeTypeEnum.Vmess && vmessNode.tls) {

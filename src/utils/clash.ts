@@ -155,11 +155,43 @@ function nodeListMapper(nodeConfig: PossibleNodeConfigType) {
       }
 
       if (nodeConfig.type === NodeTypeEnum.Vmess) {
-        vmessNode.alertId = nodeConfig.alterId || '0'
+        vmessNode.alterId = nodeConfig.alterId || '0'
       }
 
       if (nodeConfig.type === NodeTypeEnum.Vless) {
         vmessNode.flow = nodeConfig.flow
+
+        if (nodeConfig.realityOpts) {
+          vmessNode['reality-opts'] = {
+            'public-key': nodeConfig.realityOpts.publicKey,
+          }
+
+          if (nodeConfig.realityOpts.shortId) {
+            vmessNode['reality-opts']['short-id'] =
+              nodeConfig.realityOpts.shortId
+          }
+        }
+      }
+
+      if (
+        (nodeConfig.type === NodeTypeEnum.Vmess && nodeConfig.tls) ||
+        nodeConfig.type === NodeTypeEnum.Vless
+      ) {
+        vmessNode.tls = true
+
+        if (nodeConfig.skipCertVerify) {
+          vmessNode['skip-cert-verify'] = nodeConfig.skipCertVerify
+        }
+        if (clashConfig.clashCore === 'clash' && nodeConfig.sni) {
+          vmessNode.servername = nodeConfig.sni
+        }
+        if (clashConfig.clashCore === 'stash' && nodeConfig.sni) {
+          vmessNode.sni = nodeConfig.sni
+          vmessNode.servername = nodeConfig.sni
+        }
+        if (clashConfig.clashCore === 'clash.meta' && nodeConfig.sni) {
+          vmessNode.servername = nodeConfig.sni
+        }
       }
 
       switch (nodeConfig.network) {
@@ -190,27 +222,6 @@ function nodeListMapper(nodeConfig: PossibleNodeConfigType) {
             }
           }
           break
-      }
-
-      if (
-        (nodeConfig.type === NodeTypeEnum.Vmess && nodeConfig.tls) ||
-        nodeConfig.type === NodeTypeEnum.Vless
-      ) {
-        vmessNode.tls = true
-
-        if (nodeConfig.skipCertVerify) {
-          vmessNode['skip-cert-verify'] = nodeConfig.skipCertVerify
-        }
-        if (clashConfig.clashCore === 'clash' && nodeConfig.sni) {
-          vmessNode.servername = nodeConfig.sni
-        }
-        if (clashConfig.clashCore === 'stash' && nodeConfig.sni) {
-          vmessNode.sni = nodeConfig.sni
-          vmessNode.servername = nodeConfig.sni
-        }
-        if (clashConfig.clashCore === 'clash.meta' && nodeConfig.sni) {
-          vmessNode.servername = nodeConfig.sni
-        }
       }
 
       return vmessNode

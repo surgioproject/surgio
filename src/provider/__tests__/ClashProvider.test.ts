@@ -85,6 +85,7 @@ test('getClashSubscription', async (t) => {
       'vmess',
       'vmess new format',
       'vmess custom header',
+      'socks',
       'http 1',
       'http 2',
       'snell',
@@ -180,6 +181,12 @@ test('getClashSubscription', async (t) => {
       },
       path: '/path',
     },
+  })
+  t.deepEqual(config.shift(), {
+    type: NodeTypeEnum.Socks5,
+    nodeName: 'socks',
+    hostname: 'server',
+    port: 443,
   })
   t.deepEqual(config.shift(), {
     type: NodeTypeEnum.HTTPS,
@@ -459,6 +466,52 @@ test('vmess Configurations', (t) => {
         h2Opts: {
           path: '/path',
           host: ['v2ray.com'],
+        },
+      },
+    ],
+  )
+
+  t.deepEqual(
+    parseClashConfig([
+      {
+        type: 'vless',
+        name: 'vless',
+        server: 'server',
+        port: 443,
+        uuid: 'uuid',
+        cipher: 'none',
+        flow: 'xtls-rprx-direct',
+        udp: true,
+        tls: true,
+        network: 'h2',
+        'h2-opts': {
+          path: '/path',
+          host: ['v2ray.com'],
+        },
+        'reality-opts': {
+          'public-key': 'publicKey',
+          'short-id': 'shortId',
+        },
+      },
+    ]),
+    [
+      {
+        type: NodeTypeEnum.Vless,
+        nodeName: 'vless',
+        hostname: 'server',
+        port: 443,
+        uuid: 'uuid',
+        method: 'none',
+        network: 'h2',
+        udpRelay: true,
+        flow: 'xtls-rprx-direct',
+        h2Opts: {
+          path: '/path',
+          host: ['v2ray.com'],
+        },
+        realityOpts: {
+          publicKey: 'publicKey',
+          shortId: 'shortId',
         },
       },
     ],
