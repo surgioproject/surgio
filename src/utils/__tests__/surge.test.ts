@@ -384,9 +384,10 @@ test('getSurgeNodes', async (t) => {
         nodeName: 'socks node 1',
         hostname: '1.1.1.1',
         port: '80',
+        blockQuic: 'auto',
       },
     ]),
-    'socks node 1 = socks5, 1.1.1.1, 80',
+    'socks node 1 = socks5, 1.1.1.1, 80, block-quic=auto',
   )
 
   t.is(
@@ -397,9 +398,10 @@ test('getSurgeNodes', async (t) => {
         hostname: '1.1.1.1',
         port: '80',
         tfo: true,
+        blockQuic: 'on',
       },
     ]),
-    'socks node 2 = socks5, 1.1.1.1, 80, tfo=true',
+    'socks node 2 = socks5, 1.1.1.1, 80, tfo=true, block-quic=on',
   )
 
   t.is(

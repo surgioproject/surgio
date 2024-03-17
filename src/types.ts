@@ -20,8 +20,8 @@ import {
   SortedNodeFilterTypeValidator,
   Hysteria2NodeConfigValidator,
   ClashCoreValidator,
+  VlessNodeConfigValidator,
 } from './validators'
-import { VlessNodeConfigValidator } from './validators/vless'
 
 export enum NodeTypeEnum {
   HTTPS = 'https',

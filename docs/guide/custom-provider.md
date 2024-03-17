@@ -795,6 +795,17 @@ Surgio 不会验证名称是否有效
 
 是否为该节点开启 [ECN（Explicit Congestion Notification）](https://yach.me/2023/10/14/ccn-and-ecn/)。目前仅 Surge 支持这一特性。
 
+### nodeConfig.blockQuic
+
+- 类型: `string`
+- 默认值: `undefined`
+
+通过代理转发 QUIC 流量可能会导致性能问题。启用该选项将阻止 QUIC 流量，使客户端退回到传统的 HTTPS/TCP 协议。目前仅 Surge 支持这一特性。
+
+`auto`: 根据代理是否适合转发 QUIC 流量自动启用
+`on`: 强制阻止 QUIC 流量
+`off`: 不阻止 QUIC 流量
+
 ### 客户端特殊配置
 
 > <Badge text="v3.2.0" vertical="middle" />

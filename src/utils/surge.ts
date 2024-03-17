@@ -504,6 +504,7 @@ function appendCommonConfig(
         'skipCertVerify',
         'sni',
         'serverCertFingerprintSha256',
+        'blockQuic',
       ],
       {
         keyFormat: 'kebabCase',

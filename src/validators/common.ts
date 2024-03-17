@@ -73,6 +73,11 @@ export const SimpleNodeConfigValidator = z.object({
     })
     .optional(),
 
+  // UDP features
+  blockQuic: z
+    .union([z.literal('auto'), z.literal('on'), z.literal('off')])
+    .optional(),
+
   // Misc
   underlyingProxy: z.string().optional(),
   testUrl: z.string().optional(),
