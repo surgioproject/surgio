@@ -1,3 +1,12 @@
+## [3.6.3](https://github.com/geekdada/surgio/compare/v3.6.2...v3.6.3) (2024-03-17)
+
+
+### Features
+
+* add blockQuic option for surge ([23fed38](https://github.com/geekdada/surgio/commit/23fed3810c148c4254f221350110150bb7496027))
+
+
+
 ## [3.6.2](https://github.com/geekdada/surgio/compare/v3.6.1...v3.6.2) (2024-03-16)
 
 
