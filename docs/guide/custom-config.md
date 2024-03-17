@@ -249,6 +249,15 @@ module.exports = {
 
 目前仅 Clash Meta 内核和 Stash 支持 Hysteria v2，如果你希望在 Clash 订阅中输出 Hysteria v2 节点请开启此项。
 
+### clashConfig.enableVless
+
+> <Badge text="v3.6.0" vertical="middle" />
+
+- 类型: `boolean`
+- 默认值: `false`
+
+目前仅 Clash Meta 内核和 Stash 支持 VLESS，如果你希望在 Clash 订阅中输出 VLESS 节点请开启此项。
+
 ### clashConfig.clashCore
 
 > <Badge text="v3.2.0" vertical="middle" />
@@ -268,7 +277,7 @@ Clash 核心版本。默认使用 Clash 核心，如果你希望输出针对 Cla
 | `stash` | - Hysteria 协议的密码字段改为 `auth`；模板 `clash` 过滤器会改为过滤 Stash 不支持的规则 |
 
 :::warning 注意
-`enableTuic`, `enableShadowTls`, `enableHysteria2` 这三个配置项和 `clashCore` 目前互不影响，但是将来会合并到 `clashCore` 中。
+`enableTuic`, `enableShadowTls`, `enableHysteria2`, `enableVless` 这几个配置项和 `clashCore` 目前互不影响，但是将来会合并到 `clashCore` 中。
 :::
 
 ## surfboardConfig
