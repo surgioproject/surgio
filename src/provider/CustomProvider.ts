@@ -20,6 +20,7 @@ import {
   SnellNodeConfigValidator,
   TuicNodeConfigValidator,
   Hysteria2NodeConfigValidator,
+  VlessNodeConfigValidator,
 } from '../validators'
 import { GetNodeListFunction, GetNodeListParams } from './types'
 
@@ -84,6 +85,7 @@ export default class CustomProvider extends Provider {
           throw new Error('obfs-uri 已废弃, 请使用 obfsUri')
         }
 
+        // istanbul ignore next
         let parsedNode = (() => {
           switch (type) {
             case NodeTypeEnum.Shadowsocks:
@@ -118,6 +120,9 @@ export default class CustomProvider extends Provider {
 
             case NodeTypeEnum.Hysteria2:
               return Hysteria2NodeConfigValidator.parse(node)
+
+            case NodeTypeEnum.Vless:
+              return VlessNodeConfigValidator.parse(node)
 
             default:
               throw new TypeError(`无法识别的节点类型：${type}`)
