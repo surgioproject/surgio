@@ -12,57 +12,58 @@ sidebarDepth: 2
 Surgio 内置了 `defineXxxProvider` 方法，`Xxx` 对应下面所列的类型，可以让 IDE 智能提示配置项，不过你也可以不使用这样的语法糖。下面两种写法都是可以的。
 
 ```js
-const { defineClashProvider } = require('surgio');
+const { defineClashProvider } = require('surgio')
 
 module.exports = defineClashProvider({
   url: 'https://example.com/clash.yaml',
   // ...
-});
+})
 ```
 
 ```js
 module.exports = {
   type: 'clash',
   // ...
-};
+}
 ```
+
 ## 支持异步函数
 
 为了满足更多定制化的场景，支持通过异步函数的模式挂载 `Provider`
 
 ```js
-const { defineCustomProvider } = require('surgio');
+const { defineCustomProvider } = require('surgio')
 
-module.exports = defineCustomProvider(async function() {
-  const myNodeList = await someAsyncFunction();
+module.exports = defineCustomProvider(async function () {
+  const myNodeList = await someAsyncFunction()
 
   return {
     nodeList: myNodeList,
-  };
-});
+  }
+})
 ```
 
 ## 订阅类型
 
 目前 Surgio 支持两种 Provider 类型：
 
-|                       类型                       | 描述                               | 备注                                                                                                                       |
-|:----------------------------------------------:|----------------------------------|--------------------------------------------------------------------------------------------------------------------------|
-| `custom` <Badge text="推荐" vertical="middle" /> | 自己维护的节点                          | 支持 Shadowsocks, Shadowsocksr, Snell, HTTPS, HTTP, Vmess, Socks5, Tuic                                                    |
-| `clash` <Badge text="推荐" vertical="middle" />  | Clash 配置                         | 支持 Shadowsocks, Shadowsocksr, Snell, HTTPS, HTTP, Vmess, Vless, Hysteria 2, Socks5, Tuic                                 |
-|                    `trojan`                    | Trojan 订阅                        | Shadowrocket 支持的 Trojan 订阅格式                                                                                             |
-|          `shadowsocks_json_subscribe`          | 针对 Windows 客户端的 Shadowsocks 订阅地址 | 通常命名为 *gui-config.json*                                                                                                  |
-|            `shadowsocks_subscribe`             | 通用的 Shadowsocks 订阅地址             |                                                                                                                          |
-|            `shadowsocksr_subscribe`            | 通用的 Shadowsocksr 订阅地址            |                                                                                                                          |
-|               `v2rayn_subscribe`               | V2rayN 订阅地址                      | 支持 V2Ray, Shadowsocks, [协议](https://github.com/2dust/v2rayN/wiki/%E8%AE%A2%E9%98%85%E5%8A%9F%E8%83%BD%E8%AF%B4%E6%98%8E) |
-|                     `ssd`                      | SSD 订阅                           | 支持 Shadowsocks                                                                                                           |
+|                       类型                       | 描述                                       | 备注                                                                                                                         |
+| :----------------------------------------------: | ------------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------- |
+| `custom` <Badge text="推荐" vertical="middle" /> | 自己维护的节点                             | 支持 Shadowsocks, Shadowsocksr, Snell, HTTPS, HTTP, Vmess, Socks5, Tuic                                                      |
+| `clash` <Badge text="推荐" vertical="middle" />  | Clash 配置                                 | 支持 Shadowsocks, Shadowsocksr, Snell, HTTPS, HTTP, Vmess, Vless, Hysteria 2, Socks5, Tuic                                   |
+|                     `trojan`                     | Trojan 订阅                                | Shadowrocket 支持的 Trojan 订阅格式                                                                                          |
+|           `shadowsocks_json_subscribe`           | 针对 Windows 客户端的 Shadowsocks 订阅地址 | 通常命名为 _gui-config.json_                                                                                                 |
+|             `shadowsocks_subscribe`              | 通用的 Shadowsocks 订阅地址                |                                                                                                                              |
+|             `shadowsocksr_subscribe`             | 通用的 Shadowsocksr 订阅地址               |                                                                                                                              |
+|                `v2rayn_subscribe`                | V2rayN 订阅地址                            | 支持 V2Ray, Shadowsocks, [协议](https://github.com/2dust/v2rayN/wiki/%E8%AE%A2%E9%98%85%E5%8A%9F%E8%83%BD%E8%AF%B4%E6%98%8E) |
+|                      `ssd`                       | SSD 订阅                                   | 支持 Shadowsocks                                                                                                             |
 
 ## Clash 订阅 <Badge text="推荐" vertical="middle" />
 
 :::warning 注意
 1. Surgio 支持读取 `obfs-local` 和 `v2ray-plugin` 两种 SIP003 插件配置；
 2. 仅支持 `v2ray-plugin` 的 WebSocket 模式；
-   :::
+:::
 
 ### url
 
@@ -90,7 +91,7 @@ module.exports = defineCustomProvider(async function() {
 #### 普通模式
 
 ```js
-const { defineCustomProvider } = require('surgio');
+const { defineCustomProvider } = require('surgio')
 
 module.exports = defineCustomProvider({
   nodeList: [
@@ -99,7 +100,7 @@ module.exports = defineCustomProvider({
       // ...
     },
   ],
-});
+})
 ```
 
 #### 异步模式
@@ -115,10 +116,10 @@ module.exports = defineCustomProvider({
 
 :::tip 提示
 如果你想了解如何编写更复杂的 Provider 请看 [这里](/guide/advance/advanced-provider.md)。
-   :::
+:::
 
 ```js
-const { defineCustomProvider } = require('surgio');
+const { defineCustomProvider } = require('surgio')
 
 module.exports = defineCustomProvider({
   nodeList: async (customParams) => {
@@ -128,17 +129,17 @@ module.exports = defineCustomProvider({
           type: 'shadowsocks',
           // ...
         },
-      ];
+      ]
     } else {
       return [
         {
           type: 'trojan',
           // ...
         },
-      ];
+      ]
     }
   },
-});
+})
 ```
 
 ### Shadowsocks
@@ -164,7 +165,7 @@ module.exports = defineCustomProvider({
 :::warning 注意
 1. `ws` 和 `wss` 是通过服务端 v2ray-plugin 支持的；
 2. TLS 1.3 需要服务端支持
-   :::
+:::
 
 ### Shadowsocksr
 
@@ -210,23 +211,23 @@ module.exports = defineCustomProvider({
 
 ```json5
 {
-   nodeName: '🇭🇰HK',
-   type: 'vmess',
-   hostname: 'hk.example.com',
-   method: 'auto',
-   network: 'http',
-   alterId: '64',
-   port: 8080,
-   tls: false,
-   uuid: '1386f85e-657b-4d6e-9d56-78badb75e1fd',
-   udpRelay: true,
-   httpOpts: {
-     method: 'GET',
-     path: ['/', '/video'],
-     headers: {
-       'x-key': 'x-value',
-     },
-   },
+  nodeName: '🇭🇰HK',
+  type: 'vmess',
+  hostname: 'hk.example.com',
+  method: 'auto',
+  network: 'http',
+  alterId: '64',
+  port: 8080,
+  tls: false,
+  uuid: '1386f85e-657b-4d6e-9d56-78badb75e1fd',
+  udpRelay: true,
+  httpOpts: {
+    method: 'GET',
+    path: ['/', '/video'],
+    headers: {
+      'x-key': 'x-value',
+    },
+  },
 }
 ```
 
@@ -247,7 +248,7 @@ module.exports = defineCustomProvider({
   wsOpts: {
     path: '/',
     headers: {
-      'Host': 'www.example.com',
+      Host: 'www.example.com',
     },
   },
 }
@@ -313,11 +314,11 @@ Vless 节点遵循和 Vmess 类似的配置规则，除了以下几个差异：
      udpRelay: true,
      realityOpts: {
        publicKey: 'public-key',
-       shortId: 'short-id', // 可选   
+       shortId: 'short-id', // 可选
      },
    }
    ```
-4. `method` 有且仅有 `none` 一个选项 
+4. `method` 有且仅有 `none` 一个选项
 
 ### Snell
 
@@ -397,7 +398,7 @@ Vless 节点遵循和 Vmess 类似的配置规则，除了以下几个差异：
   udpRelay: false, // 可选, 仅 Clash 支持
   sni: 'example.com', // 可选, 仅 Surge 支持
   tfo: true, // 可选, 仅 Surge 支持
-  clientCert: 'item' // 可选, 仅 Surge 支持
+  clientCert: 'item', // 可选, 仅 Surge 支持
 }
 ```
 
@@ -409,25 +410,25 @@ Vless 节点遵循和 Vmess 类似的配置规则，除了以下几个差异：
 
 ```json5
 {
-   type: 'wireguard',
-   nodeName: 'Wireguard',
-   selfIp: '172.16.0.2',
-   privateKey: 'eOyyaXrwVTHwo62x98Is6v5Fo=',
-   peers: [
-     {
-       publicKey: 'eOyyaXrwVTHwo62x98Is6v5Fo=',
-       endpoint: 'wg.example.com:54321',
-       allowedIps: '172.16.0.0/24', // 可选
-       keepalive: 25, // 可选
-       presharedKey: 'eOyyaXrwVTHwo62x98Is6v5Fo=', // 可选
-       reservedBits: [16], // 可选
-     }
-   ],
-   selfIpV6: '2001:0db8:85a3:0000:0000:8a2e:0370:7334', // 可选
-   preferIpv6: false, // 可选
-   mtu: 1420, // 可选
-   dnsServers: ['1.1.1.1'], // 可选
-   reservedBits: [16], // 可选
+  type: 'wireguard',
+  nodeName: 'Wireguard',
+  selfIp: '172.16.0.2',
+  privateKey: 'eOyyaXrwVTHwo62x98Is6v5Fo=',
+  peers: [
+    {
+      publicKey: 'eOyyaXrwVTHwo62x98Is6v5Fo=',
+      endpoint: 'wg.example.com:54321',
+      allowedIps: '172.16.0.0/24', // 可选
+      keepalive: 25, // 可选
+      presharedKey: 'eOyyaXrwVTHwo62x98Is6v5Fo=', // 可选
+      reservedBits: [16], // 可选
+    },
+  ],
+  selfIpV6: '2001:0db8:85a3:0000:0000:8a2e:0370:7334', // 可选
+  preferIpv6: false, // 可选
+  mtu: 1420, // 可选
+  dnsServers: ['1.1.1.1'], // 可选
+  reservedBits: [16], // 可选
 }
 ```
 
@@ -483,7 +484,7 @@ Clash 需要在配置中开启 `clashConfig.enableHysteria2`。
   nodeName: 'Hysteria',
   hostname: 'hysteria.example.com',
   port: 443,
-  password: 'password', 
+  password: 'password',
   downloadBandwidth: 40, // 可选, Mbps
   uploadBandwidth: 40, // 可选, Mbps
   sni: 'sni.example.com', // 可选
@@ -498,7 +499,7 @@ module.exports = {
   type: 'ssd',
   url: '',
   udpRelay: true,
-};
+}
 ```
 
 :::warning 注意
@@ -525,7 +526,7 @@ module.exports = {
   type: 'shadowsocks_json_subscribe',
   url: '',
   udpRelay: true,
-};
+}
 ```
 
 ### url
@@ -553,7 +554,7 @@ module.exports = {
   type: 'shadowsocks_subscribe',
   url: '',
   udpRelay: true,
-};
+}
 ```
 
 :::warning 注意
@@ -577,14 +578,13 @@ module.exports = {
 
 由于这种订阅协议不支持定义 UDP 转发的支持情况，所以单独出来进行配置。UDP 转发可以应用在 Surge 中。
 
-
 ## Shadowsocksr 订阅
 
 ```js
 module.exports = {
   type: 'shadowsocksr_subscribe',
   url: '',
-};
+}
 ```
 
 ### url
@@ -598,7 +598,7 @@ module.exports = {
 module.exports = {
   type: 'v2rayn_subscribe',
   url: '',
-};
+}
 ```
 
 ### url
@@ -642,12 +642,12 @@ module.exports = {
 
 ## Trojan 订阅
 
- ```js
- module.exports = {
-   type: 'trojan',
-   url: '',
- };
- ```
+```js
+module.exports = {
+  type: 'trojan',
+  url: '',
+}
+```
 
 :::warning 注意
 该订阅方式仅支持标准的 Trojan 协议，不支持 WebSocket 和 GRPC
@@ -742,6 +742,7 @@ module.exports = {
 为 TLS 节点开启 TLS 1.3 支持。
 
 :::warning 注意
+
 1. TLS 1.3 需要服务端支持；
 2. 支持 TLS 的节点类型有 Shadowsocks with v2ray-plugin(tls), Vmess(tls), HTTPS；
 :::
@@ -754,6 +755,7 @@ module.exports = {
 关闭 TLS 节点的证书检查。
 
 :::warning 注意
+
 1. 支持 TLS 的节点类型有 Shadowsocks with v2ray-plugin(tls), Vmess(tls), HTTPS；
 2. 请不要随意将证书检查关闭；
 :::
@@ -777,6 +779,7 @@ Surgio 不会验证名称是否有效
 在新版的 Surge 中支持针对某个 Proxy 设置测试的地址。你可以通过这个参数来设置改地址。
 
 :::warning 注意
+
 1. Surgio 不会验证名称是否有效；
 2. 目前仅 Surge 支持该特性；
 :::
@@ -830,12 +833,12 @@ Surgio 不会验证名称是否有效
 有一些俗称「外贸机场」的服务商提供很多诸如马来西亚、土耳其的节点，不需要这些国家节点的朋友每次都要在数十个节点中寻找自己想要的。我们可以用这个方法把这些节点过滤掉。
 
 ```js
-const { utils } = require('surgio');
+const { utils } = require('surgio')
 
 module.exports = {
   // 过滤出名字中包含土耳其和马来西亚的节点
   nodeFilter: utils.useKeywords(['土耳其', '马来西亚']),
-};
+}
 ```
 
 :::tip 提示
@@ -856,7 +859,7 @@ module.exports = {
 module.exports = {
   // 过滤出名字中包含 HK（大小写不敏感）的节点
   netflixFilter: utils.useKeywords(['hk', 'HK']),
-};
+}
 ```
 
 ### provider.youtubePremiumFilter
@@ -929,6 +932,24 @@ Surgio 不会验证名称是否有效
 
 是否为该订阅强制开启 Multipath TCP。目前仅 Surge 支持这一特性。
 
+### provider.ecn
+
+- 类型: `boolean`
+- 默认值: `false`
+
+是否为该订阅强制开启 ECN（Explicit Congestion Notification）。目前仅 Surge 支持这一特性。
+
+### provider.blockQuic
+
+- 类型: `string`
+- 默认值: `undefined`
+
+是否为该订阅强制阻止 QUIC 流量。目前仅 Surge 支持这一特性。
+
+`auto`: 根据代理是否适合转发 QUIC 流量自动启用
+`on`: 强制阻止 QUIC 流量
+`off`: 不阻止 QUIC 流量
+
 ### provider.renameNode
 
 - 类型: `Function`
@@ -938,13 +959,13 @@ Surgio 不会验证名称是否有效
 
 ```js
 module.exports = {
-  renameNode: name => {
+  renameNode: (name) => {
     if (name === '社会主义') {
-      return '资本主义';
+      return '资本主义'
     }
-    return name;
+    return name
   },
-};
+}
 ```
 
 :::warning 注意
@@ -968,7 +989,7 @@ module.exports = {
 ```js
 module.exports = {
   relayUrl: 'https://proxy.example.com/%URL%',
-};
+}
 ```
 
 2. URL 中插入 URL encoded 后的订阅连接：
@@ -976,7 +997,7 @@ module.exports = {
 ```js
 module.exports = {
   relayUrl: 'https://proxy.example.com/?url=%%URL%%',
-};
+}
 ```
 
 如果 `relayUrl` 是一个布尔值，则使用内置的服务进行转发。
@@ -1003,7 +1024,7 @@ module.exports = {
 `customParams` 是一个对象，包含了所有在 Artifact 和全局定义的自定义参数。假如你使用了 Gateway，则里面还包含所有请求 URL 中的参数和 `requestUserAgent`，方便你根据不同的客户端返回不同的节点列表。
 
 ```ts
-const { defineClashProvider } = require('surgio');
+const { defineClashProvider } = require('surgio')
 
 module.exports = defineClashProvider({
   url: 'https://example.com/clash.yaml',
@@ -1011,10 +1032,9 @@ module.exports = defineClashProvider({
     afterNodeListResponse: async (nodeList, customParams) => {
       // nodeList: NodeConfig[]
       // customerParams: {}
-      return nodeList;
+      return nodeList
     },
   },
-  }
 })
 ```
 

@@ -407,13 +407,29 @@ export class Artifact extends EventEmitter {
           }
 
           // TCP Fast Open
-          if (provider.config.tfo) {
+          if (typeof nodeConfig.tfo === 'undefined' && provider.config.tfo) {
             nodeConfig.tfo = provider.config.tfo
           }
 
           // MPTCP
-          if (provider.config.mptcp) {
+          if (
+            typeof nodeConfig.mptcp === 'undefined' &&
+            provider.config.mptcp
+          ) {
             nodeConfig.mptcp = provider.config.mptcp
+          }
+
+          // ECN
+          if (typeof nodeConfig.ecn === 'undefined' && provider.config.ecn) {
+            nodeConfig.ecn = provider.config.ecn
+          }
+
+          // Block QUIC
+          if (
+            typeof nodeConfig.blockQuic === 'undefined' &&
+            provider.config.blockQuic
+          ) {
+            nodeConfig.blockQuic = provider.config.blockQuic
           }
 
           // Underlying Proxy

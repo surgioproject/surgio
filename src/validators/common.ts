@@ -62,9 +62,9 @@ export const SimpleNodeConfigValidator = z.object({
   enable: z.boolean().optional(),
 
   // TCP features
-  tfo: z.boolean().optional(),
-  mptcp: z.boolean().optional(),
-  ecn: z.boolean().optional(),
+  tfo: z.oboolean(),
+  mptcp: z.oboolean(),
+  ecn: z.oboolean(),
   shadowTls: z
     .object({
       version: IntegersVersionValidator.optional(),

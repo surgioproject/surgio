@@ -16,6 +16,10 @@ export const ProviderValidator = z.object({
   removeExistingFlag: z.oboolean(),
   mptcp: z.oboolean(),
   tfo: z.oboolean(),
+  ecn: z.oboolean(),
+  blockQuic: z
+    .union([z.literal('auto'), z.literal('on'), z.literal('off')])
+    .optional(),
   underlyingProxy: z.ostring(),
   startPort: z.number().min(1024).max(65535).optional(),
   relayUrl: z.string().url().optional(),
