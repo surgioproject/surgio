@@ -742,7 +742,6 @@ module.exports = {
 为 TLS 节点开启 TLS 1.3 支持。
 
 :::warning 注意
-
 1. TLS 1.3 需要服务端支持；
 2. 支持 TLS 的节点类型有 Shadowsocks with v2ray-plugin(tls), Vmess(tls), HTTPS；
 :::
@@ -755,7 +754,6 @@ module.exports = {
 关闭 TLS 节点的证书检查。
 
 :::warning 注意
-
 1. 支持 TLS 的节点类型有 Shadowsocks with v2ray-plugin(tls), Vmess(tls), HTTPS；
 2. 请不要随意将证书检查关闭；
 :::
@@ -779,7 +777,6 @@ Surgio 不会验证名称是否有效
 在新版的 Surge 中支持针对某个 Proxy 设置测试的地址。你可以通过这个参数来设置改地址。
 
 :::warning 注意
-
 1. Surgio 不会验证名称是否有效；
 2. 目前仅 Surge 支持该特性；
 :::

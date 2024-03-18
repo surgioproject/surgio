@@ -6,4 +6,6 @@ module.exports = {
   tfo: true,
   mptcp: true,
   underlyingProxy: 'underlying-proxy',
+  ecn: true,
+  blockQuic: 'off',
 }

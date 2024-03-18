@@ -2,8 +2,6 @@
 to: provider/<%= name %>.js
 
 ---
-'use strict';
-
 const { utils } = require('surgio');
 
 module.exports = {
