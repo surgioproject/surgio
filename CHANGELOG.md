@@ -1,3 +1,12 @@
+## [3.6.4](https://github.com/geekdada/surgio/compare/v3.6.3...v3.6.4) (2024-03-18)
+
+
+### Bug Fixes
+
+* vless isn't available in custom provider ([06d3efd](https://github.com/geekdada/surgio/commit/06d3efdce91f596d0b4f2198ea78cf1e54b88c74))
+
+
+
 ## [3.6.3](https://github.com/geekdada/surgio/compare/v3.6.2...v3.6.3) (2024-03-17)
 
 
