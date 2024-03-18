@@ -1,3 +1,12 @@
+## [3.6.5](https://github.com/geekdada/surgio/compare/v3.6.4...v3.6.5) (2024-03-18)
+
+
+### Features
+
+* allow setting ECN and blockQuic in provider config ([77f7ac9](https://github.com/geekdada/surgio/commit/77f7ac97d82c568930b343202d015fa885848f07))
+
+
+
 ## [3.6.4](https://github.com/geekdada/surgio/compare/v3.6.3...v3.6.4) (2024-03-18)
 
 
