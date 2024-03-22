@@ -114,9 +114,9 @@ shadowsocks=us.example.com:445, method=chacha20-ietf-poly1305, password=password
 shadowsocks=us.example.com:80, method=chacha20-ietf-poly1305, password=password, obfs=http, obfs-host=www.bing.com, tag=🇺🇸US 4
 shadowsocks=us.example.com:443, method=chacha20-ietf-poly1305, password=password, obfs=tls, obfs-host=gateway-carry.icloud.com, tag=🇺🇸US 1
 shadowsocks=us.example.com:443, method=chacha20-ietf-poly1305, password=password, tag=🇺🇸US 2
-vmess=1.1.1.1:8080, method=chacha20-ietf-poly1305, password=1386f85e-657b-4d6e-9d56-78badb75e1fd, aead=true, obfs=ws, obfs-uri=/, obfs-host=example.com, tag=测试 1
-vmess=1.1.1.1:8080, method=chacha20-ietf-poly1305, password=1386f85e-657b-4d6e-9d56-78badb75e1fd, aead=true, tag=测试 2
-vmess=example.com:443, method=chacha20-ietf-poly1305, password=1386f85e-657b-4d6e-9d56-78badb75e1fd, aead=true, obfs=wss, obfs-uri=/, obfs-host=example.com, tag=测试 tls
+vmess=1.1.1.1:8080, method=chacha20-poly1305, password=1386f85e-657b-4d6e-9d56-78badb75e1fd, aead=true, obfs=ws, obfs-uri=/, obfs-host=example.com, tag=测试 1
+vmess=1.1.1.1:8080, method=chacha20-poly1305, password=1386f85e-657b-4d6e-9d56-78badb75e1fd, aead=true, tag=测试 2
+vmess=example.com:443, method=chacha20-poly1305, password=1386f85e-657b-4d6e-9d56-78badb75e1fd, aead=true, obfs=wss, obfs-uri=/, obfs-host=example.com, tag=测试 tls
 shadowsocks=server:443, method=chacha20-ietf-poly1305, password=password, udp-relay=true, tag=ss1
 shadowsocks=server:443, method=chacha20-ietf-poly1305, password=password, obfs=tls, obfs-host=www.bing.com, tag=ss2
 shadowsocks=server:443, method=chacha20-ietf-poly1305, password=password, obfs=ws, obfs-host=server, obfs-uri=/, tag=ss3
@@ -143,9 +143,9 @@ trojan node = trojan,trojan.example.com,443,\\"password\\",tls-name=trojan.examp
 🇺🇸US 4 = Shadowsocks,us.example.com,80,chacha20-ietf-poly1305,\\"password\\",http,www.bing.com
 🇺🇸US 1 = Shadowsocks,us.example.com,443,chacha20-ietf-poly1305,\\"password\\",tls,gateway-carry.icloud.com
 🇺🇸US 2 = Shadowsocks,us.example.com,443,chacha20-ietf-poly1305,\\"password\\"
-测试 1 = vmess,1.1.1.1,8080,method=chacha20-ietf-poly1305,\\"1386f85e-657b-4d6e-9d56-78badb75e1fd\\",transport=ws,path=/,host=example.com
-测试 2 = vmess,1.1.1.1,8080,method=chacha20-ietf-poly1305,\\"1386f85e-657b-4d6e-9d56-78badb75e1fd\\",transport=tcp
-测试 tls = vmess,example.com,443,method=chacha20-ietf-poly1305,\\"1386f85e-657b-4d6e-9d56-78badb75e1fd\\",transport=ws,path=/,host=example.com,over-tls=true
+测试 1 = vmess,1.1.1.1,8080,\\"1386f85e-657b-4d6e-9d56-78badb75e1fd\\",transport=ws,method=chacha20-poly1305,path=/,host=example.com
+测试 2 = vmess,1.1.1.1,8080,\\"1386f85e-657b-4d6e-9d56-78badb75e1fd\\",transport=tcp,method=chacha20-poly1305
+测试 tls = vmess,example.com,443,\\"1386f85e-657b-4d6e-9d56-78badb75e1fd\\",transport=ws,method=chacha20-poly1305,path=/,host=example.com,over-tls=true
 ss1 = Shadowsocks,server,443,chacha20-ietf-poly1305,\\"password\\",udp=true
 ss2 = Shadowsocks,server,443,chacha20-ietf-poly1305,\\"password\\",tls,www.bing.com
 ss4 = Shadowsocks,server,443,chacha20-ietf-poly1305,\\"password\\",tls,example.com
@@ -194,9 +194,9 @@ getNodeNames
 getQuantumultXNodes
 shadowsocks=us.example.com:443, method=chacha20-ietf-poly1305, password=password, obfs=tls, obfs-host=gateway-carry.icloud.com, tag=🇺🇸US 1
 shadowsocks=us.example.com:443, method=chacha20-ietf-poly1305, password=password, tag=🇺🇸US 2
-vmess=1.1.1.1:8080, method=chacha20-ietf-poly1305, password=1386f85e-657b-4d6e-9d56-78badb75e1fd, aead=true, obfs=ws, obfs-uri=/, obfs-host=example.com, tag=测试 1
-vmess=1.1.1.1:8080, method=chacha20-ietf-poly1305, password=1386f85e-657b-4d6e-9d56-78badb75e1fd, aead=true, tag=测试 2
-vmess=example.com:443, method=chacha20-ietf-poly1305, password=1386f85e-657b-4d6e-9d56-78badb75e1fd, aead=true, obfs=wss, obfs-uri=/, obfs-host=example.com, tag=测试 tls
+vmess=1.1.1.1:8080, method=chacha20-poly1305, password=1386f85e-657b-4d6e-9d56-78badb75e1fd, aead=true, obfs=ws, obfs-uri=/, obfs-host=example.com, tag=测试 1
+vmess=1.1.1.1:8080, method=chacha20-poly1305, password=1386f85e-657b-4d6e-9d56-78badb75e1fd, aead=true, tag=测试 2
+vmess=example.com:443, method=chacha20-poly1305, password=1386f85e-657b-4d6e-9d56-78badb75e1fd, aead=true, obfs=wss, obfs-uri=/, obfs-host=example.com, tag=测试 tls
 ----
 getSurgeNodes
 
@@ -204,9 +204,9 @@ getSurgeNodes
 getLoonNodes
 🇺🇸US 1 = Shadowsocks,us.example.com,443,chacha20-ietf-poly1305,\\"password\\",tls,gateway-carry.icloud.com
 🇺🇸US 2 = Shadowsocks,us.example.com,443,chacha20-ietf-poly1305,\\"password\\"
-测试 1 = vmess,1.1.1.1,8080,method=chacha20-ietf-poly1305,\\"1386f85e-657b-4d6e-9d56-78badb75e1fd\\",transport=ws,path=/,host=example.com
-测试 2 = vmess,1.1.1.1,8080,method=chacha20-ietf-poly1305,\\"1386f85e-657b-4d6e-9d56-78badb75e1fd\\",transport=tcp
-测试 tls = vmess,example.com,443,method=chacha20-ietf-poly1305,\\"1386f85e-657b-4d6e-9d56-78badb75e1fd\\",transport=ws,path=/,host=example.com,over-tls=true
+测试 1 = vmess,1.1.1.1,8080,\\"1386f85e-657b-4d6e-9d56-78badb75e1fd\\",transport=ws,method=chacha20-poly1305,path=/,host=example.com
+测试 2 = vmess,1.1.1.1,8080,\\"1386f85e-657b-4d6e-9d56-78badb75e1fd\\",transport=tcp,method=chacha20-poly1305
+测试 tls = vmess,example.com,443,\\"1386f85e-657b-4d6e-9d56-78badb75e1fd\\",transport=ws,method=chacha20-poly1305,path=/,host=example.com,over-tls=true
 ----
 proxyTestUrl
 http://www.google.com/generate_204
@@ -249,9 +249,9 @@ getNodeNames
 getQuantumultXNodes
 shadowsocks=us.example.com:443, method=chacha20-ietf-poly1305, password=password, obfs=tls, obfs-host=gateway-carry.icloud.com, tag=🇺🇸US 1
 shadowsocks=us.example.com:443, method=chacha20-ietf-poly1305, password=password, tag=🇺🇸US 2
-vmess=1.1.1.1:8080, method=chacha20-ietf-poly1305, password=1386f85e-657b-4d6e-9d56-78badb75e1fd, aead=true, obfs=ws, obfs-uri=/, obfs-host=example.com, tag=测试 1
-vmess=1.1.1.1:8080, method=chacha20-ietf-poly1305, password=1386f85e-657b-4d6e-9d56-78badb75e1fd, aead=true, tag=测试 2
-vmess=example.com:443, method=chacha20-ietf-poly1305, password=1386f85e-657b-4d6e-9d56-78badb75e1fd, aead=true, obfs=wss, obfs-uri=/, obfs-host=example.com, tag=测试 tls
+vmess=1.1.1.1:8080, method=chacha20-poly1305, password=1386f85e-657b-4d6e-9d56-78badb75e1fd, aead=true, obfs=ws, obfs-uri=/, obfs-host=example.com, tag=测试 1
+vmess=1.1.1.1:8080, method=chacha20-poly1305, password=1386f85e-657b-4d6e-9d56-78badb75e1fd, aead=true, tag=测试 2
+vmess=example.com:443, method=chacha20-poly1305, password=1386f85e-657b-4d6e-9d56-78badb75e1fd, aead=true, obfs=wss, obfs-uri=/, obfs-host=example.com, tag=测试 tls
 ----
 getSurgeNodes
 
@@ -259,9 +259,9 @@ getSurgeNodes
 getLoonNodes
 🇺🇸US 1 = Shadowsocks,us.example.com,443,chacha20-ietf-poly1305,\\"password\\",tls,gateway-carry.icloud.com
 🇺🇸US 2 = Shadowsocks,us.example.com,443,chacha20-ietf-poly1305,\\"password\\"
-测试 1 = vmess,1.1.1.1,8080,method=chacha20-ietf-poly1305,\\"1386f85e-657b-4d6e-9d56-78badb75e1fd\\",transport=ws,path=/,host=example.com
-测试 2 = vmess,1.1.1.1,8080,method=chacha20-ietf-poly1305,\\"1386f85e-657b-4d6e-9d56-78badb75e1fd\\",transport=tcp
-测试 tls = vmess,example.com,443,method=chacha20-ietf-poly1305,\\"1386f85e-657b-4d6e-9d56-78badb75e1fd\\",transport=ws,path=/,host=example.com,over-tls=true
+测试 1 = vmess,1.1.1.1,8080,\\"1386f85e-657b-4d6e-9d56-78badb75e1fd\\",transport=ws,method=chacha20-poly1305,path=/,host=example.com
+测试 2 = vmess,1.1.1.1,8080,\\"1386f85e-657b-4d6e-9d56-78badb75e1fd\\",transport=tcp,method=chacha20-poly1305
+测试 tls = vmess,example.com,443,\\"1386f85e-657b-4d6e-9d56-78badb75e1fd\\",transport=ws,method=chacha20-poly1305,path=/,host=example.com,over-tls=true
 ----
 proxyTestUrl
 http://www.google.com/generate_204
@@ -290,6 +290,7 @@ ss2 = ss, server, 443, encrypt-method=chacha20-ietf-poly1305, password=password,
 vmess = vmess, server, 443, username=uuid, vmess-aead=true
 vmess new format = vmess, server, 443, username=uuid, ws=true, ws-path=/path, ws-headers=\\"user-agent:Mozilla/5.0 (iPhone; CPU iPhone OS 13_5 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/13.1.1 Mobile/15E148 Safari/604.1|host:v2ray.com\\", tls=true, vmess-aead=true, tls13=true, skip-cert-verify=true
 vmess custom header = vmess, server, 443, username=uuid, ws=true, ws-path=/path, ws-headers=\\"user-agent:Mozilla/5.0 (iPhone; CPU iPhone OS 13_5 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/13.1.1 Mobile/15E148 Safari/604.1|edge:www.baidu.com\\", tls=true, vmess-aead=true, tls13=true, skip-cert-verify=false
+socks = socks5, server, 443
 http 1 = https, server, 443, username, password, tls13=true, skip-cert-verify=false
 http 2 = http, server, 443, username, password
 snell = snell, server, 44046, psk=yourpsk, obfs=http
@@ -301,20 +302,21 @@ ss2 = ss, server, 443, encrypt-method=chacha20-ietf-poly1305, password=password,
 vmess = vmess, server, 443, username=uuid, vmess-aead=true
 vmess new format = vmess, server, 443, username=uuid, ws=true, ws-path=/path, ws-headers=\\"user-agent:Mozilla/5.0 (iPhone; CPU iPhone OS 13_5 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/13.1.1 Mobile/15E148 Safari/604.1|Host:v2ray.com\\", tls=true, skip-cert-verify=true, vmess-aead=true
 vmess custom header = vmess, server, 443, username=uuid, ws=true, ws-path=/path, ws-headers=\\"user-agent:Mozilla/5.0 (iPhone; CPU iPhone OS 13_5 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/13.1.1 Mobile/15E148 Safari/604.1|edge:www.baidu.com\\", tls=true, vmess-aead=true
+socks = socks5, server, 443
 http 1 = https, server, 443, username, password, skip-cert-verify=false
 http 2 = http, server, 443, username, password
 ss4 = ss, server, 443, encrypt-method=chacha20-ietf-poly1305, password=password, udp-relay=true, obfs=tls, obfs-host=example.com
 ----
 getNodeNames
-ss1, ss2, ss3, vmess, vmess new format, vmess custom header, http 1, http 2, snell, ss4, ss-wss, hysteria2
+ss1, ss2, ss3, vmess, vmess new format, vmess custom header, socks, http 1, http 2, snell, ss4, ss-wss, hysteria2
 ----
 getQuantumultXNodes
 shadowsocks=server:443, method=chacha20-ietf-poly1305, password=password, udp-relay=true, tag=ss1
 shadowsocks=server:443, method=chacha20-ietf-poly1305, password=password, obfs=tls, obfs-host=www.bing.com, udp-relay=true, tag=ss2
 shadowsocks=server:443, method=chacha20-ietf-poly1305, password=password, obfs=ws, obfs-host=server, obfs-uri=/, udp-relay=true, tag=ss3
-vmess=server:443, method=chacha20-ietf-poly1305, password=uuid, udp-relay=true, aead=true, tag=vmess
-vmess=server:443, method=chacha20-ietf-poly1305, password=uuid, udp-relay=true, aead=true, obfs=wss, tls-verification=false, tls13=true, obfs-uri=/path, obfs-host=v2ray.com, tag=vmess new format
-vmess=server:443, method=chacha20-ietf-poly1305, password=uuid, udp-relay=true, aead=true, obfs=wss, tls13=true, obfs-uri=/path, tag=vmess custom header
+vmess=server:443, method=chacha20-poly1305, password=uuid, udp-relay=true, aead=true, tag=vmess
+vmess=server:443, method=chacha20-poly1305, password=uuid, udp-relay=true, aead=true, obfs=wss, tls-verification=false, tls13=true, obfs-uri=/path, obfs-host=v2ray.com, tag=vmess new format
+vmess=server:443, method=chacha20-poly1305, password=uuid, udp-relay=true, aead=true, obfs=wss, tls13=true, obfs-uri=/path, tag=vmess custom header
 http=server:443, username=username, password=password, over-tls=true, tls-verification=true, tls13=true, tag=http 1
 http=server:443, username=username, password=password, tag=http 2
 shadowsocks=server:443, method=chacha20-ietf-poly1305, password=password, obfs=tls, obfs-host=example.com, udp-relay=true, tag=ss4
@@ -326,9 +328,9 @@ getSurgeNodes
 getLoonNodes
 ss1 = Shadowsocks,server,443,chacha20-ietf-poly1305,\\"password\\",udp=true
 ss2 = Shadowsocks,server,443,chacha20-ietf-poly1305,\\"password\\",tls,www.bing.com,udp=true
-vmess = vmess,server,443,method=chacha20-ietf-poly1305,\\"uuid\\",transport=tcp
-vmess new format = vmess,server,443,method=chacha20-ietf-poly1305,\\"uuid\\",transport=ws,path=/path,host=v2ray.com,over-tls=true,skip-cert-verify=true
-vmess custom header = vmess,server,443,method=chacha20-ietf-poly1305,\\"uuid\\",transport=ws,path=/path,over-tls=true
+vmess = vmess,server,443,\\"uuid\\",transport=tcp,method=chacha20-poly1305
+vmess new format = vmess,server,443,\\"uuid\\",transport=ws,method=chacha20-poly1305,path=/path,host=v2ray.com,over-tls=true,skip-cert-verify=true
+vmess custom header = vmess,server,443,\\"uuid\\",transport=ws,method=chacha20-poly1305,path=/path,over-tls=true
 http 1 = https,server,443,username,\\"password\\",tls-name=server,skip-cert-verify=false
 http 2 = http,server,443,username,\\"password\\"
 ss4 = Shadowsocks,server,443,chacha20-ietf-poly1305,\\"password\\",tls,example.com,udp=true
