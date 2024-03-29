@@ -10,7 +10,6 @@
 [![Test coverage][codecov-image]][codecov-url]
 [![Known Vulnerabilities][snyk-image]][snyk-url]
 [![npm download][download-image]][download-url]
-[![install size](https://packagephobia.now.sh/badge?p=surgio)](https://packagephobia.now.sh/result?p=surgio)
 
 [npm-image]: https://img.shields.io/npm/v/surgio.svg?style=flat-square
 [npm-url]: https://npmjs.org/package/surgio
