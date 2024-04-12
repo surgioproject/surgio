@@ -5,6 +5,7 @@ import {
   PortValidator,
   SimpleNodeConfigValidator,
   AlterIdValiator,
+  MultiplexValidator,
 } from './common'
 
 export const VmessNetworkValidator = z.union([
@@ -13,6 +14,8 @@ export const VmessNetworkValidator = z.union([
   z.literal('h2'),
   z.literal('http'),
   z.literal('grpc'),
+  z.literal('quic'),
+  z.literal('httpupgrade'),
 ])
 
 export const VmessMethodValidator = z.union([
@@ -42,6 +45,16 @@ export const VmessGRPCOptsValidator = z.object({
   serviceName: z.string(),
 })
 
+export const VmessQuicOptsValidator = z.object({
+  // no field now
+})
+
+export const VmessHttpUpgradeOptsValidator = z.object({
+  path: z.string(),
+  host: z.string().optional(),
+  headers: z.record(z.string()).optional(),
+})
+
 /**
  * @see https://stash.wiki/proxy-protocols/proxy-types#vmess
  * @see https://wiki.metacubex.one/config/proxies/vmess/
@@ -60,6 +73,8 @@ export const VmessNodeConfigValidator = SimpleNodeConfigValidator.extend({
   h2Opts: VmessH2OptsValidator.optional(),
   httpOpts: VmessHttpOptsValidator.optional(),
   grpcOpts: VmessGRPCOptsValidator.optional(),
+  quicOpts: VmessQuicOptsValidator.optional(),
+  httpUpgradeOpts: VmessHttpUpgradeOptsValidator.optional(),
 
   tls: z.oboolean(),
   sni: z.ostring(),
@@ -68,6 +83,8 @@ export const VmessNodeConfigValidator = SimpleNodeConfigValidator.extend({
   serverCertFingerprintSha256: z.ostring(),
   alpn: z.array(z.string()).nonempty().optional(),
   clientFingerprint: z.ostring(),
+
+  multiplex: MultiplexValidator.optional(),
 
   /**
    * @deprecated

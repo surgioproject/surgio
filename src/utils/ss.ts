@@ -46,3 +46,25 @@ export const parseSSUri = (str: string): ShadowsocksNodeConfig => {
       : null),
   }
 }
+
+// Marshal SIP003 plugin options in PossibleNodeConfigType to formatted string.
+// An example is 'a=123;host=https://a.com/foo?bar\=baz&q\\q\=1&w\;w\=2;mode=quic;tls=true',
+// where semicolons, equal signs and backslashes MUST be escaped with a backslash.
+export const stringifySip003Options = (args: {
+  [key: string]: any
+}): string => {
+  if (!args) {
+    return ''
+  }
+
+  const keys = Object.keys(args).sort()
+  const pairs: string[] = []
+  for (const key of keys) {
+    pairs.push(
+      `${key.replace(/([;=\\])/g, '\\$1')}=${args[key]
+        .toString()
+        .replace(/([;=\\])/g, '\\$1')}`,
+    )
+  }
+  return pairs.join(';')
+}

@@ -97,3 +97,17 @@ export const TlsNodeConfigValidator = SimpleNodeConfigValidator.extend({
   serverCertFingerprintSha256: z.ostring(),
   clientFingerprint: z.ostring(),
 })
+
+export const MultiplexValidator = z.object({
+  protocol: z.enum(['smux', 'yamux', 'h2mux']),
+  maxConnections: z.number().optional(),
+  minStreams: z.number().optional(),
+  maxStreams: z.number().optional(),
+  padding: z.boolean().optional(),
+  brutal: z
+    .object({
+      upMbps: z.number(),
+      downMbps: z.number(),
+    })
+    .optional(),
+})
