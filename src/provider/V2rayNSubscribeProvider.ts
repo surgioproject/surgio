@@ -163,7 +163,7 @@ export const getV2rayNSubscription = async ({
 
 export const parseJSONConfig = (
   json: string,
-  isCompatibleMode: boolean | undefined,
+  isCompatibleMode?: boolean | undefined,
   skipCertVerify?: boolean | undefined,
   udpRelay?: boolean | undefined,
   tls13?: boolean | undefined,

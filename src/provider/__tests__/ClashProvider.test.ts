@@ -24,9 +24,7 @@ test('ClashProvider', async (t) => {
   })
 
   t.is(provider.type, SupportProviderEnum.Clash)
-  await t.notThrowsAsync(async () => {
-    await provider.getNodeList()
-  })
+  t.snapshot(await provider.getNodeList())
 })
 
 test('ClashProvider new format', async (t) => {
