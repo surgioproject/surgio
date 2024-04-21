@@ -47,6 +47,9 @@ import {
   toBase64,
   toUrlSafeBase64,
   getNetworkConcurrency,
+  getSingboxNodeNames,
+  getSingboxNodes,
+  getSingboxNodesString,
 } from '../utils'
 import { resolveDomain } from '../utils/dns'
 import { internalFilters, validateFilter } from '../filters'
@@ -129,6 +132,9 @@ export class Artifact extends EventEmitter {
       getNodeNames,
       getClashNodes,
       getClashNodeNames,
+      getSingboxNodesString,
+      getSingboxNodes,
+      getSingboxNodeNames,
       getSurgeNodes,
       getSurgeNodeNames,
       getSurgeWireguardNodes,

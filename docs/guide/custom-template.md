@@ -324,6 +324,81 @@ getClashNodeNames(nodeList, netflixFilter, ['测试节点']);
 getClashNodeNames(nodeList, netflixFilter, [], ['默认节点']);
 ```
 
+### getSingboxNodesString
+
+`getSingboxNodesString(nodeList, filter?)`
+
+该方法返回一个字符串，格式为逗号分隔的节点信息json object，便于你组织 sing-box 的前后 outbound。例如：
+
+```json
+"outbounds": [
+{
+    "type": "selector",
+    "tag": "proxy",
+    "outbounds": {{ getSingboxNodeNames(nodeList, null, ['auto']) | json }},
+    "interrupt_exist_connections": false
+},
+{
+    "type": "urltest",
+    "tag": "auto",
+    "outbounds": {{ getSingboxNodeNames(nodeList) | json }},
+    "url": "{{ proxyTestUrl }}",
+    "interrupt_exist_connections": false
+},
+{{ getSingboxNodesString(nodeList) }},
+{
+    "type": "direct",
+    "tag": "direct",
+    "tcp_fast_open": true,
+    "tcp_multi_path": true
+},
+{
+    "type": "block",
+    "tag": "block"
+},
+{
+    "type": "dns",
+    "tag": "dns"
+}
+]
+```
+
+### getSingboxNodes
+
+`getSingboxNodes(nodeList, filter?)`
+
+该方法会返回一个包含有节点信息的数组，可用于编写 sing-box 规则。
+
+### getSingboxNodeNames
+
+`getSingboxNodeNames(nodeList, filter?, prependNodeNames?, defaultNodeNames?)`
+
+该方法会返回一个包含有节点名称的数组，用于编写 sing-box 规则，可参考上方`getSingboxNodesString`的示例。
+
+:::tip 提示
+- `filter` 为可选参数
+- `prependNodeNames` 为可选参数。可以通过这个参数在过滤结果前加入自定义节点名
+- `defaultNodeNames` 为可选参数。可以通过这个参数实现在过滤结果为空的情况下，使用默认的自定义节点名
+:::
+
+若需要过滤 Netflix 节点则传入：
+
+```js
+getSingboxNodeNames(nodeList, netflixFilter);
+```
+
+需要过滤 Netflix 节点，并且在前面加入节点 `测试节点`
+
+```js
+getSingboxNodeNames(nodeList, netflixFilter, ['测试节点']);
+```
+
+需要过滤 Netflix 节点，如果没有 Netflix 相关节点，则使用 `默认节点`
+
+```js
+getSingboxNodeNames(nodeList, netflixFilter, [], ['默认节点']);
+```
+
 ### getLoonNodes
 
 `getLoonNodes(nodeList, filter?)`

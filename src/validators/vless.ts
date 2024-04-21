@@ -1,13 +1,19 @@
 import { z } from 'zod'
 
 import { NodeTypeEnum } from '../types'
-import { PortValidator, TlsNodeConfigValidator } from './common'
+import {
+  MultiplexValidator,
+  PortValidator,
+  TlsNodeConfigValidator,
+} from './common'
 import {
   VmessNetworkValidator,
   VmessH2OptsValidator,
   VmessGRPCOptsValidator,
   VmessHttpOptsValidator,
   VmessWSOptsValidator,
+  VmessQuicOptsValidator,
+  VmessHttpUpgradeOptsValidator,
 } from './vmess'
 
 export const VlessRealityOptsValidator = z.object({
@@ -30,5 +36,9 @@ export const VlessNodeConfigValidator = TlsNodeConfigValidator.extend({
   h2Opts: VmessH2OptsValidator.optional(),
   httpOpts: VmessHttpOptsValidator.optional(),
   grpcOpts: VmessGRPCOptsValidator.optional(),
+  quicOpts: VmessQuicOptsValidator.optional(),
+  httpUpgradeOpts: VmessHttpUpgradeOptsValidator.optional(),
   realityOpts: VlessRealityOptsValidator.optional(),
+
+  multiplex: MultiplexValidator.optional(),
 })
