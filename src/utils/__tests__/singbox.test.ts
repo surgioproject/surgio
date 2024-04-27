@@ -579,10 +579,6 @@ const nodeList: ReadonlyArray<PossibleNodeConfigType> = [
   },
 ]
 
-// test('generateExpectedNodes', async (t) => {
-//   t.log(`[${singbox.getSingboxNodesString(nodeList)}]`)
-//   t.pass()
-// })
 const expectedNodes: Record<string, any>[] = [
   {
     type: 'shadowsocks',
@@ -1022,31 +1018,12 @@ const expectedNodeNames = expectedNodes
 
 test('getSingboxNodeNames', async (t) => {
   t.deepEqual(singbox.getSingboxNodeNames(nodeList), expectedNodeNames)
-  t.deepEqual(singbox.getSingboxNodeNames(nodeList, undefined, ['TEST']), [
-    'TEST',
-    ...expectedNodeNames,
-  ])
+
   t.deepEqual(
     singbox.getSingboxNodeNames(
       nodeList,
       (nodeConfig) => nodeConfig.nodeName === 'ss',
     ),
     ['ss'],
-  )
-  t.deepEqual(
-    singbox.getSingboxNodeNames(
-      nodeList,
-      (nodeConfig) => nodeConfig.nodeName === 'non-exist',
-      [],
-      ['foo'],
-    ),
-    ['foo'],
-  )
-})
-
-test('getSingboxNodesString', async (t) => {
-  t.deepEqual(
-    JSON.parse(`[${singbox.getSingboxNodesString(nodeList)}]`),
-    expectedNodes,
   )
 })

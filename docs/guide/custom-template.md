@@ -324,81 +324,34 @@ getClashNodeNames(nodeList, netflixFilter, ['测试节点']);
 getClashNodeNames(nodeList, netflixFilter, [], ['默认节点']);
 ```
 
-### getSingboxNodesString
-
-`getSingboxNodesString(nodeList, filter?)`
-
-该方法返回一个字符串，格式为逗号分隔的节点信息json object，便于你组织 sing-box 的前后 outbound。例如：
-
-```json5
-{
-  "outbounds": [
-    {
-      "type": "selector",
-      "tag": "proxy",
-      "outbounds": {{ getSingboxNodeNames(nodeList, null, ['auto']) | json }},
-    "interrupt_exist_connections": false
-    },
-    {
-      "type": "urltest",
-      "tag": "auto",
-      "outbounds": {{ getSingboxNodeNames(nodeList) | json }},
-    "url": "{{ proxyTestUrl }}",
-    "interrupt_exist_connections": false
-    },
-    {{ getSingboxNodesString(nodeList) }},
-    {
-      "type": "direct",
-      "tag": "direct",
-      "tcp_fast_open": true,
-      "tcp_multi_path": true
-    },
-    {
-      "type": "block",
-      "tag": "block"
-    },
-    {
-      "type": "dns",
-      "tag": "dns"
-    }
-  ]
-}
-```
-
 ### getSingboxNodes
+
+> <Badge text="v3.7.0" vertical="middle" />
 
 `getSingboxNodes(nodeList, filter?)`
 
 该方法会返回一个包含有节点信息的数组，可用于编写 sing-box 规则。
 
+:::tip 提示
+- `filter` 为可选参数
+:::
+
 ### getSingboxNodeNames
 
-`getSingboxNodeNames(nodeList, filter?, prependNodeNames?, defaultNodeNames?)`
+> <Badge text="v3.7.0" vertical="middle" />
 
-该方法会返回一个包含有节点名称的数组，用于编写 sing-box 规则，可参考上方`getSingboxNodesString`的示例。
+`getSingboxNodeNames(nodeList, filter?)`
+
+该方法会返回一个包含有节点名称的数组，用于编写 sing-box 规则。
 
 :::tip 提示
 - `filter` 为可选参数
-- `prependNodeNames` 为可选参数。可以通过这个参数在过滤结果前加入自定义节点名
-- `defaultNodeNames` 为可选参数。可以通过这个参数实现在过滤结果为空的情况下，使用默认的自定义节点名
 :::
 
 若需要过滤 Netflix 节点则传入：
 
 ```js
 getSingboxNodeNames(nodeList, netflixFilter);
-```
-
-需要过滤 Netflix 节点，并且在前面加入节点 `测试节点`
-
-```js
-getSingboxNodeNames(nodeList, netflixFilter, ['测试节点']);
-```
-
-需要过滤 Netflix 节点，如果没有 Netflix 相关节点，则使用 `默认节点`
-
-```js
-getSingboxNodeNames(nodeList, netflixFilter, [], ['默认节点']);
 ```
 
 ### getLoonNodes
@@ -540,6 +493,118 @@ PROCESS-NAME,YT Music
 ```
 
 和远程片段一样，`.text` 可以获取到原始的字符串内容。
+
+## JSON 模板方法
+
+### extendOutbounds
+
+> <Badge text="v3.7.0" vertical="middle" />
+
+`extendOutbounds(function|object)`
+
+用于拓展 sing-box 规则的 `outbounds` 字段。
+
+#### 函数类型
+
+```js
+extendOutbounds((props) => {
+  // props 包含本文中的模板方法和变量
+  return props.getSingboxNodes(props.nodeList)
+}) 
+```
+
+#### 对象类型
+
+```js
+extendOutbounds([
+  {
+    type: 'direct',
+    tag: 'direct',
+    tcp_fast_open: false,
+    tcp_multi_path: true,
+  },
+  {
+    type: 'block',
+    tag: 'block',
+  },
+])
+```
+
+### createExtendFunction
+
+> <Badge text="v3.7.0" vertical="middle" />
+
+`createExtendFunction(string)`
+
+`extendOutbounds` 其实就是用下面的方法生成的。
+
+```js
+const { createExtendFunction } = require('surgio')
+
+const extendOutbounds = createExtendFunction('outbounds')
+```
+
+### combineExtendFunctions
+
+> <Badge text="v3.7.0" vertical="middle" />
+
+`combineExtendFunctions(function1, function2, ...)`
+
+用于合并多个拓展函数。
+
+```js
+const { combineExtendFunctions, createExtendFunction } = require('surgio')
+
+const extendDNS = createExtendFunction('dns')
+const extendInbounds = createExtendFunction('inbounds')
+
+const combined = combineExtendFunctions(
+  extendDNS({
+    nameserver: ['1.1.1.1']
+  }),
+  extendInbounds([
+    {
+      port: 7890,
+      protocol: 'http',
+    }
+  ]),
+)
+```
+
+模板：
+
+```json
+{
+  "dns": {
+    "nameserver": [
+      "1.0.0.1"
+    ]
+  }
+}
+```
+
+结果：
+
+```json
+{
+  "dns": {
+    "nameserver": [
+      "1.0.0.1",
+      "1.1.1.1"
+    ]
+  },
+  "inbounds": [
+    {
+      "port": 7890,
+      "protocol": "http"
+    }
+  ]
+}
+```
+
+:::tip 提示
+- 拓展数组时新的配置会被追加到原有配置的后面
+:::
 
 ## 片段 (Snippet)
 

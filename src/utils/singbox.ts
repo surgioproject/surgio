@@ -1,4 +1,5 @@
 import { createLogger } from '@surgio/logger'
+
 import { ERR_INVALID_FILTER } from '../constant'
 import {
   NodeFilterType,
@@ -12,7 +13,7 @@ import {
   getHostnameFromHost,
   getPortFromHost,
   pickAndFormatKeys,
-} from './index'
+} from './'
 import { MultiplexValidator, TlsNodeConfigValidator } from '../validators'
 import { stringifySip003Options } from './ss'
 
@@ -27,33 +28,16 @@ export const getSingboxNodes = function (
     .filter((item): item is Record<string, any> => checkNotNullish(item))
 }
 
-export const getSingboxNodesString = function (
-  list: ReadonlyArray<PossibleNodeConfigType>,
-  filter?: NodeFilterType | SortedNodeFilterType,
-) {
-  return JSON.stringify(getSingboxNodes(list, filter)).slice(1, -1)
-}
-
 export const getSingboxNodeNames = function (
   list: ReadonlyArray<PossibleNodeConfigType>,
   filter?: NodeFilterType | SortedNodeFilterType,
-  prependNodeNames?: ReadonlyArray<string>,
-  defaultNodeNames?: ReadonlyArray<string>,
 ): ReadonlyArray<string> {
   // istanbul ignore next
   if (arguments.length === 2 && typeof filter === 'undefined') {
     throw new Error(ERR_INVALID_FILTER)
   }
 
-  let result: string[] = []
-  if (prependNodeNames) {
-    result = result.concat(prependNodeNames)
-  }
-  result = result.concat(getSingboxNodes(list, filter).map((item) => item.tag))
-  if (result.length === 0 && defaultNodeNames) {
-    result = result.concat(defaultNodeNames)
-  }
-  return result
+  return getSingboxNodes(list, filter).map((item) => item.tag)
 }
 
 const typeMap = {
@@ -67,7 +51,7 @@ const typeMap = {
   [NodeTypeEnum.Tuic]: 'tuic',
   [NodeTypeEnum.Wireguard]: 'wireguard',
   [NodeTypeEnum.Hysteria2]: 'hysteria2',
-}
+} as const
 
 /**
  * @see https://sing-box.sagernet.org/configuration/outbound/

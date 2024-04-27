@@ -1,7 +1,7 @@
 import test from 'ava'
 
 import { NodeTypeEnum } from '../../types'
-import { parseSSUri } from '../ss'
+import { parseSSUri, stringifySip003Options } from '../ss'
 
 test('parseSSUri', (t) => {
   t.deepEqual(
@@ -19,4 +19,18 @@ test('parseSSUri', (t) => {
       obfsHost: 'example.com',
     },
   )
+})
+
+test('stringifySip003Options', (t) => {
+  t.is(
+    stringifySip003Options({
+      a: 123,
+      host: 'https://a.com/foo?bar=baz&q\\q=1&w;w=2',
+      mode: 'quic',
+      tls: true,
+    }),
+    'a=123;host=https://a.com/foo?bar\\=baz&q\\\\q\\=1&w\\;w\\=2;mode=quic;tls=true',
+  )
+  t.is(stringifySip003Options({}), '')
+  t.is(stringifySip003Options(), '')
 })
