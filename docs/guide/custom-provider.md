@@ -334,7 +334,7 @@ module.exports = defineCustomProvider({
     path: '/',
     host: 'www.example.com',
     headers: {
-      'x-key': ['x-value'],
+      'x-key': 'x-value',
     }
   },
 }
@@ -394,7 +394,7 @@ Vless 节点遵循和 Vmess 类似的配置规则，除了以下几个差异：
   tls13: false, // TLS 1.3
   path: '/', // 可选
   headers: { // 可选
-    'x-key': ['x-value'],
+    'x-key': 'x-value',
   },
 }
 ```
@@ -411,7 +411,7 @@ Vless 节点遵循和 Vmess 类似的配置规则，除了以下几个差异：
   password: 'password',
   path: '/', // 可选
   headers: { // 可选
-    'x-key': ['x-value'],
+    'x-key': 'x-value',
   },
 }
 ```
@@ -1119,9 +1119,12 @@ module.exports = defineClashProvider({
 })
 ```
 
-## multiplex多路复用
+## Multiplex 多路复用
 
-```js
+- sing-box 的多路复用说明：[链接](https://sing-box.sagernet.org/configuration/shared/multiplex/)
+- mihomo 的多路复用说明：[链接](https://wiki.metacubex.one/config/proxies/sing-mux/)
+
+```json5
 {
   multiplex: {
     protocol: '', // smux, yamux, h2mux

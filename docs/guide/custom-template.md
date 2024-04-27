@@ -330,37 +330,39 @@ getClashNodeNames(nodeList, netflixFilter, [], ['默认节点']);
 
 该方法返回一个字符串，格式为逗号分隔的节点信息json object，便于你组织 sing-box 的前后 outbound。例如：
 
-```json
-"outbounds": [
+```json5
 {
-    "type": "selector",
-    "tag": "proxy",
-    "outbounds": {{ getSingboxNodeNames(nodeList, null, ['auto']) | json }},
+  "outbounds": [
+    {
+      "type": "selector",
+      "tag": "proxy",
+      "outbounds": {{ getSingboxNodeNames(nodeList, null, ['auto']) | json }},
     "interrupt_exist_connections": false
-},
-{
-    "type": "urltest",
-    "tag": "auto",
-    "outbounds": {{ getSingboxNodeNames(nodeList) | json }},
+    },
+    {
+      "type": "urltest",
+      "tag": "auto",
+      "outbounds": {{ getSingboxNodeNames(nodeList) | json }},
     "url": "{{ proxyTestUrl }}",
     "interrupt_exist_connections": false
-},
-{{ getSingboxNodesString(nodeList) }},
-{
-    "type": "direct",
-    "tag": "direct",
-    "tcp_fast_open": true,
-    "tcp_multi_path": true
-},
-{
-    "type": "block",
-    "tag": "block"
-},
-{
-    "type": "dns",
-    "tag": "dns"
+    },
+    {{ getSingboxNodesString(nodeList) }},
+    {
+      "type": "direct",
+      "tag": "direct",
+      "tcp_fast_open": true,
+      "tcp_multi_path": true
+    },
+    {
+      "type": "block",
+      "tag": "block"
+    },
+    {
+      "type": "dns",
+      "tag": "dns"
+    }
+  ]
 }
-]
 ```
 
 ### getSingboxNodes
