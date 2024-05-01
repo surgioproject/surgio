@@ -500,6 +500,7 @@ function appendCommonConfig(
         'ecn',
         'underlyingProxy',
         'testUrl',
+        'testTimeout',
         'tls13',
         'skipCertVerify',
         'sni',
