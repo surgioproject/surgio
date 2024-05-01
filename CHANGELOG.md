@@ -1,3 +1,13 @@
+# [3.7.0-beta.1](https://github.com/geekdada/surgio/compare/v3.6.6...v3.7.0-beta.1) (2024-05-01)
+
+
+### Features
+
+* change how sing-box config is generated ([46d5faa](https://github.com/geekdada/surgio/commit/46d5faa86cdd35a0720471a7c53e5de4e22dce02))
+* introduce sing-box support ([d6d9403](https://github.com/geekdada/surgio/commit/d6d94030e08fe64e8ccfd2e3afb0a1fd2b2daf42))
+
+
+
 ## [3.6.6](https://github.com/geekdada/surgio/compare/v3.6.5...v3.6.6) (2024-03-22)
 
 
