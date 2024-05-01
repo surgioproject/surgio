@@ -228,6 +228,207 @@ DOMAIN,example.com,Proxy
 "
 `;
 
+exports[`generate command default runs generate cmd 3`] = `
+"{
+  \\"dns\\": {
+    \\"servers\\": [
+      {
+        \\"tag\\": \\"dnspod-doh\\",
+        \\"address\\": \\"https://1.12.12.12/dns-query\\",
+        \\"detour\\": \\"direct\\"
+      },
+      {
+        \\"tag\\": \\"remote\\",
+        \\"address\\": \\"fakeip\\"
+      },
+      {
+        \\"tag\\": \\"block\\",
+        \\"address\\": \\"rcode://success\\"
+      }
+    ],
+    \\"rules\\": [
+      {
+        \\"rule_set\\": \\"geosite-category-ads-all\\",
+        \\"server\\": \\"block\\"
+      },
+      {
+        \\"outbound\\": \\"any\\",
+        \\"server\\": \\"dnspod-doh\\"
+      },
+      {
+        \\"query_type\\": [
+          \\"A\\",
+          \\"AAAA\\"
+        ],
+        \\"server\\": \\"remote\\"
+      }
+    ],
+    \\"fakeip\\": {
+      \\"enabled\\": true,
+      \\"inet4_range\\": \\"198.18.0.0/15\\",
+      \\"inet6_range\\": \\"fc00::/18\\"
+    },
+    \\"independent_cache\\": true
+  },
+  \\"inbounds\\": [
+    {
+      \\"type\\": \\"tun\\",
+      \\"inet4_address\\": \\"172.19.0.1/30\\",
+      \\"inet6_address\\": \\"fdfe:dcba:9876::1/126\\",
+      \\"auto_route\\": true,
+      \\"strict_route\\": true,
+      \\"sniff\\": true
+    }
+  ],
+  \\"outbounds\\": [
+    {
+      \\"type\\": \\"block\\",
+      \\"tag\\": \\"block\\"
+    },
+    {
+      \\"type\\": \\"dns\\",
+      \\"tag\\": \\"dns\\"
+    },
+    {
+      \\"type\\": \\"direct\\",
+      \\"tag\\": \\"direct\\",
+      \\"tcp_fast_open\\": false,
+      \\"tcp_multi_path\\": true
+    },
+    {
+      \\"type\\": \\"selector\\",
+      \\"tag\\": \\"proxy\\",
+      \\"outbounds\\": [
+        \\"auto\\",
+        \\"🇺🇸US 1\\",
+        \\"🇺🇸US 2\\",
+        \\"🇺🇸US 3\\"
+      ],
+      \\"interrupt_exist_connections\\": false
+    },
+    {
+      \\"type\\": \\"shadowsocks\\",
+      \\"tag\\": \\"🇺🇸US 1\\",
+      \\"server\\": \\"us.example.com\\",
+      \\"server_port\\": 443,
+      \\"method\\": \\"chacha20-ietf-poly1305\\",
+      \\"password\\": \\"password\\",
+      \\"plugin\\": \\"obfs-local\\",
+      \\"plugin_opts\\": \\"obfs=tls;obfs-host=gateway-carry.icloud.com\\",
+      \\"tcp_fast_open\\": true,
+      \\"tcp_multi_path\\": true
+    },
+    {
+      \\"type\\": \\"shadowsocks\\",
+      \\"tag\\": \\"🇺🇸US 2\\",
+      \\"server\\": \\"us.example.com\\",
+      \\"server_port\\": 443,
+      \\"method\\": \\"chacha20-ietf-poly1305\\",
+      \\"password\\": \\"password\\",
+      \\"tcp_fast_open\\": true,
+      \\"tcp_multi_path\\": true
+    },
+    {
+      \\"type\\": \\"shadowsocks\\",
+      \\"tag\\": \\"🇺🇸US 3\\",
+      \\"server\\": \\"us.example.com\\",
+      \\"server_port\\": 443,
+      \\"method\\": \\"chacha20-ietf-poly1305\\",
+      \\"password\\": \\"password\\",
+      \\"plugin\\": \\"v2ray-plugin\\",
+      \\"plugin_opts\\": \\"host=gateway-carry.icloud.com;mode=websocket;tls=true\\",
+      \\"tcp_fast_open\\": true,
+      \\"tcp_multi_path\\": true
+    }
+  ],
+  \\"route\\": {
+    \\"rules\\": [
+      {
+        \\"type\\": \\"logical\\",
+        \\"mode\\": \\"or\\",
+        \\"rules\\": [
+          {
+            \\"protocol\\": \\"dns\\"
+          },
+          {
+            \\"port\\": 53
+          }
+        ],
+        \\"outbound\\": \\"dns\\"
+      },
+      {
+        \\"ip_is_private\\": true,
+        \\"outbound\\": \\"direct\\"
+      },
+      {
+        \\"clash_mode\\": \\"Direct\\",
+        \\"outbound\\": \\"direct\\"
+      },
+      {
+        \\"clash_mode\\": \\"Global\\",
+        \\"outbound\\": \\"proxy\\"
+      },
+      {
+        \\"geosite\\": \\"geosite-category-ads-all\\",
+        \\"outbound\\": \\"block\\"
+      },
+      {
+        \\"type\\": \\"logical\\",
+        \\"mode\\": \\"and\\",
+        \\"rules\\": [
+          {
+            \\"rule_set\\": \\"geosite-geolocation-!cn\\",
+            \\"invert\\": true
+          },
+          {
+            \\"rule_set\\": [
+              \\"geoip-cn\\",
+              \\"geosite-cn\\"
+            ]
+          }
+        ],
+        \\"outbound\\": \\"direct\\"
+      }
+    ],
+    \\"rule_set\\": [
+      {
+        \\"tag\\": \\"geosite-category-ads-all\\",
+        \\"type\\": \\"remote\\",
+        \\"format\\": \\"binary\\",
+        \\"url\\": \\"https://cdn.jsdelivr.net/gh/SagerNet/sing-geosite@rule-set/geosite-category-ads-all.srs\\"
+      },
+      {
+        \\"type\\": \\"remote\\",
+        \\"tag\\": \\"geosite-geolocation-!cn\\",
+        \\"format\\": \\"binary\\",
+        \\"url\\": \\"https://cdn.jsdelivr.net/gh/SagerNet/sing-geosite@rule-set/geosite-geolocation-!cn.srs\\"
+      },
+      {
+        \\"tag\\": \\"geosite-cn\\",
+        \\"type\\": \\"remote\\",
+        \\"format\\": \\"binary\\",
+        \\"url\\": \\"https://cdn.jsdelivr.net/gh/SagerNet/sing-geosite@rule-set/geosite-cn.srs\\"
+      },
+      {
+        \\"tag\\": \\"geoip-cn\\",
+        \\"type\\": \\"remote\\",
+        \\"format\\": \\"binary\\",
+        \\"url\\": \\"https://cdn.jsdelivr.net/gh/SagerNet/sing-geoip@rule-set/geoip-cn.srs\\"
+      }
+    ],
+    \\"auto_detect_interface\\": true
+  },
+  \\"experimental\\": {
+    \\"cache_file\\": {
+      \\"enabled\\": true
+    },
+    \\"clash_api\\": {
+      \\"external_controller\\": \\"127.0.0.1:9090\\"
+    }
+  }
+}"
+`;
+
 exports[`generate command v2ray tls options runs generate cmd 1`] = `
 "getSurgeNodes
 🇺🇸US 1 = ss, us.example.com, 443, encrypt-method=chacha20-ietf-poly1305, password=password, udp-relay=false, obfs=tls, obfs-host=gateway-carry.icloud.com, tls13=false, skip-cert-verify=false

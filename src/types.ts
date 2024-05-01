@@ -50,9 +50,11 @@ export enum SupportProviderEnum {
   Trojan = 'trojan',
 }
 
-export type CommandConfigBeforeNormalize = z.infer<typeof SurgioConfigValidator>
+export type CommandConfigBeforeNormalize = z.input<typeof SurgioConfigValidator>
 
-export type CommandConfig = CommandConfigBeforeNormalize & {
+export type CommandConfigAfterNormalize = z.infer<typeof SurgioConfigValidator>
+
+export type CommandConfig = CommandConfigAfterNormalize & {
   publicUrl: string
   output: string
   urlBase: string
@@ -69,6 +71,8 @@ export interface RemoteSnippet extends RemoteSnippetConfig {
 }
 
 export type ArtifactConfig = z.infer<typeof ArtifactValidator>
+
+export type ArtifactConfigInput = z.input<typeof ArtifactValidator>
 
 export type ProviderConfig = z.infer<typeof ProviderValidator>
 

@@ -7,7 +7,7 @@ sidebarDepth: 2
 
 Surgio 会根据 Artifact 的值来生成配置文件。你可以一次性配置多个 Artifact，一次性生成所有需要的配置文件。
 
-```js
+```json5
 {
   name: 'SurgeV3.conf',
   template: 'surge_v3',
@@ -32,6 +32,23 @@ Surgio 会根据 Artifact 的值来生成配置文件。你可以一次性配置
 - <Badge text="必须" vertical="middle" />
 
 模板名。会在 `./template` 目录内寻找同名文件（`.tpl` 后缀可省略）。
+
+### templateType
+
+- 类型: `string`
+- 默认值: `default`
+- 有效值: `default`, `json`
+- <Badge text="可选" vertical="middle" />
+
+模板类型。默认为 `default`，即以传统方式解析模板文件。
+
+### extendTemplate
+
+- 类型: `function`
+- 默认值: `undefined`
+- <Badge text="可选" vertical="middle" />
+
+拓展 JSON 类型的模板，在编写 sing-box 规则时会用到。
 
 ### provider
 
@@ -81,7 +98,7 @@ Surgio 会根据 Artifact 的值来生成配置文件。你可以一次性配置
 
 例如：
 
-```js
+```json5
 {
   customParams: {
     beta: true,

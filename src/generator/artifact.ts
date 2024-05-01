@@ -14,6 +14,7 @@ import {
 } from '../provider'
 import {
   ArtifactConfig,
+  ArtifactConfigInput,
   CommandConfig,
   NodeTypeEnum,
   PossibleNodeConfigType,
@@ -47,11 +48,15 @@ import {
   toBase64,
   toUrlSafeBase64,
   getNetworkConcurrency,
+  getSingboxNodeNames,
+  getSingboxNodes,
 } from '../utils'
 import { resolveDomain } from '../utils/dns'
 import { internalFilters, validateFilter } from '../filters'
 import { prependFlag, removeFlag } from '../utils/flag'
+import { ArtifactValidator } from '../validators'
 import { loadLocalSnippet } from './template'
+import { render as renderJSON } from './json-template'
 
 export interface ArtifactOptions {
   readonly remoteSnippetList?: ReadonlyArray<RemoteSnippet>
@@ -62,6 +67,7 @@ export type ExtendableRenderContext = Record<string, string>
 
 export class Artifact extends EventEmitter {
   public initProgress = 0
+  public artifact: ArtifactConfig
 
   public providerNameList: ReadonlyArray<string>
   public nodeConfigListMap: Map<string, ReadonlyArray<PossibleNodeConfigType>> =
@@ -78,13 +84,15 @@ export class Artifact extends EventEmitter {
 
   constructor(
     public surgioConfig: CommandConfig,
-    public artifact: ArtifactConfig,
+    artifactConfig: ArtifactConfigInput,
     private options: ArtifactOptions = {},
   ) {
     super()
 
-    const mainProviderName = artifact.provider
-    const combineProviders = artifact.combineProviders || []
+    this.artifact = ArtifactValidator.parse(artifactConfig)
+
+    const mainProviderName = this.artifact.provider
+    const combineProviders = this.artifact.combineProviders || []
 
     this.providerNameList = [mainProviderName].concat(combineProviders)
   }
@@ -129,6 +137,8 @@ export class Artifact extends EventEmitter {
       getNodeNames,
       getClashNodes,
       getClashNodeNames,
+      getSingboxNodes,
+      getSingboxNodeNames,
       getSurgeNodes,
       getSurgeNodeNames,
       getSurgeWireguardNodes,
@@ -221,17 +231,31 @@ export class Artifact extends EventEmitter {
       throw new Error('没有可用的 Nunjucks 环境')
     }
 
+    if (
+      this.artifact.templateType === 'json' &&
+      !this.artifact.extendTemplate
+    ) {
+      throw new Error('JSON 模板需要提供 extendTemplate 函数')
+    }
+
     const renderContext = this.getRenderContext(extendRenderContext)
-    const { templateString, template } = this.artifact
+    const { templateString, template, templateType } = this.artifact
     const result = templateString
       ? targetTemplateEngine.renderString(templateString, {
           templateEngine: targetTemplateEngine,
           ...renderContext,
         })
-      : targetTemplateEngine.render(`${template}.tpl`, {
+      : templateType === 'default'
+      ? targetTemplateEngine.render(`${template}.tpl`, {
           templateEngine: targetTemplateEngine,
           ...renderContext,
         })
+      : renderJSON(
+          this.surgioConfig.templateDir,
+          `${template}.json`,
+          this.artifact.extendTemplate!,
+          renderContext,
+        )
 
     this.emit('renderArtifact', { artifact: this.artifact, result })
 
@@ -437,7 +461,7 @@ export class Artifact extends EventEmitter {
             nodeConfig.underlyingProxy = provider.config.underlyingProxy
           }
 
-          // check whether the hostname resolves in case of blocking clash's node heurestic
+          // Check whether the hostname resolves in case of blocking clash's node heurestic
           if (
             config?.checkHostname &&
             'hostname' in nodeConfig &&

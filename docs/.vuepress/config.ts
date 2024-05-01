@@ -1,9 +1,10 @@
-import { defineUserConfig, HeadConfig, PluginConfig } from 'vuepress'
+import { defineUserConfig, type HeadConfig, type PluginConfig, type UserConfig } from 'vuepress'
 import { path } from '@vuepress/utils'
-import docsearchPlugin from '@vuepress/plugin-docsearch'
-import registerComponentsPlugin from '@vuepress/plugin-register-components'
+import { docsearchPlugin } from '@vuepress/plugin-docsearch'
+import { registerComponentsPlugin } from '@vuepress/plugin-register-components'
 import { sitemapPlugin } from 'vuepress-plugin-sitemap2'
 import { umamiAnalyticsPlugin } from 'vuepress-plugin-umami-analytics'
+import { viteBundler } from '@vuepress/bundler-vite'
 
 import customTheme from './theme'
 
@@ -60,14 +61,16 @@ if (process.env.NODE_ENV === 'production') {
     sitemapPlugin({
       hostname: 'https://surgio.js.org',
     }),
-    umamiAnalyticsPlugin({
-      id: '444a5a25-af75-4c30-b7a4-6aaba520daf6',
-      src: 'https://sashimi.royli.dev/sashimi.js',
-    }),
+    // umamiAnalyticsPlugin({
+    //   id: '444a5a25-af75-4c30-b7a4-6aaba520daf6',
+    //   src: 'https://sashimi.royli.dev/sashimi.js',
+    // }) as any,
   )
 }
 
 export default defineUserConfig({
+  bundler: viteBundler(),
+  theme: customTheme,
   locales: {
     '/': {
       lang: 'zh-CN',
@@ -78,6 +81,5 @@ export default defineUserConfig({
   title: meta.title,
   description: meta.description,
   head,
-  theme: customTheme,
   plugins,
-})
+}) as UserConfig

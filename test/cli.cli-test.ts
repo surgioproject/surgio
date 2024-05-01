@@ -51,6 +51,12 @@ describe('generate command', () => {
         const confString5 = fs.readFileSync(resolve('plain/dist/v2rayn.conf'), {
           encoding: 'utf8',
         })
+        const singboxConfString = fs.readFileSync(
+          resolve('plain/dist/singbox.json'),
+          {
+            encoding: 'utf8',
+          },
+        )
         const conf = ini.decode(confString1)
 
         expect(fs.existsSync(resolve('plain/dist/new_path.conf'))).to.be.true
@@ -59,6 +65,7 @@ describe('generate command', () => {
         expect(fs.existsSync(resolve('plain/dist/v2rayn.conf'))).to.be.true
         expect(fs.existsSync(resolve('plain/dist/custom.conf'))).to.be.true
         expect(fs.existsSync(resolve('plain/dist/ssd.conf'))).to.be.true
+        expect(fs.existsSync(resolve('plain/dist/singbox.json'))).to.be.true
         expect(confString1.split('\n')[0]).to.equal(
           '#!MANAGED-CONFIG https://example.com/ss_json.conf?access_token=abcd interval=43200 strict=false',
         )
@@ -66,6 +73,7 @@ describe('generate command', () => {
         expect(Object.keys(conf.Proxy).length).to.be.equal(4)
         ;(expect(confString3).to as any).matchSnapshot()
         ;(expect(confString5).to as any).matchSnapshot()
+        ;(expect(singboxConfString).to as any).matchSnapshot()
       })
   })
 

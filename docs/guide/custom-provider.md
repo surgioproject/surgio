@@ -45,12 +45,12 @@ module.exports = defineCustomProvider(async function () {
 
 ## 订阅类型
 
-目前 Surgio 支持两种 Provider 类型：
+目前 Surgio 支持以下几种 Provider 类型：
 
 |                       类型                       | 描述                                       | 备注                                                                                                                         |
 | :----------------------------------------------: | ------------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------- |
-| `custom` <Badge text="推荐" vertical="middle" /> | 自己维护的节点                             | 支持 Shadowsocks, Shadowsocksr, Snell, HTTPS, HTTP, Vmess, Socks5, Tuic                                                      |
-| `clash` <Badge text="推荐" vertical="middle" />  | Clash 配置                                 | 支持 Shadowsocks, Shadowsocksr, Snell, HTTPS, HTTP, Vmess, Vless, Hysteria 2, Socks5, Tuic                                   |
+| `custom` <Badge text="推荐" vertical="middle" /> | 自己维护的节点                             | 支持 Shadowsocks, Shadowsocksr, Snell, HTTPS, HTTP, Vmess, Vless, Hysteria 2, Socks5, Tuic, Trojan, Wireguard                    |
+| `clash` <Badge text="推荐" vertical="middle" />  | Clash 配置                                 | 支持 Shadowsocks, Shadowsocksr, Snell, HTTPS, HTTP, Vmess, Vless, Hysteria 2, Socks5, Tuic, Trojan, Wireguard                  |
 |                     `trojan`                     | Trojan 订阅                                | Shadowrocket 支持的 Trojan 订阅格式                                                                                          |
 |           `shadowsocks_json_subscribe`           | 针对 Windows 客户端的 Shadowsocks 订阅地址 | 通常命名为 _gui-config.json_                                                                                                 |
 |             `shadowsocks_subscribe`              | 通用的 Shadowsocks 订阅地址                |                                                                                                                              |
@@ -159,6 +159,7 @@ module.exports = defineCustomProvider({
   tfo: false, // TCP Fast Open
   tls13: false, // TLS 1.3，适用于 v2ray-plugin
   mux: false, // 目前仅 Clash + Shadowsocks + v2ray-plugin 可用
+  multiplex: {}, // 多路复用，可选，见本页面的 `multiplex多路复用` 部分
 }
 ```
 
@@ -228,6 +229,7 @@ module.exports = defineCustomProvider({
       'x-key': 'x-value',
     },
   },
+  multiplex: {}, // 多路复用，可选，见本页面的 `multiplex多路复用` 部分
 }
 ```
 
@@ -251,6 +253,7 @@ module.exports = defineCustomProvider({
       Host: 'www.example.com',
     },
   },
+  multiplex: {}, // 多路复用，可选，见本页面的 `multiplex多路复用` 部分
 }
 ```
 
@@ -271,6 +274,7 @@ module.exports = defineCustomProvider({
   grpcOpts: {
     serviceName: 'example',
   },
+  multiplex: {}, // 多路复用，可选，见本页面的 `multiplex多路复用` 部分
 }
 ```
 
@@ -291,6 +295,47 @@ module.exports = defineCustomProvider({
   h2Opts: {
     path: '/',
     host: ['www.example.com'],
+  },
+}
+```
+
+#### `network: 'quic'`
+
+```json5
+{
+  nodeName: '🇭🇰HK',
+  type: 'vmess',
+  hostname: 'hk.example.com',
+  method: 'auto',
+  network: 'quic',
+  alterId: '64',
+  port: 8080,
+  tls: true,
+  uuid: '1386f85e-657b-4d6e-9d56-78badb75e1fd',
+  udpRelay: true,
+}
+```
+
+#### `network: 'httpupgrade'`
+
+```json5
+{
+  nodeName: '🇭🇰HK',
+  type: 'vmess',
+  hostname: 'hk.example.com',
+  method: 'auto',
+  network: 'httpupgrade',
+  alterId: '64',
+  port: 8080,
+  tls: false,
+  uuid: '1386f85e-657b-4d6e-9d56-78badb75e1fd',
+  udpRelay: true,
+  httpUpgradeOpts: {
+    path: '/',
+    host: 'www.example.com',
+    headers: {
+      'x-key': 'x-value',
+    }
   },
 }
 ```
@@ -347,6 +392,10 @@ Vless 节点遵循和 Vmess 类似的配置规则，除了以下几个差异：
   username: 'username',
   password: 'password',
   tls13: false, // TLS 1.3
+  path: '/', // 可选
+  headers: { // 可选
+    'x-key': 'x-value',
+  },
 }
 ```
 
@@ -360,6 +409,10 @@ Vless 节点遵循和 Vmess 类似的配置规则，除了以下几个差异：
   port: 8080,
   username: 'username',
   password: 'password',
+  path: '/', // 可选
+  headers: { // 可选
+    'x-key': 'x-value',
+  },
 }
 ```
 
@@ -380,6 +433,7 @@ Vless 节点遵循和 Vmess 类似的配置规则，除了以下几个差异：
   network: 'ws', // 可不填
   wsPath: '/', // 可选
   wsHeaders: {}, // 可选
+  multiplex: {}, // 多路复用，可选，见本页面的 `multiplex多路复用` 部分
 }
 ```
 
@@ -1063,4 +1117,25 @@ module.exports = defineClashProvider({
   },
   }
 })
+```
+
+## Multiplex 多路复用
+
+- sing-box 的多路复用说明：[链接](https://sing-box.sagernet.org/configuration/shared/multiplex/)
+- mihomo 的多路复用说明：[链接](https://wiki.metacubex.one/config/proxies/sing-mux/)
+
+```json5
+{
+  multiplex: {
+    protocol: '', // smux, yamux, h2mux
+    maxConnections: 1, // 最大连接数量，与 max_streams 冲突
+    minStreams: 1, // 在打开新连接之前，连接中的最小多路复用流数量，与 max_streams 冲突
+    maxStreams: 1, // 在打开新连接之前，连接中的最大多路复用流数量，与 max_connections 和 min_streams 冲突
+    padding: false, // 启用填充
+    brutal: { // 可选，TCP Brutal 拥塞控制算法
+      upMbps: 0, // 上行 Mbps
+      downMbps: 0, // 下行 Mbps
+    },
+  }
+}
 ```

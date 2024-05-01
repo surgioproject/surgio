@@ -1,7 +1,7 @@
 import { z } from 'zod'
 
 import { NodeTypeEnum } from '../types'
-import { TlsNodeConfigValidator } from './common'
+import { MultiplexValidator, TlsNodeConfigValidator } from './common'
 
 export const TrojanNodeConfigValidator = TlsNodeConfigValidator.extend({
   type: z.literal(NodeTypeEnum.Trojan),
@@ -10,4 +10,6 @@ export const TrojanNodeConfigValidator = TlsNodeConfigValidator.extend({
   network: z.union([z.literal('tcp'), z.literal('ws')]).optional(),
   wsPath: z.ostring(),
   wsHeaders: z.record(z.string()).optional(),
+
+  multiplex: MultiplexValidator.optional(),
 })

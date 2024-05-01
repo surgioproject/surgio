@@ -35,7 +35,7 @@ export default {
           },
           {
             text: '客户端规则维护指南',
-            children: ['/guide/client/clash', '/guide/client/examples'],
+            children: ['/guide/client/sing-box', '/guide/client/clash', '/guide/client/examples'],
           },
           '/guide/api',
           '/guide/cli',

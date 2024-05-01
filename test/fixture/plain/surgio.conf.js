@@ -1,8 +1,9 @@
 'use strict'
 
 const path = require('path')
+const { extendOutbounds, defineSurgioConfig } = require('../../../')
 
-module.exports = {
+module.exports = defineSurgioConfig({
   artifacts: [
     {
       name: 'new_path.conf',
@@ -69,6 +70,29 @@ module.exports = {
         },
       },
     },
+    {
+      name: 'singbox.json',
+      template: 'singbox',
+      templateType: 'json',
+      extendTemplate: extendOutbounds(
+        ({ getSingboxNodes, getSingboxNodeNames, nodeList }) => [
+          {
+            type: 'direct',
+            tag: 'direct',
+            tcp_fast_open: false,
+            tcp_multi_path: true,
+          },
+          {
+            type: 'selector',
+            tag: 'proxy',
+            outbounds: ['auto', ...getSingboxNodeNames(nodeList)],
+            interrupt_exist_connections: false,
+          },
+          ...getSingboxNodes(nodeList),
+        ],
+      ),
+      provider: 'ss',
+    },
   ],
   urlBase: 'https://example.com/',
   binPath: {
@@ -95,4 +119,4 @@ module.exports = {
   },
   proxyTestUrl: 'http://www.google.com/generate_204',
   proxyTestInterval: 2400,
-}
+})

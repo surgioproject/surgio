@@ -324,6 +324,36 @@ getClashNodeNames(nodeList, netflixFilter, ['测试节点']);
 getClashNodeNames(nodeList, netflixFilter, [], ['默认节点']);
 ```
 
+### getSingboxNodes
+
+> <Badge text="v3.7.0" vertical="middle" />
+
+`getSingboxNodes(nodeList, filter?)`
+
+该方法会返回一个包含有节点信息的数组，可用于编写 sing-box 规则。
+
+:::tip 提示
+- `filter` 为可选参数
+:::
+
+### getSingboxNodeNames
+
+> <Badge text="v3.7.0" vertical="middle" />
+
+`getSingboxNodeNames(nodeList, filter?)`
+
+该方法会返回一个包含有节点名称的数组，用于编写 sing-box 规则。
+
+:::tip 提示
+- `filter` 为可选参数
+:::
+
+若需要过滤 Netflix 节点则传入：
+
+```js
+getSingboxNodeNames(nodeList, netflixFilter);
+```
+
 ### getLoonNodes
 
 `getLoonNodes(nodeList, filter?)`
@@ -463,6 +493,118 @@ PROCESS-NAME,YT Music
 ```
 
 和远程片段一样，`.text` 可以获取到原始的字符串内容。
+
+## JSON 模板方法
+
+### extendOutbounds
+
+> <Badge text="v3.7.0" vertical="middle" />
+
+`extendOutbounds(function|object)`
+
+用于拓展 sing-box 规则的 `outbounds` 字段。
+
+#### 函数类型
+
+```js
+extendOutbounds((props) => {
+  // props 包含本文中的模板方法和变量
+  return props.getSingboxNodes(props.nodeList)
+}) 
+```
+
+#### 对象类型
+
+```js
+extendOutbounds([
+  {
+    type: 'direct',
+    tag: 'direct',
+    tcp_fast_open: false,
+    tcp_multi_path: true,
+  },
+  {
+    type: 'block',
+    tag: 'block',
+  },
+])
+```
+
+### createExtendFunction
+
+> <Badge text="v3.7.0" vertical="middle" />
+
+`createExtendFunction(string)`
+
+`extendOutbounds` 其实就是用下面的方法生成的。
+
+```js
+const { createExtendFunction } = require('surgio')
+
+const extendOutbounds = createExtendFunction('outbounds')
+```
+
+### combineExtendFunctions
+
+> <Badge text="v3.7.0" vertical="middle" />
+
+`combineExtendFunctions(function1, function2, ...)`
+
+用于合并多个拓展函数。
+
+```js
+const { combineExtendFunctions, createExtendFunction } = require('surgio')
+
+const extendDNS = createExtendFunction('dns')
+const extendInbounds = createExtendFunction('inbounds')
+
+const combined = combineExtendFunctions(
+  extendDNS({
+    nameserver: ['1.1.1.1']
+  }),
+  extendInbounds([
+    {
+      port: 7890,
+      protocol: 'http',
+    }
+  ]),
+)
+```
+
+模板：
+
+```json
+{
+  "dns": {
+    "nameserver": [
+      "1.0.0.1"
+    ]
+  }
+}
+```
+
+结果：
+
+```json
+{
+  "dns": {
+    "nameserver": [
+      "1.0.0.1",
+      "1.1.1.1"
+    ]
+  },
+  "inbounds": [
+    {
+      "port": 7890,
+      "protocol": "http"
+    }
+  ]
+}
+```
+
+:::tip 提示
+- 拓展数组时新的配置会被追加到原有配置的后面
+:::
 
 ## 片段 (Snippet)
 
