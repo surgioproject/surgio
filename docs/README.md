@@ -4,7 +4,7 @@ title: '一站式各类代理规则生成器'
 heroImage: /surgio-icon.png
 actions:
 - text: 快速上手 →
-  link: /guide/
+  link: /guide
   type: primary
 footer: MIT Licensed | Copyright © 2019-present
 ---
