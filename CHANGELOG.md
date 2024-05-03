@@ -1,3 +1,12 @@
+## [3.7.1](https://github.com/geekdada/surgio/compare/v3.7.0...v3.7.1) (2024-05-03)
+
+
+### Features
+
+* per proxy `test-timeout` for Surge nodes ([e4bee65](https://github.com/geekdada/surgio/commit/e4bee657bd6c091f4dbea06a8777cfd61e1c0c8f))
+
+
+
 # [3.7.0](https://github.com/geekdada/surgio/compare/v3.7.0-beta.1...v3.7.0) (2024-05-03)
 
 
