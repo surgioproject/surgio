@@ -81,6 +81,7 @@ export const SimpleNodeConfigValidator = z.object({
   // Misc
   underlyingProxy: z.string().optional(),
   testUrl: z.string().optional(),
+  testTimeout: z.number().optional(),
   surgeConfig: SurgeConfigValidator.optional(),
   surfboardConfig: SurfboardConfigValidator.optional(),
   quantumultXConfig: QuantumultXConfigValidator.optional(),
