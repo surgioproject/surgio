@@ -2,7 +2,7 @@ import { defineUserConfig, type HeadConfig, type PluginConfig, type UserConfig }
 import { path } from '@vuepress/utils'
 import { docsearchPlugin } from '@vuepress/plugin-docsearch'
 import { registerComponentsPlugin } from '@vuepress/plugin-register-components'
-import { sitemapPlugin } from 'vuepress-plugin-sitemap2'
+import { sitemapPlugin } from '@vuepress/plugin-sitemap'
 import { umamiAnalyticsPlugin } from 'vuepress-plugin-umami-analytics'
 import { viteBundler } from '@vuepress/bundler-vite'
 
@@ -61,10 +61,10 @@ if (process.env.NODE_ENV === 'production') {
     sitemapPlugin({
       hostname: 'https://surgio.js.org',
     }),
-    // umamiAnalyticsPlugin({
-    //   id: '444a5a25-af75-4c30-b7a4-6aaba520daf6',
-    //   src: 'https://sashimi.royli.dev/sashimi.js',
-    // }) as any,
+    umamiAnalyticsPlugin({
+      id: '444a5a25-af75-4c30-b7a4-6aaba520daf6',
+      src: 'https://sashimi.royli.dev/sashimi.js',
+    }),
   )
 }
 
