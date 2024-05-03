@@ -1,5 +1,5 @@
 diff --git a/dist/server/index.js b/dist/server/index.js
-index d61f6716a7b49354722aa01f45465c1f2e912006..a904b73033771abf9c92acd3cab130f8325344d9 100644
+index d61f6716a7b49354722aa01f45465c1f2e912006..8568d24a144e09b1f23ebbd1adb652e7f97c5c2f 100644
 --- a/dist/server/index.js
 +++ b/dist/server/index.js
 @@ -1,22 +1,20 @@
@@ -27,11 +27,11 @@ index d61f6716a7b49354722aa01f45465c1f2e912006..a904b73033771abf9c92acd3cab130f8
 +        define: app => {
 +            if (!app.env.isDev) {
 +                return {
-+                    __UMAMI_ANALYTICS_DO_NOT_TRACK__: doNotTrack,
-+                    __UMAMI_ANALYTICS_AUTO_TRACK__: autoTrack,
-+                    __UMAMI_ANALYTICS_HOST_URL__: hostUrl,
-+                    __UMAMI_ANALYTICS_DOMAINS__: domains,
-+                    __UMAMI_ANALYTICS_CACHE__: cache,
++                    __UMAMI_ANALYTICS_DO_NOT_TRACK__: doNotTrack || false,
++                    __UMAMI_ANALYTICS_AUTO_TRACK__: autoTrack || false,
++                    __UMAMI_ANALYTICS_HOST_URL__: hostUrl || null,
++                    __UMAMI_ANALYTICS_DOMAINS__: domains || [],
++                    __UMAMI_ANALYTICS_CACHE__: cache || false,
 +                    __UMAMI_ANALYTICS_SRC__: src,
 +                    __UMAMI_ANALYTICS_ID__: id,
 +                };

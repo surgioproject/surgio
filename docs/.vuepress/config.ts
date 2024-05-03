@@ -64,6 +64,8 @@ if (process.env.NODE_ENV === 'production') {
     umamiAnalyticsPlugin({
       id: '444a5a25-af75-4c30-b7a4-6aaba520daf6',
       src: 'https://sashimi.royli.dev/sashimi.js',
+      domains: ['surgio.js.org'],
+      cache: true,
     }),
   )
 }
