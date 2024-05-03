@@ -1,3 +1,12 @@
+# [3.7.0](https://github.com/geekdada/surgio/compare/v3.7.0-beta.1...v3.7.0) (2024-05-03)
+
+
+### Bug Fixes
+
+* docs ([1ebb73e](https://github.com/geekdada/surgio/commit/1ebb73e4c1f11face1099e07b4ea5777329f5a77))
+
+
+
 # [3.7.0-beta.1](https://github.com/geekdada/surgio/compare/v3.6.6...v3.7.0-beta.1) (2024-05-01)
 
 
