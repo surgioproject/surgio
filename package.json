@@ -11,6 +11,7 @@
   "author": "Roy Li <me@royli.dev>",
   "license": "MIT",
   "files": [
+    "patches",
     "bin",
     "build",
     "hygen-template",
