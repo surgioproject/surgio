@@ -180,7 +180,9 @@ module.exports = {
 - 类型: `boolean`
 - 默认值: `false`
 
-在 Surge 官方对 External Provider 的 [解释](https://medium.com/@Blankwonder/surge-mac-new-features-external-proxy-provider-375e0e9ea660) 中提到，为了不让代理进程（如 ssr-local）的流量经过 Surge 的 TUN 模块，需要额外指定 `addresses` 参数。在之前版本的 Surgio 里，生成的配置不会对域名进行解析，导致实际使用中仍然会造成额外的性能损耗。
+如果你已经开启了全局的 `resolveHostname`，可以不开启此项。
+
+为了不让代理进程（如 ssr-local）的流量经过 Surge 的 TUN 模块，需要额外指定 `addresses` 参数。在之前版本的 Surgio 里，生成的配置不会对域名进行解析，导致实际使用中仍然会造成额外的性能损耗。
 
 打开这个选项后，Surgio 会在生成配置的时候解析域名。不过，这必然会造成生成时间延长，所以请按照个人的需要进行选择。
 
@@ -421,6 +423,15 @@ module.exports = {
 是否丢弃无法解析出域名 IP 地址的节点。无法解析出域名的节点有可能会导致 Clash 的 `url-test` 模式抛出异常而中止，丢弃这些节点可以避免这个问题。
 
 某些机场的节点域名 TTL 非常小，在某些情况下可能会导致 DNS 回溯解析超时，这样会导致节点本身可用但是被抛弃，所以建议谨慎开启该选项。
+
+## resolveHostname
+
+- 类型: `boolean`
+- 默认值: `false`
+
+是否解析节点的域名。开启此功能后 Surgio 会将节点的域名解析为 IP 地址，这样可能可以加速节点的连接速度。请注意，这个选项和 `surgeConfig.resolveHostname` 不同，前者是全局配置，后者供生成 Surge 使用的 SSR 配置。
+
+打开这个选项后，Surgio 会在生成配置的时候解析域名，这必然会造成生成时间延长，所以请按照个人的需要进行选择。另外，开启此选项后将失去节点的负载均衡功能（如有）和 DNS 解析的灵活性，所以请**谨慎使用**。
 
 ## flags
 

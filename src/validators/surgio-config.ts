@@ -89,6 +89,7 @@ export const SurgioConfigValidator = z.object({
     })
     .optional(),
   checkHostname: z.oboolean(),
+  resolveHostname: z.oboolean(),
   proxyTestUrl: z.string().url().optional(),
   proxyTestInterval: z.onumber(),
   internetTestUrl: z.string().url().optional(),

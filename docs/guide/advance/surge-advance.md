@@ -10,28 +10,25 @@ sidebarDepth: 2
 - 如果你已经订阅了 Surge 4，推荐使用 [原生](/guide/custom-config.md#surgeconfig-v2ray) 的 Vmess 支持
 :::
 
-Surge 没有原生提供对 V2Ray 和 SSR 的支持 ~~（将来也不太可能）~~ ，但是提供了一个叫做 [External Proxy Provider](https://medium.com/@Blankwonder/surge-mac-new-features-external-proxy-provider-375e0e9ea660) 的功能，能够满足我们连接 V2Ray 和 SSR 服务器。
+Surge 没有原生提供对 SSR 的支持 ~~（将来也不太可能）~~ ，但是提供了一个叫做 [External Proxy Provider](https://medium.com/@Blankwonder/surge-mac-new-features-external-proxy-provider-375e0e9ea660) 的功能，能够满足我们连接 SSR 服务器。
 
 ## 开始之前
 
 在一切开始之前，你需要确保本地已经安装了 V2Ray 和 SSR 的可执行文件。
 
-- [安装 V2Ray](https://github.com/v2ray/homebrew-v2ray)
 - [安装 SSR](/guide/install-ssr-local.md)
 
 ## 修改 Surgio 配置
 
 找到 `surgio.conf.js`，补充如下字段：
 
-```js{3-9}
+```js{3-6}
 module.exports = {
   // ...
   binPath: {
     shadowsocksr: '/usr/local/bin/ssr-local',
   },
-  surgeConfig: {
-    resolveHostname: true,
-  },
+  resolveHostname: true,
 }
 ```
 

@@ -470,11 +470,15 @@ export class Artifact extends EventEmitter {
           ) {
             try {
               const domains = await resolveDomain(nodeConfig.hostname)
+
+              /* istanbul ignore next */
               if (domains.length < 1) {
                 logger.warn(
                   `DNS 解析结果中 ${nodeConfig.hostname} 未有对应 IP 地址，将忽略该节点`,
                 )
                 return undefined
+              } /* istanbul ignore next */ else {
+                nodeConfig.hostnameIp = domains
               }
             } catch (err) /* istanbul ignore next */ {
               logger.warn(`${nodeConfig.hostname} 无法解析，将忽略该节点`)
@@ -483,19 +487,22 @@ export class Artifact extends EventEmitter {
           }
 
           if (
-            config?.surgeConfig?.resolveHostname &&
+            config?.resolveHostname &&
             'hostname' in nodeConfig &&
-            !isIp(nodeConfig.hostname) &&
-            [NodeTypeEnum.Vmess, NodeTypeEnum.Shadowsocksr].includes(
-              nodeConfig.type,
-            )
+            !isIp(nodeConfig.hostname)
           ) {
-            try {
-              nodeConfig.hostnameIp = await resolveDomain(nodeConfig.hostname)
-            } catch (err) /* istanbul ignore next */ {
-              logger.warn(
-                `${nodeConfig.hostname} 无法解析，将忽略该域名的解析结果`,
-              )
+            /* istanbul ignore next */
+            if (nodeConfig.hostnameIp) {
+              nodeConfig.hostname = nodeConfig.hostnameIp[0]
+            } /* istanbul ignore next */ else {
+              try {
+                nodeConfig.hostnameIp = await resolveDomain(nodeConfig.hostname)
+                nodeConfig.hostname = nodeConfig.hostnameIp[0]
+              } catch (err) {
+                logger.warn(
+                  `${nodeConfig.hostname} 无法解析，将忽略该域名的解析结果`,
+                )
+              }
             }
           }
 

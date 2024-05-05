@@ -277,7 +277,11 @@ function nodeListMapper(
         )
       }
 
-      if (nodeConfig.hostnameIp && nodeConfig.hostnameIp.length) {
+      if (
+        nodeConfig?.surgeConfig?.resolveHostname &&
+        nodeConfig.hostnameIp &&
+        nodeConfig.hostnameIp.length
+      ) {
         nodeConfigString.push(
           ...nodeConfig.hostnameIp.map((item) => `addresses = ${item}`),
         )

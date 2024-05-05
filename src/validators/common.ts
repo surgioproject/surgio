@@ -87,6 +87,9 @@ export const SimpleNodeConfigValidator = z.object({
   surfboardConfig: SurfboardConfigValidator.optional(),
   quantumultXConfig: QuantumultXConfigValidator.optional(),
   clashConfig: ClashConfigValidator.optional(),
+  hostnameIp: z.array(z.string()).readonly().optional(),
+  binPath: z.string().optional(),
+  localPort: z.number().optional(),
 })
 
 export const TlsNodeConfigValidator = SimpleNodeConfigValidator.extend({

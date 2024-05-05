@@ -182,13 +182,6 @@ export type Hysteria2NodeConfig = z.infer<typeof Hysteria2NodeConfigValidator> &
   SurgioInternals
 
 export interface SurgioInternals {
-  binPath?: string
-  localPort?: number
-  surgeConfig?: CommandConfig['surgeConfig']
-  clashConfig?: CommandConfig['clashConfig']
-  quantumultXConfig?: CommandConfig['quantumultXConfig']
-  surfboardConfig?: CommandConfig['surfboardConfig']
-  hostnameIp?: ReadonlyArray<string>
   provider?: Provider
 }
 

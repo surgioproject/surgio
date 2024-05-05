@@ -123,6 +123,7 @@ export const normalizeConfig = (
     internetTestUrl: INTERNET_TEST_URL,
     internetTestInterval: INTERNET_TEST_INTERVAL,
     checkHostname: false,
+    resolveHostname: false,
     cache: {
       type: 'default',
     },

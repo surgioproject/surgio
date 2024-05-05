@@ -8,7 +8,7 @@ import { getNetworkResolveTimeout } from './env-flag'
 
 const domainCache = caching('memory', {
   ttl: ms('1d'),
-  max: 1000,
+  max: 5000,
 })
 const logger = createLogger({ service: 'surgio:utils:dns' })
 
