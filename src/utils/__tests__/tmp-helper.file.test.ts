@@ -1,7 +1,7 @@
-import test from 'ava'
-import fs from 'fs-extra'
 import path from 'path'
 import os from 'os'
+import test from 'ava'
+import fs from 'fs-extra'
 import Bluebird from 'bluebird'
 
 import { TMP_FOLDER_NAME } from '../../constant'

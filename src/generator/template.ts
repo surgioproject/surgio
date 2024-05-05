@@ -1,6 +1,6 @@
+import path from 'path'
 import fs from 'fs-extra'
 import nunjucks from 'nunjucks'
-import path from 'path'
 import { JsonObject } from 'type-fest'
 import YAML from 'yaml'
 

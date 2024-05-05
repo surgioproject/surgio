@@ -7,7 +7,6 @@ import {
   VmessNodeConfig,
 } from '../types'
 import { SurgioError } from '../utils'
-import Provider from './Provider'
 import {
   WireguardNodeConfigValidator,
   ShadowsocksNodeConfigValidator,
@@ -22,6 +21,8 @@ import {
   Hysteria2NodeConfigValidator,
   VlessNodeConfigValidator,
 } from '../validators'
+
+import Provider from './Provider'
 import { GetNodeListFunction, GetNodeListParams } from './types'
 
 export default class CustomProvider extends Provider {

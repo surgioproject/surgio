@@ -1,6 +1,6 @@
 // istanbul ignore file
-import { Args } from '@oclif/core'
 import { join } from 'path'
+import { Args } from '@oclif/core'
 import { runner, Logger } from '@royli/hygen'
 
 import BaseCommand from '../base-command'

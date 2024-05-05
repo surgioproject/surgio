@@ -1,6 +1,6 @@
+import { isIPv4 } from 'net'
 import { createLogger } from '@surgio/logger'
 import _ from 'lodash'
-import { isIPv4 } from 'net'
 
 import {
   NodeFilterType,
@@ -10,6 +10,7 @@ import {
 } from '../types'
 import { ERR_INVALID_FILTER, LOON_SUPPORTED_VMESS_NETWORK } from '../constant'
 import { applyFilter, internalFilters } from '../filters'
+
 import { getHeader } from './index'
 
 const {

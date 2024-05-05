@@ -1,7 +1,7 @@
 'use strict'
 
-const execa = require('execa')
 const { resolve } = require('path')
+const execa = require('execa')
 const fs = require('fs-extra')
 
 const { argv } = process

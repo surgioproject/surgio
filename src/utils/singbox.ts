@@ -8,14 +8,16 @@ import {
   SortedNodeFilterType,
 } from '../types'
 import { applyFilter } from '../filters'
+import { MultiplexValidator, TlsNodeConfigValidator } from '../validators'
+
+import { stringifySip003Options } from './ss'
+
 import {
   checkNotNullish,
   getHostnameFromHost,
   getPortFromHost,
   pickAndFormatKeys,
 } from './'
-import { MultiplexValidator, TlsNodeConfigValidator } from '../validators'
-import { stringifySip003Options } from './ss'
 
 const logger = createLogger({ service: 'surgio:utils:singbox' })
 

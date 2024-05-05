@@ -1,7 +1,7 @@
+import { promises } from 'dns'
 import test from 'ava'
 import Bluebird from 'bluebird'
 import sinon, { SinonStub } from 'sinon'
-import { promises } from 'dns'
 
 import { resolveDomain } from '../dns'
 

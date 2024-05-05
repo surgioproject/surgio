@@ -1,6 +1,7 @@
 import { z } from 'zod'
 
 import { NodeTypeEnum } from '../types'
+
 import { MultiplexValidator, TlsNodeConfigValidator } from './common'
 
 export const TrojanNodeConfigValidator = TlsNodeConfigValidator.extend({

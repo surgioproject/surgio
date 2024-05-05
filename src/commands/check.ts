@@ -1,7 +1,7 @@
 // istanbul ignore file
+import path from 'path'
 import { Args, ux } from '@oclif/core'
 import fs from 'fs-extra'
-import path from 'path'
 import inquirer from 'inquirer'
 
 import BaseCommand from '../base-command'

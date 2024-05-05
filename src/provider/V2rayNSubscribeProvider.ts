@@ -1,5 +1,5 @@
-import { logger } from '@surgio/logger'
 import assert from 'assert'
+import { logger } from '@surgio/logger'
 import { z } from 'zod'
 import _ from 'lodash'
 
@@ -12,6 +12,7 @@ import {
 import { fromBase64, SurgioError } from '../utils'
 import relayableUrl from '../utils/relayable-url'
 import { parseSSUri } from '../utils/ss'
+
 import Provider from './Provider'
 import { GetNodeListFunction } from './types'
 

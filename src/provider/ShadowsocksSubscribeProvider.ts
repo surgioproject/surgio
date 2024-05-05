@@ -9,6 +9,7 @@ import {
 import { fromBase64, SurgioError } from '../utils'
 import relayableUrl from '../utils/relayable-url'
 import { parseSSUri } from '../utils/ss'
+
 import Provider from './Provider'
 import { GetNodeListFunction, GetSubscriptionUserInfoFunction } from './types'
 

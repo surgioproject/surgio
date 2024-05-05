@@ -1,6 +1,7 @@
 import { z } from 'zod'
 
 import { NodeTypeEnum } from '../types'
+
 import { TlsNodeConfigValidator } from './common'
 
 export const Hysteria2NodeConfigValidator = TlsNodeConfigValidator.extend({

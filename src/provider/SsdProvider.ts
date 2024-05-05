@@ -1,5 +1,5 @@
-import { createLogger } from '@surgio/logger'
 import assert from 'assert'
+import { createLogger } from '@surgio/logger'
 import bytes from 'bytes'
 import { z } from 'zod'
 
@@ -11,6 +11,7 @@ import {
 } from '../types'
 import { decodeStringList, fromBase64, SurgioError } from '../utils'
 import relayableUrl from '../utils/relayable-url'
+
 import Provider from './Provider'
 import { GetNodeListFunction, GetSubscriptionUserInfoFunction } from './types'
 

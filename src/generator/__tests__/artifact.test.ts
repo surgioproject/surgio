@@ -1,5 +1,6 @@
-import test from 'ava'
 import { join } from 'path'
+import test from 'ava'
+
 import { loadConfig } from '../../config'
 import { Artifact } from '../artifact'
 import { getEngine } from '../template'

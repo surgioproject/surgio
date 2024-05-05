@@ -1,6 +1,6 @@
 import test from 'ava'
-import { NodeTypeEnum } from '../../types'
 
+import { NodeTypeEnum } from '../../types'
 import { parseTrojanUri } from '../trojan'
 
 test('parseTrojanUri', (t) => {

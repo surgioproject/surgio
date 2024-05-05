@@ -7,8 +7,9 @@ import {
   PossibleNodeConfigType,
   SortedNodeFilterType,
 } from '../types'
-import { pickAndFormatStringList } from './index'
 import { applyFilter } from '../filters'
+
+import { pickAndFormatStringList } from './index'
 
 const logger = createLogger({ service: 'surgio:utils:surfboard' })
 

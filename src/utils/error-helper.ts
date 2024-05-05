@@ -2,6 +2,7 @@ import chalk from 'chalk'
 import { fromZodError } from 'zod-validation-error'
 
 import BaseCommand from '../base-command'
+
 import { generateDoctorInfo } from './doctor'
 import { isError, isSurgioError, isZodError } from './errors'
 

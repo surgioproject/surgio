@@ -1,6 +1,6 @@
-import { createLogger } from '@surgio/logger'
 import os from 'os'
 import path from 'path'
+import { createLogger } from '@surgio/logger'
 import fs from 'fs-extra'
 import Redis from 'ioredis'
 

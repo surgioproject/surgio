@@ -8,6 +8,7 @@ import {
 } from '../types'
 import { SurgioError } from '../utils'
 import relayableUrl from '../utils/relayable-url'
+
 import Provider from './Provider'
 import { GetNodeListFunction } from './types'
 

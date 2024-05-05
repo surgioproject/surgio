@@ -1,6 +1,5 @@
 import { z } from 'zod'
 
-import type { Provider, GetNodeListParams } from './provider'
 import {
   WireguardNodeConfigValidator,
   ProviderValidator,
@@ -22,6 +21,8 @@ import {
   ClashCoreValidator,
   VlessNodeConfigValidator,
 } from './validators'
+
+import type { Provider, GetNodeListParams } from './provider'
 
 export enum NodeTypeEnum {
   HTTPS = 'https',

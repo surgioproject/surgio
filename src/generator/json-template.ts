@@ -1,7 +1,7 @@
+import { join } from 'path'
 import { JsonObject } from 'type-fest'
 import _ from 'lodash'
 import fs from 'fs-extra'
-import { join } from 'path'
 
 type ExtendContext = Record<string, any>
 

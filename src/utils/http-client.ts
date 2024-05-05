@@ -3,6 +3,7 @@ import HttpAgent, { HttpsAgent } from 'agentkeepalive'
 import { HttpProxyAgent, HttpsProxyAgent } from 'hpagent'
 
 import { NETWORK_SURGIO_UA } from '../constant'
+
 import { getNetworkRetry, getNetworkTimeout } from './env-flag'
 
 const httpProxy = hasHTTPProxy()

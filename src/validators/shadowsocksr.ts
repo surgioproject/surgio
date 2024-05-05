@@ -1,6 +1,7 @@
 import { z } from 'zod'
 
 import { NodeTypeEnum } from '../types'
+
 import { PortValidator, SimpleNodeConfigValidator } from './common'
 
 export const ShadowsocksrNodeConfigValidator = SimpleNodeConfigValidator.extend(

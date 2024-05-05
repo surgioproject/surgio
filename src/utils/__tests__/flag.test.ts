@@ -1,4 +1,5 @@
 import test from 'ava'
+
 import { addFlagMap, prependFlag, removeFlag } from '../flag'
 
 test.before(() => {

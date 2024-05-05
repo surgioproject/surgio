@@ -1,10 +1,10 @@
+import { EventEmitter } from 'events'
+import path from 'path'
 import { logger } from '@surgio/logger'
 import Bluebird from 'bluebird'
-import { EventEmitter } from 'events'
 import fs from 'fs-extra'
 import _ from 'lodash'
 import { Environment } from 'nunjucks'
-import path from 'path'
 
 import {
   CustomProvider,
@@ -55,6 +55,7 @@ import { resolveDomain } from '../utils/dns'
 import { internalFilters, validateFilter } from '../filters'
 import { prependFlag, removeFlag } from '../utils/flag'
 import { ArtifactValidator } from '../validators'
+
 import { loadLocalSnippet } from './template'
 import { render as renderJSON } from './json-template'
 

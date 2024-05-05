@@ -1,6 +1,7 @@
 import { z } from 'zod'
 
 import { NodeTypeEnum } from '../types'
+
 import { SimpleNodeConfigValidator } from './common'
 
 const WireguardPeerConfigValidator = z.object({

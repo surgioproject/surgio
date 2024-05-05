@@ -1,7 +1,7 @@
 // tslint:disable:no-expression-statement
+import { join } from 'path'
 import test from 'ava'
 import fs from 'fs-extra'
-import { join } from 'path'
 
 import {
   convertNewSurgeScriptRuleToQuantumultXRewriteRule,

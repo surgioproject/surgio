@@ -9,6 +9,7 @@ import {
   SortedNodeFilterType,
 } from '../types'
 import { applyFilter } from '../filters'
+
 import { getHeader, pickAndFormatStringList } from './index'
 
 const logger = createLogger({ service: 'surgio:utils:quantumult' })

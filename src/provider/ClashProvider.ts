@@ -3,11 +3,11 @@ import yaml from 'yaml'
 import _ from 'lodash'
 import { createLogger } from '@surgio/logger'
 import { z } from 'zod'
+
 import {
   CLASH_META_SUPPORTED_VMESS_NETWORK,
   STASH_SUPPORTED_VMESS_NETWORK,
 } from '../constant'
-
 import {
   ClashProviderConfig,
   HttpNodeConfig,
@@ -31,6 +31,7 @@ import {
   parseBitrate,
 } from '../utils'
 import relayableUrl from '../utils/relayable-url'
+
 import Provider from './Provider'
 import { GetNodeListFunction, GetSubscriptionUserInfoFunction } from './types'
 

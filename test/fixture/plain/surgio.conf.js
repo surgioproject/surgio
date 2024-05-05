@@ -1,6 +1,7 @@
 'use strict'
 
 const path = require('path')
+
 const { extendOutbounds, defineSurgioConfig } = require('../../../')
 
 module.exports = defineSurgioConfig({

@@ -1,9 +1,9 @@
 // istanbul ignore file
+import path from 'path'
 import { Flags } from '@oclif/core'
 import OSS from 'ali-oss'
 import fs from 'fs-extra'
 import dir from 'node-dir'
-import path from 'path'
 
 import BaseCommand from '../base-command'
 import { setConfig } from '../config'

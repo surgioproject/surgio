@@ -1,8 +1,8 @@
+import { join } from 'path'
+import { promisify } from 'util'
 import check from 'check-node-version'
 import { readJSON } from 'fs-extra'
-import { join } from 'path'
 import { PackageJson } from 'type-fest'
-import { promisify } from 'util'
 
 type OnComplete = Parameters<typeof check>[1]
 type CheckInfo = Parameters<OnComplete>[1]

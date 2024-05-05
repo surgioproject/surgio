@@ -6,6 +6,7 @@ import {
   PossibleNodeConfigType,
   SortedNodeFilterType,
 } from '../types'
+
 import {
   SortFilterWithSortedFilters,
   SortFilterWithSortedKeywords,

@@ -1,7 +1,7 @@
 // istanbul ignore file
 
-import { z } from 'zod'
 import assert from 'assert'
+import { z } from 'zod'
 
 import {
   BlackSSLProviderConfig,
@@ -13,6 +13,7 @@ import { SurgioError } from '../utils'
 import { unifiedCache } from '../utils/cache'
 import { getProviderCacheMaxage } from '../utils/env-flag'
 import httpClient from '../utils/http-client'
+
 import Provider from './Provider'
 import { GetNodeListFunction, GetSubscriptionUserInfoFunction } from './types'
 

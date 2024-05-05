@@ -1,4 +1,5 @@
 import test from 'ava'
+
 import { NodeTypeEnum } from '../../types'
 import { parseSSRUri } from '../ssr'
 

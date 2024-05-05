@@ -7,11 +7,13 @@ import * as babelParser from '@babel/parser'
 
 import { CACHE_KEYS } from '../constant'
 import { RemoteSnippet, RemoteSnippetConfig } from '../types'
+
 import { unifiedCache } from './cache'
 import { getNetworkConcurrency, getRemoteSnippetCacheMaxage } from './env-flag'
 import httpClient from './http-client'
-import { toMD5 } from './index'
 import { createTmpFactory } from './tmp-helper'
+
+import { toMD5 } from './index'
 
 export const parseMacro = (
   snippet: string,

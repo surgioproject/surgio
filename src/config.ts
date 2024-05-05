@@ -1,7 +1,7 @@
-import fs from 'fs-extra'
-import _ from 'lodash'
 import path from 'path'
 import { URL } from 'url'
+import fs from 'fs-extra'
+import _ from 'lodash'
 
 import {
   INTERNET_TEST_INTERVAL,

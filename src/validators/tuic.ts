@@ -1,6 +1,7 @@
 import { z } from 'zod'
 
 import { NodeTypeEnum } from '../types'
+
 import { IntegersVersionValidator, TlsNodeConfigValidator } from './common'
 
 export const TuicNodeV5ConfigValidator = TlsNodeConfigValidator.extend({

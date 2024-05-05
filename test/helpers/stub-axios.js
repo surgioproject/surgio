@@ -1,8 +1,8 @@
 'use strict'
 
-const nock = require('nock')
 const fs = require('fs')
 const path = require('path')
+const nock = require('nock')
 
 const toBase64 = (str) => Buffer.from(str, 'utf8').toString('base64')
 

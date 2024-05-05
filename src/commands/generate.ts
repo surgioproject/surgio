@@ -1,6 +1,6 @@
+import path from 'path'
 import { Flags } from '@oclif/core'
 import fs from 'fs-extra'
-import path from 'path'
 
 import BaseCommand from '../base-command'
 import { Artifact, getEngine } from '../generator'

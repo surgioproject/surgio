@@ -1,12 +1,12 @@
-import { createLogger } from '@surgio/logger'
-import fs from 'fs-extra'
 import os from 'os'
 import { join } from 'path'
-import queryString from 'query-string'
 import { URL, URLSearchParams } from 'url'
-import URLSafeBase64 from 'urlsafe-base64'
 import net from 'net'
 import crypto from 'crypto'
+import URLSafeBase64 from 'urlsafe-base64'
+import queryString from 'query-string'
+import fs from 'fs-extra'
+import { createLogger } from '@surgio/logger'
 import { camelCase, snakeCase, paramCase } from 'change-case'
 
 import {
@@ -19,8 +19,9 @@ import {
   VmessNodeConfig,
 } from '../types'
 import { ERR_INVALID_FILTER, V2RAYN_SUPPORTED_VMESS_NETWORK } from '../constant'
-import { getIsGFWFree } from './env-flag'
 import { applyFilter } from '../filters'
+
+import { getIsGFWFree } from './env-flag'
 
 export * from './surge'
 export * from './surfboard'

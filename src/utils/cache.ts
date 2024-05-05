@@ -5,8 +5,8 @@ import {
   RedisCache,
   RedisStore,
 } from 'cache-manager-ioredis-yet'
-import { getConfig } from '../config'
 
+import { getConfig } from '../config'
 import redis from '../redis'
 
 type CacheType = MemoryCache | RedisCache
