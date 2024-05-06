@@ -11,6 +11,5 @@ export const TrojanNodeConfigValidator = TlsNodeConfigValidator.extend({
   network: z.union([z.literal('tcp'), z.literal('ws')]).optional(),
   wsPath: z.ostring(),
   wsHeaders: z.record(z.string()).optional(),
-
   multiplex: MultiplexValidator.optional(),
 })

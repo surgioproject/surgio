@@ -40,6 +40,5 @@ export const VlessNodeConfigValidator = TlsNodeConfigValidator.extend({
   quicOpts: VmessQuicOptsValidator.optional(),
   httpUpgradeOpts: VmessHttpUpgradeOptsValidator.optional(),
   realityOpts: VlessRealityOptsValidator.optional(),
-
   multiplex: MultiplexValidator.optional(),
 })

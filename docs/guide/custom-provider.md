@@ -860,6 +860,34 @@ Surgio 不会验证名称是否有效
 `on`: 强制阻止 QUIC 流量
 `off`: 不阻止 QUIC 流量
 
+## nodeConfig.multiplex
+
+> <Badge text="v3.7.0" vertical="middle" />
+
+:::warning 注意
+1. 当前仅支持输出 sing-box 的多路复用配置
+2. 仅基于 TCP 的协议支持多路复用
+:::
+
+- sing-box 的多路复用说明：[链接](https://sing-box.sagernet.org/configuration/shared/multiplex/)
+-【暂不支持】mihomo 的多路复用说明：[链接](https://wiki.metacubex.one/config/proxies/sing-mux/)
+
+```json5
+{
+  multiplex: {
+    protocol: '', // smux, yamux, h2mux
+    maxConnections: 1, // 最大连接数量，与 max_streams 冲突
+    minStreams: 1, // 在打开新连接之前，连接中的最小多路复用流数量，与 max_streams 冲突
+    maxStreams: 1, // 在打开新连接之前，连接中的最大多路复用流数量，与 max_connections 和 min_streams 冲突
+    padding: false, // 启用填充
+    brutal: { // 可选，TCP Brutal 拥塞控制算法
+      upMbps: 0, // 上行 Mbps
+      downMbps: 0, // 下行 Mbps
+    },
+  }
+}
+```
+
 ### 客户端特殊配置
 
 > <Badge text="v3.2.0" vertical="middle" />
@@ -1115,27 +1143,5 @@ module.exports = defineClashProvider({
       ];
     },
   },
-  }
 })
-```
-
-## Multiplex 多路复用
-
-- sing-box 的多路复用说明：[链接](https://sing-box.sagernet.org/configuration/shared/multiplex/)
-- mihomo 的多路复用说明：[链接](https://wiki.metacubex.one/config/proxies/sing-mux/)
-
-```json5
-{
-  multiplex: {
-    protocol: '', // smux, yamux, h2mux
-    maxConnections: 1, // 最大连接数量，与 max_streams 冲突
-    minStreams: 1, // 在打开新连接之前，连接中的最小多路复用流数量，与 max_streams 冲突
-    maxStreams: 1, // 在打开新连接之前，连接中的最大多路复用流数量，与 max_connections 和 min_streams 冲突
-    padding: false, // 启用填充
-    brutal: { // 可选，TCP Brutal 拥塞控制算法
-      upMbps: 0, // 上行 Mbps
-      downMbps: 0, // 下行 Mbps
-    },
-  }
-}
 ```
