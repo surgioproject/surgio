@@ -860,7 +860,7 @@ Surgio 不会验证名称是否有效
 `on`: 强制阻止 QUIC 流量
 `off`: 不阻止 QUIC 流量
 
-## nodeConfig.multiplex
+### nodeConfig.multiplex
 
 > <Badge text="v3.7.0" vertical="middle" />
 
