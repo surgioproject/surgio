@@ -870,7 +870,7 @@ Surgio 不会验证名称是否有效
 :::
 
 - sing-box 的多路复用说明：[链接](https://sing-box.sagernet.org/configuration/shared/multiplex/)
--【暂不支持】mihomo 的多路复用说明：[链接](https://wiki.metacubex.one/config/proxies/sing-mux/)
+- 【暂不支持】mihomo 的多路复用说明：[链接](https://wiki.metacubex.one/config/proxies/sing-mux/)
 
 ```json5
 {
