@@ -213,5 +213,7 @@ test('parseBitrate', (t) => {
   t.is(utils.parseBitrate('1 Kbps'), 0.001)
   t.is(utils.parseBitrate('1 Mbps'), 1)
   t.is(utils.parseBitrate('1000 Kbps'), 1)
-  t.is(utils.parseBitrate('1Gbps'), 1000)
+  t.is(utils.parseBitrate(1), 1)
+  t.is(utils.parseBitrate(10), 10)
+  t.is(utils.parseBitrate(100), 100)
 })

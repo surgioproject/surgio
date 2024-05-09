@@ -595,18 +595,20 @@ export const getHostnameFromHost = (host: string): string => {
  * - 1.2
  * - 1200
  */
-export const parseBitrate = (str: string): number => {
-  const match = str.match(/^(\d+(?:\.\d+)?)\s*(?:Mbps|Kbps|Gbps)?$/)
+export const parseBitrate = (input: string | number): number => {
+  const inputStr = typeof input === 'number' ? `${input} Mbps` : input
+
+  const match = inputStr.match(/^(\d+(?:\.\d+)?)\s*(?:Mbps|Kbps|Gbps)?$/)
 
   if (!match) {
-    throw new Error(`Invalid bitrate: ${str}`)
+    throw new Error(`Invalid bitrate: ${inputStr}`)
   }
 
   const bitrate = Number(match[1])
 
-  if (str.includes('Gbps')) {
+  if (inputStr.includes('Gbps')) {
     return bitrate * 1000
-  } else if (str.includes('Kbps')) {
+  } else if (inputStr.includes('Kbps')) {
     return bitrate / 1000
   } else {
     return bitrate
