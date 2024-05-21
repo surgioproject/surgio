@@ -241,7 +241,6 @@
     "singbox",
     "shadowrocket"
   ],
-  "packageManager": "pnpm@9.0.6",
   "pnpm": {
     "patchedDependencies": {
       "vuepress-plugin-umami-analytics@1.8.1": "patches/vuepress-plugin-umami-analytics@1.8.1.patch"
