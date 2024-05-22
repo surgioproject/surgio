@@ -1,9 +1,5 @@
 <template>
-  <ParentLayout>
-    <template #page-bottom>
-      <Sponsor />
-    </template>
-  </ParentLayout>
+  <ParentLayout></ParentLayout>
 </template>
 
 <script>

@@ -33,7 +33,3 @@ npx surgio generate
 ### 交流
 
 [<img width="207" src="https://surgio.js.org/join-telegram.png">](https://t.me/surgiotg)
-
-<div style="margin-bottom: 2rem">
-  <Sponsor />
-</div>
