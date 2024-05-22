@@ -1,3 +1,12 @@
+# [3.9.0](https://github.com/geekdada/surgio/compare/v3.8.2...v3.9.0) (2024-05-22)
+
+
+### Features
+
+* support dialer-proxy and smux property in clash.meta config ([64c9575](https://github.com/geekdada/surgio/commit/64c957581e557213570fa1b43df3bb6682b00aba))
+
+
+
 ## [3.8.2](https://github.com/geekdada/surgio/compare/v3.8.1...v3.8.2) (2024-05-21)
 
 
