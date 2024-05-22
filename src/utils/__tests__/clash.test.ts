@@ -988,4 +988,67 @@ test('getClashNodes', async (t) => {
       },
     ],
   )
+
+  t.deepEqual(
+    clash.getClashNodes([
+      {
+        nodeName: 'trojan',
+        type: NodeTypeEnum.Trojan,
+        hostname: '1.1.1.1',
+        port: 443,
+        password: 'password1',
+        udpRelay: true,
+        alpn: ['h2', 'http/1.1'],
+        sni: 'example.com',
+        skipCertVerify: true,
+        network: 'ws',
+        underlyingProxy: 'socks5',
+        multiplex: {
+          protocol: 'smux',
+          maxConnections: 10,
+          minStreams: 1,
+          maxStreams: 16,
+          padding: true,
+          brutal: {
+            upMbps: 100,
+            downMbps: 100,
+          },
+        },
+        clashConfig: {
+          clashCore: 'clash.meta',
+        },
+      },
+    ]),
+    [
+      {
+        alpn: ['h2', 'http/1.1'],
+        'dialer-proxy': 'socks5',
+        name: 'trojan',
+        network: 'ws',
+        password: 'password1',
+        port: 443,
+        server: '1.1.1.1',
+        'skip-cert-verify': true,
+        smux: {
+          'brutal-opts': {
+            down: 100,
+            enabled: true,
+            up: 100,
+          },
+          enabled: true,
+          'max-connections': 10,
+          'max-streams': 16,
+          'min-streams': 1,
+          padding: true,
+          protocol: 'smux',
+        },
+        sni: 'example.com',
+        type: 'trojan',
+        udp: true,
+        'ws-opts': {
+          path: '/',
+        },
+      },
+    ],
+  )
 })

@@ -870,7 +870,7 @@ Surgio 不会验证名称是否有效
 :::
 
 - sing-box 的多路复用说明：[链接](https://sing-box.sagernet.org/configuration/shared/multiplex/)
-- 【暂不支持】mihomo 的多路复用说明：[链接](https://wiki.metacubex.one/config/proxies/sing-mux/)
+- Clash Meta (mihomo) 的多路复用说明：[链接](https://wiki.metacubex.one/config/proxies/sing-mux/)
 
 ```json5
 {
@@ -996,9 +996,9 @@ module.exports = {
 - 类型: `string`
 - 默认值: `undefined`
 
-是否对当前 Provider 中所有节点使用自定义 [Underlying Proxy](https://manual.nssurge.com/policy/proxy.html)。在 `CustomProvider` 中也可以使用，但是优先级低于 `nodeConfig.underlyingProxy`。
+是否对当前 Provider 中所有节点使用自定义 Underlying Proxy。在 `CustomProvider` 中也可以使用，但是优先级低于 `nodeConfig.underlyingProxy`。
 
-目前仅 Surge 支持该特性。
+目前仅 [Surge](https://manual.nssurge.com/policy/proxy.html) 和 [Clash Meta](https://wiki.metacubex.one/config/proxies/dialer-proxy/?h=dialer#dialer-proxy) 支持该特性。
 
 :::warning 注意
 Surgio 不会验证名称是否有效

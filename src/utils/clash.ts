@@ -24,7 +24,43 @@ export const getClashNodes = function (
   filter?: NodeFilterType | SortedNodeFilterType,
 ) {
   return applyFilter(list, filter)
-    .map(nodeListMapper)
+    .map((nodeConfig) => {
+      const clashNode = nodeListMapper(nodeConfig)
+
+      if (!clashNode) {
+        return clashNode
+      }
+
+      if (nodeConfig?.clashConfig?.clashCore === 'clash.meta') {
+        if (nodeConfig.underlyingProxy) {
+          clashNode['dialer-proxy'] = nodeConfig.underlyingProxy
+        }
+
+        if ('multiplex' in nodeConfig && nodeConfig.multiplex) {
+          // https://wiki.metacubex.one/config/proxies/sing-mux/#sing-mux
+          clashNode.smux = {
+            enabled: true,
+            protocol: nodeConfig.multiplex.protocol,
+            ...(nodeConfig.multiplex.brutal && {
+              'brutal-opts': {
+                enabled: true,
+                up: nodeConfig.multiplex.brutal.upMbps,
+                down: nodeConfig.multiplex.brutal.downMbps,
+              },
+            }),
+            ...pickAndFormatKeys(
+              nodeConfig.multiplex,
+              ['maxConnections', 'minStreams', 'maxStreams', 'padding'],
+              {
+                keyFormat: 'kebabCase',
+              },
+            ),
+          }
+        }
+      }
+
+      return clashNode
+    })
     .filter((item): item is NonNullable<ReturnType<typeof nodeListMapper>> =>
       checkNotNullish(item),
     )

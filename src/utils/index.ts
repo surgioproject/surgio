@@ -432,6 +432,24 @@ export const pickAndFormatStringList = (
   return result
 }
 
+/**
+ * Pick and format keys from an object
+ * Input:
+ * {
+ *   foo: 'bar',
+ *   bAr: 'bar',
+ *   bAz: 'baz',
+ * }
+ *
+ * pickAndFormatKeys(obj, ['foo', 'bar'], { keyFormat: 'kebabCase' })
+ *
+ * Output:
+ * {
+ *   'foo': 'bar',
+ *   'b-ar': 'bar',
+ *   'b-az': 'baz',
+ * }
+ */
 export const pickAndFormatKeys = (
   obj: Record<string, any>,
   keyList: readonly string[],
