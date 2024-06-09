@@ -117,9 +117,9 @@ function nodeListMapper(nodeConfig: PossibleNodeConfigType) {
 
     case NodeTypeEnum.Vless:
     case NodeTypeEnum.Vmess: {
-      node.security = nodeConfig.method
       node.uuid = nodeConfig.uuid
       if (nodeConfig.type === NodeTypeEnum.Vmess) {
+        node.security = nodeConfig.method
         if (nodeConfig.alterId) {
           node.alter_id = Number(nodeConfig.alterId)
         }
