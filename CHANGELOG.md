@@ -1,3 +1,12 @@
+## [3.9.1](https://github.com/geekdada/surgio/compare/v3.9.0...v3.9.1) (2024-06-11)
+
+
+### Bug Fixes
+
+* singbox ([2aea1c2](https://github.com/geekdada/surgio/commit/2aea1c2b52b2ee527831cbef6a8b2fed20034628))
+
+
+
 # [3.9.0](https://github.com/geekdada/surgio/compare/v3.8.2...v3.9.0) (2024-05-22)
 
 
