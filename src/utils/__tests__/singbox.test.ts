@@ -123,7 +123,7 @@ const nodeList: ReadonlyArray<PossibleNodeConfigType> = [
     mux: true,
   },
   {
-    nodeName: 'vmess.tcpNotSupported',
+    nodeName: 'vmess.tcp',
     type: NodeTypeEnum.Vmess,
     hostname: 'example.com',
     port: 443,
@@ -261,7 +261,7 @@ const nodeList: ReadonlyArray<PossibleNodeConfigType> = [
     },
   },
   {
-    nodeName: 'vless.tcpNotSupported',
+    nodeName: 'vless.tcp',
     type: NodeTypeEnum.Vless,
     hostname: 'example.com',
     port: 443,
@@ -670,6 +670,15 @@ const expectedNodes: Record<string, any>[] = [
   },
   {
     type: 'vmess',
+    tag: 'vmess.tcp',
+    server: 'example.com',
+    server_port: 443,
+    security: 'auto',
+    uuid: '1386f85e-657b-4d6e-9d56-78badb75e1fd',
+    alter_id: 0,
+  },
+  {
+    type: 'vmess',
     tag: 'vmess.complex',
     security: 'auto',
     uuid: '1386f85e-657b-4d6e-9d56-78badb75e1fd',
@@ -757,6 +766,19 @@ const expectedNodes: Record<string, any>[] = [
       host: 'example.com',
       path: '/foo',
       headers: { Host: ['example.com'] },
+    },
+  },
+  {
+    type: 'vless',
+    tag: 'vless.tcp',
+    server: 'example.com',
+    server_port: 443,
+    uuid: '1386f85e-657b-4d6e-9d56-78badb75e1fd',
+    flow: 'xtls-rprx-vision',
+    tls: {
+      enabled: true,
+      utls: { enabled: true, fingerprint: 'chrome2' },
+      reality: { enabled: true, public_key: 'publicKey', short_id: 'shortId' },
     },
   },
   {
