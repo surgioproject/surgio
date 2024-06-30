@@ -1,3 +1,12 @@
+## [3.9.2](https://github.com/geekdada/surgio/compare/v3.9.1...v3.9.2) (2024-06-30)
+
+
+### Features
+
+* **singbox:** Support network=tcp in VMESS/VLESS ([5e56602](https://github.com/geekdada/surgio/commit/5e5660283e77814229d5ec3043ee76146bf4880e))
+
+
+
 ## [3.9.1](https://github.com/geekdada/surgio/compare/v3.9.0...v3.9.1) (2024-06-11)
 
 
