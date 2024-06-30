@@ -187,6 +187,9 @@ function nodeListMapper(nodeConfig: PossibleNodeConfigType) {
           }
           break
 
+        case 'tcp':
+          break
+
         default:
           logger.warn(
             `sing-box 的 ${nodeConfig.type} 节点不支持 network=${nodeConfig.network}，节点 ${nodeConfig.nodeName} 会被忽略`,
