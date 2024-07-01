@@ -573,7 +573,7 @@ module.exports = {
 
 你可以通过配置这个属性来强制设定节点的 UDP 转发支持情况。
 
-## Shddowsocks JSON 订阅
+## Shadowsocks JSON 订阅
 
 ```js
 module.exports = {
