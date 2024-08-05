@@ -129,7 +129,7 @@ const nodeList: ReadonlyArray<PossibleNodeConfigType> = [
     port: 443,
     method: 'auto',
     uuid: '1386f85e-657b-4d6e-9d56-78badb75e1fd',
-    alterId: 0,
+    alterId: 1,
     network: 'tcp',
   },
   {
@@ -575,6 +575,20 @@ const nodeList: ReadonlyArray<PossibleNodeConfigType> = [
         presharedKey: 'presharedKey2',
         reservedBits: [2, 2, 3],
       },
+      {
+        publicKey: 'publicKey3',
+        endpoint: '162.159.195.115:7156',
+        allowedIps: '0.0.0.0/0, ::/0',
+        presharedKey: 'presharedKey3',
+        reservedBits: [3, 2, 3],
+      },
+      {
+        publicKey: 'publicKey4',
+        endpoint: '[2606:4700:d0:0:8537:1837:8101:92fd]:942',
+        allowedIps: '0.0.0.0/0, ::/0',
+        presharedKey: 'presharedKey4',
+        reservedBits: [4, 2, 3],
+      },
     ],
   },
 ]
@@ -675,7 +689,7 @@ const expectedNodes: Record<string, any>[] = [
     server_port: 443,
     security: 'auto',
     uuid: '1386f85e-657b-4d6e-9d56-78badb75e1fd',
-    alter_id: 0,
+    alter_id: 1,
   },
   {
     type: 'vmess',
@@ -784,7 +798,6 @@ const expectedNodes: Record<string, any>[] = [
   {
     type: 'vless',
     tag: 'vless.complex',
-    security: 'none',
     uuid: '1386f85e-657b-4d6e-9d56-78badb75e1fd',
     flow: 'xtls-rprx-vision',
     tls: {
@@ -824,7 +837,6 @@ const expectedNodes: Record<string, any>[] = [
     tag: 'vless.http',
     server: 'example.com',
     server_port: 443,
-    security: 'none',
     uuid: '1386f85e-657b-4d6e-9d56-78badb75e1fd',
     flow: 'xtls-rprx-vision',
     tls: {
@@ -844,7 +856,6 @@ const expectedNodes: Record<string, any>[] = [
     tag: 'vless.ws',
     server: 'example.com',
     server_port: 443,
-    security: 'none',
     uuid: '1386f85e-657b-4d6e-9d56-78badb75e1fd',
     flow: 'xtls-rprx-vision',
     tls: {
@@ -859,7 +870,6 @@ const expectedNodes: Record<string, any>[] = [
     tag: 'vless.quic',
     server: 'example.com',
     server_port: 443,
-    security: 'none',
     uuid: '1386f85e-657b-4d6e-9d56-78badb75e1fd',
     flow: 'xtls-rprx-vision',
     tls: {
@@ -874,7 +884,6 @@ const expectedNodes: Record<string, any>[] = [
     tag: 'vless.grpc',
     server: 'example.com',
     server_port: 443,
-    security: 'none',
     uuid: '1386f85e-657b-4d6e-9d56-78badb75e1fd',
     flow: 'xtls-rprx-vision',
     tls: {
@@ -889,7 +898,6 @@ const expectedNodes: Record<string, any>[] = [
     tag: 'vless.httpupgrade',
     server: 'example.com',
     server_port: 443,
-    security: 'none',
     uuid: '1386f85e-657b-4d6e-9d56-78badb75e1fd',
     flow: 'xtls-rprx-vision',
     tls: {
@@ -1029,6 +1037,22 @@ const expectedNodes: Record<string, any>[] = [
         allowed_ips: ['0.0.0.0/0', '::/0'],
         reserved: [2, 2, 3],
       },
+      {
+        server: '162.159.195.115',
+        server_port: 7156,
+        public_key: 'publicKey3',
+        pre_shared_key: 'presharedKey3',
+        allowed_ips: ['0.0.0.0/0', '::/0'],
+        reserved: [3, 2, 3],
+      },
+      {
+        server: '[2606:4700:d0:0:8537:1837:8101:92fd]',
+        server_port: 942,
+        public_key: 'publicKey4',
+        pre_shared_key: 'presharedKey4',
+        allowed_ips: ['0.0.0.0/0', '::/0'],
+        reserved: [4, 2, 3],
+      },
     ],
     mtu: 1420,
   },
@@ -1047,5 +1071,17 @@ test('getSingboxNodeNames', async (t) => {
       (nodeConfig) => nodeConfig.nodeName === 'ss',
     ),
     ['ss'],
+  )
+})
+
+test('getSingboxNodes', async (t) => {
+  t.deepEqual(singbox.getSingboxNodes(nodeList), expectedNodes)
+
+  t.deepEqual(
+    singbox.getSingboxNodes(
+      nodeList,
+      (nodeConfig) => nodeConfig.nodeName === 'ss',
+    ),
+    [expectedNodes[0]],
   )
 })
