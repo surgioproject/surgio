@@ -1,3 +1,12 @@
+## [3.9.3](https://github.com/geekdada/surgio/compare/v3.9.2...v3.9.3) (2024-08-12)
+
+
+### Bug Fixes
+
+* singbox wireguard ipv6 endpoint parsing; singbox test case ([b013657](https://github.com/geekdada/surgio/commit/b013657350cdb2ebf016b302c0eada884d018950))
+
+
+
 ## [3.9.2](https://github.com/geekdada/surgio/compare/v3.9.1...v3.9.2) (2024-06-30)
 
 
