@@ -12,12 +12,7 @@ import { MultiplexValidator, TlsNodeConfigValidator } from '../validators'
 
 import { stringifySip003Options } from './ss'
 
-import {
-  checkNotNullish,
-  getHostnameFromHost,
-  getPortFromHost,
-  pickAndFormatKeys,
-} from './'
+import { checkNotNullish, pickAndFormatKeys } from './'
 
 const logger = createLogger({ service: 'surgio:utils:singbox' })
 
@@ -292,14 +287,17 @@ function nodeListMapper(nodeConfig: PossibleNodeConfigType) {
         node.local_address.push(`${nodeConfig.selfIpV6}/128`)
       }
       node.private_key = nodeConfig.privateKey
-      node.peers = nodeConfig.peers.map((peer) => ({
-        server: getHostnameFromHost(peer.endpoint),
-        server_port: getPortFromHost(peer.endpoint),
-        public_key: peer.publicKey,
-        pre_shared_key: peer.presharedKey,
-        allowed_ips: peer.allowedIps?.split(',').map((ip) => ip.trim()),
-        reserved: peer.reservedBits,
-      }))
+      node.peers = nodeConfig.peers.map((peer) => {
+        const endpoint = new URL(`http://${peer.endpoint}`)
+        return {
+          server: endpoint.hostname,
+          server_port: Number(endpoint.port),
+          public_key: peer.publicKey,
+          pre_shared_key: peer.presharedKey,
+          allowed_ips: peer.allowedIps?.split(',').map((ip) => ip.trim()),
+          reserved: peer.reservedBits,
+        }
+      })
       node.mtu = nodeConfig.mtu
       break
   }
