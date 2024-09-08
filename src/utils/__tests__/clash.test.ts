@@ -823,12 +823,15 @@ test('getClashNodes', async (t) => {
         clashConfig: {
           enableTuic: true,
           enableShadowTls: false,
+          clashCore: 'stash',
         },
         hostname: '1.1.1.1',
         port: 443,
         token: 'password',
         skipCertVerify: true,
         alpn: ['h3'],
+        portHopping: '5000-6000',
+        portHoppingInterval: 10,
       },
     ]),
     [
@@ -849,6 +852,8 @@ test('getClashNodes', async (t) => {
         'skip-cert-verify': true,
         udp: true,
         alpn: ['h3'],
+        'hop-interval': 10,
+        ports: '5000-6000',
       },
     ],
   )
@@ -935,6 +940,8 @@ test('getClashNodes', async (t) => {
         password: 'password',
         downloadBandwidth: 100,
         uploadBandwidth: 100,
+        portHopping: '5000-6000',
+        portHoppingInterval: 10,
         clashConfig: {
           enableHysteria2: true,
           clashCore: 'stash',
@@ -974,6 +981,8 @@ test('getClashNodes', async (t) => {
         server: 'example.com',
         type: 'hysteria2',
         up: 100,
+        ports: '5000-6000',
+        'hop-interval': 10,
       },
       {
         down: 100,

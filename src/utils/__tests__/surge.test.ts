@@ -514,6 +514,8 @@ test('getSurgeNodes - Tuic', (t) => {
         port: 443,
         token: 'token',
         serverCertFingerprintSha256: 'sha256',
+        portHopping: '5000-6000',
+        portHoppingInterval: 10,
       },
       {
         type: NodeTypeEnum.Tuic,
@@ -548,7 +550,7 @@ test('getSurgeNodes - Tuic', (t) => {
       },
     ]),
     [
-      '测试 Tuic = tuic, example.com, 443, token=token, server-cert-fingerprint-sha256=sha256',
+      '测试 Tuic = tuic, example.com, 443, token=token, server-cert-fingerprint-sha256=sha256, port-hopping=5000-6000, port-hopping-interval=10',
       '测试 Tuic = tuic, example.com, 443, token=token, alpn=h3',
       '测试 Tuic = tuic, example.com, 443, token=token, skip-cert-verify=true, sni=sni.example.com, alpn=h3',
       '测试 Tuic = tuic-v5, example.com, 443, password=password, uuid=uuid, ecn=true, skip-cert-verify=true, sni=sni.example.com, alpn=h3',

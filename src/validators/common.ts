@@ -80,6 +80,8 @@ export const SimpleNodeConfigValidator = z.object({
     .optional(),
 
   // Misc
+  portHopping: z.string().optional(),
+  portHoppingInterval: z.number().optional(),
   underlyingProxy: z.string().optional(),
   testUrl: z.string().optional(),
   testTimeout: z.number().optional(),

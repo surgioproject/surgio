@@ -511,6 +511,8 @@ function appendCommonConfig(
         'sni',
         'serverCertFingerprintSha256',
         'blockQuic',
+        'portHopping',
+        'portHoppingInterval',
       ],
       {
         keyFormat: 'kebabCase',

@@ -409,6 +409,17 @@ function nodeListMapper(nodeConfig: PossibleNodeConfigType) {
               keyFormat: 'kebabCase',
             },
           ),
+          ...(clashConfig.clashCore === 'stash' && nodeConfig.portHopping
+            ? {
+                ports: nodeConfig.portHopping,
+              }
+            : null),
+          ...(clashConfig.clashCore === 'stash' &&
+          nodeConfig.portHoppingInterval
+            ? {
+                'hop-interval': nodeConfig.portHoppingInterval,
+              }
+            : null),
           ...(nodeConfig.alpn ? { alpn: nodeConfig.alpn } : null),
         } as const
       }
@@ -426,6 +437,16 @@ function nodeListMapper(nodeConfig: PossibleNodeConfigType) {
             keyFormat: 'kebabCase',
           },
         ),
+        ...(clashConfig.clashCore === 'stash' && nodeConfig.portHopping
+          ? {
+              ports: nodeConfig.portHopping,
+            }
+          : null),
+        ...(clashConfig.clashCore === 'stash' && nodeConfig.portHoppingInterval
+          ? {
+              'hop-interval': nodeConfig.portHoppingInterval,
+            }
+          : null),
         ...(nodeConfig.alpn ? { alpn: nodeConfig.alpn } : null),
       } as const
 
@@ -454,6 +475,20 @@ function nodeListMapper(nodeConfig: PossibleNodeConfigType) {
             keyFormat: 'kebabCase',
           },
         ),
+        ...((clashConfig.clashCore === 'stash' ||
+          clashConfig.clashCore === 'clash.meta') &&
+        nodeConfig.portHopping
+          ? {
+              ports: nodeConfig.portHopping,
+            }
+          : null),
+        ...((clashConfig.clashCore === 'stash' ||
+          clashConfig.clashCore === 'clash.meta') &&
+        nodeConfig.portHoppingInterval
+          ? {
+              'hop-interval': nodeConfig.portHoppingInterval,
+            }
+          : null),
         ...(nodeConfig.alpn ? { alpn: nodeConfig.alpn } : null),
       } as const
 
