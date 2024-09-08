@@ -1,3 +1,12 @@
+# [3.10.0](https://github.com/geekdada/surgio/compare/v3.9.3...v3.10.0) (2024-09-08)
+
+
+### Features
+
+* Add port hopping support to Clash and Surge config ([8d867cc](https://github.com/geekdada/surgio/commit/8d867cc036a2ccace8386ef2297c12866a4660b2))
+
+
+
 ## [3.9.3](https://github.com/geekdada/surgio/compare/v3.9.2...v3.9.3) (2024-08-12)
 
 
