@@ -411,7 +411,7 @@ function nodeListMapper(nodeConfig: PossibleNodeConfigType) {
           ),
           ...(clashConfig.clashCore === 'stash' && nodeConfig.portHopping
             ? {
-                ports: nodeConfig.portHopping,
+                ports: nodeConfig.portHopping.replaceAll(';', ','),
               }
             : null),
           ...(clashConfig.clashCore === 'stash' &&
@@ -439,7 +439,7 @@ function nodeListMapper(nodeConfig: PossibleNodeConfigType) {
         ),
         ...(clashConfig.clashCore === 'stash' && nodeConfig.portHopping
           ? {
-              ports: nodeConfig.portHopping,
+              ports: nodeConfig.portHopping.replaceAll(';', ','),
             }
           : null),
         ...(clashConfig.clashCore === 'stash' && nodeConfig.portHoppingInterval
@@ -479,7 +479,7 @@ function nodeListMapper(nodeConfig: PossibleNodeConfigType) {
           clashConfig.clashCore === 'clash.meta') &&
         nodeConfig.portHopping
           ? {
-              ports: nodeConfig.portHopping,
+              ports: nodeConfig.portHopping.replaceAll(';', ','),
             }
           : null),
         ...((clashConfig.clashCore === 'stash' ||

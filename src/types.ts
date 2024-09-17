@@ -141,42 +141,74 @@ export interface TrojanProviderConfig extends ProviderConfig {
   readonly tls13?: boolean
 }
 
+export type HttpNodeConfigInput = z.infer<typeof HttpNodeConfigValidator>
+
 export type HttpNodeConfig = z.infer<typeof HttpNodeConfigValidator> &
   SurgioInternals
+
+export type HttpsNodeConfigInput = z.infer<typeof HttpsNodeConfigValidator>
 
 export type HttpsNodeConfig = z.infer<typeof HttpsNodeConfigValidator> &
   SurgioInternals
 
+export type TrojanNodeConfigInput = z.infer<typeof TrojanNodeConfigValidator>
+
 export type TrojanNodeConfig = z.infer<typeof TrojanNodeConfigValidator> &
   SurgioInternals
+
+export type ShadowsocksNodeConfigInput = z.infer<
+  typeof ShadowsocksNodeConfigValidator
+>
 
 export type ShadowsocksNodeConfig = z.infer<
   typeof ShadowsocksNodeConfigValidator
 > &
   SurgioInternals
 
+export type ShadowsocksrNodeConfigInput = z.infer<
+  typeof ShadowsocksrNodeConfigValidator
+>
+
 export type ShadowsocksrNodeConfig = z.infer<
   typeof ShadowsocksrNodeConfigValidator
 > &
   SurgioInternals
 
+export type Socks5NodeConfigInput = z.infer<typeof Socks5NodeConfigValidator>
+
 export type Socks5NodeConfig = z.infer<typeof Socks5NodeConfigValidator> &
   SurgioInternals
+
+export type SnellNodeConfigInput = z.infer<typeof SnellNodeConfigValidator>
 
 export type SnellNodeConfig = z.infer<typeof SnellNodeConfigValidator> &
   SurgioInternals
 
+export type VmessNodeConfigInput = z.infer<typeof VmessNodeConfigValidator>
+
 export type VmessNodeConfig = z.infer<typeof VmessNodeConfigValidator> &
   SurgioInternals
+
+export type VlessNodeConfigInput = z.infer<typeof VlessNodeConfigValidator>
 
 export type VlessNodeConfig = z.infer<typeof VlessNodeConfigValidator> &
   SurgioInternals
 
+export type TuicNodeConfigInput = z.input<typeof TuicNodeConfigValidator>
+
 export type TuicNodeConfig = z.infer<typeof TuicNodeConfigValidator> &
   SurgioInternals
 
+export type WireguardNodeConfigInput = z.input<
+  typeof WireguardNodeConfigValidator
+>
+
 export type WireguardNodeConfig = z.infer<typeof WireguardNodeConfigValidator> &
   SurgioInternals
+
+export type Hysteria2NodeConfigInput = z.input<
+  typeof Hysteria2NodeConfigValidator
+>
 
 export type Hysteria2NodeConfig = z.infer<typeof Hysteria2NodeConfigValidator> &
   SurgioInternals

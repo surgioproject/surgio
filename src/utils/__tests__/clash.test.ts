@@ -830,7 +830,7 @@ test('getClashNodes', async (t) => {
         token: 'password',
         skipCertVerify: true,
         alpn: ['h3'],
-        portHopping: '5000-6000',
+        portHopping: '5000-6000;7000',
         portHoppingInterval: 10,
       },
     ]),
@@ -853,7 +853,7 @@ test('getClashNodes', async (t) => {
         udp: true,
         alpn: ['h3'],
         'hop-interval': 10,
-        ports: '5000-6000',
+        ports: '5000-6000,7000',
       },
     ],
   )
