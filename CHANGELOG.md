@@ -1,3 +1,17 @@
+## [3.10.1](https://github.com/geekdada/surgio/compare/v3.10.0...v3.10.1) (2024-09-17)
+
+
+### Bug Fixes
+
+* Output correct port-hopping config for Surge ([ecc6901](https://github.com/geekdada/surgio/commit/ecc69018cbe8a001e4588e8b8e55261e46a756f6))
+
+
+### Features
+
+* Support port-hopping config from Clash subscription ([1869a1f](https://github.com/geekdada/surgio/commit/1869a1fd49fc41dec7575b802f25b3ac8998c301))
+
+
+
 # [3.10.0](https://github.com/geekdada/surgio/compare/v3.9.3...v3.10.0) (2024-09-08)
 
 
