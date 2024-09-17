@@ -239,6 +239,8 @@ Proxy:
       - h3
     # ca: "./my.ca"
     # ca-str: "xyz"
+    ports: "5000-6000,7000"
+    hop-interval: 10
 
 Proxy Group:
   # url-test select which proxy will be used by benchmarking speed to a URL.

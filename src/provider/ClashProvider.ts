@@ -12,6 +12,7 @@ import {
   ClashProviderConfig,
   HttpNodeConfig,
   HttpsNodeConfig,
+  Hysteria2NodeConfigInput,
   Hysteria2NodeConfig,
   NodeTypeEnum,
   ShadowsocksNodeConfig,
@@ -23,6 +24,7 @@ import {
   VlessNodeConfig,
   VmessNodeConfig,
   Socks5NodeConfig,
+  TuicNodeConfigInput,
 } from '../types'
 import {
   lowercaseHeaderKeys,
@@ -31,6 +33,10 @@ import {
   parseBitrate,
 } from '../utils'
 import relayableUrl from '../utils/relayable-url'
+import {
+  Hysteria2NodeConfigValidator,
+  TuicNodeConfigValidator,
+} from '../validators'
 
 import Provider from './Provider'
 import { GetNodeListFunction, GetSubscriptionUserInfoFunction } from './types'
@@ -461,8 +467,10 @@ export const parseClashConfig = (
         }
 
         case 'tuic': {
+          let input: TuicNodeConfigInput
+
           if (item.version >= 5) {
-            return {
+            input = {
               type: NodeTypeEnum.Tuic,
               version: item.version,
               nodeName: item.name,
@@ -476,25 +484,52 @@ export const parseClashConfig = (
               tls13: tls13 ?? false,
               ...('sni' in item ? { sni: item.sni } : null),
               ...('alpn' in item ? { alpn: item.alpn } : null),
-            } as TuicNodeConfig
+              ...('ports' in item
+                ? {
+                    portHopping: item.ports,
+                  }
+                : null),
+              ...('hop-interval' in item
+                ? { portHoppingInterval: item['hop-interval'] }
+                : null),
+            }
+          } else {
+            input = {
+              type: NodeTypeEnum.Tuic,
+              nodeName: item.name,
+              hostname: item.server,
+              port: item.port,
+              token: item.token,
+              ...('skip-cert-verify' in item
+                ? { skipCertVerify: item['skip-cert-verify'] === true }
+                : null),
+              tls13: tls13 ?? false,
+              ...('sni' in item ? { sni: item.sni } : null),
+              ...('alpn' in item ? { alpn: item.alpn } : null),
+              ...('ports' in item
+                ? {
+                    portHopping: item.ports,
+                  }
+                : null),
+              ...('hop-interval' in item
+                ? { portHoppingInterval: item['hop-interval'] }
+                : null),
+            }
           }
 
-          return {
-            type: NodeTypeEnum.Tuic,
-            nodeName: item.name,
-            hostname: item.server,
-            port: item.port,
-            token: item.token,
-            ...('skip-cert-verify' in item
-              ? { skipCertVerify: item['skip-cert-verify'] === true }
-              : null),
-            tls13: tls13 ?? false,
-            ...('sni' in item ? { sni: item.sni } : null),
-            ...('alpn' in item ? { alpn: item.alpn } : null),
-          } as TuicNodeConfig
+          const result = TuicNodeConfigValidator.safeParse(input)
+
+          // istanbul ignore next
+          if (!result.success) {
+            throw new SurgioError('Tuic 节点配置校验失败', {
+              cause: result.error,
+            })
+          }
+
+          return result.data
         }
 
-        case 'hysteria2':
+        case 'hysteria2': {
           // istanbul ignore next
           if (item.obfs && item.obfs !== 'salamander') {
             throw new Error(
@@ -502,7 +537,7 @@ export const parseClashConfig = (
             )
           }
 
-          return {
+          const input: Hysteria2NodeConfigInput = {
             type: NodeTypeEnum.Hysteria2,
             nodeName: item.name,
             hostname: item.server,
@@ -521,7 +556,27 @@ export const parseClashConfig = (
             ...('skip-cert-verify' in item
               ? { skipCertVerify: item['skip-cert-verify'] === true }
               : null),
-          } as Hysteria2NodeConfig
+            ...('ports' in item
+              ? {
+                  portHopping: item.ports,
+                }
+              : null),
+            ...('hop-interval' in item
+              ? { portHoppingInterval: item['hop-interval'] }
+              : null),
+          }
+
+          const result = Hysteria2NodeConfigValidator.safeParse(input)
+
+          // istanbul ignore next
+          if (!result.success) {
+            throw new SurgioError('Hysteria2 节点配置校验失败', {
+              cause: result.error,
+            })
+          }
+
+          return result.data
+        }
 
         case 'socks5': {
           const socks5Node = {

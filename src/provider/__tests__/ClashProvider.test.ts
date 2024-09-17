@@ -251,6 +251,8 @@ test('getClashSubscription', async (t) => {
     alpn: ['h3'],
     skipCertVerify: false,
     sni: 'server.com',
+    portHopping: '5000-6000;7000',
+    portHoppingInterval: 10,
   })
 })
 
