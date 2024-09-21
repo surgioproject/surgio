@@ -116,17 +116,20 @@ export const getLoonNodes = function (
             }`,
             nodeConfig.hostname,
             nodeConfig.port,
-            JSON.stringify(nodeConfig.uuid),
-            `transport=${nodeConfig.network}`,
           ]
 
           if (nodeConfig.type === NodeTypeEnum.Vmess) {
             config.push(
               nodeConfig.method === 'auto'
-                ? `method=chacha20-poly1305`
-                : `method=${nodeConfig.method}`,
+                ? `chacha20-poly1305`
+                : nodeConfig.method,
             )
           }
+
+          config.push(
+            JSON.stringify(nodeConfig.uuid),
+            `transport=${nodeConfig.network}`,
+          )
 
           if (nodeConfig.network === 'ws' && nodeConfig.wsOpts) {
             const obfsHost = getHeader(nodeConfig.wsOpts.headers, 'Host')
