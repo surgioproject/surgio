@@ -89,8 +89,8 @@ function nodeListMapper(
             'https',
             nodeConfig.hostname,
             nodeConfig.port,
-            nodeConfig.username,
-            nodeConfig.password,
+            nodeConfig.username /* istanbul ignore next */ || '',
+            nodeConfig.password /* istanbul ignore next */ || '',
             ...(typeof nodeConfig.skipCertVerify === 'boolean'
               ? [`skip-cert-verify=${nodeConfig.skipCertVerify}`]
               : []),
@@ -109,8 +109,8 @@ function nodeListMapper(
             'http',
             nodeConfig.hostname,
             nodeConfig.port,
-            nodeConfig.username,
-            nodeConfig.password,
+            nodeConfig.username /* istanbul ignore next */ || '',
+            nodeConfig.password /* istanbul ignore next */ || '',
           ].join(', '),
         ].join(' = '),
       ]
