@@ -1,4 +1,4 @@
 {
   "cache_dependencies": false,
-  "ZBPACK_BUILD_COMMAND": "pnpm run docs:build:zeabur"
+  "build_command": "pnpm run docs:build:zeabur"
 }
