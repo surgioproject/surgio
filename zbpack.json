@@ -1,4 +1,6 @@
 {
   "cache_dependencies": false,
-  "build_command": "pnpm run docs:build:zeabur"
+  "build_command": "pnpm run docs:build:zeabur",
+  "start_command": "",
+  "serverless": true
 }
