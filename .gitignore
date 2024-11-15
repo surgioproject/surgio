@@ -9,6 +9,7 @@
 node_modules/
 coverage/
 
+/.zeabur/output/
 /dist/
 /build/
 /binary-build/
