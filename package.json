@@ -50,7 +50,7 @@
     "prepare": "husky install",
     "docs:dev": "NODE_ENV=development vuepress dev docs",
     "docs:build": "NODE_ENV=production vuepress build docs",
-    "docs:build:zeabur": "NODE_ENV=production vuepress build docs --dest .zeabur/output",
+    "docs:build:zeabur": "NODE_ENV=production vuepress build docs --dest .zeabur/output/static",
     "release": "bumpp && npm publish",
     "release:beta": "bumpp --preid beta --no-push && npm publish --tag beta"
   },
