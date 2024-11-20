@@ -266,6 +266,10 @@ export const getLoonNodes = function (
             }
           }
 
+          if (nodeConfig.peers[0].keepalive) {
+            config.push(`keepalive=${nodeConfig.peers[0].keepalive}`)
+          }
+
           for (const peer of nodeConfig.peers) {
             const peerConfig = [
               `public-key=${JSON.stringify(peer.publicKey)}`,
@@ -273,20 +277,18 @@ export const getLoonNodes = function (
             ]
 
             if (peer.allowedIps) {
-              peers.push(`allowed-ips=${JSON.stringify(peer.allowedIps)}`)
+              peerConfig.push(`allowed-ips=${JSON.stringify(peer.allowedIps)}`)
             }
             if (peer.presharedKey) {
-              peers.push(`preshared-key=${JSON.stringify(peer.presharedKey)}`)
+              peerConfig.push(
+                `preshared-key=${JSON.stringify(peer.presharedKey)}`,
+              )
             }
             if (peer.reservedBits) {
-              peers.push(`reserved=${JSON.stringify(peer.reservedBits)}`)
+              peerConfig.push(`reserved=${JSON.stringify(peer.reservedBits)}`)
             }
 
             peers.push(`{${peerConfig.join(',')}}`)
-          }
-
-          if (nodeConfig.peers[0].keepalive) {
-            config.push(`keepalive=${nodeConfig.peers[0].keepalive}`)
           }
 
           config.push(`peers=[${peers.join(',')}]`)
