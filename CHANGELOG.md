@@ -1,3 +1,16 @@
+## [3.10.3](https://github.com/geekdada/surgio/compare/v3.10.2...v3.10.3) (2024-11-20)
+
+
+### Bug Fixes
+
+* clash wireguard config pre-shared-key key name wrong ([760af58](https://github.com/geekdada/surgio/commit/760af582352de2217c05959cdd433b4c895397eb))
+* correct formatting of peers in Loon configuration ([096db3d](https://github.com/geekdada/surgio/commit/096db3dddb46b77349cbf3fb9daae3dfeb79bea3))
+* distinguish pre-shared-key by clashCore ([f43be62](https://github.com/geekdada/surgio/commit/f43be6287329bc80a5717cf65b73b74abf76ebbb))
+* update Loon node configuration to include keepalive and correct peers formatting ([76782f4](https://github.com/geekdada/surgio/commit/76782f4e8b01e2e0b609f6d9297cb83fb909518b))
+* **utils:** HTTP(S) optional username & password ([805b93e](https://github.com/geekdada/surgio/commit/805b93e61943e9bebc477cf514f3e708fe4ab644))
+
+
+
 ## [3.10.2](https://github.com/geekdada/surgio/compare/v3.10.1...v3.10.2) (2024-09-21)
 
 
