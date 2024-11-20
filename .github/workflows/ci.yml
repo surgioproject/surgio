@@ -19,14 +19,16 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
+      # This has to be done before setting up Node.js,
+      # more info found in https://github.com/actions/setup-node/issues/531#issuecomment-1872977503
+      - name: Enable Corepack
+        run: corepack enable
+
       - name: Use Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.node-version }}
           cache: 'pnpm'
-
-      - name: Enable Corepack
-        run: corepack enable
 
       - name: Install dependencies
         run: |
