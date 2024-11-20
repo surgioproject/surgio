@@ -100,6 +100,8 @@ export const SimpleNodeConfigValidator = z.object({
   hostnameIp: z.array(z.string()).readonly().optional(),
   binPath: z.string().optional(),
   localPort: z.number().optional(),
+  interfaceName: z.string().optional(),
+  ipVersion: z.string().optional(),
 })
 
 export const TlsNodeConfigValidator = SimpleNodeConfigValidator.extend({
