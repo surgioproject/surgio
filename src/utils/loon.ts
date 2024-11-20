@@ -273,13 +273,13 @@ export const getLoonNodes = function (
             ]
 
             if (peer.allowedIps) {
-              peers.push(`allowed-ips=${JSON.stringify(peer.allowedIps)}}}`)
+              peers.push(`allowed-ips=${JSON.stringify(peer.allowedIps)}`)
             }
             if (peer.presharedKey) {
-              peers.push(`preshared-key=${JSON.stringify(peer.presharedKey)}}}`)
+              peers.push(`preshared-key=${JSON.stringify(peer.presharedKey)}`)
             }
             if (peer.reservedBits) {
-              peers.push(`reserved=${JSON.stringify(peer.reservedBits)}}`)
+              peers.push(`reserved=${JSON.stringify(peer.reservedBits)}`)
             }
 
             peers.push(`{${peerConfig.join(',')}}`)
