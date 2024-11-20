@@ -25,7 +25,7 @@ const {
 } = internalFilters
 const logger = createLogger({ service: 'surgio:utils:loon' })
 
-// https://loon0x00.github.io/LoonManual/#/cn/node
+// https://nsloon.app/docs/Node/#%E8%8A%82%E7%82%B9%E6%A0%BC%E5%BC%8F
 export const getLoonNodes = function (
   list: ReadonlyArray<PossibleNodeConfigType>,
   filter?: NodeFilterType | SortedNodeFilterType,
