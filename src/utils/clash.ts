@@ -515,10 +515,9 @@ function nodeListMapper(nodeConfig: PossibleNodeConfigType) {
         port: getPortFromHost(nodeConfig.peers[0].endpoint),
         'public-key': nodeConfig.peers[0].publicKey,
         ...(nodeConfig.peers[0].presharedKey
-          ? {
-              'pre-shared-key': nodeConfig.peers[0].presharedKey,
-              'preshared-key': nodeConfig.peers[0].presharedKey,
-            }
+          ? nodeConfig?.clashConfig?.clashCore === 'clash.meta'
+            ? { 'pre-shared-key': nodeConfig.peers[0].presharedKey }
+            : { 'preshared-key': nodeConfig.peers[0].presharedKey }
           : null),
         ...(nodeConfig.peers[0].reservedBits
           ? {
