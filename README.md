@@ -32,18 +32,15 @@
 
 ## Sponsors
 
-### [MorseGPT][morse-link]
-
-[无需海外信用卡和手机号码使用 `gpt-4o` 模型，支持微信、支付宝付款][morse-link]
+[![Deployed on Zeabur](https://zeabur.com/deployed-on-zeabur-dark.svg)](https://zeabur.com?referralCode=geekdada&utm_source=geekdada&utm_campaign=oss)
 
 ---
 
-[<img width="180" src="docs/.vuepress/public/vxtrans.png" alt="vxtrans">][vx-link]
+### [MorseGPT][morse-link]
 
-[vxTrans - 网络优化工具，有效地降低延迟，改善传输性能][vx-link]
+[无需海外信用卡和手机号码使用 `gpt-4o` 模型，支持微信、支付宝付款。][morse-link]
 
 [morse-link]: https://morsegpt.net/?utm_source=surgio
-[vx-link]: https://vx.link/?rel=geekdada
 
 ## Contributors
 
