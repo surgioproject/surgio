@@ -1,6 +1,5 @@
 import { defaultTheme } from '@vuepress/theme-default'
 import type { Theme } from 'vuepress'
-import { path } from '@vuepress/utils'
 
 export default {
   name: 'custom-theme',
@@ -62,7 +61,4 @@ export default {
       },
     ],
   }),
-  layouts: {
-    Layout: path.resolve(__dirname, 'layouts/Layout.vue'),
-  },
 } as Theme;

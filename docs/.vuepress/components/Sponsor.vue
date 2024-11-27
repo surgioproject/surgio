@@ -1,8 +1,7 @@
 <template>
     <div class="sponsor">
-        <a href="https://vx.link/?rel=geekdada" target="_blank" rel="noopener">
-            <div><img src="/vxtrans.png" alt="vxtrans"></div>
-            <div class="text">有效地降低延迟，改善传输性能</div>
+        <a href="https://zeabur.com?referralCode=geekdada&utm_source=geekdada&utm_campaign=oss" target="_blank">
+            <div><img src="https://zeabur.com/deployed-on-zeabur-dark.svg" alt="Deployed on Zeabur"></div>
         </a>
     </div>
 </template>
@@ -18,7 +17,7 @@ export default {
         display: flex;
         justify-content: center;
         width: auto;
-        margin: 2rem 0 0;
+        margin: 0;
     }
     .sponsor img {
         width: 180px;
