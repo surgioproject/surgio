@@ -1,3 +1,12 @@
+## [3.10.5](https://github.com/geekdada/surgio/compare/v3.10.4...v3.10.5) (2024-12-31)
+
+
+### Features
+
+* Enable dual-stack resolving for ioredis ([d28922b](https://github.com/geekdada/surgio/commit/d28922b085effe65ff1edeac271042e01e4893dd))
+
+
+
 ## [3.10.4](https://github.com/geekdada/surgio/compare/v3.10.3...v3.10.4) (2024-12-31)
 
 
