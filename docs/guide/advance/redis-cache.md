@@ -10,6 +10,7 @@ sidebarDepth: 1
 
 ## 新建一个免费的 Redis 实例
 
+- Railway 和 Zeabur 都提供 Redis 服务
 - [Redis Cloud](https://redis.com/try-free/)
 - [Upstash](https://upstash.com/redis/)
 
@@ -48,14 +49,18 @@ module.exports = {
 
 请在需要开启 Redis 的环境下配置环境变量 `REDIS_URL`。不建议在本地生成配置时也连接 Redis，这样反而会变慢。
 
+:::tip 提示
+Zeabur 的 Redis 环境变量是 `REDIS_URI`。
+:::
+
 ```js
 // surgio.conf.js
 
 module.exports = {
-  cache: process.env.REDIS_URL
+  cache: process.env.REDIS_URL || process.env.REDIS_URI
     ? {
       type: 'redis',
-      redisUrl: process.env.REDIS_URL,
+      redisUrl: process.env.REDIS_URL || process.env.REDIS_URI,
     }
     : undefined,
 }
@@ -63,4 +68,4 @@ module.exports = {
 
 以 Netlify 为例，你可以在后台下图位置增加环境变量。
 
-![](../images/netlify-redis-config.png)
+![](/images/netlify-redis-config.png)
