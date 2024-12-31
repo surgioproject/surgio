@@ -5,6 +5,7 @@ import { registerComponentsPlugin } from '@vuepress/plugin-register-components'
 import { sitemapPlugin } from '@vuepress/plugin-sitemap'
 import { umamiAnalyticsPlugin } from 'vuepress-plugin-umami-analytics'
 import { viteBundler } from '@vuepress/bundler-vite'
+import { shikiPlugin } from '@vuepress/plugin-shiki'
 
 import customTheme from './theme'
 
@@ -48,6 +49,10 @@ const head: HeadConfig[] = [
 const plugins: PluginConfig = [
   registerComponentsPlugin({
     componentsDir: path.resolve(__dirname, './components'),
+  }),
+  shikiPlugin({
+    // 配置项
+    langs: ['ts', 'json', 'bash', 'shell', 'yaml', 'js', 'json5', 'html', 'ini', 'toml', 'md'],
   }),
 ]
 

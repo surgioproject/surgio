@@ -715,7 +715,7 @@ http-response ^https?://(sdk|wb)app\.uve\.weibo\.com(/interface/sdk/sdkad.php|/w
 
 _for Surge_
 
-```{4}
+```txt {4}
 {% import './snippet/surge_script.tpl' as surge_script %}
 
 [Script]
@@ -724,7 +724,7 @@ _for Surge_
 
 _for Quantumult X_
 
-```{4}
+```txt {4}
 {% import './snippet/surge_script.tpl' as surge_script %}
 
 [rewrite_local]

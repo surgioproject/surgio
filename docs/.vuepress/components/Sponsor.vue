@@ -18,6 +18,7 @@ export default {
         justify-content: center;
         width: auto;
         margin: 0;
+        margin-bottom: 1em;
     }
     .sponsor img {
         width: 180px;

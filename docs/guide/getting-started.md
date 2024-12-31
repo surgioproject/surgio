@@ -52,7 +52,7 @@ Surgio 生成出的规则就是「产品」。
 
 ## 目录结构
 
-```txt{5,6,7}
+```txt {5,6,7}
 ./my-rule-store
 ├── node_modules
 ├── package-lock.json

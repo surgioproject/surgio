@@ -33,7 +33,7 @@ rules:
 
 我们利用 `getClashNodes`（[文档](/guide/custom-template.md#getclashnodes)）来获取完整的节点信息，然后把它转换成 JSON 格式。
 
-```yaml{7}
+```yaml {7}
 allow-lan: true
 mode: Rule
 external-controller: 127.0.0.1:7892
@@ -55,7 +55,7 @@ rules:
 
 Clash 的 Proxy Group 有多种类型，这里分别举例。代码中的 `getClashNodeNames`（[文档](/guide/custom-template.md#getclashnodenames)）用于获取节点名。
 
-```yaml{9-23}
+```yaml {9-23}
 allow-lan: true
 mode: Rule
 external-controller: 127.0.0.1:7892
@@ -87,7 +87,7 @@ rules:
 
 下面例子中使用了本地和远程的规则片段，你可以在文档中找到对应的配置方法，或是在初始的仓库中找到相似的代码供参考。
 
-```yaml{1,27-42}
+```yaml {1,27-42}
 {% import './snippet/blocked_rules.tpl' as blocked_rules %}
 
 allow-lan: true

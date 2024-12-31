@@ -22,7 +22,7 @@ Surge 没有原生提供对 SSR 的支持 ~~（将来也不太可能）~~ ，但
 
 找到 `surgio.conf.js`，补充如下字段：
 
-```js{3-6}
+```js {3-6}
 module.exports = {
   // ...
   binPath: {

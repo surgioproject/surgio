@@ -43,7 +43,7 @@ sidebarDepth: 1
 
 ## 编写 Artifact
 
-```js{9-26}
+```js {9-26}
 const { extendOutbounds } = require('surgio');
 
 module.exports = {
