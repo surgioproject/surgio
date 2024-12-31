@@ -42,7 +42,12 @@ export const prependFlag = (
         return `${value} ${str}`
       }
     } else {
-      if (str.toUpperCase().includes(key)) {
+      const isKeyChineseCharacters = /[\u4E00-\u9FA5]/.test(key)
+      const regex = new RegExp(`(^|\\b)${key}(\\b|$)`, 'i')
+
+      if (isKeyChineseCharacters && str.toUpperCase().includes(key)) {
+        return `${value} ${str}`
+      } else if (!isKeyChineseCharacters && regex.test(str)) {
         return `${value} ${str}`
       }
     }
@@ -54,7 +59,12 @@ export const prependFlag = (
         return `${value} ${str}`
       }
     } else {
-      if (str.toUpperCase().includes(key)) {
+      const isKeyChineseCharacters = /[\u4E00-\u9FA5]/.test(key)
+      const regex = new RegExp(`(^|\\b)${key}(\\b|$)`, 'i')
+
+      if (isKeyChineseCharacters && str.toUpperCase().includes(key)) {
+        return `${value} ${str}`
+      } else if (!isKeyChineseCharacters && regex.test(str)) {
         return `${value} ${str}`
       }
     }
