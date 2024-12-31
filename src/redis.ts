@@ -21,7 +21,11 @@ const prepareRedis = () => {
       if (customRedis) {
         client = new customRedis(_redisURL)
       } else {
-        client = new Redis(_redisURL)
+        client = new Redis(
+          _redisURL.includes('?')
+            ? `${_redisURL}&family=0`
+            : `${_redisURL}?family=0`,
+        )
       }
 
       return client as Redis
