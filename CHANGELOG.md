@@ -1,3 +1,12 @@
+## [3.10.7](https://github.com/geekdada/surgio/compare/v3.10.6...v3.10.7) (2025-03-11)
+
+
+### Bug Fixes
+
+* 处理 check 方法可能的错误情况 ([23684c4](https://github.com/geekdada/surgio/commit/23684c4afd39edaf45c5f845001dc7fad13ed823))
+
+
+
 ## [3.10.6](https://github.com/geekdada/surgio/compare/v3.10.5...v3.10.6) (2025-01-06)
 
 
