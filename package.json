@@ -223,7 +223,7 @@
   "engines": {
     "node": ">=18.0.0"
   },
-  "packageManager": "pnpm@9.7.0",
+  "packageManager": "pnpm@9.15.9+sha256.cf86a7ad764406395d4286a6d09d730711720acc6d93e9dce9ac7ac4dc4a28a7",
   "lint-staged": {
     "*.js": "eslint",
     "*.ts": "eslint --ext .ts"
