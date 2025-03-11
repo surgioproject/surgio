@@ -12,7 +12,7 @@ export const generateDoctorInfo = async (
   pjson: PackageJson,
 ): Promise<ReadonlyArray<string>> => {
   const doctorInfo: string[] = []
-  const checkInfo = await promisify<CheckInfo>(check)()
+  const checkInfo = await promisify<CheckInfo>(check)().catch(() => null)
 
   try {
     const gatewayPkg: PackageJson = await readJSON(
