@@ -15,6 +15,8 @@ jobs:
       matrix:
         os: [ubuntu-latest, macOS-latest]
         node-version: [18, 20, 22]
+    env:
+      COREPACK_INTEGRITY_KEYS: 0
 
     steps:
       - uses: actions/checkout@v3
