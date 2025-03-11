@@ -18,7 +18,11 @@ export type { CommandConfigBeforeNormalize as SurgioConfig } from './types'
 export * from './configurables'
 export { default as httpClient } from './utils/http-client'
 export { unifiedCache as cache } from './utils/cache'
-export { createExtendFunction, extendOutbounds } from './generator'
+export {
+  extendOutbounds,
+  createExtendFunction,
+  combineExtendFunctions,
+} from './generator'
 
 const { internalFilters, ...filtersUtils } = filters
 
