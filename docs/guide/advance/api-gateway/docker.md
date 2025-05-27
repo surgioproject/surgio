@@ -2,7 +2,7 @@
 
 [[toc]]
 
-如果你有一定编程经验（会 docker 就行）并且有自己的服务器，也可以选择 docker 的部署方式。
+如果你有一定编程经验（会 docker 以及基本的运维操作）并且有自己的服务器，也可以选择 docker 的部署方式。
 
 ## 准备
 
@@ -63,6 +63,7 @@ docker run --name surgio -p 3000:3000 -d surgio:latest
 ### docker compose
 
 在希望运行的目录创建文件 `compose.yml`
+
 ```yaml
 name: 'surgio'
 
@@ -75,12 +76,57 @@ services:
 
 运行 `docker compose up -d` 即可
 
+## 在公开网络中使用
+:::warning 注意
+为了你自己的服务器安全，在公开网络（所有人都可能会访问到的情况下）中请勿使用 `IP:端口` 的方式进行访问。
+
+另外，请为自己的服务器申请证书并通过后端代理进行 HTTPS 访问。
+:::
+
+以下提供了简单的反向代理配置，更复杂的请自行研究。
+
+### 如果你有 traefik 部署
+那么你的 `compose.yml` 文件可以按以下方式编写：
+```yaml
+name: 'surgio'
+
+services:
+  ladder:
+    image: surgio:latest
+    labels:
+      - traefik.enable=true
+      - traefik.docker.network=traefik
+      - traefik.http.routers.surgio.rule=Host(`你的域名`)
+      - traefik.http.routers.surgio.tls=true
+    networks:
+      - traefik
+```
+
+### 如果你有 nginx
+
+可以在你的站点配置下新增 `surgio.conf`：
+
+```
+server {
+    listen 80;
+    location / {
+        proxy_pass http://127.0.0.1:3000;
+    }
+}
+```
+
+然后重新加载 nginx 配置
+
+```bash
+sudo nginx -s reload
+```
+
 ### 更新 url
 
 你可能还需要更新 _surgio.conf.js_ 内 `urlBase` 的值，它应该类似：
 
 ```
-http://你的域名或IP:3000/get-artifact/
+http://你的域名/get-artifact/
 ```
 
 :::tip 移步至
