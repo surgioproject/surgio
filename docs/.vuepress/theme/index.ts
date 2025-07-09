@@ -59,6 +59,7 @@ export default {
               '/guide/advance/api-gateway/netlify',
               '/guide/advance/api-gateway/railway',
               '/guide/advance/api-gateway/vercel',
+              '/guide/advance/api-gateway/docker',
             ],
           },
           '/guide/advance/redis-cache',
