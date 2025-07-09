@@ -1,3 +1,12 @@
+## [3.10.8](https://github.com/geekdada/surgio/compare/v3.10.7...v3.10.8) (2025-07-09)
+
+
+### Features
+
+* Add germanyFilter and update youtubePremiumFilter ([a2bf19b](https://github.com/geekdada/surgio/commit/a2bf19ba9dd31a3052fee90cd5616317a668ecce))
+
+
+
 ## [3.10.7](https://github.com/geekdada/surgio/compare/v3.10.6...v3.10.7) (2025-03-11)
 
 
