@@ -39,6 +39,12 @@ export const singaporeFilter: NodeFilterType = (item) => {
   )
 }
 
+export const germanyFilter: NodeFilterType = (item) => {
+  return ['🇩🇪', ...FLAGS['🇩🇪']].some((key) =>
+    item.nodeName.toUpperCase().includes(key),
+  )
+}
+
 export const taiwanFilter: NodeFilterType = (item) => {
   return ['🇹🇼', ...TAIWAN].some((key) =>
     item.nodeName.toUpperCase().includes(key),
@@ -73,6 +79,7 @@ export const youtubePremiumFilter: NodeFilterType = mergeFilters([
   hkFilter,
   singaporeFilter,
   taiwanFilter,
+  germanyFilter,
 ])
 
 // istanbul ignore next
