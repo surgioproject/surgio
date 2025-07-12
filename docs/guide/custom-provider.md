@@ -818,6 +818,7 @@ module.exports = {
 - 默认值: `undefined`
 
 开启 Tuic 和 Hysteria 协议端口跳跃，目前仅 Surge, Stash 和 Mihomo 支持这一特性。例如 `5000,6000-7000`。该配置支持逗号或分号分割的端口列表，以及连字符分割的端口范围，Surgio 会自动转换成 Surge 和 Stash 支持的格式。
+Sing-box 的 Hysteria 协议也支持端口跳跃，但仅支持 `6000-7000` 这样连字符分割的端口范围，单个端口的配置会被忽略。
 
 ### nodeConfig.portHoppingInterval
 
