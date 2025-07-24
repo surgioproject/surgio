@@ -34,6 +34,7 @@
   included_files = [
     "node_modules/surgio/**",
     "node_modules/@surgio/**",
+    "node_modules/compare-versions/**", 
     "provider/**",
     "template/**",
     "*.js",
