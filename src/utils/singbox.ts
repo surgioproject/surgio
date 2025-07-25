@@ -257,6 +257,19 @@ function nodeListMapper(nodeConfig: PossibleNodeConfigType) {
         password: nodeConfig.obfsPassword,
       }
       node.password = nodeConfig.password
+
+      if (nodeConfig.portHopping) {
+        const ports = nodeConfig.portHopping
+          .split(',')
+          .filter((portConfig) => portConfig.includes('-'))
+          .map((portConfig) => portConfig.replace(/-/g, ':'))
+        node.server_ports = ports
+      }
+
+      if (nodeConfig.portHoppingInterval) {
+        node.hop_interval = `${nodeConfig.portHoppingInterval}s`
+      }
+
       break
 
     case NodeTypeEnum.Wireguard:
