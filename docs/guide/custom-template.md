@@ -39,32 +39,32 @@ Surgio 为了能够灵活地定义模板而引入了 [Nunjucks](https://nunjucks
 
 ### providerName
 
-- 类型: `string`
+- 类型：`string`
 
 当前 Provider 的名称。
 
 ### downloadUrl
 
-- 类型: `string`
+- 类型：`string`
 
 当前文件对应的订阅地址。
 
 ### proxyTestUrl
 
-- 类型: `string`
-- 默认值: `http://cp.cloudflare.com/generate_204`
+- 类型：`string`
+- 默认值：`http://cp.cloudflare.com/generate_204`
 
 节点测试地址。Surgio 会内置一个推荐的测试地址，你可以直接在模板文件中使用。如果在设置中使用了新的地址，这里也会变成所设的值。
 
 ### nodeList
 
-- 类型: `object[]`
+- 类型：`object[]`
 
 过滤之后的节点列表。
 
 ### remoteSnippets
 
-- 类型: `object`
+- 类型：`object`
 
 远程模板片段。假如你已经配置了一个像 [这样](/guide/custom-config.md#remotesnippets) 的远程片段，那就能够以下面的方式使用。
 
@@ -103,7 +103,7 @@ DOMAIN-KEYWORD,baidu,DIRECT
 
 ### customParams
 
-- 类型: `object`
+- 类型：`object`
 
 获取自定义的模板参数。请 [先在 Artifact 中定义](/guide/custom-artifact.md#customparams) 再使用。
 
@@ -191,6 +191,7 @@ Youtube Premium 节点过滤器。Surgio 默认会将名称中包含 *日*, *美
 `getSurgeNodes(nodeList, filter?)`
 
 :::tip 提示
+
 - `filter` 为可选参数
 - 支持输出 Shadowsocks, Shadowsocksr, HTTPS, Snell, Vmess, Trojan 节点
 - 请参考 [「Surge 进阶 - 生成 SSR 和 V2Ray 订阅」](/guide/advance/surge-advance.md) 生成针对 Surge 的 SSR 订阅
@@ -245,6 +246,7 @@ Proxy = select, {{ getSurgeNodeNames(nodeList) }}
 `getShadowsocksNodes(nodeList, providerName)`
 
 :::tip 提示
+
 - 第二个入参为 Group 名称
 :::
 
@@ -267,6 +269,7 @@ ss://cmM0LW1kNTpwYXNzd29yZA@hk.com:1234/?group=subscribe_demo#%F0%9F%87%AD%F0%9F
 `getQuantumultXNodes(nodeList, filter?)`
 
 :::tip 提示
+
 - 第二个参数可选，可传入标准的过滤器或自定义的过滤器
 - 支持输出 Shadowsocks, Shadowsocksr, Vmess, HTTPS, Trojan 节点
 - 支持添加 `udp-relay` 和 `fast-open` 配置
@@ -289,6 +292,7 @@ ss://cmM0LW1kNTpwYXNzd29yZA@hk.com:1234/?group=subscribe_demo#%F0%9F%87%AD%F0%9F
 该方法会返回一个包含有节点信息的数组，用于编写 Clash 规则。
 
 :::tip 提示
+
 - [Clash 规则维护指南](/guide/client/clash.md)
 - 支持输出 Shadowsocks, Shadowsocksr, HTTPS, Snell, Vmess, Trojan 节点
 :::
@@ -298,6 +302,7 @@ ss://cmM0LW1kNTpwYXNzd29yZA@hk.com:1234/?group=subscribe_demo#%F0%9F%87%AD%F0%9F
 `getClashNodeNames(nodeList, filter?, prependNodeNames?, defaultNodeNames?)`
 
 :::tip 提示
+
 - `filter` 为可选参数
 - `prependNodeNames` 为可选参数。可以通过这个参数在过滤结果前加入自定义节点名
 - `defaultNodeNames` 为可选参数。可以通过这个参数实现在过滤结果为空的情况下，使用默认的自定义节点名
@@ -333,6 +338,7 @@ getClashNodeNames(nodeList, netflixFilter, [], ['默认节点']);
 该方法会返回一个包含有节点信息的数组，可用于编写 sing-box 规则。
 
 :::tip 提示
+
 - `filter` 为可选参数
 :::
 
@@ -345,6 +351,7 @@ getClashNodeNames(nodeList, netflixFilter, [], ['默认节点']);
 该方法会返回一个包含有节点名称的数组，用于编写 sing-box 规则。
 
 :::tip 提示
+
 - `filter` 为可选参数
 :::
 
@@ -359,6 +366,7 @@ getSingboxNodeNames(nodeList, netflixFilter);
 `getLoonNodes(nodeList, filter?)`
 
 :::tip 提示
+
 - 第二个参数可选，可传入标准的过滤器或自定义的过滤器
 - 支持输出 Shadowsocks, Shadowsocksr, HTTPS, HTTP, Vmess, Trojan 节点
 :::
@@ -385,6 +393,7 @@ getSingboxNodeNames(nodeList, netflixFilter);
 `getSurfboardNodes(nodeList, filter?)`
 
 :::tip 提示
+
 - `filter` 为可选参数，可传入标准的过滤器或自定义的过滤器
 - 支持输出 Shadowsocks, HTTPS, HTTP, Vmess, Trojan 节点
 :::
@@ -411,6 +420,7 @@ getSingboxNodeNames(nodeList, netflixFilter);
 `getNodeNames(nodeList, filter?, separator?)`
 
 :::tip 提示
+
 - 不同于 `getXxxxNodeNames` 方法，该方法不会根据节点类型进行过滤
 - `filter` 为可选参数
 - `separator` 为可选参数。可以通过这个参数修改节点名的分隔符
@@ -471,6 +481,7 @@ getUrl('/export-provider?format=surge-policy');
 方便将本地的 Surge 规则片段转换为类似远程片段用法，免去人工创建特定的片段格式（即后面提到的宏）。
 
 :::tip 提示
+
 - 文件路径均相对于 template 目录进行提取，这和 Nunjucks 的路径写法有所不同；
 - 通过这个方法获取的片段只能有一种策略，相对于正规片段有所限制；
 :::
@@ -529,6 +540,14 @@ extendOutbounds([
   },
 ])
 ```
+
+### extendEndpoints
+
+> <Badge text="v3.11.0" vertical="middle" />
+
+`extendEndpoints(function|object)`
+
+用于拓展 sing-box 规则的 `endpoints` 字段。该方法和 `extendOutbounds` 类似，用于适配 sing-box v1.11.0 之后的配置格式。
 
 ### createExtendFunction
 
@@ -603,6 +622,7 @@ const combined = combineExtendFunctions(
 ```
 
 :::tip 提示
+
 - 拓展数组时新的配置会被追加到原有配置的后面
 :::
 
@@ -626,6 +646,7 @@ DOMAIN-SUFFIX,ytimg.com,{{ rule }}
 ```
 
 :::tip 提示
+
 - 宏暴露了一个 `main` 方法，传入一个字符串变量
 - 你可以使用 Nunjucks 宏的其它特性
 :::
@@ -679,7 +700,7 @@ DOMAIN-SUFFIX,ytimg.com,🚀 Proxy
 
 - USER-AGENT
 
-从 v3.5.0 开始，Surgio 还内置了两个新的 Clash 规则格式处理器 `stash` 和 `clashMeta`，他们会依据不同内核的支持情况进行处理。需要注意的是，假如你设定了 `clashConfig.clashCore`，`clash` 处理器会被自动替换为 `clashConfig.clashCore`。 
+从 v3.5.0 开始，Surgio 还内置了两个新的 Clash 规则格式处理器 `stash` 和 `clashMeta`，他们会依据不同内核的支持情况进行处理。需要注意的是，假如你设定了 `clashConfig.clashCore`，`clash` 处理器会被自动替换为 `clashConfig.clashCore`。
 
 ### Quantumult X 规则处理
 
@@ -713,7 +734,7 @@ http-response ^https?://(sdk|wb)app\.uve\.weibo\.com(/interface/sdk/sdkad.php|/w
 
 然后在模板文件中引用：
 
-_for Surge_
+*for Surge*
 
 ```txt {4}
 {% import './snippet/surge_script.tpl' as surge_script %}
@@ -722,7 +743,7 @@ _for Surge_
 {{ surge_script.main() }}
 ```
 
-_for Quantumult X_
+*for Quantumult X*
 
 ```txt {4}
 {% import './snippet/surge_script.tpl' as surge_script %}
@@ -732,7 +753,7 @@ _for Quantumult X_
 ```
 
 :::warning 注意
-Surgio 不会处理类似 `[rewrite_local]` 这样的标题，所以请 **不要** 将它们也放到片段中。
+Surgio 不会处理类似 `[rewrite_local]` 这样的标题，所以请 __不要__ 将它们也放到片段中。
 :::
 
 ### Loon 规则处理
