@@ -1,9 +1,6 @@
 .DS_Store
 *.log
-.vscode
-.ideas
 .env
-.idea
 .nyc_output
 
 node_modules/

@@ -277,12 +277,12 @@ function nodeListMapper(nodeConfig: PossibleNodeConfigType) {
       //   system_interface: false,
       //   gso: false,
       //   interface_name: 'wg0',
-      //   local_address: ['10.0.0.2/32'],
+      //   address: ['10.0.0.2/32'],
       //   private_key: 'YNXtAzepDqRv9H52osJVDQnznT5AM11eCK3ESpwSt04=',
       //   peers: [
       //     {
-      //       server: '127.0.0.1',
-      //       server_port: 1080,
+      //       address: '127.0.0.1',
+      //       port: 1080,
       //       public_key: 'Z1XXLsKYkYxuiYjJIkRvtIKFepCYHTgON+GwPq7SOV4=',
       //       pre_shared_key: '31aIhAPwktDGpH4JDhA8GNvjFXEf/a6+UaQRyOAiyfM=',
       //       allowed_ips: ['0.0.0.0/0'],
@@ -295,16 +295,16 @@ function nodeListMapper(nodeConfig: PossibleNodeConfigType) {
       //   workers: 4,
       //   mtu: 1408,
       // }
-      node.local_address = [`${nodeConfig.selfIp}/32`]
+      node.address = [`${nodeConfig.selfIp}/32`]
       if (nodeConfig.selfIpV6) {
-        node.local_address.push(`${nodeConfig.selfIpV6}/128`)
+        node.address.push(`${nodeConfig.selfIpV6}/128`)
       }
       node.private_key = nodeConfig.privateKey
       node.peers = nodeConfig.peers.map((peer) => {
         const endpoint = new URL(`http://${peer.endpoint}`)
         return {
-          server: endpoint.hostname,
-          server_port: Number(endpoint.port),
+          address: endpoint.hostname,
+          port: Number(endpoint.port),
           public_key: peer.publicKey,
           pre_shared_key: peer.presharedKey,
           allowed_ips: peer.allowedIps?.split(',').map((ip) => ip.trim()),

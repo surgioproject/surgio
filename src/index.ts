@@ -20,6 +20,7 @@ export { default as httpClient } from './utils/http-client'
 export { unifiedCache as cache } from './utils/cache'
 export {
   extendOutbounds,
+  extendEndpoints,
   createExtendFunction,
   combineExtendFunctions,
 } from './generator'

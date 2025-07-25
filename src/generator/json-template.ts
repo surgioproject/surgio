@@ -51,6 +51,7 @@ export const createExtendFunction = (extendKey: string) => {
 }
 
 export const extendOutbounds = createExtendFunction('outbounds')
+export const extendEndpoints = createExtendFunction('endpoints')
 
 export const combineExtendFunctions = (
   ...args: ReturnType<ExtendFunction>[]
