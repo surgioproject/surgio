@@ -1102,6 +1102,20 @@ module.exports = {
 
 指定订阅请求头中的 User-Agent 字段。若不指定则使用内置的默认值 `surgio/<版本号>`。
 
+### provider.fetchOnce
+
+> <Badge text="v3.11.0" vertical="middle" />
+
+- 类型: `boolean`
+- 默认值: `false`
+
+将 Provider 标记为“阅后即焚”。当一个 Provider 被标记为 `fetchOnce` 时，它的行为会发生一些变化：
+
+1.  执行 `surgio generate --local` 时，Surgio 会获取该 Provider 的节点列表，并将其缓存到项目根目录下的 `local` 文件夹中。文件名是订阅地址的 MD5 哈希值。
+2.  执行 `surgio generate`（不带 `--local` 参数）时，Surgio 会尝试从本地缓存文件中读取节点列表，而不是从远程 URL 获取。如果本地缓存文件不存在，则会报错。
+
+这个功能适用于那些不希望频繁请求订阅地址，或者订阅地址有请求次数限制的场景。
+
 ## 钩子函数 (hooks)
 
 钩子函数是 Surgio v3 新增的特性，用于在获取远程订阅内容时执行一些操作。你可以在所有类型的 Provider 中定义钩子函数。所有的钩子函数都会在 `renameNode`, `addFlag`, `removeExistingFlag`, `nodeFilter` 等原有用来修改节点的方法之前执行。

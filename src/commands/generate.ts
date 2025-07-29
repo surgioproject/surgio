@@ -121,16 +121,16 @@ class GenerateCommand extends BaseCommand<typeof GenerateCommand> {
       }
     })
 
-    const ephemeralProviders = providers.filter((p) => p.config.fetchOnce)
+    const fetchOnceProviders = providers.filter((p) => p.config.fetchOnce)
 
-    if (!ephemeralProviders.length) {
+    if (!fetchOnceProviders.length) {
       this.ora.warn('没有找到 fetchOnce Provider')
       return
     }
 
     await fs.mkdirp(localDir)
 
-    for (const providerMeta of ephemeralProviders) {
+    for (const providerMeta of fetchOnceProviders) {
       const providerName = providerMeta.name
       this.ora.start(`正在处理 Provider ${providerName}`)
 
