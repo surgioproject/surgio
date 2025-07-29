@@ -1,5 +1,6 @@
 import { EventEmitter } from 'events'
 import path from 'path'
+import crypto from 'crypto'
 import { logger } from '@surgio/logger'
 import Bluebird from 'bluebird'
 import fs from 'fs-extra'
@@ -282,10 +283,30 @@ export class Artifact extends EventEmitter {
 
     let provider: PossibleProviderType
     let nodeConfigList: ReadonlyArray<PossibleNodeConfigType>
+    let providerConfig = require(filePath)
+
+    // Read from local file if fetchOnce
+    if (providerConfig.fetchOnce) {
+      const providerUrl = providerConfig.url
+      const fileName =
+        crypto.createHash('md5').update(providerUrl).digest('hex') + '.json'
+      const localPath = path.join(this.surgioConfig.cwd, 'local', fileName)
+
+      if (!fs.existsSync(localPath)) {
+        throw new SurgioError(
+          `本地阅后即焚配置文件 ${localPath} 不存在，请先执行 surgio generate --local`,
+        )
+      }
+
+      providerConfig = {
+        type: SupportProviderEnum.Custom,
+        nodeList: require(localPath),
+      }
+    }
 
     try {
       // eslint-disable-next-line prefer-const
-      provider = await getProvider(providerName, require(filePath))
+      provider = await getProvider(providerName, providerConfig)
       this.providerMap.set(providerName, provider)
     } catch (err) /* istanbul ignore next */ {
       if (isSurgioError(err)) {

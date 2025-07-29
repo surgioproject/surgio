@@ -131,7 +131,10 @@ export const normalizeConfig = (
       passRequestUserAgent: false,
     },
   }
-  const config: CommandConfig = _.defaultsDeep(userConfig, defaultConfig)
+  const config: CommandConfig = {
+    ..._.defaultsDeep(userConfig, defaultConfig),
+    cwd,
+  }
 
   // istanbul ignore next
   if (!fs.existsSync(config.templateDir)) {

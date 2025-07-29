@@ -1,10 +1,16 @@
+import crypto from 'crypto'
 import path from 'path'
 import { Flags } from '@oclif/core'
 import fs from 'fs-extra'
 
+import {
+  PossibleNodeConfigType,
+  ArtifactConfig,
+  PossibleProviderConfigType,
+} from '../types'
 import BaseCommand from '../base-command'
 import { Artifact, getEngine } from '../generator'
-import { ArtifactConfig } from '../types'
+import { getProvider } from '../provider'
 import { setConfig } from '../config'
 import { checkAndFix } from '../utils/linter'
 import { loadRemoteSnippetList } from '../utils'
@@ -13,6 +19,11 @@ class GenerateCommand extends BaseCommand<typeof GenerateCommand> {
   static description = '生成规则'
 
   public async run(): Promise<void> {
+    if (this.flags.local) {
+      await this.generateLocal()
+      return
+    }
+
     if (!this.flags['skip-lint']) {
       const result = await checkAndFix(this.projectDir)
 
@@ -91,6 +102,60 @@ class GenerateCommand extends BaseCommand<typeof GenerateCommand> {
 
     this.ora.succeed('规则生成成功')
   }
+
+  private async generateLocal(): Promise<void> {
+    this.ora.info('开始拉取阅后即焚 Provider')
+
+    const config = this.surgioConfig
+    const localDir = path.join(this.projectDir, 'local')
+    const providerFiles = await fs.readdir(config.providerDir)
+    const jsProviderFiles = providerFiles.filter((file) => file.endsWith('.js'))
+    const providers: {
+      name: string
+      config: PossibleProviderConfigType
+    }[] = jsProviderFiles.map((file) => {
+      const filePath = path.join(config.providerDir, file)
+      return {
+        name: path.basename(file, '.js'),
+        config: require(filePath),
+      }
+    })
+
+    const ephemeralProviders = providers.filter((p) => p.config.fetchOnce)
+
+    if (!ephemeralProviders.length) {
+      this.ora.warn('没有找到 fetchOnce Provider')
+      return
+    }
+
+    await fs.mkdirp(localDir)
+
+    for (const providerMeta of ephemeralProviders) {
+      const providerName = providerMeta.name
+      this.ora.start(`正在处理 Provider ${providerName}`)
+
+      try {
+        const provider = await getProvider(providerName, providerMeta.config)
+        const nodeList = await provider.getNodeList()
+        const json = nodeList.map((node: PossibleNodeConfigType) => {
+          const result = { ...node }
+          delete result.provider
+          return result
+        })
+        const fileName =
+          crypto.createHash('md5').update(provider.url).digest('hex') + '.json'
+        const filePath = path.join(localDir, fileName)
+
+        await fs.writeJson(filePath, json, { spaces: 2 })
+        this.ora.succeed(`Provider ${providerName} 已保存至 ${filePath}`)
+      } catch (err) {
+        this.ora.fail(`Provider ${providerName} 处理失败`)
+        throw err
+      }
+    }
+
+    this.ora.succeed('所有 fetchOnce Provider 已处理完毕')
+  }
 }
 
 GenerateCommand.flags = {
@@ -109,6 +174,10 @@ GenerateCommand.flags = {
   'skip-lint': Flags.boolean({
     default: false,
     description: '跳过代码检查',
+  }),
+  local: Flags.boolean({
+    default: false,
+    description: '生成本地阅后即焚 Provider',
   }),
 }
 

@@ -13,6 +13,7 @@ import {
 
 export const ProviderValidator = z.object({
   type: z.nativeEnum(SupportProviderEnum),
+  fetchOnce: z.oboolean(),
   addFlag: z.oboolean(),
   removeExistingFlag: z.oboolean(),
   mptcp: z.oboolean(),
