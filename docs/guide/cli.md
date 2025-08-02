@@ -14,6 +14,12 @@ $ npx surgio generate
 
 ### 可选参数
 
+#### `--local`
+
+> <Badge text="v3.11.0" vertical="middle" />
+
+拉取 `fetchOnce` Provider 的节点信息并缓存到本地。
+
 #### `--cache-snippet`
 
 > <Badge text="v2.4.0" vertical="middle" />
