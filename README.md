@@ -28,13 +28,9 @@
 
 ## 交流
 
-[<img width="200px" src="docs/.vuepress/public/join-telegram.png" />](https://t.me/surgiotg)
+[<img width="200px" src="docs/.vuepress/public/join-telegram.png" />](https://url.royli.dev/surgiotg)
 
 ## Sponsors
-
-[![Deployed on Zeabur](https://zeabur.com/deployed-on-zeabur-dark.svg)](https://zeabur.com?referralCode=geekdada&utm_source=geekdada&utm_campaign=oss)
-
----
 
 ### [MorseGPT][morse-link]
 
