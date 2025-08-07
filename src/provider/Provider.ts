@@ -12,6 +12,7 @@ import { getProviderCacheMaxage } from '../utils/env-flag'
 import httpClient, { getUserAgent } from '../utils/http-client'
 import { toMD5, parseSubscriptionUserInfo, SurgioError } from '../utils'
 import { ProviderValidator } from '../validators'
+import relayableUrl from '../utils/relayable-url'
 
 import { GetNodeListFunction, GetSubscriptionUserInfoFunction } from './types'
 
@@ -44,6 +45,13 @@ export default abstract class Provider {
     this.type = result.data.type
     this.passGatewayRequestUserAgent =
       getConfig()?.gateway?.passRequestUserAgent ?? false
+  }
+
+  public get url(): string {
+    if ('url' in this.config) {
+      return relayableUrl(this.config.url as string, this.config.relayUrl)
+    }
+    throw new Error('Provider 中没有定义 url')
   }
 
   static async requestCacheableResource(
@@ -98,6 +106,14 @@ export default abstract class Provider {
           )
           return subsciptionCacheItem
         })()
+  }
+
+  public async getRawSubscription(
+    options: {
+      requestUserAgent?: string
+    } = {},
+  ): Promise<SubsciptionCacheItem> {
+    return Provider.requestCacheableResource(this.url, options)
   }
 
   public determineRequestUserAgent(

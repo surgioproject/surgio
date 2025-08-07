@@ -56,6 +56,7 @@ export type CommandConfigBeforeNormalize = z.input<typeof SurgioConfigValidator>
 export type CommandConfigAfterNormalize = z.infer<typeof SurgioConfigValidator>
 
 export type CommandConfig = CommandConfigAfterNormalize & {
+  cwd: string
   publicUrl: string
   output: string
   urlBase: string
