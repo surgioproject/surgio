@@ -12,13 +12,43 @@ export const parseSSUri = (str: string): ShadowsocksNodeConfig => {
 
   const scheme = new URL(str)
   const pluginString = scheme.searchParams.get('plugin')
-  const userInfo = fromUrlSafeBase64(decodeURIComponent(scheme.username)).split(
-    ':',
-  )
+
+  // SIP002 兼容：若 URL 已经拆分出 username/password，则说明 userinfo 为明文形式
+  let userInfo: string[]
+  if (scheme.password) {
+    userInfo = [
+      decodeURIComponent(scheme.username),
+      decodeURIComponent(scheme.password),
+    ]
+  } else {
+    userInfo = fromUrlSafeBase64(decodeURIComponent(scheme.username)).split(':')
+  }
   const pluginInfo =
     typeof pluginString === 'string'
       ? decodeStringList(pluginString.split(';'))
       : {}
+
+  // SIP001 兼容：如果未能正确取得 method 或 password，且未出现 '@'，尝试解析整段 Base64 主机名
+  if (!userInfo[0] || userInfo.length < 2) {
+    try {
+      const legacyStr = fromUrlSafeBase64(scheme.hostname)
+      // legacyStr 形如 method:password@host:port
+      const atIndex = legacyStr.indexOf('@')
+      if (atIndex > 0) {
+        const [cred, hostPort] = [legacyStr.slice(0, atIndex), legacyStr.slice(atIndex + 1)]
+        const [legacyMethod, legacyPassword] = cred.split(':')
+        const [legacyHost, legacyPort] = hostPort.split(':')
+        if (legacyMethod && legacyPassword && legacyHost && legacyPort) {
+          userInfo = [legacyMethod, legacyPassword]
+          // 覆盖 hostname、port
+          scheme.hostname = legacyHost
+          scheme.port = legacyPort
+        }
+      }
+    } catch (_) {
+      // ignore
+    }
+  }
 
   return {
     type: NodeTypeEnum.Shadowsocks,
