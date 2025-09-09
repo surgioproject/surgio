@@ -35,7 +35,10 @@ export const parseSSUri = (str: string): ShadowsocksNodeConfig => {
       // legacyStr 形如 method:password@host:port
       const atIndex = legacyStr.indexOf('@')
       if (atIndex > 0) {
-        const [cred, hostPort] = [legacyStr.slice(0, atIndex), legacyStr.slice(atIndex + 1)]
+        const [cred, hostPort] = [
+          legacyStr.slice(0, atIndex),
+          legacyStr.slice(atIndex + 1),
+        ]
         const [legacyMethod, legacyPassword] = cred.split(':')
         const [legacyHost, legacyPort] = hostPort.split(':')
         if (legacyMethod && legacyPassword && legacyHost && legacyPort) {
