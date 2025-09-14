@@ -1,3 +1,12 @@
+## [3.11.2](https://github.com/geekdada/surgio/compare/v3.11.1...v3.11.2) (2025-09-14)
+
+
+### Bug Fixes
+
+* 修复 SIP002 解析逻辑，支持明文 AEAD-2022 和传统 Base64 格式 ([efd9bbb](https://github.com/geekdada/surgio/commit/efd9bbb1d5e03ab0611ae62476c646576bb94de0))
+
+
+
 ## [3.11.1](https://github.com/geekdada/surgio/compare/v3.11.0...v3.11.1) (2025-08-06)
 
 
