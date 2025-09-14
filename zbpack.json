@@ -1,5 +1,0 @@
-{
-  "cache_dependencies": false,
-  "build_command": "pnpm run docs:build",
-  "serverless": true
-}
