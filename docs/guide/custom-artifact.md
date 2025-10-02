@@ -134,4 +134,11 @@ Surgio 会根据 Artifact 的值来生成配置文件。你可以一次性配置
 - 类型: `string`
 - 默认值: `undefined`
 
-该 Artifact 的生成目录。对于本地管理规则仓库的朋友可能会非常有用，你不再需要人肉复制粘贴了。
+该 Artifact 的生成目录。对于本地管理规则仓库的朋友可能会非常有用，你不再需要手工复制粘贴了。
+
+### destDirs
+
+- 类型: `string[]`
+- 默认值: `undefined`
+
+同时指定多个 Artifact 的生成目录。
