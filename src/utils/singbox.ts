@@ -218,6 +218,15 @@ function nodeListMapper(nodeConfig: PossibleNodeConfigType) {
               // early_data_header_name: '',
             }
             break
+          case 'grpc':
+            node.transport = {
+              type: 'grpc',
+              service_name: nodeConfig.grpcOpts?.serviceName,
+              // idle_timeout: '15s',
+              // ping_timeout: '15s',
+              // permit_without_stream: false,
+            }
+            break
 
           default:
             logger.warn(
