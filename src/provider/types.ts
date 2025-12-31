@@ -34,6 +34,6 @@ export type GetNodeListFunction = (
   params?: GetNodeListParams,
 ) => Promise<ReadonlyArray<PossibleNodeConfigType>>
 
-export type GetSubscriptionUserInfoFunction = (params?: {
-  requestUserAgent?: string
-}) => Promise<SubscriptionUserinfo | undefined>
+export type GetSubscriptionUserInfoFunction = (
+  params?: GetNodeListParams,
+) => Promise<SubscriptionUserinfo | undefined>

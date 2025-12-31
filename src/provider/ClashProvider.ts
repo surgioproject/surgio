@@ -101,6 +101,7 @@ export default class ClashProvider extends Provider {
   ) => {
     const requestHeaders = this.determineRequestHeaders(
       params.requestUserAgent || getNetworkClashUA(),
+      params.requestHeaders,
     )
     const cacheKey = Provider.getResourceCacheKey(requestHeaders, this.url)
     const { subscriptionUserinfo } = await getClashSubscription({

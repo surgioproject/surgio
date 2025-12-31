@@ -56,6 +56,7 @@ export default class TrojanProvider extends Provider {
   ) => {
     const requestHeaders = this.determineRequestHeaders(
       params.requestUserAgent || 'shadowrocket',
+      params.requestHeaders,
     )
     const cacheKey = Provider.getResourceCacheKey(requestHeaders, this.url)
     const { subscriptionUserinfo } = await getTrojanSubscription({

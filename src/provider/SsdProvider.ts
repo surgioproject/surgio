@@ -57,7 +57,10 @@ export default class SsdProvider extends Provider {
   public getSubscriptionUserInfo: GetSubscriptionUserInfoFunction = async (
     params = {},
   ) => {
-    const requestHeaders = this.determineRequestHeaders(params.requestUserAgent)
+    const requestHeaders = this.determineRequestHeaders(
+      params.requestUserAgent,
+      params.requestHeaders,
+    )
     const cacheKey = Provider.getResourceCacheKey(requestHeaders, this.url)
     const { subscriptionUserinfo } = await getSsdSubscription(
       this.url,
