@@ -13,7 +13,7 @@ overrides:
 
 patchedDependencies:
   vuepress-plugin-umami-analytics@1.8.1:
-    hash: kl3xzwkcje474ullucyetsascu
+    hash: a433798b4574e2d7f1de1d6ac24b02ed12c662404e905d67e823a92a87bf047a
     path: patches/vuepress-plugin-umami-analytics@1.8.1.patch
 
 importers:
@@ -371,7 +371,7 @@ importers:
         version: 2.0.0-rc.19(@vuepress/bundler-vite@2.0.0-rc.19(@types/node@18.19.21)(jiti@1.21.0)(sass@1.71.1)(typescript@5.9.2)(yaml@2.4.0))(typescript@5.9.2)(vue@3.5.13(typescript@5.9.2))
       vuepress-plugin-umami-analytics:
         specifier: 1.8.1
-        version: 1.8.1(patch_hash=kl3xzwkcje474ullucyetsascu)(typescript@5.9.2)
+        version: 1.8.1(patch_hash=a433798b4574e2d7f1de1d6ac24b02ed12c662404e905d67e823a92a87bf047a)(typescript@5.9.2)
 
 packages:
 
@@ -13184,7 +13184,7 @@ snapshots:
     optionalDependencies:
       typescript: 5.9.2
 
-  vuepress-plugin-umami-analytics@1.8.1(patch_hash=kl3xzwkcje474ullucyetsascu)(typescript@5.9.2):
+  vuepress-plugin-umami-analytics@1.8.1(patch_hash=a433798b4574e2d7f1de1d6ac24b02ed12c662404e905d67e823a92a87bf047a)(typescript@5.9.2):
     dependencies:
       '@vuepress/client': 2.0.0-rc.19(typescript@5.9.2)
       '@vuepress/core': 2.0.0-rc.19(typescript@5.9.2)
