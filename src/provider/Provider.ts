@@ -55,14 +55,41 @@ export default abstract class Provider {
       getConfig()?.gateway?.passRequestHeaders ?? []
   }
 
-  static getResourceCacheKey(indentifier: string): string {
-    return `${CACHE_KEYS.Provider}:${toMD5(indentifier)}`
+  /**
+   * Generate a cache key for a provider resource based on an identifier.
+   *
+   * @param indentifier - A unique identifier for the resource (typically user-agent + URL)
+   * @returns MD5-hashed cache key
+   */
+  static getResourceCacheKey(
+    ...indentifiers: (string | Record<string, unknown>)[]
+  ): string {
+    const identifier: string[] = []
+
+    for (const indentifier of indentifiers) {
+      if (typeof indentifier === 'string') {
+        identifier.push(indentifier)
+      } else {
+        identifier.push(JSON.stringify(indentifier))
+      }
+    }
+
+    return `${CACHE_KEYS.Provider}:${toMD5(identifier.join(''))}`
   }
 
+  /**
+   * Fetch a cacheable resource from a URL with specified headers.
+   * Returns cached response if available within the cache TTL.
+   *
+   * @param url - The subscription URL to fetch
+   * @param headers - HTTP headers to include in the request
+   * @param cacheKey - Cache key for storing/retrieving the response (auto-generated if not provided)
+   * @returns Subscription data including body and optional user info
+   */
   static async requestCacheableResource(
     url: string,
     headers: DefaultProviderRequestHeaders,
-    cacheKey: string = this.getResourceCacheKey(headers['user-agent'] + url),
+    cacheKey: string = this.getResourceCacheKey(headers, url),
   ): Promise<SubsciptionCacheItem> {
     const requestResource = async () => {
       const res = await httpClient.get(url, {
@@ -103,26 +130,83 @@ export default abstract class Provider {
         })()
   }
 
+  /**
+   * Determine the User-Agent string to use for provider requests.
+   * Respects the gateway's passRequestUserAgent configuration.
+   *
+   * @param requestUserAgent - Optional User-Agent from the gateway request
+   * @returns Normalized User-Agent string
+   *
+   * @remarks
+   * - If passGatewayRequestUserAgent is true, uses the gateway's User-Agent (if provided)
+   * - Falls back to the provider's configured requestUserAgent
+   * - Normalizes the User-Agent through getUserAgent() utility
+   */
   public determineRequestUserAgent(
     requestUserAgent?: string | undefined,
   ): string {
-    const userAgent = this.passGatewayRequestUserAgent
-      ? requestUserAgent || this.config.requestUserAgent
-      : this.config.requestUserAgent
+    const userAgent =
+      this.passGatewayRequestUserAgent && requestUserAgent
+        ? requestUserAgent
+        : this.config.requestUserAgent
 
     return getUserAgent(userAgent)
   }
 
+  /**
+   * Determine the HTTP headers to use for provider requests.
+   * Filters headers based on the gateway's passRequestHeaders configuration.
+   *
+   * @param requestUserAgent - Optional User-Agent from the gateway request
+   * @param requestHeaders - Optional custom headers from the gateway request
+   * @returns Filtered headers object with required user-agent
+   *
+   * @remarks
+   * - Always includes the user-agent header (determined by determineRequestUserAgent)
+   * - The requestUserAgent parameter takes priority over requestHeaders['user-agent']
+   * - Filters additional headers based on passGatewayRequestHeaders allowlist
+   * - If passGatewayRequestHeaders is empty, only user-agent is returned
+   * - The returned object always contains 'user-agent' regardless of configuration
+   *
+   * @example
+   * ```typescript
+   * // With passGatewayRequestHeaders: ['accept-language']
+   * const headers = provider.determineRequestHeaders(
+   *   'custom-ua',
+   *   { 'accept-language': 'en-US', 'x-custom': 'value' }
+   * )
+   * // Returns: { 'user-agent': 'custom-ua', 'accept-language': 'en-US' }
+   * // Note: 'x-custom' is filtered out
+   * ```
+   */
   public determineRequestHeaders(
     requestUserAgent?: string | undefined,
     requestHeaders?: Record<string, string> | undefined,
   ): DefaultProviderRequestHeaders {
     const userAgent = this.determineRequestUserAgent(requestUserAgent)
-    const headers = { ...requestHeaders, 'user-agent': userAgent }
-    return _.pick(
-      headers,
+
+    // Normalize incoming headers to lowercase keys for case-insensitive matching
+    const normalizedHeaders = requestHeaders
+      ? Object.fromEntries(
+          Object.entries(requestHeaders).map(([k, v]) => [k.toLowerCase(), v]),
+        )
+      : {}
+
+    // Merge headers with normalized user-agent
+    // requestUserAgent takes priority over requestHeaders['user-agent']
+    const mergedHeaders = { ...normalizedHeaders, 'user-agent': userAgent }
+
+    // Filter headers based on allowlist
+    const filteredHeaders = _.pick(
+      mergedHeaders,
       this.passGatewayRequestHeaders,
-    ) as DefaultProviderRequestHeaders
+    )
+
+    // Always ensure user-agent is included in the result
+    return {
+      'user-agent': userAgent,
+      ...filteredHeaders,
+    } as DefaultProviderRequestHeaders
   }
 
   public get nextPort(): number {
