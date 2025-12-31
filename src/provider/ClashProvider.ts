@@ -102,9 +102,7 @@ export default class ClashProvider extends Provider {
     const requestHeaders = this.determineRequestHeaders(
       params.requestUserAgent || getNetworkClashUA(),
     )
-    const cacheKey = Provider.getResourceCacheKey(
-      requestHeaders['user-agent'] + this.url,
-    )
+    const cacheKey = Provider.getResourceCacheKey(requestHeaders, this.url)
     const { subscriptionUserinfo } = await getClashSubscription({
       url: this.url,
       udpRelay: this.udpRelay,
@@ -127,9 +125,7 @@ export default class ClashProvider extends Provider {
       params.requestUserAgent || getNetworkClashUA(),
       params.requestHeaders,
     )
-    const cacheKey = Provider.getResourceCacheKey(
-      requestHeaders['user-agent'] + this.url,
-    )
+    const cacheKey = Provider.getResourceCacheKey(requestHeaders, this.url)
     const { nodeList } = await getClashSubscription({
       url: this.url,
       udpRelay: this.udpRelay,

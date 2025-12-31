@@ -58,9 +58,7 @@ export default class ShadowsocksrSubscribeProvider extends Provider {
     params = {},
   ) => {
     const requestHeaders = this.determineRequestHeaders(params.requestUserAgent)
-    const cacheKey = Provider.getResourceCacheKey(
-      requestHeaders['user-agent'] + this.url,
-    )
+    const cacheKey = Provider.getResourceCacheKey(requestHeaders, this.url)
     const { subscriptionUserinfo } = await getShadowsocksrSubscription(
       this.url,
       requestHeaders,
@@ -81,9 +79,7 @@ export default class ShadowsocksrSubscribeProvider extends Provider {
       params.requestUserAgent,
       params.requestHeaders,
     )
-    const cacheKey = Provider.getResourceCacheKey(
-      requestHeaders['user-agent'] + this.url,
-    )
+    const cacheKey = Provider.getResourceCacheKey(requestHeaders, this.url)
     const { nodeList } = await getShadowsocksrSubscription(
       this.url,
       requestHeaders,

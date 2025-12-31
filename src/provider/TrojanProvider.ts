@@ -57,9 +57,7 @@ export default class TrojanProvider extends Provider {
     const requestHeaders = this.determineRequestHeaders(
       params.requestUserAgent || 'shadowrocket',
     )
-    const cacheKey = Provider.getResourceCacheKey(
-      requestHeaders['user-agent'] + this.url,
-    )
+    const cacheKey = Provider.getResourceCacheKey(requestHeaders, this.url)
     const { subscriptionUserinfo } = await getTrojanSubscription({
       url: this.url,
       udpRelay: this.udpRelay,
@@ -81,9 +79,7 @@ export default class TrojanProvider extends Provider {
       params.requestUserAgent || 'shadowrocket',
       params.requestHeaders,
     )
-    const cacheKey = Provider.getResourceCacheKey(
-      requestHeaders['user-agent'] + this.url,
-    )
+    const cacheKey = Provider.getResourceCacheKey(requestHeaders, this.url)
     const { nodeList } = await getTrojanSubscription({
       url: this.url,
       udpRelay: this.udpRelay,

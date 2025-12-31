@@ -49,9 +49,7 @@ export default class ShadowsocksJsonSubscribeProvider extends Provider {
       'shadowrocket',
       params.requestHeaders,
     )
-    const cacheKey = Provider.getResourceCacheKey(
-      requestHeaders['user-agent'] + this.url,
-    )
+    const cacheKey = Provider.getResourceCacheKey(requestHeaders, this.url)
     const nodeList = await getShadowsocksJSONConfig(
       this.url,
       requestHeaders,
