@@ -64,7 +64,7 @@ export default class V2rayNSubscribeProvider extends Provider {
       params.requestHeaders,
     )
     const cacheKey = Provider.getResourceCacheKey(
-      requestHeaders['user-agent'] + this.url,
+      requestHeaders, this.url,
     )
     const nodeList = await getV2rayNSubscription({
       url: this.url,
@@ -183,7 +183,7 @@ export const parseJSONConfig = (
   // istanbul ignore next
   if (!isCompatibleMode && (!config.v || Number(config.v) !== 2)) {
     throw new Error(
-      `该节点 ${config.ps} 可能不是一个有效的 V2rayN 节点。请参考 https://url.royli.dev/Qtrci 进行排查, 或者将解析模式改为兼容模式`,
+      `该节点 ${config.ps} 可能不是一个有效的 V2rayN 节点。请参考 https://url.royli.dev/Qtrci 进行排查，或者将解析模式改为兼容模式`,
     )
   }
 

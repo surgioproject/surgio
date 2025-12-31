@@ -37,3 +37,12 @@ export type GetNodeListFunction = (
 export type GetSubscriptionUserInfoFunction = (
   params?: GetNodeListParams,
 ) => Promise<SubscriptionUserinfo | undefined>
+
+export type GetNodeListV2Result = {
+  readonly nodeList: ReadonlyArray<PossibleNodeConfigType>
+  readonly subscriptionUserinfo?: SubscriptionUserinfo
+}
+
+export type GetNodeListV2Function = (
+  params?: GetNodeListParams,
+) => Promise<GetNodeListV2Result>

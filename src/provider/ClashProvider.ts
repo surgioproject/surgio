@@ -42,6 +42,8 @@ import Provider from './Provider'
 import {
   DefaultProviderRequestHeaders,
   GetNodeListFunction,
+  GetNodeListV2Function,
+  GetNodeListV2Result,
   GetSubscriptionUserInfoFunction,
 } from './types'
 
@@ -147,6 +149,37 @@ export default class ClashProvider extends Provider {
     }
 
     return nodeList
+  }
+
+  public getNodeListV2: GetNodeListV2Function = async (
+    params = {},
+  ): Promise<GetNodeListV2Result> => {
+    const requestHeaders = this.determineRequestHeaders(
+      params.requestUserAgent || getNetworkClashUA(),
+      params.requestHeaders,
+    )
+    const cacheKey = Provider.getResourceCacheKey(requestHeaders, this.url)
+
+    const { nodeList, subscriptionUserinfo } = await getClashSubscription({
+      url: this.url,
+      udpRelay: this.udpRelay,
+      tls13: this.tls13,
+      requestHeaders,
+      cacheKey,
+    })
+
+    if (this.config.hooks?.afterNodeListResponse) {
+      const newList = await this.config.hooks.afterNodeListResponse(
+        nodeList,
+        params,
+      )
+
+      if (newList) {
+        return { nodeList: newList, subscriptionUserinfo }
+      }
+    }
+
+    return { nodeList, subscriptionUserinfo }
   }
 }
 

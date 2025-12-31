@@ -15,7 +15,12 @@ import { getProviderCacheMaxage } from '../utils/env-flag'
 import httpClient from '../utils/http-client'
 
 import Provider from './Provider'
-import { GetNodeListFunction, GetSubscriptionUserInfoFunction } from './types'
+import {
+  GetNodeListFunction,
+  GetNodeListV2Function,
+  GetNodeListV2Result,
+  GetSubscriptionUserInfoFunction,
+} from './types'
 
 export default class BlackSSLProvider extends Provider {
   public readonly username: string
@@ -76,6 +81,28 @@ export default class BlackSSLProvider extends Provider {
     }
 
     return nodeList
+  }
+
+  public getNodeListV2: GetNodeListV2Function = async (
+    params = {},
+  ): Promise<GetNodeListV2Result> => {
+    const { nodeList, subscriptionUserinfo } = await this.getBlackSSLConfig(
+      this.username,
+      this.password,
+    )
+
+    if (this.config.hooks?.afterNodeListResponse) {
+      const newList = await this.config.hooks.afterNodeListResponse(
+        nodeList,
+        params,
+      )
+
+      if (newList) {
+        return { nodeList: newList, subscriptionUserinfo }
+      }
+    }
+
+    return { nodeList, subscriptionUserinfo }
   }
 
   // istanbul ignore next

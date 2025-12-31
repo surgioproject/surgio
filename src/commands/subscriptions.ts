@@ -18,21 +18,17 @@ class SubscriptionsCommand extends BaseCommand<typeof SubscriptionsCommand> {
     const providerList = await this.listProviders()
 
     for (const provider of providerList) {
-      if (provider.supportGetSubscriptionUserInfo) {
-        const userInfo = await provider.getSubscriptionUserInfo()
+      const { subscriptionUserinfo } = await provider.getNodeListV2()
 
-        if (userInfo) {
-          const format = formatSubscriptionUserInfo(userInfo)
-          console.log(
-            '🤟 %s 已用流量：%s 剩余流量：%s 有效期至：%s',
-            provider.name,
-            format.used,
-            format.left,
-            format.expire,
-          )
-        } else {
-          console.log('⚠️  无法查询 %s 的流量信息', provider.name)
-        }
+      if (subscriptionUserinfo) {
+        const format = formatSubscriptionUserInfo(subscriptionUserinfo)
+        console.log(
+          '🤟 %s 已用流量：%s 剩余流量：%s 有效期至：%s',
+          provider.name,
+          format.used,
+          format.left,
+          format.expire,
+        )
       } else {
         console.log('⚠️  无法查询 %s 的流量信息', provider.name)
       }

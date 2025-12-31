@@ -306,9 +306,10 @@ export class Artifact extends EventEmitter {
 
     try {
       try {
-        nodeConfigList = await provider.getNodeList(
+        const result = await provider.getNodeListV2(
           this.getMergedCustomParams(getNodeListParams),
         )
+        nodeConfigList = result.nodeList
       } catch (err) {
         if (provider.config.hooks?.onError && isError(err)) {
           const result = await provider.config.hooks.onError(err)
@@ -319,7 +320,9 @@ export class Artifact extends EventEmitter {
               nodeList: result,
             })
 
-            nodeConfigList = await adHocProvider.getNodeList()
+            const { nodeList: adHocNodeList } =
+              await adHocProvider.getNodeListV2()
+            nodeConfigList = adHocNodeList
           } else {
             nodeConfigList = []
           }
