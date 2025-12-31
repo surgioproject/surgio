@@ -129,6 +129,7 @@ export const normalizeConfig = (
     },
     gateway: {
       passRequestUserAgent: false,
+      passRequestHeaders: [],
     },
   }
   const config: CommandConfig = _.defaultsDeep(userConfig, defaultConfig)
@@ -163,6 +164,14 @@ export const normalizeConfig = (
     if (config.gateway.auth && !config.gateway.accessToken) {
       throw new Error('请检查 gateway.accessToken 配置')
     }
+  }
+
+  // istanbul ignore next
+  if (
+    config.gateway?.passRequestUserAgent &&
+    !config.gateway.passRequestHeaders.includes('user-agent')
+  ) {
+    config.gateway.passRequestHeaders.push('user-agent')
   }
 
   return config

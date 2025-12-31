@@ -21,8 +21,13 @@ export type PossibleProviderType =
   | SsdProvider
   | TrojanProvider
 
+export type DefaultProviderRequestHeaders = Record<string, string> & {
+  'user-agent': string
+}
+
 export type GetNodeListParams = Record<string, unknown> & {
   requestUserAgent?: string
+  requestHeaders?: Record<string, string>
 }
 
 export type GetNodeListFunction = (
