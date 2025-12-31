@@ -39,7 +39,11 @@ import {
 } from '../validators'
 
 import Provider from './Provider'
-import { GetNodeListFunction, GetSubscriptionUserInfoFunction } from './types'
+import {
+  DefaultProviderRequestHeaders,
+  GetNodeListFunction,
+  GetSubscriptionUserInfoFunction,
+} from './types'
 
 type SupportConfigTypes =
   | ShadowsocksNodeConfig
@@ -95,14 +99,18 @@ export default class ClashProvider extends Provider {
   public getSubscriptionUserInfo: GetSubscriptionUserInfoFunction = async (
     params = {},
   ) => {
-    const requestUserAgent = this.determineRequestUserAgent(
-      params.requestUserAgent,
+    const requestHeaders = this.determineRequestHeaders(
+      params.requestUserAgent || getNetworkClashUA(),
+    )
+    const cacheKey = Provider.getResourceCacheKey(
+      requestHeaders['user-agent'] + this.url,
     )
     const { subscriptionUserinfo } = await getClashSubscription({
       url: this.url,
       udpRelay: this.udpRelay,
       tls13: this.tls13,
-      requestUserAgent,
+      requestHeaders,
+      cacheKey,
     })
 
     if (subscriptionUserinfo) {
@@ -115,14 +123,19 @@ export default class ClashProvider extends Provider {
   public getNodeList: GetNodeListFunction = async (
     params = {},
   ): Promise<SupportConfigTypes[]> => {
-    const requestUserAgent = this.determineRequestUserAgent(
-      params.requestUserAgent,
+    const requestHeaders = this.determineRequestHeaders(
+      params.requestUserAgent || getNetworkClashUA(),
+      params.requestHeaders,
+    )
+    const cacheKey = Provider.getResourceCacheKey(
+      requestHeaders['user-agent'] + this.url,
     )
     const { nodeList } = await getClashSubscription({
       url: this.url,
       udpRelay: this.udpRelay,
       tls13: this.tls13,
-      requestUserAgent,
+      requestHeaders,
+      cacheKey,
     })
 
     if (this.config.hooks?.afterNodeListResponse) {
@@ -144,21 +157,25 @@ export const getClashSubscription = async ({
   url,
   udpRelay,
   tls13,
-  requestUserAgent,
+  requestHeaders,
+  cacheKey,
 }: {
   url: string
+  requestHeaders: DefaultProviderRequestHeaders
   udpRelay?: boolean
   tls13?: boolean
-  requestUserAgent?: string
+  cacheKey: string
 }): Promise<{
   readonly nodeList: Array<SupportConfigTypes>
   readonly subscriptionUserinfo?: SubscriptionUserinfo
 }> => {
   assert(url, '未指定订阅地址 url')
 
-  const response = await Provider.requestCacheableResource(url, {
-    requestUserAgent: requestUserAgent || getNetworkClashUA(),
-  })
+  const response = await Provider.requestCacheableResource(
+    url,
+    requestHeaders,
+    cacheKey,
+  )
   let clashConfig
 
   try {

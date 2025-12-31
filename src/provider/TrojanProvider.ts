@@ -11,7 +11,11 @@ import relayableUrl from '../utils/relayable-url'
 import { parseTrojanUri } from '../utils/trojan'
 
 import Provider from './Provider'
-import { GetNodeListFunction, GetSubscriptionUserInfoFunction } from './types'
+import {
+  DefaultProviderRequestHeaders,
+  GetNodeListFunction,
+  GetSubscriptionUserInfoFunction,
+} from './types'
 
 export default class TrojanProvider extends Provider {
   readonly #originalUrl: string
@@ -50,14 +54,18 @@ export default class TrojanProvider extends Provider {
   public getSubscriptionUserInfo: GetSubscriptionUserInfoFunction = async (
     params = {},
   ) => {
-    const requestUserAgent = this.determineRequestUserAgent(
-      params.requestUserAgent,
+    const requestHeaders = this.determineRequestHeaders(
+      params.requestUserAgent || 'shadowrocket',
+    )
+    const cacheKey = Provider.getResourceCacheKey(
+      requestHeaders['user-agent'] + this.url,
     )
     const { subscriptionUserinfo } = await getTrojanSubscription({
       url: this.url,
       udpRelay: this.udpRelay,
       tls13: this.tls13,
-      requestUserAgent: requestUserAgent || this.config.requestUserAgent,
+      requestHeaders,
+      cacheKey,
     })
 
     if (subscriptionUserinfo) {
@@ -69,14 +77,19 @@ export default class TrojanProvider extends Provider {
   public getNodeList: GetNodeListFunction = async (
     params = {},
   ): Promise<Array<TrojanNodeConfig>> => {
-    const requestUserAgent = this.determineRequestUserAgent(
-      params.requestUserAgent,
+    const requestHeaders = this.determineRequestHeaders(
+      params.requestUserAgent || 'shadowrocket',
+      params.requestHeaders,
+    )
+    const cacheKey = Provider.getResourceCacheKey(
+      requestHeaders['user-agent'] + this.url,
     )
     const { nodeList } = await getTrojanSubscription({
       url: this.url,
       udpRelay: this.udpRelay,
       tls13: this.tls13,
-      requestUserAgent: requestUserAgent,
+      requestHeaders,
+      cacheKey,
     })
 
     if (this.config.hooks?.afterNodeListResponse) {
@@ -101,21 +114,25 @@ export const getTrojanSubscription = async ({
   url,
   udpRelay,
   tls13,
-  requestUserAgent,
+  requestHeaders,
+  cacheKey,
 }: {
   url: string
   udpRelay?: boolean
   tls13?: boolean
-  requestUserAgent?: string
+  requestHeaders: DefaultProviderRequestHeaders
+  cacheKey: string
 }): Promise<{
   readonly nodeList: Array<TrojanNodeConfig>
   readonly subscriptionUserinfo?: SubscriptionUserinfo
 }> => {
   assert(url, '未指定订阅地址 url')
 
-  const response = await Provider.requestCacheableResource(url, {
-    requestUserAgent: requestUserAgent || 'shadowrocket',
-  })
+  const response = await Provider.requestCacheableResource(
+    url,
+    requestHeaders,
+    cacheKey,
+  )
   const config = fromBase64(response.body)
   const nodeList = config
     .split('\n')

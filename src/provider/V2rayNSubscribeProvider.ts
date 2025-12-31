@@ -14,7 +14,7 @@ import relayableUrl from '../utils/relayable-url'
 import { parseSSUri } from '../utils/ss'
 
 import Provider from './Provider'
-import { GetNodeListFunction } from './types'
+import { DefaultProviderRequestHeaders, GetNodeListFunction } from './types'
 
 export default class V2rayNSubscribeProvider extends Provider {
   public readonly compatibleMode?: boolean
@@ -59,8 +59,12 @@ export default class V2rayNSubscribeProvider extends Provider {
   public getNodeList: GetNodeListFunction = async (
     params = {},
   ): ReturnType<typeof getV2rayNSubscription> => {
-    const requestUserAgent = this.determineRequestUserAgent(
+    const requestHeaders = this.determineRequestHeaders(
       params.requestUserAgent,
+      params.requestHeaders,
+    )
+    const cacheKey = Provider.getResourceCacheKey(
+      requestHeaders['user-agent'] + this.url,
     )
     const nodeList = await getV2rayNSubscription({
       url: this.url,
@@ -68,7 +72,8 @@ export default class V2rayNSubscribeProvider extends Provider {
       tls13: this.tls13,
       udpRelay: this.udpRelay,
       isCompatibleMode: this.compatibleMode,
-      requestUserAgent: requestUserAgent,
+      requestHeaders,
+      cacheKey,
     })
 
     if (this.config.hooks?.afterNodeListResponse) {
@@ -95,14 +100,16 @@ export const getV2rayNSubscription = async ({
   skipCertVerify,
   tls13,
   udpRelay,
-  requestUserAgent,
+  requestHeaders,
+  cacheKey,
 }: {
   url: string
   isCompatibleMode?: boolean
   skipCertVerify?: boolean
   udpRelay?: boolean
   tls13?: boolean
-  requestUserAgent?: string
+  requestHeaders: DefaultProviderRequestHeaders
+  cacheKey: string
 }): Promise<Array<VmessNodeConfig | ShadowsocksNodeConfig>> => {
   assert(url, '未指定订阅地址 url')
 
@@ -113,9 +120,11 @@ export const getV2rayNSubscription = async ({
   async function requestConfigFromRemote(): Promise<
     Array<VmessNodeConfig | ShadowsocksNodeConfig>
   > {
-    const response = await Provider.requestCacheableResource(url, {
-      requestUserAgent,
-    })
+    const response = await Provider.requestCacheableResource(
+      url,
+      requestHeaders,
+      cacheKey,
+    )
     const configString = response.body
 
     const configList = fromBase64(configString)

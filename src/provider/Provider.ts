@@ -1,4 +1,5 @@
 import { createLogger } from '@surgio/logger'
+import _ from 'lodash'
 
 import { CACHE_KEYS } from '../constant'
 import {
@@ -13,7 +14,11 @@ import httpClient, { getUserAgent } from '../utils/http-client'
 import { toMD5, parseSubscriptionUserInfo, SurgioError } from '../utils'
 import { ProviderValidator } from '../validators'
 
-import { GetNodeListFunction, GetSubscriptionUserInfoFunction } from './types'
+import {
+  DefaultProviderRequestHeaders,
+  GetNodeListFunction,
+  GetSubscriptionUserInfoFunction,
+} from './types'
 
 const logger = createLogger({
   service: 'surgio:Provider',
@@ -27,6 +32,8 @@ export default abstract class Provider {
   public supportGetSubscriptionUserInfo: boolean
   // 是否传递 Gateway 请求的 User-Agent
   public passGatewayRequestUserAgent: boolean
+  // 是否传递 Gateway 请求的 Headers
+  public passGatewayRequestHeaders: string[]
 
   protected constructor(public name: string, config: ProviderConfig) {
     const result = ProviderValidator.safeParse(config)
@@ -44,24 +51,20 @@ export default abstract class Provider {
     this.type = result.data.type
     this.passGatewayRequestUserAgent =
       getConfig()?.gateway?.passRequestUserAgent ?? false
+    this.passGatewayRequestHeaders =
+      getConfig()?.gateway?.passRequestHeaders ?? []
+  }
+
+  static getResourceCacheKey(indentifier: string): string {
+    return `${CACHE_KEYS.Provider}:${toMD5(indentifier)}`
   }
 
   static async requestCacheableResource(
     url: string,
-    options: {
-      requestUserAgent?: string
-    } = {},
+    headers: DefaultProviderRequestHeaders,
+    cacheKey: string = this.getResourceCacheKey(headers['user-agent'] + url),
   ): Promise<SubsciptionCacheItem> {
-    const cacheKey = `${CACHE_KEYS.Provider}:${toMD5(
-      getUserAgent(options.requestUserAgent) + url,
-    )}`
     const requestResource = async () => {
-      const headers: Record<string, string> = {}
-
-      if (options.requestUserAgent) {
-        headers['user-agent'] = getUserAgent(options.requestUserAgent)
-      }
-
       const res = await httpClient.get(url, {
         responseType: 'text',
         headers,
@@ -102,10 +105,24 @@ export default abstract class Provider {
 
   public determineRequestUserAgent(
     requestUserAgent?: string | undefined,
-  ): string | undefined {
-    return this.passGatewayRequestUserAgent
+  ): string {
+    const userAgent = this.passGatewayRequestUserAgent
       ? requestUserAgent || this.config.requestUserAgent
       : this.config.requestUserAgent
+
+    return getUserAgent(userAgent)
+  }
+
+  public determineRequestHeaders(
+    requestUserAgent?: string | undefined,
+    requestHeaders?: Record<string, string> | undefined,
+  ): DefaultProviderRequestHeaders {
+    const userAgent = this.determineRequestUserAgent(requestUserAgent)
+    const headers = { ...requestHeaders, 'user-agent': userAgent }
+    return _.pick(
+      headers,
+      this.passGatewayRequestHeaders,
+    ) as DefaultProviderRequestHeaders
   }
 
   public get nextPort(): number {
