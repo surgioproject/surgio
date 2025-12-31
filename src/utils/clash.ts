@@ -354,7 +354,9 @@ function nodeListMapper(nodeConfig: PossibleNodeConfigType) {
         ...(nodeConfig.udpRelay ? { udp: nodeConfig.udpRelay } : null),
         ...(nodeConfig.alpn ? { alpn: nodeConfig.alpn } : null),
         ...(nodeConfig.sni ? { sni: nodeConfig.sni } : null),
-        ...(nodeConfig.serverCertFingerprintSha256 ? { fingerprint: nodeConfig.serverCertFingerprintSha256 } : null),
+        ...(nodeConfig.serverCertFingerprintSha256
+          ? { fingerprint: nodeConfig.serverCertFingerprintSha256 }
+          : null),
         'skip-cert-verify': nodeConfig.skipCertVerify === true,
         ...(nodeConfig.network === 'ws'
           ? {
