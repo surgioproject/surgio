@@ -15,6 +15,8 @@ test.beforeEach(() => {
 test('getShadowsocksSubscription with udp', async (t) => {
   const { nodeList } = await getShadowsocksSubscription(
     'http://example.com/test-ss-sub.txt',
+    { 'user-agent': 'shadowrocket' },
+    'test-cache-key',
     true,
   )
 
@@ -54,6 +56,8 @@ test('getShadowsocksSubscription with udp', async (t) => {
 test('getShadowsocksSubscription without udp', async (t) => {
   const { nodeList } = await getShadowsocksSubscription(
     'http://example.com/test-ss-sub.txt',
+    { 'user-agent': 'shadowrocket' },
+    'test-cache-key',
   )
 
   t.deepEqual(nodeList[0], {

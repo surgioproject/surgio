@@ -71,6 +71,8 @@ test('ClashProvider.getSubscriptionUserInfo', async (t) => {
 test('getClashSubscription', async (t) => {
   const { nodeList } = await getClashSubscription({
     url: 'http://example.com/clash-sample.yaml',
+    requestHeaders: { 'user-agent': 'clash-for-windows' },
+    cacheKey: 'test-cache-key',
   })
   const config = [...nodeList]
 
@@ -259,6 +261,8 @@ test('getClashSubscription', async (t) => {
 test('getClashSubscription udpRelay', async (t) => {
   const { nodeList: config } = await getClashSubscription({
     url: 'http://example.com/clash-sample.yaml',
+    requestHeaders: { 'user-agent': 'clash-for-windows' },
+    cacheKey: 'test-cache-key',
     udpRelay: true,
   })
 
@@ -325,6 +329,8 @@ foo: bar
     async () => {
       await getClashSubscription({
         url: 'http://example.com/test-v2rayn-sub.txt',
+        requestHeaders: { 'user-agent': 'clash-for-windows' },
+        cacheKey: 'test-cache-key',
       })
     },
     {
@@ -336,7 +342,11 @@ foo: bar
 
   await t.throwsAsync(
     async () => {
-      await getClashSubscription({ url: 'http://local/fail-1' })
+      await getClashSubscription({
+        url: 'http://local/fail-1',
+        requestHeaders: { 'user-agent': 'clash-for-windows' },
+        cacheKey: 'test-cache-key',
+      })
     },
     {
       instanceOf: Error,
@@ -346,7 +356,11 @@ foo: bar
 
   await t.throwsAsync(
     async () => {
-      await getClashSubscription({ url: 'http://local/fail-2' })
+      await getClashSubscription({
+        url: 'http://local/fail-2',
+        requestHeaders: { 'user-agent': 'clash-for-windows' },
+        cacheKey: 'test-cache-key',
+      })
     },
     {
       instanceOf: Error,
@@ -790,12 +804,10 @@ test.serial('ClashProvider requestUserAgent', async (t) => {
     await provider.getNodeList()
   })
 
-  sandbox.assert.calledWithExactly(
+  sandbox.assert.calledWith(
     mock,
     'http://example.com/clash-sample.yaml',
-    {
-      requestUserAgent: 'test useragent',
-    },
+    sinon.match.has('user-agent', 'test useragent'),
   )
 })
 
@@ -817,12 +829,10 @@ test.serial(
       })
     })
 
-    sandbox.assert.calledWithExactly(
+    sandbox.assert.calledWith(
       mock,
       'http://example.com/clash-sample.yaml',
-      {
-        requestUserAgent: 'test useragent',
-      },
+      sinon.match.has('user-agent', 'test useragent'),
     )
   },
 )
@@ -845,12 +855,10 @@ test.serial(
       })
     })
 
-    sandbox.assert.calledWithExactly(
+    sandbox.assert.calledWith(
       mock,
       'http://example.com/clash-sample.yaml',
-      {
-        requestUserAgent: 'clash',
-      },
+      sinon.match.has('user-agent', 'clash'),
     )
   },
 )
