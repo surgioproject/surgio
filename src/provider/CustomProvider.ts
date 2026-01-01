@@ -23,7 +23,12 @@ import {
 } from '../validators'
 
 import Provider from './Provider'
-import { GetNodeListFunction, GetNodeListParams } from './types'
+import {
+  GetNodeListFunction,
+  GetNodeListParams,
+  GetNodeListV2Function,
+  GetNodeListV2Result,
+} from './types'
 
 export default class CustomProvider extends Provider {
   public readonly nodeList:
@@ -73,17 +78,17 @@ export default class CustomProvider extends Provider {
 
         // istanbul ignore next
         if (node['udp-relay']) {
-          throw new Error('udp-relay 已废弃, 请使用 udpRelay')
+          throw new Error('udp-relay 已废弃，请使用 udpRelay')
         }
 
         // istanbul ignore next
         if (node['obfs-host']) {
-          throw new Error('obfs-host 已废弃, 请使用 obfsHost')
+          throw new Error('obfs-host 已废弃，请使用 obfsHost')
         }
 
         // istanbul ignore next
         if (node['obfs-uri']) {
-          throw new Error('obfs-uri 已废弃, 请使用 obfsUri')
+          throw new Error('obfs-uri 已废弃，请使用 obfsUri')
         }
 
         // istanbul ignore next
@@ -160,6 +165,13 @@ export default class CustomProvider extends Provider {
     }
 
     return parsedNodeList
+  }
+
+  public getNodeListV2: GetNodeListV2Function = async (
+    params = {},
+  ): Promise<GetNodeListV2Result> => {
+    const nodeList = await this.getNodeList(params)
+    return { nodeList }
   }
 
   public prepareVmessNodeConfig(node: VmessNodeConfig): VmessNodeConfig {

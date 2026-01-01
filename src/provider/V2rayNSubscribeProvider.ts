@@ -14,7 +14,12 @@ import relayableUrl from '../utils/relayable-url'
 import { parseSSUri } from '../utils/ss'
 
 import Provider from './Provider'
-import { DefaultProviderRequestHeaders, GetNodeListFunction } from './types'
+import {
+  DefaultProviderRequestHeaders,
+  GetNodeListFunction,
+  GetNodeListV2Function,
+  GetNodeListV2Result,
+} from './types'
 
 export default class V2rayNSubscribeProvider extends Provider {
   public readonly compatibleMode?: boolean
@@ -88,6 +93,13 @@ export default class V2rayNSubscribeProvider extends Provider {
     }
 
     return nodeList
+  }
+
+  public getNodeListV2: GetNodeListV2Function = async (
+    params = {},
+  ): Promise<GetNodeListV2Result> => {
+    const nodeList = await this.getNodeList(params)
+    return { nodeList }
   }
 }
 

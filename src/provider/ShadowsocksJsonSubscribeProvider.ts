@@ -10,7 +10,12 @@ import { SurgioError } from '../utils'
 import relayableUrl from '../utils/relayable-url'
 
 import Provider from './Provider'
-import { DefaultProviderRequestHeaders, GetNodeListFunction } from './types'
+import {
+  DefaultProviderRequestHeaders,
+  GetNodeListFunction,
+  GetNodeListV2Function,
+  GetNodeListV2Result,
+} from './types'
 
 export default class ShadowsocksJsonSubscribeProvider extends Provider {
   readonly #originalUrl: string
@@ -69,6 +74,13 @@ export default class ShadowsocksJsonSubscribeProvider extends Provider {
     }
 
     return nodeList
+  }
+
+  public getNodeListV2: GetNodeListV2Function = async (
+    params = {},
+  ): Promise<GetNodeListV2Result> => {
+    const nodeList = await this.getNodeList(params)
+    return { nodeList }
   }
 }
 
