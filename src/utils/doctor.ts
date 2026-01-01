@@ -19,7 +19,7 @@ export const generateDoctorInfo = async (
       join(cwd, 'node_modules/@surgio/gateway/package.json'),
     )
     doctorInfo.push(`@surgio/gateway: ${gatewayPkg.version}`)
-  } catch (_) {
+  } catch {
     // no catch
   }
 

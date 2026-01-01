@@ -284,10 +284,10 @@ export class Artifact extends EventEmitter {
     let nodeConfigList: ReadonlyArray<PossibleNodeConfigType>
 
     try {
-      // eslint-disable-next-line prefer-const
       provider = await getProvider(providerName, require(filePath))
       this.providerMap.set(providerName, provider)
-    } catch (err) /* istanbul ignore next */ {
+    } catch (_err) /* istanbul ignore next */ {
+      const err = _err
       if (isSurgioError(err)) {
         err.providerName = providerName
         err.providerPath = filePath
@@ -483,7 +483,7 @@ export class Artifact extends EventEmitter {
               } /* istanbul ignore next */ else {
                 nodeConfig.hostnameIp = domains
               }
-            } catch (err) /* istanbul ignore next */ {
+            } catch /* istanbul ignore next */ {
               logger.warn(`${nodeConfig.hostname} 无法解析，将忽略该节点`)
               return undefined
             }
@@ -501,7 +501,7 @@ export class Artifact extends EventEmitter {
               try {
                 nodeConfig.hostnameIp = await resolveDomain(nodeConfig.hostname)
                 nodeConfig.hostname = nodeConfig.hostnameIp[0]
-              } catch (err) {
+              } catch {
                 logger.warn(
                   `${nodeConfig.hostname} 无法解析，将忽略该域名的解析结果`,
                 )

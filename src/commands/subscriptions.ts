@@ -54,9 +54,8 @@ class SubscriptionsCommand extends BaseCommand<typeof SubscriptionsCommand> {
 
         logger.debug('read %s %s', providerName, path)
 
-        // eslint-disable-next-line prefer-const
         provider = await getProvider(providerName, module.default)
-      } catch (err) {
+      } catch {
         logger.debug(`${path} 不是一个合法的模块`)
         return undefined
       }

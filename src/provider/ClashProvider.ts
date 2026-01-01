@@ -209,9 +209,8 @@ export const getClashSubscription = async ({
   let clashConfig
 
   try {
-    // eslint-disable-next-line prefer-const
     clashConfig = yaml.parse(response.body)
-  } catch (err) /* istanbul ignore next */ {
+  } catch /* istanbul ignore next */ {
     throw new Error(`${url} 不是一个合法的 YAML 文件`)
   }
 
