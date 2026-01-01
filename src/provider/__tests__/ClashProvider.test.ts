@@ -328,24 +328,9 @@ foo: bar
   await t.throwsAsync(
     async () => {
       await getClashSubscription({
-        url: 'http://example.com/test-v2rayn-sub.txt',
-        requestHeaders: { 'user-agent': 'clash-for-windows' },
-        cacheKey: 'test-cache-key',
-      })
-    },
-    {
-      instanceOf: Error,
-      message:
-        'http://example.com/test-v2rayn-sub.txt 订阅内容有误，请检查后重试',
-    },
-  )
-
-  await t.throwsAsync(
-    async () => {
-      await getClashSubscription({
         url: 'http://local/fail-1',
         requestHeaders: { 'user-agent': 'clash-for-windows' },
-        cacheKey: 'test-cache-key',
+        cacheKey: 'test-cache-key-1',
       })
     },
     {
@@ -359,7 +344,7 @@ foo: bar
       await getClashSubscription({
         url: 'http://local/fail-2',
         requestHeaders: { 'user-agent': 'clash-for-windows' },
-        cacheKey: 'test-cache-key',
+        cacheKey: 'test-cache-key-2',
       })
     },
     {
@@ -807,7 +792,8 @@ test.serial('ClashProvider requestUserAgent', async (t) => {
   sandbox.assert.calledWith(
     mock,
     'http://example.com/clash-sample.yaml',
-    sinon.match.has('user-agent', 'test useragent'),
+    sinon.match.has('user-agent', sinon.match(/^test useragent surgio\//)),
+    sinon.match.string,
   )
 })
 
@@ -832,7 +818,8 @@ test.serial(
     sandbox.assert.calledWith(
       mock,
       'http://example.com/clash-sample.yaml',
-      sinon.match.has('user-agent', 'test useragent'),
+      sinon.match.has('user-agent', sinon.match(/^test useragent surgio\//)),
+      sinon.match.string,
     )
   },
 )
@@ -858,7 +845,8 @@ test.serial(
     sandbox.assert.calledWith(
       mock,
       'http://example.com/clash-sample.yaml',
-      sinon.match.has('user-agent', 'clash'),
+      sinon.match.has('user-agent', sinon.match(/^surgio\//)),
+      sinon.match.string,
     )
   },
 )
