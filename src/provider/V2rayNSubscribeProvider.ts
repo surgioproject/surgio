@@ -68,9 +68,7 @@ export default class V2rayNSubscribeProvider extends Provider {
       params.requestUserAgent,
       params.requestHeaders,
     )
-    const cacheKey = Provider.getResourceCacheKey(
-      requestHeaders, this.url,
-    )
+    const cacheKey = Provider.getResourceCacheKey(requestHeaders, this.url)
     const nodeList = await getV2rayNSubscription({
       url: this.url,
       skipCertVerify: this.skipCertVerify,

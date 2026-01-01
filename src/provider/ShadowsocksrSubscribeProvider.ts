@@ -115,12 +115,13 @@ export default class ShadowsocksrSubscribeProvider extends Provider {
     )
     const cacheKey = Provider.getResourceCacheKey(requestHeaders, this.url)
 
-    const { nodeList, subscriptionUserinfo } = await getShadowsocksrSubscription(
-      this.url,
-      requestHeaders,
-      cacheKey,
-      this.udpRelay,
-    )
+    const { nodeList, subscriptionUserinfo } =
+      await getShadowsocksrSubscription(
+        this.url,
+        requestHeaders,
+        cacheKey,
+        this.udpRelay,
+      )
 
     if (this.config.hooks?.afterNodeListResponse) {
       const newList = await this.config.hooks.afterNodeListResponse(
@@ -160,7 +161,7 @@ export const getShadowsocksrSubscription = async (
       const nodeConfig = parseSSRUri(str)
 
       if (udpRelay !== void 0) {
-        ;(nodeConfig.udpRelay as boolean) = udpRelay
+        nodeConfig.udpRelay = udpRelay
       }
 
       return nodeConfig
