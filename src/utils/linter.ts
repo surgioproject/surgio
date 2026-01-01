@@ -2,18 +2,15 @@
 
 import { ESLint } from 'eslint'
 import _ from 'lodash'
+// @ts-expect-error - no types available
+import surgioConfig from '@surgio/eslint-config-surgio'
 
 export const createCli = (cliConfig?: ESLint.Options): ESLint => {
-  const linterConfig = {
-    // 在测试情况下 fixture 目录不包含 eslintrc，避免 eslint 读取根目录的 eslintrc
-    useEslintrc: process.env.NODE_ENV !== 'test',
-    extensions: ['.js'],
-    baseConfig: {
-      extends: ['@surgio/eslint-config-surgio'].map(
-        // @ts-ignore
-        require.resolve,
-      ),
-    },
+  const linterConfig: ESLint.Options = {
+    // In ESLint 9 flat config, we use overrideConfigFile to specify a config array
+    // When in test mode, we only use the surgioConfig without reading user's config files
+    overrideConfigFile: true,
+    overrideConfig: surgioConfig,
   }
 
   return new ESLint({
@@ -31,7 +28,7 @@ export const checkAndFix = async (cwd: string): Promise<boolean> => {
   await ESLint.outputFixes(results)
 
   const formatter = await cli.loadFormatter('stylish')
-  const resultText = formatter.format(results)
+  const resultText = await formatter.format(results)
 
   console.log(resultText)
 
@@ -43,7 +40,7 @@ export const check = async (cwd: string): Promise<boolean> => {
   const results = await cli.lintFiles(['.'])
   const errorCount = _.sumBy(results, (curr) => curr.errorCount)
   const formatter = await cli.loadFormatter('stylish')
-  const resultText = formatter.format(results)
+  const resultText = await formatter.format(results)
 
   console.log(resultText)
 
