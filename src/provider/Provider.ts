@@ -17,9 +17,7 @@ import { ProviderValidator } from '../validators'
 import {
   DefaultProviderRequestHeaders,
   GetNodeListFunction,
-  GetNodeListParams,
   GetNodeListV2Function,
-  GetNodeListV2Result,
   GetSubscriptionUserInfoFunction,
 } from './types'
 
@@ -231,24 +229,7 @@ export default abstract class Provider {
    * Get node list and subscription user info in a single call.
    * This is the recommended method over separate getNodeList and getSubscriptionUserInfo calls.
    *
-   * Default implementation composes results from existing methods.
-   * Providers should override this for better efficiency when they fetch both from the same source.
+   * Providers must implement this to efficiently fetch both data when they come from the same source.
    */
-  public async getNodeListV2(
-    params?: GetNodeListParams,
-  ): Promise<GetNodeListV2Result> {
-    const nodeList = await this.getNodeList(params)
-
-    if (this.supportGetSubscriptionUserInfo) {
-      try {
-        const subscriptionUserinfo = await this.getSubscriptionUserInfo(params)
-        return { nodeList, subscriptionUserinfo }
-      } catch (err) {
-        // If getSubscriptionUserInfo fails, still return nodeList
-        return { nodeList }
-      }
-    }
-
-    return { nodeList }
-  }
+  abstract getNodeListV2: GetNodeListV2Function
 }
