@@ -3,10 +3,12 @@
   "compilerOptions": {
     "outDir": "build/",
     "sourceMap": true,
-    "noEmit": false,
   },
   "include": [
     "src/**/*.ts",
   ],
-  "exclude": ["node_modules/**", "**/*.test.ts"]
+  "exclude": [
+    "node_modules/**",
+    "**/*.test.ts"
+  ]
 }
