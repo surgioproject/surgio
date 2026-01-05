@@ -239,6 +239,9 @@ function nodeListMapper(nodeConfig: PossibleNodeConfigType) {
         if (clashConfig.clashCore === 'clash.meta' && nodeConfig.sni) {
           vmessNode.servername = nodeConfig.sni
         }
+        if (clashConfig.clashCore === 'clash.meta' && nodeConfig.alpn) {
+          vmessNode.alpn = nodeConfig.alpn
+        }
         if (nodeConfig.clientFingerprint) {
           vmessNode['client-fingerprint'] = nodeConfig.clientFingerprint
         }
