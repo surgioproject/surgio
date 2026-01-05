@@ -327,7 +327,10 @@ export const parseClashConfig = (
             if (typeof item['client-fingerprint'] === 'string') {
               vmessNode.clientFingerprint = item['client-fingerprint']
             }
-
+            if (Array.isArray(item.alpn) && item.alpn.length > 0) {
+              vmessNode.alpn = item.alpn
+            }
+            
             vmessNode.skipCertVerify = item['skip-cert-verify'] === true
             vmessNode.tls13 = tls13 === true
           }
