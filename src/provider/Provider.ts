@@ -1,10 +1,8 @@
 import { createLogger } from '@surgio/logger'
 import _ from 'lodash'
 import { IncomingHttpHeaders } from 'http'
-import { deprecate } from 'util'
 
-import { DEP011 as DEP011_MESSAGE } from '../misc/deprecation'
-import { CACHE_KEYS } from '../constant'
+import { CACHE_KEYS, PASS_GATEWAY_REQUEST_HEADERS_WHITELIST } from '../constant'
 import {
   ProviderConfig,
   SubsciptionCacheItem,
@@ -27,8 +25,6 @@ import {
 const logger = createLogger({
   service: 'surgio:Provider',
 })
-
-const DEP011 = deprecate(() => {}, DEP011_MESSAGE)
 
 export default abstract class Provider {
   public readonly type: SupportProviderEnum
@@ -53,14 +49,19 @@ export default abstract class Provider {
     this.supportGetSubscriptionUserInfo = false
     this.config = result.data as ProviderConfig
     this.type = result.data.type
-    this.passGatewayRequestHeaders =
+    this.passGatewayRequestHeaders = (
       getConfig()?.gateway?.passRequestHeaders ?? []
+    ).map((header) => header.toLowerCase())
 
     if (getConfig()?.gateway?.passRequestUserAgent) {
-      DEP011()
-
       if (!this.passGatewayRequestHeaders.includes('user-agent')) {
         this.passGatewayRequestHeaders.push('user-agent')
+      }
+    }
+
+    for (const header of PASS_GATEWAY_REQUEST_HEADERS_WHITELIST) {
+      if (!this.passGatewayRequestHeaders.includes(header)) {
+        this.passGatewayRequestHeaders.push(header)
       }
     }
   }
@@ -111,14 +112,14 @@ export default abstract class Provider {
       }
 
       if (res.headers['subscription-userinfo']) {
-        subsciptionCacheItem.subscriptionUserinfo = parseSubscriptionUserInfo(
+        subsciptionCacheItem.subscriptionUserInfo = parseSubscriptionUserInfo(
           res.headers['subscription-userinfo'] as string,
         )
         logger.debug(
           '%s received subscription userinfo - raw: %s | parsed: %j',
           url,
           res.headers['subscription-userinfo'],
-          subsciptionCacheItem.subscriptionUserinfo,
+          subsciptionCacheItem.subscriptionUserInfo,
         )
       }
 
@@ -212,9 +213,7 @@ export default abstract class Provider {
       this.passGatewayRequestHeaders,
     )
 
-    // Always ensure user-agent is included in the result
     return {
-      'user-agent': userAgent,
       ...filteredHeaders,
     } as DefaultProviderRequestHeaders
   }

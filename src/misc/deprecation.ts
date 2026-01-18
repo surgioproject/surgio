@@ -16,5 +16,3 @@ export const DEP009 =
   'proxyGroupModifier 会在后续版本中移出，详情请阅读 https://url.royli.dev/YyKh1'
 export const DEP010 =
   'Quantumult 相关方法会在下个大版本中移出，请使用其它客户端'
-export const DEP011 =
-  'passRequestUserAgent 即将废弃，请使用 passRequestHeaders 替代'

@@ -177,3 +177,8 @@ export const SURGE_SUPPORTED_VMESS_NETWORK = ['tcp', 'ws'] as const
 export const SURFBOARD_SUPPORTED_VMESS_NETWORK = ['tcp', 'ws'] as const
 
 export const LOON_SUPPORTED_VMESS_NETWORK = ['tcp', 'ws', 'http'] as const
+
+export const PASS_GATEWAY_REQUEST_HEADERS_WHITELIST = [
+  'x-surge-unlocked-features',
+  'user-agent',
+] as const
