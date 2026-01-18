@@ -1,6 +1,9 @@
 import { createLogger } from '@surgio/logger'
 import _ from 'lodash'
+import { IncomingHttpHeaders } from 'http'
+import { deprecate } from 'util'
 
+import { DEP011 as DEP011_MESSAGE } from '../misc/deprecation'
 import { CACHE_KEYS } from '../constant'
 import {
   ProviderConfig,
@@ -25,14 +28,14 @@ const logger = createLogger({
   service: 'surgio:Provider',
 })
 
+const DEP011 = deprecate(() => {}, DEP011_MESSAGE)
+
 export default abstract class Provider {
   public readonly type: SupportProviderEnum
   public readonly config: ProviderConfig
 
   // 是否支持在订阅中获取用户流量信息
   public supportGetSubscriptionUserInfo: boolean
-  // 是否传递 Gateway 请求的 User-Agent
-  public passGatewayRequestUserAgent: boolean
   // 是否传递 Gateway 请求的 Headers
   public passGatewayRequestHeaders: string[]
 
@@ -50,10 +53,16 @@ export default abstract class Provider {
     this.supportGetSubscriptionUserInfo = false
     this.config = result.data as ProviderConfig
     this.type = result.data.type
-    this.passGatewayRequestUserAgent =
-      getConfig()?.gateway?.passRequestUserAgent ?? false
     this.passGatewayRequestHeaders =
       getConfig()?.gateway?.passRequestHeaders ?? []
+
+    if (getConfig()?.gateway?.passRequestUserAgent) {
+      DEP011()
+
+      if (!this.passGatewayRequestHeaders.includes('user-agent')) {
+        this.passGatewayRequestHeaders.push('user-agent')
+      }
+    }
   }
 
   /**
@@ -139,7 +148,7 @@ export default abstract class Provider {
    * @returns Normalized User-Agent string
    *
    * @remarks
-   * - If passGatewayRequestUserAgent is true, uses the gateway's User-Agent (if provided)
+   * - If passGatewayRequestHeaders includes 'user-agent', uses the gateway's User-Agent (if provided)
    * - Falls back to the provider's configured requestUserAgent
    * - Normalizes the User-Agent through getUserAgent() utility
    */
@@ -147,7 +156,7 @@ export default abstract class Provider {
     requestUserAgent?: string | undefined,
   ): string {
     const userAgent =
-      this.passGatewayRequestUserAgent && requestUserAgent
+      this.passGatewayRequestHeaders.includes('user-agent') && requestUserAgent
         ? requestUserAgent
         : this.config.requestUserAgent
 
@@ -182,7 +191,7 @@ export default abstract class Provider {
    */
   public determineRequestHeaders(
     requestUserAgent?: string | undefined,
-    requestHeaders?: Record<string, string> | undefined,
+    requestHeaders?: IncomingHttpHeaders | undefined,
   ): DefaultProviderRequestHeaders {
     const userAgent = this.determineRequestUserAgent(requestUserAgent)
 

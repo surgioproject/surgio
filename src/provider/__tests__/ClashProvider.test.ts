@@ -798,7 +798,7 @@ test.serial('ClashProvider requestUserAgent', async (t) => {
 })
 
 test.serial(
-  'ClashProvider requestUserAgent with passGatewayRequestUserAgent',
+  'ClashProvider requestUserAgent with passGatewayRequestHeaders',
   async (t) => {
     const mock = sandbox.spy(Provider, 'requestCacheableResource')
 
@@ -807,7 +807,7 @@ test.serial(
       type: SupportProviderEnum.Clash,
       url: 'http://example.com/clash-sample.yaml',
     })
-    provider.passGatewayRequestUserAgent = true
+    provider.passGatewayRequestHeaders = ['user-agent']
 
     await t.notThrowsAsync(async () => {
       await provider.getNodeList({
@@ -825,7 +825,7 @@ test.serial(
 )
 
 test.serial(
-  'ClashProvider requestUserAgent without passGatewayRequestUserAgent',
+  'ClashProvider requestUserAgent without passGatewayRequestHeaders',
   async (t) => {
     const mock = sandbox.spy(Provider, 'requestCacheableResource')
 
@@ -834,7 +834,7 @@ test.serial(
       type: SupportProviderEnum.Clash,
       url: 'http://example.com/clash-sample.yaml',
     })
-    provider.passGatewayRequestUserAgent = false
+    provider.passGatewayRequestHeaders = []
 
     await t.notThrowsAsync(async () => {
       await provider.getNodeList({
