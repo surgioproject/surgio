@@ -81,7 +81,6 @@
     "@royli/hygen": "^6.2.0",
     "@surgio/eslint-config-surgio": "^2.0.0",
     "@surgio/logger": "^1.3.0",
-    "agentkeepalive": "^4.6.0",
     "ali-oss": "^6.23.0",
     "bluebird": "^3.7.2",
     "bytes": "^3.1.2",

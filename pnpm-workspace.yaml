@@ -1,0 +1,4 @@
+autoInstallPeers: false
+hoistPattern:
+  - "!@vuepress/*"
+  - "!vuepress*"
