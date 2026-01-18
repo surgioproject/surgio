@@ -46,6 +46,10 @@ export default class TrojanProvider extends Provider {
     this.udpRelay = result.data.udpRelay
     this.tls13 = result.data.tls13
     this.supportGetSubscriptionUserInfo = true
+
+    if (!this.config.requestUserAgent) {
+      this.config.requestUserAgent = 'shadowrocket'
+    }
   }
 
   // istanbul ignore next
@@ -57,7 +61,7 @@ export default class TrojanProvider extends Provider {
     params = {},
   ) => {
     const requestHeaders = this.determineRequestHeaders(
-      params.requestUserAgent || 'shadowrocket',
+      params.requestUserAgent,
       params.requestHeaders,
     )
     const cacheKey = Provider.getResourceCacheKey(requestHeaders, this.url)
@@ -79,7 +83,7 @@ export default class TrojanProvider extends Provider {
     params = {},
   ): Promise<Array<TrojanNodeConfig>> => {
     const requestHeaders = this.determineRequestHeaders(
-      params.requestUserAgent || 'shadowrocket',
+      params.requestUserAgent,
       params.requestHeaders,
     )
     const cacheKey = Provider.getResourceCacheKey(requestHeaders, this.url)
@@ -109,7 +113,7 @@ export default class TrojanProvider extends Provider {
     params = {},
   ): Promise<GetNodeListV2Result> => {
     const requestHeaders = this.determineRequestHeaders(
-      params.requestUserAgent || 'shadowrocket',
+      params.requestUserAgent,
       params.requestHeaders,
     )
     const cacheKey = Provider.getResourceCacheKey(requestHeaders, this.url)

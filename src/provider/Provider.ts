@@ -30,10 +30,11 @@ export default abstract class Provider {
   public readonly type: SupportProviderEnum
   public readonly config: ProviderConfig
 
-  // 是否支持在订阅中获取用户流量信息
-  public supportGetSubscriptionUserInfo: boolean
-  // 是否传递 Gateway 请求的 Headers
-  public passGatewayRequestHeaders: string[]
+  // Whether the provider supports getting subscription user info
+  public supportGetSubscriptionUserInfo: boolean = false
+
+  // Headers that will be passed to the upstream server
+  private passGatewayRequestHeaders: string[]
 
   protected constructor(public name: string, config: ProviderConfig) {
     const result = ProviderValidator.safeParse(config)
@@ -46,8 +47,7 @@ export default abstract class Provider {
       })
     }
 
-    this.supportGetSubscriptionUserInfo = false
-    this.config = result.data as ProviderConfig
+    this.config = result.data satisfies ProviderConfig
     this.type = result.data.type
     this.passGatewayRequestHeaders = (
       getConfig()?.gateway?.passRequestHeaders ?? []
@@ -160,7 +160,7 @@ export default abstract class Provider {
       this.passGatewayRequestHeaders.includes('user-agent') && requestUserAgent
         ? requestUserAgent
         : this.config.requestUserAgent
-
+    
     return getUserAgent(userAgent)
   }
 

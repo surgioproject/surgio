@@ -807,7 +807,6 @@ test.serial(
       type: SupportProviderEnum.Clash,
       url: 'http://example.com/clash-sample.yaml',
     })
-    provider.passGatewayRequestHeaders = ['user-agent']
 
     await t.notThrowsAsync(async () => {
       await provider.getNodeList({
@@ -829,23 +828,23 @@ test.serial(
   async (t) => {
     const mock = sandbox.spy(Provider, 'requestCacheableResource')
 
-    const requestUserAgent = 'test useragent'
     const provider = new ClashProvider('test', {
       type: SupportProviderEnum.Clash,
       url: 'http://example.com/clash-sample.yaml',
     })
-    provider.passGatewayRequestHeaders = []
 
     await t.notThrowsAsync(async () => {
       await provider.getNodeList({
-        requestUserAgent,
+        requestHeaders: {
+          'x-custom': 'value',
+        },
       })
     })
 
     sandbox.assert.calledWith(
       mock,
       'http://example.com/clash-sample.yaml',
-      sinon.match.has('user-agent', sinon.match(/^surgio\//)),
+      sinon.match.has('user-agent', sinon.match(/^clash surgio\//)),
       sinon.match.string,
     )
   },

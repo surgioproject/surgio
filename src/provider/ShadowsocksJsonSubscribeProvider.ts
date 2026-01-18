@@ -40,6 +40,10 @@ export default class ShadowsocksJsonSubscribeProvider extends Provider {
 
     this.#originalUrl = result.data.url
     this.udpRelay = result.data.udpRelay
+
+    if (!this.config.requestUserAgent) {
+      this.config.requestUserAgent = 'shadowrocket'
+    }
   }
 
   // istanbul ignore next
@@ -51,7 +55,7 @@ export default class ShadowsocksJsonSubscribeProvider extends Provider {
     params = {},
   ): Promise<Array<ShadowsocksNodeConfig>> => {
     const requestHeaders = this.determineRequestHeaders(
-      'shadowrocket',
+      params.requestUserAgent,
       params.requestHeaders,
     )
     const cacheKey = Provider.getResourceCacheKey(requestHeaders, this.url)

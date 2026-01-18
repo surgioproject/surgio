@@ -91,6 +91,10 @@ export default class ClashProvider extends Provider {
     this.udpRelay = result.data.udpRelay
     this.tls13 = result.data.tls13
     this.supportGetSubscriptionUserInfo = true
+
+    if (!this.config.requestUserAgent) {
+      this.config.requestUserAgent = getNetworkClashUA()
+    }
   }
 
   // istanbul ignore next
@@ -102,7 +106,7 @@ export default class ClashProvider extends Provider {
     params = {},
   ) => {
     const requestHeaders = this.determineRequestHeaders(
-      params.requestUserAgent || getNetworkClashUA(),
+      params.requestUserAgent,
       params.requestHeaders,
     )
     const cacheKey = Provider.getResourceCacheKey(requestHeaders, this.url)
@@ -125,7 +129,7 @@ export default class ClashProvider extends Provider {
     params = {},
   ): Promise<SupportConfigTypes[]> => {
     const requestHeaders = this.determineRequestHeaders(
-      params.requestUserAgent || getNetworkClashUA(),
+      params.requestUserAgent,
       params.requestHeaders,
     )
     const cacheKey = Provider.getResourceCacheKey(requestHeaders, this.url)
@@ -155,7 +159,7 @@ export default class ClashProvider extends Provider {
     params = {},
   ): Promise<GetNodeListV2Result> => {
     const requestHeaders = this.determineRequestHeaders(
-      params.requestUserAgent || getNetworkClashUA(),
+      params.requestUserAgent,
       params.requestHeaders,
     )
     const cacheKey = Provider.getResourceCacheKey(requestHeaders, this.url)
