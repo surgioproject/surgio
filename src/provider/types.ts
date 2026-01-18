@@ -40,7 +40,7 @@ export type GetSubscriptionUserInfoFunction = (
 
 export type GetNodeListV2Result = {
   readonly nodeList: ReadonlyArray<PossibleNodeConfigType>
-  readonly subscriptionUserinfo?: SubscriptionUserinfo
+  readonly subscriptionUserInfo?: SubscriptionUserinfo
 }
 
 export type GetNodeListV2Function = (
