@@ -102,6 +102,8 @@ export default abstract class Provider {
     headers: DefaultProviderRequestHeaders,
     cacheKey: string = this.getResourceCacheKey(headers, url),
   ): Promise<SubsciptionCacheItem> {
+    logger.debug('requestCacheableResource: %s %j %s', url, headers, cacheKey)
+
     const requestResource = async () => {
       const res = await httpClient.get(url, {
         responseType: 'text',
@@ -128,17 +130,43 @@ export default abstract class Provider {
 
     const cachedValue = await unifiedCache.get<SubsciptionCacheItem>(cacheKey)
 
-    return cachedValue
-      ? cachedValue
-      : await (async () => {
-          const subsciptionCacheItem = await requestResource()
-          await unifiedCache.set(
-            cacheKey,
-            subsciptionCacheItem,
-            getProviderCacheMaxage(),
-          )
-          return subsciptionCacheItem
-        })()
+    if (cachedValue) {
+      logger.debug(
+        'requestCacheableResource: %s %j %s: cached',
+        url,
+        headers,
+        cacheKey,
+      )
+    }
+
+    try {
+      return cachedValue
+        ? cachedValue
+        : await (async () => {
+            const subsciptionCacheItem = await requestResource()
+            await unifiedCache.set(
+              cacheKey,
+              subsciptionCacheItem,
+              getProviderCacheMaxage(),
+            )
+            logger.debug(
+              'requestCacheableResource: %s %j %s: not cached',
+              url,
+              headers,
+              cacheKey,
+            )
+            return subsciptionCacheItem
+          })()
+    } catch (error) {
+      logger.error(
+        'requestCacheableResource: %s %j %s',
+        url,
+        headers,
+        cacheKey,
+        error,
+      )
+      throw error
+    }
   }
 
   /**
@@ -160,7 +188,7 @@ export default abstract class Provider {
       this.passGatewayRequestHeaders.includes('user-agent') && requestUserAgent
         ? requestUserAgent
         : this.config.requestUserAgent
-    
+
     return getUserAgent(userAgent)
   }
 
