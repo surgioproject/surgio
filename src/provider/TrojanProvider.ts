@@ -61,7 +61,7 @@ export default class TrojanProvider extends Provider {
       params.requestHeaders,
     )
     const cacheKey = Provider.getResourceCacheKey(requestHeaders, this.url)
-    const { subscriptionUserinfo } = await getTrojanSubscription({
+    const { subscriptionUserInfo } = await getTrojanSubscription({
       url: this.url,
       udpRelay: this.udpRelay,
       tls13: this.tls13,
@@ -69,8 +69,8 @@ export default class TrojanProvider extends Provider {
       cacheKey,
     })
 
-    if (subscriptionUserinfo) {
-      return subscriptionUserinfo
+    if (subscriptionUserInfo) {
+      return subscriptionUserInfo
     }
     return undefined
   }
@@ -114,7 +114,7 @@ export default class TrojanProvider extends Provider {
     )
     const cacheKey = Provider.getResourceCacheKey(requestHeaders, this.url)
 
-    const { nodeList, subscriptionUserinfo } = await getTrojanSubscription({
+    const { nodeList, subscriptionUserInfo } = await getTrojanSubscription({
       url: this.url,
       udpRelay: this.udpRelay,
       tls13: this.tls13,
@@ -129,11 +129,11 @@ export default class TrojanProvider extends Provider {
       )
 
       if (newList) {
-        return { nodeList: newList, subscriptionUserinfo }
+        return { nodeList: newList, subscriptionUserInfo }
       }
     }
 
-    return { nodeList, subscriptionUserinfo }
+    return { nodeList, subscriptionUserInfo }
   }
 }
 
@@ -154,7 +154,7 @@ export const getTrojanSubscription = async ({
   cacheKey: string
 }): Promise<{
   readonly nodeList: Array<TrojanNodeConfig>
-  readonly subscriptionUserinfo?: SubscriptionUserinfo
+  readonly subscriptionUserInfo?: SubscriptionUserinfo
 }> => {
   assert(url, '未指定订阅地址 url')
 
@@ -179,6 +179,6 @@ export const getTrojanSubscription = async ({
 
   return {
     nodeList,
-    subscriptionUserinfo: response.subscriptionUserinfo,
+    subscriptionUserInfo: response.subscriptionUserInfo,
   }
 }

@@ -64,15 +64,15 @@ export default class ShadowsocksrSubscribeProvider extends Provider {
       params.requestHeaders,
     )
     const cacheKey = Provider.getResourceCacheKey(requestHeaders, this.url)
-    const { subscriptionUserinfo } = await getShadowsocksrSubscription(
+    const { subscriptionUserInfo } = await getShadowsocksrSubscription(
       this.url,
       requestHeaders,
       cacheKey,
       this.udpRelay,
     )
 
-    if (subscriptionUserinfo) {
-      return subscriptionUserinfo
+    if (subscriptionUserInfo) {
+      return subscriptionUserInfo
     }
     return undefined
   }
@@ -115,7 +115,7 @@ export default class ShadowsocksrSubscribeProvider extends Provider {
     )
     const cacheKey = Provider.getResourceCacheKey(requestHeaders, this.url)
 
-    const { nodeList, subscriptionUserinfo } =
+    const { nodeList, subscriptionUserInfo } =
       await getShadowsocksrSubscription(
         this.url,
         requestHeaders,
@@ -130,11 +130,11 @@ export default class ShadowsocksrSubscribeProvider extends Provider {
       )
 
       if (newList) {
-        return { nodeList: newList, subscriptionUserinfo }
+        return { nodeList: newList, subscriptionUserInfo }
       }
     }
 
-    return { nodeList, subscriptionUserinfo }
+    return { nodeList, subscriptionUserInfo }
   }
 }
 
@@ -145,7 +145,7 @@ export const getShadowsocksrSubscription = async (
   udpRelay?: boolean,
 ): Promise<{
   readonly nodeList: Array<ShadowsocksrNodeConfig>
-  readonly subscriptionUserinfo?: SubscriptionUserinfo
+  readonly subscriptionUserInfo?: SubscriptionUserinfo
 }> => {
   assert(url, '未指定订阅地址 url')
 
@@ -168,12 +168,12 @@ export const getShadowsocksrSubscription = async (
     })
 
   if (
-    !response.subscriptionUserinfo &&
+    !response.subscriptionUserInfo &&
     nodeList[0].nodeName.includes('剩余流量')
   ) {
     const dataNode = nodeList[0]
     const expireNode = nodeList[1]
-    response.subscriptionUserinfo = parseSubscriptionNode(
+    response.subscriptionUserInfo = parseSubscriptionNode(
       dataNode.nodeName,
       expireNode.nodeName,
     )
@@ -182,12 +182,12 @@ export const getShadowsocksrSubscription = async (
       url,
       dataNode.nodeName,
       expireNode.nodeName,
-      response.subscriptionUserinfo,
+      response.subscriptionUserInfo,
     )
   }
 
   return {
     nodeList,
-    subscriptionUserinfo: response.subscriptionUserinfo,
+    subscriptionUserInfo: response.subscriptionUserInfo,
   }
 }

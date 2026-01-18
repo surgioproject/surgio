@@ -64,15 +64,15 @@ export default class SsdProvider extends Provider {
       params.requestHeaders,
     )
     const cacheKey = Provider.getResourceCacheKey(requestHeaders, this.url)
-    const { subscriptionUserinfo } = await getSsdSubscription(
+    const { subscriptionUserInfo } = await getSsdSubscription(
       this.url,
       requestHeaders,
       cacheKey,
       this.udpRelay,
     )
 
-    if (subscriptionUserinfo) {
-      return subscriptionUserinfo
+    if (subscriptionUserInfo) {
+      return subscriptionUserInfo
     }
     return undefined
   }
@@ -115,7 +115,7 @@ export default class SsdProvider extends Provider {
     )
     const cacheKey = Provider.getResourceCacheKey(requestHeaders, this.url)
 
-    const { nodeList, subscriptionUserinfo } = await getSsdSubscription(
+    const { nodeList, subscriptionUserInfo } = await getSsdSubscription(
       this.url,
       requestHeaders,
       cacheKey,
@@ -129,11 +129,11 @@ export default class SsdProvider extends Provider {
       )
 
       if (newList) {
-        return { nodeList: newList, subscriptionUserinfo }
+        return { nodeList: newList, subscriptionUserInfo }
       }
     }
 
-    return { nodeList, subscriptionUserinfo }
+    return { nodeList, subscriptionUserInfo }
   }
 }
 
@@ -145,7 +145,7 @@ export const getSsdSubscription = async (
   udpRelay?: boolean,
 ): Promise<{
   readonly nodeList: Array<ShadowsocksNodeConfig>
-  readonly subscriptionUserinfo?: SubscriptionUserinfo
+  readonly subscriptionUserInfo?: SubscriptionUserinfo
 }> => {
   assert(url, '未指定订阅地址 url')
 
@@ -169,12 +169,12 @@ export const getSsdSubscription = async (
     )
 
   if (
-    !response.subscriptionUserinfo &&
+    !response.subscriptionUserInfo &&
     traffic_used &&
     traffic_total &&
     expiry
   ) {
-    response.subscriptionUserinfo = {
+    response.subscriptionUserInfo = {
       upload: 0,
       download: bytes.parse(`${traffic_used}GB`),
       total: bytes.parse(`${traffic_total}GB`),
@@ -186,7 +186,7 @@ export const getSsdSubscription = async (
     nodeList: nodeList.filter(
       (item): item is ShadowsocksNodeConfig => item !== undefined,
     ),
-    subscriptionUserinfo: response.subscriptionUserinfo,
+    subscriptionUserInfo: response.subscriptionUserInfo,
   }
 }
 

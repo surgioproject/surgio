@@ -106,7 +106,7 @@ export default class ClashProvider extends Provider {
       params.requestHeaders,
     )
     const cacheKey = Provider.getResourceCacheKey(requestHeaders, this.url)
-    const { subscriptionUserinfo } = await getClashSubscription({
+    const { subscriptionUserInfo } = await getClashSubscription({
       url: this.url,
       udpRelay: this.udpRelay,
       tls13: this.tls13,
@@ -114,8 +114,8 @@ export default class ClashProvider extends Provider {
       cacheKey,
     })
 
-    if (subscriptionUserinfo) {
-      return subscriptionUserinfo
+    if (subscriptionUserInfo) {
+      return subscriptionUserInfo
     }
 
     return undefined
@@ -160,7 +160,7 @@ export default class ClashProvider extends Provider {
     )
     const cacheKey = Provider.getResourceCacheKey(requestHeaders, this.url)
 
-    const { nodeList, subscriptionUserinfo } = await getClashSubscription({
+    const { nodeList, subscriptionUserInfo } = await getClashSubscription({
       url: this.url,
       udpRelay: this.udpRelay,
       tls13: this.tls13,
@@ -175,11 +175,11 @@ export default class ClashProvider extends Provider {
       )
 
       if (newList) {
-        return { nodeList: newList, subscriptionUserinfo }
+        return { nodeList: newList, subscriptionUserInfo }
       }
     }
 
-    return { nodeList, subscriptionUserinfo }
+    return { nodeList, subscriptionUserInfo }
   }
 }
 
@@ -197,7 +197,7 @@ export const getClashSubscription = async ({
   cacheKey: string
 }): Promise<{
   readonly nodeList: Array<SupportConfigTypes>
-  readonly subscriptionUserinfo?: SubscriptionUserinfo
+  readonly subscriptionUserInfo?: SubscriptionUserinfo
 }> => {
   assert(url, '未指定订阅地址 url')
 
@@ -230,7 +230,7 @@ export const getClashSubscription = async ({
 
   return {
     nodeList: parseClashConfig(proxyList, udpRelay, tls13),
-    subscriptionUserinfo: response.subscriptionUserinfo,
+    subscriptionUserInfo: response.subscriptionUserInfo,
   }
 }
 
@@ -419,8 +419,9 @@ export const parseClashConfig = (
             case 'http':
               vmessNode.httpOpts = {
                 ...item['http-opts'],
-                headers:
-                  resolveVmessHttpHeaders(item['http-opts'].headers) || {},
+                headers: resolveVmessHttpHeaders(
+                  item['http-opts'].headers || {},
+                ),
               }
 
               break

@@ -58,15 +58,15 @@ export default class ShadowsocksSubscribeProvider extends Provider {
       params.requestHeaders,
     )
     const cacheKey = Provider.getResourceCacheKey(requestHeaders, this.url)
-    const { subscriptionUserinfo } = await getShadowsocksSubscription(
+    const { subscriptionUserInfo } = await getShadowsocksSubscription(
       this.url,
       requestHeaders,
       cacheKey,
       this.udpRelay,
     )
 
-    if (subscriptionUserinfo) {
-      return subscriptionUserinfo
+    if (subscriptionUserInfo) {
+      return subscriptionUserInfo
     }
     return undefined
   }
@@ -109,7 +109,7 @@ export default class ShadowsocksSubscribeProvider extends Provider {
     )
     const cacheKey = Provider.getResourceCacheKey(requestHeaders, this.url)
 
-    const { nodeList, subscriptionUserinfo } = await getShadowsocksSubscription(
+    const { nodeList, subscriptionUserInfo } = await getShadowsocksSubscription(
       this.url,
       requestHeaders,
       cacheKey,
@@ -123,11 +123,11 @@ export default class ShadowsocksSubscribeProvider extends Provider {
       )
 
       if (newList) {
-        return { nodeList: newList, subscriptionUserinfo }
+        return { nodeList: newList, subscriptionUserInfo }
       }
     }
 
-    return { nodeList, subscriptionUserinfo }
+    return { nodeList, subscriptionUserInfo }
   }
 }
 
@@ -141,7 +141,7 @@ export const getShadowsocksSubscription = async (
   udpRelay?: boolean,
 ): Promise<{
   readonly nodeList: Array<ShadowsocksNodeConfig>
-  readonly subscriptionUserinfo?: SubscriptionUserinfo
+  readonly subscriptionUserInfo?: SubscriptionUserinfo
 }> => {
   assert(url, '未指定订阅地址 url')
 
@@ -165,6 +165,6 @@ export const getShadowsocksSubscription = async (
 
   return {
     nodeList,
-    subscriptionUserinfo: response.subscriptionUserinfo,
+    subscriptionUserInfo: response.subscriptionUserInfo,
   }
 }

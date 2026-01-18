@@ -50,13 +50,13 @@ export default class BlackSSLProvider extends Provider {
 
   public getSubscriptionUserInfo: GetSubscriptionUserInfoFunction =
     async () => {
-      const { subscriptionUserinfo } = await this.getBlackSSLConfig(
+      const { subscriptionUserInfo } = await this.getBlackSSLConfig(
         this.username,
         this.password,
       )
 
-      if (subscriptionUserinfo) {
-        return subscriptionUserinfo
+      if (subscriptionUserInfo) {
+        return subscriptionUserInfo
       }
       return undefined
     }
@@ -86,7 +86,7 @@ export default class BlackSSLProvider extends Provider {
   public getNodeListV2: GetNodeListV2Function = async (
     params = {},
   ): Promise<GetNodeListV2Result> => {
-    const { nodeList, subscriptionUserinfo } = await this.getBlackSSLConfig(
+    const { nodeList, subscriptionUserInfo } = await this.getBlackSSLConfig(
       this.username,
       this.password,
     )
@@ -98,11 +98,11 @@ export default class BlackSSLProvider extends Provider {
       )
 
       if (newList) {
-        return { nodeList: newList, subscriptionUserinfo }
+        return { nodeList: newList, subscriptionUserInfo }
       }
     }
 
-    return { nodeList, subscriptionUserinfo }
+    return { nodeList, subscriptionUserInfo }
   }
 
   // istanbul ignore next
@@ -111,7 +111,7 @@ export default class BlackSSLProvider extends Provider {
     password: string,
   ): Promise<{
     readonly nodeList: Array<HttpsNodeConfig>
-    readonly subscriptionUserinfo?: SubscriptionUserinfo
+    readonly subscriptionUserInfo?: SubscriptionUserinfo
   }> {
     assert(username, '未指定 BlackSSL username.')
     assert(password, '未指定 BlackSSL password.')
@@ -152,7 +152,7 @@ export default class BlackSSLProvider extends Provider {
           password,
         }),
       ),
-      subscriptionUserinfo: {
+      subscriptionUserInfo: {
         upload: 0,
         download: response.transfer_used,
         total: response.transfer_enable,
