@@ -48,7 +48,7 @@ const httpClient = got.extend({
   headers: {
     'user-agent': getUserAgent(),
   },
-  agent,
+  agent: process.env.NODE_ENV === 'production' ? agent : undefined,
 })
 
 function hasHTTPProxy(): string | undefined {
