@@ -44,7 +44,7 @@
     "run-example": "node ./scripts/run-example.js",
     "coverage": "TS_NODE_FILES=true nyc ava",
     "clean": "rimraf build",
-    "build": "tsc -p tsconfig.build.json",
+    "build": "tsc --build tsconfig.build.json",
     "prepublishOnly": "npm run clean && npm run build",
     "changelog": "conventional-changelog -p angular -i CHANGELOG.md -s -r 0",
     "prepare": "husky install",
