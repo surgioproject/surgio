@@ -1,3 +1,5 @@
+import { IncomingHttpHeaders } from 'http'
+
 import { PossibleNodeConfigType, SubscriptionUserinfo } from '../types'
 
 import BlackSSLProvider from './BlackSSLProvider'
@@ -21,13 +23,11 @@ export type PossibleProviderType =
   | SsdProvider
   | TrojanProvider
 
-export type DefaultProviderRequestHeaders = Record<string, string> & {
-  'user-agent': string
-}
+export type DefaultProviderRequestHeaders = IncomingHttpHeaders
 
 export type GetNodeListParams = Record<string, unknown> & {
   requestUserAgent?: string
-  requestHeaders?: Record<string, string>
+  requestHeaders?: IncomingHttpHeaders
 }
 
 export type GetNodeListFunction = (
