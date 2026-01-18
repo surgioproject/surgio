@@ -18,10 +18,10 @@ class SubscriptionsCommand extends BaseCommand<typeof SubscriptionsCommand> {
     const providerList = await this.listProviders()
 
     for (const provider of providerList) {
-      const { subscriptionUserinfo } = await provider.getNodeListV2()
+      const { subscriptionUserInfo } = await provider.getNodeListV2()
 
-      if (subscriptionUserinfo) {
-        const format = formatSubscriptionUserInfo(subscriptionUserinfo)
+      if (subscriptionUserInfo) {
+        const format = formatSubscriptionUserInfo(subscriptionUserInfo)
         console.log(
           '🤟 %s 已用流量：%s 剩余流量：%s 有效期至：%s',
           provider.name,
