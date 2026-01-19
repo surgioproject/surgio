@@ -31,7 +31,7 @@ export const parseMacro = (
   const ast = babelParser.parse(match[1], {})
   let statement
 
-  if (ast.errors.length) {
+  if (ast.errors?.length) {
     throw new Error('该片段不包含可用的宏')
   }
 
@@ -138,11 +138,11 @@ export const loadRemoteSnippetList = async (
     return httpClient
       .get(url)
       .then((data) => {
-        logger.info(`远程片段下载成功: ${url}`)
+        logger.info(`远程片段下载成功：${url}`)
         return data.body
       })
       .catch((err) => {
-        logger.error(`远程片段下载失败: ${url}`)
+        logger.error(`远程片段下载失败：${url}`)
         throw err
       })
   }

@@ -15,7 +15,12 @@ import { getProviderCacheMaxage } from '../utils/env-flag'
 import httpClient from '../utils/http-client'
 
 import Provider from './Provider'
-import { GetNodeListFunction, GetSubscriptionUserInfoFunction } from './types'
+import {
+  GetNodeListFunction,
+  GetNodeListV2Function,
+  GetNodeListV2Result,
+  GetSubscriptionUserInfoFunction,
+} from './types'
 
 export default class BlackSSLProvider extends Provider {
   public readonly username: string
@@ -45,13 +50,13 @@ export default class BlackSSLProvider extends Provider {
 
   public getSubscriptionUserInfo: GetSubscriptionUserInfoFunction =
     async () => {
-      const { subscriptionUserinfo } = await this.getBlackSSLConfig(
+      const { subscriptionUserInfo } = await this.getBlackSSLConfig(
         this.username,
         this.password,
       )
 
-      if (subscriptionUserinfo) {
-        return subscriptionUserinfo
+      if (subscriptionUserInfo) {
+        return subscriptionUserInfo
       }
       return undefined
     }
@@ -78,13 +83,35 @@ export default class BlackSSLProvider extends Provider {
     return nodeList
   }
 
+  public getNodeListV2: GetNodeListV2Function = async (
+    params = {},
+  ): Promise<GetNodeListV2Result> => {
+    const { nodeList, subscriptionUserInfo } = await this.getBlackSSLConfig(
+      this.username,
+      this.password,
+    )
+
+    if (this.config.hooks?.afterNodeListResponse) {
+      const newList = await this.config.hooks.afterNodeListResponse(
+        nodeList,
+        params,
+      )
+
+      if (newList) {
+        return { nodeList: newList, subscriptionUserInfo }
+      }
+    }
+
+    return { nodeList, subscriptionUserInfo }
+  }
+
   // istanbul ignore next
   private async getBlackSSLConfig(
     username: string,
     password: string,
   ): Promise<{
     readonly nodeList: Array<HttpsNodeConfig>
-    readonly subscriptionUserinfo?: SubscriptionUserinfo
+    readonly subscriptionUserInfo?: SubscriptionUserinfo
   }> {
     assert(username, '未指定 BlackSSL username.')
     assert(password, '未指定 BlackSSL password.')
@@ -125,7 +152,7 @@ export default class BlackSSLProvider extends Provider {
           password,
         }),
       ),
-      subscriptionUserinfo: {
+      subscriptionUserInfo: {
         upload: 0,
         download: response.transfer_used,
         total: response.transfer_enable,

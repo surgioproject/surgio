@@ -1,18 +1,51 @@
+# OS
 .DS_Store
+Thumbs.db
+
+# Logs
 *.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Environment
 .env
-.nyc_output
+.env.local
+.env.*.local
 
+# Dependencies
 node_modules/
-coverage/
 
-/.zeabur/output/
+# Build outputs
 /dist/
 /build/
 /binary-build/
+*.tsbuildinfo
+.buildinfo
+
+# Test & Coverage
+.nyc_output
+coverage/
+/test/fixture/**/dist
+/test/benchmark/playground.js
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# VuePress docs
 /docs/.vuepress/dist
 /docs/.vuepress/.cache
 /docs/.vuepress/.temp
-/test/fixture/**/dist
-/test/benchmark/playground.js
+
+# Examples
 /examples/**/dist
+
+# Misc
+*.tgz
+.eslintcache
+.cache/

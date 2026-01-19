@@ -14,21 +14,18 @@
     "allowSyntheticDefaultImports": true, // https://zhuanlan.zhihu.com/p/29022311
     "resolveJsonModule": true,
     "skipLibCheck": true,
-    "noEmit": true,
-
+    "composite": true,
     /* Strict Type-Checking Options */
     "strict": true /* Enable all strict type-checking options. */,
     "noUnusedLocals": false /* Report errors on unused locals. */,
     "noUnusedParameters": true /* Report errors on unused parameters. */,
     "noImplicitReturns": true /* Report error when not all code paths in function return a value. */,
     "noFallthroughCasesInSwitch": true /* Report errors for fallthrough cases in switch statement. */,
-
     /* Debugging Options */
     "traceResolution": false /* Report module resolution log messages. */,
     "listEmittedFiles": false /* Print names of generated files part of the compilation. */,
     "listFiles": false /* Print names of files part of the compilation. */,
     "pretty": true /* Stylize errors and messages using color and context. */,
-
     "lib": [
       "ES2022"
     ],
@@ -44,6 +41,8 @@
     "src/**/*.ts",
     "test/**/*.ts",
   ],
-  "exclude": ["./node_modules/**"],
+  "exclude": [
+    "./node_modules/**"
+  ],
   "compileOnSave": false,
 }

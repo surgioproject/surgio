@@ -42,13 +42,13 @@ export const parseSubscriptionNode = (
 
   if (dataMatch && expireMatch) {
     const percent = Number(dataMatch[1]) / 100
-    const leftData = bytes.parse(dataMatch[3])
-    const total = Number((leftData / percent).toFixed(0))
+    const leftData = bytes.parse(dataMatch[3]) ?? 0
+    const total = Number((Number(leftData) / percent).toFixed(0))
     const expire = Math.floor(new Date(expireMatch[1]).getTime() / 1000)
 
     return {
       upload: 0,
-      download: total - leftData,
+      download: total - Number(leftData),
       total,
       expire,
     }

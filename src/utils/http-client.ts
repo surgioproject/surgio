@@ -1,5 +1,6 @@
 import got from 'got'
-import HttpAgent, { HttpsAgent } from 'agentkeepalive'
+import http from 'http'
+import https from 'https'
 import { HttpProxyAgent, HttpsProxyAgent } from 'hpagent'
 
 import { NETWORK_SURGIO_UA } from '../constant'
@@ -21,7 +22,7 @@ const agent =
               scheduling: 'lifo',
               proxy: httpProxy,
             })
-          : new HttpAgent(),
+          : new http.Agent({ keepAlive: true }),
         https: httpsProxy
           ? new HttpsProxyAgent({
               keepAlive: true,
@@ -31,11 +32,11 @@ const agent =
               scheduling: 'lifo',
               proxy: httpsProxy,
             })
-          : new HttpsAgent(),
+          : new https.Agent({ keepAlive: true }),
       }
     : {
-        http: new HttpAgent(),
-        https: new HttpsAgent(),
+        http: new http.Agent({ keepAlive: true }),
+        https: new https.Agent({ keepAlive: true }),
       }
 
 export const getUserAgent = (str?: string): string =>

@@ -86,6 +86,10 @@ export const SurgioConfigValidator = z.object({
       cookieMaxAge: z.onumber(),
       useCacheOnError: z.oboolean(),
       passRequestUserAgent: z.oboolean(),
+      passRequestHeaders: z
+        .array(z.string())
+        .default([])
+        .transform((val) => val.map((item) => item.toLowerCase())),
     })
     .optional(),
   checkHostname: z.oboolean(),

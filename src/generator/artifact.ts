@@ -20,6 +20,7 @@ import {
   PossibleNodeConfigType,
   ProviderConfig,
   RemoteSnippet,
+  SubscriptionUserinfo,
   SupportProviderEnum,
 } from '../types'
 import {
@@ -75,6 +76,8 @@ export class Artifact extends EventEmitter {
     new Map()
   public providerMap: Map<string, PossibleProviderType> = new Map()
   public nodeList: PossibleNodeConfigType[] = []
+  public subscriptionUserInfo?: SubscriptionUserinfo
+  public subscriptionUserInfoMap: Map<string, SubscriptionUserinfo> = new Map()
 
   private customFilters: NonNullable<ProviderConfig['customFilters']> = {}
   private netflixFilter: NonNullable<ProviderConfig['netflixFilter']> =
@@ -281,13 +284,14 @@ export class Artifact extends EventEmitter {
     }
 
     let provider: PossibleProviderType
+    let subscriptionUserInfo: SubscriptionUserinfo | undefined
     let nodeConfigList: ReadonlyArray<PossibleNodeConfigType>
 
     try {
-      // eslint-disable-next-line prefer-const
       provider = await getProvider(providerName, require(filePath))
       this.providerMap.set(providerName, provider)
-    } catch (err) /* istanbul ignore next */ {
+    } catch (_err) /* istanbul ignore next */ {
+      const err = _err
       if (isSurgioError(err)) {
         err.providerName = providerName
         err.providerPath = filePath
@@ -306,9 +310,11 @@ export class Artifact extends EventEmitter {
 
     try {
       try {
-        nodeConfigList = await provider.getNodeList(
+        const result = await provider.getNodeListV2(
           this.getMergedCustomParams(getNodeListParams),
         )
+        nodeConfigList = result.nodeList
+        subscriptionUserInfo = result.subscriptionUserInfo
       } catch (err) {
         if (provider.config.hooks?.onError && isError(err)) {
           const result = await provider.config.hooks.onError(err)
@@ -319,7 +325,9 @@ export class Artifact extends EventEmitter {
               nodeList: result,
             })
 
-            nodeConfigList = await adHocProvider.getNodeList()
+            const { nodeList: adHocNodeList } =
+              await adHocProvider.getNodeListV2()
+            nodeConfigList = adHocNodeList
           } else {
             nodeConfigList = []
           }
@@ -480,7 +488,7 @@ export class Artifact extends EventEmitter {
               } /* istanbul ignore next */ else {
                 nodeConfig.hostnameIp = domains
               }
-            } catch (err) /* istanbul ignore next */ {
+            } catch /* istanbul ignore next */ {
               logger.warn(`${nodeConfig.hostname} 无法解析，将忽略该节点`)
               return undefined
             }
@@ -498,7 +506,7 @@ export class Artifact extends EventEmitter {
               try {
                 nodeConfig.hostnameIp = await resolveDomain(nodeConfig.hostname)
                 nodeConfig.hostname = nodeConfig.hostnameIp[0]
-              } catch (err) {
+              } catch {
                 logger.warn(
                   `${nodeConfig.hostname} 无法解析，将忽略该域名的解析结果`,
                 )
@@ -514,6 +522,21 @@ export class Artifact extends EventEmitter {
     ).filter((item): item is PossibleNodeConfigType => item !== undefined)
 
     this.nodeConfigListMap.set(providerName, nodeConfigList)
+
+    // Store subscriptionUserInfo for all providers in the map
+    if (subscriptionUserInfo) {
+      this.subscriptionUserInfoMap.set(providerName, subscriptionUserInfo)
+
+      if (
+        this.artifact.subscriptionUserInfoProvider &&
+        providerName === this.artifact.subscriptionUserInfoProvider
+      ) {
+        this.subscriptionUserInfo = subscriptionUserInfo
+      } else if (providerName === mainProviderName) {
+        this.subscriptionUserInfo = subscriptionUserInfo
+      }
+    }
+
     this.initProgress++
 
     this.emit('initProvider:end', {

@@ -11,7 +11,13 @@ import relayableUrl from '../utils/relayable-url'
 import { parseSSUri } from '../utils/ss'
 
 import Provider from './Provider'
-import { GetNodeListFunction, GetSubscriptionUserInfoFunction } from './types'
+import {
+  DefaultProviderRequestHeaders,
+  GetNodeListFunction,
+  GetNodeListV2Function,
+  GetNodeListV2Result,
+  GetSubscriptionUserInfoFunction,
+} from './types'
 
 export default class ShadowsocksSubscribeProvider extends Provider {
   public readonly udpRelay?: boolean
@@ -47,17 +53,20 @@ export default class ShadowsocksSubscribeProvider extends Provider {
   public getSubscriptionUserInfo: GetSubscriptionUserInfoFunction = async (
     params = {},
   ) => {
-    const requestUserAgent = this.determineRequestUserAgent(
+    const requestHeaders = this.determineRequestHeaders(
       params.requestUserAgent,
+      params.requestHeaders,
     )
-    const { subscriptionUserinfo } = await getShadowsocksSubscription(
+    const cacheKey = Provider.getResourceCacheKey(requestHeaders, this.url)
+    const { subscriptionUserInfo } = await getShadowsocksSubscription(
       this.url,
+      requestHeaders,
+      cacheKey,
       this.udpRelay,
-      requestUserAgent,
     )
 
-    if (subscriptionUserinfo) {
-      return subscriptionUserinfo
+    if (subscriptionUserInfo) {
+      return subscriptionUserInfo
     }
     return undefined
   }
@@ -65,13 +74,16 @@ export default class ShadowsocksSubscribeProvider extends Provider {
   public getNodeList: GetNodeListFunction = async (
     params = {},
   ): Promise<Array<ShadowsocksNodeConfig>> => {
-    const requestUserAgent = this.determineRequestUserAgent(
+    const requestHeaders = this.determineRequestHeaders(
       params.requestUserAgent,
+      params.requestHeaders,
     )
+    const cacheKey = Provider.getResourceCacheKey(requestHeaders, this.url)
     const { nodeList } = await getShadowsocksSubscription(
       this.url,
+      requestHeaders,
+      cacheKey,
       this.udpRelay,
-      requestUserAgent,
     )
 
     if (this.config.hooks?.afterNodeListResponse) {
@@ -87,6 +99,36 @@ export default class ShadowsocksSubscribeProvider extends Provider {
 
     return nodeList
   }
+
+  public getNodeListV2: GetNodeListV2Function = async (
+    params = {},
+  ): Promise<GetNodeListV2Result> => {
+    const requestHeaders = this.determineRequestHeaders(
+      params.requestUserAgent,
+      params.requestHeaders,
+    )
+    const cacheKey = Provider.getResourceCacheKey(requestHeaders, this.url)
+
+    const { nodeList, subscriptionUserInfo } = await getShadowsocksSubscription(
+      this.url,
+      requestHeaders,
+      cacheKey,
+      this.udpRelay,
+    )
+
+    if (this.config.hooks?.afterNodeListResponse) {
+      const newList = await this.config.hooks.afterNodeListResponse(
+        nodeList,
+        params,
+      )
+
+      if (newList) {
+        return { nodeList: newList, subscriptionUserInfo }
+      }
+    }
+
+    return { nodeList, subscriptionUserInfo }
+  }
 }
 
 /**
@@ -94,17 +136,20 @@ export default class ShadowsocksSubscribeProvider extends Provider {
  */
 export const getShadowsocksSubscription = async (
   url: string,
+  requestHeaders: DefaultProviderRequestHeaders,
+  cacheKey: string,
   udpRelay?: boolean,
-  requestUserAgent?: string,
 ): Promise<{
   readonly nodeList: Array<ShadowsocksNodeConfig>
-  readonly subscriptionUserinfo?: SubscriptionUserinfo
+  readonly subscriptionUserInfo?: SubscriptionUserinfo
 }> => {
   assert(url, '未指定订阅地址 url')
 
-  const response = await Provider.requestCacheableResource(url, {
-    requestUserAgent,
-  })
+  const response = await Provider.requestCacheableResource(
+    url,
+    requestHeaders,
+    cacheKey,
+  )
   const nodeList = fromBase64(response.body)
     .split('\n')
     .filter((item) => !!item && item.startsWith('ss://'))
@@ -120,6 +165,6 @@ export const getShadowsocksSubscription = async (
 
   return {
     nodeList,
-    subscriptionUserinfo: response.subscriptionUserinfo,
+    subscriptionUserInfo: response.subscriptionUserInfo,
   }
 }

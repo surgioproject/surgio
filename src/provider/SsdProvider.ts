@@ -13,7 +13,13 @@ import { decodeStringList, fromBase64, SurgioError } from '../utils'
 import relayableUrl from '../utils/relayable-url'
 
 import Provider from './Provider'
-import { GetNodeListFunction, GetSubscriptionUserInfoFunction } from './types'
+import {
+  DefaultProviderRequestHeaders,
+  GetNodeListFunction,
+  GetNodeListV2Function,
+  GetNodeListV2Result,
+  GetSubscriptionUserInfoFunction,
+} from './types'
 
 const logger = createLogger({
   service: 'surgio:SsdProvider',
@@ -53,17 +59,20 @@ export default class SsdProvider extends Provider {
   public getSubscriptionUserInfo: GetSubscriptionUserInfoFunction = async (
     params = {},
   ) => {
-    const requestUserAgent = this.determineRequestUserAgent(
+    const requestHeaders = this.determineRequestHeaders(
       params.requestUserAgent,
+      params.requestHeaders,
     )
-    const { subscriptionUserinfo } = await getSsdSubscription(
+    const cacheKey = Provider.getResourceCacheKey(requestHeaders, this.url)
+    const { subscriptionUserInfo } = await getSsdSubscription(
       this.url,
+      requestHeaders,
+      cacheKey,
       this.udpRelay,
-      requestUserAgent,
     )
 
-    if (subscriptionUserinfo) {
-      return subscriptionUserinfo
+    if (subscriptionUserInfo) {
+      return subscriptionUserInfo
     }
     return undefined
   }
@@ -71,13 +80,16 @@ export default class SsdProvider extends Provider {
   public getNodeList: GetNodeListFunction = async (
     params = {},
   ): Promise<Array<ShadowsocksNodeConfig>> => {
-    const requestUserAgent = this.determineRequestUserAgent(
+    const requestHeaders = this.determineRequestHeaders(
       params.requestUserAgent,
+      params.requestHeaders,
     )
+    const cacheKey = Provider.getResourceCacheKey(requestHeaders, this.url)
     const { nodeList } = await getSsdSubscription(
       this.url,
+      requestHeaders,
+      cacheKey,
       this.udpRelay,
-      requestUserAgent,
     )
 
     if (this.config.hooks?.afterNodeListResponse) {
@@ -93,22 +105,55 @@ export default class SsdProvider extends Provider {
 
     return nodeList
   }
+
+  public getNodeListV2: GetNodeListV2Function = async (
+    params = {},
+  ): Promise<GetNodeListV2Result> => {
+    const requestHeaders = this.determineRequestHeaders(
+      params.requestUserAgent,
+      params.requestHeaders,
+    )
+    const cacheKey = Provider.getResourceCacheKey(requestHeaders, this.url)
+
+    const { nodeList, subscriptionUserInfo } = await getSsdSubscription(
+      this.url,
+      requestHeaders,
+      cacheKey,
+      this.udpRelay,
+    )
+
+    if (this.config.hooks?.afterNodeListResponse) {
+      const newList = await this.config.hooks.afterNodeListResponse(
+        nodeList,
+        params,
+      )
+
+      if (newList) {
+        return { nodeList: newList, subscriptionUserInfo }
+      }
+    }
+
+    return { nodeList, subscriptionUserInfo }
+  }
 }
 
 // 协议定义：https://github.com/TheCGDF/SSD-Windows/wiki/HTTP%E8%AE%A2%E9%98%85%E5%8D%8F%E5%AE%9A
 export const getSsdSubscription = async (
   url: string,
+  requestHeaders: DefaultProviderRequestHeaders,
+  cacheKey: string,
   udpRelay?: boolean,
-  requestUserAgent?: string,
 ): Promise<{
   readonly nodeList: Array<ShadowsocksNodeConfig>
-  readonly subscriptionUserinfo?: SubscriptionUserinfo
+  readonly subscriptionUserInfo?: SubscriptionUserinfo
 }> => {
   assert(url, '未指定订阅地址 url')
 
-  const response = await Provider.requestCacheableResource(url, {
-    requestUserAgent,
-  })
+  const response = await Provider.requestCacheableResource(
+    url,
+    requestHeaders,
+    cacheKey,
+  )
 
   // istanbul ignore next
   if (!response.body.startsWith('ssd://')) {
@@ -124,12 +169,12 @@ export const getSsdSubscription = async (
     )
 
   if (
-    !response.subscriptionUserinfo &&
+    !response.subscriptionUserInfo &&
     traffic_used &&
     traffic_total &&
     expiry
   ) {
-    response.subscriptionUserinfo = {
+    response.subscriptionUserInfo = {
       upload: 0,
       download: bytes.parse(`${traffic_used}GB`),
       total: bytes.parse(`${traffic_total}GB`),
@@ -141,7 +186,7 @@ export const getSsdSubscription = async (
     nodeList: nodeList.filter(
       (item): item is ShadowsocksNodeConfig => item !== undefined,
     ),
-    subscriptionUserinfo: response.subscriptionUserinfo,
+    subscriptionUserInfo: response.subscriptionUserInfo,
   }
 }
 

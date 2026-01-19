@@ -64,7 +64,7 @@ class CheckCommand extends BaseCommand<typeof CheckCommand> {
     }
 
     const provider = await getProvider(providerName, file.default)
-    const nodeList = await provider.getNodeList()
+    const { nodeList } = await provider.getNodeListV2()
 
     ux.action.stop()
 

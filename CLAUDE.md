@@ -40,7 +40,7 @@ pnpm test:lint
 pnpm test:unit
 
 # 运行单个测试文件
-npx ava src/path/to/test.test.ts
+pnpm ava src/path/to/test.test.ts
 
 # 运行 CLI 测试 (使用 mocha)
 pnpm test:cli
