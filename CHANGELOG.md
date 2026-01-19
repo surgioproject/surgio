@@ -1,3 +1,35 @@
+# [3.12.0](https://github.com/geekdada/surgio/compare/v3.11.3...v3.12.0) (2026-01-19)
+
+
+### Bug Fixes
+
+* **artifact:** correct variable name for subscription user info map ([6097c0e](https://github.com/geekdada/surgio/commit/6097c0e7610606fd636eb3f1471211caa31c077b))
+* **commands:** update subscriptions command for consistent naming ([3840c2e](https://github.com/geekdada/surgio/commit/3840c2e82c6f17c9a0a85f7eee3678d34675bf3d))
+* **http-client:** conditionally apply agent based on NODE_ENV ([75433fc](https://github.com/geekdada/surgio/commit/75433fcefd76046639b78b2d0ace90139adbf516))
+* **provider:** add requestHeaders support to getSubscriptionUserInfo ([18fa69b](https://github.com/geekdada/surgio/commit/18fa69b9160839d0212006570967e27e839456b3))
+* **provider:** improve header handling and cache key generation ([7f6d3af](https://github.com/geekdada/surgio/commit/7f6d3af2a7a89e8a0be10f0ef3f3da1b0e9702aa))
+* **types:** fix subscriptionUserInfo spelling consistency ([077c4f5](https://github.com/geekdada/surgio/commit/077c4f5447cf8f417a85cb3e267c58f755c298f7))
+
+
+### Features
+
+* **gateway:** add passRequestHeaders configuration ([ca01b1b](https://github.com/geekdada/surgio/commit/ca01b1b4327aebd811199520e756e5408ec2fc63))
+* **generator:** enhance artifact subscription info handling ([f54843e](https://github.com/geekdada/surgio/commit/f54843ed43643bfe041e70e50a0d999c15998664))
+* **provider:** add getNodeListV2 method ([8bb2d29](https://github.com/geekdada/surgio/commit/8bb2d299d4429c4c57c2aa240bb9bd3c6a3f14dc))
+* **provider:** add logging and error handling to requestCacheableResource ([43a7588](https://github.com/geekdada/surgio/commit/43a758842bd100e52a2352cb113debfa8d06bc0d))
+* **provider:** enhance request headers handling and UA initialization ([e6c9272](https://github.com/geekdada/surgio/commit/e6c9272080c0bfcce1f93490a25218f06460790e))
+* **provider:** migrate from passGatewayRequestUserAgent to passGatewayRequestHeaders ([f7b03e6](https://github.com/geekdada/surgio/commit/f7b03e6189d3572088a456df868e54939e8f5828))
+* **provider:** migrate from passGatewayRequestUserAgent to passGatewayRequestHeaders ([95b5672](https://github.com/geekdada/surgio/commit/95b56729a966ec56ffd6a148ec0db7d74467bb61))
+* **provider:** update all providers for consistent naming ([2b1af4a](https://github.com/geekdada/surgio/commit/2b1af4a09abd7a098982f7c64b6aa3a69ab00d9d))
+* **types:** improve HTTP headers type definition ([42f4472](https://github.com/geekdada/surgio/commit/42f4472875ea0d93b2a860c24745a9f4cf5eb16c))
+
+
+### BREAKING CHANGES
+
+* **provider:** passGatewayRequestUserAgent property has been removed. Use passGatewayRequestHeaders array instead.
+
+
+
 ## [3.11.3](https://github.com/geekdada/surgio/compare/v3.11.2...v3.11.3) (2025-12-31)
 
 
