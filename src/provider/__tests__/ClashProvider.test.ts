@@ -870,3 +870,209 @@ test('ClashProvider with hooks', async (t) => {
   }
   t.true(afterNodeListResponse.calledOnce)
 })
+
+test('getClashSubscription - invalid yaml syntax', async (t) => {
+  const scope = nock('http://local')
+    .get('/fail-3')
+    .reply(
+      200,
+      `
+foo: [bar
+`,
+    )
+
+  await t.throwsAsync(
+    async () => {
+      await getClashSubscription({
+        url: 'http://local/fail-3',
+        requestHeaders: { 'user-agent': 'clash-for-windows' },
+        cacheKey: 'test-cache-key-3',
+      })
+    },
+    {
+      instanceOf: Error,
+      message: 'http://local/fail-3 不是一个合法的 YAML 文件',
+    },
+  )
+
+  scope.done()
+})
+
+test('parseClashConfig filters unsupported nodes', (t) => {
+  const nodeList = parseClashConfig([
+    {
+      type: 'ss',
+      name: 'unsupported-plugin',
+      server: 'server',
+      port: 443,
+      cipher: 'chacha20-ietf-poly1305',
+      password: 'password',
+      plugin: 'shadow-tls',
+      'plugin-opts': {},
+    },
+    {
+      type: 'ss',
+      name: 'quic-plugin',
+      server: 'server',
+      port: 443,
+      cipher: 'chacha20-ietf-poly1305',
+      password: 'password',
+      plugin: 'v2ray-plugin',
+      'plugin-opts': {
+        mode: 'quic',
+      },
+    },
+    {
+      type: 'vmess',
+      name: 'unsupported-network',
+      server: 'server',
+      port: 443,
+      uuid: 'uuid',
+      alterId: 0,
+      cipher: 'auto',
+      network: 'quic',
+    },
+    {
+      type: 'vless',
+      name: 'vless-no-tls',
+      server: 'server',
+      port: 443,
+      uuid: 'uuid',
+      tls: false,
+    },
+    {
+      type: 'vless',
+      name: 'reality-no-fingerprint',
+      server: 'server',
+      port: 443,
+      uuid: 'uuid',
+      tls: true,
+      'reality-opts': {
+        'public-key': 'publicKey',
+        'short-id': 'shortId',
+      },
+    },
+    {
+      type: 'unknown',
+      name: 'unknown',
+    },
+  ])
+
+  t.deepEqual(nodeList, [])
+})
+
+test('parseClashConfig socks5 options', (t) => {
+  t.deepEqual(
+    parseClashConfig([
+      {
+        type: 'socks5',
+        name: 'socks5',
+        server: 'server',
+        port: 443,
+        username: 'user',
+        password: 'pass',
+        udp: true,
+        tls: true,
+        'skip-cert-verify': true,
+      },
+    ]),
+    [
+      {
+        type: NodeTypeEnum.Socks5,
+        nodeName: 'socks5',
+        hostname: 'server',
+        port: 443,
+        username: 'user',
+        password: 'pass',
+        udpRelay: true,
+        tls: true,
+        skipCertVerify: true,
+      },
+    ],
+  )
+})
+
+test('parseClashConfig tuic configurations', (t) => {
+  t.deepEqual(
+    parseClashConfig([
+      {
+        type: 'tuic',
+        name: 'tuic-v5',
+        server: 'example.com',
+        port: 443,
+        version: 5,
+        uuid: 'uuid',
+        password: 'password',
+        'skip-cert-verify': true,
+        sni: 'sni.example.com',
+        alpn: ['h3'],
+        ports: '4000-5000',
+        'hop-interval': 5,
+      },
+      {
+        type: 'tuic',
+        name: 'tuic-v4',
+        server: 'example.com',
+        port: 443,
+        token: 'token',
+        'skip-cert-verify': true,
+        sni: 'sni.example.com',
+        alpn: ['h3'],
+        ports: '4000-5000',
+        'hop-interval': 5,
+      },
+    ]),
+    [
+      {
+        type: NodeTypeEnum.Tuic,
+        version: 5,
+        nodeName: 'tuic-v5',
+        hostname: 'example.com',
+        port: 443,
+        password: 'password',
+        uuid: 'uuid',
+        skipCertVerify: true,
+        tls13: false,
+        sni: 'sni.example.com',
+        alpn: ['h3'],
+        portHopping: '4000-5000',
+        portHoppingInterval: 5,
+      },
+      {
+        type: NodeTypeEnum.Tuic,
+        nodeName: 'tuic-v4',
+        hostname: 'example.com',
+        port: 443,
+        token: 'token',
+        skipCertVerify: true,
+        tls13: false,
+        sni: 'sni.example.com',
+        alpn: ['h3'],
+        portHopping: '4000-5000',
+        portHoppingInterval: 5,
+      },
+    ],
+  )
+})
+
+test('parseClashConfig hysteria2 invalid obfs', (t) => {
+  t.throws(
+    () => {
+      parseClashConfig([
+        {
+          type: 'hysteria2',
+          name: 'hysteria2',
+          server: 'server.com',
+          port: 443,
+          auth: 'password',
+          obfs: 'plain',
+        },
+      ])
+    },
+    {
+      instanceOf: Error,
+      message:
+        '不支持从 Clash 订阅中读取 Hysteria2 节点，因为其 obfs 不是 salamander',
+    },
+  )
+})
