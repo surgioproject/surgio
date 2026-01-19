@@ -77,7 +77,7 @@ export class Artifact extends EventEmitter {
   public providerMap: Map<string, PossibleProviderType> = new Map()
   public nodeList: PossibleNodeConfigType[] = []
   public subscriptionUserInfo?: SubscriptionUserinfo
-  public subscriptionUserinfoMap: Map<string, SubscriptionUserinfo> = new Map()
+  public subscriptionUserInfoMap: Map<string, SubscriptionUserinfo> = new Map()
 
   private customFilters: NonNullable<ProviderConfig['customFilters']> = {}
   private netflixFilter: NonNullable<ProviderConfig['netflixFilter']> =
@@ -525,7 +525,7 @@ export class Artifact extends EventEmitter {
 
     // Store subscriptionUserInfo for all providers in the map
     if (subscriptionUserInfo) {
-      this.subscriptionUserinfoMap.set(providerName, subscriptionUserInfo)
+      this.subscriptionUserInfoMap.set(providerName, subscriptionUserInfo)
 
       if (
         this.artifact.subscriptionUserInfoProvider &&
