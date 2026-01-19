@@ -1,3 +1,7 @@
+## [3.12.1](https://github.com/geekdada/surgio/compare/v3.12.0...v3.12.1) (2026-01-19)
+
+
+
 # [3.12.0](https://github.com/geekdada/surgio/compare/v3.11.3...v3.12.0) (2026-01-19)
 
 
