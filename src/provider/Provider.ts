@@ -69,19 +69,19 @@ export default abstract class Provider {
   /**
    * Generate a cache key for a provider resource based on an identifier.
    *
-   * @param indentifier - A unique identifier for the resource (typically user-agent + URL)
+   * @param identifier - A unique identifier for the resource (typically user-agent + URL)
    * @returns MD5-hashed cache key
    */
   static getResourceCacheKey(
-    ...indentifiers: (string | Record<string, unknown>)[]
+    ...identifiers: (string | Record<string, unknown>)[]
   ): string {
     const identifier: string[] = []
 
-    for (const indentifier of indentifiers) {
-      if (typeof indentifier === 'string') {
-        identifier.push(indentifier)
+    for (const identifierItem of identifiers) {
+      if (typeof identifierItem === 'string') {
+        identifier.push(identifierItem)
       } else {
-        identifier.push(JSON.stringify(indentifier))
+        identifier.push(JSON.stringify(identifierItem))
       }
     }
 
