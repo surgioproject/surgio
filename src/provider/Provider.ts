@@ -170,29 +170,6 @@ export default abstract class Provider {
   }
 
   /**
-   * Determine the User-Agent string to use for provider requests.
-   * Respects the gateway's passRequestUserAgent configuration.
-   *
-   * @param requestUserAgent - Optional User-Agent from the gateway request
-   * @returns Normalized User-Agent string
-   *
-   * @remarks
-   * - If passGatewayRequestHeaders includes 'user-agent', uses the gateway's User-Agent (if provided)
-   * - Falls back to the provider's configured requestUserAgent
-   * - Normalizes the User-Agent through getUserAgent() utility
-   */
-  public determineRequestUserAgent(
-    requestUserAgent?: string | undefined,
-  ): string {
-    const userAgent =
-      this.passGatewayRequestHeaders.includes('user-agent') && requestUserAgent
-        ? requestUserAgent
-        : this.config.requestUserAgent
-
-    return getUserAgent(userAgent)
-  }
-
-  /**
    * Determine the HTTP headers to use for provider requests.
    * Filters headers based on the gateway's passRequestHeaders configuration.
    *
@@ -201,7 +178,9 @@ export default abstract class Provider {
    * @returns Filtered headers object with required user-agent
    *
    * @remarks
-   * - Always includes the user-agent header (determined by determineRequestUserAgent)
+   * - Always includes the user-agent header
+   * - If user doesn't want to pass the user-agent header from the gateway request, a
+   *   default user-agent from the provider config will be used
    * - The requestUserAgent parameter takes priority over requestHeaders['user-agent']
    * - Filters additional headers based on passGatewayRequestHeaders allowlist
    * - If passGatewayRequestHeaders is empty, only user-agent is returned
@@ -222,27 +201,35 @@ export default abstract class Provider {
     requestUserAgent?: string | undefined,
     requestHeaders?: IncomingHttpHeaders | undefined,
   ): DefaultProviderRequestHeaders {
-    const userAgent = this.determineRequestUserAgent(requestUserAgent)
+    const passRequestUserAgent =
+      this.passGatewayRequestHeaders.includes('user-agent')
+    const userAgent = getUserAgent(
+      passRequestUserAgent
+        ? requestUserAgent ||
+            requestHeaders?.['user-agent'] ||
+            this.config.requestUserAgent
+        : this.config.requestUserAgent,
+    )
 
     // Normalize incoming headers to lowercase keys for case-insensitive matching
+    // Always exclude user-agent from the normalized headers
     const normalizedHeaders = requestHeaders
       ? Object.fromEntries(
-          Object.entries(requestHeaders).map(([k, v]) => [k.toLowerCase(), v]),
+          Object.entries(requestHeaders)
+            .map(([k, v]) => [k.toLowerCase(), v])
+            .filter(([k]) => k !== 'user-agent'),
         )
       : {}
 
-    // Merge headers with normalized user-agent
-    // requestUserAgent takes priority over requestHeaders['user-agent']
-    const mergedHeaders = { ...normalizedHeaders, 'user-agent': userAgent }
-
     // Filter headers based on allowlist
     const filteredHeaders = _.pick(
-      mergedHeaders,
+      normalizedHeaders,
       this.passGatewayRequestHeaders,
     )
 
     return {
       ...filteredHeaders,
+      'user-agent': userAgent,
     } as DefaultProviderRequestHeaders
   }
 

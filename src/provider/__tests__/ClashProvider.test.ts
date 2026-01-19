@@ -808,6 +808,9 @@ test.serial(
       url: 'http://example.com/clash-sample.yaml',
     })
 
+    // @ts-expect-error
+    provider.passGatewayRequestHeaders = ['user-agent']
+
     await t.notThrowsAsync(async () => {
       await provider.getNodeList({
         requestUserAgent,
