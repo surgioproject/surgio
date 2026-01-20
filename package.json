@@ -34,7 +34,7 @@
   },
   "homepage": "https://surgio.js.org",
   "scripts": {
-    "dev": "npm run build -- --watch",
+    "dev": "pnpm run build -- --watch",
     "test": "run-s build test:lint test:unit test:cli",
     "test:types": "tsc --noEmit",
     "test:lint": "eslint .",
@@ -43,15 +43,15 @@
     "test:cli:update": "CHAI_JEST_SNAPSHOT_UPDATE_ALL=true pnpm test:cli",
     "run-example": "node ./scripts/run-example.js",
     "coverage": "TS_NODE_FILES=true nyc ava",
-    "clean": "rimraf build",
+    "clean": "pnpm run build --clean",
     "build": "tsc --build tsconfig.build.json",
-    "prepublishOnly": "npm run clean && npm run build",
+    "prepublishOnly": "pnpm run clean && pnpm run build",
     "changelog": "conventional-changelog -p angular -i CHANGELOG.md -s -r 0",
     "prepare": "husky install",
     "docs:dev": "NODE_ENV=development vuepress dev docs",
     "docs:build": "NODE_ENV=production vuepress build docs",
-    "release": "bumpp && npm publish",
-    "release:beta": "bumpp --preid beta --no-push && npm publish --tag beta",
+    "release": "bumpp && pnpm publish",
+    "release:beta": "bumpp --preid beta --no-push && pnpm publish --tag beta",
     "check-vuepress-version": "ncu -f \"*vuepress*\" --interactive --target @next -p pnpm"
   },
   "oclif": {
@@ -179,8 +179,8 @@
     "mocha": "^10.8.2",
     "nock": "^13.5.6",
     "np": "^6.5.0",
-    "npm-debug-log-cleaner": "^1.0.3",
-    "npm-run-all": "^4.1.5",
+    "pnpm-debug-log-cleaner": "^1.0.3",
+    "pnpm-run-all": "^4.1.5",
     "nyc": "^15.1.0",
     "prettier": "^2.8.8",
     "sass": "^1.97.1",
@@ -233,7 +233,7 @@
   "husky": {
     "hooks": {
       "commit-msg": "commitlint -c .commitlintrc.json -E HUSKY_GIT_PARAMS",
-      "pre-commit": "npm-debug-log-cleaner && lint-staged"
+      "pre-commit": "pnpm-debug-log-cleaner && lint-staged"
     }
   },
   "keywords": [
