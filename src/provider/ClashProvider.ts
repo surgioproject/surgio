@@ -384,6 +384,9 @@ export const parseClashConfig = (
 
           if (vmessNode.type === NodeTypeEnum.Vless) {
             vmessNode.flow = item.flow
+            if (typeof item.encryption === 'string') {
+              vmessNode.encryption = item.encryption
+            }
 
             if (item['reality-opts']) {
               vmessNode.realityOpts = {

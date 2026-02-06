@@ -203,6 +203,9 @@ function nodeListMapper(nodeConfig: PossibleNodeConfigType) {
 
       if (nodeConfig.type === NodeTypeEnum.Vless) {
         vmessNode.flow = nodeConfig.flow
+        if (typeof nodeConfig.encryption === 'string') {
+          vmessNode.encryption = nodeConfig.encryption
+        }
 
         if (nodeConfig.realityOpts) {
           vmessNode['reality-opts'] = {

@@ -361,6 +361,7 @@ Vless 节点遵循和 Vmess 类似的配置规则，除了以下几个差异：
        publicKey: 'public-key',
        shortId: 'short-id', // 可选
      },
+     encryption: "", // 可选
    }
    ```
 4. `method` 有且仅有 `none` 一个选项

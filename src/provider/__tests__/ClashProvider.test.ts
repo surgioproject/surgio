@@ -492,6 +492,7 @@ test('vmess Configurations', (t) => {
           'public-key': 'publicKey',
           'short-id': 'shortId',
         },
+        encryption: 'encryption',
       },
     ]),
     [
@@ -517,6 +518,7 @@ test('vmess Configurations', (t) => {
           shortId: 'shortId',
           spiderX: undefined,
         },
+        encryption: 'encryption',
       },
     ],
   )
