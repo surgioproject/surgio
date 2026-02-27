@@ -501,6 +501,31 @@ function nodeListMapper(nodeConfig: PossibleNodeConfigType) {
         ...(nodeConfig.alpn ? { alpn: nodeConfig.alpn } : null),
       } as const
 
+    case NodeTypeEnum.AnyTLS:
+      return {
+        type: 'anytls',
+        name: nodeConfig.nodeName,
+        server: nodeConfig.hostname,
+        port: nodeConfig.port,
+        password: nodeConfig.password,
+        ...(nodeConfig.udpRelay ? { udp: nodeConfig.udpRelay } : null),
+        ...(nodeConfig.alpn ? { alpn: nodeConfig.alpn } : null),
+        ...(nodeConfig.sni ? { sni: nodeConfig.sni } : null),
+        'skip-cert-verify': nodeConfig.skipCertVerify === true,
+        ...(nodeConfig.idleSessionCheckInterval
+          ? {
+              'idle-session-check-interval':
+                nodeConfig.idleSessionCheckInterval,
+            }
+          : null),
+        ...(nodeConfig.idleSessionTimeout
+          ? { 'idle-session-timeout': nodeConfig.idleSessionTimeout }
+          : null),
+        ...(nodeConfig.minIdleSessions
+          ? { 'min-idle-session': nodeConfig.minIdleSessions }
+          : null),
+      } as const
+
     case NodeTypeEnum.Wireguard:
       // istanbul ignore next
       if (nodeConfig.peers.length > 1) {

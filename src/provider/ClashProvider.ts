@@ -9,6 +9,8 @@ import {
   STASH_SUPPORTED_VMESS_NETWORK,
 } from '../constant'
 import {
+  AnyTLSNodeConfig,
+  AnyTLSNodeConfigInput,
   ClashProviderConfig,
   HttpNodeConfig,
   HttpsNodeConfig,
@@ -34,6 +36,7 @@ import {
 } from '../utils'
 import relayableUrl from '../utils/relayable-url'
 import {
+  AnyTLSNodeConfigValidator,
   Hysteria2NodeConfigValidator,
   TuicNodeConfigValidator,
 } from '../validators'
@@ -59,6 +62,7 @@ type SupportConfigTypes =
   | TuicNodeConfig
   | Hysteria2NodeConfig
   | Socks5NodeConfig
+  | AnyTLSNodeConfig
 
 const logger = createLogger({
   service: 'surgio:ClashProvider',
@@ -654,6 +658,45 @@ export const parseClashConfig = (
           }
 
           return socks5Node
+        }
+
+        case 'anytls': {
+          const input: AnyTLSNodeConfigInput = {
+            type: NodeTypeEnum.AnyTLS,
+            nodeName: item.name,
+            hostname: item.server,
+            port: item.port,
+            password: item.password,
+            ...('skip-cert-verify' in item
+              ? { skipCertVerify: item['skip-cert-verify'] === true }
+              : null),
+            ...('alpn' in item ? { alpn: item.alpn } : null),
+            ...('sni' in item ? { sni: item.sni } : null),
+            udpRelay: resolveUdpRelay(item.udp, udpRelay),
+            tls13: tls13 ?? false,
+            ...('idle-session-check-interval' in item
+              ? {
+                  idleSessionCheckInterval: item['idle-session-check-interval'],
+                }
+              : null),
+            ...('idle-session-timeout' in item
+              ? { idleSessionTimeout: item['idle-session-timeout'] }
+              : null),
+            ...('min-idle-session' in item
+              ? { minIdleSessions: item['min-idle-session'] }
+              : null),
+          }
+
+          const result = AnyTLSNodeConfigValidator.safeParse(input)
+
+          // istanbul ignore next
+          if (!result.success) {
+            throw new SurgioError('AnyTLS 节点配置校验失败', {
+              cause: result.error,
+            })
+          }
+
+          return result.data
         }
 
         default:
