@@ -20,6 +20,7 @@ import {
   Hysteria2NodeConfigValidator,
   ClashCoreValidator,
   VlessNodeConfigValidator,
+  AnyTLSNodeConfigValidator,
 } from './validators'
 
 import type { Provider, GetNodeListParams } from './provider'
@@ -37,6 +38,7 @@ export enum NodeTypeEnum {
   Tuic = 'tuic',
   Wireguard = 'wireguard',
   Hysteria2 = 'hysteria2',
+  AnyTLS = 'anytls',
 }
 
 export enum SupportProviderEnum {
@@ -213,6 +215,11 @@ export type Hysteria2NodeConfigInput = z.input<
 export type Hysteria2NodeConfig = z.infer<typeof Hysteria2NodeConfigValidator> &
   SurgioInternals
 
+export type AnyTLSNodeConfigInput = z.input<typeof AnyTLSNodeConfigValidator>
+
+export type AnyTLSNodeConfig = z.infer<typeof AnyTLSNodeConfigValidator> &
+  SurgioInternals
+
 export interface SurgioInternals {
   provider?: Provider
 }
@@ -246,6 +253,7 @@ export type PossibleNodeConfigType =
   | TuicNodeConfig
   | WireguardNodeConfig
   | Hysteria2NodeConfig
+  | AnyTLSNodeConfig
 
 export type PossibleProviderConfigType =
   | BlackSSLProviderConfig
