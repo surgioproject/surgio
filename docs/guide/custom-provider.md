@@ -67,20 +67,20 @@ module.exports = defineCustomProvider(async function () {
 
 ### url
 
-- 类型: `string`
+- 类型：`string`
 - <Badge text="必须" vertical="middle" />
 
 ### udpRelay
 
-- 类型: `boolean`
-- 默认值: `false`
+- 类型：`boolean`
+- 默认值：`false`
 
 我们发现部分机场的 Clash 订阅并没有设定 `udp`，所以你可以通过配置这个属性来强制设定节点的 UDP 转发支持情况。如果订阅节点中包含 `udp` 字段，则该配置无效。
 
 ### tls13
 
-- 类型: `boolean`
-- 默认值: `false`
+- 类型：`boolean`
+- 默认值：`false`
 
 强制开启节点的 TLS 1.3。
 
@@ -159,7 +159,7 @@ module.exports = defineCustomProvider({
   tfo: false, // TCP Fast Open
   tls13: false, // TLS 1.3，适用于 v2ray-plugin
   mux: false, // 目前仅 Clash + Shadowsocks + v2ray-plugin 可用
-  multiplex: {}, // 多路复用，可选，见本页面的 `multiplex多路复用` 部分
+  multiplex: {}, // 多路复用，可选，见本页面的 `multiplex 多路复用` 部分
 }
 ```
 
@@ -189,7 +189,7 @@ module.exports = defineCustomProvider({
 
 ### Vmess
 
-从 v3.5.0 开始 Surgio 支持了更多 Vmess 协议。为了更好地区分不同协议的参数，原有的 `host`, `path`, `wsHeaders` 将会在后面的版本中废弃，请使用下面列出的新属性。 Surgio 会忽略代理客户端不支持的协议类型。
+从 v3.5.0 开始 Surgio 支持了更多 Vmess 协议。为了更好地区分不同协议的参数，原有的 `host`, `path`, `wsHeaders` 将会在后面的版本中废弃，请使用下面列出的新属性。Surgio 会忽略代理客户端不支持的协议类型。
 
 #### `network: 'tcp'`
 
@@ -229,7 +229,7 @@ module.exports = defineCustomProvider({
       'x-key': 'x-value',
     },
   },
-  multiplex: {}, // 多路复用，可选，见本页面的 `multiplex多路复用` 部分
+  multiplex: {}, // 多路复用，可选，见本页面的 `multiplex 多路复用` 部分
 }
 ```
 
@@ -253,7 +253,7 @@ module.exports = defineCustomProvider({
       Host: 'www.example.com',
     },
   },
-  multiplex: {}, // 多路复用，可选，见本页面的 `multiplex多路复用` 部分
+  multiplex: {}, // 多路复用，可选，见本页面的 `multiplex 多路复用` 部分
 }
 ```
 
@@ -274,7 +274,7 @@ module.exports = defineCustomProvider({
   grpcOpts: {
     serviceName: 'example',
   },
-  multiplex: {}, // 多路复用，可选，见本页面的 `multiplex多路复用` 部分
+  multiplex: {}, // 多路复用，可选，见本页面的 `multiplex 多路复用` 部分
 }
 ```
 
@@ -361,7 +361,7 @@ Vless 节点遵循和 Vmess 类似的配置规则，除了以下几个差异：
        publicKey: 'public-key',
        shortId: 'short-id', // 可选
      },
-     encryption: "", // 可选
+     encryption: "", // 可选，参考 https://wiki.metacubex.one/config/proxies/vless/#encryption
    }
    ```
 4. `method` 有且仅有 `none` 一个选项
@@ -434,7 +434,7 @@ Vless 节点遵循和 Vmess 类似的配置规则，除了以下几个差异：
   network: 'ws', // 可不填
   wsPath: '/', // 可选
   wsHeaders: {}, // 可选
-  multiplex: {}, // 多路复用，可选，见本页面的 `multiplex多路复用` 部分
+  multiplex: {}, // 多路复用，可选，见本页面的 `multiplex 多路复用` 部分
 }
 ```
 
@@ -450,14 +450,14 @@ Vless 节点遵循和 Vmess 类似的配置规则，除了以下几个差异：
   password: 'password', // 可选
   tls: true, // 可选
   skipCertVerify: true, // 可选
-  udpRelay: false, // 可选, 仅 Clash 支持
-  sni: 'example.com', // 可选, 仅 Surge 支持
-  tfo: true, // 可选, 仅 Surge 支持
-  clientCert: 'item', // 可选, 仅 Surge 支持
+  udpRelay: false, // 可选，仅 Clash 支持
+  sni: 'example.com', // 可选，仅 Surge 支持
+  tfo: true, // 可选，仅 Surge 支持
+  clientCert: 'item', // 可选，仅 Surge 支持
 }
 ```
 
-`clientCert` 仅 Surge 支持, 参考 [文档](https://github.com/Blankwonder/Surge-Manual/blob/master/release-note/surge-mac.md#version-250) 进行配置。
+`clientCert` 仅 Surge 支持，参考 [文档](https://github.com/Blankwonder/Surge-Manual/blob/master/release-note/surge-mac.md#version-250) 进行配置。
 
 ### Wireguard
 
@@ -505,7 +505,7 @@ Vless 节点遵循和 Vmess 类似的配置规则，除了以下几个差异：
   sni: 'sni.example.com', // 可选
   skipCertVerify: true, // 可选
   alpn: ['h3'], // 可选，Stash 不支持空值
-  udpRelay: false, // 可选, 仅 Clash 支持更改，Surge 默认开启
+  udpRelay: false, // 可选，仅 Clash 支持更改，Surge 默认开启
 }
 ```
 
@@ -521,7 +521,7 @@ Vless 节点遵循和 Vmess 类似的配置规则，除了以下几个差异：
   sni: 'sni.example.com', // 可选
   skipCertVerify: true, // 可选
   alpn: ['h3'], // 可选，Stash 不支持空值
-  udpRelay: false, // 可选, 仅 Clash 支持更改，Surge 默认开启
+  udpRelay: false, // 可选，仅 Clash 支持更改，Surge 默认开启
 }
 ```
 
@@ -540,8 +540,8 @@ Clash 需要在配置中开启 `clashConfig.enableHysteria2`。
   hostname: 'hysteria.example.com',
   port: 443,
   password: 'password',
-  downloadBandwidth: 40, // 可选, Mbps
-  uploadBandwidth: 40, // 可选, Mbps
+  downloadBandwidth: 40, // 可选，Mbps
+  uploadBandwidth: 40, // 可选，Mbps
   sni: 'sni.example.com', // 可选
   skipCertVerify: true, // 可选
 }
@@ -564,13 +564,13 @@ module.exports = {
 
 ### url
 
-- 类型: `string`
+- 类型：`string`
 - <Badge text="必须" vertical="middle" />
 
 ### udpRelay
 
-- 类型: `boolean`
-- 默认值: `false`
+- 类型：`boolean`
+- 默认值：`false`
 
 你可以通过配置这个属性来强制设定节点的 UDP 转发支持情况。
 
@@ -586,7 +586,7 @@ module.exports = {
 
 ### url
 
-- 类型: `string`
+- 类型：`string`
 - <Badge text="必须" vertical="middle" />
 
 若机场没有提供这种订阅地址，推荐使用 Fndroid 的 [接口](https://github.com/Fndroid/jsbox_script/wiki/%E5%BC%80%E6%94%BE%E6%8E%A5%E5%8F%A3%E4%BD%BF%E7%94%A8%E5%8F%8A%E8%AF%B4%E6%98%8E#surge%E6%89%98%E7%AE%A1%E8%BD%AC%E6%8D%A2shadowsockswindows%E9%85%8D%E7%BD%AE) 进行转换。
@@ -597,8 +597,8 @@ module.exports = {
 
 ### udpRelay
 
-- 类型: `boolean`
-- 默认值: `false`
+- 类型：`boolean`
+- 默认值：`false`
 
 由于这种订阅协议不支持定义 UDP 转发的支持情况，所以单独出来进行配置。UDP 转发可以应用在 Surge 中。
 
@@ -619,7 +619,7 @@ module.exports = {
 
 ### url
 
-- 类型: `string`
+- 类型：`string`
 - <Badge text="必须" vertical="middle" />
 
 :::warning 注意
@@ -628,8 +628,8 @@ module.exports = {
 
 ### udpRelay
 
-- 类型: `boolean`
-- 默认值: `false`
+- 类型：`boolean`
+- 默认值：`false`
 
 由于这种订阅协议不支持定义 UDP 转发的支持情况，所以单独出来进行配置。UDP 转发可以应用在 Surge 中。
 
@@ -644,7 +644,7 @@ module.exports = {
 
 ### url
 
-- 类型: `string`
+- 类型：`string`
 - <Badge text="必须" vertical="middle" />
 
 ## V2rayn 订阅
@@ -658,7 +658,7 @@ module.exports = {
 
 ### url
 
-- 类型: `string`
+- 类型：`string`
 - <Badge text="必须" vertical="middle" />
 
 :::warning 注意
@@ -669,29 +669,29 @@ module.exports = {
 
 ### compatibleMode
 
-- 类型: `boolean`
-- 默认值: `false`
+- 类型：`boolean`
+- 默认值：`false`
 
 部分机场提供的订阅地址不符合标准，提供一个兼容模式进行解析。
 
 ### udpRelay
 
-- 类型: `boolean`
-- 默认值: `false`
+- 类型：`boolean`
+- 默认值：`false`
 
 由于这种订阅协议不支持定义 UDP 转发的支持情况，所以单独出来进行配置。
 
 ### skipCertVerify
 
-- 类型: `boolean`
-- 默认值: `false`
+- 类型：`boolean`
+- 默认值：`false`
 
 由于这种订阅协议不支持定义跳过证书验证，所以单独出来进行配置。
 
 ### tls13
 
-- 类型: `boolean`
-- 默认值: `false`
+- 类型：`boolean`
+- 默认值：`false`
 
 强制开启节点的 TLS 1.3。
 
@@ -710,20 +710,20 @@ module.exports = {
 
 ### url
 
-- 类型: `string`
+- 类型：`string`
 - <Badge text="必须" vertical="middle" />
 
 ### udpRelay
 
-- 类型: `boolean`
-- 默认值: `false`
+- 类型：`boolean`
+- 默认值：`false`
 
 强制开启节点的 UDP 转发。
 
 ### tls13
 
-- 类型: `boolean`
-- 默认值: `false`
+- 类型：`boolean`
+- 默认值：`false`
 
 强制开启节点的 TLS 1.3。
 
@@ -736,8 +736,8 @@ module.exports = {
 
 ### nodeConfig.enable
 
-- 类型: `boolean`
-- 默认值: `true`
+- 类型：`boolean`
+- 默认值：`true`
 
 单独关闭某个节点输出到配置中。若没有 `enable` 属性则默认打开。
 
@@ -755,44 +755,44 @@ module.exports = {
 
 ### nodeConfig.tfo
 
-- 类型: `boolean`
-- 默认值: `false`
+- 类型：`boolean`
+- 默认值：`false`
 
 是否为该节点开启 TFO（TCP Fast Open）。
 
 ### nodeConfig.mptcp
 
-- 类型: `boolean`
-- 默认值: `false`
+- 类型：`boolean`
+- 默认值：`false`
 
 是否为该节点开启 Multipath TCP。目前仅 Surge 支持这一特性。
 
 ### nodeConfig.shadowTls
 
-- 类型: `object`
-- 默认值: `undefined`
+- 类型：`object`
+- 默认值：`undefined`
 
 目前仅 Surge 和 Stash 支持这一特性。
 
 ### nodeConfig.shadowTls.password
 
-- 类型: `string`
+- 类型：`string`
 - <Badge text="必须" vertical="middle" />
 
 ### nodeConfig.shadowTls.sni
 
-- 类型: `string`
+- 类型：`string`
 - <Badge text="必须" vertical="middle" />
 
 ### nodeConfig.shadowTls.version
 
-- 类型: `number`
-- 默认值: `undefined`
+- 类型：`number`
+- 默认值：`undefined`
 
 ### nodeConfig.tls13
 
-- 类型: `boolean`
-- 默认值: `false`
+- 类型：`boolean`
+- 默认值：`false`
 
 为 TLS 节点开启 TLS 1.3 支持。
 
@@ -803,8 +803,8 @@ module.exports = {
 
 ### nodeConfig.skipCertVerify
 
-- 类型: `boolean`
-- 默认值: `false`
+- 类型：`boolean`
+- 默认值：`false`
 
 关闭 TLS 节点的证书检查。
 
@@ -815,22 +815,22 @@ module.exports = {
 
 ### nodeConfig.portHopping
 
-- 类型: `string`
-- 默认值: `undefined`
+- 类型：`string`
+- 默认值：`undefined`
 
 开启 Tuic 和 Hysteria 协议端口跳跃，目前仅 Surge, Sing-box, Stash 和 Mihomo 支持这一特性。例如 `5000,6000-7000`。该配置支持逗号或分号分割的端口列表，以及连字符分割的端口范围，Surgio 会自动转换成 Surge 和 Stash 支持的格式。Sing-box 的 Hysteria 协议也支持端口跳跃，但仅支持 `6000-7000` 这样连字符分割的端口范围，单个端口的配置会被忽略。
 
 ### nodeConfig.portHoppingInterval
 
-- 类型: `number`
-- 默认值: `undefined`
+- 类型：`number`
+- 默认值：`undefined`
 
 端口跳跃的间隔时间，单位为秒。目前仅 Surge, Stash 和 Mihomo 支持这一特性。
 
 ### nodeConfig.underlyingProxy
 
-- 类型: `string`
-- 默认值: `undefined`
+- 类型：`string`
+- 默认值：`undefined`
 
 可以通过一个代理跳板使用另一个代理，可以无限嵌套使用。目前仅 Surge 支持该特性。
 
@@ -840,8 +840,8 @@ Surgio 不会验证名称是否有效
 
 ### nodeConfig.testUrl
 
-- 类型: `string`
-- 默认值: `undefined`
+- 类型：`string`
+- 默认值：`undefined`
 
 在新版的 Surge 中支持针对某个 Proxy 设置测试的地址。你可以通过这个参数来设置改地址。
 
@@ -852,22 +852,22 @@ Surgio 不会验证名称是否有效
 
 ### nodeConfig.serverCertFingerprintSha256
 
-- 类型: `string`
-- 默认值: `undefined`
+- 类型：`string`
+- 默认值：`undefined`
 
 用于验证服务器证书的 SHA256 指纹。目前仅 Surge 支持该特性。
 
 ### nodeConfig.ecn
 
-- 类型: `boolean`
-- 默认值: `false`
+- 类型：`boolean`
+- 默认值：`false`
 
 是否为该节点开启 [ECN（Explicit Congestion Notification）](https://yach.me/2023/10/14/ccn-and-ecn/)。目前仅 Surge 支持这一特性。
 
 ### nodeConfig.blockQuic
 
-- 类型: `string`
-- 默认值: `undefined`
+- 类型：`string`
+- 默认值：`undefined`
 
 通过代理转发 QUIC 流量可能会导致性能问题。启用该选项将阻止 QUIC 流量，使客户端退回到传统的 HTTPS/TCP 协议。目前仅 Surge 支持这一特性。
 
@@ -920,9 +920,9 @@ Surgio 不会验证名称是否有效
 
 ### provider.nodeFilter
 
-- 类型: `Function`
-- 入参: `NodeConfig`
-- 返回值: `boolean`
+- 类型：`Function`
+- 入参：`NodeConfig`
+- 返回值：`boolean`
 
 有一些俗称「外贸机场」的服务商提供很多诸如马来西亚、土耳其的节点，不需要这些国家节点的朋友每次都要在数十个节点中寻找自己想要的。我们可以用这个方法把这些节点过滤掉。
 
@@ -941,9 +941,9 @@ module.exports = {
 
 ### provider.netflixFilter
 
-- 类型: `Function`
-- 入参: `NodeConfig`
-- 返回值: `boolean`
+- 类型：`Function`
+- 入参：`NodeConfig`
+- 返回值：`boolean`
 
 该方法会覆盖 Surgio 内置的 `netflixFilter`。用于过滤出支持 Netflix 的节点。对于那些每一个节点都解锁流媒体的机场，也可以单独过滤出部分你喜欢的节点。
 
@@ -958,9 +958,9 @@ module.exports = {
 
 ### provider.youtubePremiumFilter
 
-- 类型: `Function`
-- 入参: `NodeConfig`
-- 返回值: `boolean`
+- 类型：`Function`
+- 入参：`NodeConfig`
+- 返回值：`boolean`
 
 该方法会覆盖 Surgio 内置的 `youtubePremiumFilter`。用于过滤出支持 Youtube Premium 的节点。
 
@@ -968,8 +968,8 @@ module.exports = {
 
 ### provider.customFilters
 
-- 类型: `object`
-- 默认值: `undefined`
+- 类型：`object`
+- 默认值：`undefined`
 
 自定义 Filter。关于自定义 Filter 的用法，请阅读 [进阶 - 自定义 Filter](/guide/advance/custom-filter)。
 
@@ -979,7 +979,7 @@ module.exports = {
 
 ### provider.startPort
 
-- 类型: `number`
+- 类型：`number`
 
 在调用 `getSurgeNodes` 时会强制要求设置该值。建议大于 10000。
 
@@ -987,29 +987,29 @@ module.exports = {
 
 ### provider.addFlag
 
-- 类型: `boolean`
-- 默认值: `false`
+- 类型：`boolean`
+- 默认值：`false`
 
 在节点名称前加国旗 Emoji。需要注意的是，Surgio 是根据有限的节点名关键词判断位置的，如果无法匹配则会保留原节点名。你可以在所有的过滤器中检索国旗 Emoji。
 
 ### provider.removeExistingFlag
 
-- 类型: `boolean`
-- 默认值: `false`
+- 类型：`boolean`
+- 默认值：`false`
 
 去除订阅中的国旗 Emoji。可以在不开启 `addFlag` 时使用，这时会输出没有 Emoji 的节点名称。
 
 ### provider.tfo
 
-- 类型: `boolean`
-- 默认值: `false`
+- 类型：`boolean`
+- 默认值：`false`
 
 是否为该订阅强制开启 TFO（TCP Fast Open）。部分机场虽然支持 TFO 但是没有在订阅中开启，你可以通过这个配置强制打开。
 
 ### provider.underlyingProxy
 
-- 类型: `string`
-- 默认值: `undefined`
+- 类型：`string`
+- 默认值：`undefined`
 
 是否对当前 Provider 中所有节点使用自定义 Underlying Proxy。在 `CustomProvider` 中也可以使用，但是优先级低于 `nodeConfig.underlyingProxy`。
 
@@ -1021,22 +1021,22 @@ Surgio 不会验证名称是否有效
 
 ### provider.mptcp
 
-- 类型: `boolean`
-- 默认值: `false`
+- 类型：`boolean`
+- 默认值：`false`
 
 是否为该订阅强制开启 Multipath TCP。目前仅 Surge 支持这一特性。
 
 ### provider.ecn
 
-- 类型: `boolean`
-- 默认值: `false`
+- 类型：`boolean`
+- 默认值：`false`
 
 是否为该订阅强制开启 ECN（Explicit Congestion Notification）。目前仅 Surge 支持这一特性。
 
 ### provider.blockQuic
 
-- 类型: `string`
-- 默认值: `undefined`
+- 类型：`string`
+- 默认值：`undefined`
 
 是否为该订阅强制阻止 QUIC 流量。目前仅 Surge 支持这一特性。
 
@@ -1046,8 +1046,8 @@ Surgio 不会验证名称是否有效
 
 ### provider.renameNode
 
-- 类型: `Function`
-- 默认值: `undefined`
+- 类型：`Function`
+- 默认值：`undefined`
 
 更改节点名。如果你对机场的奇葩命名有意见，可以在这里把他们替换掉。
 
@@ -1071,8 +1071,8 @@ module.exports = {
 
 ### provider.relayUrl
 
-- 类型: `Boolean|String`
-- 默认值: `undefined`
+- 类型：`Boolean|String`
+- 默认值：`undefined`
 
 开启订阅地址转发。由于部分机场禁止 AWS 等公有云服务器访问，所以面板无法获取订阅内容。开启后会使用一个免费并且安全的转发服务进行获取。
 
@@ -1098,8 +1098,8 @@ module.exports = {
 
 ### provider.requestUserAgent
 
-- 类型: `string`
-- 默认值: undefined
+- 类型：`string`
+- 默认值：undefined
 
 指定订阅请求头中的 User-Agent 字段。若不指定则使用内置的默认值 `surgio/<版本号>`。
 
