@@ -56,6 +56,17 @@ module.exports = {
       port: '443',
       password: 'password',
     },
+    {
+      type: 'anytls',
+      nodeName: 'anytls node',
+      hostname: 'anytls.example.com',
+      port: '443',
+      password: 'password',
+      udpRelay: false,
+      idleSessionCheckInterval: 0,
+      idleSessionTimeout: 0,
+      minIdleSessions: 0,
+    },
   ],
   renameNode: (name) => {
     if (name === 'rename to HTTPS') {

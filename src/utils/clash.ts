@@ -517,20 +517,20 @@ function nodeListMapper(nodeConfig: PossibleNodeConfigType) {
         server: nodeConfig.hostname,
         port: nodeConfig.port,
         password: nodeConfig.password,
-        ...(nodeConfig.udpRelay ? { udp: nodeConfig.udpRelay } : null),
+        udp: nodeConfig.udpRelay === true,
         ...(nodeConfig.alpn ? { alpn: nodeConfig.alpn } : null),
         ...(nodeConfig.sni ? { sni: nodeConfig.sni } : null),
         'skip-cert-verify': nodeConfig.skipCertVerify === true,
-        ...(nodeConfig.idleSessionCheckInterval
+        ...(nodeConfig.idleSessionCheckInterval !== undefined
           ? {
               'idle-session-check-interval':
                 nodeConfig.idleSessionCheckInterval,
             }
           : null),
-        ...(nodeConfig.idleSessionTimeout
+        ...(nodeConfig.idleSessionTimeout !== undefined
           ? { 'idle-session-timeout': nodeConfig.idleSessionTimeout }
           : null),
-        ...(nodeConfig.minIdleSessions
+        ...(nodeConfig.minIdleSessions !== undefined
           ? { 'min-idle-session': nodeConfig.minIdleSessions }
           : null),
       } as const

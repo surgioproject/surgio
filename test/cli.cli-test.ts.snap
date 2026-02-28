@@ -57,6 +57,7 @@ HTTPS = https, us.example.com, 443, username, password, tfo=true, tls13=true
 trojan node = trojan, trojan.example.com, 443, password=password
 🚀 火箭 trojan node = trojan, trojan.example.com, 443, password=password
 🎉 foobar trojan node = trojan, trojan.example.com, 443, password=password
+anytls node = anytls, anytls.example.com, 443, password=password
 🇺🇸US 1 = ss, us.example.com, 443, encrypt-method=chacha20-ietf-poly1305, password=password, obfs=tls, obfs-host=gateway-carry.icloud.com
 🇺🇸US 2 = ss, us.example.com, 444, encrypt-method=chacha20-ietf-poly1305, password=password
 🇺🇸US 3 = ss, us.example.com, 445, encrypt-method=chacha20-ietf-poly1305, password=password, obfs=tls, obfs-host=www.bing.com
@@ -97,7 +98,7 @@ US GIA = ss, 45.45.45.45, 444, encrypt-method=aes-128-gcm, password=password, ud
 HK GIA = ss, 55.55.55.55, 444, encrypt-method=aes-128-gcm, password=password, udp-relay=false, obfs=http, obfs-host=www.taobao.com
 ----
 getNodeNames
-🇺🇸US 1, 🇺🇸US 2, 🇺🇸US 3, 🇺🇸 US, Snell, HTTPS, trojan node, 🚀 火箭 trojan node, 🎉 foobar trojan node, 🇺🇸US 1, 🇺🇸US 2, 🇺🇸US 3, 🇺🇸US 4, 🇺🇸US 1, 🇺🇸US 2, 测试 1, 测试 2, 测试 tls, ss1, ss2, ss3, ss4, ss-wss, 测试中文, US GIA, HK GIA
+🇺🇸US 1, 🇺🇸US 2, 🇺🇸US 3, 🇺🇸 US, Snell, HTTPS, trojan node, 🚀 火箭 trojan node, 🎉 foobar trojan node, anytls node, 🇺🇸US 1, 🇺🇸US 2, 🇺🇸US 3, 🇺🇸US 4, 🇺🇸US 1, 🇺🇸US 2, 测试 1, 测试 2, 测试 tls, ss1, ss2, ss3, ss4, ss-wss, 测试中文, US GIA, HK GIA
 ----
 getQuantumultXNodes
 shadowsocks=us.example.com:443, method=chacha20-ietf-poly1305, password=password, obfs=tls, obfs-host=gateway-carry.icloud.com, fast-open=true, tag=🇺🇸US 1
