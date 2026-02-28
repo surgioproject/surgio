@@ -202,7 +202,10 @@ function nodeListMapper(nodeConfig: PossibleNodeConfigType) {
       }
 
       if (nodeConfig.type === NodeTypeEnum.Vless) {
-        vmessNode.flow = nodeConfig.flow
+        if (typeof nodeConfig.flow === 'string') {
+          vmessNode.flow = nodeConfig.flow
+        }
+
         if (typeof nodeConfig.encryption === 'string') {
           vmessNode.encryption = nodeConfig.encryption
         }
@@ -241,6 +244,9 @@ function nodeListMapper(nodeConfig: PossibleNodeConfigType) {
         }
         if (clashConfig.clashCore === 'clash.meta' && nodeConfig.sni) {
           vmessNode.servername = nodeConfig.sni
+        }
+        if (clashConfig.clashCore === 'clash.meta' && nodeConfig.alpn) {
+          vmessNode.alpn = nodeConfig.alpn
         }
         if (nodeConfig.clientFingerprint) {
           vmessNode['client-fingerprint'] = nodeConfig.clientFingerprint
