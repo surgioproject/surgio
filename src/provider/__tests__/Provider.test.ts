@@ -9,11 +9,15 @@ import Provider from '../Provider'
 const sandbox = sinon.createSandbox()
 
 class TestProvider extends Provider {
-  async getNodeList() {
+  constructor(name: string, config: any) {
+    super(name, config)
+  }
+
+  getNodeList = async () => {
     return []
   }
 
-  async getNodeListV2() {
+  getNodeListV2 = async () => {
     return {
       nodeList: [],
     }
@@ -48,8 +52,7 @@ test('Provider determineRequestHeaders filters headers by allowlist', (t) => {
     nodeList: [],
   })
 
-  // @ts-expect-error - test-only override of private property
-  provider.passGatewayRequestHeaders = ['accept-language']
+  ;(provider as any).passGatewayRequestHeaders = ['accept-language']
 
   const headers = provider.determineRequestHeaders(undefined, {
     'accept-language': 'en-US',
@@ -69,8 +72,7 @@ test('Provider determineRequestHeaders uses requestUserAgent when allowed', (t) 
     requestUserAgent: 'config-ua',
   })
 
-  // @ts-expect-error - test-only override of private property
-  provider.passGatewayRequestHeaders = ['user-agent']
+  ;(provider as any).passGatewayRequestHeaders = ['user-agent']
 
   const headers = provider.determineRequestHeaders('param-ua', {
     'user-agent': 'header-ua',
@@ -86,8 +88,7 @@ test('Provider determineRequestHeaders falls back to header user-agent', (t) => 
     requestUserAgent: 'config-ua',
   })
 
-  // @ts-expect-error - test-only override of private property
-  provider.passGatewayRequestHeaders = ['user-agent']
+  ;(provider as any).passGatewayRequestHeaders = ['user-agent']
 
   const headers = provider.determineRequestHeaders(undefined, {
     'user-agent': 'header-ua',
@@ -103,8 +104,7 @@ test('Provider determineRequestHeaders falls back to config user-agent', (t) => 
     requestUserAgent: 'config-ua',
   })
 
-  // @ts-expect-error - test-only override of private property
-  provider.passGatewayRequestHeaders = ['user-agent']
+  ;(provider as any).passGatewayRequestHeaders = ['user-agent']
 
   const headers = provider.determineRequestHeaders()
 
@@ -117,8 +117,7 @@ test('Provider determineRequestHeaders normalizes header casing', (t) => {
     nodeList: [],
   })
 
-  // @ts-expect-error - test-only override of private property
-  provider.passGatewayRequestHeaders = ['accept-language']
+  ;(provider as any).passGatewayRequestHeaders = ['accept-language']
 
   const headers = provider.determineRequestHeaders(undefined, {
     'Accept-Language': 'en-GB',

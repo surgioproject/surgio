@@ -709,6 +709,37 @@ test('getClashNodes', async (t) => {
   t.deepEqual(
     clash.getClashNodes([
       {
+        type: NodeTypeEnum.AnyTLS,
+        nodeName: 'anytls',
+        hostname: 'example.com',
+        port: 443,
+        password: 'password',
+        udpRelay: false,
+        skipCertVerify: false,
+        idleSessionCheckInterval: 0,
+        idleSessionTimeout: 0,
+        minIdleSessions: 0,
+      },
+    ]),
+    [
+      {
+        type: 'anytls',
+        name: 'anytls',
+        server: 'example.com',
+        port: 443,
+        password: 'password',
+        udp: false,
+        'skip-cert-verify': false,
+        'idle-session-check-interval': 0,
+        'idle-session-timeout': 0,
+        'min-idle-session': 0,
+      },
+    ],
+  )
+
+  t.deepEqual(
+    clash.getClashNodes([
+      {
         nodeName: 'trojan',
         type: NodeTypeEnum.Trojan,
         hostname: '1.1.1.1',

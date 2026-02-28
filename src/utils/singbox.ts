@@ -48,6 +48,7 @@ const typeMap = {
   [NodeTypeEnum.Tuic]: 'tuic',
   [NodeTypeEnum.Wireguard]: 'wireguard',
   [NodeTypeEnum.Hysteria2]: 'hysteria2',
+  [NodeTypeEnum.AnyTLS]: 'anytls',
 } as const
 
 /**
@@ -270,6 +271,19 @@ function nodeListMapper(nodeConfig: PossibleNodeConfigType) {
         node.hop_interval = `${nodeConfig.portHoppingInterval}s`
       }
 
+      break
+
+    case NodeTypeEnum.AnyTLS:
+      node.password = nodeConfig.password
+      if (nodeConfig.idleSessionCheckInterval !== undefined) {
+        node.idle_session_check_interval = nodeConfig.idleSessionCheckInterval
+      }
+      if (nodeConfig.idleSessionTimeout !== undefined) {
+        node.idle_session_timeout = nodeConfig.idleSessionTimeout
+      }
+      if (nodeConfig.minIdleSessions !== undefined) {
+        node.min_idle_session = nodeConfig.minIdleSessions
+      }
       break
 
     case NodeTypeEnum.Wireguard:

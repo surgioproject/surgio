@@ -1146,3 +1146,37 @@ test('parseClashConfig hysteria2 invalid obfs', (t) => {
     },
   )
 })
+
+test('parseClashConfig anytls options', (t) => {
+  t.deepEqual(
+    parseClashConfig([
+      {
+        type: 'anytls',
+        name: 'anytls',
+        server: 'server',
+        port: 443,
+        password: 'password',
+        udp: false,
+        'skip-cert-verify': false,
+        'idle-session-check-interval': 0,
+        'idle-session-timeout': 0,
+        'min-idle-session': 0,
+      },
+    ]),
+    [
+      {
+        type: NodeTypeEnum.AnyTLS,
+        nodeName: 'anytls',
+        hostname: 'server',
+        port: 443,
+        password: 'password',
+        udpRelay: false,
+        tls13: false,
+        skipCertVerify: false,
+        idleSessionCheckInterval: 0,
+        idleSessionTimeout: 0,
+        minIdleSessions: 0,
+      },
+    ],
+  )
+})

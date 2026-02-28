@@ -468,6 +468,20 @@ function nodeListMapper(
         ].join(', '),
       ]
 
+    case NodeTypeEnum.AnyTLS: {
+      const result: string[] = [
+        'anytls',
+        nodeConfig.hostname,
+        `${nodeConfig.port}`,
+        `password=${nodeConfig.password}`,
+      ]
+
+      return [
+        nodeConfig.nodeName,
+        [nodeConfig.nodeName, result.join(', ')].join(' = '),
+      ]
+    }
+
     case NodeTypeEnum.Wireguard:
       logger.info(
         `请配合使用 getSurgeWireguardNodes 生成 ${nodeConfig.nodeName} 节点配置`,

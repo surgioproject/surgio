@@ -121,3 +121,6 @@ export const hysteria2Filter: NodeFilterType = (item) =>
 // istanbul ignore next
 export const vlessFilter: NodeFilterType = (item) =>
   item.type === NodeTypeEnum.Vless
+// istanbul ignore next
+export const anytlsFilter: NodeFilterType = (item) =>
+  item.type === NodeTypeEnum.AnyTLS
