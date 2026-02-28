@@ -1,0 +1,12 @@
+autoInstallPeers: false
+hoistPattern:
+  - "!@vuepress/*"
+  - "!vuepress*"
+
+patchedDependencies:
+  vuepress-plugin-umami-analytics@1.8.1: patches/vuepress-plugin-umami-analytics@1.8.1.patch
+
+allowBuilds:
+  "@parcel/watcher": true
+  unrs-resolver: true
+  yarn: false

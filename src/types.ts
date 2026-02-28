@@ -226,7 +226,7 @@ export interface SubscriptionUserinfo {
 
 export interface SubsciptionCacheItem {
   readonly body: string
-  subscriptionUserinfo?: SubscriptionUserinfo
+  subscriptionUserInfo?: SubscriptionUserinfo
 }
 
 export type NodeFilterType = z.infer<typeof NodeFilterTypeValidator>

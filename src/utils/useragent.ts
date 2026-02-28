@@ -23,7 +23,7 @@ export const isSurgeIOS = (
     return true
   }
 
-  const matcher = /(surge ios)\/([\w\.]+)/i
+  const matcher = /(surge ios)\/([\w.]+)/i
   const result = matcher.exec(ua.toLowerCase())
   const clientVersion = result ? result[2] : ''
 
@@ -56,7 +56,7 @@ export const isSurgeMac = (
     return true
   }
 
-  const matcher = /(surge mac)\/([\w\.]+)/i
+  const matcher = /(surge mac)\/([\w.]+)/i
   const result = matcher.exec(ua.toLowerCase())
   const clientVersion = result ? result[2] : ''
 
@@ -82,7 +82,7 @@ export const isClash = (ua: string | undefined, version?: string): boolean => {
     return true
   }
 
-  const matcher = /clash\/([\w\.]+)/i
+  const matcher = /clash\/([\w.]+)/i
   const result = matcher.exec(ua.toLowerCase())
   const clientVersion = result ? result[1] : ''
 
@@ -164,7 +164,7 @@ export const isStash = (ua: string | undefined, version?: string): boolean => {
     return true
   }
 
-  const matcher = /(stash)\/([\w\.]+)/i
+  const matcher = /(stash)\/([\w.]+)/i
   const result = matcher.exec(ua.toLowerCase())
   const clientVersion = result ? result[2] : ''
 
@@ -193,7 +193,7 @@ export const isQuantumultX = (
     return true
   }
 
-  const matcher = /(Quantumult%20X)\/([\w\.]+)/i
+  const matcher = /(Quantumult%20X)\/([\w.]+)/i
   const result = matcher.exec(ua.toLowerCase())
   const clientVersion = result ? result[2] : ''
 
@@ -222,7 +222,7 @@ export const isShadowrocket = (
     return true
   }
 
-  const matcher = /(Shadowrocket)\/([\w\.]+)/i
+  const matcher = /(Shadowrocket)\/([\w.]+)/i
   const result = matcher.exec(ua.toLowerCase())
   const clientVersion = result ? result[2] : ''
 
@@ -248,7 +248,7 @@ export const isLoon = (ua: string | undefined, version?: string): boolean => {
     return true
   }
 
-  const matcher = /(Loon)\/([\w\.]+)/i
+  const matcher = /(Loon)\/([\w.]+)/i
   const result = matcher.exec(ua.toLowerCase())
   const clientVersion = result ? result[2] : ''
 

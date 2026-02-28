@@ -48,7 +48,7 @@ export const parseSSUri = (str: string): ShadowsocksNodeConfig => {
           scheme.port = legacyPort
         }
       }
-    } catch (_) {
+    } catch {
       // ignore
     }
   }

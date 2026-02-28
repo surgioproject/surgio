@@ -32,6 +32,7 @@ export const VlessNodeConfigValidator = TlsNodeConfigValidator.extend({
   network: VmessNetworkValidator.default('tcp'),
   udpRelay: z.oboolean(),
   flow: z.ostring(),
+  encryption: z.ostring(),
 
   wsOpts: VmessWSOptsValidator.optional(),
   h2Opts: VmessH2OptsValidator.optional(),

@@ -407,7 +407,7 @@ export const pickAndFormatStringList = (
   const { keyFormat, stringifyValue } = options
 
   keyList.forEach((key) => {
-    if (obj.hasOwnProperty(key) && obj[key] !== undefined) {
+    if (Object.hasOwn(obj, key) && obj[key] !== undefined) {
       const propertyKey = keyFormat ? changeCase(key, keyFormat) : key
       const propertyValue = obj[key]
 
@@ -460,7 +460,7 @@ export const pickAndFormatKeys = (
   const result: Record<string, any> = {}
 
   keyList.forEach((key) => {
-    if (obj.hasOwnProperty(key) && obj[key] !== undefined) {
+    if (Object.hasOwn(obj, key) && obj[key] !== undefined) {
       const propertyKey = options.keyFormat
         ? changeCase(key, options.keyFormat)
         : key
@@ -498,7 +498,7 @@ export const ensureConfigFolder = (dir: string = os.homedir()): string => {
   try {
     fs.accessSync(dir, fs.constants.W_OK)
     baseDir = dir
-  } catch (err) {
+  } catch {
     // if the user do not have write permission
     // istanbul ignore next
     baseDir = '/tmp'

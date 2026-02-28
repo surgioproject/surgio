@@ -10,7 +10,12 @@ import { SurgioError } from '../utils'
 import relayableUrl from '../utils/relayable-url'
 
 import Provider from './Provider'
-import { GetNodeListFunction } from './types'
+import {
+  DefaultProviderRequestHeaders,
+  GetNodeListFunction,
+  GetNodeListV2Function,
+  GetNodeListV2Result,
+} from './types'
 
 export default class ShadowsocksJsonSubscribeProvider extends Provider {
   readonly #originalUrl: string
@@ -35,6 +40,10 @@ export default class ShadowsocksJsonSubscribeProvider extends Provider {
 
     this.#originalUrl = result.data.url
     this.udpRelay = result.data.udpRelay
+
+    if (!this.config.requestUserAgent) {
+      this.config.requestUserAgent = 'shadowrocket'
+    }
   }
 
   // istanbul ignore next
@@ -45,13 +54,16 @@ export default class ShadowsocksJsonSubscribeProvider extends Provider {
   public getNodeList: GetNodeListFunction = async (
     params = {},
   ): Promise<Array<ShadowsocksNodeConfig>> => {
-    const requestUserAgent = this.determineRequestUserAgent(
+    const requestHeaders = this.determineRequestHeaders(
       params.requestUserAgent,
+      params.requestHeaders,
     )
+    const cacheKey = Provider.getResourceCacheKey(requestHeaders, this.url)
     const nodeList = await getShadowsocksJSONConfig(
       this.url,
+      requestHeaders,
+      cacheKey,
       this.udpRelay,
-      requestUserAgent,
     )
 
     if (this.config.hooks?.afterNodeListResponse) {
@@ -67,21 +79,31 @@ export default class ShadowsocksJsonSubscribeProvider extends Provider {
 
     return nodeList
   }
+
+  public getNodeListV2: GetNodeListV2Function = async (
+    params = {},
+  ): Promise<GetNodeListV2Result> => {
+    const nodeList = await this.getNodeList(params)
+    return { nodeList }
+  }
 }
 
 export const getShadowsocksJSONConfig = async (
   url: string,
+  requestHeaders: DefaultProviderRequestHeaders,
+  cacheKey: string,
   udpRelay?: boolean,
-  requestUserAgent?: string,
 ): Promise<Array<ShadowsocksNodeConfig>> => {
   assert(url, '未指定订阅地址 url')
 
   async function requestConfigFromRemote(): Promise<
     Array<ShadowsocksNodeConfig>
   > {
-    const response = await Provider.requestCacheableResource(url, {
-      requestUserAgent: requestUserAgent || 'shadowrocket',
-    })
+    const response = await Provider.requestCacheableResource(
+      url,
+      requestHeaders,
+      cacheKey,
+    )
     const config = JSON.parse(response.body) as {
       configs?: ReadonlyArray<any>
     }

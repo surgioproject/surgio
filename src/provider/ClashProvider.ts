@@ -39,7 +39,13 @@ import {
 } from '../validators'
 
 import Provider from './Provider'
-import { GetNodeListFunction, GetSubscriptionUserInfoFunction } from './types'
+import {
+  DefaultProviderRequestHeaders,
+  GetNodeListFunction,
+  GetNodeListV2Function,
+  GetNodeListV2Result,
+  GetSubscriptionUserInfoFunction,
+} from './types'
 
 type SupportConfigTypes =
   | ShadowsocksNodeConfig
@@ -85,6 +91,10 @@ export default class ClashProvider extends Provider {
     this.udpRelay = result.data.udpRelay
     this.tls13 = result.data.tls13
     this.supportGetSubscriptionUserInfo = true
+
+    if (!this.config.requestUserAgent) {
+      this.config.requestUserAgent = getNetworkClashUA()
+    }
   }
 
   // istanbul ignore next
@@ -95,18 +105,21 @@ export default class ClashProvider extends Provider {
   public getSubscriptionUserInfo: GetSubscriptionUserInfoFunction = async (
     params = {},
   ) => {
-    const requestUserAgent = this.determineRequestUserAgent(
+    const requestHeaders = this.determineRequestHeaders(
       params.requestUserAgent,
+      params.requestHeaders,
     )
-    const { subscriptionUserinfo } = await getClashSubscription({
+    const cacheKey = Provider.getResourceCacheKey(requestHeaders, this.url)
+    const { subscriptionUserInfo } = await getClashSubscription({
       url: this.url,
       udpRelay: this.udpRelay,
       tls13: this.tls13,
-      requestUserAgent,
+      requestHeaders,
+      cacheKey,
     })
 
-    if (subscriptionUserinfo) {
-      return subscriptionUserinfo
+    if (subscriptionUserInfo) {
+      return subscriptionUserInfo
     }
 
     return undefined
@@ -115,14 +128,17 @@ export default class ClashProvider extends Provider {
   public getNodeList: GetNodeListFunction = async (
     params = {},
   ): Promise<SupportConfigTypes[]> => {
-    const requestUserAgent = this.determineRequestUserAgent(
+    const requestHeaders = this.determineRequestHeaders(
       params.requestUserAgent,
+      params.requestHeaders,
     )
+    const cacheKey = Provider.getResourceCacheKey(requestHeaders, this.url)
     const { nodeList } = await getClashSubscription({
       url: this.url,
       udpRelay: this.udpRelay,
       tls13: this.tls13,
-      requestUserAgent,
+      requestHeaders,
+      cacheKey,
     })
 
     if (this.config.hooks?.afterNodeListResponse) {
@@ -138,33 +154,67 @@ export default class ClashProvider extends Provider {
 
     return nodeList
   }
+
+  public getNodeListV2: GetNodeListV2Function = async (
+    params = {},
+  ): Promise<GetNodeListV2Result> => {
+    const requestHeaders = this.determineRequestHeaders(
+      params.requestUserAgent,
+      params.requestHeaders,
+    )
+    const cacheKey = Provider.getResourceCacheKey(requestHeaders, this.url)
+
+    const { nodeList, subscriptionUserInfo } = await getClashSubscription({
+      url: this.url,
+      udpRelay: this.udpRelay,
+      tls13: this.tls13,
+      requestHeaders,
+      cacheKey,
+    })
+
+    if (this.config.hooks?.afterNodeListResponse) {
+      const newList = await this.config.hooks.afterNodeListResponse(
+        nodeList,
+        params,
+      )
+
+      if (newList) {
+        return { nodeList: newList, subscriptionUserInfo }
+      }
+    }
+
+    return { nodeList, subscriptionUserInfo }
+  }
 }
 
 export const getClashSubscription = async ({
   url,
   udpRelay,
   tls13,
-  requestUserAgent,
+  requestHeaders,
+  cacheKey,
 }: {
   url: string
+  requestHeaders: DefaultProviderRequestHeaders
   udpRelay?: boolean
   tls13?: boolean
-  requestUserAgent?: string
+  cacheKey: string
 }): Promise<{
   readonly nodeList: Array<SupportConfigTypes>
-  readonly subscriptionUserinfo?: SubscriptionUserinfo
+  readonly subscriptionUserInfo?: SubscriptionUserinfo
 }> => {
   assert(url, '未指定订阅地址 url')
 
-  const response = await Provider.requestCacheableResource(url, {
-    requestUserAgent: requestUserAgent || getNetworkClashUA(),
-  })
+  const response = await Provider.requestCacheableResource(
+    url,
+    requestHeaders,
+    cacheKey,
+  )
   let clashConfig
 
   try {
-    // eslint-disable-next-line prefer-const
     clashConfig = yaml.parse(response.body)
-  } catch (err) /* istanbul ignore next */ {
+  } catch /* istanbul ignore next */ {
     throw new Error(`${url} 不是一个合法的 YAML 文件`)
   }
 
@@ -184,7 +234,7 @@ export const getClashSubscription = async ({
 
   return {
     nodeList: parseClashConfig(proxyList, udpRelay, tls13),
-    subscriptionUserinfo: response.subscriptionUserinfo,
+    subscriptionUserInfo: response.subscriptionUserInfo,
   }
 }
 
@@ -337,6 +387,9 @@ export const parseClashConfig = (
 
           if (vmessNode.type === NodeTypeEnum.Vless) {
             vmessNode.flow = item.flow
+            if (typeof item.encryption === 'string') {
+              vmessNode.encryption = item.encryption
+            }
 
             if (item['reality-opts']) {
               vmessNode.realityOpts = {
@@ -376,8 +429,9 @@ export const parseClashConfig = (
             case 'http':
               vmessNode.httpOpts = {
                 ...item['http-opts'],
-                headers:
-                  resolveVmessHttpHeaders(item['http-opts'].headers) || {},
+                headers: resolveVmessHttpHeaders(
+                  item['http-opts'].headers || {},
+                ),
               }
 
               break

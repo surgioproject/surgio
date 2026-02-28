@@ -76,7 +76,7 @@ class UploadCommand extends BaseCommand<typeof UploadCommand> {
       const deleteList: string[] = []
 
       for (const key in list.objects) {
-        if (list.objects.hasOwnProperty(key)) {
+        if (Object.hasOwn(list.objects, key)) {
           const object = list.objects[key]
           const objectName = object.name.replace(prefix, '')
           const isExist = fileNameList.indexOf(objectName) > -1

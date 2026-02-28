@@ -138,7 +138,7 @@ export const TMP_FOLDER_NAME = 'surgio-config'
 
 export const CACHE_KEYS = {
   RemoteSnippets: 'remote-snippets-v2',
-  Provider: 'provider-v2',
+  Provider: 'provider-v3',
   RenderedArtifact: 'rendered-artifact',
 } as const
 
@@ -177,3 +177,7 @@ export const SURGE_SUPPORTED_VMESS_NETWORK = ['tcp', 'ws'] as const
 export const SURFBOARD_SUPPORTED_VMESS_NETWORK = ['tcp', 'ws'] as const
 
 export const LOON_SUPPORTED_VMESS_NETWORK = ['tcp', 'ws', 'http'] as const
+
+export const PASS_GATEWAY_REQUEST_HEADERS_WHITELIST = [
+  'x-surge-unlocked-features',
+] as const

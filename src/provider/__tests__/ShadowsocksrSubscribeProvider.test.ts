@@ -15,10 +15,14 @@ test.beforeEach(() => {
 test('getShadowsocksrSubscription', async (t) => {
   const { nodeList } = await getShadowsocksrSubscription(
     'http://example.com/test-ssr-sub.txt?v=1',
+    { 'user-agent': 'shadowrocket' },
+    'test-cache-key-1',
     false,
   )
   const { nodeList: nodeList2 } = await getShadowsocksrSubscription(
     'http://example.com/test-ssr-sub.txt?v=2',
+    { 'user-agent': 'shadowrocket' },
+    'test-cache-key-2',
     true,
   )
 

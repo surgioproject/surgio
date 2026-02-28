@@ -14,7 +14,12 @@ import relayableUrl from '../utils/relayable-url'
 import { parseSSUri } from '../utils/ss'
 
 import Provider from './Provider'
-import { GetNodeListFunction } from './types'
+import {
+  DefaultProviderRequestHeaders,
+  GetNodeListFunction,
+  GetNodeListV2Function,
+  GetNodeListV2Result,
+} from './types'
 
 export default class V2rayNSubscribeProvider extends Provider {
   public readonly compatibleMode?: boolean
@@ -59,16 +64,19 @@ export default class V2rayNSubscribeProvider extends Provider {
   public getNodeList: GetNodeListFunction = async (
     params = {},
   ): ReturnType<typeof getV2rayNSubscription> => {
-    const requestUserAgent = this.determineRequestUserAgent(
+    const requestHeaders = this.determineRequestHeaders(
       params.requestUserAgent,
+      params.requestHeaders,
     )
+    const cacheKey = Provider.getResourceCacheKey(requestHeaders, this.url)
     const nodeList = await getV2rayNSubscription({
       url: this.url,
       skipCertVerify: this.skipCertVerify,
       tls13: this.tls13,
       udpRelay: this.udpRelay,
       isCompatibleMode: this.compatibleMode,
-      requestUserAgent: requestUserAgent,
+      requestHeaders,
+      cacheKey,
     })
 
     if (this.config.hooks?.afterNodeListResponse) {
@@ -84,6 +92,13 @@ export default class V2rayNSubscribeProvider extends Provider {
 
     return nodeList
   }
+
+  public getNodeListV2: GetNodeListV2Function = async (
+    params = {},
+  ): Promise<GetNodeListV2Result> => {
+    const nodeList = await this.getNodeList(params)
+    return { nodeList }
+  }
 }
 
 /**
@@ -95,14 +110,16 @@ export const getV2rayNSubscription = async ({
   skipCertVerify,
   tls13,
   udpRelay,
-  requestUserAgent,
+  requestHeaders,
+  cacheKey,
 }: {
   url: string
   isCompatibleMode?: boolean
   skipCertVerify?: boolean
   udpRelay?: boolean
   tls13?: boolean
-  requestUserAgent?: string
+  requestHeaders: DefaultProviderRequestHeaders
+  cacheKey: string
 }): Promise<Array<VmessNodeConfig | ShadowsocksNodeConfig>> => {
   assert(url, '未指定订阅地址 url')
 
@@ -113,9 +130,11 @@ export const getV2rayNSubscription = async ({
   async function requestConfigFromRemote(): Promise<
     Array<VmessNodeConfig | ShadowsocksNodeConfig>
   > {
-    const response = await Provider.requestCacheableResource(url, {
-      requestUserAgent,
-    })
+    const response = await Provider.requestCacheableResource(
+      url,
+      requestHeaders,
+      cacheKey,
+    )
     const configString = response.body
 
     const configList = fromBase64(configString)
@@ -174,7 +193,7 @@ export const parseJSONConfig = (
   // istanbul ignore next
   if (!isCompatibleMode && (!config.v || Number(config.v) !== 2)) {
     throw new Error(
-      `该节点 ${config.ps} 可能不是一个有效的 V2rayN 节点。请参考 https://url.royli.dev/Qtrci 进行排查, 或者将解析模式改为兼容模式`,
+      `该节点 ${config.ps} 可能不是一个有效的 V2rayN 节点。请参考 https://url.royli.dev/Qtrci 进行排查，或者将解析模式改为兼容模式`,
     )
   }
 

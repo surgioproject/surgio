@@ -15,10 +15,14 @@ test.beforeEach(() => {
 test('getShadowsocksJSONConfig', async (t) => {
   const config = await getShadowsocksJSONConfig(
     'http://example.com/gui-config.json?v=1',
+    { 'user-agent': 'shadowrocket' },
+    'test-cache-key-1',
     true,
   )
   const config2 = await getShadowsocksJSONConfig(
     'http://example.com/gui-config.json?v=2',
+    { 'user-agent': 'shadowrocket' },
+    'test-cache-key-2',
     false,
   )
 

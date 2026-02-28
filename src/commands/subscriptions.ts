@@ -18,21 +18,17 @@ class SubscriptionsCommand extends BaseCommand<typeof SubscriptionsCommand> {
     const providerList = await this.listProviders()
 
     for (const provider of providerList) {
-      if (provider.supportGetSubscriptionUserInfo) {
-        const userInfo = await provider.getSubscriptionUserInfo()
+      const { subscriptionUserInfo } = await provider.getNodeListV2()
 
-        if (userInfo) {
-          const format = formatSubscriptionUserInfo(userInfo)
-          console.log(
-            '🤟 %s 已用流量：%s 剩余流量：%s 有效期至：%s',
-            provider.name,
-            format.used,
-            format.left,
-            format.expire,
-          )
-        } else {
-          console.log('⚠️  无法查询 %s 的流量信息', provider.name)
-        }
+      if (subscriptionUserInfo) {
+        const format = formatSubscriptionUserInfo(subscriptionUserInfo)
+        console.log(
+          '🤟 %s 已用流量：%s 剩余流量：%s 有效期至：%s',
+          provider.name,
+          format.used,
+          format.left,
+          format.expire,
+        )
       } else {
         console.log('⚠️  无法查询 %s 的流量信息', provider.name)
       }
@@ -58,9 +54,8 @@ class SubscriptionsCommand extends BaseCommand<typeof SubscriptionsCommand> {
 
         logger.debug('read %s %s', providerName, path)
 
-        // eslint-disable-next-line prefer-const
         provider = await getProvider(providerName, module.default)
-      } catch (err) {
+      } catch {
         logger.debug(`${path} 不是一个合法的模块`)
         return undefined
       }

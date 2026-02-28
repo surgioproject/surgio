@@ -30,6 +30,8 @@ test('getV2rayNSubscription', async (t) => {
   const configList = await getV2rayNSubscription({
     url,
     isCompatibleMode: false,
+    requestHeaders: { 'user-agent': 'v2rayN' },
+    cacheKey: 'test-cache-key',
   })
 
   t.snapshot(configList)
@@ -40,6 +42,8 @@ test('getV2rayNSubscription compatible mode', async (t) => {
   const configList = await getV2rayNSubscription({
     url,
     isCompatibleMode: true,
+    requestHeaders: { 'user-agent': 'v2rayN' },
+    cacheKey: 'test-cache-key',
   })
 
   t.snapshot(configList)
@@ -53,6 +57,8 @@ test('getV2rayNSubscription udpRelay skipCertVerify', async (t) => {
     tls13: true,
     udpRelay: true,
     isCompatibleMode: true,
+    requestHeaders: { 'user-agent': 'v2rayN' },
+    cacheKey: 'test-cache-key',
   })
 
   t.snapshot(configList)
