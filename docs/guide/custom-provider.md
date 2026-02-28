@@ -49,8 +49,8 @@ module.exports = defineCustomProvider(async function () {
 
 |                       类型                       | 描述                                       | 备注                                                                                                                         |
 | :----------------------------------------------: | ------------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------- |
-| `custom` <Badge text="推荐" vertical="middle" /> | 自己维护的节点                             | 支持 Shadowsocks, Shadowsocksr, Snell, HTTPS, HTTP, Vmess, Vless, Hysteria 2, Socks5, Tuic, Trojan, Wireguard                    |
-| `clash` <Badge text="推荐" vertical="middle" />  | Clash 配置                                 | 支持 Shadowsocks, Shadowsocksr, Snell, HTTPS, HTTP, Vmess, Vless, Hysteria 2, Socks5, Tuic, Trojan, Wireguard                  |
+| `custom` <Badge text="推荐" vertical="middle" /> | 自己维护的节点                             | 支持 Shadowsocks, Shadowsocksr, Snell, HTTPS, HTTP, Vmess, Vless, Hysteria 2, AnyTLS, Socks5, Tuic, Trojan, Wireguard                    |
+| `clash` <Badge text="推荐" vertical="middle" />  | Clash 配置                                 | 支持 Shadowsocks, Shadowsocksr, Snell, HTTPS, HTTP, Vmess, Vless, Hysteria 2, AnyTLS, Socks5, Tuic, Trojan, Wireguard                  |
 |                     `trojan`                     | Trojan 订阅                                | Shadowrocket 支持的 Trojan 订阅格式                                                                                          |
 |           `shadowsocks_json_subscribe`           | 针对 Windows 客户端的 Shadowsocks 订阅地址 | 通常命名为 _gui-config.json_                                                                                                 |
 |             `shadowsocks_subscribe`              | 通用的 Shadowsocks 订阅地址                |                                                                                                                              |
@@ -547,6 +547,27 @@ Clash 需要在配置中开启 `clashConfig.enableHysteria2`。
 }
 ```
 
+### AnyTLS
+
+当前支持为 Clash、Surge 和 sing-box 生成 AnyTLS 节点。
+
+```json5
+{
+  type: 'anytls',
+  nodeName: 'AnyTLS',
+  hostname: 'anytls.example.com',
+  port: 443,
+  password: 'password',
+  udpRelay: false, // 可选
+  sni: 'sni.example.com', // 可选
+  alpn: ['h2', 'http/1.1'], // 可选
+  skipCertVerify: false, // 可选
+  idleSessionCheckInterval: 0, // 可选
+  idleSessionTimeout: 0, // 可选
+  minIdleSessions: 0, // 可选
+}
+```
+
 ## SSD 订阅
 
 ```js
@@ -798,7 +819,7 @@ module.exports = {
 
 :::warning 注意
 1. TLS 1.3 需要服务端支持；
-2. 支持 TLS 的节点类型有 Shadowsocks with v2ray-plugin(tls), Vmess(tls), HTTPS；
+2. 支持 TLS 的节点类型有 Shadowsocks with v2ray-plugin(tls), Vmess(tls), HTTPS, AnyTLS；
 :::
 
 ### nodeConfig.skipCertVerify
@@ -809,7 +830,7 @@ module.exports = {
 关闭 TLS 节点的证书检查。
 
 :::warning 注意
-1. 支持 TLS 的节点类型有 Shadowsocks with v2ray-plugin(tls), Vmess(tls), HTTPS；
+1. 支持 TLS 的节点类型有 Shadowsocks with v2ray-plugin(tls), Vmess(tls), HTTPS, AnyTLS；
 2. 请不要随意将证书检查关闭；
 :::
 
