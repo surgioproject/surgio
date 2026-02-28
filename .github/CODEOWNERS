@@ -1,0 +1,5 @@
+# This file defines code owners who will be automatically requested for review
+# when a pull request modifies files that match the patterns.
+
+# @geekdada will be requested for review on all pull requests
+* @geekdada
