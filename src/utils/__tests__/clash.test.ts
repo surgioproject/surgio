@@ -498,6 +498,7 @@ test('getClashNodes', async (t) => {
           publicKey: 'publicKey',
           shortId: 'shortId',
         },
+        encryption: 'encryption',
         clashConfig: {
           enableVless: true,
         },
@@ -519,6 +520,7 @@ test('getClashNodes', async (t) => {
           path: '/path',
           host: ['v2ray.com'],
         },
+        encryption: 'encryption',
         'reality-opts': {
           'public-key': 'publicKey',
           'short-id': 'shortId',
