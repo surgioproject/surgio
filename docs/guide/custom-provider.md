@@ -549,6 +549,8 @@ Clash 需要在配置中开启 `clashConfig.enableHysteria2`。
 
 ### AnyTLS
 
+> <Badge text="Surgio v3.13.0" vertical="middle" />
+
 当前支持为 Clash、Surge 和 sing-box 生成 AnyTLS 节点。
 
 ```json5
