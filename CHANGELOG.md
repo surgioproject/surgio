@@ -1,3 +1,18 @@
+# [3.13.0](https://github.com/geekdada/surgio/compare/v3.12.2...v3.13.0) (2026-02-28)
+
+
+### Bug Fixes
+
+* add AnyTLS case to CustomProvider switch statement ([8e67b6e](https://github.com/geekdada/surgio/commit/8e67b6e00d6ddb8b93a61d140f75ae5503b8d0e6))
+* preserve explicit AnyTLS false/zero fields ([c2d6e8a](https://github.com/geekdada/surgio/commit/c2d6e8aead098c97ec9b2cf16ae77581c9562a1d))
+
+
+### Features
+
+* add AnyTLS protocol support ([a3375fd](https://github.com/geekdada/surgio/commit/a3375fdd131a182241e03000eade078e0a0a96da))
+
+
+
 ## [3.12.2](https://github.com/geekdada/surgio/compare/v3.12.1...v3.12.2) (2026-01-20)
 
 
