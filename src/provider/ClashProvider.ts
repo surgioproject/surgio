@@ -380,13 +380,16 @@ export const parseClashConfig = (
             if (Array.isArray(item.alpn) && item.alpn.length > 0) {
               vmessNode.alpn = item.alpn
             }
-            
+
             vmessNode.skipCertVerify = item['skip-cert-verify'] === true
             vmessNode.tls13 = tls13 === true
           }
 
           if (vmessNode.type === NodeTypeEnum.Vless) {
-            vmessNode.flow = item.flow
+            if (typeof item.flow === 'string') {
+              vmessNode.flow = item.flow
+            }
+
             if (typeof item.encryption === 'string') {
               vmessNode.encryption = item.encryption
             }

@@ -361,6 +361,71 @@ test('vmess Configurations', (t) => {
     parseClashConfig([
       {
         type: 'vmess',
+        name: 'vmess meta alpn',
+        server: 'server',
+        port: 443,
+        uuid: 'uuid',
+        alterId: 32,
+        cipher: 'auto',
+        network: 'tcp',
+        tls: true,
+        alpn: ['h2', 'http/1.1'],
+      },
+    ]),
+    [
+      {
+        type: NodeTypeEnum.Vmess,
+        nodeName: 'vmess meta alpn',
+        hostname: 'server',
+        port: 443,
+        uuid: 'uuid',
+        alterId: '32',
+        method: 'auto',
+        network: 'tcp',
+        tls: true,
+        alpn: ['h2', 'http/1.1'],
+        udpRelay: false,
+        skipCertVerify: false,
+        tls13: false,
+      },
+    ],
+  )
+
+  t.deepEqual(
+    parseClashConfig([
+      {
+        type: 'vless',
+        name: 'vless alpn',
+        server: 'server',
+        port: 443,
+        uuid: 'uuid',
+        cipher: 'none',
+        network: 'tcp',
+        tls: true,
+        alpn: ['h2'],
+      },
+    ]),
+    [
+      {
+        type: NodeTypeEnum.Vless,
+        nodeName: 'vless alpn',
+        hostname: 'server',
+        port: 443,
+        uuid: 'uuid',
+        method: 'none',
+        network: 'tcp',
+        alpn: ['h2'],
+        udpRelay: false,
+        skipCertVerify: false,
+        tls13: false,
+      },
+    ],
+  )
+
+  t.deepEqual(
+    parseClashConfig([
+      {
+        type: 'vmess',
         name: 'vmess',
         server: 'server',
         port: 443,
