@@ -275,13 +275,13 @@ function nodeListMapper(nodeConfig: PossibleNodeConfigType) {
 
     case NodeTypeEnum.AnyTLS:
       node.password = nodeConfig.password
-      if (nodeConfig.idleSessionCheckInterval) {
+      if (nodeConfig.idleSessionCheckInterval !== undefined) {
         node.idle_session_check_interval = nodeConfig.idleSessionCheckInterval
       }
-      if (nodeConfig.idleSessionTimeout) {
+      if (nodeConfig.idleSessionTimeout !== undefined) {
         node.idle_session_timeout = nodeConfig.idleSessionTimeout
       }
-      if (nodeConfig.minIdleSessions) {
+      if (nodeConfig.minIdleSessions !== undefined) {
         node.min_idle_session = nodeConfig.minIdleSessions
       }
       break
