@@ -543,6 +543,7 @@ function appendCommonConfig(
         ? (() => {
           const preferred = ['h3', 'h2', 'http/1.1'].find((p) => alpn.includes(p))
           return [`alpn=${preferred ?? nodeConfig.alpn[0]}`]
+          appendConfig.push('alpn=' + selectedAlpn)
         })()
         : []),
     )
