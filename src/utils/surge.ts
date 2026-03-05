@@ -457,10 +457,8 @@ function nodeListMapper(
         [
           `${nodeConfig.nodeName} = hysteria2`,
           nodeConfig.hostname,
-          nodeConfig.port,
-          ...pickAndFormatStringList(
-            nodeConfig,
-            ['password', 'downloadBandwidth'],
+          (typeof nodeConfig.port === "string" && nodeConfig.port.includes("-") ? nodeConfig.port.split("-")[0] : nodeConfig.port),
+          ...(0, _1.pickAndFormatStringList)(nodeConfig, ['password', 'downloadBandwidth'], 
             {
               keyFormat: 'kebabCase',
             },

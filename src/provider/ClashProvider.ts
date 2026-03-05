@@ -583,12 +583,11 @@ export const parseClashConfig = (
             )
           }
 
-          const hysteria2Port = item.port ?? (item.ports ? Number(item.ports.split('-')[0]) : undefined);
           const input: Hysteria2NodeConfigInput = {
             type: NodeTypeEnum.Hysteria2,
             nodeName: item.name,
             hostname: item.server,
-            port: item.port,
+            port: item.port ?? item.ports,
             password: item.auth || item.password,
             ...(item.down
               ? { downloadBandwidth: parseBitrate(item.down) }
