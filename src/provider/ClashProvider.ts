@@ -531,56 +531,38 @@ export const parseClashConfig = (
         }
 
         case 'tuic': {
-          let input: TuicNodeConfigInput
-
-          if (item.version >= 5) {
+          let input;
+          const tuicCommonFields = {
+            type: types_1.NodeTypeEnum.Tuic,
+            nodeName: item.name,
+            hostname: item.server,
+            port: item.port,
+            ...('skip-cert-verify' in item
+              ? { skipCertVerify: item['skip-cert-verify'] === true }
+              : null),
+            tls13: tls13 ?? false,
+            ...('sni' in item ? { sni: item.sni } : null),
+            ...('alpn' in item ? { alpn: item.alpn } : null),
+            ...('ports' in item ? { portHopping: item.ports } : null),
+            ...('hop-interval' in item
+              ? { portHoppingInterval: item['hop-interval'] }
+              : null),
+          };
+          if (item.uuid) {
+            // TuicV5: 含 uuid + password
             input = {
-              type: NodeTypeEnum.Tuic,
-              version: item.version,
-              nodeName: item.name,
-              hostname: item.server,
-              port: item.port,
-              password: item.password,
+              ...tuicCommonFields,
               uuid: item.uuid,
-              ...('skip-cert-verify' in item
-                ? { skipCertVerify: item['skip-cert-verify'] === true }
-                : null),
-              tls13: tls13 ?? false,
-              ...('sni' in item ? { sni: item.sni } : null),
-              ...('alpn' in item ? { alpn: item.alpn } : null),
-              ...('ports' in item
-                ? {
-                    portHopping: item.ports,
-                  }
-                : null),
-              ...('hop-interval' in item
-                ? { portHoppingInterval: item['hop-interval'] }
-                : null),
-            }
-          } else {
-            input = {
-              type: NodeTypeEnum.Tuic,
-              nodeName: item.name,
-              hostname: item.server,
-              port: item.port,
-              token: item.token,
-              ...('skip-cert-verify' in item
-                ? { skipCertVerify: item['skip-cert-verify'] === true }
-                : null),
-              tls13: tls13 ?? false,
-              ...('sni' in item ? { sni: item.sni } : null),
-              ...('alpn' in item ? { alpn: item.alpn } : null),
-              ...('ports' in item
-                ? {
-                    portHopping: item.ports,
-                  }
-                : null),
-              ...('hop-interval' in item
-                ? { portHoppingInterval: item['hop-interval'] }
-                : null),
-            }
+              password: item.password,
+            };
           }
-
+          else {
+            // TuicV4: 含 token
+            input = {
+              ...tuicCommonFields,
+              token: item.token,
+            };
+          }
           const result = TuicNodeConfigValidator.safeParse(input)
 
           // istanbul ignore next
@@ -601,6 +583,7 @@ export const parseClashConfig = (
             )
           }
 
+          const hysteria2Port = item.port ?? (item.ports ? Number(item.ports.split('-')[0]) : undefined);
           const input: Hysteria2NodeConfigInput = {
             type: NodeTypeEnum.Hysteria2,
             nodeName: item.name,

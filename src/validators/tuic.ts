@@ -8,7 +8,6 @@ export const TuicNodeV5ConfigValidator = TlsNodeConfigValidator.extend({
   type: z.literal(NodeTypeEnum.Tuic),
   password: z.string(),
   uuid: z.string(),
-  version: IntegersVersionValidator,
 })
 
 export const TuicNodeV4ConfigValidator = TlsNodeConfigValidator.extend({
