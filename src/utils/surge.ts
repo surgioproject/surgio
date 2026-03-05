@@ -533,12 +533,15 @@ function appendCommonConfig(
     ...parseShadowTlsConfig(nodeConfig),
   ]
 
-  if (nodeConfig.type === types_1.NodeTypeEnum.Tuic) {
-    if ('alpn' in nodeConfig && Array.isArray(nodeConfig.alpn) && nodeConfig.alpn.length > 0) {
-      const preferredAlpn = ["h3", "h2", "http/1.1"].find(function (a) { return nodeConfig.alpn.includes(a); });
-      const selectedAlpn = preferredAlpn !== undefined ? preferredAlpn : nodeConfig.alpn[0];
-      appendConfig.push("alpn=" + selectedAlpn);
-    }
+  if (nodeConfig.type === NodeTypeEnum.Tuic) {
+    appendConfig.push(
+      ...('alpn' in nodeConfig && Array.isArray(nodeConfig.alpn)
+        ? (() => {
+          const preferred = ['h3', 'h2', 'http/1.1'].find((a) => nodeConfig.alpn.includes(a))
+          return [`alpn=${preferred ?? nodeConfig.alpn[0]}`]
+        })()
+        : []),
+    )
   }
 
   if (!appendConfig.length) {

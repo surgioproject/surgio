@@ -533,7 +533,7 @@ export const parseClashConfig = (
         case 'tuic': {
           let input;
           const tuicCommonFields = {
-            type: types_1.NodeTypeEnum.Tuic,
+            type: NodeTypeEnum.Tuic,
             nodeName: item.name,
             hostname: item.server,
             port: item.port,

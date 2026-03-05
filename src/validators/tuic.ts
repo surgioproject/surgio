@@ -16,6 +16,6 @@ export const TuicNodeV4ConfigValidator = TlsNodeConfigValidator.extend({
 })
 
 export const TuicNodeConfigValidator = z.union([
-  TuicNodeV4ConfigValidator,
   TuicNodeV5ConfigValidator,
+  TuicNodeV4ConfigValidator,
 ])
