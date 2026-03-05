@@ -457,8 +457,12 @@ function nodeListMapper(
         [
           `${nodeConfig.nodeName} = hysteria2`,
           nodeConfig.hostname,
-          (typeof nodeConfig.port === "string" && nodeConfig.port.includes("-") ? nodeConfig.port.split("-")[0] : nodeConfig.port),
-          ...(0, _1.pickAndFormatStringList)(nodeConfig, ['password', 'downloadBandwidth'], 
+          (typeof nodeConfig.port === 'string' && nodeConfig.port.includes('-')
+            ? nodeConfig.port.split('-')[0]
+            : String(nodeConfig.port)),
+          ...pickAndFormatStringList(
+            nodeConfig,
+            ['password', 'downloadBandwidth'],
             {
               keyFormat: 'kebabCase',
             },
@@ -537,7 +541,7 @@ function appendCommonConfig(
     appendConfig.push(
       ...('alpn' in nodeConfig && Array.isArray(nodeConfig.alpn)
         ? (() => {
-          const preferred = ['h3', 'h2', 'http/1.1'].find((a) => nodeConfig.alpn.includes(a))
+          const preferred = ['h3', 'h2', 'http/1.1'].find((a) => alpn.includes(a))
           return [`alpn=${preferred ?? nodeConfig.alpn[0]}`]
         })()
         : []),
