@@ -1,3 +1,20 @@
+## [3.13.1](https://github.com/geekdada/surgio/compare/v3.13.0...v3.13.1) (2026-03-07)
+
+
+### Bug Fixes
+
+* **generator:** deep merge objects in createExtendFunction ([cde3351](https://github.com/geekdada/surgio/commit/cde335156cc7f0afe4b34bd9ab5d7ad7e58061db)), closes [#309](https://github.com/geekdada/surgio/issues/309)
+* **provider:** support port ranges for tuic and hysteria2 ([1ddd25b](https://github.com/geekdada/surgio/commit/1ddd25b0e24b6e3075a603fb1cb5258cea2c3eb7))
+* **utils:** preserve colons in SS URI passwords ([5edbe43](https://github.com/geekdada/surgio/commit/5edbe438b5017b775d44e24d1633767612580799)), closes [#310](https://github.com/geekdada/surgio/issues/310)
+* **validators:** make username/password optional in HTTP/HTTPS node validators ([6b30f9a](https://github.com/geekdada/surgio/commit/6b30f9a96f2ea33defa149731b94801babc0ffaf)), closes [#321](https://github.com/geekdada/surgio/issues/321)
+
+
+### Features
+
+* **http:** add headers support to Clash HTTP/HTTPS proxies ([ea4a5f4](https://github.com/geekdada/surgio/commit/ea4a5f4e4f0a29eef2218a22cecc4c23c3cf6d9f)), closes [#321](https://github.com/geekdada/surgio/issues/321)
+
+
+
 # [3.13.0](https://github.com/geekdada/surgio/compare/v3.12.2...v3.13.0) (2026-02-28)
 
 
