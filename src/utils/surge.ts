@@ -538,7 +538,13 @@ function appendCommonConfig(
   if (nodeConfig.type === NodeTypeEnum.Tuic) {
     appendConfig.push(
       ...('alpn' in nodeConfig && Array.isArray(nodeConfig.alpn)
-        ? [`alpn=${nodeConfig.alpn.join(',')}`]
+        ? (() => {
+            const alpn = nodeConfig.alpn as string[]
+            const preferred = ['h3', 'h2', 'http/1.1'].find((a) =>
+              alpn.includes(a),
+            )
+            return [`alpn=${preferred ?? alpn[0]}`]
+          })()
         : []),
     )
   }
