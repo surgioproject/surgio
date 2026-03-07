@@ -533,51 +533,44 @@ export const parseClashConfig = (
         case 'tuic': {
           let input: TuicNodeConfigInput
 
-          if (item.version >= 5) {
+          const port = item.port ?? extractFirstPort(item.ports)
+
+          if (!port) {
+            throw new SurgioError('Tuic 节点配置校验失败，未指定端口或端口范围')
+          }
+
+          const tuicCommonFields = {
+            type: NodeTypeEnum.Tuic as const,
+            nodeName: item.name,
+            hostname: item.server,
+            port,
+            ...('skip-cert-verify' in item
+              ? { skipCertVerify: item['skip-cert-verify'] === true }
+              : null),
+            tls13: tls13 ?? false,
+            ...('sni' in item ? { sni: item.sni } : null),
+            ...('alpn' in item ? { alpn: item.alpn } : null),
+            ...('ports' in item
+              ? {
+                  portHopping: item.ports,
+                }
+              : null),
+            ...('hop-interval' in item
+              ? { portHoppingInterval: item['hop-interval'] }
+              : null),
+          }
+
+          if (item.uuid) {
             input = {
-              type: NodeTypeEnum.Tuic,
-              version: item.version,
-              nodeName: item.name,
-              hostname: item.server,
-              port: item.port,
+              ...tuicCommonFields,
               password: item.password,
               uuid: item.uuid,
-              ...('skip-cert-verify' in item
-                ? { skipCertVerify: item['skip-cert-verify'] === true }
-                : null),
-              tls13: tls13 ?? false,
-              ...('sni' in item ? { sni: item.sni } : null),
-              ...('alpn' in item ? { alpn: item.alpn } : null),
-              ...('ports' in item
-                ? {
-                    portHopping: item.ports,
-                  }
-                : null),
-              ...('hop-interval' in item
-                ? { portHoppingInterval: item['hop-interval'] }
-                : null),
+              version: item.version ?? 5,
             }
           } else {
             input = {
-              type: NodeTypeEnum.Tuic,
-              nodeName: item.name,
-              hostname: item.server,
-              port: item.port,
+              ...tuicCommonFields,
               token: item.token,
-              ...('skip-cert-verify' in item
-                ? { skipCertVerify: item['skip-cert-verify'] === true }
-                : null),
-              tls13: tls13 ?? false,
-              ...('sni' in item ? { sni: item.sni } : null),
-              ...('alpn' in item ? { alpn: item.alpn } : null),
-              ...('ports' in item
-                ? {
-                    portHopping: item.ports,
-                  }
-                : null),
-              ...('hop-interval' in item
-                ? { portHoppingInterval: item['hop-interval'] }
-                : null),
             }
           }
 
@@ -601,11 +594,19 @@ export const parseClashConfig = (
             )
           }
 
+          const port = item.port ?? extractFirstPort(item.ports)
+
+          if (!port) {
+            throw new SurgioError(
+              'Hysteria2 节点配置校验失败，未指定端口或端口范围',
+            )
+          }
+
           const input: Hysteria2NodeConfigInput = {
             type: NodeTypeEnum.Hysteria2,
             nodeName: item.name,
             hostname: item.server,
-            port: item.port,
+            port,
             password: item.auth || item.password,
             ...(item.down
               ? { downloadBandwidth: parseBitrate(item.down) }
@@ -727,6 +728,10 @@ function resolveUdpRelay(val?: boolean, defaultVal = false): boolean {
     return val
   }
   return defaultVal
+}
+
+function extractFirstPort(ports: string): number {
+  return Number(ports.split(/[;,-]/)[0])
 }
 
 function resolveVmessHttpHeaders(

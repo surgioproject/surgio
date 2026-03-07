@@ -1070,7 +1070,6 @@ test('parseClashConfig tuic configurations', (t) => {
         name: 'tuic-v5',
         server: 'example.com',
         port: 443,
-        version: 5,
         uuid: 'uuid',
         password: 'password',
         'skip-cert-verify': true,
@@ -1095,12 +1094,12 @@ test('parseClashConfig tuic configurations', (t) => {
     [
       {
         type: NodeTypeEnum.Tuic,
-        version: 5,
         nodeName: 'tuic-v5',
         hostname: 'example.com',
         port: 443,
         password: 'password',
         uuid: 'uuid',
+        version: 5,
         skipCertVerify: true,
         tls13: false,
         sni: 'sni.example.com',
