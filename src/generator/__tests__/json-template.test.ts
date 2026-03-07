@@ -158,9 +158,32 @@ test('createExtendFunction - deep extend array', (t) => {
     {
       foo: [
         {
+          baz: 'baz',
           bar: 'bar',
         },
       ],
+    },
+  )
+})
+
+test('createExtendFunction - deep merge object', (t) => {
+  const extendDNS = createExtendFunction('dns')
+  const extend = extendDNS({
+    nameserver: ['1.1.1.1'],
+  })
+
+  t.deepEqual(
+    extend({
+      dns: {
+        nameserver: ['1.0.0.1'],
+        strategy: 'prefer_ipv6',
+      },
+    }),
+    {
+      dns: {
+        nameserver: ['1.0.0.1', '1.1.1.1'],
+        strategy: 'prefer_ipv6',
+      },
     },
   )
 })

@@ -36,6 +36,22 @@ export const createExtendFunction = (extendKey: string) => {
           } else {
             _.set(jsonInputCopy, extendKey, [...isExist, valueToExtend])
           }
+        } else if (_.isPlainObject(isExist) && _.isPlainObject(valueToExtend)) {
+          _.set(
+            jsonInputCopy,
+            extendKey,
+            _.mergeWith(
+              {},
+              isExist,
+              valueToExtend,
+              (objValue: unknown, srcValue: unknown) => {
+                if (_.isArray(objValue) && _.isArray(srcValue)) {
+                  return [...objValue, ...srcValue]
+                }
+                return undefined
+              },
+            ),
+          )
         } else {
           _.set(jsonInputCopy, extendKey, valueToExtend)
         }
