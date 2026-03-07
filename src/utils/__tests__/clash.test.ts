@@ -1204,3 +1204,111 @@ test('getClashNodes', async (t) => {
     ],
   )
 })
+
+test('getClashNodes - HTTP/HTTPS with headers', async (t) => {
+  t.deepEqual(
+    clash.getClashNodes([
+      {
+        type: NodeTypeEnum.HTTP,
+        nodeName: 'HTTP Proxy',
+        hostname: '1.1.1.1',
+        port: 8080,
+        username: 'user',
+        password: 'pass',
+        headers: {
+          'X-Custom': 'value',
+          Host: 'example.com',
+        },
+      },
+    ]),
+    [
+      {
+        type: 'http',
+        name: 'HTTP Proxy',
+        server: '1.1.1.1',
+        port: 8080,
+        username: 'user',
+        password: 'pass',
+        headers: {
+          'X-Custom': 'value',
+          Host: 'example.com',
+        },
+      },
+    ],
+  )
+
+  t.deepEqual(
+    clash.getClashNodes([
+      {
+        type: NodeTypeEnum.HTTP,
+        nodeName: 'HTTP Proxy No Headers',
+        hostname: '1.1.1.1',
+        port: 8080,
+        username: 'user',
+        password: 'pass',
+      },
+    ]),
+    [
+      {
+        type: 'http',
+        name: 'HTTP Proxy No Headers',
+        server: '1.1.1.1',
+        port: 8080,
+        username: 'user',
+        password: 'pass',
+      },
+    ],
+  )
+
+  t.deepEqual(
+    clash.getClashNodes([
+      {
+        type: NodeTypeEnum.HTTPS,
+        nodeName: 'HTTPS Proxy',
+        hostname: '1.1.1.1',
+        port: 443,
+        username: 'user',
+        password: 'pass',
+        tls13: false,
+        skipCertVerify: false,
+        headers: {
+          'X-Custom': 'value',
+        },
+      },
+    ]),
+    [
+      {
+        type: 'http',
+        name: 'HTTPS Proxy',
+        server: '1.1.1.1',
+        port: 443,
+        username: 'user',
+        password: 'pass',
+        tls: true,
+        'skip-cert-verify': false,
+        headers: {
+          'X-Custom': 'value',
+        },
+      },
+    ],
+  )
+
+  t.deepEqual(
+    clash.getClashNodes([
+      {
+        type: NodeTypeEnum.HTTP,
+        nodeName: 'HTTP No Auth',
+        hostname: '1.1.1.1',
+        port: 8080,
+      },
+    ]),
+    [
+      {
+        type: 'http',
+        name: 'HTTP No Auth',
+        server: '1.1.1.1',
+        port: 8080,
+      },
+    ],
+  )
+})

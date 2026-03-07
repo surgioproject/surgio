@@ -337,10 +337,15 @@ function nodeListMapper(nodeConfig: PossibleNodeConfigType) {
         name: nodeConfig.nodeName,
         server: nodeConfig.hostname,
         port: nodeConfig.port,
-        username: nodeConfig.username /* istanbul ignore next */ || '',
-        password: nodeConfig.password /* istanbul ignore next */ || '',
+        ...(typeof nodeConfig.username === 'string'
+          ? { username: nodeConfig.username }
+          : null),
+        ...(typeof nodeConfig.password === 'string'
+          ? { password: nodeConfig.password }
+          : null),
         tls: true,
         'skip-cert-verify': nodeConfig.skipCertVerify === true,
+        ...(nodeConfig.headers ? { headers: nodeConfig.headers } : null),
       } as const
 
     case NodeTypeEnum.HTTP:
@@ -349,8 +354,13 @@ function nodeListMapper(nodeConfig: PossibleNodeConfigType) {
         name: nodeConfig.nodeName,
         server: nodeConfig.hostname,
         port: nodeConfig.port,
-        username: nodeConfig.username /* istanbul ignore next */ || '',
-        password: nodeConfig.password /* istanbul ignore next */ || '',
+        ...(typeof nodeConfig.username === 'string'
+          ? { username: nodeConfig.username }
+          : null),
+        ...(typeof nodeConfig.password === 'string'
+          ? { password: nodeConfig.password }
+          : null),
+        ...(nodeConfig.headers ? { headers: nodeConfig.headers } : null),
       } as const
 
     case NodeTypeEnum.Trojan:

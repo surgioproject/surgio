@@ -462,6 +462,7 @@ export const parseClashConfig = (
               port: item.port,
               username: item.username /* istanbul ignore next */ || '',
               password: item.password /* istanbul ignore next */ || '',
+              ...(item.headers ? { headers: item.headers } : null),
             } as HttpNodeConfig
           }
 
@@ -474,6 +475,7 @@ export const parseClashConfig = (
             password: item.password || '',
             tls13: tls13 ?? false,
             skipCertVerify: item['skip-cert-verify'] === true,
+            ...(item.headers ? { headers: item.headers } : null),
           } as HttpsNodeConfig
 
         case 'snell':
