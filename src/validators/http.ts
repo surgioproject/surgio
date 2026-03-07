@@ -12,16 +12,16 @@ export const HttpNodeConfigValidator = SimpleNodeConfigValidator.extend({
   type: z.literal(NodeTypeEnum.HTTP),
   hostname: z.string(),
   port: PortValidator,
-  username: z.string(),
-  password: z.string(),
+  username: z.string().optional(),
+  password: z.string().optional(),
   path: z.string().optional(),
   headers: z.record(z.string()).optional(),
 })
 
 export const HttpsNodeConfigValidator = TlsNodeConfigValidator.extend({
   type: z.literal(NodeTypeEnum.HTTPS),
-  username: z.string(),
-  password: z.string(),
+  username: z.string().optional(),
+  password: z.string().optional(),
   path: z.string().optional(),
   headers: z.record(z.string()).optional(),
 })
