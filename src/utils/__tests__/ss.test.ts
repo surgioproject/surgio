@@ -21,6 +21,36 @@ test('parseSSUri', (t) => {
   )
 })
 
+test('parseSSUri - SIP002 password with colon', (t) => {
+  t.deepEqual(
+    parseSSUri('ss://YWVzLTI1Ni1nY206cGFzczp3b3Jk@example.com:8388#test'),
+    {
+      hostname: 'example.com',
+      method: 'aes-256-gcm',
+      nodeName: 'test',
+      password: 'pass:word',
+      port: '8388',
+      type: NodeTypeEnum.Shadowsocks,
+    },
+  )
+})
+
+test('parseSSUri - SIP001 legacy password with colon', (t) => {
+  t.deepEqual(
+    parseSSUri(
+      'ss://YWVzLTI1Ni1nY206cGFzczp3b3JkQGV4YW1wbGUuY29tOjgzODg=#test',
+    ),
+    {
+      hostname: 'example.com',
+      method: 'aes-256-gcm',
+      nodeName: 'test',
+      password: 'pass:word',
+      port: '8388',
+      type: NodeTypeEnum.Shadowsocks,
+    },
+  )
+})
+
 test('stringifySip003Options', (t) => {
   t.is(
     stringifySip003Options({

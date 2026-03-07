@@ -21,7 +21,12 @@ export const parseSSUri = (str: string): ShadowsocksNodeConfig => {
       decodeURIComponent(scheme.password),
     ]
   } else {
-    userInfo = fromUrlSafeBase64(decodeURIComponent(scheme.username)).split(':')
+    const decoded = fromUrlSafeBase64(decodeURIComponent(scheme.username))
+    const colonIndex = decoded.indexOf(':')
+    userInfo =
+      colonIndex > -1
+        ? [decoded.slice(0, colonIndex), decoded.slice(colonIndex + 1)]
+        : [decoded]
   }
   const pluginInfo =
     typeof pluginString === 'string'
@@ -39,7 +44,11 @@ export const parseSSUri = (str: string): ShadowsocksNodeConfig => {
           legacyStr.slice(0, atIndex),
           legacyStr.slice(atIndex + 1),
         ]
-        const [legacyMethod, legacyPassword] = cred.split(':')
+        const credColonIndex = cred.indexOf(':')
+        const legacyMethod =
+          credColonIndex > -1 ? cred.slice(0, credColonIndex) : cred
+        const legacyPassword =
+          credColonIndex > -1 ? cred.slice(credColonIndex + 1) : undefined
         const [legacyHost, legacyPort] = hostPort.split(':')
         if (legacyMethod && legacyPassword && legacyHost && legacyPort) {
           userInfo = [legacyMethod, legacyPassword]
