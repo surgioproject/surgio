@@ -1,3 +1,12 @@
+## [3.13.2](https://github.com/geekdada/surgio/compare/v3.13.1...v3.13.2) (2026-03-08)
+
+
+### Bug Fixes
+
+* **utils:** prioritize common ALPN protocols and use a single ALPN for Tuic nodes in Surge configuration. ([25b20b6](https://github.com/geekdada/surgio/commit/25b20b6514d37afc24bb315e14f1bcd4b93bd4b3))
+
+
+
 ## [3.13.1](https://github.com/geekdada/surgio/compare/v3.13.0...v3.13.1) (2026-03-07)
 
 
