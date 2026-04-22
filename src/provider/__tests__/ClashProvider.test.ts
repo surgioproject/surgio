@@ -92,6 +92,7 @@ test('getClashSubscription', async (t) => {
       'ss4',
       'ss-wss',
       'hysteria2',
+      'vless',
     ].join(', '),
   )
 
