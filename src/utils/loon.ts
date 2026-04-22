@@ -131,6 +131,23 @@ export const getLoonNodes = function (
             `transport=${nodeConfig.network}`,
           )
 
+          // VLESS Reality 支持
+          if (nodeConfig.type === NodeTypeEnum.Vless) {
+            if (nodeConfig.flow) {
+              config.push(`flow=${nodeConfig.flow}`)
+            }
+
+            if (nodeConfig.realityOpts) {
+              if (nodeConfig.realityOpts.publicKey) {
+                config.push(`public-key="${nodeConfig.realityOpts.publicKey}"`)
+              }
+
+              if (nodeConfig.realityOpts.shortId) {
+                config.push(`short-id=${nodeConfig.realityOpts.shortId}`)
+              }
+            }
+          }
+
           if (nodeConfig.network === 'ws' && nodeConfig.wsOpts) {
             const obfsHost = getHeader(nodeConfig.wsOpts.headers, 'Host')
 
@@ -165,14 +182,16 @@ export const getLoonNodes = function (
             config.push(`over-tls=true`)
 
             if (nodeConfig.sni) {
-              config.push(`tls-name=${nodeConfig.sni}`)
+              config.push(`sni=${nodeConfig.sni}`)
             }
 
             if (nodeConfig.skipCertVerify) {
               config.push(`skip-cert-verify=true`)
             }
           }
-
+          if (nodeConfig.udpRelay) {
+            config.push('udp=true')
+          }
           return config.join(',')
         }
 
@@ -182,7 +201,7 @@ export const getLoonNodes = function (
             nodeConfig.hostname,
             nodeConfig.port,
             JSON.stringify(nodeConfig.password),
-            `tls-name=${nodeConfig.sni || nodeConfig.hostname}`,
+            `sni=${nodeConfig.sni || nodeConfig.hostname}`,
             `skip-cert-verify=${nodeConfig.skipCertVerify === true}`,
           ]
 
@@ -224,7 +243,7 @@ export const getLoonNodes = function (
             JSON.stringify(
               nodeConfig.password /* istanbul ignore next */ || '',
             ),
-            `tls-name=${nodeConfig.sni || nodeConfig.hostname}`,
+            `sni=${nodeConfig.sni || nodeConfig.hostname}`,
             `skip-cert-verify=${nodeConfig.skipCertVerify === true}`,
           ]
 

@@ -21,7 +21,7 @@ test('getLoonNodes', (t) => {
         uuid: '1386f85e-657b-4d6e-9d56-78badb75e1fd',
       },
     ]),
-    '测试 = vmess,1.1.1.1,443,chacha20-poly1305,"1386f85e-657b-4d6e-9d56-78badb75e1fd",transport=tcp,over-tls=true',
+    '测试 = vmess,1.1.1.1,443,chacha20-poly1305,"1386f85e-657b-4d6e-9d56-78badb75e1fd",transport=tcp,over-tls=true,udp=true',
   )
   t.is(
     getLoonNodes([
@@ -46,7 +46,7 @@ test('getLoonNodes', (t) => {
         },
       },
     ]),
-    '测试 = vmess,1.1.1.1,443,chacha20-poly1305,"1386f85e-657b-4d6e-9d56-78badb75e1fd",transport=http,path=/test,host=example.com,over-tls=true',
+    '测试 = vmess,1.1.1.1,443,chacha20-poly1305,"1386f85e-657b-4d6e-9d56-78badb75e1fd",transport=http,path=/test,host=example.com,over-tls=true,udp=true',
   )
   t.is(
     getLoonNodes([
@@ -68,7 +68,7 @@ test('getLoonNodes', (t) => {
         },
       },
     ]),
-    '测试 = vmess,1.1.1.1,443,chacha20-poly1305,"1386f85e-657b-4d6e-9d56-78badb75e1fd",transport=ws,path=/test,over-tls=true',
+    '测试 = vmess,1.1.1.1,443,chacha20-poly1305,"1386f85e-657b-4d6e-9d56-78badb75e1fd",transport=ws,path=/test,over-tls=true,udp=true',
   )
   t.is(
     getLoonNodes([
@@ -79,11 +79,18 @@ test('getLoonNodes', (t) => {
         port: 443,
         uuid: 'uuid',
         method: 'none',
-        udpRelay: true,
         network: 'tcp',
+        flow: 'flow',
+        realityOpts: {
+          publicKey: 'publicKey',
+          shortId: 'shortId',
+        },
+        udpRelay: true,
+        sni: 'sni',
+        skipCertVerify: true,
       },
     ]),
-    'vless = VLESS,server,443,"uuid",transport=tcp,over-tls=true',
+    'vless = VLESS,server,443,"uuid",transport=tcp,flow=flow,public-key="publicKey",short-id=shortId,over-tls=true,sni=sni,skip-cert-verify=true,udp=true',
   )
   t.is(
     getLoonNodes([
@@ -114,7 +121,7 @@ test('getLoonNodes', (t) => {
         password: 'nndndnd',
       },
     ]),
-    'test = https,a.com,443,snsms,"nndndnd",tls-name=a.com,skip-cert-verify=false',
+    'test = https,a.com,443,snsms,"nndndnd",sni=a.com,skip-cert-verify=false',
   )
   t.is(
     getLoonNodes([
@@ -126,7 +133,7 @@ test('getLoonNodes', (t) => {
         password: 'password1',
       },
     ]),
-    'trojan = trojan,example.com,443,"password1",tls-name=example.com,skip-cert-verify=false',
+    'trojan = trojan,example.com,443,"password1",sni=example.com,skip-cert-verify=false',
   )
   t.is(
     getLoonNodes([
@@ -141,7 +148,7 @@ test('getLoonNodes', (t) => {
         tfo: true,
       },
     ]),
-    'trojan = trojan,example.com,443,"password1",tls-name=example.com,skip-cert-verify=true,fast-open=true,udp=true',
+    'trojan = trojan,example.com,443,"password1",sni=example.com,skip-cert-verify=true,fast-open=true,udp=true',
   )
   t.is(
     getLoonNodes([
@@ -158,7 +165,7 @@ test('getLoonNodes', (t) => {
         tls13: true,
       },
     ]),
-    'trojan = trojan,example.com,443,"password1",tls-name=sni.example.com,skip-cert-verify=true,fast-open=true,udp=true',
+    'trojan = trojan,example.com,443,"password1",sni=sni.example.com,skip-cert-verify=true,fast-open=true,udp=true',
   )
   t.is(
     getLoonNodes([
@@ -180,7 +187,7 @@ test('getLoonNodes', (t) => {
         },
       },
     ]),
-    'trojan = trojan,example.com,443,"password1",tls-name=sni.example.com,skip-cert-verify=true,transport=ws,path=/ws,host=example.com,fast-open=true,udp=true',
+    'trojan = trojan,example.com,443,"password1",sni=sni.example.com,skip-cert-verify=true,transport=ws,path=/ws,host=example.com,fast-open=true,udp=true',
   )
   t.is(
     getLoonNodes([
