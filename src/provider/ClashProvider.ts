@@ -217,7 +217,16 @@ export const getClashSubscription = async ({
   let clashConfig
 
   try {
-    clashConfig = yaml.parse(response.body)
+    const doc = yaml.parseDocument(response.body, {
+      keepSourceTokens: true,
+    })
+    yaml.visit(doc, {
+      Pair: (_, node: any) =>
+        node.key?.value === 'short-id' &&
+        node.value?.srcToken &&
+        (node.value.value = node.value.srcToken.source),
+    })
+    clashConfig = doc.toJS()
   } catch /* istanbul ignore next */ {
     throw new Error(`${url} 不是一个合法的 YAML 文件`)
   }

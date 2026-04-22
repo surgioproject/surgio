@@ -242,6 +242,24 @@ Proxy:
     ports: "5000-6000,7000"
     hop-interval: 10
 
+  #vless
+  - name: "vless"
+    type: vless
+    server: server.com
+    port: 443
+    tls: true
+    uuid: uuid
+    servername: porter.server.com
+    host: porter.server.com
+    flow: xtls-rprx-vision
+    reality-opts:
+      public-key: 666Kuy1l13XTLXaX2m9nV_s6JYRc8C3FRuAT15Bhaba
+      #short-id: f33273b2
+      # 短标识符（Short ID）通常是一个16位的随机字符串
+      short-id: 09561058
+    client-fingerprint: random
+    skip-cert-verify: false
+
 Proxy Group:
   # url-test select which proxy will be used by benchmarking speed to a URL.
   - name: "auto"
