@@ -30,9 +30,9 @@ export const getClashNodes = function (
       if (!clashNode) {
         return clashNode
       }
-      
+
       if (nodeConfig.tfo) {
-          clashNode.tfo = true
+        clashNode.tfo = true
       }
 
       if (nodeConfig?.clashConfig?.clashCore === 'clash.meta') {
