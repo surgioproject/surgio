@@ -4,7 +4,7 @@ import fs from 'fs-extra'
 import ini from 'ini'
 import { test, expect } from '@oclif/test'
 
-const fixture = join(__dirname, './fixture')
+const fixture = join(process.cwd(), './test/fixture')
 const resolve = (p: string) => join(fixture, p)
 
 afterEach(async () => {

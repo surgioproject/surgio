@@ -551,7 +551,7 @@ Clash 需要在配置中开启 `clashConfig.enableHysteria2`。
 
 > <Badge text="Surgio v3.13.0" vertical="middle" />
 
-当前支持为 Clash、Surge 和 sing-box 生成 AnyTLS 节点。
+当前支持为 Clash、Surge、sing-box 和 Quantumult X 生成 AnyTLS 节点。
 
 ```json5
 {
@@ -562,6 +562,10 @@ Clash 需要在配置中开启 `clashConfig.enableHysteria2`。
   password: 'password',
   udpRelay: false, // 可选
   sni: 'sni.example.com', // 可选
+  realityOpts: {
+    publicKey: 'public-key',
+    shortId: 'short-id', // 可选
+  }, // 可选，仅 Quantumult X Reality TLS 输出使用
   alpn: ['h2', 'http/1.1'], // 可选
   skipCertVerify: false, // 可选
   idleSessionCheckInterval: 0, // 可选
