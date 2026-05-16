@@ -271,7 +271,7 @@ ss://cmM0LW1kNTpwYXNzd29yZA@hk.com:1234/?group=subscribe_demo#%F0%9F%87%AD%F0%9F
 :::tip 提示
 
 - 第二个参数可选，可传入标准的过滤器或自定义的过滤器
-- 支持输出 Shadowsocks, Shadowsocksr, Vmess, HTTPS, Trojan 节点
+- 支持输出 Shadowsocks, Shadowsocksr, Vmess, HTTPS, Trojan, AnyTLS 节点
 - 支持添加 `udp-relay` 和 `fast-open` 配置
 :::
 

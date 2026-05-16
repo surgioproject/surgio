@@ -277,6 +277,61 @@ test('getQuantumultXNodes', (t) => {
   t.is(
     quantumult.getQuantumultXNodes([
       {
+        type: NodeTypeEnum.AnyTLS,
+        nodeName: 'anytls',
+        hostname: 'example.com',
+        port: 443,
+        password: 'password1',
+      },
+    ]),
+    'anytls=example.com:443, password=password1, over-tls=true, tls-verification=true, tag=anytls',
+  )
+
+  t.is(
+    quantumult.getQuantumultXNodes([
+      {
+        type: NodeTypeEnum.AnyTLS,
+        nodeName: 'anytls-standard-tls-01',
+        hostname: 'example.com',
+        port: 443,
+        password: 'password1',
+        sni: 'sni.example.com',
+        udpRelay: true,
+        skipCertVerify: true,
+        tfo: true,
+        tls13: true,
+        testUrl: 'http://example.com',
+      },
+    ]),
+    'anytls=example.com:443, password=password1, over-tls=true, tls-host=sni.example.com, tls-verification=false, udp-relay=true, fast-open=true, tls13=true, server_check_url=http://example.com, tag=anytls-standard-tls-01',
+  )
+
+  t.is(
+    quantumult.getQuantumultXNodes([
+      {
+        type: NodeTypeEnum.AnyTLS,
+        nodeName: 'anytls-reality-tls-01',
+        hostname: 'example.com',
+        port: 443,
+        password: 'password1',
+        sni: 'sni.example.com',
+        realityOpts: {
+          publicKey: 'udCD6aJAy_l_rXtv2gRVJmY3n0m7ei08u4mqhF6PgkA',
+          shortId: '0123456789abcdef',
+        },
+        udpRelay: true,
+        skipCertVerify: true,
+        tfo: true,
+        tls13: true,
+        testUrl: 'http://example.com',
+      },
+    ]),
+    'anytls=example.com:443, password=password1, over-tls=true, tls-host=sni.example.com, reality-base64-pubkey=udCD6aJAy_l_rXtv2gRVJmY3n0m7ei08u4mqhF6PgkA, reality-hex-shortid=0123456789abcdef, tls-verification=true, udp-relay=true, fast-open=true, tls13=true, server_check_url=http://example.com, tag=anytls-reality-tls-01',
+  )
+
+  t.is(
+    quantumult.getQuantumultXNodes([
+      {
         type: NodeTypeEnum.Vmess,
         alterId: '64',
         hostname: '1.1.1.1',
@@ -390,6 +445,13 @@ test('getQuantumultXNodeNames', (t) => {
         password: 'password',
       },
       {
+        nodeName: 'AnyTLS Node',
+        type: NodeTypeEnum.AnyTLS,
+        hostname: 'anytls.example.com',
+        port: '443',
+        password: 'password',
+      },
+      {
         enable: false,
         nodeName: 'Test Node 3',
         type: NodeTypeEnum.Shadowsocks,
@@ -399,6 +461,6 @@ test('getQuantumultXNodeNames', (t) => {
         password: 'password',
       },
     ]),
-    ['Test Node 1', 'Test Node 2'].join(', '),
+    ['Test Node 1', 'Test Node 2', 'AnyTLS Node'].join(', '),
   )
 })

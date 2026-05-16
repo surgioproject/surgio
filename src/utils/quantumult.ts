@@ -310,6 +310,35 @@ function nodeListMapper(
       return [nodeConfig.nodeName, `trojan=${config.join(', ')}`]
     }
 
+    case NodeTypeEnum.AnyTLS: {
+      const config = [
+        `${nodeConfig.hostname}:${nodeConfig.port}`,
+        ...pickAndFormatStringList(nodeConfig, ['password']),
+        'over-tls=true',
+        ...(nodeConfig.sni ? [`tls-host=${nodeConfig.sni}`] : []),
+        ...(nodeConfig.realityOpts?.publicKey
+          ? [`reality-base64-pubkey=${nodeConfig.realityOpts.publicKey}`]
+          : []),
+        ...(nodeConfig.realityOpts?.shortId
+          ? [`reality-hex-shortid=${nodeConfig.realityOpts.shortId}`]
+          : []),
+        `tls-verification=${
+          nodeConfig.realityOpts ? true : nodeConfig.skipCertVerify !== true
+        }`,
+        ...(nodeConfig.udpRelay ? [`udp-relay=true`] : []),
+        ...(nodeConfig.tfo ? [`fast-open=true`] : []),
+        ...(nodeConfig.tls13 ? [`tls13=true`] : []),
+      ]
+
+      if (typeof nodeConfig.testUrl === 'string') {
+        config.push(`server_check_url=${nodeConfig['testUrl']}`)
+      }
+
+      config.push(`tag=${nodeConfig.nodeName}`)
+
+      return [nodeConfig.nodeName, `anytls=${config.join(', ')}`]
+    }
+
     // istanbul ignore next
     default:
       logger.warn(
