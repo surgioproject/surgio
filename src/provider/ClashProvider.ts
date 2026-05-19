@@ -221,10 +221,15 @@ export const getClashSubscription = async ({
       keepSourceTokens: true,
     })
     yaml.visit(doc, {
-      Pair: (_, node: any) =>
-        node.key?.value === 'short-id' &&
-        node.value?.srcToken &&
-        (node.value.value = node.value.srcToken.source),
+      Pair: (_, node: any) => {
+        if (
+          node.key?.value === 'short-id' &&
+          typeof node.value?.value === 'number' && //short-id应是字符串,如果这里是数字,则将srcToken的source赋给value, 避免yaml转换错误, 如: "09561058" 变成 9561058
+          node.value?.srcToken
+        ) {
+          node.value.value = node.value.srcToken.source
+        }
+      },
     })
     if (doc.errors.length > 0) {
       throw new Error() //yaml.parseDocument语法错误时不会抛出异常, 这里手动丢下(跳转到下面的catch)
