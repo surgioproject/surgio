@@ -5,6 +5,27 @@ import { ERR_INVALID_FILTER } from '../../constant'
 import { getLoonNodeNames, getLoonNodes } from '../loon'
 
 test('getLoonNodes', (t) => {
+  //anytls://5af6f92a-08d6-46b2-a142-4fcacae7c5fd@hkzz.yuyan.vin:11001?security=tls&type=tcp&packetEncoding=none&allowInsecure=1&sni=www.apple.com&udp=1&insecure=1&ecn=true&test_url=http%3A%2F%2F1.0.0.1%2Fgenerate_204#%5BYuYan%5D%20%F0%9F%87%AD%F0%9F%87%B0%20%E9%A6%99%E6%B8%AFA%7CBGP%E4%BC%98%E5%8C%96
+  t.is(
+    getLoonNodes([
+      {
+        type: NodeTypeEnum.AnyTLS,
+        nodeName: '测试',
+        hostname: '1.1.1.1',
+        port: 443,
+        sni: 'sni',
+        password: 'password',
+        udpRelay: false,
+        skipCertVerify: true,
+        idleSessionCheckInterval: 0,
+        idleSessionTimeout: 0,
+        minIdleSessions: 0,
+        tfo: true,
+      },
+    ]),
+    //anytlsimac = AnyTLS,192.168.2.254,8443,"qwertyuiop",idle-session-check-interval=30,idle-session-timeout=30,min-idle-session=1,max-stream-count=1
+    '测试 = AnyTLS,1.1.1.1,443,"password",sni=sni,skip-cert-verify=true,idle-session-check-interval=0,idle-session-timeout=0,min-idle-session=0,fast-open=true',
+  )
   t.is(
     getLoonNodes([
       {
