@@ -22,6 +22,7 @@ const {
   vmessFilter,
   wireguardFilter,
   vlessFilter,
+  anytlsFilter,
 } = internalFilters
 const logger = createLogger({ service: 'surgio:utils:loon' })
 
@@ -95,6 +96,46 @@ export const getLoonNodes = function (
           return config.join(',')
         }
 
+        case NodeTypeEnum.AnyTLS: {
+          const config: Array<string | number> = [
+            `${nodeConfig.nodeName} = AnyTLS`,
+            nodeConfig.hostname,
+            nodeConfig.port,
+            JSON.stringify(nodeConfig.password),
+          ]
+
+          if (nodeConfig.sni) {
+            config.push(`sni=${nodeConfig.sni}`)
+          }
+
+          if (nodeConfig.skipCertVerify) {
+            config.push('skip-cert-verify=true')
+          }
+
+          if (nodeConfig.idleSessionCheckInterval !== undefined) {
+            config.push(
+              `idle-session-check-interval=${nodeConfig.idleSessionCheckInterval}`,
+            )
+          }
+
+          if (nodeConfig.idleSessionTimeout !== undefined) {
+            config.push(`idle-session-timeout=${nodeConfig.idleSessionTimeout}`)
+          }
+
+          if (nodeConfig.minIdleSessions !== undefined) {
+            config.push(`min-idle-session=${nodeConfig.minIdleSessions}`)
+          }
+
+          /*if (nodeConfig.maxStreamCount !== undefined) {
+            config.push(`max-stream-count=${nodeConfig.maxStreamCount}`)
+          }*/
+
+          if (nodeConfig.tfo) {
+            config.push('fast-open=true')
+          }
+
+          return config.join(',')
+        }
         case NodeTypeEnum.Vless:
         case NodeTypeEnum.Vmess: {
           if (
@@ -131,6 +172,23 @@ export const getLoonNodes = function (
             `transport=${nodeConfig.network}`,
           )
 
+          // VLESS Reality 支持
+          if (nodeConfig.type === NodeTypeEnum.Vless) {
+            if (nodeConfig.flow) {
+              config.push(`flow=${nodeConfig.flow}`)
+            }
+
+            if (nodeConfig.realityOpts) {
+              if (nodeConfig.realityOpts.publicKey) {
+                config.push(`public-key="${nodeConfig.realityOpts.publicKey}"`)
+              }
+
+              if (nodeConfig.realityOpts.shortId) {
+                config.push(`short-id=${nodeConfig.realityOpts.shortId}`)
+              }
+            }
+          }
+
           if (nodeConfig.network === 'ws' && nodeConfig.wsOpts) {
             const obfsHost = getHeader(nodeConfig.wsOpts.headers, 'Host')
 
@@ -165,14 +223,16 @@ export const getLoonNodes = function (
             config.push(`over-tls=true`)
 
             if (nodeConfig.sni) {
-              config.push(`tls-name=${nodeConfig.sni}`)
+              config.push(`sni=${nodeConfig.sni}`)
             }
 
             if (nodeConfig.skipCertVerify) {
               config.push(`skip-cert-verify=true`)
             }
           }
-
+          if (nodeConfig.udpRelay) {
+            config.push('udp=true')
+          }
           return config.join(',')
         }
 
@@ -182,7 +242,7 @@ export const getLoonNodes = function (
             nodeConfig.hostname,
             nodeConfig.port,
             JSON.stringify(nodeConfig.password),
-            `tls-name=${nodeConfig.sni || nodeConfig.hostname}`,
+            `sni=${nodeConfig.sni || nodeConfig.hostname}`,
             `skip-cert-verify=${nodeConfig.skipCertVerify === true}`,
           ]
 
@@ -224,7 +284,7 @@ export const getLoonNodes = function (
             JSON.stringify(
               nodeConfig.password /* istanbul ignore next */ || '',
             ),
-            `tls-name=${nodeConfig.sni || nodeConfig.hostname}`,
+            `sni=${nodeConfig.sni || nodeConfig.hostname}`,
             `skip-cert-verify=${nodeConfig.skipCertVerify === true}`,
           ]
 
@@ -322,6 +382,7 @@ export const getLoonNodeNames = function (
   return applyFilter(
     list.filter(
       (item) =>
+        anytlsFilter(item) ||
         shadowsocksFilter(item) ||
         shadowsocksrFilter(item) ||
         vmessFilter(item) ||

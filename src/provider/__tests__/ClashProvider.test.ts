@@ -314,6 +314,54 @@ test('getClashSubscription udpRelay', async (t) => {
   })
 })
 
+test('getClashSubscription keeps reality short-id as plain string', async (t) => {
+  const scope = nock('http://local')
+    .get('/short-id')
+    .reply(
+      200,
+      `
+proxies:
+  - name: "short-id numeric"
+    type: vless
+    server: server.com
+    port: 443
+    tls: true
+    uuid: uuid-1
+    flow: xtls-rprx-vision
+    reality-opts:
+      public-key: publicKey1
+      short-id: 09561058
+    client-fingerprint: chrome
+  - name: "short-id quoted"
+    type: vless
+    server: server.com
+    port: 443
+    tls: true
+    uuid: uuid-2
+    flow: xtls-rprx-vision
+    reality-opts:
+      public-key: publicKey2
+      short-id: '12'
+    client-fingerprint: chrome
+    `,
+    )
+
+  const { nodeList } = await getClashSubscription({
+    url: 'http://local/short-id',
+    requestHeaders: { 'user-agent': 'clash-for-windows' },
+    cacheKey: 'test-cache-key-short-id',
+  })
+
+  t.deepEqual(
+    nodeList.map((node) =>
+      node.type === NodeTypeEnum.Vless ? node.realityOpts?.shortId : undefined,
+    ),
+    ['09561058', '12'],
+  )
+
+  scope.done()
+})
+
 test('getClashSubscription - invalid yaml', async (t) => {
   const scope = nock('http://local')
     .get('/fail-1')

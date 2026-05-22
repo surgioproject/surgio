@@ -31,6 +31,10 @@ export const getClashNodes = function (
         return clashNode
       }
 
+      if (nodeConfig.tfo) {
+        clashNode.tfo = true
+      }
+
       if (nodeConfig?.clashConfig?.clashCore === 'clash.meta') {
         if (nodeConfig.underlyingProxy) {
           clashNode['dialer-proxy'] = nodeConfig.underlyingProxy
