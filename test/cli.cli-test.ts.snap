@@ -109,6 +109,7 @@ http=us.example.com:443, username=username, password=password, fast-open=true, o
 trojan=trojan.example.com:443, password=password, tls-verification=true, over-tls=true, tag=trojan node
 trojan=trojan.example.com:443, password=password, tls-verification=true, over-tls=true, tag=🚀 火箭 trojan node
 trojan=trojan.example.com:443, password=password, tls-verification=true, over-tls=true, tag=🎉 foobar trojan node
+anytls=anytls.example.com:443, password=password, over-tls=true, tls-verification=true, tag=anytls node
 shadowsocks=us.example.com:443, method=chacha20-ietf-poly1305, password=password, obfs=tls, obfs-host=gateway-carry.icloud.com, tag=🇺🇸US 1
 shadowsocks=us.example.com:444, method=chacha20-ietf-poly1305, password=password, tag=🇺🇸US 2
 shadowsocks=us.example.com:445, method=chacha20-ietf-poly1305, password=password, obfs=tls, obfs-host=www.bing.com, tag=🇺🇸US 3
@@ -134,10 +135,10 @@ getLoonNodes
 🇺🇸US 1 = Shadowsocks,us.example.com,443,chacha20-ietf-poly1305,\\"password\\",tls,gateway-carry.icloud.com,fast-open=true
 🇺🇸US 2 = Shadowsocks,us.example.com,443,chacha20-ietf-poly1305,\\"password\\",fast-open=true
 🇺🇸 US = Shadowsocks,us.example.com,443,chacha20-ietf-poly1305,\\"password\\",tls,gateway-carry.icloud.com,fast-open=true,udp=true
-HTTPS = https,us.example.com,443,username,\\"password\\",tls-name=us.example.com,skip-cert-verify=false
-trojan node = trojan,trojan.example.com,443,\\"password\\",tls-name=trojan.example.com,skip-cert-verify=false
-🚀 火箭 trojan node = trojan,trojan.example.com,443,\\"password\\",tls-name=trojan.example.com,skip-cert-verify=false
-🎉 foobar trojan node = trojan,trojan.example.com,443,\\"password\\",tls-name=trojan.example.com,skip-cert-verify=false
+HTTPS = https,us.example.com,443,username,\\"password\\",sni=us.example.com,skip-cert-verify=false
+trojan node = trojan,trojan.example.com,443,\\"password\\",sni=trojan.example.com,skip-cert-verify=false
+🚀 火箭 trojan node = trojan,trojan.example.com,443,\\"password\\",sni=trojan.example.com,skip-cert-verify=false
+🎉 foobar trojan node = trojan,trojan.example.com,443,\\"password\\",sni=trojan.example.com,skip-cert-verify=false
 🇺🇸US 1 = Shadowsocks,us.example.com,443,chacha20-ietf-poly1305,\\"password\\",tls,gateway-carry.icloud.com
 🇺🇸US 2 = Shadowsocks,us.example.com,444,chacha20-ietf-poly1305,\\"password\\"
 🇺🇸US 3 = Shadowsocks,us.example.com,445,chacha20-ietf-poly1305,\\"password\\",tls,www.bing.com
@@ -510,7 +511,7 @@ http 2 = http, server, 443, username, password
 ss4 = ss, server, 443, encrypt-method=chacha20-ietf-poly1305, password=password, udp-relay=true, obfs=tls, obfs-host=example.com
 ----
 getNodeNames
-ss1, ss2, ss3, vmess, vmess new format, vmess custom header, socks, http 1, http 2, snell, ss4, ss-wss, hysteria2
+ss1, ss2, ss3, vmess, vmess new format, vmess custom header, socks, http 1, http 2, snell, ss4, ss-wss, hysteria2, vless
 ----
 getQuantumultXNodes
 shadowsocks=server:443, method=chacha20-ietf-poly1305, password=password, udp-relay=true, tag=ss1
@@ -523,6 +524,7 @@ http=server:443, username=username, password=password, over-tls=true, tls-verifi
 http=server:443, username=username, password=password, tag=http 2
 shadowsocks=server:443, method=chacha20-ietf-poly1305, password=password, obfs=tls, obfs-host=example.com, udp-relay=true, tag=ss4
 shadowsocks=server:443, method=chacha20-ietf-poly1305, password=password, obfs=wss, obfs-host=cloudflare.com, obfs-uri=/ws, udp-relay=true, tls-verification=true, tls13=true, tag=ss-wss
+vless=server.com:443, method=none, password=uuid, udp-relay=true, aead=true, obfs=over-tls, tls-verification=true, tls13=true, tag=vless
 ----
 getSurgeNodes
 
@@ -530,12 +532,13 @@ getSurgeNodes
 getLoonNodes
 ss1 = Shadowsocks,server,443,chacha20-ietf-poly1305,\\"password\\",udp=true
 ss2 = Shadowsocks,server,443,chacha20-ietf-poly1305,\\"password\\",tls,www.bing.com,udp=true
-vmess = vmess,server,443,chacha20-poly1305,\\"uuid\\",transport=tcp
-vmess new format = vmess,server,443,chacha20-poly1305,\\"uuid\\",transport=ws,path=/path,host=v2ray.com,over-tls=true,skip-cert-verify=true
-vmess custom header = vmess,server,443,chacha20-poly1305,\\"uuid\\",transport=ws,path=/path,over-tls=true
-http 1 = https,server,443,username,\\"password\\",tls-name=server,skip-cert-verify=false
+vmess = vmess,server,443,chacha20-poly1305,\\"uuid\\",transport=tcp,udp=true
+vmess new format = vmess,server,443,chacha20-poly1305,\\"uuid\\",transport=ws,path=/path,host=v2ray.com,over-tls=true,skip-cert-verify=true,udp=true
+vmess custom header = vmess,server,443,chacha20-poly1305,\\"uuid\\",transport=ws,path=/path,over-tls=true,udp=true
+http 1 = https,server,443,username,\\"password\\",sni=server,skip-cert-verify=false
 http 2 = http,server,443,username,\\"password\\"
 ss4 = Shadowsocks,server,443,chacha20-ietf-poly1305,\\"password\\",tls,example.com,udp=true
+vless = VLESS,server.com,443,\\"uuid\\",transport=tcp,flow=xtls-rprx-vision,public-key=\\"666Kuy1l13XTLXaX2m9nV_s6JYRc8C3FRuAT15Bhaba\\",short-id=09561058,over-tls=true,sni=porter.server.com,udp=true
 ----
 proxyTestUrl
 http://www.google.com/generate_204
