@@ -158,12 +158,22 @@ export const CLASH_META_SUPPORTED_VMESS_NETWORK = [
   'http',
 ] as const
 
+export const CLASH_META_SUPPORTED_VLESS_NETWORK = [
+  ...CLASH_META_SUPPORTED_VMESS_NETWORK,
+  'xhttp',
+] as const
+
 export const STASH_SUPPORTED_VMESS_NETWORK = [
   'tcp',
   'ws',
   'h2',
   'grpc',
   'http',
+] as const
+
+export const STASH_SUPPORTED_VLESS_NETWORK = [
+  ...STASH_SUPPORTED_VMESS_NETWORK,
+  'xhttp',
 ] as const
 
 export const QUANTUMULT_X_SUPPORTED_VMESS_NETWORK = [

@@ -642,6 +642,75 @@ test('getClashNodes', async (t) => {
   t.deepEqual(
     clash.getClashNodes([
       {
+        type: NodeTypeEnum.Vless,
+        nodeName: 'vless-xhttp',
+        hostname: 'server',
+        port: 443,
+        uuid: 'uuid',
+        method: 'none',
+        network: 'xhttp',
+        udpRelay: true,
+        flow: 'xtls-rprx-vision',
+        encryption: 'none',
+        packetEncoding: 'xudp',
+        xhttpOpts: {
+          path: '/xhttp',
+          mode: 'auto',
+        },
+        echOpts: {
+          enable: true,
+          config: 'ech-config',
+        },
+        clashConfig: {
+          enableVless: true,
+        },
+      },
+    ]),
+    [
+      {
+        type: 'vless',
+        name: 'vless-xhttp',
+        server: 'server',
+        port: 443,
+        uuid: 'uuid',
+        cipher: 'none',
+        flow: 'xtls-rprx-vision',
+        udp: true,
+        tls: true,
+        network: 'xhttp',
+        encryption: 'none',
+        'packet-encoding': 'xudp',
+        'xhttp-opts': {
+          path: '/xhttp',
+          mode: 'auto',
+        },
+        'ech-opts': {
+          enable: true,
+          config: 'ech-config',
+        },
+      },
+    ],
+  )
+
+  t.deepEqual(
+    clash.getClashNodes([
+      {
+        alterId: '64',
+        hostname: '1.1.1.1',
+        method: 'auto',
+        network: 'xhttp',
+        nodeName: 'vmess-xhttp',
+        port: 8080,
+        type: NodeTypeEnum.Vmess,
+        uuid: '1386f85e-657b-4d6e-9d56-78badb75e1fd',
+      } as any,
+    ]),
+    [],
+  )
+
+  t.deepEqual(
+    clash.getClashNodes([
+      {
         nodeName: 'snell',
         type: NodeTypeEnum.Snell,
         hostname: '1.1.1.1',

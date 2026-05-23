@@ -6,7 +6,9 @@ import { z } from 'zod'
 
 import {
   CLASH_META_SUPPORTED_VMESS_NETWORK,
+  CLASH_META_SUPPORTED_VLESS_NETWORK,
   STASH_SUPPORTED_VMESS_NETWORK,
+  STASH_SUPPORTED_VLESS_NETWORK,
 } from '../constant'
 import {
   AnyTLSNodeConfig,
@@ -344,15 +346,20 @@ export const parseClashConfig = (
         case 'vless':
         case 'vmess': {
           // istanbul ignore next
-          if (
-            item.network &&
-            ![
-              ...CLASH_META_SUPPORTED_VMESS_NETWORK,
-              ...STASH_SUPPORTED_VMESS_NETWORK,
-            ].includes(item.network)
-          ) {
+          const supportedNetworks =
+            item.type === 'vless'
+              ? [
+                  ...CLASH_META_SUPPORTED_VLESS_NETWORK,
+                  ...STASH_SUPPORTED_VLESS_NETWORK,
+                ]
+              : [
+                  ...CLASH_META_SUPPORTED_VMESS_NETWORK,
+                  ...STASH_SUPPORTED_VMESS_NETWORK,
+                ]
+
+          if (item.network && !supportedNetworks.includes(item.network)) {
             logger.warn(
-              `不支持从 Clash 订阅中读取 network 类型为 ${item.network} 的 Vmess 节点，节点 ${item.name} 会被省略`,
+              `不支持从 Clash 订阅中读取 network 类型为 ${item.network} 的 ${item.type} 节点，节点 ${item.name} 会被省略`,
             )
             return undefined
           }
@@ -414,6 +421,12 @@ export const parseClashConfig = (
             if (typeof item.encryption === 'string') {
               vmessNode.encryption = item.encryption
             }
+            if (typeof item['packet-encoding'] === 'string') {
+              vmessNode.packetEncoding = item['packet-encoding']
+            }
+            if (item['ech-opts']) {
+              vmessNode.echOpts = item['ech-opts']
+            }
 
             if (item['reality-opts']) {
               vmessNode.realityOpts = {
@@ -462,6 +475,18 @@ export const parseClashConfig = (
             case 'grpc':
               vmessNode.grpcOpts = {
                 serviceName: item['grpc-opts']['grpc-service-name'],
+              }
+
+              break
+            case 'xhttp':
+              if (vmessNode.type !== NodeTypeEnum.Vless) {
+                logger.warn(
+                  `mihomo 仅支持 VLESS 使用 xhttp 传输层，节点 ${item.name} 会被省略`,
+                )
+                return undefined
+              }
+              vmessNode.xhttpOpts = item['xhttp-opts'] || {
+                path: '/',
               }
 
               break

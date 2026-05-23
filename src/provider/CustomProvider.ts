@@ -92,6 +92,14 @@ export default class CustomProvider extends Provider {
           throw new Error('obfs-uri 已废弃，请使用 obfsUri')
         }
 
+        if (
+          type === NodeTypeEnum.Vless &&
+          node.network === 'xhttp' &&
+          node.path
+        ) {
+          throw new Error('请将 path 移动到 xhttpOpts.path')
+        }
+
         // istanbul ignore next
         let parsedNode = (() => {
           switch (type) {

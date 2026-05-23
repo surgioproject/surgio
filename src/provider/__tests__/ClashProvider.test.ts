@@ -636,6 +636,73 @@ test('vmess Configurations', (t) => {
       },
     ],
   )
+
+  t.deepEqual(
+    parseClashConfig([
+      {
+        type: 'vless',
+        name: 'vless-xhttp',
+        server: 'server',
+        port: 443,
+        uuid: 'uuid',
+        cipher: 'none',
+        udp: true,
+        tls: true,
+        network: 'xhttp',
+        'client-fingerprint': 'chrome',
+        'packet-encoding': 'xudp',
+        'xhttp-opts': {
+          path: '/xhttp',
+          mode: 'auto',
+        },
+        'ech-opts': {
+          enable: true,
+          config: 'ech-config',
+        },
+        encryption: 'none',
+      },
+    ]),
+    [
+      {
+        type: NodeTypeEnum.Vless,
+        nodeName: 'vless-xhttp',
+        hostname: 'server',
+        port: 443,
+        uuid: 'uuid',
+        method: 'none',
+        network: 'xhttp',
+        udpRelay: true,
+        clientFingerprint: 'chrome',
+        packetEncoding: 'xudp',
+        xhttpOpts: {
+          path: '/xhttp',
+          mode: 'auto',
+        },
+        echOpts: {
+          enable: true,
+          config: 'ech-config',
+        },
+        skipCertVerify: false,
+        tls13: false,
+        encryption: 'none',
+      },
+    ],
+  )
+
+  t.deepEqual(
+    parseClashConfig([
+      {
+        type: 'vmess',
+        name: 'vmess-xhttp',
+        server: 'server',
+        port: 443,
+        uuid: 'uuid',
+        cipher: 'auto',
+        network: 'xhttp',
+      },
+    ]),
+    [],
+  )
 })
 
 test('snell Configurations', (t) => {

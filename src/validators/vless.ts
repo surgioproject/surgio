@@ -8,7 +8,6 @@ import {
   TlsNodeConfigValidator,
 } from './common'
 import {
-  VmessNetworkValidator,
   VmessH2OptsValidator,
   VmessGRPCOptsValidator,
   VmessHttpOptsValidator,
@@ -17,11 +16,24 @@ import {
   VmessHttpUpgradeOptsValidator,
 } from './vmess'
 
+export const VlessNetworkValidator = z.union([
+  z.literal('tcp'),
+  z.literal('ws'),
+  z.literal('h2'),
+  z.literal('http'),
+  z.literal('grpc'),
+  z.literal('xhttp'),
+  z.literal('quic'),
+  z.literal('httpupgrade'),
+])
+
 export const VlessRealityOptsValidator = z.object({
   publicKey: z.string(),
   shortId: z.ostring(),
   spiderX: z.ostring(),
 })
+
+export const VlessXHTTPOptsValidator = z.record(z.any())
 
 export const VlessNodeConfigValidator = TlsNodeConfigValidator.extend({
   type: z.literal(NodeTypeEnum.Vless),
@@ -29,7 +41,7 @@ export const VlessNodeConfigValidator = TlsNodeConfigValidator.extend({
   port: PortValidator,
   method: z.literal('none'),
   uuid: z.string().uuid(),
-  network: VmessNetworkValidator.default('tcp'),
+  network: VlessNetworkValidator.default('tcp'),
   udpRelay: z.oboolean(),
   flow: z.ostring(),
   encryption: z.ostring(),
@@ -38,6 +50,9 @@ export const VlessNodeConfigValidator = TlsNodeConfigValidator.extend({
   h2Opts: VmessH2OptsValidator.optional(),
   httpOpts: VmessHttpOptsValidator.optional(),
   grpcOpts: VmessGRPCOptsValidator.optional(),
+  xhttpOpts: VlessXHTTPOptsValidator.optional(),
+  echOpts: VlessXHTTPOptsValidator.optional(),
+  packetEncoding: z.ostring(),
   quicOpts: VmessQuicOptsValidator.optional(),
   httpUpgradeOpts: VmessHttpUpgradeOptsValidator.optional(),
   realityOpts: VlessRealityOptsValidator.optional(),
