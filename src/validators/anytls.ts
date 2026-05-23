@@ -17,4 +17,5 @@ export const AnyTLSNodeConfigValidator = TlsNodeConfigValidator.extend({
   idleSessionCheckInterval: z.number().optional(),
   idleSessionTimeout: z.number().optional(),
   minIdleSessions: z.number().optional(),
+  reuse: z.oboolean(),
 })

@@ -465,6 +465,41 @@ test('getSurgeNodes', async (t) => {
   )
 })
 
+test('getSurgeNodes - AnyTLS', (t) => {
+  t.is(
+    surge.getSurgeNodes([
+      {
+        type: NodeTypeEnum.AnyTLS,
+        nodeName: 'anytls default',
+        hostname: 'example.com',
+        port: 443,
+        password: 'password',
+      },
+      {
+        type: NodeTypeEnum.AnyTLS,
+        nodeName: 'anytls reuse on',
+        hostname: 'example.com',
+        port: 443,
+        password: 'password',
+        reuse: true,
+      },
+      {
+        type: NodeTypeEnum.AnyTLS,
+        nodeName: 'anytls reuse off',
+        hostname: 'example.com',
+        port: 443,
+        password: 'password',
+        reuse: false,
+      },
+    ]),
+    [
+      'anytls default = anytls, example.com, 443, password=password',
+      'anytls reuse on = anytls, example.com, 443, password=password, reuse=true',
+      'anytls reuse off = anytls, example.com, 443, password=password, reuse=false',
+    ].join('\n'),
+  )
+})
+
 test('getSurgeNodes - Wireguard', (t) => {
   t.is(
     surge.getSurgeNodes([

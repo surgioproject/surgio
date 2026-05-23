@@ -474,6 +474,9 @@ function nodeListMapper(
         nodeConfig.hostname,
         `${nodeConfig.port}`,
         `password=${nodeConfig.password}`,
+        ...pickAndFormatStringList(nodeConfig, ['reuse'], {
+          keyFormat: 'kebabCase',
+        }),
       ]
 
       return [

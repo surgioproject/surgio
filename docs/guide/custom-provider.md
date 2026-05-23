@@ -571,6 +571,7 @@ Clash 需要在配置中开启 `clashConfig.enableHysteria2`。
   idleSessionCheckInterval: 0, // 可选
   idleSessionTimeout: 0, // 可选
   minIdleSessions: 0, // 可选
+  reuse: true, // 可选，仅 Surge 输出生效
 }
 ```
 
