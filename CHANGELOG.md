@@ -1,3 +1,20 @@
+# [3.15.0](https://github.com/geekdada/surgio/compare/v3.14.0...v3.15.0) (2026-05-23)
+
+
+### Bug Fixes
+
+* **provider:** preserve reality short-id strings without extra quotes ([5245ff3](https://github.com/geekdada/surgio/commit/5245ff3d422287a21e8fc22c321dab157d874a3c))
+* **provider:** 修复 Clash 配置中 short-id 数字转换问题 ([78fe16c](https://github.com/geekdada/surgio/commit/78fe16c7f8dfc2b2cfa30ef855f0957114273c99))
+
+
+### Features
+
+* **anyls:** add reuse field support for Surge output ([57e43b6](https://github.com/geekdada/surgio/commit/57e43b6fc2044f2eaed7fab3702122a1fb27c152))
+* support anytls quantumultx output ([348e5b2](https://github.com/geekdada/surgio/commit/348e5b233c9649073a156d9c777a4c8bcba46b57))
+* **utils:** 添加Loon对AnyTLS节点类型的支持 ([8e36569](https://github.com/geekdada/surgio/commit/8e365697bff14fa7fb6cf260737e43f0d772640c))
+
+
+
 # [3.14.0](https://github.com/geekdada/surgio/compare/v3.13.3...v3.14.0) (2026-04-22)
 
 
