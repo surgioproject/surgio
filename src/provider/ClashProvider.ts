@@ -224,7 +224,7 @@ export const getClashSubscription = async ({
       Pair: (_, node: any) => {
         if (
           node.key?.value === 'short-id' &&
-          typeof node.value?.value === 'number' && //short-id应是字符串,如果这里是数字,则将srcToken的source赋给value, 避免yaml转换错误, 如: "09561058" 变成 9561058
+          typeof node.value?.value === 'number' && //short-id 应是字符串，如果这里是数字，则将 srcToken 的 source 赋给 value, 避免 yaml 转换错误，如："09561058" 变成 9561058
           node.value?.srcToken
         ) {
           node.value.value = node.value.srcToken.source
@@ -232,7 +232,7 @@ export const getClashSubscription = async ({
       },
     })
     if (doc.errors.length > 0) {
-      throw new Error() //yaml.parseDocument语法错误时不会抛出异常, 这里手动丢下(跳转到下面的catch)
+      throw new Error() // yaml.parseDocument 语法错误时不会抛出异常，这里手动丢下 (跳转到下面的 catch)
     }
     clashConfig = doc.toJS()
   } catch /* istanbul ignore next */ {
