@@ -302,8 +302,8 @@ function nodeListMapper(nodeConfig: PossibleNodeConfigType) {
             )
             return null
           }
-          if (nodeConfig.xhttpOpts) {
-            vmessNode['xhttp-opts'] = nodeConfig.xhttpOpts
+          vmessNode['xhttp-opts'] = nodeConfig.xhttpOpts || {
+            path: '/',
           }
           break
       }

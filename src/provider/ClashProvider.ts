@@ -485,8 +485,9 @@ export const parseClashConfig = (
                 )
                 return undefined
               }
-              vmessNode.xhttpOpts = item['xhttp-opts'] || {
+              vmessNode.xhttpOpts = {
                 path: '/',
+                ...item['xhttp-opts'],
               }
 
               break
