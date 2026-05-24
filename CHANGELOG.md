@@ -1,3 +1,18 @@
+# [3.16.0](https://github.com/geekdada/surgio/compare/v3.15.0...v3.16.0) (2026-05-24)
+
+
+### Bug Fixes
+
+* **vless:** ensure xhttpOpts has default path value ([074ca78](https://github.com/geekdada/surgio/commit/074ca788ad21947193bdf79cdb5cc9c346f504b5))
+
+
+### Features
+
+* support vless xhttp for mihomo ([19c54b0](https://github.com/geekdada/surgio/commit/19c54b06de53e8303019cba7771c166ecfc02407))
+* **validators:** improve VLESS xhttp options schema validation ([25914d0](https://github.com/geekdada/surgio/commit/25914d083385516e0a58772fb322531f96fcb2ff))
+
+
+
 # [3.15.0](https://github.com/geekdada/surgio/compare/v3.14.0...v3.15.0) (2026-05-23)
 
 
