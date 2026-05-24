@@ -33,7 +33,13 @@ export const VlessRealityOptsValidator = z.object({
   spiderX: z.ostring(),
 })
 
-export const VlessXHTTPOptsValidator = z.record(z.any())
+export const VlessXHTTPOptsValidator = z
+  .object({
+    path: z.string(),
+  })
+  .passthrough()
+
+export const VlessECHPortsValidator = z.record(z.any())
 
 export const VlessNodeConfigValidator = TlsNodeConfigValidator.extend({
   type: z.literal(NodeTypeEnum.Vless),
@@ -51,7 +57,7 @@ export const VlessNodeConfigValidator = TlsNodeConfigValidator.extend({
   httpOpts: VmessHttpOptsValidator.optional(),
   grpcOpts: VmessGRPCOptsValidator.optional(),
   xhttpOpts: VlessXHTTPOptsValidator.optional(),
-  echOpts: VlessXHTTPOptsValidator.optional(),
+  echOpts: VlessECHPortsValidator.optional(),
   packetEncoding: z.ostring(),
   quicOpts: VmessQuicOptsValidator.optional(),
   httpUpgradeOpts: VmessHttpUpgradeOptsValidator.optional(),
