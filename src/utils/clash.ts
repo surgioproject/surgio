@@ -214,6 +214,10 @@ function nodeListMapper(nodeConfig: PossibleNodeConfigType) {
           vmessNode.encryption = nodeConfig.encryption
         }
 
+        if (typeof nodeConfig.packetEncoding === 'string') {
+          vmessNode['packet-encoding'] = nodeConfig.packetEncoding
+        }
+
         if (nodeConfig.realityOpts) {
           vmessNode['reality-opts'] = {
             'public-key': nodeConfig.realityOpts.publicKey,
@@ -255,6 +259,9 @@ function nodeListMapper(nodeConfig: PossibleNodeConfigType) {
         if (nodeConfig.clientFingerprint) {
           vmessNode['client-fingerprint'] = nodeConfig.clientFingerprint
         }
+        if (nodeConfig.type === NodeTypeEnum.Vless && nodeConfig.echOpts) {
+          vmessNode['ech-opts'] = nodeConfig.echOpts
+        }
       }
 
       switch (nodeConfig.network) {
@@ -283,6 +290,20 @@ function nodeListMapper(nodeConfig: PossibleNodeConfigType) {
             vmessNode['grpc-opts'] = {
               'grpc-service-name': nodeConfig.grpcOpts.serviceName,
             }
+          }
+          break
+
+        case 'xhttp':
+          if ((nodeConfig as any).type !== NodeTypeEnum.Vless) {
+            logger.warn(
+              `mihomo 仅支持 VLESS 使用 xhttp 传输层，节点 ${
+                (nodeConfig as any).nodeName
+              } 会被省略`,
+            )
+            return null
+          }
+          vmessNode['xhttp-opts'] = nodeConfig.xhttpOpts || {
+            path: '/',
           }
           break
       }

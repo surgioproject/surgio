@@ -321,3 +321,29 @@ test('CustomProvider rejects vmess path on ws network', async (t) => {
   const error = await t.throwsAsync(() => provider.getNodeList())
   t.true(error?.message.includes('节点配置校验失败'))
 })
+
+test('CustomProvider rejects vless path on xhttp network', async (t) => {
+  const provider = new CustomProvider('test', {
+    type: SupportProviderEnum.Custom,
+    nodeList: [
+      {
+        type: NodeTypeEnum.Vless,
+        nodeName: 'vless-test',
+        hostname: 'example.com',
+        port: 443,
+        method: 'none',
+        uuid: '2e1a3b2a-0a6e-4aa6-9b1f-32b3f4cc0c1a',
+        network: 'xhttp',
+        path: '/legacy',
+        encryption: 'none',
+        tls: true,
+        xhttpOpts: {
+          path: '/xhttp',
+        },
+      } as any,
+    ],
+  })
+
+  const error = await t.throwsAsync(() => provider.getNodeList())
+  t.true(error?.message.includes('节点配置校验失败'))
+})
