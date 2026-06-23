@@ -328,7 +328,7 @@ function nodeListMapper(nodeConfig: PossibleNodeConfigType) {
 
     case NodeTypeEnum.Snell:
       // Istanbul ignore next
-      if (Number(nodeConfig.version) >= 4) {
+      if (Number(nodeConfig.version) >= 6) {
         logger.warn(
           `Clash 尚不支持 Snell v${nodeConfig.version}，节点 ${nodeConfig.nodeName} 会被省略。`,
         )
