@@ -220,7 +220,7 @@ function nodeListMapper(
             nodeConfig.port,
             ...pickAndFormatStringList(
               nodeConfig,
-              ['psk', 'obfs', 'obfsHost', 'version', 'reuse'],
+              ['psk', 'obfs', 'obfsHost', 'version', 'reuse', 'ipVersion'],
               {
                 keyFormat: 'kebabCase',
               },
