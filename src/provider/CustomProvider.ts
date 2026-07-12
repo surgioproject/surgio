@@ -21,6 +21,7 @@ import {
   Hysteria2NodeConfigValidator,
   VlessNodeConfigValidator,
   AnyTLSNodeConfigValidator,
+  TailscaleNodeConfigValidator,
 } from '../validators'
 
 import Provider from './Provider'
@@ -141,6 +142,9 @@ export default class CustomProvider extends Provider {
 
             case NodeTypeEnum.AnyTLS:
               return AnyTLSNodeConfigValidator.parse(node)
+
+            case NodeTypeEnum.Tailscale:
+              return TailscaleNodeConfigValidator.parse(node)
 
             default:
               throw new TypeError(`无法识别的节点类型：${type}`)

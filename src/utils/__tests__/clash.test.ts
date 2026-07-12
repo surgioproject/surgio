@@ -1274,6 +1274,85 @@ test('getClashNodes', async (t) => {
   )
 })
 
+test('getClashNodes - Tailscale varies by clashCore', (t) => {
+  const tailscaleNode = {
+    type: NodeTypeEnum.Tailscale as const,
+    nodeName: 'tailnet',
+    authKey: 'tskey-auth-example',
+    hostname: 'surgio-node',
+    controlUrl: 'https://controlplane.tailscale.com',
+    exitNode: '100.64.0.1',
+    ephemeral: false,
+    stateDir: './tailscale',
+    udpRelay: false,
+    acceptRoutes: true,
+    exitNodeAllowLanAccess: false,
+    routingMark: 0,
+    underlyingProxy: 'upstream',
+    interfaceName: 'WLAN',
+    ipVersion: 'ipv4-prefer' as const,
+    tfo: true,
+  }
+
+  t.deepEqual(
+    clash.getClashNodes([
+      {
+        ...tailscaleNode,
+        clashConfig: { clashCore: 'stash' },
+      },
+    ]),
+    [
+      {
+        type: 'tailscale',
+        name: 'tailnet',
+        'auth-key': 'tskey-auth-example',
+        hostname: 'surgio-node',
+        'control-url': 'https://controlplane.tailscale.com',
+        ephemeral: false,
+        'exit-node': '100.64.0.1',
+      },
+    ],
+  )
+
+  t.deepEqual(
+    clash.getClashNodes([
+      {
+        ...tailscaleNode,
+        clashConfig: { clashCore: 'clash.meta' },
+      },
+    ]),
+    [
+      {
+        type: 'tailscale',
+        name: 'tailnet',
+        'auth-key': 'tskey-auth-example',
+        hostname: 'surgio-node',
+        'control-url': 'https://controlplane.tailscale.com',
+        'state-dir': './tailscale',
+        ephemeral: false,
+        udp: false,
+        'accept-routes': true,
+        'exit-node': '100.64.0.1',
+        'exit-node-allow-lan-access': false,
+        'dialer-proxy': 'upstream',
+        'interface-name': 'WLAN',
+        'routing-mark': 0,
+        'ip-version': 'ipv4-prefer',
+      },
+    ],
+  )
+
+  t.deepEqual(
+    clash.getClashNodes([
+      {
+        ...tailscaleNode,
+        clashConfig: { clashCore: 'clash' },
+      },
+    ]),
+    [],
+  )
+})
+
 test('getClashNodes - HTTP/HTTPS with headers', async (t) => {
   t.deepEqual(
     clash.getClashNodes([

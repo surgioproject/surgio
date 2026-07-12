@@ -155,6 +155,7 @@ Surgio 内置多个节点名国别/地区过滤器。除非是火星文，Surgio
 - socks5Filter
 - tuicFilter
 - wireguardFilter
+- tailscaleFilter
 
 ### netflixFilter
 
@@ -231,6 +232,30 @@ Proxy = select, {{ getSurgeNodeNames(nodeList) }}
 
 :::tip 提示
 [Surge - WireGuard 官方文档](https://manual.nssurge.com/policy/wireguard.html)
+:::
+
+### getSurgeTailscaleNodes
+
+> <Badge text="v3.17.0" vertical="middle" />
+
+`getSurgeTailscaleNodes(nodeList, filter?)`
+
+Surge 的 Tailscale 节点由 `[Proxy]` 中的策略声明和独立的 `[Tailscale <section-name>]` 两部分组成。模板必须同时调用 `getSurgeNodes` 和 `getSurgeTailscaleNodes`；使用过滤器时应向两个方法传入同一个过滤器。
+
+```txt
+[Proxy]
+{{ getSurgeNodes(nodeList, customFilters.tailnet) }}
+
+[Proxy Group]
+Proxy = select, {{ getSurgeNodeNames(nodeList, customFilters.tailnet) }}
+
+{{ getSurgeTailscaleNodes(nodeList, customFilters.tailnet) }}
+```
+
+Tailscale 节点用于 Surge 时必须配置 `authKey`，否则模板生成会报错。
+
+:::tip 提示
+[Surge - Tailscale 官方文档](https://manual.nssurge.com/policy/tailscale.html)
 :::
 
 ### getSurgeNodeNames

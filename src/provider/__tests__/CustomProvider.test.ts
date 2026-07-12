@@ -269,6 +269,47 @@ test('CustomProvider applies vmess compatibility rules', async (t) => {
   ])
 })
 
+test('CustomProvider accepts and validates Tailscale nodes', async (t) => {
+  const validProvider = new CustomProvider('tailscale-provider', {
+    type: SupportProviderEnum.Custom,
+    nodeList: [
+      {
+        type: NodeTypeEnum.Tailscale,
+        nodeName: 'tailnet',
+        hostname: 'surgio-node',
+        ephemeral: false,
+        routingMark: 0,
+      },
+    ],
+  })
+
+  t.deepEqual(await validProvider.getNodeList(), [
+    {
+      type: NodeTypeEnum.Tailscale,
+      nodeName: 'tailnet',
+      hostname: 'surgio-node',
+      ephemeral: false,
+      routingMark: 0,
+    },
+  ])
+
+  const invalidProvider = new CustomProvider('tailscale-provider', {
+    type: SupportProviderEnum.Custom,
+    nodeList: [
+      {
+        type: NodeTypeEnum.Tailscale,
+        nodeName: 'invalid-tailnet',
+        mtu: 1421,
+      } as any,
+    ],
+  })
+  const error = await t.throwsAsync(() => invalidProvider.getNodeList())
+
+  t.true(error?.message.includes('节点配置校验失败'))
+  t.is((error as any)?.providerName, 'tailscale-provider')
+  t.is((error as any)?.nodeIndex, 0)
+})
+
 test('CustomProvider rejects conflicting vmess ws headers', async (t) => {
   const provider = new CustomProvider('test', {
     type: SupportProviderEnum.Custom,

@@ -2,6 +2,7 @@ import { join } from 'path'
 import test from 'ava'
 
 import { loadConfig } from '../../config'
+import { NodeTypeEnum } from '../../types'
 import { Artifact } from '../artifact'
 import { getEngine } from '../template'
 
@@ -165,6 +166,17 @@ test('getRenderContext', async (t) => {
       anotherVariableWillBeRewritten: 'value',
     },
   })
+  t.is(typeof ctx.getSurgeTailscaleNodes, 'function')
+  t.is(
+    ctx.getSurgeTailscaleNodes([
+      {
+        type: NodeTypeEnum.Tailscale,
+        nodeName: 'tailnet',
+        authKey: 'tskey-auth-example',
+      },
+    ]),
+    '[Tailscale tailnet]\nauth-key=tskey-auth-example',
+  )
 })
 
 test('Artifact with underlyingProxy', async (t) => {

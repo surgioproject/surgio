@@ -38,7 +38,12 @@ export const getSurgeNodes = function (
 
       const [nodeName, nodeConfigString] = result
 
-      return [nodeName, appendCommonConfig(nodeConfigString, nodeConfig)]
+      return [
+        nodeName,
+        nodeConfig.type === NodeTypeEnum.Tailscale
+          ? nodeConfigString
+          : appendCommonConfig(nodeConfigString, nodeConfig),
+      ]
     })
     .filter(
       (item): item is NonNullable<ReturnType<typeof nodeListMapper>> =>
@@ -127,6 +132,48 @@ export const getSurgeWireguardNodes = (
     .filter((item): item is string => item !== undefined)
 
   return result.join('\n\n')
+}
+
+export const getSurgeTailscaleNodes = (
+  nodeList: ReadonlyArray<PossibleNodeConfigType>,
+  filter?: NodeFilterType | SortedNodeFilterType,
+): string => {
+  return applyFilter(nodeList, filter)
+    .map((nodeConfig) => {
+      if (nodeConfig.type !== NodeTypeEnum.Tailscale) {
+        return undefined
+      }
+
+      assertSurgeTailscaleAuthKey(nodeConfig)
+
+      const nodeConfigSection = [
+        `[Tailscale ${nodeConfig.nodeName}]`,
+        `auth-key=${nodeConfig.authKey}`,
+        ...pickAndFormatStringList(
+          nodeConfig,
+          [
+            'controlUrl',
+            'hostname',
+            'derpOnly',
+            'exitNode',
+            'idleKeepalive',
+            'preferIpv6',
+          ],
+          { keyFormat: 'kebabCase' },
+        ),
+      ]
+
+      if (nodeConfig.dnsServers) {
+        nodeConfigSection.push(`dns-server=${nodeConfig.dnsServers.join(', ')}`)
+      }
+      if (nodeConfig.mtu !== undefined) {
+        nodeConfigSection.push(`mtu=${nodeConfig.mtu}`)
+      }
+
+      return nodeConfigSection.join('\n')
+    })
+    .filter((item): item is string => item !== undefined)
+    .join('\n\n')
 }
 
 export const getSurgeNodeNames = function (
@@ -485,6 +532,24 @@ function nodeListMapper(
       ]
     }
 
+    case NodeTypeEnum.Tailscale: {
+      assertSurgeTailscaleAuthKey(nodeConfig)
+
+      const policyOptions = [
+        `section-name=${nodeConfig.nodeName}`,
+        ...pickAndFormatStringList(
+          nodeConfig,
+          ['underlyingProxy', 'testUrl', 'testTimeout', 'ecn', 'noErrorAlert'],
+          { keyFormat: 'kebabCase' },
+        ),
+      ]
+
+      return [
+        nodeConfig.nodeName,
+        `${nodeConfig.nodeName} = tailscale, ${policyOptions.join(', ')}`,
+      ]
+    }
+
     case NodeTypeEnum.Wireguard:
       logger.info(
         `请配合使用 getSurgeWireguardNodes 生成 ${nodeConfig.nodeName} 节点配置`,
@@ -506,6 +571,16 @@ function nodeListMapper(
         } 会被省略`,
       )
       return undefined
+  }
+}
+
+function assertSurgeTailscaleAuthKey(
+  nodeConfig: Extract<PossibleNodeConfigType, { type: NodeTypeEnum.Tailscale }>,
+): asserts nodeConfig is typeof nodeConfig & { authKey: string } {
+  if (!nodeConfig.authKey) {
+    throw new Error(
+      `无法为 Surge 生成 Tailscale 节点 ${nodeConfig.nodeName}：缺少必填字段 authKey`,
+    )
   }
 }
 

@@ -31,7 +31,7 @@ export const getClashNodes = function (
         return clashNode
       }
 
-      if (nodeConfig.tfo) {
+      if (nodeConfig.tfo && nodeConfig.type !== NodeTypeEnum.Tailscale) {
         clashNode.tfo = true
       }
 
@@ -603,6 +603,43 @@ function nodeListMapper(nodeConfig: PossibleNodeConfigType) {
             }
           : null),
       } as const
+
+    case NodeTypeEnum.Tailscale: {
+      if (!['stash', 'clash.meta'].includes(clashConfig.clashCore ?? 'clash')) {
+        logger.warn(
+          `Clash 不支持 Tailscale 节点，节点 ${nodeConfig.nodeName} 会被省略`,
+        )
+        return null
+      }
+
+      const sharedConfig = pickAndFormatKeys(
+        nodeConfig,
+        ['authKey', 'hostname', 'controlUrl', 'ephemeral', 'exitNode'],
+        { keyFormat: 'kebabCase' },
+      )
+
+      if (clashConfig.clashCore === 'stash') {
+        return {
+          type: 'tailscale',
+          name: nodeConfig.nodeName,
+          ...sharedConfig,
+        } as const
+      }
+
+      return {
+        type: 'tailscale',
+        name: nodeConfig.nodeName,
+        ...sharedConfig,
+        ...pickAndFormatKeys(
+          nodeConfig,
+          ['stateDir', 'acceptRoutes', 'exitNodeAllowLanAccess', 'routingMark'],
+          { keyFormat: 'kebabCase' },
+        ),
+        ...(nodeConfig.udpRelay !== undefined
+          ? { udp: nodeConfig.udpRelay }
+          : null),
+      } as const
+    }
 
     // istanbul ignore next
     default:

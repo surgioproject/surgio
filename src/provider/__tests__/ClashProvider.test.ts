@@ -1295,3 +1295,58 @@ test('parseClashConfig anytls options', (t) => {
     ],
   )
 })
+
+test('parseClashConfig tailscale options', (t) => {
+  t.deepEqual(
+    parseClashConfig([
+      {
+        type: 'tailscale',
+        name: 'stash-tailnet',
+        hostname: 'stash-node',
+        ephemeral: false,
+      },
+      {
+        type: 'tailscale',
+        name: 'mihomo-tailnet',
+        'auth-key': 'tskey-auth-example',
+        hostname: 'mihomo-node',
+        'control-url': 'https://controlplane.tailscale.com',
+        'state-dir': './tailscale',
+        ephemeral: false,
+        udp: false,
+        'accept-routes': true,
+        'exit-node': 'auto:any',
+        'exit-node-allow-lan-access': false,
+        'dialer-proxy': 'upstream',
+        'interface-name': 'WLAN',
+        'routing-mark': 0,
+        'ip-version': 'ipv4-prefer',
+      },
+    ]),
+    [
+      {
+        type: NodeTypeEnum.Tailscale,
+        nodeName: 'stash-tailnet',
+        hostname: 'stash-node',
+        ephemeral: false,
+      },
+      {
+        type: NodeTypeEnum.Tailscale,
+        nodeName: 'mihomo-tailnet',
+        authKey: 'tskey-auth-example',
+        hostname: 'mihomo-node',
+        controlUrl: 'https://controlplane.tailscale.com',
+        stateDir: './tailscale',
+        ephemeral: false,
+        udpRelay: false,
+        acceptRoutes: true,
+        exitNode: 'auto:any',
+        exitNodeAllowLanAccess: false,
+        underlyingProxy: 'upstream',
+        interfaceName: 'WLAN',
+        routingMark: 0,
+        ipVersion: 'ipv4-prefer',
+      },
+    ],
+  )
+})

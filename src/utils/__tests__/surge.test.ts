@@ -709,6 +709,81 @@ test('getSurgeWireguardNodes', (t) => {
   )
 })
 
+test('getSurgeNodes and getSurgeTailscaleNodes generate Tailscale policy', (t) => {
+  const nodeList: ReadonlyArray<PossibleNodeConfigType> = [
+    {
+      type: NodeTypeEnum.Tailscale,
+      nodeName: 'tailnet',
+      authKey: 'tskey-auth-example',
+      hostname: 'surge-mac',
+      controlUrl: 'https://controlplane.tailscale.com',
+      derpOnly: false,
+      exitNode: 'none',
+      idleKeepalive: 0,
+      preferIpv6: false,
+      dnsServers: ['100.100.100.100', '[fd7a:115c:a1e0::53]:53'],
+      mtu: 1280,
+      underlyingProxy: 'upstream',
+      testUrl: 'http://100.64.0.1/',
+      testTimeout: 0,
+      ecn: false,
+      noErrorAlert: false,
+      tfo: true,
+    },
+    {
+      type: NodeTypeEnum.Tailscale,
+      nodeName: 'disabled-tailnet',
+      authKey: 'tskey-auth-disabled',
+      enable: false,
+    },
+    {
+      type: NodeTypeEnum.Tailscale,
+      nodeName: 'filtered-tailnet',
+      authKey: 'tskey-auth-filtered',
+    },
+  ]
+  const filter = (node: PossibleNodeConfigType) =>
+    node.nodeName !== 'filtered-tailnet'
+
+  t.is(
+    surge.getSurgeNodes(nodeList, filter),
+    'tailnet = tailscale, section-name=tailnet, underlying-proxy=upstream, test-url=http://100.64.0.1/, test-timeout=0, ecn=false, no-error-alert=false',
+  )
+  t.is(
+    surge.getSurgeTailscaleNodes(nodeList, filter),
+    [
+      '[Tailscale tailnet]',
+      'auth-key=tskey-auth-example',
+      'control-url=https://controlplane.tailscale.com',
+      'hostname=surge-mac',
+      'derp-only=false',
+      'exit-node=none',
+      'idle-keepalive=0',
+      'prefer-ipv6=false',
+      'dns-server=100.100.100.100, [fd7a:115c:a1e0::53]:53',
+      'mtu=1280',
+    ].join('\n'),
+  )
+})
+
+test('Surge Tailscale generation requires authKey', (t) => {
+  const nodeList: ReadonlyArray<PossibleNodeConfigType> = [
+    {
+      type: NodeTypeEnum.Tailscale,
+      nodeName: 'interactive-tailnet',
+    },
+  ]
+
+  for (const generate of [
+    () => surge.getSurgeNodes(nodeList),
+    () => surge.getSurgeTailscaleNodes(nodeList),
+  ]) {
+    const error = t.throws(generate)
+    t.true(error?.message.includes('interactive-tailnet'))
+    t.true(error?.message.includes('authKey'))
+  }
+})
+
 test('getSurgeNodeNames', (t) => {
   t.is(
     surge.getSurgeNodeNames([

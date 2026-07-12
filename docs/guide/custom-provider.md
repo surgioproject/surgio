@@ -487,6 +487,55 @@ Vless 节点遵循和 Vmess 类似的配置规则，除了以下几个差异：
 }
 ```
 
+### Tailscale
+
+> <Badge text="Surgio v3.17.0" vertical="middle" />
+
+Tailscale 节点支持输出为 Stash、Mihomo（`clashCore: 'clash.meta'`）和 Surge。原版 Clash 不支持该节点类型。
+
+```json5
+{
+  type: 'tailscale',
+  nodeName: 'Tailnet',
+  authKey: 'tskey-auth-example', // Surge 必填；Stash 和 Mihomo 可选
+  hostname: 'surgio-node',
+  controlUrl: 'https://controlplane.tailscale.com',
+  exitNode: '100.64.0.1',
+  ephemeral: false, // Stash、Mihomo
+  stateDir: './tailscale', // Mihomo
+  udpRelay: true, // Mihomo，输出为 udp
+  acceptRoutes: true, // Mihomo
+  exitNodeAllowLanAccess: false, // Mihomo
+  routingMark: 0, // Mihomo
+  interfaceName: 'WLAN', // Mihomo
+  ipVersion: 'ipv4-prefer', // Mihomo
+  derpOnly: false, // Surge
+  idleKeepalive: 600, // Surge
+  preferIpv6: false, // Surge
+  dnsServers: ['100.100.100.100'], // Surge
+  mtu: 1280, // Surge，范围 576～1420
+  underlyingProxy: 'DIRECT', // Mihomo、Surge
+  testUrl: 'http://100.64.0.1/', // Surge，仅支持 HTTP URL
+  testTimeout: 5, // Surge
+  ecn: false, // Surge
+  noErrorAlert: false, // Surge
+}
+```
+
+| Surgio 字段 | Stash | Mihomo | Surge |
+| --- | --- | --- | --- |
+| `authKey`、`hostname`、`controlUrl`、`exitNode` | ✓ | ✓ | ✓ |
+| `ephemeral` | ✓ | ✓ | — |
+| `stateDir`、`udpRelay`、`acceptRoutes`、`exitNodeAllowLanAccess`、`routingMark` | — | ✓ | — |
+| `interfaceName`、`ipVersion` | — | ✓ | — |
+| `underlyingProxy` | — | ✓ | ✓ |
+| `derpOnly`、`idleKeepalive`、`preferIpv6`、`dnsServers`、`mtu` | — | — | ✓ |
+| `testUrl`、`testTimeout`、`ecn`、`noErrorAlert` | — | — | ✓ |
+
+Stash 和 Mihomo 可以省略 `authKey`，然后使用客户端提供的交互认证流程；Surge 不支持交互认证，因此生成 Surge 配置时缺少 `authKey` 会直接报错。
+
+Surgio 不会为 `exitNode` 注入统一默认值：Stash 省略时会尝试自动选择可用 exit node，Mihomo 省略时不会配置 exit node，Surge 省略时默认为 `none`。需要跨客户端一致行为时请显式设置该字段，并注意各客户端支持的特殊值不同。
+
 ### Tuic
 
 #### V5

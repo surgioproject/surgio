@@ -39,6 +39,7 @@ import {
   getSurfboardNodes,
   getSurgeNodeNames,
   getSurgeNodes,
+  getSurgeTailscaleNodes,
   getSurgeWireguardNodes,
   getUrl,
   getV2rayNNodes,
@@ -145,6 +146,7 @@ export class Artifact extends EventEmitter {
       getSingboxNodeNames,
       getSurgeNodes,
       getSurgeNodeNames,
+      getSurgeTailscaleNodes,
       getSurgeWireguardNodes,
       getSurfboardNodes,
       getSurfboardNodeNames,
@@ -474,6 +476,7 @@ export class Artifact extends EventEmitter {
           if (
             config?.checkHostname &&
             'hostname' in nodeConfig &&
+            typeof nodeConfig.hostname === 'string' &&
             !isIp(nodeConfig.hostname)
           ) {
             try {
@@ -497,6 +500,7 @@ export class Artifact extends EventEmitter {
           if (
             config?.resolveHostname &&
             'hostname' in nodeConfig &&
+            typeof nodeConfig.hostname === 'string' &&
             !isIp(nodeConfig.hostname)
           ) {
             /* istanbul ignore next */

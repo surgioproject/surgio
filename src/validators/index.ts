@@ -1,4 +1,5 @@
 export * from './wireguard'
+export * from './tailscale'
 export * from './shadowsocks'
 export * from './shadowsocksr'
 export * from './snell'

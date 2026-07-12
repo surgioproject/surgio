@@ -22,6 +22,22 @@ test('validateFilter', (t) => {
   t.true(filters.validateFilter(filters.useSortedKeywords(['US'])))
 })
 
+test('tailscaleFilter', (t) => {
+  t.true(
+    internalFilters.tailscaleFilter({
+      type: NodeTypeEnum.Tailscale,
+      nodeName: 'tailnet',
+    }),
+  )
+  t.false(
+    internalFilters.tailscaleFilter({
+      type: NodeTypeEnum.Shadowsocks,
+      nodeName: 'shadowsocks',
+      ...nodeConfigDefaults,
+    }),
+  )
+})
+
 test('useKeywords', (t) => {
   const fn1 = filters.useKeywords(['测试', 'test'])
   const fn2 = filters.useKeywords(['测试', 'test'], true)

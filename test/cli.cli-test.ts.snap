@@ -139,6 +139,7 @@ HTTPS = https,us.example.com,443,username,\\"password\\",sni=us.example.com,skip
 trojan node = trojan,trojan.example.com,443,\\"password\\",sni=trojan.example.com,skip-cert-verify=false
 🚀 火箭 trojan node = trojan,trojan.example.com,443,\\"password\\",sni=trojan.example.com,skip-cert-verify=false
 🎉 foobar trojan node = trojan,trojan.example.com,443,\\"password\\",sni=trojan.example.com,skip-cert-verify=false
+anytls node = AnyTLS,anytls.example.com,443,\\"password\\",idle-session-check-interval=0,idle-session-timeout=0,min-idle-session=0
 🇺🇸US 1 = Shadowsocks,us.example.com,443,chacha20-ietf-poly1305,\\"password\\",tls,gateway-carry.icloud.com
 🇺🇸US 2 = Shadowsocks,us.example.com,444,chacha20-ietf-poly1305,\\"password\\"
 🇺🇸US 3 = Shadowsocks,us.example.com,445,chacha20-ietf-poly1305,\\"password\\",tls,www.bing.com

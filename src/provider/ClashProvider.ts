@@ -29,6 +29,8 @@ import {
   VmessNodeConfig,
   Socks5NodeConfig,
   TuicNodeConfigInput,
+  TailscaleNodeConfig,
+  TailscaleNodeConfigInput,
 } from '../types'
 import {
   lowercaseHeaderKeys,
@@ -41,6 +43,7 @@ import {
   AnyTLSNodeConfigValidator,
   Hysteria2NodeConfigValidator,
   TuicNodeConfigValidator,
+  TailscaleNodeConfigValidator,
 } from '../validators'
 
 import Provider from './Provider'
@@ -65,6 +68,7 @@ type SupportConfigTypes =
   | Hysteria2NodeConfig
   | Socks5NodeConfig
   | AnyTLSNodeConfig
+  | TailscaleNodeConfig
 
 const logger = createLogger({
   service: 'surgio:ClashProvider',
@@ -747,6 +751,53 @@ export const parseClashConfig = (
           // istanbul ignore next
           if (!result.success) {
             throw new SurgioError('AnyTLS 节点配置校验失败', {
+              cause: result.error,
+            })
+          }
+
+          return result.data
+        }
+
+        case 'tailscale': {
+          const input: TailscaleNodeConfigInput = {
+            type: NodeTypeEnum.Tailscale,
+            nodeName: item.name,
+            ...('auth-key' in item ? { authKey: item['auth-key'] } : null),
+            ...('hostname' in item ? { hostname: item.hostname } : null),
+            ...('control-url' in item
+              ? { controlUrl: item['control-url'] }
+              : null),
+            ...('exit-node' in item ? { exitNode: item['exit-node'] } : null),
+            ...('ephemeral' in item ? { ephemeral: item.ephemeral } : null),
+            ...('state-dir' in item ? { stateDir: item['state-dir'] } : null),
+            ...('udp' in item ? { udpRelay: item.udp } : null),
+            ...('accept-routes' in item
+              ? { acceptRoutes: item['accept-routes'] }
+              : null),
+            ...('exit-node-allow-lan-access' in item
+              ? {
+                  exitNodeAllowLanAccess: item['exit-node-allow-lan-access'],
+                }
+              : null),
+            ...('dialer-proxy' in item
+              ? { underlyingProxy: item['dialer-proxy'] }
+              : null),
+            ...('interface-name' in item
+              ? { interfaceName: item['interface-name'] }
+              : null),
+            ...('routing-mark' in item
+              ? { routingMark: item['routing-mark'] }
+              : null),
+            ...('ip-version' in item
+              ? { ipVersion: item['ip-version'] }
+              : null),
+          }
+
+          const result = TailscaleNodeConfigValidator.safeParse(input)
+
+          // istanbul ignore next
+          if (!result.success) {
+            throw new SurgioError('Tailscale 节点配置校验失败', {
               cause: result.error,
             })
           }
