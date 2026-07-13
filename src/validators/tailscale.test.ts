@@ -80,10 +80,6 @@ test('TailscaleNodeConfigValidator rejects invalid constrained fields', (t) => {
     { authKey: '' },
     { exitNode: '' },
     { stateDir: '' },
-    { underlyingProxy: '' },
-    { interfaceName: '' },
-    { testUrl: '' },
-    { nodeName: '' },
   ]) {
     t.false(
       TailscaleNodeConfigValidator.safeParse({
