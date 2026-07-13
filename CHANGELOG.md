@@ -1,3 +1,13 @@
+# [3.17.0](https://github.com/geekdada/surgio/compare/v3.16.0...v3.17.0) (2026-07-13)
+
+
+### Features
+
+* add sing-box tailscale endpoint support ([b5ca1c1](https://github.com/geekdada/surgio/commit/b5ca1c13c2e6adcd7eb1cc8cfe5da7935c8ff1bc))
+* add tailscale node support ([86c23bc](https://github.com/geekdada/surgio/commit/86c23bc9be2da66e6c3d56ba0473501ede9914dd))
+
+
+
 # [3.16.0](https://github.com/geekdada/surgio/compare/v3.15.0...v3.16.0) (2026-05-24)
 
 
