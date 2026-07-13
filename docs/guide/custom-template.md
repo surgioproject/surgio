@@ -367,13 +367,27 @@ getClashNodeNames(nodeList, netflixFilter, [], ['默认节点']);
 - `filter` 为可选参数
 :::
 
+### getSingboxEndpoints
+
+> <Badge text="v3.17.0" vertical="middle" />
+
+`getSingboxEndpoints(nodeList, filter?)`
+
+sing-box 将 Tailscale 等节点视为 [endpoint](https://sing-box.sagernet.org/configuration/endpoint/tailscale) 而非 outbound。该方法会返回一个包含 endpoint 信息的数组，需要放入配置文件的 `endpoints` 字段中（通常配合 `extendEndpoints` 使用）。
+
+:::tip 提示
+
+- `filter` 为可选参数
+- 目前仅支持 Tailscale 节点
+:::
+
 ### getSingboxNodeNames
 
 > <Badge text="v3.7.0" vertical="middle" />
 
 `getSingboxNodeNames(nodeList, filter?)`
 
-该方法会返回一个包含有节点名称的数组，用于编写 sing-box 规则。
+该方法会返回一个包含有节点名称的数组，用于编写 sing-box 规则。返回的名称同时包含 outbound 与 endpoint（如 Tailscale）节点，方便在 `selector`、`urltest` 中引用。
 
 :::tip 提示
 

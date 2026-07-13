@@ -1089,3 +1089,69 @@ test('getSingboxNodes', async (t) => {
     [expectedNodes[0]],
   )
 })
+
+const tailscaleEndpoint = {
+  type: 'tailscale',
+  tag: 'ts',
+  auth_key: 'tskey-auth-xxxx',
+  control_url: 'https://controlplane.tailscale.com',
+  ephemeral: true,
+  hostname: 'surgio-node',
+  accept_routes: true,
+  exit_node: '100.64.0.1',
+  exit_node_allow_lan_access: false,
+  state_directory: '/var/lib/tailscale',
+  routing_mark: 1234,
+  detour: 'proxy',
+}
+
+const tailscaleNodeList: ReadonlyArray<PossibleNodeConfigType> = [
+  {
+    type: NodeTypeEnum.Tailscale,
+    nodeName: 'ts',
+    authKey: 'tskey-auth-xxxx',
+    controlUrl: 'https://controlplane.tailscale.com',
+    ephemeral: true,
+    hostname: 'surgio-node',
+    acceptRoutes: true,
+    exitNode: '100.64.0.1',
+    exitNodeAllowLanAccess: false,
+    stateDir: '/var/lib/tailscale',
+    routingMark: 1234,
+    underlyingProxy: 'proxy',
+  },
+  {
+    nodeName: 'ss',
+    type: NodeTypeEnum.Shadowsocks,
+    hostname: 'example.com',
+    port: 443,
+    method: 'chacha20-ietf-poly1305',
+    password: 'password',
+  },
+]
+
+test('getSingboxEndpoints', async (t) => {
+  t.deepEqual(singbox.getSingboxEndpoints(tailscaleNodeList), [
+    tailscaleEndpoint,
+  ])
+
+  t.deepEqual(
+    singbox.getSingboxEndpoints(
+      tailscaleNodeList,
+      (nodeConfig) => nodeConfig.nodeName === 'ts',
+    ),
+    [tailscaleEndpoint],
+  )
+})
+
+test('Tailscale is emitted as an endpoint, not an outbound', async (t) => {
+  // 不应出现在 outbounds 中
+  t.false(
+    singbox
+      .getSingboxNodes(tailscaleNodeList)
+      .some((node) => node.type === 'tailscale'),
+  )
+
+  // 但其 tag 应出现在节点名列表中，方便被 selector/urltest 引用
+  t.deepEqual(singbox.getSingboxNodeNames(tailscaleNodeList), ['ss', 'ts'])
+})

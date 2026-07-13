@@ -491,22 +491,22 @@ Vless 节点遵循和 Vmess 类似的配置规则，除了以下几个差异：
 
 > <Badge text="Surgio v3.17.0" vertical="middle" />
 
-Tailscale 节点支持输出为 Stash、Mihomo（`clashCore: 'clash.meta'`）和 Surge。原版 Clash 不支持该节点类型。
+Tailscale 节点支持输出为 Stash、Mihomo（`clashCore: 'clash.meta'`）、Surge 和 sing-box。原版 Clash 不支持该节点类型。
 
 ```json5
 {
   type: 'tailscale',
   nodeName: 'Tailnet',
-  authKey: 'tskey-auth-example', // Surge 必填；Stash 和 Mihomo 可选
+  authKey: 'tskey-auth-example', // Surge 必填；Stash、Mihomo、sing-box 可选
   hostname: 'surgio-node',
   controlUrl: 'https://controlplane.tailscale.com',
   exitNode: '100.64.0.1',
-  ephemeral: false, // Stash、Mihomo
-  stateDir: './tailscale', // Mihomo
+  ephemeral: false, // Stash、Mihomo、sing-box
+  stateDir: './tailscale', // Mihomo、sing-box
   udpRelay: true, // Mihomo，输出为 udp
-  acceptRoutes: true, // Mihomo
-  exitNodeAllowLanAccess: false, // Mihomo
-  routingMark: 0, // Mihomo
+  acceptRoutes: true, // Mihomo、sing-box
+  exitNodeAllowLanAccess: false, // Mihomo、sing-box
+  routingMark: 0, // Mihomo、sing-box
   interfaceName: 'WLAN', // Mihomo
   ipVersion: 'ipv4-prefer', // Mihomo
   derpOnly: false, // Surge
@@ -514,7 +514,7 @@ Tailscale 节点支持输出为 Stash、Mihomo（`clashCore: 'clash.meta'`）和
   preferIpv6: false, // Surge
   dnsServers: ['100.100.100.100'], // Surge
   mtu: 1280, // Surge，范围 576～1420
-  underlyingProxy: 'DIRECT', // Mihomo、Surge
+  underlyingProxy: 'DIRECT', // Mihomo、Surge、sing-box
   testUrl: 'http://100.64.0.1/', // Surge，仅支持 HTTP URL
   testTimeout: 5, // Surge
   ecn: false, // Surge
@@ -522,19 +522,39 @@ Tailscale 节点支持输出为 Stash、Mihomo（`clashCore: 'clash.meta'`）和
 }
 ```
 
-| Surgio 字段 | Stash | Mihomo | Surge |
-| --- | --- | --- | --- |
-| `authKey`、`hostname`、`controlUrl`、`exitNode` | ✓ | ✓ | ✓ |
-| `ephemeral` | ✓ | ✓ | — |
-| `stateDir`、`udpRelay`、`acceptRoutes`、`exitNodeAllowLanAccess`、`routingMark` | — | ✓ | — |
-| `interfaceName`、`ipVersion` | — | ✓ | — |
-| `underlyingProxy` | — | ✓ | ✓ |
-| `derpOnly`、`idleKeepalive`、`preferIpv6`、`dnsServers`、`mtu` | — | — | ✓ |
-| `testUrl`、`testTimeout`、`ecn`、`noErrorAlert` | — | — | ✓ |
+各字段的含义以及被哪些客户端支持如下（`✓` 表示支持，`—` 表示该客户端会忽略该字段）：
+
+| Surgio 字段 | 说明 | Stash | Mihomo | Surge | sing-box |
+| --- | --- | :---: | :---: | :---: | :---: |
+| `nodeName` | 节点名称 | ✓ | ✓ | ✓ | ✓ |
+| `authKey` | Tailscale 鉴权密钥（Auth Key），用于自动登录并将设备加入 tailnet | ✓ | ✓ | ✓（必填） | ✓ |
+| `hostname` | 节点在 tailnet 中显示的主机名，默认使用系统主机名 | ✓ | ✓ | ✓ | ✓ |
+| `controlUrl` | 自定义控制服务器地址，默认 `https://controlplane.tailscale.com`，可指向 Headscale 等自建服务 | ✓ | ✓ | ✓ | ✓ |
+| `exitNode` | 用作出口节点（exit node）的节点名称或 IP 地址 | ✓ | ✓ | ✓ | ✓ |
+| `ephemeral` | 是否以临时节点（ephemeral node）身份注册，离线后自动从 tailnet 移除 | ✓ | ✓ | — | ✓ |
+| `stateDir` | 存放 Tailscale 状态数据的目录 | — | ✓ | — | ✓ |
+| `acceptRoutes` | 是否接受其它节点通告的子网路由（subnet routes） | — | ✓ | — | ✓ |
+| `exitNodeAllowLanAccess` | 使用出口节点时，是否允许直接访问本地局域网而不经由出口节点 | — | ✓ | — | ✓ |
+| `routingMark` | 为 Tailscale 流量设置的路由标记（fwmark），仅在 Linux 下有效 | — | ✓ | — | ✓ |
+| `underlyingProxy` | 底层（前置）代理，连接将通过该代理建立（Mihomo 输出为 `dialer-proxy`，Surge 输出为 `underlying-proxy`，sing-box 输出为 `detour`） | — | ✓ | ✓ | ✓ |
+| `udpRelay` | 是否启用 UDP 转发（Mihomo 输出为 `udp`） | — | ✓ | — | — |
+| `interfaceName` | 绑定的网络接口名称 | — | ✓ | — | — |
+| `ipVersion` | IP 版本偏好（`dual`/`ipv4`/`ipv6`/`ipv4-prefer`/`ipv6-prefer`） | — | ✓ | — | — |
+| `derpOnly` | 是否强制仅通过 DERP 中继服务器连接，禁用点对点直连 | — | — | ✓ | — |
+| `idleKeepalive` | 空闲连接的保活间隔，单位为秒 | — | — | ✓ | — |
+| `preferIpv6` | 是否优先使用 IPv6 | — | — | ✓ | — |
+| `dnsServers` | 自定义 DNS 服务器列表 | — | — | ✓ | — |
+| `mtu` | 网络接口的 MTU（最大传输单元），取值范围 576～1420 | — | — | ✓ | — |
+| `testUrl` | 节点可用性测试所使用的 URL（Surge 仅支持 HTTP URL） | — | — | ✓ | — |
+| `testTimeout` | 节点测试超时时间（秒），[公共属性](#nodeconfig-公共属性) | — | — | ✓ | — |
+| `ecn` | 是否启用 ECN，[公共属性](#nodeconfig-公共属性) | — | — | ✓ | — |
+| `noErrorAlert` | 是否在连接出错时不弹出提示 | — | — | ✓ | — |
 
 Stash 和 Mihomo 可以省略 `authKey`，然后使用客户端提供的交互认证流程；Surge 不支持交互认证，因此生成 Surge 配置时缺少 `authKey` 会直接报错。
 
 Surgio 不会为 `exitNode` 注入统一默认值：Stash 省略时会尝试自动选择可用 exit node，Mihomo 省略时不会配置 exit node，Surge 省略时默认为 `none`。需要跨客户端一致行为时请显式设置该字段，并注意各客户端支持的特殊值不同。
+
+sing-box 将 Tailscale 视为 [endpoint](https://sing-box.sagernet.org/configuration/endpoint/tailscale) 而非 outbound，需要使用 `getSingboxEndpoints` 生成并放入配置的 `endpoints` 字段，详见 [sing-box 客户端文档](/guide/client/sing-box.md#tailscale-等-endpoint-节点)。
 
 ### Tuic
 
