@@ -89,7 +89,7 @@ npm run update
 ```
 
 :::warning 注意
-请确保已配置阿里云 OSS。
+请确保已配置阿里云 OSS 或 Cloudflare R2，详见[配置文件 - upload](./custom-config.md#upload)。
 :::
 
 ## 如何自定义

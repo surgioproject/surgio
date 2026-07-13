@@ -46,6 +46,14 @@ export const QuantumultXConfigValidator = z.object({
   vmessAEAD: z.oboolean(),
 })
 
+export const UploadR2ConfigValidator = z.object({
+  accountId: z.ostring(),
+  endpoint: z.ostring(),
+  bucket: z.ostring(),
+  accessKeyId: z.ostring(),
+  secretAccessKey: z.ostring(),
+})
+
 export const SurgioConfigValidator = z.object({
   artifacts: z.array(ArtifactValidator),
   remoteSnippets: z.array(RemoteSnippetValidator).optional(),
@@ -55,9 +63,10 @@ export const SurgioConfigValidator = z.object({
       prefix: z.ostring(),
       region: z.ostring(),
       endpoint: z.ostring(),
-      bucket: z.string(),
-      accessKeyId: z.string(),
-      accessKeySecret: z.string(),
+      bucket: z.ostring(),
+      accessKeyId: z.ostring(),
+      accessKeySecret: z.ostring(),
+      r2: UploadR2ConfigValidator.optional(),
     })
     .optional(),
   binPath: z
