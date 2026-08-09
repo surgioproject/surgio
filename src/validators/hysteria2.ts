@@ -11,4 +11,5 @@ export const Hysteria2NodeConfigValidator = TlsNodeConfigValidator.extend({
   uploadBandwidth: z.number().optional(),
   obfs: z.literal('salamander').optional(),
   obfsPassword: z.string().optional(),
+  udpRelay: z.oboolean(),
 })

@@ -6,6 +6,45 @@ import { NodeTypeEnum } from '../../types'
 import { ERR_INVALID_FILTER } from '../../constant'
 import { getLoonNodeNames, getLoonNodes } from '../loon'
 
+test('getLoonNodes Hysteria2', (t) => {
+  t.is(
+    getLoonNodes([
+      {
+        type: NodeTypeEnum.Hysteria2,
+        nodeName: 'hysteria2',
+        hostname: 'example.com',
+        port: 9898,
+        password: 'pa"ssword',
+        sni: 'sni.example.com',
+        skipCertVerify: true,
+        tfo: true,
+        obfs: 'salamander',
+        obfsPassword: 'obfs"password',
+        udpRelay: true,
+        downloadBandwidth: 100,
+        uploadBandwidth: 50,
+        portHopping: '5000-6000',
+        portHoppingInterval: 10,
+        alpn: ['h3'],
+      },
+    ]),
+    'hysteria2 = Hysteria2,example.com,9898,"pa\\"ssword",sni=sni.example.com,skip-cert-verify=true,fast-open=true,salamander-password="obfs\\"password",udp=true',
+  )
+
+  t.is(
+    getLoonNodes([
+      {
+        type: NodeTypeEnum.Hysteria2,
+        nodeName: 'hysteria2 minimal',
+        hostname: 'example.com',
+        port: 443,
+        password: 'password',
+      },
+    ]),
+    'hysteria2 minimal = Hysteria2,example.com,443,"password"',
+  )
+})
+
 test('getLoonNodes AnyTLS', (t) => {
   t.is(
     getLoonNodes([
@@ -370,7 +409,14 @@ test('getLoonNodeNames', (t) => {
         method: 'chacha20-ietf-poly1305',
         password: 'password',
       },
+      {
+        nodeName: 'Hysteria 2',
+        type: NodeTypeEnum.Hysteria2,
+        hostname: 'hysteria.example.com',
+        port: 443,
+        password: 'password',
+      },
     ]),
-    ['Test Node 1, Test Node 2'].join(', '),
+    ['Test Node 1, Test Node 2, Hysteria 2'].join(', '),
   )
 })

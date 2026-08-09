@@ -23,6 +23,7 @@ const {
   wireguardFilter,
   vlessFilter,
   anytlsFilter,
+  hysteria2Filter,
 } = internalFilters
 const logger = createLogger({ service: 'surgio:utils:loon' })
 
@@ -87,6 +88,39 @@ export const getLoonNodes = function (
 
           if (nodeConfig.tfo) {
             config.push('fast-open=true')
+          }
+
+          if (nodeConfig.udpRelay) {
+            config.push('udp=true')
+          }
+
+          return config.join(',')
+        }
+
+        case NodeTypeEnum.Hysteria2: {
+          const config: Array<string | number> = [
+            `${nodeConfig.nodeName} = Hysteria2`,
+            nodeConfig.hostname,
+            nodeConfig.port,
+            JSON.stringify(nodeConfig.password),
+          ]
+
+          if (nodeConfig.sni) {
+            config.push(`sni=${nodeConfig.sni}`)
+          }
+
+          if (nodeConfig.skipCertVerify) {
+            config.push('skip-cert-verify=true')
+          }
+
+          if (nodeConfig.tfo) {
+            config.push('fast-open=true')
+          }
+
+          if (nodeConfig.obfsPassword) {
+            config.push(
+              `salamander-password=${JSON.stringify(nodeConfig.obfsPassword)}`,
+            )
           }
 
           if (nodeConfig.udpRelay) {
@@ -377,6 +411,7 @@ export const getLoonNodeNames = function (
     list.filter(
       (item) =>
         anytlsFilter(item) ||
+        hysteria2Filter(item) ||
         shadowsocksFilter(item) ||
         shadowsocksrFilter(item) ||
         vmessFilter(item) ||
