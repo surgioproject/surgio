@@ -539,6 +539,7 @@ vmess custom header = vmess,server,443,chacha20-poly1305,\\"uuid\\",transport=ws
 http 1 = https,server,443,username,\\"password\\",sni=server,skip-cert-verify=false
 http 2 = http,server,443,username,\\"password\\"
 ss4 = Shadowsocks,server,443,chacha20-ietf-poly1305,\\"password\\",tls,example.com,udp=true
+hysteria2 = Hysteria2,server.com,443,\\"yourpassword\\",sni=server.com,salamander-password=\\"yourpassword\\"
 vless = VLESS,server.com,443,\\"uuid\\",transport=tcp,flow=xtls-rprx-vision,public-key=\\"666Kuy1l13XTLXaX2m9nV_s6JYRc8C3FRuAT15Bhaba\\",short-id=09561058,over-tls=true,sni=porter.server.com,udp=true
 ----
 proxyTestUrl

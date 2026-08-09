@@ -598,9 +598,11 @@ sing-box 将 Tailscale 视为 [endpoint](https://sing-box.sagernet.org/configura
 
 > <Badge text="Surgio v3.1.0" vertical="middle" />
 
-Surgio 只支持 Hysteria v2 协议。请注意，Hysteria v2 协议和 v1 协议完全不兼容。当前可以为 Clash 和 Surge 生成此节点。
+Surgio 只支持 Hysteria v2 协议。请注意，Hysteria v2 协议和 v1 协议完全不兼容。当前可以为 Clash、Surge、sing-box 和 Loon 生成此节点。
 
 Clash 需要在配置中开启 `clashConfig.enableHysteria2`。
+
+Loon 支持输出 `sni`、`skipCertVerify`、`tfo`、`obfsPassword` 和 `udpRelay`。Loon 文档未支持的带宽、端口跳跃和 `alpn` 参数不会输出。
 
 ```json5
 {
@@ -611,8 +613,12 @@ Clash 需要在配置中开启 `clashConfig.enableHysteria2`。
   password: 'password',
   downloadBandwidth: 40, // 可选，Mbps
   uploadBandwidth: 40, // 可选，Mbps
+  obfs: 'salamander', // 可选
+  obfsPassword: 'obfs-password', // 可选，Loon 输出为 salamander-password
   sni: 'sni.example.com', // 可选
   skipCertVerify: true, // 可选
+  tfo: true, // 可选，Loon 输出为 fast-open=true
+  udpRelay: true, // 可选，Loon 输出为 udp=true
 }
 ```
 
