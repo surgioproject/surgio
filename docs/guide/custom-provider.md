@@ -620,7 +620,7 @@ Clash 需要在配置中开启 `clashConfig.enableHysteria2`。
 
 > <Badge text="Surgio v3.13.0" vertical="middle" />
 
-当前支持为 Clash、Surge、sing-box 和 Quantumult X 生成 AnyTLS 节点。
+当前支持为 Clash、Surge、sing-box、Quantumult X 和 Loon 生成 AnyTLS 节点。Loon 需要 Build 945 或更高版本。
 
 ```json5
 {
@@ -630,6 +630,7 @@ Clash 需要在配置中开启 `clashConfig.enableHysteria2`。
   port: 443,
   password: 'password',
   udpRelay: false, // 可选
+  blockQuic: 'off', // 可选，Loon 输出为 block-quic=false
   sni: 'sni.example.com', // 可选
   realityOpts: {
     publicKey: 'public-key',
@@ -966,11 +967,13 @@ Surgio 不会验证名称是否有效
 - 类型：`string`
 - 默认值：`undefined`
 
-通过代理转发 QUIC 流量可能会导致性能问题。启用该选项将阻止 QUIC 流量，使客户端退回到传统的 HTTPS/TCP 协议。目前仅 Surge 支持这一特性。
+通过代理转发 QUIC 流量可能会导致性能问题。启用该选项将阻止 QUIC 流量，使客户端退回到传统的 HTTPS/TCP 协议。目前 Surge 和 Loon AnyTLS 支持这一特性。
 
 `auto`: 根据代理是否适合转发 QUIC 流量自动启用
 `on`: 强制阻止 QUIC 流量
 `off`: 不阻止 QUIC 流量
+
+Loon 仅支持布尔值，因此 `on` 和 `off` 分别输出为 `block-quic=true` 和 `block-quic=false`。`auto` 无法无损映射，Surgio 会省略该参数并输出警告。
 
 ### nodeConfig.multiplex
 

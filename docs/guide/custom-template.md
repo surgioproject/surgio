@@ -407,10 +407,10 @@ getSingboxNodeNames(nodeList, netflixFilter);
 :::tip 提示
 
 - 第二个参数可选，可传入标准的过滤器或自定义的过滤器
-- 支持输出 Shadowsocks, Shadowsocksr, HTTPS, HTTP, Vmess, Trojan 节点
+- 支持输出 Shadowsocks, Shadowsocksr, HTTPS, HTTP, Vmess, Vless, Trojan, WireGuard, AnyTLS 节点
 :::
 
-生成符合 `[Proxy]` 规范的节点信息，使用时请参考 [文档](https://www.notion.so/1-9809ce5acf524d868affee8dd5fc0a6e)。
+生成符合 `[Proxy]` 规范的节点信息，使用时请参考 [Loon 节点文档](https://nsloon.app/docs/Node/)。
 
 示例：
 
