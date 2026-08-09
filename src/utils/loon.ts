@@ -112,23 +112,17 @@ export const getLoonNodes = function (
             config.push('skip-cert-verify=true')
           }
 
-          if (nodeConfig.idleSessionCheckInterval !== undefined) {
-            config.push(
-              `idle-session-check-interval=${nodeConfig.idleSessionCheckInterval}`,
+          if (nodeConfig.udpRelay) {
+            config.push('udp=true')
+          }
+
+          if (nodeConfig.blockQuic === 'auto') {
+            logger.warn(
+              `Loon 不支持 AnyTLS 节点 ${nodeConfig.nodeName} 的 blockQuic=auto，将省略 block-quic 参数`,
             )
+          } else if (nodeConfig.blockQuic !== undefined) {
+            config.push(`block-quic=${nodeConfig.blockQuic === 'on'}`)
           }
-
-          if (nodeConfig.idleSessionTimeout !== undefined) {
-            config.push(`idle-session-timeout=${nodeConfig.idleSessionTimeout}`)
-          }
-
-          if (nodeConfig.minIdleSessions !== undefined) {
-            config.push(`min-idle-session=${nodeConfig.minIdleSessions}`)
-          }
-
-          /*if (nodeConfig.maxStreamCount !== undefined) {
-            config.push(`max-stream-count=${nodeConfig.maxStreamCount}`)
-          }*/
 
           if (nodeConfig.tfo) {
             config.push('fast-open=true')
