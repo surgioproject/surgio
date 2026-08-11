@@ -31,7 +31,10 @@ export const getClashNodes = function (
         return clashNode
       }
 
-      if (nodeConfig.tfo && nodeConfig.type !== NodeTypeEnum.Tailscale) {
+      if (
+        nodeConfig.tfo &&
+        ![NodeTypeEnum.Masque, NodeTypeEnum.Tailscale].includes(nodeConfig.type)
+      ) {
         clashNode.tfo = true
       }
 
@@ -569,6 +572,77 @@ function nodeListMapper(nodeConfig: PossibleNodeConfigType) {
           ? { 'min-idle-session': nodeConfig.minIdleSessions }
           : null),
       } as const
+
+    case NodeTypeEnum.Masque: {
+      const clashCore = clashConfig.clashCore ?? 'clash'
+
+      if (nodeConfig.authMode !== 'key-pair') {
+        logger.warn(
+          `Stash 和 Clash Meta 仅支持 key-pair 模式的 MASQUE 节点，节点 ${nodeConfig.nodeName} 会被省略`,
+        )
+        return null
+      }
+
+      if (!['stash', 'clash.meta'].includes(clashCore)) {
+        logger.warn(
+          `Clash 不支持 MASQUE 节点，节点 ${nodeConfig.nodeName} 会被省略`,
+        )
+        return null
+      }
+
+      if (clashCore === 'stash' && nodeConfig.network === 'h3-l4proxy') {
+        logger.warn(
+          `Stash 不支持 h3-l4proxy 模式的 MASQUE 节点，节点 ${nodeConfig.nodeName} 会被省略`,
+        )
+        return null
+      }
+
+      const sharedConfig = {
+        type: 'masque' as const,
+        name: nodeConfig.nodeName,
+        server: nodeConfig.hostname,
+        port: nodeConfig.port,
+        'private-key': nodeConfig.privateKey,
+        'public-key': nodeConfig.publicKey,
+        ...pickAndFormatKeys(nodeConfig, ['ip', 'ipv6', 'sni', 'mtu'], {
+          keyFormat: 'kebabCase',
+        }),
+        ...(nodeConfig.dnsServers ? { dns: nodeConfig.dnsServers } : null),
+      }
+
+      if (clashCore === 'stash') {
+        return {
+          ...sharedConfig,
+          ...(nodeConfig.network ? { network: nodeConfig.network } : null),
+          ...pickAndFormatKeys(nodeConfig, ['connectUri', 'keepalive'], {
+            keyFormat: 'kebabCase',
+          }),
+        } as const
+      }
+
+      return {
+        ...sharedConfig,
+        ...(nodeConfig.network
+          ? {
+              network:
+                nodeConfig.network === 'h3' ? 'quic' : nodeConfig.network,
+            }
+          : null),
+        ...(nodeConfig.udpRelay !== undefined
+          ? { udp: nodeConfig.udpRelay }
+          : null),
+        ...pickAndFormatKeys(
+          nodeConfig,
+          [
+            'remoteDnsResolve',
+            'congestionController',
+            'bbrProfile',
+            'handshakeTimeout',
+          ],
+          { keyFormat: 'kebabCase' },
+        ),
+      } as const
+    }
 
     case NodeTypeEnum.Wireguard:
       // istanbul ignore next

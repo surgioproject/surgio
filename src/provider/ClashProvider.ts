@@ -31,6 +31,8 @@ import {
   TuicNodeConfigInput,
   TailscaleNodeConfig,
   TailscaleNodeConfigInput,
+  MasqueNodeConfig,
+  MasqueNodeConfigInput,
 } from '../types'
 import {
   lowercaseHeaderKeys,
@@ -44,6 +46,7 @@ import {
   Hysteria2NodeConfigValidator,
   TuicNodeConfigValidator,
   TailscaleNodeConfigValidator,
+  MasqueNodeConfigValidator,
 } from '../validators'
 
 import Provider from './Provider'
@@ -69,6 +72,7 @@ type SupportConfigTypes =
   | Socks5NodeConfig
   | AnyTLSNodeConfig
   | TailscaleNodeConfig
+  | MasqueNodeConfig
 
 const logger = createLogger({
   service: 'surgio:ClashProvider',
@@ -751,6 +755,63 @@ export const parseClashConfig = (
           // istanbul ignore next
           if (!result.success) {
             throw new SurgioError('AnyTLS 节点配置校验失败', {
+              cause: result.error,
+            })
+          }
+
+          return result.data
+        }
+
+        case 'masque': {
+          const input: MasqueNodeConfigInput = {
+            type: NodeTypeEnum.Masque,
+            authMode: 'key-pair',
+            nodeName: item.name,
+            hostname: item.server,
+            port: item.port,
+            privateKey: item['private-key'],
+            publicKey: item['public-key'],
+            ...('ip' in item ? { ip: item.ip } : null),
+            ...('ipv6' in item ? { ipv6: item.ipv6 } : null),
+            ...('dns' in item
+              ? {
+                  dnsServers: Array.isArray(item.dns) ? item.dns : [item.dns],
+                }
+              : null),
+            ...('network' in item
+              ? {
+                  network: item.network === 'quic' ? 'h3' : item.network,
+                }
+              : null),
+            ...('sni' in item ? { sni: item.sni } : null),
+            ...('connect-uri' in item
+              ? { connectUri: item['connect-uri'] }
+              : null),
+            ...('mtu' in item ? { mtu: item.mtu } : null),
+            ...('keepalive' in item ? { keepalive: item.keepalive } : null),
+            ...('udp' in item ? { udpRelay: item.udp } : null),
+            ...('remote-dns-resolve' in item
+              ? { remoteDnsResolve: item['remote-dns-resolve'] }
+              : null),
+            ...('congestion-controller' in item
+              ? { congestionController: item['congestion-controller'] }
+              : null),
+            ...('bbr-profile' in item
+              ? { bbrProfile: item['bbr-profile'] }
+              : null),
+            ...('handshake-timeout' in item
+              ? { handshakeTimeout: item['handshake-timeout'] }
+              : null),
+            ...('dialer-proxy' in item
+              ? { underlyingProxy: item['dialer-proxy'] }
+              : null),
+          }
+
+          const result = MasqueNodeConfigValidator.safeParse(input)
+
+          // istanbul ignore next
+          if (!result.success) {
+            throw new SurgioError('MASQUE 节点配置校验失败', {
               cause: result.error,
             })
           }

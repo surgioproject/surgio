@@ -532,6 +532,31 @@ function nodeListMapper(
       ]
     }
 
+    case NodeTypeEnum.Masque: {
+      if (nodeConfig.authMode !== 'basic-auth') {
+        logger.warn(
+          `Surge 仅支持 basic-auth 模式的 MASQUE 节点，节点 ${nodeConfig.nodeName} 会被省略`,
+        )
+        return undefined
+      }
+
+      const result: string[] = [
+        'masque',
+        nodeConfig.hostname,
+        `${nodeConfig.port}`,
+        ...pickAndFormatStringList(nodeConfig, ['username', 'password']),
+      ]
+
+      if (nodeConfig.alpn) {
+        result.push(`alpn=${JSON.stringify(nodeConfig.alpn.join(','))}`)
+      }
+
+      return [
+        nodeConfig.nodeName,
+        [nodeConfig.nodeName, result.join(', ')].join(' = '),
+      ]
+    }
+
     case NodeTypeEnum.Tailscale: {
       assertSurgeTailscaleAuthKey(nodeConfig)
 

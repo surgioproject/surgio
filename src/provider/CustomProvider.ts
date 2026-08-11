@@ -22,6 +22,7 @@ import {
   VlessNodeConfigValidator,
   AnyTLSNodeConfigValidator,
   TailscaleNodeConfigValidator,
+  MasqueNodeConfigValidator,
 } from '../validators'
 
 import Provider from './Provider'
@@ -145,6 +146,9 @@ export default class CustomProvider extends Provider {
 
             case NodeTypeEnum.Tailscale:
               return TailscaleNodeConfigValidator.parse(node)
+
+            case NodeTypeEnum.Masque:
+              return MasqueNodeConfigValidator.parse(node)
 
             default:
               throw new TypeError(`无法识别的节点类型：${type}`)

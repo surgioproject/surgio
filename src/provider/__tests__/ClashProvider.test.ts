@@ -1296,6 +1296,81 @@ test('parseClashConfig anytls options', (t) => {
   )
 })
 
+test('parseClashConfig masque options', (t) => {
+  t.deepEqual(
+    parseClashConfig([
+      {
+        type: 'masque',
+        name: 'masque',
+        server: 'server.com',
+        port: 443,
+        'private-key': 'private-key',
+        'public-key': 'public-key',
+        ip: '172.16.0.2/32',
+        ipv6: 'fd00::2/128',
+        dns: '1.1.1.1',
+        network: 'quic',
+        sni: 'masque.example.com',
+        'connect-uri': 'https://cloudflareaccess.com',
+        mtu: 1280,
+        keepalive: 30,
+        udp: true,
+        'remote-dns-resolve': true,
+        'congestion-controller': 'bbr',
+        'bbr-profile': 'conservative',
+        'handshake-timeout': 20,
+        'dialer-proxy': 'upstream',
+      },
+      {
+        type: 'masque',
+        name: 'masque-h3-l4proxy',
+        server: 'server.com',
+        port: 443,
+        'private-key': 'private-key',
+        'public-key': 'public-key',
+        network: 'h3-l4proxy',
+        udp: false,
+      },
+    ]),
+    [
+      {
+        type: NodeTypeEnum.Masque,
+        authMode: 'key-pair',
+        nodeName: 'masque',
+        hostname: 'server.com',
+        port: 443,
+        privateKey: 'private-key',
+        publicKey: 'public-key',
+        ip: '172.16.0.2/32',
+        ipv6: 'fd00::2/128',
+        dnsServers: ['1.1.1.1'],
+        network: 'h3',
+        sni: 'masque.example.com',
+        connectUri: 'https://cloudflareaccess.com',
+        mtu: 1280,
+        keepalive: 30,
+        udpRelay: true,
+        remoteDnsResolve: true,
+        congestionController: 'bbr',
+        bbrProfile: 'conservative',
+        handshakeTimeout: 20,
+        underlyingProxy: 'upstream',
+      },
+      {
+        type: NodeTypeEnum.Masque,
+        authMode: 'key-pair',
+        nodeName: 'masque-h3-l4proxy',
+        hostname: 'server.com',
+        port: 443,
+        privateKey: 'private-key',
+        publicKey: 'public-key',
+        network: 'h3-l4proxy',
+        udpRelay: false,
+      },
+    ],
+  )
+})
+
 test('parseClashConfig tailscale options', (t) => {
   t.deepEqual(
     parseClashConfig([

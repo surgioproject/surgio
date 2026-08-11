@@ -22,6 +22,7 @@ import {
   VlessNodeConfigValidator,
   AnyTLSNodeConfigValidator,
   TailscaleNodeConfigValidator,
+  MasqueNodeConfigValidator,
 } from './validators'
 
 import type { Provider, GetNodeListParams } from './provider'
@@ -41,6 +42,7 @@ export enum NodeTypeEnum {
   Hysteria2 = 'hysteria2',
   AnyTLS = 'anytls',
   Tailscale = 'tailscale',
+  Masque = 'masque',
 }
 
 export enum SupportProviderEnum {
@@ -229,6 +231,11 @@ export type TailscaleNodeConfigInput = z.input<
 export type TailscaleNodeConfig = z.infer<typeof TailscaleNodeConfigValidator> &
   SurgioInternals
 
+export type MasqueNodeConfigInput = z.input<typeof MasqueNodeConfigValidator>
+
+export type MasqueNodeConfig = z.infer<typeof MasqueNodeConfigValidator> &
+  SurgioInternals
+
 export interface SurgioInternals {
   provider?: Provider
 }
@@ -264,6 +271,7 @@ export type PossibleNodeConfigType =
   | Hysteria2NodeConfig
   | AnyTLSNodeConfig
   | TailscaleNodeConfig
+  | MasqueNodeConfig
 
 export type PossibleProviderConfigType =
   | BlackSSLProviderConfig

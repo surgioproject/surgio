@@ -1274,6 +1274,113 @@ test('getClashNodes', async (t) => {
   )
 })
 
+test('getClashNodes - MASQUE varies by clashCore and auth mode', (t) => {
+  const keyPairNode = {
+    type: NodeTypeEnum.Masque as const,
+    authMode: 'key-pair' as const,
+    nodeName: 'WARP MASQUE',
+    hostname: 'masque.example.com',
+    port: 443,
+    privateKey: 'private-key',
+    publicKey: 'public-key',
+    ip: '172.16.0.2/32',
+    ipv6: 'fd00::2/128',
+    dnsServers: ['1.1.1.1', '2606:4700:4700::1111'] as [string, string],
+    network: 'h3' as const,
+    sni: 'consumer-masque.cloudflareclient.com',
+    connectUri: 'https://cloudflareaccess.com',
+    mtu: 1280,
+    keepalive: 30,
+    udpRelay: true,
+    remoteDnsResolve: true,
+    congestionController: 'bbr' as const,
+    bbrProfile: 'aggressive' as const,
+    handshakeTimeout: 20,
+    underlyingProxy: 'upstream',
+  }
+
+  t.deepEqual(
+    clash.getClashNodes([
+      {
+        ...keyPairNode,
+        clashConfig: { clashCore: 'stash' },
+      },
+      {
+        ...keyPairNode,
+        clashConfig: { clashCore: 'clash.meta' },
+      },
+    ]),
+    [
+      {
+        type: 'masque',
+        name: 'WARP MASQUE',
+        server: 'masque.example.com',
+        port: 443,
+        'private-key': 'private-key',
+        'public-key': 'public-key',
+        ip: '172.16.0.2/32',
+        ipv6: 'fd00::2/128',
+        sni: 'consumer-masque.cloudflareclient.com',
+        mtu: 1280,
+        dns: ['1.1.1.1', '2606:4700:4700::1111'],
+        network: 'h3',
+        'connect-uri': 'https://cloudflareaccess.com',
+        keepalive: 30,
+      },
+      {
+        type: 'masque',
+        name: 'WARP MASQUE',
+        server: 'masque.example.com',
+        port: 443,
+        'private-key': 'private-key',
+        'public-key': 'public-key',
+        ip: '172.16.0.2/32',
+        ipv6: 'fd00::2/128',
+        sni: 'consumer-masque.cloudflareclient.com',
+        mtu: 1280,
+        dns: ['1.1.1.1', '2606:4700:4700::1111'],
+        network: 'quic',
+        udp: true,
+        'remote-dns-resolve': true,
+        'congestion-controller': 'bbr',
+        'bbr-profile': 'aggressive',
+        'handshake-timeout': 20,
+        'dialer-proxy': 'upstream',
+      },
+    ],
+  )
+
+  t.deepEqual(
+    clash.getClashNodes([
+      {
+        type: NodeTypeEnum.Masque,
+        authMode: 'basic-auth',
+        nodeName: 'Surge MASQUE',
+        hostname: 'masque.example.com',
+        port: 443,
+        clashConfig: { clashCore: 'clash.meta' },
+      },
+      {
+        ...keyPairNode,
+        clashConfig: { clashCore: 'clash' },
+      },
+      {
+        type: NodeTypeEnum.Masque,
+        authMode: 'key-pair',
+        nodeName: 'H3 L4 MASQUE',
+        hostname: 'masque.example.com',
+        port: 443,
+        privateKey: 'private-key',
+        publicKey: 'public-key',
+        network: 'h3-l4proxy',
+        udpRelay: false,
+        clashConfig: { clashCore: 'stash' },
+      },
+    ]),
+    [],
+  )
+})
+
 test('getClashNodes - Tailscale varies by clashCore', (t) => {
   const tailscaleNode = {
     type: NodeTypeEnum.Tailscale as const,
