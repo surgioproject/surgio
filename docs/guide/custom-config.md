@@ -106,12 +106,16 @@ module.exports = {
 - 类型：`object`
 - 默认值：`undefined`
 
-上传阿里云 OSS 的配置。
+上传规则文件至对象存储，支持阿里云 OSS 和 Cloudflare R2：
+
+- 若配置了（或通过环境变量提供了）阿里云 OSS 的 `accessKeyId` 和 `accessKeySecret`，`surgio upload` 会优先上传至阿里云 OSS
+- 否则，若配置了（或通过环境变量提供了）Cloudflare R2 的 `accessKeyId` 和 `secretAccessKey`，会改为上传至 Cloudflare R2
+- 若两者都未配置，`surgio upload` 会报错提示缺少凭证
 
 :::warning 注意
-- 若删除了某个 Artifact，该规则文件会从 OSS 中删除
-- 每次上传都会覆盖原有的文件，所以请不要更改 OSS 中的文件
-- 请不要通过 CDN 访问 OSS 内的文件，这样会导致更新不即时且很难删除
+- 若删除了某个 Artifact，该规则文件会从对象存储中删除
+- 每次上传都会覆盖原有的文件，所以请不要更改对象存储中的文件
+- 请不要通过 CDN 访问对象存储内的文件，这样会导致更新不即时且很难删除
 :::
 
 ### upload.prefix
@@ -119,13 +123,16 @@ module.exports = {
 - 类型：`string`
 - 默认值：`/`
 
-默认保存至根目录，可以修改子目录名，以 / 结尾
+默认保存至根目录，可以修改子目录名，以 / 结尾。该配置对阿里云 OSS 和 Cloudflare R2 均生效。
+
+### 阿里云 OSS
 
 ### upload.bucket
 
 - 类型：`string`
 - 默认值：`undefined`
-- <Badge text="必须" vertical="middle" />
+
+使用阿里云 OSS 时为 <Badge text="必须" vertical="middle" />。
 
 ### upload.region
 
@@ -136,7 +143,8 @@ module.exports = {
 
 - 类型：`string`
 - 默认值：`undefined`
-- <Badge text="必须" vertical="middle" />
+
+使用阿里云 OSS 时为 <Badge text="必须" vertical="middle" />，也可以通过环境变量 `OSS_ACCESS_KEY_ID` 提供。
 
 :::warning 注意
 请不要将该字段上传至公共仓库。
@@ -146,7 +154,55 @@ module.exports = {
 
 - 类型：`string`
 - 默认值：`undefined`
-- <Badge text="必须" vertical="middle" />
+
+使用阿里云 OSS 时为 <Badge text="必须" vertical="middle" />，也可以通过环境变量 `OSS_ACCESS_KEY_SECRET` 提供。
+
+:::warning 注意
+请不要将该字段上传至公共仓库。
+:::
+
+### Cloudflare R2
+
+只要不配置（或不提供环境变量）阿里云 OSS 的 `accessKeyId`/`accessKeySecret`，并按下方配置好 Cloudflare R2 的凭证，`surgio upload` 即会上传到 Cloudflare R2。
+
+### upload.r2.accountId
+
+- 类型：`string`
+- 默认值：`undefined`
+
+Cloudflare 账户 ID，用于拼接默认的 R2 Endpoint（`https://<accountId>.r2.cloudflarestorage.com`）。也可以通过环境变量 `R2_ACCOUNT_ID` 提供。若已配置 `upload.r2.endpoint`（或环境变量 `R2_ENDPOINT`），可省略此项。
+
+### upload.r2.bucket
+
+- 类型：`string`
+- 默认值：`undefined`
+
+使用 Cloudflare R2 时为 <Badge text="必须" vertical="middle" />，也可以通过环境变量 `R2_BUCKET` 提供。
+
+### upload.r2.endpoint
+
+- 类型：`string`
+- 默认值：`https://<accountId>.r2.cloudflarestorage.com`
+
+自定义 R2 的 S3 兼容 Endpoint（例如使用了特定区域的 Jurisdiction Endpoint 时）。也可以通过环境变量 `R2_ENDPOINT` 提供。
+
+### upload.r2.accessKeyId
+
+- 类型：`string`
+- 默认值：`undefined`
+
+使用 Cloudflare R2 时为 <Badge text="必须" vertical="middle" />，也可以通过环境变量 `R2_ACCESS_KEY_ID` 提供。
+
+:::warning 注意
+请不要将该字段上传至公共仓库。
+:::
+
+### upload.r2.secretAccessKey
+
+- 类型：`string`
+- 默认值：`undefined`
+
+使用 Cloudflare R2 时为 <Badge text="必须" vertical="middle" />，也可以通过环境变量 `R2_SECRET_ACCESS_KEY` 提供。
 
 :::warning 注意
 请不要将该字段上传至公共仓库。
