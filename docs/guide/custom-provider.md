@@ -624,6 +624,8 @@ Loon 支持输出 `sni`、`skipCertVerify`、`tfo`、`obfsPassword` 和 `udpRela
 
 ### MASQUE
 
+> <Badge text="Surgio v3.19.0" vertical="middle" />
+
 MASQUE 节点必须通过 `authMode` 指明认证模式。Surge 使用标准的 HTTP Basic Auth 模式；Stash 和 Mihomo（`clashCore: 'clash.meta'`）使用 Cloudflare WARP 风格的密钥对模式。两种认证模式无法自动转换。
 
 #### Surge Basic Auth
@@ -689,6 +691,8 @@ Stash iOS/tvOS 3.6+、Stash macOS 4.4+ 和 Mihomo 1.19.20+ 支持该模式。Mih
 从 Clash 或 Stash 订阅读取 `type: masque` 节点时，Surgio 会自动设置 `authMode: 'key-pair'`，并将 Mihomo 的 `network: quic` 归一化为 `h3`。
 
 ### TrustTunnel
+
+> <Badge text="Surgio v3.19.0" vertical="middle" />
 
 TrustTunnel 使用用户名和密码认证。Surgio 使用公共类型 `trust-tunnel`；生成 Stash 或 Mihomo 配置时会输出为 `trusttunnel`。
 
