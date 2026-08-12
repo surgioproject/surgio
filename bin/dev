@@ -12,13 +12,9 @@ if (fs.existsSync(envPath)) {
   dotenv.config({ path: envPath })
 }
 
-// In dev mode -> use ts-node and dev plugins
-process.env.NODE_ENV = 'development';
-
 require('ts-node').register({ project });
 
-// In dev mode, always show stack traces
-oclif.settings.debug = true;
-
-// Start the CLI
-oclif.run().then(oclif.flush).catch(oclif.Errors.handle);
+void oclif.execute({
+  development: true,
+  dir: path.join(__dirname, '..'),
+});

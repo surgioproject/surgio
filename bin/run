@@ -11,7 +11,4 @@ if (fs.existsSync(envPath)) {
   dotenv.config({ path: envPath })
 }
 
-oclif
-  .run()
-  .then(require('@oclif/core/flush'))
-  .catch(require('@oclif/core/handle'));
+void oclif.execute({ dir: resolve(__dirname, '..') });
