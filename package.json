@@ -2,6 +2,7 @@
   "name": "surgio",
   "description": "Generating rules for Surge, Clash, Quantumult like a PRO",
   "version": "3.19.0",
+  "type": "commonjs",
   "main": "./build/index.js",
   "types": "./build/index.d.ts",
   "bin": {
@@ -35,8 +36,8 @@
   "homepage": "https://surgio.js.org",
   "scripts": {
     "dev": "pnpm run build -- --watch",
-    "test": "run-s build test:lint test:unit test:cli",
-    "test:types": "tsc --noEmit",
+    "test": "run-s build test:types test:lint test:unit test:cli",
+    "test:types": "tsc --noEmit && tsc6 --noEmit -p test/fixture/typescript-consumer/tsconfig.json && tsc --noEmit -p test/fixture/typescript-consumer/tsconfig.json",
     "test:lint": "eslint .",
     "test:unit": "ava",
     "test:cli": "mocha",
@@ -148,7 +149,8 @@
     "@types/sinon": "^10.0.20",
     "@types/urlsafe-base64": "^1.0.31",
     "@eslint/js": "^9.28.0",
-    "typescript-eslint": "^8.33.1",
+    "@typescript/native": "npm:typescript@7.0.2",
+    "typescript-eslint": "^8.67.0",
     "@vuepress/bundler-vite": "2.0.0-rc.19",
     "@vuepress/client": "2.0.0-rc.19",
     "@vuepress/core": "2.0.0-rc.19",
@@ -187,7 +189,7 @@
     "search-insights": "^2.17.3",
     "sinon": "^15.2.0",
     "ts-node": "^10.9.2",
-    "typescript": "^5.9.3",
+    "typescript": "npm:@typescript/typescript6@6.0.2",
     "vue": "^3.5.26",
     "vuepress": "2.0.0-rc.19",
     "vuepress-plugin-umami-analytics": "1.8.1"

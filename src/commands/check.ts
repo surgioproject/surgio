@@ -3,10 +3,19 @@ import path from 'path'
 import { Args, ux } from '@oclif/core'
 import fs from 'fs-extra'
 import inquirer from 'inquirer'
+import { createRequire } from 'module'
 
 import BaseCommand from '../base-command'
 import { getConfig } from '../config'
 import { getProvider } from '../provider'
+
+const requireModule = createRequire(__filename)
+
+const loadCommonJsDefault = <T>(modulePath: string): T => {
+  const loadedModule = requireModule(modulePath)
+
+  return loadedModule?.__esModule ? loadedModule.default : loadedModule
+}
 
 class CheckCommand extends BaseCommand<typeof CheckCommand> {
   static description = '查询 Provider'
@@ -56,14 +65,14 @@ class CheckCommand extends BaseCommand<typeof CheckCommand> {
     const config = getConfig()
     const filePath = path.resolve(config.providerDir, `./${providerName}.js`)
     const file: any | Error = fs.existsSync(filePath)
-      ? await import(filePath)
+      ? loadCommonJsDefault(filePath)
       : new Error('找不到该 Provider')
 
     if (file instanceof Error) {
       throw file
     }
 
-    const provider = await getProvider(providerName, file.default)
+    const provider = await getProvider(providerName, file)
     const { nodeList } = await provider.getNodeListV2()
 
     ux.action.stop()

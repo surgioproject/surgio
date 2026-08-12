@@ -1,11 +1,20 @@
 // istanbul ignore file
 import { promises as fsp } from 'fs'
+import { createRequire } from 'module'
 import { basename, join } from 'path'
 import { createLogger } from '@surgio/logger'
 
 import BaseCommand from '../base-command'
 import { getProvider, PossibleProviderType } from '../provider'
 import { formatSubscriptionUserInfo } from '../utils'
+
+const requireModule = createRequire(__filename)
+
+const loadCommonJsDefault = <T>(modulePath: string): T => {
+  const loadedModule = requireModule(modulePath)
+
+  return loadedModule?.__esModule ? loadedModule.default : loadedModule
+}
 
 const logger = createLogger({
   service: 'surgio:SubscriptionsCommand',
@@ -50,11 +59,11 @@ class SubscriptionsCommand extends BaseCommand<typeof SubscriptionsCommand> {
 
       try {
         const providerName = basename(path, '.js')
-        const module = await import(path)
+        const providerConfig = loadCommonJsDefault(path)
 
         logger.debug('read %s %s', providerName, path)
 
-        provider = await getProvider(providerName, module.default)
+        provider = await getProvider(providerName, providerConfig)
       } catch {
         logger.debug(`${path} 不是一个合法的模块`)
         return undefined

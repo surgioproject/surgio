@@ -27,6 +27,24 @@ describe('doctor command', () => {
     })
 })
 
+describe('check command', () => {
+  test
+    .stdout()
+    .command(['check', 'ss', `--project=${resolve('plain')}`])
+    .it('loads a CommonJS provider', (ctx) => {
+      expect(ctx.stdout).to.contain('nodeName')
+    })
+})
+
+describe('subscriptions command', () => {
+  test
+    .stdout()
+    .command(['subscriptions', `--project=${resolve('subscriptions')}`])
+    .it('enumerates CommonJS providers', (ctx) => {
+      expect(ctx.stdout).to.contain('custom')
+    })
+})
+
 describe('generate command', () => {
   describe('default', () => {
     test

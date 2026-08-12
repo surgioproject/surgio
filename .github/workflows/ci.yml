@@ -37,8 +37,11 @@ jobs:
       - name: test, report coverage
         run: |
           pnpm build
+          pnpm test:types
           pnpm test:lint
+          pnpm test:cli
           pnpm coverage
+          pnpm docs:build
 
       - uses: codecov/codecov-action@v1
         if: success() && matrix.os == 'ubuntu-latest'
