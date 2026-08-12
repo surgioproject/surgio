@@ -23,6 +23,7 @@ import {
   AnyTLSNodeConfigValidator,
   TailscaleNodeConfigValidator,
   MasqueNodeConfigValidator,
+  TrustTunnelNodeConfigValidator,
 } from './validators'
 
 import type { Provider, GetNodeListParams } from './provider'
@@ -43,6 +44,7 @@ export enum NodeTypeEnum {
   AnyTLS = 'anytls',
   Tailscale = 'tailscale',
   Masque = 'masque',
+  TrustTunnel = 'trust-tunnel',
 }
 
 export enum SupportProviderEnum {
@@ -236,6 +238,15 @@ export type MasqueNodeConfigInput = z.input<typeof MasqueNodeConfigValidator>
 export type MasqueNodeConfig = z.infer<typeof MasqueNodeConfigValidator> &
   SurgioInternals
 
+export type TrustTunnelNodeConfigInput = z.input<
+  typeof TrustTunnelNodeConfigValidator
+>
+
+export type TrustTunnelNodeConfig = z.infer<
+  typeof TrustTunnelNodeConfigValidator
+> &
+  SurgioInternals
+
 export interface SurgioInternals {
   provider?: Provider
 }
@@ -272,6 +283,7 @@ export type PossibleNodeConfigType =
   | AnyTLSNodeConfig
   | TailscaleNodeConfig
   | MasqueNodeConfig
+  | TrustTunnelNodeConfig
 
 export type PossibleProviderConfigType =
   | BlackSSLProviderConfig

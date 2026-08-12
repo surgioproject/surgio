@@ -1381,6 +1381,122 @@ test('getClashNodes - MASQUE varies by clashCore and auth mode', (t) => {
   )
 })
 
+test('getClashNodes - TrustTunnel varies by clashCore', (t) => {
+  const sharedNode = {
+    type: NodeTypeEnum.TrustTunnel as const,
+    nodeName: 'TrustTunnel',
+    hostname: 'trust.example.com',
+    port: 443,
+    username: 'user',
+    password: 'pass',
+    quic: true,
+    alpn: ['h3'] as [string],
+    sni: 'sni.example.com',
+    skipCertVerify: true,
+    serverCertFingerprintSha256: 'sha256',
+    underlyingProxy: 'upstream',
+  }
+
+  t.deepEqual(
+    clash.getClashNodes([
+      {
+        ...sharedNode,
+        portHopping: '443;8443;5000-6000',
+        portHoppingInterval: 30,
+        clashConfig: { clashCore: 'stash' },
+      },
+      {
+        ...sharedNode,
+        udpRelay: true,
+        clientFingerprint: 'chrome',
+        healthCheck: true,
+        nameCertVerify: 'verify.example.com',
+        congestionController: 'bbr',
+        bbrProfile: 'conservative' as const,
+        maxConnections: 8,
+        minStreams: 5,
+        clashConfig: { clashCore: 'clash.meta' },
+      },
+    ]),
+    [
+      {
+        type: 'trusttunnel',
+        name: 'TrustTunnel',
+        server: 'trust.example.com',
+        port: 443,
+        username: 'user',
+        password: 'pass',
+        quic: true,
+        sni: 'sni.example.com',
+        alpn: ['h3'],
+        'skip-cert-verify': true,
+        'server-cert-fingerprint': 'sha256',
+        'dialer-proxy': 'upstream',
+        ports: '443,8443,5000-6000',
+        'hop-interval': 30,
+      },
+      {
+        type: 'trusttunnel',
+        name: 'TrustTunnel',
+        server: 'trust.example.com',
+        port: 443,
+        username: 'user',
+        password: 'pass',
+        quic: true,
+        sni: 'sni.example.com',
+        alpn: ['h3'],
+        'skip-cert-verify': true,
+        fingerprint: 'sha256',
+        'client-fingerprint': 'chrome',
+        udp: true,
+        'health-check': true,
+        'name-cert-verify': 'verify.example.com',
+        'congestion-controller': 'bbr',
+        'bbr-profile': 'conservative',
+        'max-connections': 8,
+        'min-streams': 5,
+        'dialer-proxy': 'upstream',
+      },
+    ],
+  )
+
+  t.deepEqual(
+    clash.getClashNodes([
+      {
+        ...sharedNode,
+        clashConfig: { clashCore: 'clash' },
+      },
+      {
+        ...sharedNode,
+        shadowTls: {
+          password: 'shadow-password',
+          sni: 'shadow.example.com',
+        },
+        clashConfig: { clashCore: 'stash' },
+      },
+      {
+        ...sharedNode,
+        shadowTls: {
+          password: 'shadow-password',
+          sni: 'shadow.example.com',
+        },
+        clashConfig: { clashCore: 'clash.meta' },
+      },
+      {
+        ...sharedNode,
+        interfaceName: 'en0',
+        clashConfig: { clashCore: 'stash' },
+      },
+      {
+        ...sharedNode,
+        portHopping: '443;8443',
+        clashConfig: { clashCore: 'clash.meta' },
+      },
+    ]),
+    [],
+  )
+})
+
 test('getClashNodes - Tailscale varies by clashCore', (t) => {
   const tailscaleNode = {
     type: NodeTypeEnum.Tailscale as const,

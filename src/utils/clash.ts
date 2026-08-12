@@ -644,6 +644,113 @@ function nodeListMapper(nodeConfig: PossibleNodeConfigType) {
       } as const
     }
 
+    case NodeTypeEnum.TrustTunnel: {
+      const clashCore = clashConfig.clashCore ?? 'clash'
+
+      if (!['stash', 'clash.meta'].includes(clashCore)) {
+        logger.warn(
+          `Clash 不支持 TrustTunnel 节点，节点 ${nodeConfig.nodeName} 会被省略`,
+        )
+        return null
+      }
+
+      if (nodeConfig.shadowTls) {
+        logger.warn(
+          `Stash 和 Clash Meta 不支持 TrustTunnel 使用 Shadow TLS，节点 ${nodeConfig.nodeName} 会被省略`,
+        )
+        return null
+      }
+
+      if (
+        clashCore === 'clash.meta' &&
+        (nodeConfig.portHopping || nodeConfig.portHoppingInterval !== undefined)
+      ) {
+        logger.warn(
+          `Clash Meta 不支持 TrustTunnel 端口跳跃，节点 ${nodeConfig.nodeName} 会被省略`,
+        )
+        return null
+      }
+
+      if (
+        clashCore === 'stash' &&
+        nodeConfig.underlyingProxy &&
+        nodeConfig.interfaceName
+      ) {
+        logger.warn(
+          `Stash 的 TrustTunnel 节点不能同时配置 underlyingProxy 和 interfaceName，节点 ${nodeConfig.nodeName} 会被省略`,
+        )
+        return null
+      }
+
+      const sharedConfig = {
+        type: 'trusttunnel' as const,
+        name: nodeConfig.nodeName,
+        server: nodeConfig.hostname,
+        port: nodeConfig.port,
+        username: nodeConfig.username,
+        password: nodeConfig.password,
+        ...(nodeConfig.quic !== undefined ? { quic: nodeConfig.quic } : null),
+        ...(nodeConfig.sni ? { sni: nodeConfig.sni } : null),
+        ...(nodeConfig.alpn ? { alpn: nodeConfig.alpn } : null),
+        ...(nodeConfig.skipCertVerify !== undefined
+          ? { 'skip-cert-verify': nodeConfig.skipCertVerify }
+          : null),
+      }
+
+      if (clashCore === 'stash') {
+        return {
+          ...sharedConfig,
+          ...(nodeConfig.serverCertFingerprintSha256
+            ? {
+                'server-cert-fingerprint':
+                  nodeConfig.serverCertFingerprintSha256,
+              }
+            : null),
+          ...(nodeConfig.underlyingProxy
+            ? { 'dialer-proxy': nodeConfig.underlyingProxy }
+            : null),
+          ...(nodeConfig.interfaceName
+            ? { 'interface-name': nodeConfig.interfaceName }
+            : null),
+          ...(nodeConfig.quic && nodeConfig.portHopping
+            ? { ports: nodeConfig.portHopping.replaceAll(';', ',') }
+            : null),
+          ...(nodeConfig.quic && nodeConfig.portHoppingInterval !== undefined
+            ? { 'hop-interval': nodeConfig.portHoppingInterval }
+            : null),
+        } as const
+      }
+
+      return {
+        ...sharedConfig,
+        ...(nodeConfig.serverCertFingerprintSha256
+          ? { fingerprint: nodeConfig.serverCertFingerprintSha256 }
+          : null),
+        ...(nodeConfig.clientFingerprint
+          ? { 'client-fingerprint': nodeConfig.clientFingerprint }
+          : null),
+        ...(nodeConfig.udpRelay !== undefined
+          ? { udp: nodeConfig.udpRelay }
+          : null),
+        ...(nodeConfig.mptcp !== undefined
+          ? { mptcp: nodeConfig.mptcp }
+          : null),
+        ...pickAndFormatKeys(
+          nodeConfig,
+          [
+            'healthCheck',
+            'nameCertVerify',
+            'congestionController',
+            'bbrProfile',
+            'maxConnections',
+            'minStreams',
+            'maxStreams',
+          ],
+          { keyFormat: 'kebabCase' },
+        ),
+      } as const
+    }
+
     case NodeTypeEnum.Wireguard:
       // istanbul ignore next
       if (nodeConfig.peers.length > 1) {

@@ -85,6 +85,37 @@ test('CustomProvider supports masque key-pair nodes', async (t) => {
   ])
 })
 
+test('CustomProvider supports TrustTunnel nodes', async (t) => {
+  const provider = new CustomProvider('test', {
+    type: SupportProviderEnum.Custom,
+    nodeList: [
+      {
+        type: NodeTypeEnum.TrustTunnel,
+        nodeName: 'trust-tunnel',
+        hostname: 'trust.example.com',
+        port: 443,
+        username: 'user',
+        password: 'pass',
+        alpn: ['h2'],
+        maxStreams: 3,
+      },
+    ],
+  })
+
+  t.deepEqual(await provider.getNodeList(), [
+    {
+      type: 'trust-tunnel',
+      nodeName: 'trust-tunnel',
+      hostname: 'trust.example.com',
+      port: 443,
+      username: 'user',
+      password: 'pass',
+      alpn: ['h2'],
+      maxStreams: 3,
+    },
+  ])
+})
+
 test('CustomProvider underlying proxy', async (t) => {
   t.deepEqual(
     await new CustomProvider('test', {

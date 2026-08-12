@@ -557,6 +557,43 @@ function nodeListMapper(
       ]
     }
 
+    case NodeTypeEnum.TrustTunnel: {
+      if (nodeConfig.quic) {
+        logger.warn(
+          `Surge 不支持 QUIC 模式的 TrustTunnel 节点，节点 ${nodeConfig.nodeName} 会被省略`,
+        )
+        return undefined
+      }
+
+      const result: string[] = [
+        'trust-tunnel',
+        nodeConfig.hostname,
+        `${nodeConfig.port}`,
+        ...pickAndFormatStringList(
+          nodeConfig,
+          ['username', 'password', 'maxStreams'],
+          { keyFormat: 'kebabCase' },
+        ),
+      ]
+
+      if (nodeConfig.alpn) {
+        result.push(`alpn=${JSON.stringify(nodeConfig.alpn.join(','))}`)
+      }
+
+      if (nodeConfig.headers) {
+        result.push(
+          `headers=${Object.entries(nodeConfig.headers)
+            .map(([key, value]) => `${key}:${value}`)
+            .join(';')}`,
+        )
+      }
+
+      return [
+        nodeConfig.nodeName,
+        [nodeConfig.nodeName, result.join(', ')].join(' = '),
+      ]
+    }
+
     case NodeTypeEnum.Tailscale: {
       assertSurgeTailscaleAuthKey(nodeConfig)
 
