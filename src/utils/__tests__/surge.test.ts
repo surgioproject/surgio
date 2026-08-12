@@ -465,6 +465,99 @@ test('getSurgeNodes', async (t) => {
   )
 })
 
+test('getSurgeNodes supports masque nodes', (t) => {
+  t.is(
+    surge.getSurgeNodes([
+      {
+        type: NodeTypeEnum.Masque,
+        authMode: 'basic-auth',
+        nodeName: 'MASQUE',
+        hostname: 'masque.example.com',
+        port: 443,
+        username: 'user',
+        password: 'pass',
+        alpn: ['h3', 'h3-29'],
+        sni: 'sni.example.com',
+        skipCertVerify: true,
+        ecn: false,
+        portHopping: '1234;5000-6000',
+        portHoppingInterval: 20,
+      },
+    ]),
+    'MASQUE = masque, masque.example.com, 443, username=user, password=pass, alpn="h3,h3-29", ecn=false, skip-cert-verify=true, sni=sni.example.com, port-hopping=1234;5000-6000, port-hopping-interval=20',
+  )
+
+  t.is(
+    surge.getSurgeNodes([
+      {
+        type: NodeTypeEnum.Masque,
+        authMode: 'basic-auth',
+        nodeName: 'MASQUE without auth',
+        hostname: 'masque.example.com',
+        port: 443,
+      },
+    ]),
+    'MASQUE without auth = masque, masque.example.com, 443',
+  )
+
+  t.is(
+    surge.getSurgeNodes([
+      {
+        type: NodeTypeEnum.Masque,
+        authMode: 'key-pair',
+        nodeName: 'WARP MASQUE',
+        hostname: 'masque.example.com',
+        port: 443,
+        privateKey: 'private-key',
+        publicKey: 'public-key',
+        ip: '172.16.0.2/32',
+      },
+    ]),
+    '',
+  )
+})
+
+test('getSurgeNodes supports HTTP/2 TrustTunnel nodes', (t) => {
+  t.is(
+    surge.getSurgeNodes([
+      {
+        type: NodeTypeEnum.TrustTunnel,
+        nodeName: 'TrustTunnel',
+        hostname: 'trust.example.com',
+        port: 443,
+        username: 'user',
+        password: 'pass',
+        alpn: ['h2'],
+        headers: {
+          'X-Client': 'Surge',
+          'X-Token': 'token',
+        },
+        maxStreams: 3,
+        skipCertVerify: true,
+        sni: 'sni.example.com',
+        serverCertFingerprintSha256: 'sha256',
+        underlyingProxy: 'upstream',
+      },
+    ]),
+    'TrustTunnel = trust-tunnel, trust.example.com, 443, username=user, password=pass, max-streams=3, alpn="h2", headers=X-Client:Surge;X-Token:token, underlying-proxy=upstream, skip-cert-verify=true, sni=sni.example.com, server-cert-fingerprint-sha256=sha256',
+  )
+
+  t.is(
+    surge.getSurgeNodes([
+      {
+        type: NodeTypeEnum.TrustTunnel,
+        nodeName: 'TrustTunnel QUIC',
+        hostname: 'trust.example.com',
+        port: 443,
+        username: 'user',
+        password: 'pass',
+        quic: true,
+      },
+    ]),
+    '',
+  )
+})
+
 test('getSurgeNodes - AnyTLS', (t) => {
   t.is(
     surge.getSurgeNodes([

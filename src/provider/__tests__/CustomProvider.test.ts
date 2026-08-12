@@ -21,6 +21,121 @@ test('CustomProvider should work', async (t) => {
   t.deepEqual(await provider.getNodeList(), [])
 })
 
+test('CustomProvider supports masque nodes', async (t) => {
+  const provider = new CustomProvider('test', {
+    type: SupportProviderEnum.Custom,
+    nodeList: [
+      {
+        type: NodeTypeEnum.Masque,
+        authMode: 'basic-auth',
+        nodeName: 'masque-test',
+        hostname: 'masque.example.com',
+        port: 443,
+        username: 'user',
+        password: 'pass',
+        alpn: ['h3'],
+      },
+    ],
+  })
+
+  t.deepEqual(await provider.getNodeList(), [
+    {
+      type: 'masque',
+      authMode: 'basic-auth',
+      nodeName: 'masque-test',
+      hostname: 'masque.example.com',
+      port: 443,
+      username: 'user',
+      password: 'pass',
+      alpn: ['h3'],
+    },
+  ])
+})
+
+test('CustomProvider supports masque key-pair nodes', async (t) => {
+  const provider = new CustomProvider('test', {
+    type: SupportProviderEnum.Custom,
+    nodeList: [
+      {
+        type: NodeTypeEnum.Masque,
+        authMode: 'key-pair',
+        nodeName: 'warp-masque',
+        hostname: 'masque.example.com',
+        port: 443,
+        privateKey: 'private-key',
+        publicKey: 'public-key',
+        ip: '172.16.0.2/32',
+        network: 'h3',
+      },
+    ],
+  })
+
+  t.deepEqual(await provider.getNodeList(), [
+    {
+      type: 'masque',
+      authMode: 'key-pair',
+      nodeName: 'warp-masque',
+      hostname: 'masque.example.com',
+      port: 443,
+      privateKey: 'private-key',
+      publicKey: 'public-key',
+      ip: '172.16.0.2/32',
+      network: 'h3',
+    },
+  ])
+})
+
+test('CustomProvider rejects provider underlyingProxy with MASQUE portHopping', async (t) => {
+  const provider = new CustomProvider('test', {
+    type: SupportProviderEnum.Custom,
+    underlyingProxy: 'upstream',
+    nodeList: [
+      {
+        type: NodeTypeEnum.Masque,
+        authMode: 'basic-auth',
+        nodeName: 'masque-test',
+        hostname: 'masque.example.com',
+        port: 443,
+        portHopping: '1234;5000-6000',
+      },
+    ],
+  })
+
+  const error = await t.throwsAsync(() => provider.getNodeList())
+  t.true(error?.message.includes('节点配置校验失败'))
+})
+
+test('CustomProvider supports TrustTunnel nodes', async (t) => {
+  const provider = new CustomProvider('test', {
+    type: SupportProviderEnum.Custom,
+    nodeList: [
+      {
+        type: NodeTypeEnum.TrustTunnel,
+        nodeName: 'trust-tunnel',
+        hostname: 'trust.example.com',
+        port: 443,
+        username: 'user',
+        password: 'pass',
+        alpn: ['h2'],
+        maxStreams: 3,
+      },
+    ],
+  })
+
+  t.deepEqual(await provider.getNodeList(), [
+    {
+      type: 'trust-tunnel',
+      nodeName: 'trust-tunnel',
+      hostname: 'trust.example.com',
+      port: 443,
+      username: 'user',
+      password: 'pass',
+      alpn: ['h2'],
+      maxStreams: 3,
+    },
+  ])
+})
+
 test('CustomProvider underlying proxy', async (t) => {
   t.deepEqual(
     await new CustomProvider('test', {

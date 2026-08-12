@@ -1274,6 +1274,229 @@ test('getClashNodes', async (t) => {
   )
 })
 
+test('getClashNodes - MASQUE varies by clashCore and auth mode', (t) => {
+  const keyPairNode = {
+    type: NodeTypeEnum.Masque as const,
+    authMode: 'key-pair' as const,
+    nodeName: 'WARP MASQUE',
+    hostname: 'masque.example.com',
+    port: 443,
+    privateKey: 'private-key',
+    publicKey: 'public-key',
+    ip: '172.16.0.2/32',
+    ipv6: 'fd00::2/128',
+    dnsServers: ['1.1.1.1', '2606:4700:4700::1111'] as [string, string],
+    network: 'h3' as const,
+    sni: 'consumer-masque.cloudflareclient.com',
+    connectUri: 'https://cloudflareaccess.com',
+    mtu: 1280,
+    keepalive: 30,
+    udpRelay: true,
+    remoteDnsResolve: true,
+    congestionController: 'bbr' as const,
+    bbrProfile: 'aggressive' as const,
+    handshakeTimeout: 20,
+    underlyingProxy: 'upstream',
+  }
+
+  t.deepEqual(
+    clash.getClashNodes([
+      {
+        ...keyPairNode,
+        clashConfig: { clashCore: 'stash' },
+      },
+      {
+        ...keyPairNode,
+        clashConfig: { clashCore: 'clash.meta' },
+      },
+    ]),
+    [
+      {
+        type: 'masque',
+        name: 'WARP MASQUE',
+        server: 'masque.example.com',
+        port: 443,
+        'private-key': 'private-key',
+        'public-key': 'public-key',
+        ip: '172.16.0.2/32',
+        ipv6: 'fd00::2/128',
+        sni: 'consumer-masque.cloudflareclient.com',
+        mtu: 1280,
+        dns: ['1.1.1.1', '2606:4700:4700::1111'],
+        network: 'h3',
+        'connect-uri': 'https://cloudflareaccess.com',
+        keepalive: 30,
+      },
+      {
+        type: 'masque',
+        name: 'WARP MASQUE',
+        server: 'masque.example.com',
+        port: 443,
+        'private-key': 'private-key',
+        'public-key': 'public-key',
+        ip: '172.16.0.2/32',
+        ipv6: 'fd00::2/128',
+        sni: 'consumer-masque.cloudflareclient.com',
+        mtu: 1280,
+        dns: ['1.1.1.1', '2606:4700:4700::1111'],
+        network: 'quic',
+        udp: true,
+        'remote-dns-resolve': true,
+        'congestion-controller': 'bbr',
+        'bbr-profile': 'aggressive',
+        'handshake-timeout': 20,
+        'dialer-proxy': 'upstream',
+      },
+    ],
+  )
+
+  t.deepEqual(
+    clash.getClashNodes([
+      {
+        type: NodeTypeEnum.Masque,
+        authMode: 'basic-auth',
+        nodeName: 'Surge MASQUE',
+        hostname: 'masque.example.com',
+        port: 443,
+        clashConfig: { clashCore: 'clash.meta' },
+      },
+      {
+        ...keyPairNode,
+        clashConfig: { clashCore: 'clash' },
+      },
+      {
+        type: NodeTypeEnum.Masque,
+        authMode: 'key-pair',
+        nodeName: 'H3 L4 MASQUE',
+        hostname: 'masque.example.com',
+        port: 443,
+        privateKey: 'private-key',
+        publicKey: 'public-key',
+        network: 'h3-l4proxy',
+        udpRelay: false,
+        clashConfig: { clashCore: 'stash' },
+      },
+    ]),
+    [],
+  )
+})
+
+test('getClashNodes - TrustTunnel varies by clashCore', (t) => {
+  const sharedNode = {
+    type: NodeTypeEnum.TrustTunnel as const,
+    nodeName: 'TrustTunnel',
+    hostname: 'trust.example.com',
+    port: 443,
+    username: 'user',
+    password: 'pass',
+    quic: true,
+    alpn: ['h3'] as [string],
+    sni: 'sni.example.com',
+    skipCertVerify: true,
+    serverCertFingerprintSha256: 'sha256',
+    underlyingProxy: 'upstream',
+  }
+
+  t.deepEqual(
+    clash.getClashNodes([
+      {
+        ...sharedNode,
+        portHopping: '443;8443;5000-6000',
+        portHoppingInterval: 30,
+        clashConfig: { clashCore: 'stash' },
+      },
+      {
+        ...sharedNode,
+        udpRelay: true,
+        clientFingerprint: 'chrome',
+        healthCheck: true,
+        nameCertVerify: 'verify.example.com',
+        congestionController: 'bbr',
+        bbrProfile: 'conservative' as const,
+        maxConnections: 8,
+        minStreams: 5,
+        clashConfig: { clashCore: 'clash.meta' },
+      },
+    ]),
+    [
+      {
+        type: 'trusttunnel',
+        name: 'TrustTunnel',
+        server: 'trust.example.com',
+        port: 443,
+        username: 'user',
+        password: 'pass',
+        quic: true,
+        sni: 'sni.example.com',
+        alpn: ['h3'],
+        'skip-cert-verify': true,
+        'server-cert-fingerprint': 'sha256',
+        'dialer-proxy': 'upstream',
+        ports: '443,8443,5000-6000',
+        'hop-interval': 30,
+      },
+      {
+        type: 'trusttunnel',
+        name: 'TrustTunnel',
+        server: 'trust.example.com',
+        port: 443,
+        username: 'user',
+        password: 'pass',
+        quic: true,
+        sni: 'sni.example.com',
+        alpn: ['h3'],
+        'skip-cert-verify': true,
+        fingerprint: 'sha256',
+        'client-fingerprint': 'chrome',
+        udp: true,
+        'health-check': true,
+        'name-cert-verify': 'verify.example.com',
+        'congestion-controller': 'bbr',
+        'bbr-profile': 'conservative',
+        'max-connections': 8,
+        'min-streams': 5,
+        'dialer-proxy': 'upstream',
+      },
+    ],
+  )
+
+  t.deepEqual(
+    clash.getClashNodes([
+      {
+        ...sharedNode,
+        clashConfig: { clashCore: 'clash' },
+      },
+      {
+        ...sharedNode,
+        shadowTls: {
+          password: 'shadow-password',
+          sni: 'shadow.example.com',
+        },
+        clashConfig: { clashCore: 'stash' },
+      },
+      {
+        ...sharedNode,
+        shadowTls: {
+          password: 'shadow-password',
+          sni: 'shadow.example.com',
+        },
+        clashConfig: { clashCore: 'clash.meta' },
+      },
+      {
+        ...sharedNode,
+        interfaceName: 'en0',
+        clashConfig: { clashCore: 'stash' },
+      },
+      {
+        ...sharedNode,
+        portHopping: '443;8443',
+        clashConfig: { clashCore: 'clash.meta' },
+      },
+    ]),
+    [],
+  )
+})
+
 test('getClashNodes - Tailscale varies by clashCore', (t) => {
   const tailscaleNode = {
     type: NodeTypeEnum.Tailscale as const,

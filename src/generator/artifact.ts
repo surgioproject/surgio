@@ -57,7 +57,7 @@ import {
 import { resolveDomain } from '../utils/dns'
 import { internalFilters, validateFilter } from '../filters'
 import { prependFlag, removeFlag } from '../utils/flag'
-import { ArtifactValidator } from '../validators'
+import { ArtifactValidator, MasqueNodeConfigValidator } from '../validators'
 
 import { loadLocalSnippet } from './template'
 import { render as renderJSON } from './json-template'
@@ -380,7 +380,7 @@ export class Artifact extends EventEmitter {
     }
 
     nodeConfigList = (
-      await Bluebird.map(nodeConfigList, async (nodeConfig) => {
+      await Bluebird.map(nodeConfigList, async (nodeConfig, nodeIndex) => {
         let isValid = false
 
         if (nodeConfig.enable === false) {
@@ -472,6 +472,19 @@ export class Artifact extends EventEmitter {
           // Underlying Proxy
           if (!nodeConfig.underlyingProxy && provider.config.underlyingProxy) {
             nodeConfig.underlyingProxy = provider.config.underlyingProxy
+          }
+
+          if (nodeConfig.type === NodeTypeEnum.Masque) {
+            const result = MasqueNodeConfigValidator.safeParse(nodeConfig)
+
+            if (!result.success) {
+              throw new SurgioError('节点配置校验失败', {
+                providerName,
+                providerPath: filePath,
+                nodeIndex,
+                cause: result.error,
+              })
+            }
           }
 
           // Check whether the hostname resolves in case of blocking clash's node heurestic

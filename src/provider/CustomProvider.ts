@@ -22,6 +22,8 @@ import {
   VlessNodeConfigValidator,
   AnyTLSNodeConfigValidator,
   TailscaleNodeConfigValidator,
+  MasqueNodeConfigValidator,
+  TrustTunnelNodeConfigValidator,
 } from '../validators'
 
 import Provider from './Provider'
@@ -76,27 +78,31 @@ export default class CustomProvider extends Provider {
 
     nodeList.forEach((node, index) => {
       try {
-        const type = node.type as NodeTypeEnum
+        const nodeWithDefaults =
+          this.underlyingProxy && !node.underlyingProxy
+            ? { ...node, underlyingProxy: this.underlyingProxy }
+            : node
+        const type = nodeWithDefaults.type as NodeTypeEnum
 
         // istanbul ignore next
-        if (node['udp-relay']) {
+        if (nodeWithDefaults['udp-relay']) {
           throw new Error('udp-relay 已废弃，请使用 udpRelay')
         }
 
         // istanbul ignore next
-        if (node['obfs-host']) {
+        if (nodeWithDefaults['obfs-host']) {
           throw new Error('obfs-host 已废弃，请使用 obfsHost')
         }
 
         // istanbul ignore next
-        if (node['obfs-uri']) {
+        if (nodeWithDefaults['obfs-uri']) {
           throw new Error('obfs-uri 已废弃，请使用 obfsUri')
         }
 
         if (
           type === NodeTypeEnum.Vless &&
-          node.network === 'xhttp' &&
-          node.path
+          nodeWithDefaults.network === 'xhttp' &&
+          nodeWithDefaults.path
         ) {
           throw new Error('请将 path 移动到 xhttpOpts.path')
         }
@@ -105,55 +111,57 @@ export default class CustomProvider extends Provider {
         let parsedNode = (() => {
           switch (type) {
             case NodeTypeEnum.Shadowsocks:
-              return ShadowsocksNodeConfigValidator.parse(node)
+              return ShadowsocksNodeConfigValidator.parse(nodeWithDefaults)
 
             case NodeTypeEnum.Shadowsocksr:
-              return ShadowsocksrNodeConfigValidator.parse(node)
+              return ShadowsocksrNodeConfigValidator.parse(nodeWithDefaults)
 
             case NodeTypeEnum.Vmess:
-              return VmessNodeConfigValidator.parse(node)
+              return VmessNodeConfigValidator.parse(nodeWithDefaults)
 
             case NodeTypeEnum.Trojan:
-              return TrojanNodeConfigValidator.parse(node)
+              return TrojanNodeConfigValidator.parse(nodeWithDefaults)
 
             case NodeTypeEnum.Socks5:
-              return Socks5NodeConfigValidator.parse(node)
+              return Socks5NodeConfigValidator.parse(nodeWithDefaults)
 
             case NodeTypeEnum.HTTP:
-              return HttpNodeConfigValidator.parse(node)
+              return HttpNodeConfigValidator.parse(nodeWithDefaults)
 
             case NodeTypeEnum.HTTPS:
-              return HttpsNodeConfigValidator.parse(node)
+              return HttpsNodeConfigValidator.parse(nodeWithDefaults)
 
             case NodeTypeEnum.Snell:
-              return SnellNodeConfigValidator.parse(node)
+              return SnellNodeConfigValidator.parse(nodeWithDefaults)
 
             case NodeTypeEnum.Tuic:
-              return TuicNodeConfigValidator.parse(node)
+              return TuicNodeConfigValidator.parse(nodeWithDefaults)
 
             case NodeTypeEnum.Wireguard:
-              return WireguardNodeConfigValidator.parse(node)
+              return WireguardNodeConfigValidator.parse(nodeWithDefaults)
 
             case NodeTypeEnum.Hysteria2:
-              return Hysteria2NodeConfigValidator.parse(node)
+              return Hysteria2NodeConfigValidator.parse(nodeWithDefaults)
 
             case NodeTypeEnum.Vless:
-              return VlessNodeConfigValidator.parse(node)
+              return VlessNodeConfigValidator.parse(nodeWithDefaults)
 
             case NodeTypeEnum.AnyTLS:
-              return AnyTLSNodeConfigValidator.parse(node)
+              return AnyTLSNodeConfigValidator.parse(nodeWithDefaults)
 
             case NodeTypeEnum.Tailscale:
-              return TailscaleNodeConfigValidator.parse(node)
+              return TailscaleNodeConfigValidator.parse(nodeWithDefaults)
+
+            case NodeTypeEnum.Masque:
+              return MasqueNodeConfigValidator.parse(nodeWithDefaults)
+
+            case NodeTypeEnum.TrustTunnel:
+              return TrustTunnelNodeConfigValidator.parse(nodeWithDefaults)
 
             default:
               throw new TypeError(`无法识别的节点类型：${type}`)
           }
         })()
-
-        if (this.underlyingProxy && !parsedNode.underlyingProxy) {
-          parsedNode.underlyingProxy = this.underlyingProxy
-        }
 
         if (parsedNode.type === NodeTypeEnum.Vmess) {
           parsedNode = this.prepareVmessNodeConfig(parsedNode)

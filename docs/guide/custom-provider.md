@@ -622,6 +622,122 @@ Loon 支持输出 `sni`、`skipCertVerify`、`tfo`、`obfsPassword` 和 `udpRela
 }
 ```
 
+### MASQUE
+
+MASQUE 节点必须通过 `authMode` 指明认证模式。Surge 使用标准的 HTTP Basic Auth 模式；Stash 和 Mihomo（`clashCore: 'clash.meta'`）使用 Cloudflare WARP 风格的密钥对模式。两种认证模式无法自动转换。
+
+#### Surge Basic Auth
+
+Surge iOS 5.22.0+ 和 Surge Mac 6.9.0+ 支持该模式。
+
+```json5
+{
+  type: 'masque',
+  authMode: 'basic-auth',
+  nodeName: 'MASQUE',
+  hostname: 'masque.example.com',
+  port: 443,
+  username: 'user', // 可选；username 和 password 均省略时不发送认证信息
+  password: 'pass', // 可选
+  alpn: ['h3'], // 可选，Surge 默认使用 h3
+  sni: 'sni.example.com', // 可选
+  skipCertVerify: false, // 可选
+  ecn: true, // 可选
+  portHopping: '1234;5000-6000', // 可选
+  portHoppingInterval: 30, // 可选，单位为秒
+}
+```
+
+`portHopping` 可以单独使用，但不能与 `underlyingProxy` 同时配置。MASQUE 基于 QUIC，因此不支持 Shadow TLS。
+
+#### Stash / Mihomo Key Pair
+
+Stash iOS/tvOS 3.6+、Stash macOS 4.4+ 和 Mihomo 1.19.20+ 支持该模式。Mihomo 的 HTTP/2 和 `bbrProfile` 需要 1.19.24+，`h3-l4proxy` 和 `handshakeTimeout` 需要 1.19.28+。
+
+```json5
+{
+  type: 'masque',
+  authMode: 'key-pair',
+  nodeName: 'WARP MASQUE',
+  hostname: '162.159.198.1',
+  port: 443,
+  privateKey: 'BASE64_ENCODED_PRIVATE_KEY',
+  publicKey: 'BASE64_ENCODED_PUBLIC_KEY',
+  ip: '172.16.0.2/32', // ip 和 ipv6 至少配置一个
+  ipv6: '2606:4700:110:84c0::2/128', // 可选
+  dnsServers: ['1.1.1.1', '2606:4700:4700::1111'], // 可选
+  network: 'h3', // 可选：h3、h2、h3-l4proxy；默认 h3
+  sni: 'consumer-masque.cloudflareclient.com', // 可选
+  mtu: 1280, // 可选，范围 1280～1500
+
+  // Stash
+  connectUri: 'https://cloudflareaccess.com', // 可选
+  keepalive: 30, // 可选，单位为秒
+
+  // Mihomo
+  udpRelay: true, // 可选
+  remoteDnsResolve: true, // 可选
+  congestionController: 'bbr', // 可选
+  bbrProfile: 'standard', // 可选：standard、conservative、aggressive
+  handshakeTimeout: 30, // 可选，单位为秒
+  underlyingProxy: 'upstream', // 可选，输出为 dialer-proxy
+}
+```
+
+内部的 `network: 'h3'` 在 Stash 中输出为 `h3`，在 Mihomo 中输出为 `quic`。`h3-l4proxy` 仅 Mihomo 支持，并且不能启用 UDP。原版 Clash 不支持 MASQUE 节点。
+
+从 Clash 或 Stash 订阅读取 `type: masque` 节点时，Surgio 会自动设置 `authMode: 'key-pair'`，并将 Mihomo 的 `network: quic` 归一化为 `h3`。
+
+### TrustTunnel
+
+TrustTunnel 使用用户名和密码认证。Surgio 使用公共类型 `trust-tunnel`；生成 Stash 或 Mihomo 配置时会输出为 `trusttunnel`。
+
+```json5
+{
+  type: 'trust-tunnel',
+  nodeName: 'TrustTunnel',
+  hostname: 'trust.example.com',
+  port: 443,
+  username: 'user',
+  password: 'pass',
+  quic: false, // 可选；false 为 HTTP/2，true 为 HTTP/3
+  sni: 'sni.example.com', // 可选
+  alpn: ['h2'], // 可选；HTTP/2 必须包含 h2，QUIC 必须包含 h3
+  skipCertVerify: false, // 可选
+  serverCertFingerprintSha256: 'SHA256_HEX', // 可选
+  underlyingProxy: 'upstream', // 可选
+
+  // Surge
+  headers: { // 可选，输出为分号分隔的握手请求头
+    'X-Client': 'Surge',
+    'X-Token': 'token',
+  },
+  maxStreams: 3, // 可选；Surge 和 Mihomo
+
+  // Stash QUIC
+  portHopping: '443,8443,5000-6000', // 可选
+  portHoppingInterval: 30, // 可选，单位为秒
+
+  // Mihomo
+  udpRelay: true, // 可选
+  clientFingerprint: 'chrome', // 可选
+  healthCheck: true, // 可选
+  nameCertVerify: 'verify.example.com', // 可选
+  congestionController: 'bbr', // 可选，仅 QUIC
+  bbrProfile: 'standard', // 可选：standard、conservative、aggressive
+  maxConnections: 8, // 可选，与 maxStreams 冲突
+  minStreams: 5, // 可选，与 maxStreams 冲突
+}
+```
+
+Surge 当前仅支持 HTTP/2/TCP。`quic: true` 的节点不会被降级，而是记录警告并从 Surge 输出中省略。Shadow TLS 仅能用于 Surge HTTP/2 模式；Stash 和 Mihomo 不支持该组合。
+
+Stash 和 Mihomo 默认使用 HTTP/2，`quic: true` 时切换到 HTTP/3。Stash 使用 `server-cert-fingerprint`，并仅在 QUIC 模式输出 `ports` 与 `hop-interval`；Mihomo 使用 `fingerprint`，并支持 UDP、健康检查、拥塞控制和连接池字段。原版 Clash 不支持 TrustTunnel。
+
+从 Clash 或 Stash 订阅读取 `type: trusttunnel` 节点时，Surgio 会归一化为 `type: 'trust-tunnel'`，并将 `server-cert-fingerprint` 或 `fingerprint` 统一映射为 `serverCertFingerprintSha256`。
+
+版本要求：Surge Mac 6.4.4+；`headers` 和 `maxStreams` 需要 Surge Mac 6.6.0+，自定义 ALPN 需要 6.7.0+。Stash iOS 3.4.0+、macOS 4.2.0+。Mihomo 1.19.21+；连接池字段需要 1.19.23+，`bbrProfile` 需要 1.19.24+。Stash tvOS 和 Surge iOS 的官方文档尚未给出可靠的最低版本。
+
 ### AnyTLS
 
 > <Badge text="Surgio v3.13.0" vertical="middle" />
@@ -902,7 +1018,7 @@ module.exports = {
 
 :::warning 注意
 1. TLS 1.3 需要服务端支持；
-2. 支持 TLS 的节点类型有 Shadowsocks with v2ray-plugin(tls), Vmess(tls), HTTPS, AnyTLS；
+2. 支持 TLS 的节点类型有 Shadowsocks with v2ray-plugin(tls), Vmess(tls), HTTPS, AnyTLS, TrustTunnel；
 :::
 
 ### nodeConfig.skipCertVerify
@@ -913,7 +1029,7 @@ module.exports = {
 关闭 TLS 节点的证书检查。
 
 :::warning 注意
-1. 支持 TLS 的节点类型有 Shadowsocks with v2ray-plugin(tls), Vmess(tls), HTTPS, AnyTLS；
+1. 支持 TLS 的节点类型有 Shadowsocks with v2ray-plugin(tls), Vmess(tls), HTTPS, AnyTLS, MASQUE, TrustTunnel；
 2. 请不要随意将证书检查关闭；
 :::
 
@@ -922,7 +1038,7 @@ module.exports = {
 - 类型：`string`
 - 默认值：`undefined`
 
-开启 Tuic 和 Hysteria 协议端口跳跃，目前仅 Surge, Sing-box, Stash 和 Mihomo 支持这一特性。例如 `5000,6000-7000`。该配置支持逗号或分号分割的端口列表，以及连字符分割的端口范围，Surgio 会自动转换成 Surge 和 Stash 支持的格式。Sing-box 的 Hysteria 协议也支持端口跳跃，但仅支持 `6000-7000` 这样连字符分割的端口范围，单个端口的配置会被忽略。
+开启 Tuic、Hysteria、Surge MASQUE 和 Stash TrustTunnel QUIC 协议端口跳跃，目前仅 Surge, Sing-box, Stash 和 Mihomo 支持这一特性。例如 `5000,6000-7000`。该配置支持逗号或分号分割的端口列表，以及连字符分割的端口范围，Surgio 会自动转换成 Surge 和 Stash 支持的格式。Sing-box 的 Hysteria 协议也支持端口跳跃，但仅支持 `6000-7000` 这样连字符分割的端口范围，单个端口的配置会被忽略。MASQUE 端口跳跃仅输出到 Surge，且不能与 `underlyingProxy` 同时使用。TrustTunnel 端口跳跃仅输出到 Stash，并要求 `quic: true`。
 
 ### nodeConfig.portHoppingInterval
 
@@ -936,7 +1052,7 @@ module.exports = {
 - 类型：`string`
 - 默认值：`undefined`
 
-可以通过一个代理跳板使用另一个代理，可以无限嵌套使用。目前仅 Surge 支持该特性。
+可以通过一个代理跳板使用另一个代理，可以无限嵌套使用。TrustTunnel 可为 Surge、Stash 和 Mihomo 输出该字段。
 
 :::warning 注意
 Surgio 不会验证名称是否有效
@@ -959,7 +1075,7 @@ Surgio 不会验证名称是否有效
 - 类型：`string`
 - 默认值：`undefined`
 
-用于验证服务器证书的 SHA256 指纹。目前仅 Surge 支持该特性。
+用于验证服务器证书的 SHA256 指纹。TrustTunnel 会分别输出 Surge 的 `server-cert-fingerprint-sha256`、Stash 的 `server-cert-fingerprint` 和 Mihomo 的 `fingerprint`。
 
 ### nodeConfig.ecn
 
