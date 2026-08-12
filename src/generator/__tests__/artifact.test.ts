@@ -1,5 +1,6 @@
 import { join } from 'path'
 import test from 'ava'
+import nock from 'nock'
 
 import { loadConfig } from '../../config'
 import { NodeTypeEnum } from '../../types'
@@ -196,4 +197,28 @@ test('Artifact with underlyingProxy', async (t) => {
   await artifact.init()
 
   t.snapshot(artifact.render())
+})
+
+test('Artifact rejects provider underlyingProxy with MASQUE portHopping', async (t) => {
+  const fixture = resolve('plain')
+  const config = loadConfig(fixture)
+  const providerName = 'clash_masque_with_up'
+
+  nock('http://artifact-test')
+    .get('/masque.yaml')
+    .reply(
+      200,
+      `
+proxies: []
+`,
+    )
+
+  const artifact = new Artifact(config, {
+    name: 'new_path.conf',
+    template: 'test',
+    provider: providerName,
+  })
+
+  const error = await t.throwsAsync(() => artifact.init())
+  t.true(error?.message.includes('节点配置校验失败'))
 })

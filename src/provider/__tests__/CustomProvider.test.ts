@@ -85,6 +85,26 @@ test('CustomProvider supports masque key-pair nodes', async (t) => {
   ])
 })
 
+test('CustomProvider rejects provider underlyingProxy with MASQUE portHopping', async (t) => {
+  const provider = new CustomProvider('test', {
+    type: SupportProviderEnum.Custom,
+    underlyingProxy: 'upstream',
+    nodeList: [
+      {
+        type: NodeTypeEnum.Masque,
+        authMode: 'basic-auth',
+        nodeName: 'masque-test',
+        hostname: 'masque.example.com',
+        port: 443,
+        portHopping: '1234;5000-6000',
+      },
+    ],
+  })
+
+  const error = await t.throwsAsync(() => provider.getNodeList())
+  t.true(error?.message.includes('节点配置校验失败'))
+})
+
 test('CustomProvider supports TrustTunnel nodes', async (t) => {
   const provider = new CustomProvider('test', {
     type: SupportProviderEnum.Custom,
