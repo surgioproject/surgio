@@ -3,10 +3,19 @@ hoistPattern:
   - "!@vuepress/*"
   - "!vuepress*"
 
+overrides:
+  "@vuepress/client": 2.0.0-rc.19
+  "@vuepress/core": 2.0.0-rc.19
+  "@vuepress/markdown": 2.0.0-rc.19
+  "@vuepress/utils": 2.0.0-rc.19
+  vuepress: 2.0.0-rc.19
+
 patchedDependencies:
   vuepress-plugin-umami-analytics@1.8.1: patches/vuepress-plugin-umami-analytics@1.8.1.patch
 
 allowBuilds:
   "@parcel/watcher": true
+  esbuild: true
   unrs-resolver: true
+  vue-demi: true
   yarn: false

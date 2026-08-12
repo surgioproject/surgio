@@ -24,16 +24,13 @@ export const generateDoctorInfo = async (
   }
 
   doctorInfo.push(`surgio: ${pjson.version} (${join(__dirname, '../..')})`)
+  doctorInfo.push(`node: ${process.version} (${process.execPath})`)
 
   if (checkInfo) {
     Object.keys(checkInfo.versions).forEach((key) => {
       const version = checkInfo.versions[key].version
-      if (version) {
-        if (key === 'node') {
-          doctorInfo.push(`${key}: ${version} (${process.execPath})`)
-        } else {
-          doctorInfo.push(`${key}: ${version}`)
-        }
+      if (version && key !== 'node') {
+        doctorInfo.push(`${key}: ${version}`)
       }
     })
   }

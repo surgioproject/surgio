@@ -14,17 +14,16 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu-latest, macOS-latest]
-        node-version: [18, 20, 22]
-    env:
-      COREPACK_INTEGRITY_KEYS: 0
+        node-version: [22, 26]
 
     steps:
       - uses: actions/checkout@v3
 
-      # This has to be done before setting up Node.js,
-      # more info found in https://github.com/actions/setup-node/issues/531#issuecomment-1872977503
-      - name: Enable Corepack
-        run: corepack enable
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 11.15.1
+          run_install: false
 
       - name: Use Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v4
@@ -33,8 +32,7 @@ jobs:
           cache: 'pnpm'
 
       - name: Install dependencies
-        run: |
-          pnpm install
+        run: pnpm install --frozen-lockfile
 
       - name: test, report coverage
         run: |

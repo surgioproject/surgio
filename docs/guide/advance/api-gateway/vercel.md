@@ -74,7 +74,7 @@ $ vercel login
 ```json
 {
   "engines": {
-    "node": ">=14"
+    "node": ">=22"
   }
 }
 ```
