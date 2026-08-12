@@ -1,19 +1,18 @@
-import test from 'ava'
+import { expect, test } from 'vitest'
 
 import { NodeTypeEnum, PossibleNodeConfigType } from '../../types'
 import * as surfboard from '../surfboard'
 
-test('getSurfboardExtendHeaders', (t) => {
-  t.is(
+test('getSurfboardExtendHeaders', () => {
+  expect(
     surfboard.getSurfboardExtendHeaders({
       foo: 'bar',
       'multi words key': 'multi words value',
     }),
-    'foo:bar|multi words key:multi words value',
-  )
+  ).toBe('foo:bar|multi words key:multi words value')
 })
 
-test('getSurfboardNodes', async (t) => {
+test('getSurfboardNodes', async () => {
   const nodeList: ReadonlyArray<PossibleNodeConfigType> = [
     {
       nodeName: 'Test Node 1',
@@ -123,17 +122,18 @@ test('getSurfboardNodes', async (t) => {
     },
   ]
 
-  t.snapshot(surfboard.getSurfboardNodes(nodeList))
+  expect(surfboard.getSurfboardNodes(nodeList)).toMatchSnapshot()
 
-  t.is(
+  expect(
     surfboard.getSurfboardNodes(
       nodeList,
       (nodeConfig) => nodeConfig.nodeName === 'Test Node 1',
     ),
+  ).toBe(
     'Test Node 1 = ss, example.com, 443, encrypt-method=chacha20-ietf-poly1305, password=password, udp-relay=true, obfs=tls, obfs-host=example.com',
   )
 
-  t.is(
+  expect(
     surfboard.getSurfboardNodes([
       {
         type: NodeTypeEnum.Trojan,
@@ -143,10 +143,9 @@ test('getSurfboardNodes', async (t) => {
         password: 'password1',
       },
     ]),
-    'trojan node 1 = trojan, example.com, 443, password=password1',
-  )
+  ).toBe('trojan node 1 = trojan, example.com, 443, password=password1')
 
-  t.is(
+  expect(
     surfboard.getSurfboardNodes([
       {
         type: NodeTypeEnum.Trojan,
@@ -160,10 +159,11 @@ test('getSurfboardNodes', async (t) => {
         skipCertVerify: true,
       },
     ]),
+  ).toBe(
     'trojan node 2 = trojan, example.com, 443, password=password1, sni=sni.com, skip-cert-verify=true',
   )
 
-  t.is(
+  expect(
     surfboard.getSurfboardNodes([
       {
         type: NodeTypeEnum.Trojan,
@@ -175,10 +175,11 @@ test('getSurfboardNodes', async (t) => {
         wsPath: '/ws',
       },
     ]),
+  ).toBe(
     'trojan node 1 = trojan, example.com, 443, password=password1, ws=true, ws-path=/ws',
   )
 
-  t.is(
+  expect(
     surfboard.getSurfboardNodes([
       {
         type: NodeTypeEnum.Trojan,
@@ -195,10 +196,11 @@ test('getSurfboardNodes', async (t) => {
         },
       },
     ]),
+  ).toBe(
     'trojan node 1 = trojan, example.com, 443, password=password1, sni=sni.example.com, ws=true, ws-path=/ws, ws-headers="host:ws.example.com|test-key:test-value"',
   )
 
-  t.is(
+  expect(
     surfboard.getSurfboardNodes([
       {
         type: NodeTypeEnum.Socks5,
@@ -208,10 +210,9 @@ test('getSurfboardNodes', async (t) => {
         tls: true,
       },
     ]),
-    'socks5-tls node 1 = socks5-tls, 1.1.1.1, 443',
-  )
+  ).toBe('socks5-tls node 1 = socks5-tls, 1.1.1.1, 443')
 
-  t.is(
+  expect(
     surfboard.getSurfboardNodes([
       {
         type: NodeTypeEnum.Socks5,
@@ -222,10 +223,9 @@ test('getSurfboardNodes', async (t) => {
         tls: true,
       },
     ]),
-    'socks5-tls node 2 = socks5-tls, 1.1.1.1, 443',
-  )
+  ).toBe('socks5-tls node 2 = socks5-tls, 1.1.1.1, 443')
 
-  t.is(
+  expect(
     surfboard.getSurfboardNodes([
       {
         type: NodeTypeEnum.Socks5,
@@ -237,10 +237,11 @@ test('getSurfboardNodes', async (t) => {
         tls: true,
       },
     ]),
+  ).toBe(
     'socks5-tls node 3 = socks5-tls, 1.1.1.1, 443, username=auto, password=auto',
   )
 
-  t.is(
+  expect(
     surfboard.getSurfboardNodes([
       {
         type: NodeTypeEnum.Socks5,
@@ -255,10 +256,11 @@ test('getSurfboardNodes', async (t) => {
         tls: true,
       },
     ]),
+  ).toBe(
     'socks5-tls node 4 = socks5-tls, 1.1.1.1, 443, username=auto, password=auto, sni=example.com, skip-cert-verify=true',
   )
 
-  t.is(
+  expect(
     surfboard.getSurfboardNodes([
       {
         type: NodeTypeEnum.Socks5,
@@ -274,10 +276,11 @@ test('getSurfboardNodes', async (t) => {
         tls: true,
       },
     ]),
+  ).toBe(
     'socks5-tls node 5 = socks5-tls, 1.1.1.1, 443, username=auto, password=auto, sni=example.com, skip-cert-verify=true, client-cert=item',
   )
 
-  t.is(
+  expect(
     surfboard.getSurfboardNodes([
       {
         type: NodeTypeEnum.Socks5,
@@ -286,10 +289,9 @@ test('getSurfboardNodes', async (t) => {
         port: '80',
       },
     ]),
-    'socks node 1 = socks5, 1.1.1.1, 80',
-  )
+  ).toBe('socks node 1 = socks5, 1.1.1.1, 80')
 
-  t.is(
+  expect(
     surfboard.getSurfboardNodes([
       {
         type: NodeTypeEnum.Socks5,
@@ -299,10 +301,9 @@ test('getSurfboardNodes', async (t) => {
         tfo: true,
       },
     ]),
-    'socks node 2 = socks5, 1.1.1.1, 80',
-  )
+  ).toBe('socks node 2 = socks5, 1.1.1.1, 80')
 
-  t.is(
+  expect(
     surfboard.getSurfboardNodes([
       {
         type: NodeTypeEnum.Socks5,
@@ -314,10 +315,9 @@ test('getSurfboardNodes', async (t) => {
         tfo: true,
       },
     ]),
-    'socks node 3 = socks5, 1.1.1.1, 80, username=auto, password=auto',
-  )
+  ).toBe('socks node 3 = socks5, 1.1.1.1, 80, username=auto, password=auto')
 
-  t.is(
+  expect(
     surfboard.getSurfboardNodes([
       {
         type: NodeTypeEnum.Vmess,
@@ -339,12 +339,13 @@ test('getSurfboardNodes', async (t) => {
         },
       },
     ]),
+  ).toBe(
     '测试 6 = vmess, 1.1.1.1, 8080, username=1386f85e-657b-4d6e-9d56-78badb75e1fd, ws=true, ws-path=/, ws-headers="user-agent:Mozilla/5.0 (iPhone; CPU iPhone OS 13_5 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/13.1.1 Mobile/15E148 Safari/604.1", tls=true, skip-cert-verify=true, vmess-aead=false',
   )
 })
 
-test('getSurfboardNodeNames', (t) => {
-  t.is(
+test('getSurfboardNodeNames', () => {
+  expect(
     surfboard.getSurfboardNodeNames([
       {
         nodeName: 'Test Node 1',
@@ -375,6 +376,5 @@ test('getSurfboardNodeNames', (t) => {
         password: 'password',
       },
     ]),
-    ['Test Node 1', 'Test Node 2'].join(', '),
-  )
+  ).toBe(['Test Node 1', 'Test Node 2'].join(', '))
 })

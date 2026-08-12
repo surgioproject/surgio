@@ -1,4 +1,4 @@
-import test from 'ava'
+import { beforeEach, expect, test, vi } from 'vitest'
 import sinon from 'sinon'
 
 import { NodeTypeEnum } from '../../types'
@@ -7,12 +7,12 @@ import { getShadowsocksJSONConfig } from '../ShadowsocksJsonSubscribeProvider'
 
 const sandbox = sinon.createSandbox()
 
-test.beforeEach(() => {
+beforeEach(() => {
   sandbox.restore()
-  sandbox.stub(config, 'getConfig').returns({} as any)
+  vi.spyOn(config, 'getConfig').mockReturnValue({} as any)
 })
 
-test('getShadowsocksJSONConfig', async (t) => {
+test('getShadowsocksJSONConfig', async () => {
   const config = await getShadowsocksJSONConfig(
     'http://example.com/gui-config.json?v=1',
     { 'user-agent': 'shadowrocket' },
@@ -26,7 +26,7 @@ test('getShadowsocksJSONConfig', async (t) => {
     false,
   )
 
-  t.deepEqual(config[0], {
+  expect(config[0]).toEqual({
     nodeName: '🇺🇸US 1',
     type: NodeTypeEnum.Shadowsocks,
     hostname: 'us.example.com',
@@ -37,7 +37,7 @@ test('getShadowsocksJSONConfig', async (t) => {
     obfs: 'tls',
     obfsHost: 'gateway-carry.icloud.com',
   })
-  t.deepEqual(config[1], {
+  expect(config[1]).toEqual({
     nodeName: '🇺🇸US 2',
     type: NodeTypeEnum.Shadowsocks,
     hostname: 'us.example.com',
@@ -46,7 +46,7 @@ test('getShadowsocksJSONConfig', async (t) => {
     password: 'password',
     udpRelay: true,
   })
-  t.deepEqual(config[2], {
+  expect(config[2]).toEqual({
     nodeName: '🇺🇸US 3',
     type: NodeTypeEnum.Shadowsocks,
     hostname: 'us.example.com',
@@ -57,7 +57,7 @@ test('getShadowsocksJSONConfig', async (t) => {
     obfs: 'tls',
     obfsHost: 'www.bing.com',
   })
-  t.deepEqual(config[3], {
+  expect(config[3]).toEqual({
     nodeName: '🇺🇸US 4',
     type: NodeTypeEnum.Shadowsocks,
     hostname: 'us.example.com',
@@ -68,7 +68,7 @@ test('getShadowsocksJSONConfig', async (t) => {
     obfs: 'http',
     obfsHost: 'www.bing.com',
   })
-  t.deepEqual(config2[0], {
+  expect(config2[0]).toEqual({
     nodeName: '🇺🇸US 1',
     type: NodeTypeEnum.Shadowsocks,
     hostname: 'us.example.com',

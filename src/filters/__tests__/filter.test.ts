@@ -1,4 +1,4 @@
-import test from 'ava'
+import { expect, test } from 'vitest'
 
 import { NodeTypeEnum, VmessNodeConfig } from '../../types'
 import * as filters from '../'
@@ -11,454 +11,454 @@ const nodeConfigDefaults = {
   password: 'password',
 }
 
-test('validateFilter', (t) => {
-  t.false(filters.validateFilter(undefined))
-  t.false(filters.validateFilter(null))
-  t.true(
+test('validateFilter', () => {
+  expect(filters.validateFilter(undefined)).toBe(false)
+  expect(filters.validateFilter(null)).toBe(false)
+  expect(
     filters.validateFilter(() => {
       return true
     }),
-  )
-  t.true(filters.validateFilter(filters.useSortedKeywords(['US'])))
+  ).toBe(true)
+  expect(filters.validateFilter(filters.useSortedKeywords(['US']))).toBe(true)
 })
 
-test('tailscaleFilter', (t) => {
-  t.true(
+test('tailscaleFilter', () => {
+  expect(
     internalFilters.tailscaleFilter({
       type: NodeTypeEnum.Tailscale,
       nodeName: 'tailnet',
     }),
-  )
-  t.false(
+  ).toBe(true)
+  expect(
     internalFilters.tailscaleFilter({
       type: NodeTypeEnum.Shadowsocks,
       nodeName: 'shadowsocks',
       ...nodeConfigDefaults,
     }),
-  )
+  ).toBe(false)
 })
 
-test('useKeywords', (t) => {
+test('useKeywords', () => {
   const fn1 = filters.useKeywords(['测试', 'test'])
   const fn2 = filters.useKeywords(['测试', 'test'], true)
 
-  t.true(
+  expect(
     fn1({
       nodeName: '测试',
       type: NodeTypeEnum.Shadowsocks,
       ...nodeConfigDefaults,
     }),
-  )
-  t.false(
+  ).toBe(true)
+  expect(
     fn2({
       nodeName: '测试',
       type: NodeTypeEnum.Shadowsocks,
       ...nodeConfigDefaults,
     }),
-  )
-  t.true(
+  ).toBe(false)
+  expect(
     fn2({
       nodeName: '测试 test',
       type: NodeTypeEnum.Shadowsocks,
       ...nodeConfigDefaults,
     }),
-  )
+  ).toBe(true)
 })
 
-test('discardKeywords', (t) => {
+test('discardKeywords', () => {
   const fn1 = filters.discardKeywords(['测试', 'test'])
   const fn2 = filters.discardKeywords(['测试', 'test'], true)
 
-  t.false(
+  expect(
     fn1({
       nodeName: '测试',
       type: NodeTypeEnum.Shadowsocks,
       ...nodeConfigDefaults,
     }),
-  )
-  t.true(
+  ).toBe(false)
+  expect(
     fn1({
       nodeName: '美国',
       type: NodeTypeEnum.Shadowsocks,
       ...nodeConfigDefaults,
     }),
-  )
-  t.true(
+  ).toBe(true)
+  expect(
     fn2({
       nodeName: '测试',
       type: NodeTypeEnum.Shadowsocks,
       ...nodeConfigDefaults,
     }),
-  )
-  t.true(
+  ).toBe(true)
+  expect(
     fn2({
       nodeName: '美国测试',
       type: NodeTypeEnum.Shadowsocks,
       ...nodeConfigDefaults,
     }),
-  )
-  t.false(
+  ).toBe(true)
+  expect(
     fn2({
       nodeName: '测试 test',
       type: NodeTypeEnum.Shadowsocks,
       ...nodeConfigDefaults,
     }),
-  )
+  ).toBe(false)
 })
 
-test('useRegexp', (t) => {
+test('useRegexp', () => {
   const fn = filters.useRegexp(/(测试|test)/i)
 
-  t.true(
+  expect(
     fn({
       nodeName: '测试',
       type: NodeTypeEnum.Shadowsocks,
       ...nodeConfigDefaults,
     }),
-  )
-  t.false(
+  ).toBe(true)
+  expect(
     fn({
       nodeName: '美国',
       type: NodeTypeEnum.Shadowsocks,
       ...nodeConfigDefaults,
     }),
-  )
+  ).toBe(false)
 })
 
-test('useGlob', (t) => {
+test('useGlob', () => {
   let fn = filters.useGlob('测试*')
 
-  t.true(
+  expect(
     fn({
       nodeName: '测试',
       type: NodeTypeEnum.Shadowsocks,
       ...nodeConfigDefaults,
     }),
-  )
-  t.true(
+  ).toBe(true)
+  expect(
     fn({
       nodeName: '测试节点',
       type: NodeTypeEnum.Shadowsocks,
       ...nodeConfigDefaults,
     }),
-  )
-  t.false(
+  ).toBe(true)
+  expect(
     fn({
       nodeName: '美国',
       type: NodeTypeEnum.Shadowsocks,
       ...nodeConfigDefaults,
     }),
-  )
+  ).toBe(false)
 
   fn = filters.useGlob('(汉堡|薯条)')
 
-  t.true(
+  expect(
     fn({
       nodeName: '两个汉堡',
       type: NodeTypeEnum.Shadowsocks,
       ...nodeConfigDefaults,
     }),
-  )
-  t.true(
+  ).toBe(true)
+  expect(
     fn({
       nodeName: '三个薯条',
       type: NodeTypeEnum.Shadowsocks,
       ...nodeConfigDefaults,
     }),
-  )
+  ).toBe(true)
 })
 
-test('discardGlob', (t) => {
+test('discardGlob', () => {
   let fn = filters.discardGlob('测试*')
 
-  t.false(
+  expect(
     fn({
       nodeName: '测试',
       type: NodeTypeEnum.Shadowsocks,
       ...nodeConfigDefaults,
     }),
-  )
-  t.false(
+  ).toBe(false)
+  expect(
     fn({
       nodeName: '测试节点',
       type: NodeTypeEnum.Shadowsocks,
       ...nodeConfigDefaults,
     }),
-  )
-  t.true(
+  ).toBe(false)
+  expect(
     fn({
       nodeName: '美国',
       type: NodeTypeEnum.Shadowsocks,
       ...nodeConfigDefaults,
     }),
-  )
+  ).toBe(true)
 
   fn = filters.discardGlob('(汉堡|薯条)')
 
-  t.false(
+  expect(
     fn({
       nodeName: '两个汉堡',
       type: NodeTypeEnum.Shadowsocks,
       ...nodeConfigDefaults,
     }),
-  )
-  t.true(
+  ).toBe(false)
+  expect(
     fn({
       nodeName: '无限堡薯',
       type: NodeTypeEnum.Shadowsocks,
       ...nodeConfigDefaults,
     }),
-  )
+  ).toBe(true)
 })
 
-test('netflixFilter', (t) => {
-  t.true(
+test('netflixFilter', () => {
+  expect(
     internalFilters.netflixFilter({
       nodeName: 'hkbn 1',
       type: NodeTypeEnum.Shadowsocks,
       ...nodeConfigDefaults,
     }),
-  )
-  t.true(
+  ).toBe(true)
+  expect(
     internalFilters.netflixFilter({
       nodeName: 'HKBN 1',
       type: NodeTypeEnum.Shadowsocks,
       ...nodeConfigDefaults,
     }),
-  )
-  t.false(
+  ).toBe(true)
+  expect(
     internalFilters.netflixFilter({
       nodeName: 'HK',
       type: NodeTypeEnum.Shadowsocks,
       ...nodeConfigDefaults,
     }),
-  )
-  t.true(
+  ).toBe(false)
+  expect(
     internalFilters.netflixFilter({
       nodeName: 'HK NF',
       type: NodeTypeEnum.Shadowsocks,
       ...nodeConfigDefaults,
     }),
-  )
-  t.true(
+  ).toBe(true)
+  expect(
     internalFilters.netflixFilter({
       nodeName: 'HK Netflix',
       type: NodeTypeEnum.Shadowsocks,
       ...nodeConfigDefaults,
     }),
-  )
+  ).toBe(true)
 })
 
-test('youtubePremiumFilter', (t) => {
-  t.true(
+test('youtubePremiumFilter', () => {
+  expect(
     internalFilters.youtubePremiumFilter({
       nodeName: '🇺🇸 美国',
       type: NodeTypeEnum.Shadowsocks,
       ...nodeConfigDefaults,
     }),
-  )
-  t.true(
+  ).toBe(true)
+  expect(
     internalFilters.youtubePremiumFilter({
       nodeName: '韩国',
       type: NodeTypeEnum.Shadowsocks,
       ...nodeConfigDefaults,
     }),
-  )
-  t.true(
+  ).toBe(true)
+  expect(
     internalFilters.youtubePremiumFilter({
       nodeName: 'HK',
       type: NodeTypeEnum.Shadowsocks,
       ...nodeConfigDefaults,
     }),
-  )
+  ).toBe(true)
 })
 
-test('usFilter', (t) => {
-  t.true(
+test('usFilter', () => {
+  expect(
     internalFilters.usFilter({
       nodeName: '🇺🇸 美国',
       type: NodeTypeEnum.Shadowsocks,
       ...nodeConfigDefaults,
     }),
-  )
-  t.false(
+  ).toBe(true)
+  expect(
     internalFilters.usFilter({
       nodeName: 'HK',
       type: NodeTypeEnum.Shadowsocks,
       ...nodeConfigDefaults,
     }),
-  )
+  ).toBe(false)
 })
 
-test('hkFilter', (t) => {
-  t.true(
+test('hkFilter', () => {
+  expect(
     internalFilters.hkFilter({
       nodeName: '🇭🇰',
       type: NodeTypeEnum.Shadowsocks,
       ...nodeConfigDefaults,
     }),
-  )
-  t.true(
+  ).toBe(true)
+  expect(
     internalFilters.hkFilter({
       nodeName: 'HK',
       type: NodeTypeEnum.Shadowsocks,
       ...nodeConfigDefaults,
     }),
-  )
-  t.false(
+  ).toBe(true)
+  expect(
     internalFilters.hkFilter({
       nodeName: 'US 1',
       type: NodeTypeEnum.Shadowsocks,
       ...nodeConfigDefaults,
     }),
-  )
+  ).toBe(false)
 })
 
-test('japanFilter', (t) => {
-  t.true(
+test('japanFilter', () => {
+  expect(
     internalFilters.japanFilter({
       nodeName: '🇯🇵',
       type: NodeTypeEnum.Shadowsocks,
       ...nodeConfigDefaults,
     }),
-  )
-  t.true(
+  ).toBe(true)
+  expect(
     internalFilters.japanFilter({
       nodeName: 'JP',
       type: NodeTypeEnum.Shadowsocks,
       ...nodeConfigDefaults,
     }),
-  )
-  t.false(
+  ).toBe(true)
+  expect(
     internalFilters.japanFilter({
       nodeName: 'US 1',
       type: NodeTypeEnum.Shadowsocks,
       ...nodeConfigDefaults,
     }),
-  )
+  ).toBe(false)
 })
 
-test('koreaFilter', (t) => {
-  t.true(
+test('koreaFilter', () => {
+  expect(
     internalFilters.koreaFilter({
       nodeName: '🇰🇷',
       type: NodeTypeEnum.Shadowsocks,
       ...nodeConfigDefaults,
     }),
-  )
-  t.true(
+  ).toBe(true)
+  expect(
     internalFilters.koreaFilter({
       nodeName: '韩国',
       type: NodeTypeEnum.Shadowsocks,
       ...nodeConfigDefaults,
     }),
-  )
-  t.false(
+  ).toBe(true)
+  expect(
     internalFilters.koreaFilter({
       nodeName: 'US 1',
       type: NodeTypeEnum.Shadowsocks,
       ...nodeConfigDefaults,
     }),
-  )
+  ).toBe(false)
 })
 
-test('singaporeFilter', (t) => {
-  t.true(
+test('singaporeFilter', () => {
+  expect(
     internalFilters.singaporeFilter({
       nodeName: '🇸🇬',
       type: NodeTypeEnum.Shadowsocks,
       ...nodeConfigDefaults,
     }),
-  )
-  t.true(
+  ).toBe(true)
+  expect(
     internalFilters.singaporeFilter({
       nodeName: '新加坡',
       type: NodeTypeEnum.Shadowsocks,
       ...nodeConfigDefaults,
     }),
-  )
-  t.false(
+  ).toBe(true)
+  expect(
     internalFilters.singaporeFilter({
       nodeName: 'US 1',
       type: NodeTypeEnum.Shadowsocks,
       ...nodeConfigDefaults,
     }),
-  )
+  ).toBe(false)
 })
 
-test('taiwanFilter', (t) => {
-  t.true(
+test('taiwanFilter', () => {
+  expect(
     internalFilters.taiwanFilter({
       nodeName: '🇹🇼',
       type: NodeTypeEnum.Shadowsocks,
       ...nodeConfigDefaults,
     }),
-  )
-  t.true(
+  ).toBe(true)
+  expect(
     internalFilters.taiwanFilter({
       nodeName: '台湾',
       type: NodeTypeEnum.Shadowsocks,
       ...nodeConfigDefaults,
     }),
-  )
-  t.false(
+  ).toBe(true)
+  expect(
     internalFilters.taiwanFilter({
       nodeName: 'US 1',
       type: NodeTypeEnum.Shadowsocks,
       ...nodeConfigDefaults,
     }),
-  )
+  ).toBe(false)
 })
 
-test('chinaBackFilter', (t) => {
-  t.true(
+test('chinaBackFilter', () => {
+  expect(
     internalFilters.chinaBackFilter({
       nodeName: '回国',
       type: NodeTypeEnum.Shadowsocks,
       ...nodeConfigDefaults,
     }),
-  )
-  t.true(
+  ).toBe(true)
+  expect(
     internalFilters.chinaBackFilter({
       nodeName: '中国上海',
       type: NodeTypeEnum.Shadowsocks,
       ...nodeConfigDefaults,
     }),
-  )
-  t.false(
+  ).toBe(true)
+  expect(
     internalFilters.chinaBackFilter({
       nodeName: 'US 1',
       type: NodeTypeEnum.Shadowsocks,
       ...nodeConfigDefaults,
     }),
-  )
+  ).toBe(false)
 })
 
-test('chinaOutFilter', (t) => {
-  t.false(
+test('chinaOutFilter', () => {
+  expect(
     internalFilters.chinaOutFilter({
       nodeName: '回国',
       type: NodeTypeEnum.Shadowsocks,
       ...nodeConfigDefaults,
     }),
-  )
-  t.false(
+  ).toBe(false)
+  expect(
     internalFilters.chinaOutFilter({
       nodeName: '中国上海',
       type: NodeTypeEnum.Shadowsocks,
       ...nodeConfigDefaults,
     }),
-  )
-  t.true(
+  ).toBe(false)
+  expect(
     internalFilters.chinaOutFilter({
       nodeName: 'US 1',
       type: NodeTypeEnum.Shadowsocks,
       ...nodeConfigDefaults,
     }),
-  )
+  ).toBe(true)
 })
 
-test('useSortedKeywords', (t) => {
+test('useSortedKeywords', () => {
   const fn = filters.useSortedKeywords(['test', '测试'])
   const result = fn.filter([
     generateVmessNode('测试 1'),
@@ -469,8 +469,8 @@ test('useSortedKeywords', (t) => {
     generateVmessNode('🇺🇸US 1'),
   ])
 
-  t.true(fn.supportSort)
-  t.deepEqual(result, [
+  expect(fn.supportSort).toBe(true)
+  expect(result).toEqual([
     generateVmessNode('test 测试 1'),
     generateVmessNode('test 2'),
     generateVmessNode('测试 1'),
@@ -479,7 +479,7 @@ test('useSortedKeywords', (t) => {
   ])
 })
 
-test('mergeSortedFilters 1', (t) => {
+test('mergeSortedFilters 1', () => {
   const fn = filters.mergeSortedFilters([
     internalFilters.hkFilter,
     internalFilters.usFilter,
@@ -492,8 +492,8 @@ test('mergeSortedFilters 1', (t) => {
     generateVmessNode('test 1'),
   ])
 
-  t.true(fn.supportSort)
-  t.deepEqual(result, [
+  expect(fn.supportSort).toBe(true)
+  expect(result).toEqual([
     generateVmessNode('HK 1'),
     generateVmessNode('HK 2'),
     generateVmessNode('US 1'),
@@ -501,31 +501,31 @@ test('mergeSortedFilters 1', (t) => {
   ])
 })
 
-test('mergeSortedFilters 2', (t) => {
-  t.throws(() => {
+test('mergeSortedFilters 2', () => {
+  expect(() => {
     const fn = filters.useSortedKeywords(['1'])
     filters.mergeSortedFilters([fn as any])
-  })
+  }).toThrow()
 
-  t.throws(() => {
+  expect(() => {
     // @ts-ignore
     filters.mergeSortedFilters([undefined])
-  })
+  }).toThrow()
 })
 
-test('mergeFilters', (t) => {
-  t.throws(() => {
+test('mergeFilters', () => {
+  expect(() => {
     const fn = filters.useSortedKeywords(['1'])
     filters.mergeFilters([fn as any])
-  })
+  }).toThrow()
 
-  t.throws(() => {
+  expect(() => {
     // @ts-ignore
     filters.mergeFilters([undefined])
-  })
+  }).toThrow()
 })
 
-test('complicated mergeFilters', (t) => {
+test('complicated mergeFilters', () => {
   const fn = filters.mergeFilters([
     filters.mergeFilters(
       [filters.useKeywords(['test']), filters.useProviders(['foo'], true)],
@@ -537,161 +537,143 @@ test('complicated mergeFilters', (t) => {
     ),
   ])
 
-  t.is(
+  expect(
     fn({
       provider: { name: 'foo' } as any,
       type: NodeTypeEnum.Shadowsocks,
       nodeName: 'test',
       ...nodeConfigDefaults,
     }),
-    true,
-  )
-  t.is(
+  ).toBe(true)
+  expect(
     fn({
       provider: { name: 'foo2' } as any,
       type: NodeTypeEnum.Shadowsocks,
       nodeName: 'test',
       ...nodeConfigDefaults,
     }),
-    false,
-  )
-  t.is(
+  ).toBe(false)
+  expect(
     fn({
       provider: { name: 'foo' } as any,
       type: NodeTypeEnum.Shadowsocks,
       nodeName: 'should be false',
       ...nodeConfigDefaults,
     }),
-    false,
-  )
-  t.is(
+  ).toBe(false)
+  expect(
     fn({
       provider: { name: 'foo' } as any,
       type: NodeTypeEnum.Shadowsocks,
       nodeName: 'should be true test',
       ...nodeConfigDefaults,
     }),
-    true,
-  )
-  t.is(
+  ).toBe(true)
+  expect(
     fn({
       provider: { name: 'bar' } as any,
       type: NodeTypeEnum.Shadowsocks,
       nodeName: 'test',
       ...nodeConfigDefaults,
     }),
-    true,
-  )
-  t.is(
+  ).toBe(true)
+  expect(
     fn({
       provider: { name: 'bar2' } as any,
       type: NodeTypeEnum.Shadowsocks,
       nodeName: 'test',
       ...nodeConfigDefaults,
     }),
-    false,
-  )
+  ).toBe(false)
 })
 
-test('useProviders', (t) => {
+test('useProviders', () => {
   const fn = filters.useProviders(['测试', 'test'], false)
   const fn2 = filters.useProviders(['测试', 'test'])
 
-  t.is(
+  expect(
     fn({
       ...generateVmessNode('test'),
       provider: { name: '测试 asdf' },
     } as any),
-    true,
-  )
-  t.is(
+  ).toBe(true)
+  expect(
     fn({
       ...generateVmessNode('test'),
       provider: { name: 'test asdf' },
     } as any),
-    true,
-  )
-  t.is(
+  ).toBe(true)
+  expect(
     fn({
       ...generateVmessNode('test'),
       provider: { name: 'other' },
     } as any),
-    false,
-  )
+  ).toBe(false)
 
-  t.is(
+  expect(
     fn2({
       ...generateVmessNode('test'),
       provider: { name: '测试 asdf' },
     } as any),
-    false,
-  )
-  t.is(
+  ).toBe(false)
+  expect(
     fn2({
       ...generateVmessNode('test'),
       provider: { name: 'test asdf' },
     } as any),
-    false,
-  )
-  t.is(
+  ).toBe(false)
+  expect(
     fn2({
       ...generateVmessNode('test'),
       provider: { name: 'test' },
     } as any),
-    true,
-  )
+  ).toBe(true)
 })
 
-test('discardProviders', (t) => {
+test('discardProviders', () => {
   const fn = filters.discardProviders(['测试', 'test'], false)
   const fn2 = filters.discardProviders(['测试', 'test'])
 
-  t.is(
+  expect(
     fn({
       ...generateVmessNode('test'),
       provider: { name: '测试 asdf' },
     } as any),
-    false,
-  )
-  t.is(
+  ).toBe(false)
+  expect(
     fn({
       ...generateVmessNode('test'),
       provider: { name: 'test asdf' },
     } as any),
-    false,
-  )
-  t.is(
+  ).toBe(false)
+  expect(
     fn({
       ...generateVmessNode('test'),
       provider: { name: 'other' },
     } as any),
-    true,
-  )
+  ).toBe(true)
 
-  t.is(
+  expect(
     fn2({
       ...generateVmessNode('test'),
       provider: { name: 'test' },
     } as any),
-    false,
-  )
-  t.is(
+  ).toBe(false)
+  expect(
     fn2({
       ...generateVmessNode('test'),
       provider: { name: 'test asdf' },
     } as any),
-    true,
-  )
-  t.is(
+  ).toBe(true)
+  expect(
     fn2({
       ...generateVmessNode('test'),
       provider: { name: 'other' },
     } as any),
-    true,
-  )
+  ).toBe(true)
 })
 
-test('reverseFilter', (t) => {
+test('reverseFilter', () => {
   const notUS = filters.reverseFilter(internalFilters.usFilter)
   const notUSAndNotBGP = filters.mergeReversedFilters(
     [notUS, filters.discardKeywords(['BGP'])],
@@ -702,78 +684,78 @@ test('reverseFilter', (t) => {
     false,
   )
 
-  t.true(
+  expect(
     notUS({
       nodeName: '台湾',
       type: NodeTypeEnum.Shadowsocks,
       ...nodeConfigDefaults,
     }),
-  )
-  t.false(
+  ).toBe(true)
+  expect(
     notUS({
       nodeName: '美国',
       type: NodeTypeEnum.Shadowsocks,
       ...nodeConfigDefaults,
     }),
-  )
+  ).toBe(false)
 
-  t.true(
+  expect(
     notUSAndNotBGP({
       nodeName: '香港BGP',
       type: NodeTypeEnum.Shadowsocks,
       ...nodeConfigDefaults,
     }),
-  )
-  t.false(
+  ).toBe(true)
+  expect(
     notUSAndNotBGP({
       nodeName: '芝加哥BGP',
       type: NodeTypeEnum.Shadowsocks,
       ...nodeConfigDefaults,
     }),
-  )
-  t.true(
+  ).toBe(false)
+  expect(
     notUSAndNotBGP({
       nodeName: '芝加哥IPLC',
       type: NodeTypeEnum.Shadowsocks,
       ...nodeConfigDefaults,
     }),
-  )
-  t.true(
+  ).toBe(true)
+  expect(
     notUSAndNotBGP({
       nodeName: '韩国',
       type: NodeTypeEnum.Shadowsocks,
       ...nodeConfigDefaults,
     }),
-  )
+  ).toBe(true)
 
-  t.false(
+  expect(
     notUSOrNotBGP({
       nodeName: '香港BGP',
       type: NodeTypeEnum.Shadowsocks,
       ...nodeConfigDefaults,
     }),
-  )
-  t.false(
+  ).toBe(false)
+  expect(
     notUSOrNotBGP({
       nodeName: '芝加哥BGP',
       type: NodeTypeEnum.Shadowsocks,
       ...nodeConfigDefaults,
     }),
-  )
-  t.false(
+  ).toBe(false)
+  expect(
     notUSOrNotBGP({
       nodeName: '芝加哥IPLC',
       type: NodeTypeEnum.Shadowsocks,
       ...nodeConfigDefaults,
     }),
-  )
-  t.true(
+  ).toBe(false)
+  expect(
     notUSOrNotBGP({
       nodeName: '韩国',
       type: NodeTypeEnum.Shadowsocks,
       ...nodeConfigDefaults,
     }),
-  )
+  ).toBe(true)
 })
 
 function generateVmessNode(nodeName: string): VmessNodeConfig {

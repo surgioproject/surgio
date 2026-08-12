@@ -23,7 +23,7 @@ export const loadConfig = (
 ): CommandConfig => {
   const absPath = path.join(cwd, 'surgio.conf.js')
 
-  // istanbul ignore next
+  /* istanbul ignore next -- @preserve */
   if (!fs.existsSync(absPath)) {
     throw new Error(`配置文件 ${absPath} 不存在`)
   }
@@ -61,7 +61,7 @@ export const loadConfig = (
 }
 
 export const getConfig = () => {
-  // istanbul ignore next
+  /* istanbul ignore next -- @preserve */
   if (!finalConfig) {
     throw new Error('请先调用 loadConfig 方法')
   }
@@ -73,7 +73,7 @@ export const setConfig = <T extends keyof CommandConfig>(
   key: T,
   value: CommandConfig[T],
 ): CommandConfig => {
-  // istanbul ignore next
+  /* istanbul ignore next -- @preserve */
   if (!finalConfig) {
     throw new Error('请先调用 loadConfig 方法')
   }
@@ -134,11 +134,11 @@ export const normalizeConfig = (
   }
   const config: CommandConfig = _.defaultsDeep(userConfig, defaultConfig)
 
-  // istanbul ignore next
+  /* istanbul ignore next -- @preserve */
   if (!fs.existsSync(config.templateDir)) {
     throw new Error(`仓库内缺少 ${config.templateDir} 目录`)
   }
-  // istanbul ignore next
+  /* istanbul ignore next -- @preserve */
   if (!fs.existsSync(config.providerDir)) {
     throw new Error(`仓库内缺少 ${config.providerDir} 目录`)
   }
@@ -150,7 +150,7 @@ export const normalizeConfig = (
     config.publicUrl = '/'
   }
 
-  // istanbul ignore next
+  /* istanbul ignore next -- @preserve */
   if (config.cache && config.cache.type === 'redis') {
     if (!config.cache.redisUrl) {
       throw new Error('缓存配置错误，请检查 cache.redisUrl 配置')
@@ -159,14 +159,14 @@ export const normalizeConfig = (
     redis.createRedis(config.cache.redisUrl)
   }
 
-  // istanbul ignore next
+  /* istanbul ignore next -- @preserve */
   if (config.gateway) {
     if (config.gateway.auth && !config.gateway.accessToken) {
       throw new Error('请检查 gateway.accessToken 配置')
     }
   }
 
-  // istanbul ignore next
+  /* istanbul ignore next -- @preserve */
   if (
     config.gateway?.passRequestUserAgent &&
     !config.gateway.passRequestHeaders.includes('user-agent')
@@ -182,7 +182,7 @@ export const validateConfig = (
 ): CommandConfigBeforeNormalize => {
   const result = SurgioConfigValidator.safeParse(userConfig)
 
-  // istanbul ignore next
+  /* istanbul ignore next -- @preserve */
   if (!result.success) {
     throw result.error
   }

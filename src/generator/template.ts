@@ -38,7 +38,7 @@ export function getEngine(
     })()
 
     return (str?: string): string => {
-      // istanbul ignore next
+      /* istanbul ignore next -- @preserve */
       if (!str) {
         return ''
       }
@@ -77,7 +77,7 @@ export function getEngine(
   engine.addFilter('stash', getClashFilter('stash'))
 
   engine.addFilter('quantumultx', (str?: string): string => {
-    // istanbul ignore next
+    /* istanbul ignore next -- @preserve */
     if (!str) {
       return ''
     }
@@ -128,7 +128,7 @@ export function getEngine(
   })
 
   engine.addFilter('loon', (str?: string): string => {
-    // istanbul ignore next
+    /* istanbul ignore next -- @preserve */
     if (!str) {
       return ''
     }
@@ -158,7 +158,7 @@ export function getEngine(
   })
 
   engine.addFilter('surfboard', (str?: string): string => {
-    // istanbul ignore next
+    /* istanbul ignore next -- @preserve */
     if (!str) {
       return ''
     }
@@ -323,7 +323,7 @@ export const loadLocalSnippet = (
   cwd: string,
   relativeFilePath?: string,
 ): RemoteSnippet => {
-  // istanbul ignore next
+  /* istanbul ignore next -- @preserve */
   if (!relativeFilePath) {
     throw new Error('必须指定一个文件')
   }

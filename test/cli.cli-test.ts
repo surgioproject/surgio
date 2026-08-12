@@ -1,10 +1,9 @@
-import 'mocha'
 import { join } from 'path'
-import { expect } from 'chai'
 import execa from 'execa'
 import fs from 'fs-extra'
 import ini from 'ini'
 import { runCommand } from '@oclif/test'
+import { afterEach, describe, expect, it } from 'vitest'
 
 const fixture = join(process.cwd(), './test/fixture')
 const resolve = (p: string) => join(fixture, p)
@@ -49,9 +48,9 @@ describe('doctor command', () => {
       `--project=${resolve('plain')}`,
     ])
 
-    expect(error).to.be.undefined
-    expect(stdout).to.contain('surgio')
-    expect(stdout).to.contain('node')
+    expect(error).toBeUndefined()
+    expect(stdout).toContain('surgio')
+    expect(stdout).toContain('node')
   })
 })
 
@@ -63,8 +62,8 @@ describe('check command', () => {
       `--project=${resolve('plain')}`,
     ])
 
-    expect(error).to.be.undefined
-    expect(stdout).to.contain('nodeName')
+    expect(error).toBeUndefined()
+    expect(stdout).toContain('nodeName')
   })
 })
 
@@ -75,8 +74,8 @@ describe('subscriptions command', () => {
       `--project=${resolve('subscriptions')}`,
     ])
 
-    expect(error).to.be.undefined
-    expect(stdout).to.contain('custom')
+    expect(error).toBeUndefined()
+    expect(stdout).toContain('custom')
   })
 })
 
@@ -88,7 +87,7 @@ describe('generate command', () => {
         `--project=${resolve('plain')}`,
       ])
 
-      expect(error).to.be.undefined
+      expect(error).toBeUndefined()
       const confString1 = fs.readFileSync(resolve('plain/dist/ss_json.conf'), {
         encoding: 'utf8',
       })
@@ -112,21 +111,21 @@ describe('generate command', () => {
       )
       const conf = ini.decode(confString1)
 
-      expect(fs.existsSync(resolve('plain/dist/new_path.conf'))).to.be.true
-      expect(fs.existsSync(resolve('plain/dist/ss.conf'))).to.be.true
-      expect(fs.existsSync(resolve('plain/dist/ssr.conf'))).to.be.true
-      expect(fs.existsSync(resolve('plain/dist/v2rayn.conf'))).to.be.true
-      expect(fs.existsSync(resolve('plain/dist/custom.conf'))).to.be.true
-      expect(fs.existsSync(resolve('plain/dist/ssd.conf'))).to.be.true
-      expect(fs.existsSync(resolve('plain/dist/singbox.json'))).to.be.true
-      expect(confString1.split('\n')[0]).to.equal(
+      expect(fs.existsSync(resolve('plain/dist/new_path.conf'))).toBe(true)
+      expect(fs.existsSync(resolve('plain/dist/ss.conf'))).toBe(true)
+      expect(fs.existsSync(resolve('plain/dist/ssr.conf'))).toBe(true)
+      expect(fs.existsSync(resolve('plain/dist/v2rayn.conf'))).toBe(true)
+      expect(fs.existsSync(resolve('plain/dist/custom.conf'))).toBe(true)
+      expect(fs.existsSync(resolve('plain/dist/ssd.conf'))).toBe(true)
+      expect(fs.existsSync(resolve('plain/dist/singbox.json'))).toBe(true)
+      expect(confString1.split('\n')[0]).toBe(
         '#!MANAGED-CONFIG https://example.com/ss_json.conf?access_token=abcd interval=43200 strict=false',
       )
-      expect(confString2.includes('select, 🇺🇸 US')).to.be.true
-      expect(Object.keys(conf.Proxy).length).to.be.equal(4)
-      ;(expect(confString3).to as any).matchSnapshot()
-      ;(expect(confString5).to as any).matchSnapshot()
-      ;(expect(singboxConfString).to as any).matchSnapshot()
+      expect(confString2.includes('select, 🇺🇸 US')).toBe(true)
+      expect(Object.keys(conf.Proxy).length).toBe(4)
+      expect(confString3).toMatchSnapshot()
+      expect(confString5).toMatchSnapshot()
+      expect(singboxConfString).toMatchSnapshot()
     })
   })
 
@@ -138,8 +137,8 @@ describe('generate command', () => {
         '--skip-fail',
       ])
 
-      expect(error).to.be.undefined
-      expect(fs.existsSync(resolve('plain/dist/new_path.conf'))).to.be.true
+      expect(error).toBeUndefined()
+      expect(fs.existsSync(resolve('plain/dist/new_path.conf'))).toBe(true)
     })
   })
 
@@ -150,8 +149,8 @@ describe('generate command', () => {
         `--project=${resolve('template-error')}`,
       ])
 
-      expect(error?.oclif?.exit).to.equal(1)
-      expect(stderr).to.contain('expected comma after expression')
+      expect(error?.oclif?.exit).toBe(1)
+      expect(stderr).toContain('expected comma after expression')
     })
   })
 
@@ -162,8 +161,8 @@ describe('generate command', () => {
         `--project=${resolve('not-specify-binPath')}`,
       ])
 
-      expect(error?.oclif?.exit).to.equal(1)
-      expect(stderr).to.contain('添加 Shadowsocksr 二进制文件路径')
+      expect(error?.oclif?.exit).toBe(1)
+      expect(stderr).toContain('添加 Shadowsocksr 二进制文件路径')
     })
   })
 
@@ -174,7 +173,7 @@ describe('generate command', () => {
         `--project=${resolve('template-variables-functions')}`,
       ])
 
-      expect(error).to.be.undefined
+      expect(error).toBeUndefined()
       const confString = fs.readFileSync(
         resolve('template-variables-functions/dist/ss.conf'),
         {
@@ -194,7 +193,7 @@ describe('generate command', () => {
         'DOMAIN-SUFFIX,nflxvideo.net,Proxy\n' +
         'http://example.com/ss.conf\n'
 
-      expect(confString).to.equal(result)
+      expect(confString).toBe(result)
     })
   })
 
@@ -205,7 +204,7 @@ describe('generate command', () => {
         `--project=${resolve('assign-local-port')}`,
       ])
 
-      expect(error).to.be.undefined
+      expect(error).toBeUndefined()
       const confString = fs.readFileSync(
         resolve('assign-local-port/dist/ssr.conf'),
         {
@@ -214,7 +213,7 @@ describe('generate command', () => {
       )
       const conf = ini.decode(confString)
 
-      expect(conf.Proxy.测试中文.includes('local-port = 5000')).to.be.true
+      expect(conf.Proxy.测试中文.includes('local-port = 5000')).toBe(true)
     })
   })
 
@@ -225,7 +224,7 @@ describe('generate command', () => {
         `--project=${resolve('custom-filter')}`,
       ])
 
-      expect(error).to.be.undefined
+      expect(error).toBeUndefined()
       const confString1 = fs.readFileSync(
         resolve('custom-filter/dist/ss.conf'),
         {
@@ -239,8 +238,8 @@ describe('generate command', () => {
         },
       )
 
-      ;(expect(confString1).to as any).matchSnapshot()
-      ;(expect(confString2).to as any).matchSnapshot()
+      expect(confString1).toMatchSnapshot()
+      expect(confString2).toMatchSnapshot()
     })
   })
 
@@ -254,7 +253,7 @@ describe('generate command', () => {
         },
       )
 
-      expect(error).to.be.undefined
+      expect(error).toBeUndefined()
       const confString1 = fs.readFileSync(resolve('plain/dist/v2rayn.conf'), {
         encoding: 'utf8',
       })
@@ -265,8 +264,8 @@ describe('generate command', () => {
         },
       )
 
-      ;(expect(confString1).to as any).matchSnapshot()
-      ;(expect(confString2).to as any).matchSnapshot()
+      expect(confString1).toMatchSnapshot()
+      expect(confString2).toMatchSnapshot()
     })
   })
 })
@@ -275,27 +274,27 @@ describe('oclif integration', () => {
   it('lists business commands and help without plugin management', async () => {
     const { error, stdout } = await runCommand(['--help'])
 
-    expect(error).to.be.undefined
-    expect(stdout).to.contain('generate')
-    expect(stdout).to.contain('help')
-    expect(stdout).not.to.match(/^\s+plugins(?:\s|$)/m)
+    expect(error).toBeUndefined()
+    expect(stdout).toContain('generate')
+    expect(stdout).toContain('help')
+    expect(stdout).not.toMatch(/^\s+plugins(?:\s|$)/m)
   })
 
   it('shows generate command help', async () => {
     const { error, stdout } = await runCommand(['help', 'generate'])
 
-    expect(error).to.be.undefined
-    expect(stdout).to.contain('生成规则')
-    expect(stdout).to.contain('--project=<value>')
-    expect(stdout).to.contain('--verbose')
-    expect(stdout).to.contain('--skip-lint')
+    expect(error).toBeUndefined()
+    expect(stdout).toContain('生成规则')
+    expect(stdout).toContain('--project=<value>')
+    expect(stdout).toContain('--verbose')
+    expect(stdout).toContain('--skip-lint')
   })
 
   it('rejects the removed plugins command', async () => {
     const { error } = await runCommand(['plugins'])
 
-    expect(error?.oclif?.exit).to.equal(2)
-    expect(error?.message).to.equal('command plugins not found')
+    expect(error?.oclif?.exit).toBe(2)
+    expect(error?.message).toBe('command plugins not found')
   })
 
   it('runs the production entrypoint without leaking error stacks', async () => {
@@ -311,12 +310,12 @@ describe('oclif integration', () => {
       reject: false,
     })
 
-    expect(success.exitCode).to.equal(0)
-    expect(success.stdout).to.contain('surgio')
-    expect(failure.exitCode).to.equal(2)
-    expect(failure.stderr).to.contain('command plugins not found')
-    expect(failure.stderr).not.to.contain('ExitError')
-    expect(failure.stderr).not.to.contain('node_modules/@oclif/core')
+    expect(success.exitCode).toBe(0)
+    expect(success.stdout).toContain('surgio')
+    expect(failure.exitCode).toBe(2)
+    expect(failure.stderr).toContain('command plugins not found')
+    expect(failure.stderr).not.toContain('ExitError')
+    expect(failure.stderr).not.toContain('node_modules/@oclif/core')
 
     await fs.remove(configHome)
   })

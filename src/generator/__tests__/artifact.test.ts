@@ -1,5 +1,5 @@
 import { join } from 'path'
-import test from 'ava'
+import { expect, test } from 'vitest'
 import nock from 'nock'
 
 import { loadConfig } from '../../config'
@@ -9,7 +9,7 @@ import { getEngine } from '../template'
 
 const resolve = (p: string) => join(__dirname, '../../../test/fixture/', p)
 
-test('new Artifact()', async (t) => {
+test('new Artifact()', async () => {
   const fixture = resolve('plain')
   const config = loadConfig(fixture)
   const artifact = new Artifact(config, {
@@ -19,20 +19,20 @@ test('new Artifact()', async (t) => {
   })
   const templateEngine = getEngine(config.templateDir)
 
-  t.is(artifact.isReady, false)
+  expect(artifact.isReady).toBe(false)
   await artifact.init()
-  t.is(artifact.isReady, true)
+  expect(artifact.isReady).toBe(true)
 
-  t.notThrows(() => {
+  expect(() => {
     artifact.render(templateEngine)
-  })
+  }).not.toThrow()
 
-  await t.throwsAsync(async () => {
+  await expect(async () => {
     await artifact.init()
-  })
+  }).rejects.toThrow()
 })
 
-test('Artifact without templateEngine', async (t) => {
+test('Artifact without templateEngine', async () => {
   const fixture = resolve('plain')
   const config = loadConfig(fixture)
   const artifact = new Artifact(config, {
@@ -42,33 +42,31 @@ test('Artifact without templateEngine', async (t) => {
   })
   const templateEngine = getEngine(config.templateDir)
 
-  t.throws(() => {
+  expect(() => {
     artifact.render()
-  })
+  }).toThrow()
 
   await artifact.init()
 
-  t.throws(() => {
+  expect(() => {
     artifact.render()
-  })
-  t.notThrows(() => {
+  }).toThrow()
+  expect(() => {
     artifact.render(templateEngine)
-  })
-  await t.notThrowsAsync(async () => {
-    const instance = await new Artifact(
-      config,
-      {
-        name: 'new_path.conf',
-        template: 'test',
-        provider: 'ss_json',
-      },
-      { templateEngine },
-    ).init()
-    instance.render()
-  })
+  }).not.toThrow()
+  const instance = await new Artifact(
+    config,
+    {
+      name: 'new_path.conf',
+      template: 'test',
+      provider: 'ss_json',
+    },
+    { templateEngine },
+  ).init()
+  instance.render()
 })
 
-test('render with extendRenderContext', async (t) => {
+test('render with extendRenderContext', async () => {
   const fixture = resolve('plain')
   const config = loadConfig(fixture)
   const templateEngine = getEngine(config.templateDir)
@@ -85,7 +83,7 @@ test('render with extendRenderContext', async (t) => {
     )
     await artifact.init()
 
-    t.snapshot(artifact.render())
+    expect(artifact.render()).toMatchSnapshot()
   }
 
   {
@@ -103,7 +101,7 @@ test('render with extendRenderContext', async (t) => {
     )
     await artifact.init()
 
-    t.snapshot(artifact.render())
+    expect(artifact.render()).toMatchSnapshot()
   }
 
   {
@@ -121,15 +119,15 @@ test('render with extendRenderContext', async (t) => {
     )
     await artifact.init()
 
-    t.snapshot(
+    expect(
       artifact.render(undefined, {
         foo: 'foo',
       }),
-    )
+    ).toMatchSnapshot()
   }
 })
 
-test('getRenderContext', async (t) => {
+test('getRenderContext', async () => {
   const fixture = resolve('plain')
   const config = loadConfig(fixture)
   const templateEngine = getEngine(config.templateDir)
@@ -147,28 +145,27 @@ test('getRenderContext', async (t) => {
 
   const ctx = artifact.getRenderContext()
 
-  t.is(ctx.downloadUrl, 'https://example.com/new_path.conf?access_token=abcd')
-  t.is(
-    ctx.getUrl('/extend-provider?format=foo'),
+  expect(ctx.downloadUrl).toBe(
+    'https://example.com/new_path.conf?access_token=abcd',
+  )
+  expect(ctx.getUrl('/extend-provider?format=foo')).toBe(
     'https://example.com/extend-provider?format=foo&access_token=abcd',
   )
-  t.is(
-    ctx.getUrl('get-artifact/test.conf?format=foo'),
+  expect(ctx.getUrl('get-artifact/test.conf?format=foo')).toBe(
     'https://example.com/get-artifact/test.conf?format=foo&access_token=abcd',
   )
-  t.is(
-    ctx.getDownloadUrl('test.conf?format=foo'),
+  expect(ctx.getDownloadUrl('test.conf?format=foo')).toBe(
     'https://example.com/test.conf?format=foo&access_token=abcd',
   )
-  t.deepEqual(ctx.customParams, {
+  expect(ctx.customParams).toEqual({
     globalVariable: 'foo',
     globalVariableWillBeRewritten: 'bar',
     subLevel: {
       anotherVariableWillBeRewritten: 'value',
     },
   })
-  t.is(typeof ctx.getSurgeTailscaleNodes, 'function')
-  t.is(
+  expect(typeof ctx.getSurgeTailscaleNodes).toBe('function')
+  expect(
     ctx.getSurgeTailscaleNodes([
       {
         type: NodeTypeEnum.Tailscale,
@@ -176,11 +173,10 @@ test('getRenderContext', async (t) => {
         authKey: 'tskey-auth-example',
       },
     ]),
-    '[Tailscale tailnet]\nauth-key=tskey-auth-example',
-  )
+  ).toBe('[Tailscale tailnet]\nauth-key=tskey-auth-example')
 })
 
-test('Artifact with underlyingProxy', async (t) => {
+test('Artifact with underlyingProxy', async () => {
   const fixture = resolve('plain')
   const config = loadConfig(fixture)
   const templateEngine = getEngine(config.templateDir)
@@ -196,10 +192,10 @@ test('Artifact with underlyingProxy', async (t) => {
   )
   await artifact.init()
 
-  t.snapshot(artifact.render())
+  expect(artifact.render()).toMatchSnapshot()
 })
 
-test('Artifact rejects provider underlyingProxy with MASQUE portHopping', async (t) => {
+test('Artifact rejects provider underlyingProxy with MASQUE portHopping', async () => {
   const fixture = resolve('plain')
   const config = loadConfig(fixture)
   const providerName = 'clash_masque_with_up'
@@ -219,6 +215,5 @@ proxies: []
     provider: providerName,
   })
 
-  const error = await t.throwsAsync(() => artifact.init())
-  t.true(error?.message.includes('节点配置校验失败'))
+  await expect(artifact.init()).rejects.toThrow('节点配置校验失败')
 })

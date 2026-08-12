@@ -36,13 +36,13 @@ pnpm test:types
 # 运行 ESLint 检查
 pnpm test:lint
 
-# 运行单元测试 (使用 ava)
+# 运行单元测试 (使用 Vitest)
 pnpm test:unit
 
 # 运行单个测试文件
-pnpm ava src/path/to/test.test.ts
+pnpm vitest run src/path/to/test.test.ts
 
-# 运行 CLI 测试 (使用 mocha)
+# 运行 CLI 测试 (使用 Vitest)
 pnpm test:cli
 
 # 更新 CLI 测试快照

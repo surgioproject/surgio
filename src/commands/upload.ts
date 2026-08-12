@@ -1,4 +1,4 @@
-// istanbul ignore file
+/* istanbul ignore file -- @preserve */
 import path from 'path'
 import { Flags } from '@oclif/core'
 import OSS from 'ali-oss'

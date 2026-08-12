@@ -1,4 +1,4 @@
-// istanbul ignore file
+/* istanbul ignore file -- @preserve */
 import path from 'path'
 import { Args, ux } from '@oclif/core'
 import fs from 'fs-extra'

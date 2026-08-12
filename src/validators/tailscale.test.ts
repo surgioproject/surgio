@@ -1,10 +1,10 @@
-import test from 'ava'
+import { expect, test } from 'vitest'
 
 import { NodeTypeEnum } from '../types'
 
 import { TailscaleNodeConfigValidator } from './tailscale'
 
-test('TailscaleNodeConfigValidator accepts the documented field union', (t) => {
+test('TailscaleNodeConfigValidator accepts the documented field union', () => {
   const result = TailscaleNodeConfigValidator.parse({
     type: NodeTypeEnum.Tailscale,
     nodeName: 'tailnet',
@@ -32,37 +32,37 @@ test('TailscaleNodeConfigValidator accepts the documented field union', (t) => {
     testTimeout: 5,
   })
 
-  t.is(result.type, NodeTypeEnum.Tailscale)
-  t.false(result.ephemeral!)
-  t.is(result.routingMark, 0)
-  t.is(result.idleKeepalive, -1)
+  expect(result.type).toBe(NodeTypeEnum.Tailscale)
+  expect(result.ephemeral!).toBe(false)
+  expect(result.routingMark).toBe(0)
+  expect(result.idleKeepalive).toBe(-1)
 })
 
-test('TailscaleNodeConfigValidator keeps authKey optional', (t) => {
-  t.true(
+test('TailscaleNodeConfigValidator keeps authKey optional', () => {
+  expect(
     TailscaleNodeConfigValidator.safeParse({
       type: NodeTypeEnum.Tailscale,
       nodeName: 'interactive-login',
     }).success,
-  )
+  ).toBe(true)
 })
 
-test('TailscaleNodeConfigValidator accepts numeric boundaries', (t) => {
+test('TailscaleNodeConfigValidator accepts numeric boundaries', () => {
   for (const fields of [
     { mtu: 576, routingMark: 0 },
     { mtu: 1420, routingMark: 0xffff_ffff },
   ]) {
-    t.true(
+    expect(
       TailscaleNodeConfigValidator.safeParse({
         type: NodeTypeEnum.Tailscale,
         nodeName: 'tailnet',
         ...fields,
       }).success,
-    )
+    ).toBe(true)
   }
 })
 
-test('TailscaleNodeConfigValidator rejects invalid constrained fields', (t) => {
+test('TailscaleNodeConfigValidator rejects invalid constrained fields', () => {
   const base = {
     type: NodeTypeEnum.Tailscale,
     nodeName: 'tailnet',
@@ -81,11 +81,11 @@ test('TailscaleNodeConfigValidator rejects invalid constrained fields', (t) => {
     { exitNode: '' },
     { stateDir: '' },
   ]) {
-    t.false(
+    expect(
       TailscaleNodeConfigValidator.safeParse({
         ...base,
         ...invalidFields,
       }).success,
-    )
+    ).toBe(false)
   }
 })

@@ -82,48 +82,48 @@ export const youtubePremiumFilter: NodeFilterType = mergeFilters([
   germanyFilter,
 ])
 
-// istanbul ignore next
+/* istanbul ignore next -- @preserve */
 export const shadowsocksFilter: NodeFilterType = (item) =>
   item.type === NodeTypeEnum.Shadowsocks
-// istanbul ignore next
+/* istanbul ignore next -- @preserve */
 export const shadowsocksrFilter: NodeFilterType = (item) =>
   item.type === NodeTypeEnum.Shadowsocksr
-// istanbul ignore next
+/* istanbul ignore next -- @preserve */
 export const vmessFilter: NodeFilterType = (item) =>
   item.type === NodeTypeEnum.Vmess
-// istanbul ignore next
+/* istanbul ignore next -- @preserve */
 export const v2rayFilter: NodeFilterType = (item) =>
   item.type === NodeTypeEnum.Vmess
-// istanbul ignore next
+/* istanbul ignore next -- @preserve */
 export const snellFilter: NodeFilterType = (item) =>
   item.type === NodeTypeEnum.Snell
-// istanbul ignore next
+/* istanbul ignore next -- @preserve */
 export const tuicFilter: NodeFilterType = (item) =>
   item.type === NodeTypeEnum.Tuic
-// istanbul ignore next
+/* istanbul ignore next -- @preserve */
 export const httpFilter: NodeFilterType = (item) =>
   item.type === NodeTypeEnum.HTTP
-// istanbul ignore next
+/* istanbul ignore next -- @preserve */
 export const httpsFilter: NodeFilterType = (item) =>
   item.type === NodeTypeEnum.HTTPS
-// istanbul ignore next
+/* istanbul ignore next -- @preserve */
 export const trojanFilter: NodeFilterType = (item) =>
   item.type === NodeTypeEnum.Trojan
-// istanbul ignore next
+/* istanbul ignore next -- @preserve */
 export const socks5Filter: NodeFilterType = (item) =>
   item.type === NodeTypeEnum.Socks5
-// istanbul ignore next
+/* istanbul ignore next -- @preserve */
 export const wireguardFilter: NodeFilterType = (item) =>
   item.type === NodeTypeEnum.Wireguard
-// istanbul ignore next
+/* istanbul ignore next -- @preserve */
 export const hysteria2Filter: NodeFilterType = (item) =>
   item.type === NodeTypeEnum.Hysteria2
-// istanbul ignore next
+/* istanbul ignore next -- @preserve */
 export const vlessFilter: NodeFilterType = (item) =>
   item.type === NodeTypeEnum.Vless
-// istanbul ignore next
+/* istanbul ignore next -- @preserve */
 export const anytlsFilter: NodeFilterType = (item) =>
   item.type === NodeTypeEnum.AnyTLS
-// istanbul ignore next
+/* istanbul ignore next -- @preserve */
 export const tailscaleFilter: NodeFilterType = (item) =>
   item.type === NodeTypeEnum.Tailscale

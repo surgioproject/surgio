@@ -1,4 +1,4 @@
-// istanbul ignore file
+/* istanbul ignore file -- @preserve */
 
 import assert from 'assert'
 import { z } from 'zod'
@@ -35,7 +35,7 @@ export default class BlackSSLProvider extends Provider {
     })
     const result = schema.safeParse(config)
 
-    // istanbul ignore next
+    /* istanbul ignore next -- @preserve */
     if (!result.success) {
       throw new SurgioError('BlackSSLProvider 配置校验失败', {
         cause: result.error,
@@ -105,7 +105,7 @@ export default class BlackSSLProvider extends Provider {
     return { nodeList, subscriptionUserInfo }
   }
 
-  // istanbul ignore next
+  /* istanbul ignore next -- @preserve */
   private async getBlackSSLConfig(
     username: string,
     password: string,

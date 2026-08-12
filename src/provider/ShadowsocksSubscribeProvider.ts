@@ -32,7 +32,7 @@ export default class ShadowsocksSubscribeProvider extends Provider {
     })
     const result = schema.safeParse(config)
 
-    // istanbul ignore next
+    /* istanbul ignore next -- @preserve */
     if (!result.success) {
       throw new SurgioError('ShadowsocksSubscribeProvider 配置校验失败', {
         cause: result.error,
@@ -45,7 +45,7 @@ export default class ShadowsocksSubscribeProvider extends Provider {
     this.supportGetSubscriptionUserInfo = true
   }
 
-  // istanbul ignore next
+  /* istanbul ignore next -- @preserve */
   public get url(): string {
     return relayableUrl(this.#originalUrl, this.config.relayUrl)
   }

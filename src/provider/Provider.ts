@@ -39,7 +39,7 @@ export default abstract class Provider {
   protected constructor(public name: string, config: ProviderConfig) {
     const result = ProviderValidator.safeParse(config)
 
-    // istanbul ignore next
+    /* istanbul ignore next -- @preserve */
     if (!result.success) {
       throw new SurgioError('Provider 配置校验失败', {
         cause: result.error,
@@ -240,7 +240,7 @@ export default abstract class Provider {
     return 0
   }
 
-  // istanbul ignore next
+  /* istanbul ignore next -- @preserve */
   public getSubscriptionUserInfo: GetSubscriptionUserInfoFunction =
     async () => {
       throw new Error('此 Provider 不支持该功能')

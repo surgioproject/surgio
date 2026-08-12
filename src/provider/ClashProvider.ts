@@ -97,7 +97,7 @@ export default class ClashProvider extends Provider {
     })
     const result = schema.safeParse(config)
 
-    // istanbul ignore next
+    /* istanbul ignore next -- @preserve */
     if (!result.success) {
       throw new SurgioError('ClashProvider 配置校验失败', {
         cause: result.error,
@@ -115,7 +115,7 @@ export default class ClashProvider extends Provider {
     }
   }
 
-  // istanbul ignore next
+  /* istanbul ignore next -- @preserve */
   public get url(): string {
     return relayableUrl(this.#originalUrl, this.config.relayUrl)
   }
@@ -249,7 +249,7 @@ export const getClashSubscription = async ({
       throw new Error() // yaml.parseDocument 语法错误时不会抛出异常，这里手动丢下 (跳转到下面的 catch)
     }
     clashConfig = doc.toJS()
-  } catch /* istanbul ignore next */ {
+  } catch /* istanbul ignore next -- @preserve */ {
     throw new Error(`${url} 不是一个合法的 YAML 文件`)
   }
 
@@ -262,7 +262,7 @@ export const getClashSubscription = async ({
 
   const proxyList: any[] = clashConfig.Proxy || clashConfig.proxies
 
-  // istanbul ignore next
+  /* istanbul ignore next -- @preserve */
   if (!Array.isArray(proxyList)) {
     throw new Error(`${url} 订阅内容有误，请检查后重试`)
   }
@@ -282,14 +282,14 @@ export const parseClashConfig = (
     (item) => {
       switch (item.type) {
         case 'ss': {
-          // istanbul ignore next
+          /* istanbul ignore next -- @preserve */
           if (item.plugin && !['obfs', 'v2ray-plugin'].includes(item.plugin)) {
             logger.warn(
               `不支持从 Clash 订阅中读取 ${item.plugin} 类型的 Shadowsocks 节点，节点 ${item.name} 会被省略`,
             )
             return undefined
           }
-          // istanbul ignore next
+          /* istanbul ignore next -- @preserve */
           if (
             item.plugin === 'v2ray-plugin' &&
             item['plugin-opts'].mode.toLowerCase() === 'quic'
@@ -357,7 +357,7 @@ export const parseClashConfig = (
 
         case 'vless':
         case 'vmess': {
-          // istanbul ignore next
+          /* istanbul ignore next -- @preserve */
           const supportedNetworks =
             item.type === 'vless'
               ? [
@@ -515,8 +515,10 @@ export const parseClashConfig = (
               nodeName: item.name,
               hostname: item.server,
               port: item.port,
-              username: item.username /* istanbul ignore next */ || '',
-              password: item.password /* istanbul ignore next */ || '',
+              username:
+                item.username /* istanbul ignore next -- @preserve */ || '',
+              password:
+                item.password /* istanbul ignore next -- @preserve */ || '',
               ...(item.headers ? { headers: item.headers } : null),
             } as HttpNodeConfig
           }
@@ -547,7 +549,7 @@ export const parseClashConfig = (
             ...('version' in item ? { version: item.version } : null),
           } as SnellNodeConfig
 
-        // istanbul ignore next
+        /* istanbul ignore next -- @preserve */
         case 'ssr':
           return {
             type: NodeTypeEnum.Shadowsocksr,
@@ -633,7 +635,7 @@ export const parseClashConfig = (
 
           const result = TuicNodeConfigValidator.safeParse(input)
 
-          // istanbul ignore next
+          /* istanbul ignore next -- @preserve */
           if (!result.success) {
             throw new SurgioError('Tuic 节点配置校验失败', {
               cause: result.error,
@@ -644,7 +646,7 @@ export const parseClashConfig = (
         }
 
         case 'hysteria2': {
-          // istanbul ignore next
+          /* istanbul ignore next -- @preserve */
           if (item.obfs && item.obfs !== 'salamander') {
             throw new Error(
               '不支持从 Clash 订阅中读取 Hysteria2 节点，因为其 obfs 不是 salamander',
@@ -690,7 +692,7 @@ export const parseClashConfig = (
 
           const result = Hysteria2NodeConfigValidator.safeParse(input)
 
-          // istanbul ignore next
+          /* istanbul ignore next -- @preserve */
           if (!result.success) {
             throw new SurgioError('Hysteria2 节点配置校验失败', {
               cause: result.error,
@@ -756,7 +758,7 @@ export const parseClashConfig = (
 
           const result = AnyTLSNodeConfigValidator.safeParse(input)
 
-          // istanbul ignore next
+          /* istanbul ignore next -- @preserve */
           if (!result.success) {
             throw new SurgioError('AnyTLS 节点配置校验失败', {
               cause: result.error,
@@ -813,7 +815,7 @@ export const parseClashConfig = (
 
           const result = MasqueNodeConfigValidator.safeParse(input)
 
-          // istanbul ignore next
+          /* istanbul ignore next -- @preserve */
           if (!result.success) {
             throw new SurgioError('MASQUE 节点配置校验失败', {
               cause: result.error,
@@ -895,7 +897,7 @@ export const parseClashConfig = (
 
           const result = TrustTunnelNodeConfigValidator.safeParse(input)
 
-          // istanbul ignore next
+          /* istanbul ignore next -- @preserve */
           if (!result.success) {
             throw new SurgioError('TrustTunnel 节点配置校验失败', {
               cause: result.error,
@@ -942,7 +944,7 @@ export const parseClashConfig = (
 
           const result = TailscaleNodeConfigValidator.safeParse(input)
 
-          // istanbul ignore next
+          /* istanbul ignore next -- @preserve */
           if (!result.success) {
             throw new SurgioError('Tailscale 节点配置校验失败', {
               cause: result.error,

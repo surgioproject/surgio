@@ -1,19 +1,18 @@
-import test from 'ava'
+import { expect, test } from 'vitest'
 
 import { NodeTypeEnum, PossibleNodeConfigType } from '../../types'
 import * as surge from '../surge'
 
-test('getSurgeExtendHeaders', (t) => {
-  t.is(
+test('getSurgeExtendHeaders', () => {
+  expect(
     surge.getSurgeExtendHeaders({
       foo: 'bar',
       'multi words key': 'multi words value',
     }),
-    'foo:bar|multi words key:multi words value',
-  )
+  ).toBe('foo:bar|multi words key:multi words value')
 })
 
-test('getSurgeNodes', async (t) => {
+test('getSurgeNodes', async () => {
   const nodeList: ReadonlyArray<PossibleNodeConfigType> = [
     {
       nodeName: 'Test Node 1',
@@ -179,61 +178,48 @@ test('getSurgeNodes', async (t) => {
     (nodeConfig) => nodeConfig.nodeName === 'Test Node 1',
   )
 
-  t.is(
-    txt1[0],
+  expect(txt1[0]).toBe(
     'Test Node 1 = ss, example.com, 443, encrypt-method=chacha20-ietf-poly1305, password=password, udp-relay=true, obfs=tls, obfs-host=example.com',
   )
-  t.is(
-    txt1[1],
+  expect(txt1[1]).toBe(
     'Test Node 2 = ss, example2.com, 443, encrypt-method=chacha20-ietf-poly1305, password=password',
   )
-  t.is(
-    txt1[2],
+  expect(txt1[2]).toBe(
     '测试中文 = external, exec = "/usr/local/bin/ssr-local", args = "-s", args = "127.0.0.1", args = "-p", args = "1234", args = "-m", args = "aes-128-cfb", args = "-o", args = "tls1.2_ticket_auth", args = "-O", args = "auth_aes128_md5", args = "-k", args = "aaabbb", args = "-l", args = "61100", args = "-b", args = "127.0.0.1", args = "-g", args = "breakwa11.moe", local-port = 61100, addresses = 127.0.0.1',
   )
-  t.is(
-    txt1[3],
+  expect(txt1[3]).toBe(
     '测试 3 = vmess, 1.1.1.1, 8080, username=1386f85e-657b-4d6e-9d56-78badb75e1fd, ws=true, ws-path=/, ws-headers="user-agent:Mozilla/5.0 (iPhone; CPU iPhone OS 13_5 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/13.1.1 Mobile/15E148 Safari/604.1", vmess-aead=false',
   )
-  t.is(
-    txt1[4],
+  expect(txt1[4]).toBe(
     '测试 4 = vmess, 1.1.1.1, 8080, username=1386f85e-657b-4d6e-9d56-78badb75e1fd, ws=true, ws-path=/, ws-headers="user-agent:Mozilla/5.0 (iPhone; CPU iPhone OS 13_5 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/13.1.1 Mobile/15E148 Safari/604.1", tls=true, vmess-aead=false',
   )
-  t.is(
-    txt1[5],
+  expect(txt1[5]).toBe(
     '测试 5 = vmess, 1.1.1.1, 8080, username=1386f85e-657b-4d6e-9d56-78badb75e1fd, encrypt-method=aes-128-gcm, vmess-aead=false',
   )
-  t.is(
-    txt1[6],
+  expect(txt1[6]).toBe(
     'Test Node 4 = ss, example.com, 443, encrypt-method=chacha20-ietf-poly1305, password=password, udp-relay=true, obfs=tls, obfs-host=example.com, mptcp=true',
   )
-  t.is(
-    txt1[7],
+  expect(txt1[7]).toBe(
     'Test Node 5 = ss, example2.com, 443, encrypt-method=chacha20-ietf-poly1305, password=password, mptcp=false',
   )
-  t.is(
-    txt1[8],
+  expect(txt1[8]).toBe(
     'Test Node 6 = ss, example2.com, 443, encrypt-method=chacha20-ietf-poly1305, password=password',
   )
-  t.is(
-    txt1[9],
+  expect(txt1[9]).toBe(
     'Test Node 7 = ss, example2.com, 443, encrypt-method=chacha20-ietf-poly1305, password=password, tfo=true, mptcp=true',
   )
-  t.is(
-    txt1[10],
+  expect(txt1[10]).toBe(
     '测试 6 = vmess, 1.1.1.1, 8080, username=1386f85e-657b-4d6e-9d56-78badb75e1fd, ws=true, ws-path=/, ws-headers="user-agent:Mozilla/5.0 (iPhone; CPU iPhone OS 13_5 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/13.1.1 Mobile/15E148 Safari/604.1", tls=true, vmess-aead=false, tfo=true, mptcp=true, tls13=true, skip-cert-verify=true',
   )
-  t.is(
-    txt1[11],
+  expect(txt1[11]).toBe(
     '测试 7 = vmess, 1.1.1.1, 8080, username=1386f85e-657b-4d6e-9d56-78badb75e1fd, ws=true, ws-path=/, ws-headers="user-agent:Mozilla/5.0 (iPhone; CPU iPhone OS 13_5 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/13.1.1 Mobile/15E148 Safari/604.1", tls=true, vmess-aead=false, tfo=true, mptcp=true, underlying-proxy=another-proxy, tls13=true, skip-cert-verify=true',
   )
 
-  t.is(
-    txt2,
+  expect(txt2).toBe(
     'Test Node 1 = ss, example.com, 443, encrypt-method=chacha20-ietf-poly1305, password=password, udp-relay=true, obfs=tls, obfs-host=example.com',
   )
 
-  t.is(
+  expect(
     surge.getSurgeNodes([
       {
         type: NodeTypeEnum.Trojan,
@@ -243,10 +229,9 @@ test('getSurgeNodes', async (t) => {
         password: 'password1',
       },
     ]),
-    'trojan node 1 = trojan, example.com, 443, password=password1',
-  )
+  ).toBe('trojan node 1 = trojan, example.com, 443, password=password1')
 
-  t.is(
+  expect(
     surge.getSurgeNodes([
       {
         type: NodeTypeEnum.Trojan,
@@ -260,10 +245,11 @@ test('getSurgeNodes', async (t) => {
         skipCertVerify: true,
       },
     ]),
+  ).toBe(
     'trojan node 2 = trojan, example.com, 443, password=password1, tfo=true, mptcp=true, skip-cert-verify=true, sni=sni.com',
   )
 
-  t.is(
+  expect(
     surge.getSurgeNodes([
       {
         type: NodeTypeEnum.Trojan,
@@ -275,10 +261,11 @@ test('getSurgeNodes', async (t) => {
         wsPath: '/ws',
       },
     ]),
+  ).toBe(
     'trojan node 1 = trojan, example.com, 443, password=password1, ws=true, ws-path=/ws',
   )
 
-  t.is(
+  expect(
     surge.getSurgeNodes([
       {
         type: NodeTypeEnum.Trojan,
@@ -295,10 +282,11 @@ test('getSurgeNodes', async (t) => {
         },
       },
     ]),
+  ).toBe(
     'trojan node 1 = trojan, example.com, 443, password=password1, ws=true, ws-path=/ws, ws-headers="host:ws.example.com|test-key:test-value", sni=sni.example.com',
   )
 
-  t.is(
+  expect(
     surge.getSurgeNodes([
       {
         type: NodeTypeEnum.Socks5,
@@ -308,10 +296,9 @@ test('getSurgeNodes', async (t) => {
         tls: true,
       },
     ]),
-    'socks5-tls node 1 = socks5-tls, 1.1.1.1, 443',
-  )
+  ).toBe('socks5-tls node 1 = socks5-tls, 1.1.1.1, 443')
 
-  t.is(
+  expect(
     surge.getSurgeNodes([
       {
         type: NodeTypeEnum.Socks5,
@@ -322,10 +309,9 @@ test('getSurgeNodes', async (t) => {
         tls: true,
       },
     ]),
-    'socks5-tls node 2 = socks5-tls, 1.1.1.1, 443, tfo=true',
-  )
+  ).toBe('socks5-tls node 2 = socks5-tls, 1.1.1.1, 443, tfo=true')
 
-  t.is(
+  expect(
     surge.getSurgeNodes([
       {
         type: NodeTypeEnum.Socks5,
@@ -337,10 +323,11 @@ test('getSurgeNodes', async (t) => {
         tls: true,
       },
     ]),
+  ).toBe(
     'socks5-tls node 3 = socks5-tls, 1.1.1.1, 443, username=auto, password=auto',
   )
 
-  t.is(
+  expect(
     surge.getSurgeNodes([
       {
         type: NodeTypeEnum.Socks5,
@@ -355,10 +342,11 @@ test('getSurgeNodes', async (t) => {
         tls: true,
       },
     ]),
+  ).toBe(
     'socks5-tls node 4 = socks5-tls, 1.1.1.1, 443, username=auto, password=auto, tfo=true, skip-cert-verify=true, sni=example.com',
   )
 
-  t.is(
+  expect(
     surge.getSurgeNodes([
       {
         type: NodeTypeEnum.Socks5,
@@ -374,10 +362,11 @@ test('getSurgeNodes', async (t) => {
         tls: true,
       },
     ]),
+  ).toBe(
     'socks5-tls node 5 = socks5-tls, 1.1.1.1, 443, username=auto, password=auto, client-cert=item, tfo=true, skip-cert-verify=true, sni=example.com',
   )
 
-  t.is(
+  expect(
     surge.getSurgeNodes([
       {
         type: NodeTypeEnum.Socks5,
@@ -387,10 +376,9 @@ test('getSurgeNodes', async (t) => {
         blockQuic: 'auto',
       },
     ]),
-    'socks node 1 = socks5, 1.1.1.1, 80, block-quic=auto',
-  )
+  ).toBe('socks node 1 = socks5, 1.1.1.1, 80, block-quic=auto')
 
-  t.is(
+  expect(
     surge.getSurgeNodes([
       {
         type: NodeTypeEnum.Socks5,
@@ -401,10 +389,9 @@ test('getSurgeNodes', async (t) => {
         blockQuic: 'on',
       },
     ]),
-    'socks node 2 = socks5, 1.1.1.1, 80, tfo=true, block-quic=on',
-  )
+  ).toBe('socks node 2 = socks5, 1.1.1.1, 80, tfo=true, block-quic=on')
 
-  t.is(
+  expect(
     surge.getSurgeNodes([
       {
         type: NodeTypeEnum.Socks5,
@@ -416,10 +403,11 @@ test('getSurgeNodes', async (t) => {
         tfo: true,
       },
     ]),
+  ).toBe(
     'socks node 3 = socks5, 1.1.1.1, 80, username=auto, password=auto, tfo=true',
   )
 
-  t.is(
+  expect(
     surge.getSurgeNodes([
       {
         type: NodeTypeEnum.Vmess,
@@ -442,10 +430,11 @@ test('getSurgeNodes', async (t) => {
         testUrl: 'http://www.google.com',
       },
     ]),
+  ).toBe(
     '测试 6 = vmess, 1.1.1.1, 8080, username=1386f85e-657b-4d6e-9d56-78badb75e1fd, ws=true, ws-path=/, ws-headers="user-agent:Mozilla/5.0 (iPhone; CPU iPhone OS 13_5 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/13.1.1 Mobile/15E148 Safari/604.1", tls=true, vmess-aead=false, tfo=true, mptcp=true, test-url=http://www.google.com, tls13=true, skip-cert-verify=true',
   )
 
-  t.is(
+  expect(
     surge.getSurgeNodes([
       {
         type: NodeTypeEnum.Snell,
@@ -459,14 +448,15 @@ test('getSurgeNodes', async (t) => {
         },
       },
     ]),
+  ).toBe(
     [
       '测试 Snell = snell, example.com, 443, psk=psk, shadow-tls-password=password, shadow-tls-sni=sni.example.com',
     ].join('\n'),
   )
 })
 
-test('getSurgeNodes supports masque nodes', (t) => {
-  t.is(
+test('getSurgeNodes supports masque nodes', () => {
+  expect(
     surge.getSurgeNodes([
       {
         type: NodeTypeEnum.Masque,
@@ -484,10 +474,11 @@ test('getSurgeNodes supports masque nodes', (t) => {
         portHoppingInterval: 20,
       },
     ]),
+  ).toBe(
     'MASQUE = masque, masque.example.com, 443, username=user, password=pass, alpn="h3,h3-29", ecn=false, skip-cert-verify=true, sni=sni.example.com, port-hopping=1234;5000-6000, port-hopping-interval=20',
   )
 
-  t.is(
+  expect(
     surge.getSurgeNodes([
       {
         type: NodeTypeEnum.Masque,
@@ -497,10 +488,9 @@ test('getSurgeNodes supports masque nodes', (t) => {
         port: 443,
       },
     ]),
-    'MASQUE without auth = masque, masque.example.com, 443',
-  )
+  ).toBe('MASQUE without auth = masque, masque.example.com, 443')
 
-  t.is(
+  expect(
     surge.getSurgeNodes([
       {
         type: NodeTypeEnum.Masque,
@@ -513,12 +503,11 @@ test('getSurgeNodes supports masque nodes', (t) => {
         ip: '172.16.0.2/32',
       },
     ]),
-    '',
-  )
+  ).toBe('')
 })
 
-test('getSurgeNodes supports HTTP/2 TrustTunnel nodes', (t) => {
-  t.is(
+test('getSurgeNodes supports HTTP/2 TrustTunnel nodes', () => {
+  expect(
     surge.getSurgeNodes([
       {
         type: NodeTypeEnum.TrustTunnel,
@@ -539,10 +528,11 @@ test('getSurgeNodes supports HTTP/2 TrustTunnel nodes', (t) => {
         underlyingProxy: 'upstream',
       },
     ]),
+  ).toBe(
     'TrustTunnel = trust-tunnel, trust.example.com, 443, username=user, password=pass, max-streams=3, alpn="h2", headers=X-Client:Surge;X-Token:token, underlying-proxy=upstream, skip-cert-verify=true, sni=sni.example.com, server-cert-fingerprint-sha256=sha256',
   )
 
-  t.is(
+  expect(
     surge.getSurgeNodes([
       {
         type: NodeTypeEnum.TrustTunnel,
@@ -554,12 +544,11 @@ test('getSurgeNodes supports HTTP/2 TrustTunnel nodes', (t) => {
         quic: true,
       },
     ]),
-    '',
-  )
+  ).toBe('')
 })
 
-test('getSurgeNodes - AnyTLS', (t) => {
-  t.is(
+test('getSurgeNodes - AnyTLS', () => {
+  expect(
     surge.getSurgeNodes([
       {
         type: NodeTypeEnum.AnyTLS,
@@ -585,6 +574,7 @@ test('getSurgeNodes - AnyTLS', (t) => {
         reuse: false,
       },
     ]),
+  ).toBe(
     [
       'anytls default = anytls, example.com, 443, password=password',
       'anytls reuse on = anytls, example.com, 443, password=password, reuse=true',
@@ -593,8 +583,8 @@ test('getSurgeNodes - AnyTLS', (t) => {
   )
 })
 
-test('getSurgeNodes - Wireguard', (t) => {
-  t.is(
+test('getSurgeNodes - Wireguard', () => {
+  expect(
     surge.getSurgeNodes([
       {
         type: NodeTypeEnum.Wireguard,
@@ -625,6 +615,7 @@ test('getSurgeNodes - Wireguard', (t) => {
         testUrl: 'http://www.google.com',
       },
     ]),
+  ).toBe(
     [
       'wg node = wireguard, section-name = wg node',
       'wg node = wireguard, section-name = wg node, underlying-proxy=UnderlyingProxy, test-url=http://www.google.com',
@@ -632,8 +623,8 @@ test('getSurgeNodes - Wireguard', (t) => {
   )
 })
 
-test('getSurgeNodes - Tuic', (t) => {
-  t.is(
+test('getSurgeNodes - Tuic', () => {
+  expect(
     surge.getSurgeNodes([
       {
         type: NodeTypeEnum.Tuic,
@@ -693,6 +684,7 @@ test('getSurgeNodes - Tuic', (t) => {
         ecn: true,
       },
     ]),
+  ).toBe(
     [
       '测试 Tuic = tuic, example.com, 443, token=token, server-cert-fingerprint-sha256=sha256, port-hopping=5000-6000;7000, port-hopping-interval=10',
       '测试 Tuic = tuic, example.com, 443, token=token, alpn=h3',
@@ -704,8 +696,8 @@ test('getSurgeNodes - Tuic', (t) => {
   )
 })
 
-test('getSurgeNodes - Hysteria2', (t) => {
-  t.is(
+test('getSurgeNodes - Hysteria2', () => {
+  expect(
     surge.getSurgeNodes([
       {
         type: NodeTypeEnum.Hysteria2,
@@ -730,6 +722,7 @@ test('getSurgeNodes - Hysteria2', (t) => {
         alpn: ['h2', 'h3'],
       },
     ]),
+  ).toBe(
     [
       '测试 Hysteria2 = hysteria2, example.com, 443, password=password, download-bandwidth=100',
       '测试 Hysteria2 = hysteria2, example.com, 443, password=password, download-bandwidth=100, ecn=true, skip-cert-verify=true, sni=sni.example.com',
@@ -737,8 +730,8 @@ test('getSurgeNodes - Hysteria2', (t) => {
   )
 })
 
-test('getSurgeWireguardNodes', (t) => {
-  t.snapshot(
+test('getSurgeWireguardNodes', () => {
+  expect(
     surge.getSurgeWireguardNodes([
       {
         type: NodeTypeEnum.Wireguard,
@@ -799,10 +792,10 @@ test('getSurgeWireguardNodes', (t) => {
         ],
       },
     ]),
-  )
+  ).toMatchSnapshot()
 })
 
-test('getSurgeNodes and getSurgeTailscaleNodes generate Tailscale policy', (t) => {
+test('getSurgeNodes and getSurgeTailscaleNodes generate Tailscale policy', () => {
   const nodeList: ReadonlyArray<PossibleNodeConfigType> = [
     {
       type: NodeTypeEnum.Tailscale,
@@ -838,12 +831,10 @@ test('getSurgeNodes and getSurgeTailscaleNodes generate Tailscale policy', (t) =
   const filter = (node: PossibleNodeConfigType) =>
     node.nodeName !== 'filtered-tailnet'
 
-  t.is(
-    surge.getSurgeNodes(nodeList, filter),
+  expect(surge.getSurgeNodes(nodeList, filter)).toBe(
     'tailnet = tailscale, section-name=tailnet, underlying-proxy=upstream, test-url=http://100.64.0.1/, test-timeout=0, ecn=false, no-error-alert=false',
   )
-  t.is(
-    surge.getSurgeTailscaleNodes(nodeList, filter),
+  expect(surge.getSurgeTailscaleNodes(nodeList, filter)).toBe(
     [
       '[Tailscale tailnet]',
       'auth-key=tskey-auth-example',
@@ -859,7 +850,7 @@ test('getSurgeNodes and getSurgeTailscaleNodes generate Tailscale policy', (t) =
   )
 })
 
-test('Surge Tailscale generation requires authKey', (t) => {
+test('Surge Tailscale generation requires authKey', () => {
   const nodeList: ReadonlyArray<PossibleNodeConfigType> = [
     {
       type: NodeTypeEnum.Tailscale,
@@ -871,14 +862,13 @@ test('Surge Tailscale generation requires authKey', (t) => {
     () => surge.getSurgeNodes(nodeList),
     () => surge.getSurgeTailscaleNodes(nodeList),
   ]) {
-    const error = t.throws(generate)
-    t.true(error?.message.includes('interactive-tailnet'))
-    t.true(error?.message.includes('authKey'))
+    expect(generate).toThrow('interactive-tailnet')
+    expect(generate).toThrow('authKey')
   }
 })
 
-test('getSurgeNodeNames', (t) => {
-  t.is(
+test('getSurgeNodeNames', () => {
+  expect(
     surge.getSurgeNodeNames([
       {
         nodeName: 'Test Node 1',
@@ -900,6 +890,5 @@ test('getSurgeNodeNames', (t) => {
         password: 'password',
       },
     ]),
-    'Test Node 1, Test Node 2',
-  )
+  ).toBe('Test Node 1, Test Node 2')
 })

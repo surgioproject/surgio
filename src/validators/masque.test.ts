@@ -1,4 +1,4 @@
-import test from 'ava'
+import { expect, test } from 'vitest'
 
 import { NodeTypeEnum } from '../types'
 
@@ -23,26 +23,26 @@ const keyPairNode = {
   ip: '172.16.0.2/32',
 } as const
 
-test('validates MASQUE basic-auth nodes', (t) => {
-  t.true(MasqueNodeConfigValidator.safeParse(basicAuthNode).success)
-  t.true(
+test('validates MASQUE basic-auth nodes', () => {
+  expect(MasqueNodeConfigValidator.safeParse(basicAuthNode).success).toBe(true)
+  expect(
     MasqueNodeConfigValidator.safeParse({
       ...basicAuthNode,
       portHopping: '1234,5000-6000',
       portHoppingInterval: 30,
     }).success,
-  )
+  ).toBe(true)
 })
 
-test('rejects incompatible MASQUE basic-auth options', (t) => {
-  t.false(
+test('rejects incompatible MASQUE basic-auth options', () => {
+  expect(
     MasqueNodeConfigValidator.safeParse({
       ...basicAuthNode,
       portHopping: '1234;5000-6000',
       underlyingProxy: 'upstream',
     }).success,
-  )
-  t.false(
+  ).toBe(false)
+  expect(
     MasqueNodeConfigValidator.safeParse({
       ...basicAuthNode,
       shadowTls: {
@@ -50,34 +50,34 @@ test('rejects incompatible MASQUE basic-auth options', (t) => {
         sni: 'example.com',
       },
     }).success,
-  )
+  ).toBe(false)
 })
 
-test('validates MASQUE key-pair nodes', (t) => {
-  t.true(MasqueNodeConfigValidator.safeParse(keyPairNode).success)
-  t.true(
+test('validates MASQUE key-pair nodes', () => {
+  expect(MasqueNodeConfigValidator.safeParse(keyPairNode).success).toBe(true)
+  expect(
     MasqueNodeConfigValidator.safeParse({
       ...keyPairNode,
       ip: undefined,
       network: 'h3-l4proxy',
       udpRelay: false,
     }).success,
-  )
+  ).toBe(true)
 })
 
-test('rejects invalid MASQUE key-pair nodes', (t) => {
-  t.false(
+test('rejects invalid MASQUE key-pair nodes', () => {
+  expect(
     MasqueNodeConfigValidator.safeParse({
       ...keyPairNode,
       ip: undefined,
     }).success,
-  )
-  t.false(
+  ).toBe(false)
+  expect(
     MasqueNodeConfigValidator.safeParse({
       ...keyPairNode,
       ip: undefined,
       network: 'h3-l4proxy',
       udpRelay: true,
     }).success,
-  )
+  ).toBe(false)
 })

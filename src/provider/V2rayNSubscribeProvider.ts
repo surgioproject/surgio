@@ -41,7 +41,7 @@ export default class V2rayNSubscribeProvider extends Provider {
     })
     const result = schema.safeParse(config)
 
-    // istanbul ignore next
+    /* istanbul ignore next -- @preserve */
     if (!result.success) {
       throw new SurgioError('V2rayNSubscribeProvider 配置校验失败', {
         cause: result.error,
@@ -56,7 +56,7 @@ export default class V2rayNSubscribeProvider extends Provider {
     this.udpRelay = result.data.udpRelay
   }
 
-  // istanbul ignore next
+  /* istanbul ignore next -- @preserve */
   public get url(): string {
     return relayableUrl(this.#originalUrl, this.config.relayUrl)
   }
@@ -190,14 +190,14 @@ export const parseJSONConfig = (
 ): VmessNodeConfig | undefined => {
   const config = JSON.parse(json)
 
-  // istanbul ignore next
+  /* istanbul ignore next -- @preserve */
   if (!isCompatibleMode && (!config.v || Number(config.v) !== 2)) {
     throw new Error(
       `该节点 ${config.ps} 可能不是一个有效的 V2rayN 节点。请参考 https://url.royli.dev/Qtrci 进行排查，或者将解析模式改为兼容模式`,
     )
   }
 
-  // istanbul ignore next
+  /* istanbul ignore next -- @preserve */
   if (!['tcp', 'ws', 'h2', 'grpc'].includes(config.net)) {
     logger.warn(
       `不支持读取 network 类型为 ${config.net} 的 Vmess 节点，节点 ${config.ps} 会被省略。`,
@@ -205,7 +205,7 @@ export const parseJSONConfig = (
     return undefined
   }
 
-  // istanbul ignore next
+  /* istanbul ignore next -- @preserve */
   if (!['none', 'http'].includes(config.type)) {
     logger.warn(
       `不支持读取 type 类型为 ${config.type} 的 Vmess 节点，节点 ${config.ps} 会被省略。`,

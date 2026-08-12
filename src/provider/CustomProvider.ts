@@ -52,7 +52,7 @@ export default class CustomProvider extends Provider {
     })
     const result = schema.safeParse(config)
 
-    // istanbul ignore next
+    /* istanbul ignore next -- @preserve */
     if (!result.success) {
       throw new SurgioError('CustomProvider 配置校验失败', {
         cause: result.error,
@@ -84,17 +84,17 @@ export default class CustomProvider extends Provider {
             : node
         const type = nodeWithDefaults.type as NodeTypeEnum
 
-        // istanbul ignore next
+        /* istanbul ignore next -- @preserve */
         if (nodeWithDefaults['udp-relay']) {
           throw new Error('udp-relay 已废弃，请使用 udpRelay')
         }
 
-        // istanbul ignore next
+        /* istanbul ignore next -- @preserve */
         if (nodeWithDefaults['obfs-host']) {
           throw new Error('obfs-host 已废弃，请使用 obfsHost')
         }
 
-        // istanbul ignore next
+        /* istanbul ignore next -- @preserve */
         if (nodeWithDefaults['obfs-uri']) {
           throw new Error('obfs-uri 已废弃，请使用 obfsUri')
         }
@@ -107,7 +107,7 @@ export default class CustomProvider extends Provider {
           throw new Error('请将 path 移动到 xhttpOpts.path')
         }
 
-        // istanbul ignore next
+        /* istanbul ignore next -- @preserve */
         let parsedNode = (() => {
           switch (type) {
             case NodeTypeEnum.Shadowsocks:

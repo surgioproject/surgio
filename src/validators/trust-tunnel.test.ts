@@ -1,4 +1,4 @@
-import test from 'ava'
+import { expect, test } from 'vitest'
 
 import { NodeTypeEnum } from '../types'
 
@@ -13,9 +13,9 @@ const h2Node = {
   password: 'pass',
 } as const
 
-test('validates TrustTunnel HTTP/2 and QUIC nodes', (t) => {
-  t.true(TrustTunnelNodeConfigValidator.safeParse(h2Node).success)
-  t.true(
+test('validates TrustTunnel HTTP/2 and QUIC nodes', () => {
+  expect(TrustTunnelNodeConfigValidator.safeParse(h2Node).success).toBe(true)
+  expect(
     TrustTunnelNodeConfigValidator.safeParse({
       ...h2Node,
       alpn: ['h2'],
@@ -25,8 +25,8 @@ test('validates TrustTunnel HTTP/2 and QUIC nodes', (t) => {
         sni: 'shadow.example.com',
       },
     }).success,
-  )
-  t.true(
+  ).toBe(true)
+  expect(
     TrustTunnelNodeConfigValidator.safeParse({
       ...h2Node,
       quic: true,
@@ -38,36 +38,36 @@ test('validates TrustTunnel HTTP/2 and QUIC nodes', (t) => {
       maxConnections: 8,
       minStreams: 5,
     }).success,
-  )
+  ).toBe(true)
 })
 
-test('rejects TrustTunnel transport option mismatches', (t) => {
-  t.false(
+test('rejects TrustTunnel transport option mismatches', () => {
+  expect(
     TrustTunnelNodeConfigValidator.safeParse({
       ...h2Node,
       alpn: ['h3'],
     }).success,
-  )
-  t.false(
+  ).toBe(false)
+  expect(
     TrustTunnelNodeConfigValidator.safeParse({
       ...h2Node,
       quic: true,
       alpn: ['h2'],
     }).success,
-  )
-  t.false(
+  ).toBe(false)
+  expect(
     TrustTunnelNodeConfigValidator.safeParse({
       ...h2Node,
       portHopping: '443,8443',
     }).success,
-  )
-  t.false(
+  ).toBe(false)
+  expect(
     TrustTunnelNodeConfigValidator.safeParse({
       ...h2Node,
       congestionController: 'bbr',
     }).success,
-  )
-  t.false(
+  ).toBe(false)
+  expect(
     TrustTunnelNodeConfigValidator.safeParse({
       ...h2Node,
       quic: true,
@@ -76,21 +76,21 @@ test('rejects TrustTunnel transport option mismatches', (t) => {
         sni: 'shadow.example.com',
       },
     }).success,
-  )
+  ).toBe(false)
 })
 
-test('rejects conflicting or invalid TrustTunnel reuse options', (t) => {
-  t.false(
+test('rejects conflicting or invalid TrustTunnel reuse options', () => {
+  expect(
     TrustTunnelNodeConfigValidator.safeParse({
       ...h2Node,
       maxConnections: 8,
       maxStreams: 16,
     }).success,
-  )
-  t.false(
+  ).toBe(false)
+  expect(
     TrustTunnelNodeConfigValidator.safeParse({
       ...h2Node,
       minStreams: -1,
     }).success,
-  )
+  ).toBe(false)
 })

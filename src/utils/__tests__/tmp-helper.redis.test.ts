@@ -1,4 +1,4 @@
-import test from 'ava'
+import { afterAll, beforeAll, expect, test } from 'vitest'
 import sinon from 'sinon'
 import MockRedis from 'ioredis-mock'
 
@@ -7,22 +7,22 @@ import { createTmpFactory } from '../tmp-helper'
 
 const sandbox = sinon.createSandbox()
 
-test.before(() => {
+beforeAll(() => {
   redis.createRedis('', MockRedis)
 })
 
-test.after(async () => {
+afterAll(async () => {
   sandbox.restore()
   await redis.destroyRedis()
 })
 
-test('should work', async (t) => {
+test('should work', async () => {
   const factory = createTmpFactory('tmp-helper-test', 'redis')
 
   const tmp = factory('tmp1.txt')
 
-  t.is(await tmp.getContent(), void 0)
+  expect(await tmp.getContent()).toBe(void 0)
   await tmp.setContent('123456abcdef')
-  t.is(await tmp.getContent(), '123456abcdef')
-  t.is(await tmp.getContent(), '123456abcdef')
+  expect(await tmp.getContent()).toBe('123456abcdef')
+  expect(await tmp.getContent()).toBe('123456abcdef')
 })

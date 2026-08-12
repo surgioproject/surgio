@@ -1,4 +1,4 @@
-import test from 'ava'
+import { beforeEach, expect, test, vi } from 'vitest'
 import sinon from 'sinon'
 
 import { NodeTypeEnum } from '../../types'
@@ -7,12 +7,12 @@ import { getShadowsocksrSubscription } from '../ShadowsocksrSubscribeProvider'
 
 const sandbox = sinon.createSandbox()
 
-test.beforeEach(() => {
+beforeEach(() => {
   sandbox.restore()
-  sandbox.stub(config, 'getConfig').returns({} as any)
+  vi.spyOn(config, 'getConfig').mockReturnValue({} as any)
 })
 
-test('getShadowsocksrSubscription', async (t) => {
+test('getShadowsocksrSubscription', async () => {
   const { nodeList } = await getShadowsocksrSubscription(
     'http://example.com/test-ssr-sub.txt?v=1',
     { 'user-agent': 'shadowrocket' },
@@ -26,7 +26,7 @@ test('getShadowsocksrSubscription', async (t) => {
     true,
   )
 
-  t.deepEqual(nodeList[0], {
+  expect(nodeList[0]).toEqual({
     nodeName: '测试中文',
     type: NodeTypeEnum.Shadowsocksr,
     hostname: '127.0.0.1',
@@ -39,7 +39,7 @@ test('getShadowsocksrSubscription', async (t) => {
     protoparam: '',
     udpRelay: false,
   })
-  t.deepEqual(nodeList2[0], {
+  expect(nodeList2[0]).toEqual({
     nodeName: '测试中文',
     type: NodeTypeEnum.Shadowsocksr,
     hostname: '127.0.0.1',

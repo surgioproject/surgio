@@ -38,7 +38,7 @@ export default class SsdProvider extends Provider {
     })
     const result = schema.safeParse(config)
 
-    // istanbul ignore next
+    /* istanbul ignore next -- @preserve */
     if (!result.success) {
       throw new SurgioError('SsdProvider 配置校验失败', {
         cause: result.error,
@@ -51,7 +51,7 @@ export default class SsdProvider extends Provider {
     this.supportGetSubscriptionUserInfo = true
   }
 
-  // istanbul ignore next
+  /* istanbul ignore next -- @preserve */
   public get url(): string {
     return relayableUrl(this.#originalUrl, this.config.relayUrl)
   }
@@ -155,7 +155,7 @@ export const getSsdSubscription = async (
     cacheKey,
   )
 
-  // istanbul ignore next
+  /* istanbul ignore next -- @preserve */
   if (!response.body.startsWith('ssd://')) {
     throw new Error(`暂仅支持 ssd:// 开头的订阅地址，${url} 无法处理`)
   }
@@ -202,14 +202,14 @@ export const parseSsdConfig = (
     ? decodeStringList(pluginOptsString.split(';'))
     : {}
 
-  // istanbul ignore next
+  /* istanbul ignore next -- @preserve */
   if (plugin && !['simple-obfs', 'v2ray-plugin'].includes(plugin)) {
     logger.warn(
       `不支持从 SSD 订阅中读取 ${plugin} 类型的 Shadowsocks 节点，节点 ${server.remarks} 会被省略`,
     )
     return undefined
   }
-  // istanbul ignore next
+  /* istanbul ignore next -- @preserve */
   if (
     plugin === 'v2ray-plugin' &&
     (pluginOpts.mode as string).toLowerCase() === 'quic'

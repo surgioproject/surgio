@@ -80,11 +80,11 @@ export const getUrl = (
   return url.toString()
 }
 
-// istanbul ignore next
+/* istanbul ignore next -- @preserve */
 export const toUrlSafeBase64 = (str: string): string =>
   URLSafeBase64.encode(Buffer.from(str, 'utf8'))
 
-// istanbul ignore next
+/* istanbul ignore next -- @preserve */
 export const fromUrlSafeBase64 = (str: string): string => {
   if (URLSafeBase64.validate(str)) {
     return URLSafeBase64.decode(str).toString()
@@ -92,15 +92,15 @@ export const fromUrlSafeBase64 = (str: string): string => {
   return fromBase64(str)
 }
 
-// istanbul ignore next
+/* istanbul ignore next -- @preserve */
 export const toBase64 = (str: string): string =>
   Buffer.from(str, 'utf8').toString('base64')
 
-// istanbul ignore next
+/* istanbul ignore next -- @preserve */
 export const fromBase64 = (str: string): string =>
   Buffer.from(str, 'base64').toString('utf8')
 
-// istanbul ignore next
+/* istanbul ignore next -- @preserve */
 export const toMD5 = (str: string): string =>
   crypto.createHash('md5').update(str).digest('hex')
 
@@ -113,7 +113,7 @@ export const getShadowsocksNodes = (
 ): string => {
   const result: ReadonlyArray<any> = list
     .map((nodeConfig) => {
-      // istanbul ignore next
+      /* istanbul ignore next -- @preserve */
       if (nodeConfig.enable === false) {
         return null
       }
@@ -151,7 +151,7 @@ export const getShadowsocksNodes = (
           ].join('')
         }
 
-        // istanbul ignore next
+        /* istanbul ignore next -- @preserve */
         default:
           logger.warn(
             `在生成 Shadowsocks 节点时出现了 ${nodeConfig.type} 节点，节点 ${nodeConfig.nodeName} 会被省略`,
@@ -170,7 +170,7 @@ export const getShadowsocksrNodes = (
 ): string => {
   const result: ReadonlyArray<string | undefined> = list
     .map((nodeConfig) => {
-      // istanbul ignore next
+      /* istanbul ignore next -- @preserve */
       if (nodeConfig.enable === false) {
         return void 0
       }
@@ -208,7 +208,7 @@ export const getShadowsocksrNodes = (
           )
         }
 
-        // istanbul ignore next
+        /* istanbul ignore next -- @preserve */
         default:
           logger.warn(
             `在生成 Shadowsocksr 节点时出现了 ${nodeConfig.type} 节点，节点 ${nodeConfig.nodeName} 会被省略`,
@@ -227,7 +227,7 @@ export const getV2rayNNodes = (
 ): string => {
   const result: ReadonlyArray<string> = list
     .map((nodeConfig): string | undefined => {
-      // istanbul ignore next
+      /* istanbul ignore next -- @preserve */
       if (nodeConfig.enable === false) {
         return void 0
       }
@@ -306,7 +306,7 @@ export const getV2rayNNodes = (
           return 'vmess://' + toBase64(JSON.stringify(json))
         }
 
-        // istanbul ignore next
+        /* istanbul ignore next -- @preserve */
         default:
           logger.warn(
             `在生成 V2Ray 节点时出现了 ${nodeConfig.type} 节点，节点 ${nodeConfig.nodeName} 会被省略`,
@@ -319,13 +319,13 @@ export const getV2rayNNodes = (
   return result.join('\n')
 }
 
-// istanbul ignore next
+/* istanbul ignore next -- @preserve */
 export const getShadowsocksNodesJSON = (
   list: ReadonlyArray<ShadowsocksNodeConfig>,
 ): string => {
   const nodes: ReadonlyArray<any> = list
     .map((nodeConfig) => {
-      // istanbul ignore next
+      /* istanbul ignore next -- @preserve */
       if (nodeConfig.enable === false) {
         return null
       }
@@ -352,7 +352,7 @@ export const getShadowsocksNodesJSON = (
           }
         }
 
-        // istanbul ignore next
+        /* istanbul ignore next -- @preserve */
         default:
           logger.warn(
             `在生成 Shadowsocks 节点时出现了 ${nodeConfig.type} 节点，节点 ${nodeConfig.nodeName} 会被省略`,
@@ -370,7 +370,7 @@ export const getNodeNames = function (
   filter?: NodeFilterType | SortedNodeFilterType,
   separator?: string,
 ): string {
-  // istanbul ignore next
+  /* istanbul ignore next -- @preserve */
   if (arguments.length === 2 && typeof filter === 'undefined') {
     throw new Error(ERR_INVALID_FILTER)
   }
@@ -380,7 +380,7 @@ export const getNodeNames = function (
     .join(separator || ', ')
 }
 
-// istanbul ignore next
+/* istanbul ignore next -- @preserve */
 export const changeCase = (
   str: string,
   format: 'camelCase' | 'snakeCase' | 'kebabCase',
@@ -500,7 +500,7 @@ export const ensureConfigFolder = (dir: string = os.homedir()): string => {
     baseDir = dir
   } catch {
     // if the user do not have write permission
-    // istanbul ignore next
+    /* istanbul ignore next -- @preserve */
     baseDir = '/tmp'
   }
 
@@ -521,51 +521,51 @@ export const lowercaseHeaderKeys = (
   return wsHeaders
 }
 
-// istanbul ignore next
+/* istanbul ignore next -- @preserve */
 export const isIp = (str: string): boolean => net.isIPv4(str) || net.isIPv6(str)
 
-// istanbul ignore next
+/* istanbul ignore next -- @preserve */
 export const isNow = (): boolean =>
   typeof process.env.NOW_REGION !== 'undefined' ||
   typeof process.env.VERCEL_REGION !== 'undefined'
 
-// istanbul ignore next
+/* istanbul ignore next -- @preserve */
 export const isVercel = (): boolean => isNow()
 
-// istanbul ignore next
+/* istanbul ignore next -- @preserve */
 export const isHeroku = (): boolean => typeof process.env.DYNO !== 'undefined'
 
-// istanbul ignore next
+/* istanbul ignore next -- @preserve */
 export const isGitHubActions = (): boolean =>
   typeof process.env.GITHUB_ACTIONS !== 'undefined'
 
-// istanbul ignore next
+/* istanbul ignore next -- @preserve */
 export const isGitLabCI = (): boolean =>
   typeof process.env.GITLAB_CI !== 'undefined'
 
-// istanbul ignore next
+/* istanbul ignore next -- @preserve */
 export const isRailway = (): boolean =>
   typeof process.env.RAILWAY_STATIC_URL !== 'undefined'
 
-// istanbul ignore next
+/* istanbul ignore next -- @preserve */
 export const isNetlify = (): boolean =>
   typeof process.env.NETLIFY !== 'undefined'
 
-// istanbul ignore next
+/* istanbul ignore next -- @preserve */
 export const isAWSLambda = (): boolean =>
   typeof process.env.AWS_LAMBDA_FUNCTION_NAME !== 'undefined'
 
-// istanbul ignore next
+/* istanbul ignore next -- @preserve */
 export const isAWS = (): boolean =>
   isAWSLambda() ||
   typeof process.env.AWS_EXECUTION_ENV !== 'undefined' ||
   typeof process.env.AWS_REGION !== 'undefined'
 
-// istanbul ignore next
+/* istanbul ignore next -- @preserve */
 export const isFlyIO = (): boolean =>
   typeof process.env.FLY_REGION !== 'undefined'
 
-// istanbul ignore next
+/* istanbul ignore next -- @preserve */
 export const isGFWFree = (): boolean =>
   getIsGFWFree() ||
   isAWS() ||

@@ -1,17 +1,16 @@
-import test from 'ava'
+import { expect, test } from 'vitest'
 
 import httpClient, { getUserAgent } from '../http-client'
 
-test('getUserAgent', (t) => {
+test('getUserAgent', () => {
   const pkg = require('../../../package.json')
-  t.is(getUserAgent(), 'surgio/' + pkg.version)
-  t.is(getUserAgent('foo'), 'foo surgio/' + pkg.version)
+  expect(getUserAgent()).toBe('surgio/' + pkg.version)
+  expect(getUserAgent('foo')).toBe('foo surgio/' + pkg.version)
 })
 
-test('httpClient', (t) => {
+test('httpClient', () => {
   const pkg = require('../../../package.json')
-  t.is(
-    httpClient.defaults.options.headers['user-agent'],
+  expect(httpClient.defaults.options.headers['user-agent']).toBe(
     'surgio/' + pkg.version,
   )
 })

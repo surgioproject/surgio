@@ -1,10 +1,10 @@
-import test from 'ava'
+import { expect, test } from 'vitest'
 
 import { NodeTypeEnum } from '../types'
 
 import { Hysteria2NodeConfigValidator } from './hysteria2'
 
-test('Hysteria2NodeConfigValidator preserves udpRelay', (t) => {
+test('Hysteria2NodeConfigValidator preserves udpRelay', () => {
   const result = Hysteria2NodeConfigValidator.parse({
     type: NodeTypeEnum.Hysteria2,
     nodeName: 'hysteria2',
@@ -14,5 +14,5 @@ test('Hysteria2NodeConfigValidator preserves udpRelay', (t) => {
     udpRelay: true,
   })
 
-  t.true(result.udpRelay)
+  expect(result.udpRelay).toBe(true)
 })

@@ -85,7 +85,7 @@ export const getClashNodeNames = function (
   prependNodeNames?: ReadonlyArray<string>,
   defaultNodeNames?: ReadonlyArray<string>,
 ): ReadonlyArray<string> {
-  // istanbul ignore next
+  /* istanbul ignore next -- @preserve */
   if (arguments.length === 2 && typeof filter === 'undefined') {
     throw new Error(ERR_INVALID_FILTER)
   }
@@ -752,7 +752,7 @@ function nodeListMapper(nodeConfig: PossibleNodeConfigType) {
     }
 
     case NodeTypeEnum.Wireguard:
-      // istanbul ignore next
+      /* istanbul ignore next -- @preserve */
       if (nodeConfig.peers.length > 1) {
         logger.warn(
           `节点 ${nodeConfig.nodeName} 有多个 WireGuard Peer，然而 Stash 或 Clash 仅支持一个 Peer，因此只会使用第一个 Peer。`,
@@ -822,7 +822,7 @@ function nodeListMapper(nodeConfig: PossibleNodeConfigType) {
       } as const
     }
 
-    // istanbul ignore next
+    /* istanbul ignore next -- @preserve */
     default:
       logger.warn(
         `不支持为 Clash 生成 ${(nodeConfig as any).type} 的节点，节点 ${

@@ -32,7 +32,7 @@ export const applyFilter = <T extends PossibleNodeConfigType>(
   nodeList: ReadonlyArray<T>,
   filter?: NodeFilterType | SortedNodeFilterType,
 ): ReadonlyArray<T> => {
-  // istanbul ignore next
+  /* istanbul ignore next -- @preserve */
   if (filter && !validateFilter(filter)) {
     throw new Error(`使用了无效的过滤器 ${filter}`)
   }
@@ -68,7 +68,7 @@ export const mergeFilters = (
       throw new Error('mergeFilters 不支持包含排序功能的过滤器')
     }
 
-    // istanbul ignore next
+    /* istanbul ignore next -- @preserve */
     if (typeof filter !== 'function') {
       throw new Error('mergeFilters 传入了无效的过滤器')
     }
@@ -83,7 +83,7 @@ export const useKeywords = (
   keywords: Array<string>,
   isStrict?: boolean,
 ): NodeFilterType => {
-  // istanbul ignore next
+  /* istanbul ignore next -- @preserve */
   if (!Array.isArray(keywords)) {
     throw new Error('keywords 请使用数组')
   }
@@ -98,7 +98,7 @@ export const discardKeywords = (
   keywords: Array<string>,
   isStrict?: boolean,
 ): NodeFilterType => {
-  // istanbul ignore next
+  /* istanbul ignore next -- @preserve */
   if (!Array.isArray(keywords)) {
     throw new Error('keywords 请使用数组')
   }
@@ -110,7 +110,7 @@ export const discardKeywords = (
 }
 
 export const useRegexp = (regexp: RegExp): NodeFilterType => {
-  // istanbul ignore next
+  /* istanbul ignore next -- @preserve */
   if (!_.isRegExp(regexp)) {
     throw new Error('入参不是一个合法的正则表达式')
   }
@@ -134,7 +134,7 @@ export const useProviders = (
   keywords: Array<string>,
   isStrict = true,
 ): NodeFilterType => {
-  // istanbul ignore next
+  /* istanbul ignore next -- @preserve */
   if (!Array.isArray(keywords)) {
     throw new Error('keywords 请使用数组')
   }
@@ -151,7 +151,7 @@ export const discardProviders = (
   keywords: Array<string>,
   isStrict = true,
 ): NodeFilterType => {
-  // istanbul ignore next
+  /* istanbul ignore next -- @preserve */
   if (!Array.isArray(keywords)) {
     throw new Error('keywords 请使用数组')
   }
@@ -167,7 +167,7 @@ export const discardProviders = (
 export const useSortedKeywords = (
   keywords: Array<string>,
 ): SortedNodeFilterType => {
-  // istanbul ignore next
+  /* istanbul ignore next -- @preserve */
   if (!Array.isArray(keywords)) {
     throw new Error('keywords 请使用数组')
   }
@@ -183,7 +183,7 @@ export const mergeSortedFilters = (
       throw new Error('mergeSortedFilters 不支持包含排序功能的过滤器')
     }
 
-    // istanbul ignore next
+    /* istanbul ignore next -- @preserve */
     if (typeof filter !== 'function') {
       throw new Error('mergeSortedFilters 传入了无效的过滤器')
     }
@@ -208,7 +208,7 @@ export const mergeReversedFilters = (
       throw new Error('mergeReversedFilters 不支持包含排序功能的过滤器')
     }
 
-    // istanbul ignore next
+    /* istanbul ignore next -- @preserve */
     if (typeof filter !== 'function') {
       throw new Error('mergeReversedFilters 传入了无效的过滤器')
     }

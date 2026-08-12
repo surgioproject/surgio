@@ -40,14 +40,14 @@ export const resolveDomain = async (
     return address
   }
 
-  // istanbul ignore next
+  /* istanbul ignore next -- @preserve */
   return []
 }
 
 export const resolve4And6 = async (
   domain: string,
 ): Promise<ReadonlyArray<RecordWithTtl>> => {
-  // istanbul ignore next
+  /* istanbul ignore next -- @preserve */
   function onErr(): ReadonlyArray<never> {
     return []
   }

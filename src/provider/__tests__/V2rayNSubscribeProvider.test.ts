@@ -1,4 +1,4 @@
-import test from 'ava'
+import { beforeEach, expect, test, vi } from 'vitest'
 import sinon from 'sinon'
 
 import { SupportProviderEnum } from '../../types'
@@ -9,23 +9,21 @@ import V2rayNSubscribeProvider, {
 
 const sandbox = sinon.createSandbox()
 
-test.beforeEach(() => {
+beforeEach(() => {
   sandbox.restore()
-  sandbox.stub(config, 'getConfig').returns({} as any)
+  vi.spyOn(config, 'getConfig').mockReturnValue({} as any)
 })
 
-test('V2rayNSubscribeProvider', async (t) => {
+test('V2rayNSubscribeProvider', async () => {
   const provider = new V2rayNSubscribeProvider('test', {
     type: SupportProviderEnum.V2rayNSubscribe,
     url: 'http://example.com/test-v2rayn-sub.txt',
   })
 
-  await t.notThrowsAsync(async () => {
-    await provider.getNodeList()
-  })
+  await provider.getNodeList()
 })
 
-test('getV2rayNSubscription', async (t) => {
+test('getV2rayNSubscription', async () => {
   const url = 'http://example.com/test-v2rayn-sub.txt'
   const configList = await getV2rayNSubscription({
     url,
@@ -34,10 +32,10 @@ test('getV2rayNSubscription', async (t) => {
     cacheKey: 'test-cache-key',
   })
 
-  t.snapshot(configList)
+  expect(configList).toMatchSnapshot()
 })
 
-test('getV2rayNSubscription compatible mode', async (t) => {
+test('getV2rayNSubscription compatible mode', async () => {
   const url = 'http://example.com/test-v2rayn-sub-compatible.txt'
   const configList = await getV2rayNSubscription({
     url,
@@ -46,10 +44,10 @@ test('getV2rayNSubscription compatible mode', async (t) => {
     cacheKey: 'test-cache-key',
   })
 
-  t.snapshot(configList)
+  expect(configList).toMatchSnapshot()
 })
 
-test('getV2rayNSubscription udpRelay skipCertVerify', async (t) => {
+test('getV2rayNSubscription udpRelay skipCertVerify', async () => {
   const url = 'http://example.com/test-v2rayn-sub-compatible.txt'
   const configList = await getV2rayNSubscription({
     url,
@@ -61,5 +59,5 @@ test('getV2rayNSubscription udpRelay skipCertVerify', async (t) => {
     cacheKey: 'test-cache-key',
   })
 
-  t.snapshot(configList)
+  expect(configList).toMatchSnapshot()
 })

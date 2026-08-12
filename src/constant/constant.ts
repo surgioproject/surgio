@@ -1,4 +1,4 @@
-// istanbul ignore file
+/* istanbul ignore file -- @preserve */
 
 export const NETWORK_SURGIO_UA = 'surgio'
 

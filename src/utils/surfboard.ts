@@ -89,8 +89,8 @@ function nodeListMapper(
             'https',
             nodeConfig.hostname,
             nodeConfig.port,
-            nodeConfig.username /* istanbul ignore next */ || '',
-            nodeConfig.password /* istanbul ignore next */ || '',
+            nodeConfig.username /* istanbul ignore next -- @preserve */ || '',
+            nodeConfig.password /* istanbul ignore next -- @preserve */ || '',
             ...(typeof nodeConfig.skipCertVerify === 'boolean'
               ? [`skip-cert-verify=${nodeConfig.skipCertVerify}`]
               : []),
@@ -109,8 +109,8 @@ function nodeListMapper(
             'http',
             nodeConfig.hostname,
             nodeConfig.port,
-            nodeConfig.username /* istanbul ignore next */ || '',
-            nodeConfig.password /* istanbul ignore next */ || '',
+            nodeConfig.username /* istanbul ignore next -- @preserve */ || '',
+            nodeConfig.password /* istanbul ignore next -- @preserve */ || '',
           ].join(', '),
         ].join(' = '),
       ]
@@ -234,7 +234,7 @@ function nodeListMapper(
       ]
     }
 
-    // istanbul ignore next
+    /* istanbul ignore next -- @preserve */
     default:
       logger.warn(
         `不支持为 Surfboard 生成 ${nodeConfig.type} 的节点，节点 ${nodeConfig.nodeName} 会被省略`,

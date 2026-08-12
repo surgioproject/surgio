@@ -1,4 +1,4 @@
-// istanbul ignore file
+/* istanbul ignore file -- @preserve */
 import BaseCommand from '../base-command'
 import { generateDoctorInfo } from '../utils/doctor'
 

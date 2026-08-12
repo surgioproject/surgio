@@ -1,4 +1,4 @@
-// istanbul ignore file
+/* istanbul ignore file -- @preserve */
 
 import { ESLint } from 'eslint'
 import _ from 'lodash'

@@ -1,4 +1,4 @@
-import test from 'ava'
+import { beforeEach, expect, test, vi } from 'vitest'
 import sinon from 'sinon'
 
 import { SupportProviderEnum } from '../../types'
@@ -7,32 +7,32 @@ import SsdProvider from '../SsdProvider'
 
 const sandbox = sinon.createSandbox()
 
-test.beforeEach(() => {
+beforeEach(() => {
   sandbox.restore()
-  sandbox.stub(config, 'getConfig').returns({} as any)
+  vi.spyOn(config, 'getConfig').mockReturnValue({} as any)
 })
 
-test('SsdProvider 1', async (t) => {
+test('SsdProvider 1', async () => {
   const provider = new SsdProvider('test', {
     type: SupportProviderEnum.Ssd,
     url: 'http://example.com/ssd-sample.txt',
   })
   const nodeList = await provider.getNodeList()
 
-  t.snapshot(nodeList)
+  expect(nodeList).toMatchSnapshot()
 })
 
-test('SsdProvider 2', async (t) => {
+test('SsdProvider 2', async () => {
   const provider = new SsdProvider('test', {
     type: SupportProviderEnum.Ssd,
     url: 'http://example.com/ssd-sample-2.txt',
   })
   const nodeList = await provider.getNodeList()
 
-  t.snapshot(nodeList)
+  expect(nodeList).toMatchSnapshot()
 })
 
-test('SsdProvider udpRelay', async (t) => {
+test('SsdProvider udpRelay', async () => {
   const provider = new SsdProvider('test', {
     type: SupportProviderEnum.Ssd,
     url: 'http://example.com/ssd-sample.txt',
@@ -40,17 +40,17 @@ test('SsdProvider udpRelay', async (t) => {
   })
   const nodeList = await provider.getNodeList()
 
-  t.snapshot(nodeList)
+  expect(nodeList).toMatchSnapshot()
 })
 
-test('SsdProvider.getSubscriptionUserInfo', async (t) => {
+test('SsdProvider.getSubscriptionUserInfo', async () => {
   const provider = new SsdProvider('test', {
     type: SupportProviderEnum.Ssd,
     url: 'http://example.com/ssd-sample.txt',
   })
   const userInfo = await provider.getSubscriptionUserInfo()
 
-  t.is(userInfo?.upload, 0)
-  t.is(userInfo?.download, 32212254720)
-  t.is(userInfo?.total, 429496729600)
+  expect(userInfo?.upload).toBe(0)
+  expect(userInfo?.download).toBe(32212254720)
+  expect(userInfo?.total).toBe(429496729600)
 })

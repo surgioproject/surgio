@@ -107,7 +107,7 @@ export class UnifiedCache {
 
 export const unifiedCache = new UnifiedCache()
 
-// istanbul ignore next
+/* istanbul ignore next -- @preserve */
 export const cleanCaches = async () => {
   await unifiedCache.reset()
 }

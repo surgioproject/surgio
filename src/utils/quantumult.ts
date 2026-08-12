@@ -77,12 +77,12 @@ function nodeListMapper(
           ) {
             config.push(`obfs=wss`)
 
-            // istanbul ignore next
+            /* istanbul ignore next -- @preserve */
             if (nodeConfig.skipCertVerify) {
               config.push('tls-verification=false')
             }
 
-            // istanbul ignore next
+            /* istanbul ignore next -- @preserve */
             if (nodeConfig.tls13) {
               config.push(`tls13=true`)
             }
@@ -114,7 +114,7 @@ function nodeListMapper(
               config.push('tls-verification=true')
             }
 
-            // istanbul ignore next
+            /* istanbul ignore next -- @preserve */
             if (nodeConfig.tls13) {
               config.push(`tls13=true`)
             }
@@ -142,7 +142,7 @@ function nodeListMapper(
 
       config.push(`tag=${nodeConfig.nodeName}`)
 
-      // istanbul ignore next
+      /* istanbul ignore next -- @preserve */
       if (
         nodeConfig.wsOpts?.headers &&
         Object.keys(nodeConfig.wsOpts.headers).length > 1
@@ -185,7 +185,7 @@ function nodeListMapper(
         }
       }
 
-      // istanbul ignore next
+      /* istanbul ignore next -- @preserve */
       if (
         nodeConfig.wsHeaders &&
         Object.keys(_.omit(nodeConfig.wsHeaders, ['host'])).length > 0
@@ -286,7 +286,7 @@ function nodeListMapper(
         }
 
         if (nodeConfig?.wsHeaders) {
-          // istanbul ignore next
+          /* istanbul ignore next -- @preserve */
           if (Object.keys(_.omit(nodeConfig.wsHeaders, ['host'])).length > 0) {
             logger.warn(
               `Quantumult X 不支持自定义额外的 Header 字段，节点 ${nodeConfig.nodeName} 可能不可用`,
@@ -339,7 +339,7 @@ function nodeListMapper(
       return [nodeConfig.nodeName, `anytls=${config.join(', ')}`]
     }
 
-    // istanbul ignore next
+    /* istanbul ignore next -- @preserve */
     default:
       logger.warn(
         `不支持为 QuantumultX 生成 ${(nodeConfig as any).type} 的节点，节点 ${

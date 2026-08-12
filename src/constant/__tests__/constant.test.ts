@@ -1,4 +1,4 @@
-import test from 'ava'
+import { expect, test } from 'vitest'
 import { expectType } from 'ts-expect'
 import { z } from 'zod'
 
@@ -9,7 +9,7 @@ import {
 } from '../'
 import { VlessNetworkValidator, VmessNetworkValidator } from '../../validators'
 
-test('constant', (t) => {
+test('constant', () => {
   for (const network of V2RAYN_SUPPORTED_VMESS_NETWORK) {
     expectType<z.infer<typeof VmessNetworkValidator>>(network)
   }
@@ -22,5 +22,5 @@ test('constant', (t) => {
     expectType<z.infer<typeof VlessNetworkValidator>>(network)
   }
 
-  t.pass()
+  expect(true).toBe(true)
 })

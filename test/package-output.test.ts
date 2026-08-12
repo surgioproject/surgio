@@ -1,4 +1,4 @@
-import test from 'ava'
+import { expect, test } from 'vitest'
 import fs from 'fs-extra'
 import path from 'path'
 
@@ -11,7 +11,7 @@ const listFiles = (directory: string): string[] =>
     return entry.isDirectory() ? listFiles(entryPath) : entryPath
   })
 
-test('published CommonJS entrypoints can be required', (t) => {
+test('published CommonJS entrypoints can be required', () => {
   const entrypoints = [
     'index',
     'internal',
@@ -25,11 +25,11 @@ test('published CommonJS entrypoints can be required', (t) => {
   for (const entrypoint of entrypoints) {
     const exportedValue = require(path.join(projectRoot, entrypoint))
 
-    t.truthy(exportedValue, entrypoint)
+    expect(exportedValue).toBeTruthy()
   }
 })
 
-test('build emits only CommonJS package artifacts', (t) => {
+test('build emits only CommonJS package artifacts', () => {
   const sourceDirectory = path.join(projectRoot, 'src')
   const buildDirectory = path.join(projectRoot, 'build')
   const sourceFiles = listFiles(sourceDirectory)
@@ -44,12 +44,12 @@ test('build emits only CommonJS package artifacts', (t) => {
     path.relative(buildDirectory, file),
   )
 
-  t.deepEqual(emittedFiles.sort(), expectedFiles.sort())
+  expect(emittedFiles.sort()).toEqual(expectedFiles.sort())
 
   for (const file of emittedFiles.filter((file) => file.endsWith('.js'))) {
     const source = fs.readFileSync(path.join(buildDirectory, file), 'utf8')
 
-    t.true(source.startsWith('"use strict";'), file)
-    t.notRegex(source, /^\s*(?:import|export)\s/m, file)
+    expect(source.startsWith('"use strict";')).toBe(true)
+    expect(source).not.toMatch(/^\s*(?:import|export)\s/m)
   }
 })

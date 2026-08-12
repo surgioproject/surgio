@@ -88,7 +88,7 @@ export default tseslint.config(
     },
   },
 
-  // Test files configuration (unit tests with ava)
+  // Test files configuration
   {
     files: ['test/**/*.ts', 'src/**/*.test.ts'],
     languageOptions: {
@@ -145,7 +145,7 @@ export default tseslint.config(
     },
   },
 
-  // CLI test files (mocha)
+  // CLI test files
   {
     files: ['test/**/*.cli-test.ts'],
     languageOptions: {
@@ -154,7 +154,6 @@ export default tseslint.config(
       globals: {
         ...globals.node,
         ...globals.es2021,
-        ...globals.mocha,
       },
       parserOptions: {
         project: './tsconfig.eslint.json',

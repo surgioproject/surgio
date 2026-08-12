@@ -44,7 +44,7 @@ export const getSingboxNodeNames = function (
   list: ReadonlyArray<PossibleNodeConfigType>,
   filter?: NodeFilterType | SortedNodeFilterType,
 ): ReadonlyArray<string> {
-  // istanbul ignore next
+  /* istanbul ignore next -- @preserve */
   if (arguments.length === 2 && typeof filter === 'undefined') {
     throw new Error(ERR_INVALID_FILTER)
   }

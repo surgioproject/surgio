@@ -1,11 +1,11 @@
-import test from 'ava'
+import { expect, test } from 'vitest'
 
 import { NodeTypeEnum, PossibleNodeConfigType } from '../../types'
 import { getLoonNodes } from '../loon'
 import { getQuantumultXNodes } from '../quantumult'
 import { getSurfboardNodes } from '../surfboard'
 
-test('unsupported generators omit Tailscale nodes', (t) => {
+test('unsupported generators omit Tailscale nodes', () => {
   const nodeList: ReadonlyArray<PossibleNodeConfigType> = [
     {
       type: NodeTypeEnum.Tailscale,
@@ -13,7 +13,7 @@ test('unsupported generators omit Tailscale nodes', (t) => {
     },
   ]
 
-  t.is(getLoonNodes(nodeList), '')
-  t.is(getQuantumultXNodes(nodeList), '')
-  t.is(getSurfboardNodes(nodeList), '')
+  expect(getLoonNodes(nodeList)).toBe('')
+  expect(getQuantumultXNodes(nodeList)).toBe('')
+  expect(getSurfboardNodes(nodeList)).toBe('')
 })

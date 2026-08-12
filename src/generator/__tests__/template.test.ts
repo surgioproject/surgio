@@ -1,6 +1,6 @@
 // tslint:disable:no-expression-statement
 import { join } from 'path'
-import test from 'ava'
+import { expect, test } from 'vitest'
 import fs from 'fs-extra'
 
 import {
@@ -41,13 +41,12 @@ for (const [expression, result] of [
   ['GEOIP,HK,DIRECT,no-resolve', '- GEOIP,HK,DIRECT,no-resolve'],
   ['UID,123,DIRECT', ''],
 ] as Array<[string, string]>) {
-  test(`clash - ${expression} => ${result}`, (t) => {
-    t.is(
+  test(`clash - ${expression} => ${result}`, () => {
+    expect(
       templateEngine.renderString('{{ expression | clash }}', {
         expression,
       }),
-      result,
-    )
+    ).toBe(result)
   })
 }
 
@@ -79,13 +78,12 @@ for (const [expression, result] of [
   ['GEOIP,HK,DIRECT,no-resolve', '- GEOIP,HK,DIRECT,no-resolve'],
   ['FOO,BAR,DIRECT', ''],
 ] as Array<[string, string]>) {
-  test(`clashMeta - ${expression} => ${result}`, (t) => {
-    t.is(
+  test(`clashMeta - ${expression} => ${result}`, () => {
+    expect(
       templateEngine.renderString('{{ expression | clashMeta }}', {
         expression,
       }),
-      result,
-    )
+    ).toBe(result)
   })
 }
 
@@ -117,17 +115,16 @@ for (const [expression, result] of [
   ['GEOIP,HK,DIRECT,no-resolve', '- GEOIP,HK,DIRECT,no-resolve'],
   ['FOO,BAR,DIRECT', ''],
 ] as Array<[string, string]>) {
-  test(`stash - ${expression} => ${result}`, (t) => {
-    t.is(
+  test(`stash - ${expression} => ${result}`, () => {
+    expect(
       templateEngine.renderString('{{ expression | stash }}', {
         expression,
       }),
-      result,
-    )
+    ).toBe(result)
   })
 }
 
-test('base64', (t) => {
+test('base64', () => {
   const body = `{{ str | base64 }}`
   const str = `testtesttesttest`
 
@@ -135,27 +132,25 @@ test('base64', (t) => {
     str,
   })
 
-  t.is(result, 'dGVzdHRlc3R0ZXN0dGVzdA==')
+  expect(result).toBe('dGVzdHRlc3R0ZXN0dGVzdA==')
 })
 
-test('quantumultx filter 1', (t) => {
+test('quantumultx filter 1', () => {
   const body = `{{ str | quantumultx }}`
 
-  t.is(
+  expect(
     templateEngine.renderString(body, {
       str: `PROCESS-NAME,Telegram,Proxy,no-resolve // test rule`,
     }),
-    '',
-  )
-  t.is(
+  ).toBe('')
+  expect(
     templateEngine.renderString(body, {
       str: 'IP-CIDR6, 2001:4860:4860::8888/32, DIRECT',
     }),
-    'IP6-CIDR, 2001:4860:4860::8888/32, DIRECT',
-  )
+  ).toBe('IP6-CIDR, 2001:4860:4860::8888/32, DIRECT')
 })
 
-test('quantumultx filter 2', (t) => {
+test('quantumultx filter 2', () => {
   const body = `{{ str | quantumultx }}`
   const str = fs.readFileSync(join(assetDir, 'surge-script-list.txt'), {
     encoding: 'utf8',
@@ -164,20 +159,20 @@ test('quantumultx filter 2', (t) => {
     str,
   })
 
-  t.snapshot(result)
+  expect(result).toMatchSnapshot()
 })
 
-test('loon filter 1', (t) => {
+test('loon filter 1', () => {
   const body = `{{ str | loon }}`
   const str = `# Comment`
   const result = templateEngine.renderString(body, {
     str,
   })
 
-  t.is(result, '# Comment')
+  expect(result).toBe('# Comment')
 })
 
-test('loon filter 2', (t) => {
+test('loon filter 2', () => {
   const body = `{{ str | loon }}`
   const str = [
     'IP-CIDR,67.198.55.0/24,Proxy,no-resolve // test rule',
@@ -187,8 +182,7 @@ test('loon filter 2', (t) => {
     str,
   })
 
-  t.is(
-    result,
+  expect(result).toBe(
     [
       'IP-CIDR,67.198.55.0/24,Proxy,no-resolve',
       'DOMAIN,example.com,Proxy,force-remote-dns',
@@ -196,27 +190,27 @@ test('loon filter 2', (t) => {
   )
 })
 
-test('loon filter 3', (t) => {
+test('loon filter 3', () => {
   const body = `{{ str | loon }}`
   const str = `IP-CIDR6,xxxxxxxxxxxx`
   const result = templateEngine.renderString(body, {
     str,
   })
 
-  t.is(result, '')
+  expect(result).toBe('')
 })
 
-test('surfboard filter 1', (t) => {
+test('surfboard filter 1', () => {
   const body = `{{ str | surfboard }}`
   const str = `# Comment`
   const result = templateEngine.renderString(body, {
     str,
   })
 
-  t.is(result, '# Comment')
+  expect(result).toBe('# Comment')
 })
 
-test('surfboard filter 2', (t) => {
+test('surfboard filter 2', () => {
   const body = `{{ str | surfboard }}`
   const str = [
     'IP-CIDR,67.198.55.0/24,Proxy,no-resolve // test rule',
@@ -226,8 +220,7 @@ test('surfboard filter 2', (t) => {
     str,
   })
 
-  t.is(
-    result,
+  expect(result).toBe(
     [
       'IP-CIDR,67.198.55.0/24,Proxy,no-resolve // test rule',
       'DOMAIN,example.com,Proxy,force-remote-dns',
@@ -235,137 +228,144 @@ test('surfboard filter 2', (t) => {
   )
 })
 
-test('surfboard filter 3', (t) => {
+test('surfboard filter 3', () => {
   const body = `{{ str | surfboard }}`
   const str = `IP-CIDR6,xxxxxxxxxxxx`
   const result = templateEngine.renderString(body, {
     str,
   })
 
-  t.is(result, 'IP-CIDR6,xxxxxxxxxxxx')
+  expect(result).toBe('IP-CIDR6,xxxxxxxxxxxx')
 })
 
-test('surfboard filter 4', (t) => {
+test('surfboard filter 4', () => {
   const body = `{{ str | surfboard }}`
   const str = `PROCESS-NAME,Telegram,Proxy,no-resolve // test rule`
   const result = templateEngine.renderString(body, {
     str,
   })
 
-  t.is(result, 'PROCESS-NAME,Telegram,Proxy,no-resolve // test rule')
+  expect(result).toBe('PROCESS-NAME,Telegram,Proxy,no-resolve // test rule')
 })
 
-test('surfboard filter 5', (t) => {
+test('surfboard filter 5', () => {
   const body = `{{ str | surfboard }}`
   const str = `RULE-SET,http://example.com/rule-set,DIRECT`
   const result = templateEngine.renderString(body, {
     str,
   })
 
-  t.is(result, 'RULE-SET,http://example.com/rule-set,DIRECT')
+  expect(result).toBe('RULE-SET,http://example.com/rule-set,DIRECT')
 })
 
-test('surfboard filter 6', (t) => {
+test('surfboard filter 6', () => {
   const body = `{{ str | surfboard }}`
   const str = `URL-REGEX,xxxxxxxxxxxx`
   const result = templateEngine.renderString(body, {
     str,
   })
 
-  t.is(result, '')
+  expect(result).toBe('')
 })
 
-test('spaces in string', (t) => {
+test('spaces in string', () => {
   const str = `    `
 
-  t.is(templateEngine.renderString(`{{ str | quantumultx }}`, { str }), '    ')
-  t.is(templateEngine.renderString(`{{ str | clash }}`, { str }), '    ')
+  expect(templateEngine.renderString(`{{ str | quantumultx }}`, { str })).toBe(
+    '    ',
+  )
+  expect(templateEngine.renderString(`{{ str | clash }}`, { str })).toBe('    ')
 })
 
-test('ForeignMedia', (t) => {
+test('ForeignMedia', () => {
   const str = fs.readFileSync(join(assetDir, 'ForeignMedia.list'), {
     encoding: 'utf8',
   })
 
-  t.snapshot(
+  expect(
     templateEngine.renderString(`{{ str | quantumultx }}`, {
       str,
     }),
-  )
-  t.snapshot(
+  ).toMatchSnapshot()
+  expect(
     templateEngine.renderString(`{{ str | clash }}`, {
       str,
     }),
-  )
+  ).toMatchSnapshot()
 })
 
-test('stringify', (t) => {
+test('stringify', () => {
   const obj = {
     foo: 'bar',
   }
 
-  t.snapshot(
+  expect(
     templateEngine.renderString(`{{ obj | yaml }}`, {
       obj,
     }),
-  )
-  t.snapshot(
+  ).toMatchSnapshot()
+  expect(
     templateEngine.renderString(`{{ obj | json }}`, {
       obj,
     }),
-  )
+  ).toMatchSnapshot()
 })
 
-test('convertSurgeScriptRuleToQuantumultXRewriteRule', (t) => {
-  t.is(convertSurgeScriptRuleToQuantumultXRewriteRule(''), '')
-  t.is(
+test('convertSurgeScriptRuleToQuantumultXRewriteRule', () => {
+  expect(convertSurgeScriptRuleToQuantumultXRewriteRule('')).toBe('')
+  expect(
     convertSurgeScriptRuleToQuantumultXRewriteRule(
       'unknown-type https://api.zhihu.com/people/ script-path=https://raw.githubusercontent.com/onewayticket255/Surge-Script/master/surge%20zhihu%20people.js',
     ),
-    '',
-  )
+  ).toBe('')
 })
 
-test('convertNewSurgeScriptRuleToQuantumultXRewriteRule', (t) => {
-  t.is(convertNewSurgeScriptRuleToQuantumultXRewriteRule(''), '')
-  t.is(
+test('convertNewSurgeScriptRuleToQuantumultXRewriteRule', () => {
+  expect(convertNewSurgeScriptRuleToQuantumultXRewriteRule('')).toBe('')
+  expect(
     convertNewSurgeScriptRuleToQuantumultXRewriteRule(
       'zhihu people = type=http-response,requires-body=1,max-size=0,pattern=https://api.zhihu.com/people/,script-path=https://raw.githubusercontent.com/onewayticket255/Surge-Script/master/surge%20zhihu%20people.js',
     ),
+  ).toBe(
     'https://api.zhihu.com/people/ url script-response-body https://raw.githubusercontent.com/onewayticket255/Surge-Script/master/surge%20zhihu%20people.js',
   )
-  t.is(
+  expect(
     convertNewSurgeScriptRuleToQuantumultXRewriteRule(
       'zhihu people = type=http-request,requires-body=1,max-size=0,pattern=https://api.zhihu.com/people/,script-path=https://raw.githubusercontent.com/onewayticket255/Surge-Script/master/surge%20zhihu%20people.js',
     ),
+  ).toBe(
     'https://api.zhihu.com/people/ url script-request-body https://raw.githubusercontent.com/onewayticket255/Surge-Script/master/surge%20zhihu%20people.js',
   )
-  t.is(
+  expect(
     convertNewSurgeScriptRuleToQuantumultXRewriteRule(
       'zhihu people = type=http-response,pattern=https://api.zhihu.com/people/,script-path=https://raw.githubusercontent.com/onewayticket255/Surge-Script/master/surge%20zhihu%20people.js',
     ),
+  ).toBe(
     'https://api.zhihu.com/people/ url script-response-header https://raw.githubusercontent.com/onewayticket255/Surge-Script/master/surge%20zhihu%20people.js',
   )
-  t.is(
+  expect(
     convertNewSurgeScriptRuleToQuantumultXRewriteRule(
       'zhihu people = type=http-request,pattern=https://api.zhihu.com/people/,script-path=https://raw.githubusercontent.com/onewayticket255/Surge-Script/master/surge%20zhihu%20people.js',
     ),
+  ).toBe(
     'https://api.zhihu.com/people/ url script-request-header https://raw.githubusercontent.com/onewayticket255/Surge-Script/master/surge%20zhihu%20people.js',
   )
-  t.is(
+  expect(
     convertNewSurgeScriptRuleToQuantumultXRewriteRule(
       'JD = requires-body=1,max-size=0,script-path= https://raw.githubusercontent.com/NobyDa/Script/master/JD-DailyBonus/JD_DailyBonus.js,type=http-response,pattern=^https?://api.m.jd.com/client.action?functionId=(start|signBean)',
     ),
+  ).toBe(
     '^https?://api.m.jd.com/client.action?functionId=(start|signBean) url script-response-body https://raw.githubusercontent.com/NobyDa/Script/master/JD-DailyBonus/JD_DailyBonus.js',
   )
-  t.is(
+  expect(
     convertNewSurgeScriptRuleToQuantumultXRewriteRule(
       'zhihu people = type=unknown-type',
     ),
-    '',
-  )
+  ).toBe('')
 })
 
-test('loadLocalSnippet', async (t) => {
-  t.snapshot(loadLocalSnippet(__dirname, './snippet.tpl').main('Proxy'))
+test('loadLocalSnippet', async () => {
+  expect(
+    loadLocalSnippet(__dirname, './snippet.tpl').main('Proxy'),
+  ).toMatchSnapshot()
 })

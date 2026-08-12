@@ -94,14 +94,14 @@ export const render = (
 
     return JSON.stringify(jsonOutput, null, 2)
   } catch (error) {
-    // istanbul ignore next
+    /* istanbul ignore next -- @preserve */
     if (error instanceof Error) {
       throw new Error(
         `Error when rendering JSON template ${fileName}: ${error.message}`,
       )
     }
 
-    // istanbul ignore next
+    /* istanbul ignore next -- @preserve */
     throw new Error(`Error when rendering JSON template ${fileName}`)
   }
 }

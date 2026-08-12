@@ -294,7 +294,7 @@ export class Artifact extends EventEmitter {
     try {
       provider = await getProvider(providerName, require(filePath))
       this.providerMap.set(providerName, provider)
-    } catch (_err) /* istanbul ignore next */ {
+    } catch (_err) /* istanbul ignore next -- @preserve */ {
       const err = _err
       if (isSurgioError(err)) {
         err.providerName = providerName
@@ -339,7 +339,7 @@ export class Artifact extends EventEmitter {
           throw err
         }
       }
-    } catch (err) /* istanbul ignore next */ {
+    } catch (err) /* istanbul ignore next -- @preserve */ {
       if (isSurgioError(err)) {
         err.providerName = providerName
         err.providerPath = filePath
@@ -497,16 +497,16 @@ export class Artifact extends EventEmitter {
             try {
               const domains = await resolveDomain(nodeConfig.hostname)
 
-              /* istanbul ignore next */
+              /* istanbul ignore next -- @preserve */
               if (domains.length < 1) {
                 logger.warn(
                   `DNS 解析结果中 ${nodeConfig.hostname} 未有对应 IP 地址，将忽略该节点`,
                 )
                 return undefined
-              } /* istanbul ignore next */ else {
+              } /* istanbul ignore next -- @preserve */ else {
                 nodeConfig.hostnameIp = domains
               }
-            } catch /* istanbul ignore next */ {
+            } catch /* istanbul ignore next -- @preserve */ {
               logger.warn(`${nodeConfig.hostname} 无法解析，将忽略该节点`)
               return undefined
             }
@@ -518,10 +518,10 @@ export class Artifact extends EventEmitter {
             typeof nodeConfig.hostname === 'string' &&
             !isIp(nodeConfig.hostname)
           ) {
-            /* istanbul ignore next */
+            /* istanbul ignore next -- @preserve */
             if (nodeConfig.hostnameIp) {
               nodeConfig.hostname = nodeConfig.hostnameIp[0]
-            } /* istanbul ignore next */ else {
+            } /* istanbul ignore next -- @preserve */ else {
               try {
                 nodeConfig.hostnameIp = await resolveDomain(nodeConfig.hostname)
                 nodeConfig.hostname = nodeConfig.hostnameIp[0]

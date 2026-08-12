@@ -1,4 +1,4 @@
-// istanbul ignore file
+/* istanbul ignore file -- @preserve */
 import { Flags } from '@oclif/core'
 
 import BaseCommand from '../base-command'

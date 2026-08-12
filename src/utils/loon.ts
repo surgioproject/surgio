@@ -236,7 +236,7 @@ export const getLoonNodes = function (
               config.push(`host=${obfsHost}`)
             }
 
-            // istanbul ignore next
+            /* istanbul ignore next -- @preserve */
             if (nodeConfig.httpOpts.method !== 'GET') {
               logger.warn(
                 `Loon 不支持自定义 VMESS+HTTP 节点的 method 属性，节点 ${nodeConfig.nodeName} 可能不可用`,
@@ -308,9 +308,9 @@ export const getLoonNodes = function (
             `${nodeConfig.nodeName} = https`,
             nodeConfig.hostname,
             nodeConfig.port,
-            nodeConfig.username /* istanbul ignore next */ || '',
+            nodeConfig.username /* istanbul ignore next -- @preserve */ || '',
             JSON.stringify(
-              nodeConfig.password /* istanbul ignore next */ || '',
+              nodeConfig.password /* istanbul ignore next -- @preserve */ || '',
             ),
             `sni=${nodeConfig.sni || nodeConfig.hostname}`,
             `skip-cert-verify=${nodeConfig.skipCertVerify === true}`,
@@ -324,9 +324,9 @@ export const getLoonNodes = function (
             `${nodeConfig.nodeName} = http`,
             nodeConfig.hostname,
             nodeConfig.port,
-            nodeConfig.username /* istanbul ignore next */ || '',
+            nodeConfig.username /* istanbul ignore next -- @preserve */ || '',
             JSON.stringify(
-              nodeConfig.password /* istanbul ignore next */ || '',
+              nodeConfig.password /* istanbul ignore next -- @preserve */ || '',
             ),
           ].join(',')
 
@@ -384,7 +384,7 @@ export const getLoonNodes = function (
           return config.join(',')
         }
 
-        // istanbul ignore next
+        /* istanbul ignore next -- @preserve */
         default:
           logger.warn(
             `不支持为 Loon 生成 ${nodeConfig.type} 的节点，节点 ${nodeConfig.nodeName} 会被省略`,
@@ -402,7 +402,7 @@ export const getLoonNodeNames = function (
   filter?: NodeFilterType | SortedNodeFilterType,
   separator?: string,
 ): string {
-  // istanbul ignore next
+  /* istanbul ignore next -- @preserve */
   if (arguments.length === 2 && typeof filter === 'undefined') {
     throw new Error(ERR_INVALID_FILTER)
   }

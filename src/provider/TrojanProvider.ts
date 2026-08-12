@@ -34,7 +34,7 @@ export default class TrojanProvider extends Provider {
     })
     const result = schema.safeParse(config)
 
-    // istanbul ignore next
+    /* istanbul ignore next -- @preserve */
     if (!result.success) {
       throw new SurgioError('TrojanProvider 配置校验失败', {
         cause: result.error,
@@ -52,7 +52,7 @@ export default class TrojanProvider extends Provider {
     }
   }
 
-  // istanbul ignore next
+  /* istanbul ignore next -- @preserve */
   public get url(): string {
     return relayableUrl(this.#originalUrl, this.config.relayUrl)
   }

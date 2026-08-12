@@ -1,4 +1,4 @@
-import test from 'ava'
+import { expect, test } from 'vitest'
 
 import { NodeTypeEnum, PossibleNodeConfigType } from '../../types'
 import * as singbox from '../singbox'
@@ -1066,28 +1066,26 @@ const expectedNodeNames = expectedNodes
   .map((node) => node.tag as string)
   .filter((name) => !['NotSupported', 'disabled'].some((n) => name.includes(n)))
 
-test('getSingboxNodeNames', async (t) => {
-  t.deepEqual(singbox.getSingboxNodeNames(nodeList), expectedNodeNames)
+test('getSingboxNodeNames', async () => {
+  expect(singbox.getSingboxNodeNames(nodeList)).toEqual(expectedNodeNames)
 
-  t.deepEqual(
+  expect(
     singbox.getSingboxNodeNames(
       nodeList,
       (nodeConfig) => nodeConfig.nodeName === 'ss',
     ),
-    ['ss'],
-  )
+  ).toEqual(['ss'])
 })
 
-test('getSingboxNodes', async (t) => {
-  t.deepEqual(singbox.getSingboxNodes(nodeList), expectedNodes)
+test('getSingboxNodes', async () => {
+  expect(singbox.getSingboxNodes(nodeList)).toEqual(expectedNodes)
 
-  t.deepEqual(
+  expect(
     singbox.getSingboxNodes(
       nodeList,
       (nodeConfig) => nodeConfig.nodeName === 'ss',
     ),
-    [expectedNodes[0]],
-  )
+  ).toEqual([expectedNodes[0]])
 })
 
 const tailscaleEndpoint = {
@@ -1130,28 +1128,27 @@ const tailscaleNodeList: ReadonlyArray<PossibleNodeConfigType> = [
   },
 ]
 
-test('getSingboxEndpoints', async (t) => {
-  t.deepEqual(singbox.getSingboxEndpoints(tailscaleNodeList), [
+test('getSingboxEndpoints', async () => {
+  expect(singbox.getSingboxEndpoints(tailscaleNodeList)).toEqual([
     tailscaleEndpoint,
   ])
 
-  t.deepEqual(
+  expect(
     singbox.getSingboxEndpoints(
       tailscaleNodeList,
       (nodeConfig) => nodeConfig.nodeName === 'ts',
     ),
-    [tailscaleEndpoint],
-  )
+  ).toEqual([tailscaleEndpoint])
 })
 
-test('Tailscale is emitted as an endpoint, not an outbound', async (t) => {
+test('Tailscale is emitted as an endpoint, not an outbound', async () => {
   // 不应出现在 outbounds 中
-  t.false(
+  expect(
     singbox
       .getSingboxNodes(tailscaleNodeList)
       .some((node) => node.type === 'tailscale'),
-  )
+  ).toBe(false)
 
   // 但其 tag 应出现在节点名列表中，方便被 selector/urltest 引用
-  t.deepEqual(singbox.getSingboxNodeNames(tailscaleNodeList), ['ss', 'ts'])
+  expect(singbox.getSingboxNodeNames(tailscaleNodeList)).toEqual(['ss', 'ts'])
 })

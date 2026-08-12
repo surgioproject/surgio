@@ -117,7 +117,7 @@ export const getSurgeWireguardNodes = (
           }
         }
 
-        // istanbul ignore next
+        /* istanbul ignore next -- @preserve */
         if (peer.reservedBits) {
           peerConfig.push(`client-id=${peer.reservedBits.join('/')}`)
         }
@@ -233,8 +233,8 @@ function nodeListMapper(
             'https',
             nodeConfig.hostname,
             nodeConfig.port,
-            nodeConfig.username /* istanbul ignore next */ || '',
-            nodeConfig.password /* istanbul ignore next */ || '',
+            nodeConfig.username /* istanbul ignore next -- @preserve */ || '',
+            nodeConfig.password /* istanbul ignore next -- @preserve */ || '',
           ].join(', '),
         ].join(' = '),
       ]
@@ -249,8 +249,8 @@ function nodeListMapper(
             'http',
             nodeConfig.hostname,
             nodeConfig.port,
-            nodeConfig.username /* istanbul ignore next */ || '',
-            nodeConfig.password /* istanbul ignore next */ || '',
+            nodeConfig.username /* istanbul ignore next -- @preserve */ || '',
+            nodeConfig.password /* istanbul ignore next -- @preserve */ || '',
           ].join(', '),
         ].join(' = '),
       ]
@@ -278,7 +278,7 @@ function nodeListMapper(
     }
 
     case NodeTypeEnum.Shadowsocksr: {
-      // istanbul ignore next
+      /* istanbul ignore next -- @preserve */
       if (!nodeConfig.binPath) {
         throw new Error(
           '请按照文档 https://url.royli.dev/vdGh2 添加 Shadowsocksr 二进制文件路径',
@@ -485,13 +485,13 @@ function nodeListMapper(
     }
 
     case NodeTypeEnum.Hysteria2:
-      // istanbul ignore next
+      /* istanbul ignore next -- @preserve */
       if (nodeConfig.uploadBandwidth) {
         logger.info(
           `Surge 不支持为 Hysteria2 节点配置 uploadBandwidth，节点 ${nodeConfig.nodeName} 将不包含此字段`,
         )
       }
-      // istanbul ignore next
+      /* istanbul ignore next -- @preserve */
       if (nodeConfig.obfs) {
         logger.warn(
           `Surge 不支持为 Hysteria2 节点配置 obfs，节点 ${nodeConfig.nodeName} 将被忽略`,
@@ -625,7 +625,7 @@ function nodeListMapper(
         ].join(', '),
       ]
 
-    // istanbul ignore next
+    /* istanbul ignore next -- @preserve */
     default:
       logger.warn(
         `不支持为 Surge 生成 ${(nodeConfig as any).type} 的节点，节点 ${

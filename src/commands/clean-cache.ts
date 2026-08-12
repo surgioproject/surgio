@@ -1,4 +1,4 @@
-// istanbul ignore file
+/* istanbul ignore file -- @preserve */
 import os from 'os'
 import path from 'path'
 import { ux } from '@oclif/core'

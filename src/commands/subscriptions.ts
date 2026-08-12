@@ -1,4 +1,4 @@
-// istanbul ignore file
+/* istanbul ignore file -- @preserve */
 import { promises as fsp } from 'fs'
 import { createRequire } from 'module'
 import { basename, join } from 'path'

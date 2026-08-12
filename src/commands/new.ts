@@ -1,4 +1,4 @@
-// istanbul ignore file
+/* istanbul ignore file -- @preserve */
 import { join } from 'path'
 import { Args } from '@oclif/core'
 import { runner, Logger } from '@royli/hygen'

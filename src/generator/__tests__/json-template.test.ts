@@ -1,4 +1,4 @@
-import test from 'ava'
+import { beforeEach, expect, test } from 'vitest'
 import sinon from 'sinon'
 import fs from 'fs-extra'
 
@@ -9,59 +9,56 @@ import {
   render,
 } from '../json-template'
 
-test.beforeEach(() => {
+beforeEach(() => {
   sinon.restore()
 })
 
-test('extendOutbounds - extend string', (t) => {
+test('extendOutbounds - extend string', () => {
   const extend = extendOutbounds('new-value')
 
-  t.deepEqual(
+  expect(
     extend({
       foo: 'foo',
     }),
-    {
-      foo: 'foo',
-      outbounds: 'new-value',
-    },
-  )
+  ).toEqual({
+    foo: 'foo',
+    outbounds: 'new-value',
+  })
 })
 
-test('extendOutbounds - extend object', (t) => {
+test('extendOutbounds - extend object', () => {
   const extend = extendOutbounds({
     bar: 'bar',
   })
 
-  t.deepEqual(
+  expect(
     extend({
       foo: 'foo',
     }),
-    {
-      foo: 'foo',
-      outbounds: {
-        bar: 'bar',
-      },
+  ).toEqual({
+    foo: 'foo',
+    outbounds: {
+      bar: 'bar',
     },
-  )
+  })
 })
 
-test('extendOutbounds - extend array', (t) => {
+test('extendOutbounds - extend array', () => {
   const extendString = extendOutbounds('new-value')
-  t.deepEqual(
+  expect(
     extendString({
       foo: 'foo',
       outbounds: ['old-value'],
     }),
-    {
-      foo: 'foo',
-      outbounds: ['old-value', 'new-value'],
-    },
-  )
+  ).toEqual({
+    foo: 'foo',
+    outbounds: ['old-value', 'new-value'],
+  })
 
   const extendObject = extendOutbounds({
     bar: 'bar',
   })
-  t.deepEqual(
+  expect(
     extendObject({
       outbounds: [
         {
@@ -69,28 +66,27 @@ test('extendOutbounds - extend array', (t) => {
         },
       ],
     }),
-    {
-      outbounds: [
-        {
-          foo: 'foo',
-        },
-        {
-          bar: 'bar',
-        },
-      ],
-    },
-  )
+  ).toEqual({
+    outbounds: [
+      {
+        foo: 'foo',
+      },
+      {
+        bar: 'bar',
+      },
+    ],
+  })
 
   const extendArray = extendOutbounds(['new-value1', 'new-value2'])
 
-  t.deepEqual(extendArray({ outbounds: ['old-value'] }), {
+  expect(extendArray({ outbounds: ['old-value'] })).toEqual({
     outbounds: ['old-value', 'new-value1', 'new-value2'],
   })
 })
 
-test('extendOutbounds - extend function that returns object', (t) => {
+test('extendOutbounds - extend function that returns object', () => {
   const spy = sinon.spy(() => {
-    t.pass()
+    expect(true).toBe(true)
     return 'something'
   })
   const extend = extendOutbounds(({ getSomething }) => {
@@ -99,7 +95,7 @@ test('extendOutbounds - extend function that returns object', (t) => {
     }
   })
 
-  t.deepEqual(
+  expect(
     extend(
       {
         foo: 'foo',
@@ -108,46 +104,44 @@ test('extendOutbounds - extend function that returns object', (t) => {
         getSomething: spy,
       },
     ),
-    {
-      foo: 'foo',
-      outbounds: {
-        bar: 'something',
-      },
+  ).toEqual({
+    foo: 'foo',
+    outbounds: {
+      bar: 'something',
     },
-  )
-  t.is(spy.calledOnce, true)
+  })
+  expect(spy.calledOnce).toBe(true)
 })
 
-test('createExtendFunction - deep extend', (t) => {
+test('createExtendFunction - deep extend', () => {
   const extendFunction = createExtendFunction('foo.bar')
   const extend = extendFunction({
     bar: 'bar',
   })
 
-  t.deepEqual(
+  expect(
     extend({
       foo: {
         baz: 'baz',
       },
     }),
-    {
-      foo: {
-        baz: 'baz',
-        bar: {
-          bar: 'bar',
-        },
+  ).toEqual({
+    foo: {
+      baz: 'baz',
+      bar: {
+        bar: 'bar',
       },
     },
-  )
+  })
 })
 
-test('createExtendFunction - deep extend array', (t) => {
+test('createExtendFunction - deep extend array', () => {
   const extendFunction = createExtendFunction('foo[0]')
   const extend = extendFunction({
     bar: 'bar',
   })
 
-  t.deepEqual(
+  expect(
     extend({
       foo: [
         {
@@ -155,62 +149,59 @@ test('createExtendFunction - deep extend array', (t) => {
         },
       ],
     }),
-    {
-      foo: [
-        {
-          baz: 'baz',
-          bar: 'bar',
-        },
-      ],
-    },
-  )
+  ).toEqual({
+    foo: [
+      {
+        baz: 'baz',
+        bar: 'bar',
+      },
+    ],
+  })
 })
 
-test('createExtendFunction - deep merge object', (t) => {
+test('createExtendFunction - deep merge object', () => {
   const extendDNS = createExtendFunction('dns')
   const extend = extendDNS({
     nameserver: ['1.1.1.1'],
   })
 
-  t.deepEqual(
+  expect(
     extend({
       dns: {
         nameserver: ['1.0.0.1'],
         strategy: 'prefer_ipv6',
       },
     }),
-    {
-      dns: {
-        nameserver: ['1.0.0.1', '1.1.1.1'],
-        strategy: 'prefer_ipv6',
-      },
+  ).toEqual({
+    dns: {
+      nameserver: ['1.0.0.1', '1.1.1.1'],
+      strategy: 'prefer_ipv6',
     },
-  )
+  })
 })
 
-test('combineExtendFunctions', (t) => {
+test('combineExtendFunctions', () => {
   const extend1 = createExtendFunction('foo')({ bar: 'bar' })
   const extend2 = createExtendFunction('baz')({ qux: 'qux' })
 
   const combined = combineExtendFunctions(extend1, extend2)
 
-  t.deepEqual(
+  expect(
     combined({
       original: 'original',
     }),
-    {
-      original: 'original',
-      foo: {
-        bar: 'bar',
-      },
-      baz: {
-        qux: 'qux',
-      },
+  ).toEqual({
+    original: 'original',
+    foo: {
+      bar: 'bar',
     },
-  )
+    baz: {
+      qux: 'qux',
+    },
+  })
 })
 
-test('render', (t) => {
+test('render', () => {
   sinon.stub(fs, 'readJsonSync').returns({
     foo: 'foo',
     bar: 'bar',
@@ -223,8 +214,8 @@ test('render', (t) => {
     { baz: 'baz' },
   )
 
-  t.snapshot(result)
-  t.true(
+  expect(result).toMatchSnapshot()
+  expect(
     (fs.readJsonSync as sinon.SinonStub).calledOnceWith('templateDir/fileName'),
-  )
+  ).toBe(true)
 })

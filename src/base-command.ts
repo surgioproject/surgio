@@ -40,7 +40,7 @@ abstract class BaseCommand<T extends typeof Command> extends Command {
     this.flags = flags as Flags<T>
     this.args = args as Args<T>
 
-    // istanbul ignore next
+    /* istanbul ignore next -- @preserve */
     if (flags.verbose) {
       transports.console.level = 'debug'
     }

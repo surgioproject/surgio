@@ -1,9 +1,9 @@
-import test from 'ava'
+import { expect, test } from 'vitest'
 
 import { NodeTypeEnum, PossibleNodeConfigType } from '../../types'
 import * as clash from '../clash'
 
-test('getClashNodeNames', async (t) => {
+test('getClashNodeNames', async () => {
   const nodeNameList: ReadonlyArray<PossibleNodeConfigType> = [
     {
       type: NodeTypeEnum.Shadowsocks,
@@ -45,12 +45,12 @@ test('getClashNodeNames', async (t) => {
     [],
     ['DIRECT'],
   )
-  t.deepEqual(result1, ['Test Node 1', 'Test Node 3'])
-  t.deepEqual(result2, ['TEST', 'Test Node 1', 'Test Node 3'])
-  t.deepEqual(result3, ['Test Node 1'])
-  t.deepEqual(result4, ['DIRECT'])
+  expect(result1).toEqual(['Test Node 1', 'Test Node 3'])
+  expect(result2).toEqual(['TEST', 'Test Node 1', 'Test Node 3'])
+  expect(result3).toEqual(['Test Node 1'])
+  expect(result4).toEqual(['DIRECT'])
 
-  t.deepEqual(
+  expect(
     clash.getClashNodeNames([
       {
         nodeName: 'snell',
@@ -62,11 +62,10 @@ test('getClashNodeNames', async (t) => {
         obfs: 'tls',
       },
     ]),
-    [],
-  )
+  ).toEqual([])
 })
 
-test('getClashNodes', async (t) => {
+test('getClashNodes', async () => {
   const nodeList: ReadonlyArray<PossibleNodeConfigType> = [
     {
       nodeName: 'Test Node 1',
@@ -162,8 +161,8 @@ test('getClashNodes', async (t) => {
   ]
   const array = clash.getClashNodes(nodeList)
 
-  t.is(array.length, nodeList.length)
-  t.deepEqual(array[0], {
+  expect(array.length).toBe(nodeList.length)
+  expect(array[0]).toEqual({
     name: 'Test Node 1',
     type: 'ss',
     server: 'example.com',
@@ -177,7 +176,7 @@ test('getClashNodes', async (t) => {
       host: 'example.com',
     },
   })
-  t.deepEqual(array[1], {
+  expect(array[1]).toEqual({
     name: 'Test Node 2',
     type: 'ss',
     server: 'example2.com',
@@ -186,7 +185,7 @@ test('getClashNodes', async (t) => {
     password: 'password',
     udp: false,
   })
-  t.deepEqual(array[2], {
+  expect(array[2]).toEqual({
     cipher: 'auto',
     name: 'Test Node 3',
     alterId: '64',
@@ -203,7 +202,7 @@ test('getClashNodes', async (t) => {
       path: '/',
     },
   })
-  t.deepEqual(array[3], {
+  expect(array[3]).toEqual({
     cipher: 'auto',
     name: 'Test Node 4',
     alterId: '64',
@@ -214,7 +213,7 @@ test('getClashNodes', async (t) => {
     udp: false,
     uuid: '1386f85e-657b-4d6e-9d56-78badb75e1fd',
   })
-  t.deepEqual(array[4], {
+  expect(array[4]).toEqual({
     cipher: 'auto',
     name: 'Test Node 5',
     alterId: '64',
@@ -226,7 +225,7 @@ test('getClashNodes', async (t) => {
     udp: false,
     uuid: '1386f85e-657b-4d6e-9d56-78badb75e1fd',
   })
-  t.deepEqual(array[5], {
+  expect(array[5]).toEqual({
     cipher: 'auto',
     name: 'Test Node 6',
     alterId: '64',
@@ -238,7 +237,7 @@ test('getClashNodes', async (t) => {
     type: 'vmess',
     uuid: '1386f85e-657b-4d6e-9d56-78badb75e1fd',
   })
-  t.deepEqual(array[6], {
+  expect(array[6]).toEqual({
     cipher: 'auto',
     name: 'Test Node 7',
     alterId: '64',
@@ -252,7 +251,7 @@ test('getClashNodes', async (t) => {
     uuid: '1386f85e-657b-4d6e-9d56-78badb75e1fd',
   })
 
-  t.deepEqual(
+  expect(
     clash.getClashNodes([
       {
         nodeName: 'Test Node 1',
@@ -307,27 +306,26 @@ test('getClashNodes', async (t) => {
         },
       },
     ]),
-    [
-      {
-        cipher: 'chacha20-ietf-poly1305',
-        'client-fingerprint': 'chrome',
-        name: 'Test Node 1',
+  ).toEqual([
+    {
+      cipher: 'chacha20-ietf-poly1305',
+      'client-fingerprint': 'chrome',
+      name: 'Test Node 1',
+      password: 'password',
+      plugin: 'shadow-tls',
+      'plugin-opts': {
+        host: 'example.com',
         password: 'password',
-        plugin: 'shadow-tls',
-        'plugin-opts': {
-          host: 'example.com',
-          password: 'password',
-          version: 3,
-        },
-        port: '443',
-        server: 'example.com',
-        type: 'ss',
-        udp: true,
+        version: 3,
       },
-    ],
-  )
+      port: '443',
+      server: 'example.com',
+      type: 'ss',
+      udp: true,
+    },
+  ])
 
-  t.deepEqual(
+  expect(
     clash.getClashNodes([
       {
         alterId: '64',
@@ -343,24 +341,23 @@ test('getClashNodes', async (t) => {
         uuid: '1386f85e-657b-4d6e-9d56-78badb75e1fd',
       },
     ]),
-    [
-      {
-        alterId: '64',
-        cipher: 'auto',
-        name: 'Test',
-        port: 8080,
-        server: '1.1.1.1',
-        network: 'tcp',
-        'skip-cert-verify': true,
-        tls: true,
-        type: 'vmess',
-        udp: true,
-        uuid: '1386f85e-657b-4d6e-9d56-78badb75e1fd',
-      },
-    ],
-  )
+  ).toEqual([
+    {
+      alterId: '64',
+      cipher: 'auto',
+      name: 'Test',
+      port: 8080,
+      server: '1.1.1.1',
+      network: 'tcp',
+      'skip-cert-verify': true,
+      tls: true,
+      type: 'vmess',
+      udp: true,
+      uuid: '1386f85e-657b-4d6e-9d56-78badb75e1fd',
+    },
+  ])
 
-  t.deepEqual(
+  expect(
     clash.getClashNodes([
       {
         alterId: '64',
@@ -378,24 +375,23 @@ test('getClashNodes', async (t) => {
         },
       },
     ]),
-    [
-      {
-        alterId: '64',
-        cipher: 'auto',
-        name: 'Test Node 3',
-        network: 'grpc',
-        port: 8080,
-        server: '1.1.1.1',
-        type: 'vmess',
-        udp: false,
-        uuid: '1386f85e-657b-4d6e-9d56-78badb75e1fd',
-        'grpc-opts': {
-          'grpc-service-name': 'test',
-        },
+  ).toEqual([
+    {
+      alterId: '64',
+      cipher: 'auto',
+      name: 'Test Node 3',
+      network: 'grpc',
+      port: 8080,
+      server: '1.1.1.1',
+      type: 'vmess',
+      udp: false,
+      uuid: '1386f85e-657b-4d6e-9d56-78badb75e1fd',
+      'grpc-opts': {
+        'grpc-service-name': 'test',
       },
-    ],
-  )
-  t.deepEqual(
+    },
+  ])
+  expect(
     clash.getClashNodes([
       {
         alterId: '64',
@@ -453,60 +449,59 @@ test('getClashNodes', async (t) => {
         },
       },
     ]),
-    [
-      {
-        alterId: '64',
-        cipher: 'auto',
-        name: 'Test Meta VMess ALPN',
-        network: 'tcp',
-        server: '1.1.1.1',
-        port: 8080,
-        tls: true,
-        alpn: ['h2', 'http/1.1'],
-        type: 'vmess',
-        udp: false,
-        uuid: '1386f85e-657b-4d6e-9d56-78badb75e1fd',
-      },
-      {
-        type: 'vless',
-        name: 'Test Meta VLESS ALPN',
-        server: 'server',
-        port: 443,
-        uuid: 'uuid',
-        cipher: 'none',
-        udp: false,
-        network: 'tcp',
-        alpn: ['h2'],
-        encryption: 'none',
-        tls: true,
-      },
-      {
-        alterId: '64',
-        cipher: 'auto',
-        name: 'Test Non Meta VMess ALPN',
-        network: 'tcp',
-        server: '1.1.1.1',
-        port: 8080,
-        type: 'vmess',
-        udp: false,
-        uuid: '1386f85e-657b-4d6e-9d56-78badb75e1fd',
-      },
-      {
-        alterId: '64',
-        cipher: 'auto',
-        name: 'Test Meta VMess No ALPN',
-        network: 'tcp',
-        server: '1.1.1.1',
-        port: 8080,
-        tls: true,
-        type: 'vmess',
-        udp: false,
-        uuid: '1386f85e-657b-4d6e-9d56-78badb75e1fd',
-      },
-    ],
-  )
+  ).toEqual([
+    {
+      alterId: '64',
+      cipher: 'auto',
+      name: 'Test Meta VMess ALPN',
+      network: 'tcp',
+      server: '1.1.1.1',
+      port: 8080,
+      tls: true,
+      alpn: ['h2', 'http/1.1'],
+      type: 'vmess',
+      udp: false,
+      uuid: '1386f85e-657b-4d6e-9d56-78badb75e1fd',
+    },
+    {
+      type: 'vless',
+      name: 'Test Meta VLESS ALPN',
+      server: 'server',
+      port: 443,
+      uuid: 'uuid',
+      cipher: 'none',
+      udp: false,
+      network: 'tcp',
+      alpn: ['h2'],
+      encryption: 'none',
+      tls: true,
+    },
+    {
+      alterId: '64',
+      cipher: 'auto',
+      name: 'Test Non Meta VMess ALPN',
+      network: 'tcp',
+      server: '1.1.1.1',
+      port: 8080,
+      type: 'vmess',
+      udp: false,
+      uuid: '1386f85e-657b-4d6e-9d56-78badb75e1fd',
+    },
+    {
+      alterId: '64',
+      cipher: 'auto',
+      name: 'Test Meta VMess No ALPN',
+      network: 'tcp',
+      server: '1.1.1.1',
+      port: 8080,
+      tls: true,
+      type: 'vmess',
+      udp: false,
+      uuid: '1386f85e-657b-4d6e-9d56-78badb75e1fd',
+    },
+  ])
 
-  t.deepEqual(
+  expect(
     clash.getClashNodes([
       {
         alterId: '64',
@@ -528,29 +523,28 @@ test('getClashNodes', async (t) => {
         },
       },
     ]),
-    [
-      {
-        alterId: '64',
-        cipher: 'auto',
-        name: 'Test Node 3',
-        network: 'http',
-        port: 8080,
-        server: '1.1.1.1',
-        type: 'vmess',
-        udp: false,
-        uuid: '1386f85e-657b-4d6e-9d56-78badb75e1fd',
-        'http-opts': {
-          headers: {
-            host: ['example.com'],
-          },
-          method: 'GET',
-          path: ['/'],
+  ).toEqual([
+    {
+      alterId: '64',
+      cipher: 'auto',
+      name: 'Test Node 3',
+      network: 'http',
+      port: 8080,
+      server: '1.1.1.1',
+      type: 'vmess',
+      udp: false,
+      uuid: '1386f85e-657b-4d6e-9d56-78badb75e1fd',
+      'http-opts': {
+        headers: {
+          host: ['example.com'],
         },
+        method: 'GET',
+        path: ['/'],
       },
-    ],
-  )
+    },
+  ])
 
-  t.deepEqual(
+  expect(
     clash.getClashNodes([
       {
         alterId: '64',
@@ -569,26 +563,25 @@ test('getClashNodes', async (t) => {
         },
       },
     ]),
-    [
-      {
-        alterId: '64',
-        cipher: 'auto',
-        name: 'Test Node 3',
-        network: 'h2',
-        port: 8080,
-        server: '1.1.1.1',
-        type: 'vmess',
-        udp: false,
-        uuid: '1386f85e-657b-4d6e-9d56-78badb75e1fd',
-        'h2-opts': {
-          path: '/h2',
-          host: ['host.com', 'example.com'],
-        },
+  ).toEqual([
+    {
+      alterId: '64',
+      cipher: 'auto',
+      name: 'Test Node 3',
+      network: 'h2',
+      port: 8080,
+      server: '1.1.1.1',
+      type: 'vmess',
+      udp: false,
+      uuid: '1386f85e-657b-4d6e-9d56-78badb75e1fd',
+      'h2-opts': {
+        path: '/h2',
+        host: ['host.com', 'example.com'],
       },
-    ],
-  )
+    },
+  ])
 
-  t.deepEqual(
+  expect(
     clash.getClashNodes([
       {
         type: NodeTypeEnum.Vless,
@@ -614,32 +607,31 @@ test('getClashNodes', async (t) => {
         },
       },
     ]),
-    [
-      {
-        type: 'vless',
-        name: 'vless',
-        server: 'server',
-        port: 443,
-        uuid: 'uuid',
-        cipher: 'none',
-        flow: 'xtls-rprx-direct',
-        udp: true,
-        tls: true,
-        network: 'h2',
-        'h2-opts': {
-          path: '/path',
-          host: ['v2ray.com'],
-        },
-        encryption: 'encryption',
-        'reality-opts': {
-          'public-key': 'publicKey',
-          'short-id': 'shortId',
-        },
+  ).toEqual([
+    {
+      type: 'vless',
+      name: 'vless',
+      server: 'server',
+      port: 443,
+      uuid: 'uuid',
+      cipher: 'none',
+      flow: 'xtls-rprx-direct',
+      udp: true,
+      tls: true,
+      network: 'h2',
+      'h2-opts': {
+        path: '/path',
+        host: ['v2ray.com'],
       },
-    ],
-  )
+      encryption: 'encryption',
+      'reality-opts': {
+        'public-key': 'publicKey',
+        'short-id': 'shortId',
+      },
+    },
+  ])
 
-  t.deepEqual(
+  expect(
     clash.getClashNodes([
       {
         type: NodeTypeEnum.Vless,
@@ -666,33 +658,32 @@ test('getClashNodes', async (t) => {
         },
       },
     ]),
-    [
-      {
-        type: 'vless',
-        name: 'vless-xhttp',
-        server: 'server',
-        port: 443,
-        uuid: 'uuid',
-        cipher: 'none',
-        flow: 'xtls-rprx-vision',
-        udp: true,
-        tls: true,
-        network: 'xhttp',
-        encryption: 'none',
-        'packet-encoding': 'xudp',
-        'xhttp-opts': {
-          path: '/xhttp',
-          mode: 'auto',
-        },
-        'ech-opts': {
-          enable: true,
-          config: 'ech-config',
-        },
+  ).toEqual([
+    {
+      type: 'vless',
+      name: 'vless-xhttp',
+      server: 'server',
+      port: 443,
+      uuid: 'uuid',
+      cipher: 'none',
+      flow: 'xtls-rprx-vision',
+      udp: true,
+      tls: true,
+      network: 'xhttp',
+      encryption: 'none',
+      'packet-encoding': 'xudp',
+      'xhttp-opts': {
+        path: '/xhttp',
+        mode: 'auto',
       },
-    ],
-  )
+      'ech-opts': {
+        enable: true,
+        config: 'ech-config',
+      },
+    },
+  ])
 
-  t.deepEqual(
+  expect(
     clash.getClashNodes([
       {
         alterId: '64',
@@ -705,10 +696,9 @@ test('getClashNodes', async (t) => {
         uuid: '1386f85e-657b-4d6e-9d56-78badb75e1fd',
       } as any,
     ]),
-    [],
-  )
+  ).toEqual([])
 
-  t.deepEqual(
+  expect(
     clash.getClashNodes([
       {
         nodeName: 'snell',
@@ -719,20 +709,19 @@ test('getClashNodes', async (t) => {
         obfs: 'tls',
       },
     ]),
-    [
-      {
-        name: 'snell',
-        type: 'snell',
-        server: '1.1.1.1',
-        port: 443,
-        psk: 'psk',
-        'obfs-opts': {
-          mode: 'tls',
-        },
+  ).toEqual([
+    {
+      name: 'snell',
+      type: 'snell',
+      server: '1.1.1.1',
+      port: 443,
+      psk: 'psk',
+      'obfs-opts': {
+        mode: 'tls',
       },
-    ],
-  )
-  t.deepEqual(
+    },
+  ])
+  expect(
     clash.getClashNodes([
       {
         nodeName: 'snell',
@@ -745,22 +734,21 @@ test('getClashNodes', async (t) => {
         version: '2',
       },
     ]),
-    [
-      {
-        name: 'snell',
-        type: 'snell',
-        server: '1.1.1.1',
-        port: 443,
-        psk: 'psk',
-        'obfs-opts': {
-          mode: 'tls',
-          host: 'example.com',
-        },
-        version: '2',
+  ).toEqual([
+    {
+      name: 'snell',
+      type: 'snell',
+      server: '1.1.1.1',
+      port: 443,
+      psk: 'psk',
+      'obfs-opts': {
+        mode: 'tls',
+        host: 'example.com',
       },
-    ],
-  )
-  t.deepEqual(
+      version: '2',
+    },
+  ])
+  expect(
     clash.getClashNodes([
       {
         nodeName: 'snell',
@@ -772,10 +760,9 @@ test('getClashNodes', async (t) => {
         obfs: 'tls',
       },
     ]),
-    [],
-  )
+  ).toEqual([])
 
-  t.deepEqual(
+  expect(
     clash.getClashNodes([
       {
         type: NodeTypeEnum.AnyTLS,
@@ -790,23 +777,22 @@ test('getClashNodes', async (t) => {
         minIdleSessions: 0,
       },
     ]),
-    [
-      {
-        type: 'anytls',
-        name: 'anytls',
-        server: 'example.com',
-        port: 443,
-        password: 'password',
-        udp: false,
-        'skip-cert-verify': false,
-        'idle-session-check-interval': 0,
-        'idle-session-timeout': 0,
-        'min-idle-session': 0,
-      },
-    ],
-  )
+  ).toEqual([
+    {
+      type: 'anytls',
+      name: 'anytls',
+      server: 'example.com',
+      port: 443,
+      password: 'password',
+      udp: false,
+      'skip-cert-verify': false,
+      'idle-session-check-interval': 0,
+      'idle-session-timeout': 0,
+      'min-idle-session': 0,
+    },
+  ])
 
-  t.deepEqual(
+  expect(
     clash.getClashNodes([
       {
         nodeName: 'trojan',
@@ -816,18 +802,17 @@ test('getClashNodes', async (t) => {
         password: 'password1',
       },
     ]),
-    [
-      {
-        name: 'trojan',
-        type: 'trojan',
-        server: '1.1.1.1',
-        port: 443,
-        password: 'password1',
-        'skip-cert-verify': false,
-      },
-    ],
-  )
-  t.deepEqual(
+  ).toEqual([
+    {
+      name: 'trojan',
+      type: 'trojan',
+      server: '1.1.1.1',
+      port: 443,
+      password: 'password1',
+      'skip-cert-verify': false,
+    },
+  ])
+  expect(
     clash.getClashNodes([
       {
         nodeName: 'trojan',
@@ -841,21 +826,20 @@ test('getClashNodes', async (t) => {
         skipCertVerify: true,
       },
     ]),
-    [
-      {
-        name: 'trojan',
-        type: 'trojan',
-        server: '1.1.1.1',
-        port: 443,
-        password: 'password1',
-        udp: true,
-        alpn: ['h2', 'http/1.1'],
-        sni: 'example.com',
-        'skip-cert-verify': true,
-      },
-    ],
-  )
-  t.deepEqual(
+  ).toEqual([
+    {
+      name: 'trojan',
+      type: 'trojan',
+      server: '1.1.1.1',
+      port: 443,
+      password: 'password1',
+      udp: true,
+      alpn: ['h2', 'http/1.1'],
+      sni: 'example.com',
+      'skip-cert-verify': true,
+    },
+  ])
+  expect(
     clash.getClashNodes([
       {
         nodeName: 'trojan',
@@ -870,25 +854,24 @@ test('getClashNodes', async (t) => {
         network: 'ws',
       },
     ]),
-    [
-      {
-        name: 'trojan',
-        type: 'trojan',
-        server: '1.1.1.1',
-        port: 443,
-        password: 'password1',
-        udp: true,
-        alpn: ['h2', 'http/1.1'],
-        sni: 'example.com',
-        'skip-cert-verify': true,
-        network: 'ws',
-        'ws-opts': {
-          path: '/',
-        },
+  ).toEqual([
+    {
+      name: 'trojan',
+      type: 'trojan',
+      server: '1.1.1.1',
+      port: 443,
+      password: 'password1',
+      udp: true,
+      alpn: ['h2', 'http/1.1'],
+      sni: 'example.com',
+      'skip-cert-verify': true,
+      network: 'ws',
+      'ws-opts': {
+        path: '/',
       },
-    ],
-  )
-  t.deepEqual(
+    },
+  ])
+  expect(
     clash.getClashNodes([
       {
         nodeName: 'trojan',
@@ -906,27 +889,26 @@ test('getClashNodes', async (t) => {
         },
       },
     ]),
-    [
-      {
-        name: 'trojan',
-        type: 'trojan',
-        server: '1.1.1.1',
-        port: 443,
-        password: 'password1',
-        udp: true,
-        alpn: ['h2', 'http/1.1'],
-        sni: 'example.com',
-        'skip-cert-verify': true,
-        network: 'ws',
-        'ws-opts': {
-          'multi words key': 'multi words value',
-          path: '/',
-        },
+  ).toEqual([
+    {
+      name: 'trojan',
+      type: 'trojan',
+      server: '1.1.1.1',
+      port: 443,
+      password: 'password1',
+      udp: true,
+      alpn: ['h2', 'http/1.1'],
+      sni: 'example.com',
+      'skip-cert-verify': true,
+      network: 'ws',
+      'ws-opts': {
+        'multi words key': 'multi words value',
+        path: '/',
       },
-    ],
-  )
+    },
+  ])
 
-  t.deepEqual(
+  expect(
     clash.getClashNodes([
       {
         nodeName: 'socks5',
@@ -935,17 +917,16 @@ test('getClashNodes', async (t) => {
         port: 443,
       },
     ]),
-    [
-      {
-        type: 'socks5',
-        name: 'socks5',
-        server: '1.1.1.1',
-        port: 443,
-      },
-    ],
-  )
+  ).toEqual([
+    {
+      type: 'socks5',
+      name: 'socks5',
+      server: '1.1.1.1',
+      port: 443,
+    },
+  ])
 
-  t.deepEqual(
+  expect(
     clash.getClashNodes([
       {
         nodeName: 'socks5',
@@ -959,22 +940,21 @@ test('getClashNodes', async (t) => {
         udpRelay: false,
       },
     ]),
-    [
-      {
-        type: 'socks5',
-        name: 'socks5',
-        server: '1.1.1.1',
-        port: 443,
-        username: 'username',
-        password: 'password',
-        tls: true,
-        'skip-cert-verify': true,
-        udp: false,
-      },
-    ],
-  )
+  ).toEqual([
+    {
+      type: 'socks5',
+      name: 'socks5',
+      server: '1.1.1.1',
+      port: 443,
+      username: 'username',
+      password: 'password',
+      tls: true,
+      'skip-cert-verify': true,
+      udp: false,
+    },
+  ])
 
-  t.deepEqual(
+  expect(
     clash.getClashNodes([
       {
         nodeName: 'socks5',
@@ -988,22 +968,21 @@ test('getClashNodes', async (t) => {
         udpRelay: false,
       },
     ]),
-    [
-      {
-        type: 'socks5',
-        name: 'socks5',
-        server: '1.1.1.1',
-        port: 443,
-        username: 'username',
-        password: 'password',
-        tls: false,
-        'skip-cert-verify': false,
-        udp: false,
-      },
-    ],
-  )
+  ).toEqual([
+    {
+      type: 'socks5',
+      name: 'socks5',
+      server: '1.1.1.1',
+      port: 443,
+      username: 'username',
+      password: 'password',
+      tls: false,
+      'skip-cert-verify': false,
+      udp: false,
+    },
+  ])
 
-  t.deepEqual(
+  expect(
     clash.getClashNodes([
       {
         nodeName: 'tuic',
@@ -1013,10 +992,9 @@ test('getClashNodes', async (t) => {
         token: 'password',
       },
     ]),
-    [],
-  )
+  ).toEqual([])
 
-  t.deepEqual(
+  expect(
     clash.getClashNodes([
       {
         nodeName: 'tuic',
@@ -1046,31 +1024,30 @@ test('getClashNodes', async (t) => {
         portHoppingInterval: 10,
       },
     ]),
-    [
-      {
-        type: 'tuic',
-        name: 'tuic',
-        server: '1.1.1.1',
-        port: 443,
-        token: 'password',
-        udp: true,
-      },
-      {
-        type: 'tuic',
-        name: 'tuic',
-        server: '1.1.1.1',
-        port: 443,
-        token: 'password',
-        'skip-cert-verify': true,
-        udp: true,
-        alpn: ['h3'],
-        'hop-interval': 10,
-        ports: '5000-6000,7000',
-      },
-    ],
-  )
+  ).toEqual([
+    {
+      type: 'tuic',
+      name: 'tuic',
+      server: '1.1.1.1',
+      port: 443,
+      token: 'password',
+      udp: true,
+    },
+    {
+      type: 'tuic',
+      name: 'tuic',
+      server: '1.1.1.1',
+      port: 443,
+      token: 'password',
+      'skip-cert-verify': true,
+      udp: true,
+      alpn: ['h3'],
+      'hop-interval': 10,
+      ports: '5000-6000,7000',
+    },
+  ])
 
-  t.deepEqual(
+  expect(
     clash.getClashNodes([
       {
         nodeName: 'wireguard',
@@ -1104,33 +1081,32 @@ test('getClashNodes', async (t) => {
         ],
       },
     ]),
-    [
-      {
-        ip: '127.0.0.1',
-        name: 'wireguard',
-        port: 1234,
-        'private-key': 'privateKey',
-        'public-key': 'publicKey',
-        server: 'example.com',
-        type: 'wireguard',
-        udp: true,
-        reserved: [1, 2, 3],
-      },
-      {
-        ip: '127.0.0.1',
-        name: 'wireguard',
-        port: 1234,
-        'private-key': 'privateKey',
-        'public-key': 'publicKey',
-        server: 'example.com',
-        type: 'wireguard',
-        udp: true,
-        reserved: [1, 2, 3],
-      },
-    ],
-  )
+  ).toEqual([
+    {
+      ip: '127.0.0.1',
+      name: 'wireguard',
+      port: 1234,
+      'private-key': 'privateKey',
+      'public-key': 'publicKey',
+      server: 'example.com',
+      type: 'wireguard',
+      udp: true,
+      reserved: [1, 2, 3],
+    },
+    {
+      ip: '127.0.0.1',
+      name: 'wireguard',
+      port: 1234,
+      'private-key': 'privateKey',
+      'public-key': 'publicKey',
+      server: 'example.com',
+      type: 'wireguard',
+      udp: true,
+      reserved: [1, 2, 3],
+    },
+  ])
 
-  t.deepEqual(
+  expect(
     clash.getClashNodes([
       {
         type: NodeTypeEnum.Hysteria2,
@@ -1175,42 +1151,41 @@ test('getClashNodes', async (t) => {
         },
       },
     ]),
-    [
-      {
-        down: 100,
-        name: '测试 Hysteria2',
-        password: 'password',
-        port: 443,
-        server: 'example.com',
-        type: 'hysteria2',
-        up: 100,
-      },
-      {
-        down: 100,
-        name: '测试 Hysteria2',
-        auth: 'password',
-        port: 443,
-        server: 'example.com',
-        type: 'hysteria2',
-        up: 100,
-        ports: '5000-6000',
-        'hop-interval': 10,
-      },
-      {
-        down: 100,
-        name: '测试 Hysteria2',
-        password: 'password',
-        port: 443,
-        server: 'example.com',
-        'skip-cert-verify': true,
-        sni: 'sni.example.com',
-        type: 'hysteria2',
-        up: 100,
-      },
-    ],
-  )
+  ).toEqual([
+    {
+      down: 100,
+      name: '测试 Hysteria2',
+      password: 'password',
+      port: 443,
+      server: 'example.com',
+      type: 'hysteria2',
+      up: 100,
+    },
+    {
+      down: 100,
+      name: '测试 Hysteria2',
+      auth: 'password',
+      port: 443,
+      server: 'example.com',
+      type: 'hysteria2',
+      up: 100,
+      ports: '5000-6000',
+      'hop-interval': 10,
+    },
+    {
+      down: 100,
+      name: '测试 Hysteria2',
+      password: 'password',
+      port: 443,
+      server: 'example.com',
+      'skip-cert-verify': true,
+      sni: 'sni.example.com',
+      type: 'hysteria2',
+      up: 100,
+    },
+  ])
 
-  t.deepEqual(
+  expect(
     clash.getClashNodes([
       {
         nodeName: 'trojan',
@@ -1240,41 +1215,40 @@ test('getClashNodes', async (t) => {
         },
       },
     ]),
-    [
-      {
-        alpn: ['h2', 'http/1.1'],
-        'dialer-proxy': 'socks5',
-        name: 'trojan',
-        network: 'ws',
-        password: 'password1',
-        port: 443,
-        server: '1.1.1.1',
-        'skip-cert-verify': true,
-        smux: {
-          'brutal-opts': {
-            down: 100,
-            enabled: true,
-            up: 100,
-          },
+  ).toEqual([
+    {
+      alpn: ['h2', 'http/1.1'],
+      'dialer-proxy': 'socks5',
+      name: 'trojan',
+      network: 'ws',
+      password: 'password1',
+      port: 443,
+      server: '1.1.1.1',
+      'skip-cert-verify': true,
+      smux: {
+        'brutal-opts': {
+          down: 100,
           enabled: true,
-          'max-connections': 10,
-          'max-streams': 16,
-          'min-streams': 1,
-          padding: true,
-          protocol: 'smux',
+          up: 100,
         },
-        sni: 'example.com',
-        type: 'trojan',
-        udp: true,
-        'ws-opts': {
-          path: '/',
-        },
+        enabled: true,
+        'max-connections': 10,
+        'max-streams': 16,
+        'min-streams': 1,
+        padding: true,
+        protocol: 'smux',
       },
-    ],
-  )
+      sni: 'example.com',
+      type: 'trojan',
+      udp: true,
+      'ws-opts': {
+        path: '/',
+      },
+    },
+  ])
 })
 
-test('getClashNodes - MASQUE varies by clashCore and auth mode', (t) => {
+test('getClashNodes - MASQUE varies by clashCore and auth mode', () => {
   const keyPairNode = {
     type: NodeTypeEnum.Masque as const,
     authMode: 'key-pair' as const,
@@ -1299,7 +1273,7 @@ test('getClashNodes - MASQUE varies by clashCore and auth mode', (t) => {
     underlyingProxy: 'upstream',
   }
 
-  t.deepEqual(
+  expect(
     clash.getClashNodes([
       {
         ...keyPairNode,
@@ -1310,47 +1284,46 @@ test('getClashNodes - MASQUE varies by clashCore and auth mode', (t) => {
         clashConfig: { clashCore: 'clash.meta' },
       },
     ]),
-    [
-      {
-        type: 'masque',
-        name: 'WARP MASQUE',
-        server: 'masque.example.com',
-        port: 443,
-        'private-key': 'private-key',
-        'public-key': 'public-key',
-        ip: '172.16.0.2/32',
-        ipv6: 'fd00::2/128',
-        sni: 'consumer-masque.cloudflareclient.com',
-        mtu: 1280,
-        dns: ['1.1.1.1', '2606:4700:4700::1111'],
-        network: 'h3',
-        'connect-uri': 'https://cloudflareaccess.com',
-        keepalive: 30,
-      },
-      {
-        type: 'masque',
-        name: 'WARP MASQUE',
-        server: 'masque.example.com',
-        port: 443,
-        'private-key': 'private-key',
-        'public-key': 'public-key',
-        ip: '172.16.0.2/32',
-        ipv6: 'fd00::2/128',
-        sni: 'consumer-masque.cloudflareclient.com',
-        mtu: 1280,
-        dns: ['1.1.1.1', '2606:4700:4700::1111'],
-        network: 'quic',
-        udp: true,
-        'remote-dns-resolve': true,
-        'congestion-controller': 'bbr',
-        'bbr-profile': 'aggressive',
-        'handshake-timeout': 20,
-        'dialer-proxy': 'upstream',
-      },
-    ],
-  )
+  ).toEqual([
+    {
+      type: 'masque',
+      name: 'WARP MASQUE',
+      server: 'masque.example.com',
+      port: 443,
+      'private-key': 'private-key',
+      'public-key': 'public-key',
+      ip: '172.16.0.2/32',
+      ipv6: 'fd00::2/128',
+      sni: 'consumer-masque.cloudflareclient.com',
+      mtu: 1280,
+      dns: ['1.1.1.1', '2606:4700:4700::1111'],
+      network: 'h3',
+      'connect-uri': 'https://cloudflareaccess.com',
+      keepalive: 30,
+    },
+    {
+      type: 'masque',
+      name: 'WARP MASQUE',
+      server: 'masque.example.com',
+      port: 443,
+      'private-key': 'private-key',
+      'public-key': 'public-key',
+      ip: '172.16.0.2/32',
+      ipv6: 'fd00::2/128',
+      sni: 'consumer-masque.cloudflareclient.com',
+      mtu: 1280,
+      dns: ['1.1.1.1', '2606:4700:4700::1111'],
+      network: 'quic',
+      udp: true,
+      'remote-dns-resolve': true,
+      'congestion-controller': 'bbr',
+      'bbr-profile': 'aggressive',
+      'handshake-timeout': 20,
+      'dialer-proxy': 'upstream',
+    },
+  ])
 
-  t.deepEqual(
+  expect(
     clash.getClashNodes([
       {
         type: NodeTypeEnum.Masque,
@@ -1377,11 +1350,10 @@ test('getClashNodes - MASQUE varies by clashCore and auth mode', (t) => {
         clashConfig: { clashCore: 'stash' },
       },
     ]),
-    [],
-  )
+  ).toEqual([])
 })
 
-test('getClashNodes - TrustTunnel varies by clashCore', (t) => {
+test('getClashNodes - TrustTunnel varies by clashCore', () => {
   const sharedNode = {
     type: NodeTypeEnum.TrustTunnel as const,
     nodeName: 'TrustTunnel',
@@ -1397,7 +1369,7 @@ test('getClashNodes - TrustTunnel varies by clashCore', (t) => {
     underlyingProxy: 'upstream',
   }
 
-  t.deepEqual(
+  expect(
     clash.getClashNodes([
       {
         ...sharedNode,
@@ -1418,49 +1390,48 @@ test('getClashNodes - TrustTunnel varies by clashCore', (t) => {
         clashConfig: { clashCore: 'clash.meta' },
       },
     ]),
-    [
-      {
-        type: 'trusttunnel',
-        name: 'TrustTunnel',
-        server: 'trust.example.com',
-        port: 443,
-        username: 'user',
-        password: 'pass',
-        quic: true,
-        sni: 'sni.example.com',
-        alpn: ['h3'],
-        'skip-cert-verify': true,
-        'server-cert-fingerprint': 'sha256',
-        'dialer-proxy': 'upstream',
-        ports: '443,8443,5000-6000',
-        'hop-interval': 30,
-      },
-      {
-        type: 'trusttunnel',
-        name: 'TrustTunnel',
-        server: 'trust.example.com',
-        port: 443,
-        username: 'user',
-        password: 'pass',
-        quic: true,
-        sni: 'sni.example.com',
-        alpn: ['h3'],
-        'skip-cert-verify': true,
-        fingerprint: 'sha256',
-        'client-fingerprint': 'chrome',
-        udp: true,
-        'health-check': true,
-        'name-cert-verify': 'verify.example.com',
-        'congestion-controller': 'bbr',
-        'bbr-profile': 'conservative',
-        'max-connections': 8,
-        'min-streams': 5,
-        'dialer-proxy': 'upstream',
-      },
-    ],
-  )
+  ).toEqual([
+    {
+      type: 'trusttunnel',
+      name: 'TrustTunnel',
+      server: 'trust.example.com',
+      port: 443,
+      username: 'user',
+      password: 'pass',
+      quic: true,
+      sni: 'sni.example.com',
+      alpn: ['h3'],
+      'skip-cert-verify': true,
+      'server-cert-fingerprint': 'sha256',
+      'dialer-proxy': 'upstream',
+      ports: '443,8443,5000-6000',
+      'hop-interval': 30,
+    },
+    {
+      type: 'trusttunnel',
+      name: 'TrustTunnel',
+      server: 'trust.example.com',
+      port: 443,
+      username: 'user',
+      password: 'pass',
+      quic: true,
+      sni: 'sni.example.com',
+      alpn: ['h3'],
+      'skip-cert-verify': true,
+      fingerprint: 'sha256',
+      'client-fingerprint': 'chrome',
+      udp: true,
+      'health-check': true,
+      'name-cert-verify': 'verify.example.com',
+      'congestion-controller': 'bbr',
+      'bbr-profile': 'conservative',
+      'max-connections': 8,
+      'min-streams': 5,
+      'dialer-proxy': 'upstream',
+    },
+  ])
 
-  t.deepEqual(
+  expect(
     clash.getClashNodes([
       {
         ...sharedNode,
@@ -1493,11 +1464,10 @@ test('getClashNodes - TrustTunnel varies by clashCore', (t) => {
         clashConfig: { clashCore: 'clash.meta' },
       },
     ]),
-    [],
-  )
+  ).toEqual([])
 })
 
-test('getClashNodes - Tailscale varies by clashCore', (t) => {
+test('getClashNodes - Tailscale varies by clashCore', () => {
   const tailscaleNode = {
     type: NodeTypeEnum.Tailscale as const,
     nodeName: 'tailnet',
@@ -1517,67 +1487,64 @@ test('getClashNodes - Tailscale varies by clashCore', (t) => {
     tfo: true,
   }
 
-  t.deepEqual(
+  expect(
     clash.getClashNodes([
       {
         ...tailscaleNode,
         clashConfig: { clashCore: 'stash' },
       },
     ]),
-    [
-      {
-        type: 'tailscale',
-        name: 'tailnet',
-        'auth-key': 'tskey-auth-example',
-        hostname: 'surgio-node',
-        'control-url': 'https://controlplane.tailscale.com',
-        ephemeral: false,
-        'exit-node': '100.64.0.1',
-      },
-    ],
-  )
+  ).toEqual([
+    {
+      type: 'tailscale',
+      name: 'tailnet',
+      'auth-key': 'tskey-auth-example',
+      hostname: 'surgio-node',
+      'control-url': 'https://controlplane.tailscale.com',
+      ephemeral: false,
+      'exit-node': '100.64.0.1',
+    },
+  ])
 
-  t.deepEqual(
+  expect(
     clash.getClashNodes([
       {
         ...tailscaleNode,
         clashConfig: { clashCore: 'clash.meta' },
       },
     ]),
-    [
-      {
-        type: 'tailscale',
-        name: 'tailnet',
-        'auth-key': 'tskey-auth-example',
-        hostname: 'surgio-node',
-        'control-url': 'https://controlplane.tailscale.com',
-        'state-dir': './tailscale',
-        ephemeral: false,
-        udp: false,
-        'accept-routes': true,
-        'exit-node': '100.64.0.1',
-        'exit-node-allow-lan-access': false,
-        'dialer-proxy': 'upstream',
-        'interface-name': 'WLAN',
-        'routing-mark': 0,
-        'ip-version': 'ipv4-prefer',
-      },
-    ],
-  )
+  ).toEqual([
+    {
+      type: 'tailscale',
+      name: 'tailnet',
+      'auth-key': 'tskey-auth-example',
+      hostname: 'surgio-node',
+      'control-url': 'https://controlplane.tailscale.com',
+      'state-dir': './tailscale',
+      ephemeral: false,
+      udp: false,
+      'accept-routes': true,
+      'exit-node': '100.64.0.1',
+      'exit-node-allow-lan-access': false,
+      'dialer-proxy': 'upstream',
+      'interface-name': 'WLAN',
+      'routing-mark': 0,
+      'ip-version': 'ipv4-prefer',
+    },
+  ])
 
-  t.deepEqual(
+  expect(
     clash.getClashNodes([
       {
         ...tailscaleNode,
         clashConfig: { clashCore: 'clash' },
       },
     ]),
-    [],
-  )
+  ).toEqual([])
 })
 
-test('getClashNodes - HTTP/HTTPS with headers', async (t) => {
-  t.deepEqual(
+test('getClashNodes - HTTP/HTTPS with headers', async () => {
+  expect(
     clash.getClashNodes([
       {
         type: NodeTypeEnum.HTTP,
@@ -1592,23 +1559,22 @@ test('getClashNodes - HTTP/HTTPS with headers', async (t) => {
         },
       },
     ]),
-    [
-      {
-        type: 'http',
-        name: 'HTTP Proxy',
-        server: '1.1.1.1',
-        port: 8080,
-        username: 'user',
-        password: 'pass',
-        headers: {
-          'X-Custom': 'value',
-          Host: 'example.com',
-        },
+  ).toEqual([
+    {
+      type: 'http',
+      name: 'HTTP Proxy',
+      server: '1.1.1.1',
+      port: 8080,
+      username: 'user',
+      password: 'pass',
+      headers: {
+        'X-Custom': 'value',
+        Host: 'example.com',
       },
-    ],
-  )
+    },
+  ])
 
-  t.deepEqual(
+  expect(
     clash.getClashNodes([
       {
         type: NodeTypeEnum.HTTP,
@@ -1619,19 +1585,18 @@ test('getClashNodes - HTTP/HTTPS with headers', async (t) => {
         password: 'pass',
       },
     ]),
-    [
-      {
-        type: 'http',
-        name: 'HTTP Proxy No Headers',
-        server: '1.1.1.1',
-        port: 8080,
-        username: 'user',
-        password: 'pass',
-      },
-    ],
-  )
+  ).toEqual([
+    {
+      type: 'http',
+      name: 'HTTP Proxy No Headers',
+      server: '1.1.1.1',
+      port: 8080,
+      username: 'user',
+      password: 'pass',
+    },
+  ])
 
-  t.deepEqual(
+  expect(
     clash.getClashNodes([
       {
         type: NodeTypeEnum.HTTPS,
@@ -1647,24 +1612,23 @@ test('getClashNodes - HTTP/HTTPS with headers', async (t) => {
         },
       },
     ]),
-    [
-      {
-        type: 'http',
-        name: 'HTTPS Proxy',
-        server: '1.1.1.1',
-        port: 443,
-        username: 'user',
-        password: 'pass',
-        tls: true,
-        'skip-cert-verify': false,
-        headers: {
-          'X-Custom': 'value',
-        },
+  ).toEqual([
+    {
+      type: 'http',
+      name: 'HTTPS Proxy',
+      server: '1.1.1.1',
+      port: 443,
+      username: 'user',
+      password: 'pass',
+      tls: true,
+      'skip-cert-verify': false,
+      headers: {
+        'X-Custom': 'value',
       },
-    ],
-  )
+    },
+  ])
 
-  t.deepEqual(
+  expect(
     clash.getClashNodes([
       {
         type: NodeTypeEnum.HTTP,
@@ -1673,13 +1637,12 @@ test('getClashNodes - HTTP/HTTPS with headers', async (t) => {
         port: 8080,
       },
     ]),
-    [
-      {
-        type: 'http',
-        name: 'HTTP No Auth',
-        server: '1.1.1.1',
-        port: 8080,
-      },
-    ],
-  )
+  ).toEqual([
+    {
+      type: 'http',
+      name: 'HTTP No Auth',
+      server: '1.1.1.1',
+      port: 8080,
+    },
+  ])
 })

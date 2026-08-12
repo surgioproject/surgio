@@ -1,4 +1,4 @@
-import test from 'ava'
+import { beforeEach, expect, test, vi } from 'vitest'
 import sinon from 'sinon'
 
 import * as config from '../../config'
@@ -24,12 +24,12 @@ class TestProvider extends Provider {
   }
 }
 
-test.beforeEach(() => {
+beforeEach(() => {
   sandbox.restore()
-  sandbox.stub(config, 'getConfig').returns({} as any)
+  vi.spyOn(config, 'getConfig').mockReturnValue({} as any)
 })
 
-test('Provider determineRequestHeaders always includes user-agent', (t) => {
+test('Provider determineRequestHeaders always includes user-agent', () => {
   const provider = new TestProvider('test', {
     type: SupportProviderEnum.Custom,
     nodeList: [],
@@ -41,12 +41,12 @@ test('Provider determineRequestHeaders always includes user-agent', (t) => {
     'x-custom': 'value',
   })
 
-  t.deepEqual(headers, {
+  expect(headers).toEqual({
     'user-agent': getUserAgent('config-ua'),
   })
 })
 
-test('Provider determineRequestHeaders filters headers by allowlist', (t) => {
+test('Provider determineRequestHeaders filters headers by allowlist', () => {
   const provider = new TestProvider('test', {
     type: SupportProviderEnum.Custom,
     nodeList: [],
@@ -59,13 +59,13 @@ test('Provider determineRequestHeaders filters headers by allowlist', (t) => {
     'x-custom': 'value',
   })
 
-  t.deepEqual(headers, {
+  expect(headers).toEqual({
     'accept-language': 'en-US',
     'user-agent': getUserAgent(),
   })
 })
 
-test('Provider determineRequestHeaders uses requestUserAgent when allowed', (t) => {
+test('Provider determineRequestHeaders uses requestUserAgent when allowed', () => {
   const provider = new TestProvider('test', {
     type: SupportProviderEnum.Custom,
     nodeList: [],
@@ -78,10 +78,10 @@ test('Provider determineRequestHeaders uses requestUserAgent when allowed', (t) 
     'user-agent': 'header-ua',
   })
 
-  t.is(headers['user-agent'], getUserAgent('param-ua'))
+  expect(headers['user-agent']).toBe(getUserAgent('param-ua'))
 })
 
-test('Provider determineRequestHeaders falls back to header user-agent', (t) => {
+test('Provider determineRequestHeaders falls back to header user-agent', () => {
   const provider = new TestProvider('test', {
     type: SupportProviderEnum.Custom,
     nodeList: [],
@@ -94,10 +94,10 @@ test('Provider determineRequestHeaders falls back to header user-agent', (t) => 
     'user-agent': 'header-ua',
   })
 
-  t.is(headers['user-agent'], getUserAgent('header-ua'))
+  expect(headers['user-agent']).toBe(getUserAgent('header-ua'))
 })
 
-test('Provider determineRequestHeaders falls back to config user-agent', (t) => {
+test('Provider determineRequestHeaders falls back to config user-agent', () => {
   const provider = new TestProvider('test', {
     type: SupportProviderEnum.Custom,
     nodeList: [],
@@ -108,10 +108,10 @@ test('Provider determineRequestHeaders falls back to config user-agent', (t) => 
 
   const headers = provider.determineRequestHeaders()
 
-  t.is(headers['user-agent'], getUserAgent('config-ua'))
+  expect(headers['user-agent']).toBe(getUserAgent('config-ua'))
 })
 
-test('Provider determineRequestHeaders normalizes header casing', (t) => {
+test('Provider determineRequestHeaders normalizes header casing', () => {
   const provider = new TestProvider('test', {
     type: SupportProviderEnum.Custom,
     nodeList: [],
@@ -123,7 +123,7 @@ test('Provider determineRequestHeaders normalizes header casing', (t) => {
     'Accept-Language': 'en-GB',
   })
 
-  t.deepEqual(headers, {
+  expect(headers).toEqual({
     'accept-language': 'en-GB',
     'user-agent': getUserAgent(),
   })
