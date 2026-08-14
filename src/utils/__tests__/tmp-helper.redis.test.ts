@@ -1,18 +1,14 @@
 import { afterAll, beforeAll, expect, test } from 'vitest'
-import sinon from 'sinon'
 import MockRedis from 'ioredis-mock'
 
 import redis from '../../redis'
 import { createTmpFactory } from '../tmp-helper'
-
-const sandbox = sinon.createSandbox()
 
 beforeAll(() => {
   redis.createRedis('', MockRedis)
 })
 
 afterAll(async () => {
-  sandbox.restore()
   await redis.destroyRedis()
 })
 

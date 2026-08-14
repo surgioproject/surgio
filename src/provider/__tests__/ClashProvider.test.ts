@@ -1,6 +1,5 @@
 import { beforeEach, expect, test, vi } from 'vitest'
 import nock from 'nock'
-import sinon from 'sinon'
 
 import { NodeTypeEnum, SupportProviderEnum } from '../../types'
 import ClashProvider, {
@@ -10,10 +9,8 @@ import ClashProvider, {
 import Provider from '../Provider'
 import * as config from '../../config'
 
-const sandbox = sinon.createSandbox()
-
 beforeEach(() => {
-  sandbox.restore()
+  vi.restoreAllMocks()
   vi.spyOn(config, 'getConfig').mockReturnValue({} as any)
 })
 
@@ -929,7 +926,7 @@ test('ClashProvider relayUrl', async () => {
 })
 
 test('ClashProvider requestUserAgent', async () => {
-  const mock = sandbox.spy(Provider, 'requestCacheableResource')
+  const mock = vi.spyOn(Provider, 'requestCacheableResource')
 
   const requestUserAgent = 'test useragent'
   const provider = new ClashProvider('test', {
@@ -942,16 +939,17 @@ test('ClashProvider requestUserAgent', async () => {
 
   await provider.getNodeList()
 
-  sandbox.assert.calledWith(
-    mock,
+  expect(mock).toHaveBeenCalledWith(
     'http://example.com/clash-sample.yaml',
-    sinon.match.has('user-agent', sinon.match(/^test useragent surgio\//)),
-    sinon.match.string,
+    expect.objectContaining({
+      'user-agent': expect.stringMatching(/^test useragent surgio\//),
+    }),
+    expect.any(String),
   )
 })
 
 test('ClashProvider requestUserAgent with passGatewayRequestHeaders', async () => {
-  const mock = sandbox.spy(Provider, 'requestCacheableResource')
+  const mock = vi.spyOn(Provider, 'requestCacheableResource')
 
   const requestUserAgent = 'test useragent'
   const provider = new ClashProvider('test', {
@@ -966,16 +964,17 @@ test('ClashProvider requestUserAgent with passGatewayRequestHeaders', async () =
     requestUserAgent,
   })
 
-  sandbox.assert.calledWith(
-    mock,
+  expect(mock).toHaveBeenCalledWith(
     'http://example.com/clash-sample.yaml',
-    sinon.match.has('user-agent', sinon.match(/^test useragent surgio\//)),
-    sinon.match.string,
+    expect.objectContaining({
+      'user-agent': expect.stringMatching(/^test useragent surgio\//),
+    }),
+    expect.any(String),
   )
 })
 
 test('ClashProvider requestUserAgent without passGatewayRequestHeaders', async () => {
-  const mock = sandbox.spy(Provider, 'requestCacheableResource')
+  const mock = vi.spyOn(Provider, 'requestCacheableResource')
 
   const provider = new ClashProvider('test', {
     type: SupportProviderEnum.Clash,
@@ -988,16 +987,17 @@ test('ClashProvider requestUserAgent without passGatewayRequestHeaders', async (
     },
   })
 
-  sandbox.assert.calledWith(
-    mock,
+  expect(mock).toHaveBeenCalledWith(
     'http://example.com/clash-sample.yaml',
-    sinon.match.has('user-agent', sinon.match(/^clash surgio\//)),
-    sinon.match.string,
+    expect.objectContaining({
+      'user-agent': expect.stringMatching(/^clash surgio\//),
+    }),
+    expect.any(String),
   )
 })
 
 test('ClashProvider with hooks', async () => {
-  const afterNodeListResponse = sinon.spy((nodeList) => {
+  const afterNodeListResponse = vi.fn((nodeList) => {
     nodeList.forEach((node: any) => {
       node.nodeName = 'override'
     })
@@ -1014,7 +1014,7 @@ test('ClashProvider with hooks', async () => {
   for (const node of nodeList) {
     expect(node.nodeName).toBe('override')
   }
-  expect(afterNodeListResponse.calledOnce).toBe(true)
+  expect(afterNodeListResponse).toHaveBeenCalledOnce()
 })
 
 test('getClashSubscription - invalid yaml syntax', async () => {

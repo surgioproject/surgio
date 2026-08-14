@@ -1,14 +1,15 @@
-import { beforeEach, expect, test, vi } from 'vitest'
-import sinon from 'sinon'
+import { afterEach, beforeEach, expect, test, vi } from 'vitest'
 
 import * as config from '../../config'
 import * as utils from '../remote-snippet'
 
-const sandbox = sinon.createSandbox()
-
 beforeEach(() => {
-  sandbox.restore()
+  vi.restoreAllMocks()
   vi.spyOn(config, 'getConfig').mockReturnValue({} as any)
+})
+
+afterEach(() => {
+  vi.unstubAllEnvs()
 })
 
 test('loadRemoteSnippetList', async () => {
@@ -61,7 +62,7 @@ test('loadRemoteSnippetList', async () => {
 })
 
 test('loadRemoteSnippetList in now', async () => {
-  process.env.NOW_REGION = 'dev_1'
+  vi.stubEnv('NOW_REGION', 'dev_1')
 
   const remoteSnippetList = await utils.loadRemoteSnippetList([
     {
@@ -86,8 +87,6 @@ test('loadRemoteSnippetList in now', async () => {
   expect(remoteSnippetList[1].main('Proxy')).toMatchSnapshot()
   expect(remoteSnippetList[2].main('Proxy')).toMatchSnapshot()
   expect(remoteSnippetList[3].main('Proxy')).toMatchSnapshot()
-
-  process.env.NOW_REGION = undefined
 })
 
 test('loadRemoteSnippetList with error', async () => {

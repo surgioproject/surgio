@@ -3,7 +3,7 @@ import execa from 'execa'
 import fs from 'fs-extra'
 import ini from 'ini'
 import { runCommand } from '@oclif/test'
-import { afterEach, describe, expect, it } from 'vitest'
+import { afterEach, describe, expect, it, vi } from 'vitest'
 
 const fixture = join(process.cwd(), './test/fixture')
 const resolve = (p: string) => join(fixture, p)
@@ -13,21 +13,14 @@ const runCommandWithEnv = async (
   args: string[],
   env: Record<string, string>,
 ) => {
-  const originalEnv = Object.fromEntries(
-    Object.keys(env).map((key) => [key, process.env[key]]),
-  )
+  for (const [key, value] of Object.entries(env)) {
+    vi.stubEnv(key, value)
+  }
 
   try {
-    Object.assign(process.env, env)
     return await runCommand(args)
   } finally {
-    for (const [key, value] of Object.entries(originalEnv)) {
-      if (value === undefined) {
-        delete process.env[key]
-      } else {
-        process.env[key] = value
-      }
-    }
+    vi.unstubAllEnvs()
   }
 }
 

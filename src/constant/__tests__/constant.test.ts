@@ -1,5 +1,4 @@
-import { expect, test } from 'vitest'
-import { expectType } from 'ts-expect'
+import { assertType, test } from 'vitest'
 import { z } from 'zod'
 
 import {
@@ -11,16 +10,14 @@ import { VlessNetworkValidator, VmessNetworkValidator } from '../../validators'
 
 test('constant', () => {
   for (const network of V2RAYN_SUPPORTED_VMESS_NETWORK) {
-    expectType<z.infer<typeof VmessNetworkValidator>>(network)
+    assertType<z.infer<typeof VmessNetworkValidator>>(network)
   }
 
   for (const network of CLASH_META_SUPPORTED_VMESS_NETWORK) {
-    expectType<z.infer<typeof VmessNetworkValidator>>(network)
+    assertType<z.infer<typeof VmessNetworkValidator>>(network)
   }
 
   for (const network of CLASH_META_SUPPORTED_VLESS_NETWORK) {
-    expectType<z.infer<typeof VlessNetworkValidator>>(network)
+    assertType<z.infer<typeof VlessNetworkValidator>>(network)
   }
-
-  expect(true).toBe(true)
 })

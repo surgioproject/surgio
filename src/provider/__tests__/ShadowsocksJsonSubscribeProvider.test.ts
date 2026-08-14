@@ -1,14 +1,11 @@
 import { beforeEach, expect, test, vi } from 'vitest'
-import sinon from 'sinon'
 
 import { NodeTypeEnum } from '../../types'
 import * as config from '../../config'
 import { getShadowsocksJSONConfig } from '../ShadowsocksJsonSubscribeProvider'
 
-const sandbox = sinon.createSandbox()
-
 beforeEach(() => {
-  sandbox.restore()
+  vi.restoreAllMocks()
   vi.spyOn(config, 'getConfig').mockReturnValue({} as any)
 })
 

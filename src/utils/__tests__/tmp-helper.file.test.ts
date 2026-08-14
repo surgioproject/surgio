@@ -1,13 +1,14 @@
 import path from 'path'
 import os from 'os'
-import { afterEach, expect, test } from 'vitest'
+import { afterEach, expect, test, vi } from 'vitest'
 import fs from 'fs-extra'
-import Bluebird from 'bluebird'
 
 import { TMP_FOLDER_NAME } from '../../constant'
 import { createTmpFactory, TmpFile } from '../tmp-helper'
 
 afterEach(async () => {
+  vi.useRealTimers()
+
   const dir = path.join(
     os.tmpdir(),
     TMP_FOLDER_NAME,
@@ -38,6 +39,9 @@ test('should work', async () => {
 })
 
 test('should work with maxAge 1', async () => {
+  vi.useFakeTimers({ toFake: ['Date'] })
+  vi.setSystemTime(new Date('2026-01-01T00:00:00Z'))
+
   const factory = createTmpFactory(
     'tmp-helper-test-folder' + `_nodejs_${process.version}`,
   )
@@ -45,17 +49,20 @@ test('should work with maxAge 1', async () => {
 
   expect(await tmp.getContent()).toBe(void 0)
   await tmp.setContent('123456abcdef')
-  await Bluebird.delay(100)
+  vi.advanceTimersByTime(100)
   expect(await tmp.getContent()).toBe('123456abcdef')
-  await Bluebird.delay(1000)
+  vi.advanceTimersByTime(1000)
   expect(await tmp.getContent()).toBe(void 0)
   await tmp.setContent('123456abcdefg')
-  await Bluebird.delay(100)
+  vi.advanceTimersByTime(100)
   expect(await tmp.getContent()).toBe('123456abcdefg')
   expect(await tmp.getContent()).toBe('123456abcdefg')
 })
 
 test('should work with maxAge 2', async () => {
+  vi.useFakeTimers({ toFake: ['Date'] })
+  vi.setSystemTime(new Date('2026-01-01T00:00:00Z'))
+
   const factory = createTmpFactory(
     'tmp-helper-test-folder' + `_nodejs_${process.version}`,
   )
@@ -63,6 +70,6 @@ test('should work with maxAge 2', async () => {
 
   expect(await tmp.getContent()).toBe(void 0)
   await tmp.setContent('123456abcdef')
-  await Bluebird.delay(100)
+  vi.advanceTimersByTime(100)
   expect(await tmp.getContent()).toBe('123456abcdef')
 })

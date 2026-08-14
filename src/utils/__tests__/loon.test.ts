@@ -1,5 +1,4 @@
-import { expect, test } from 'vitest'
-import sinon from 'sinon'
+import { expect, test, vi } from 'vitest'
 import { transports } from '@surgio/logger'
 
 import { NodeTypeEnum } from '../../types'
@@ -93,9 +92,9 @@ test('getLoonNodes AnyTLS', () => {
 })
 
 test('getLoonNodes AnyTLS omits automatic QUIC blocking', () => {
-  const log = sinon
-    .stub(transports.console, 'log')
-    .callsFake((info, callback) => {
+  const log = vi
+    .spyOn(transports.console, 'log')
+    .mockImplementation((info, callback) => {
       expect(info[Symbol.for('level')]).toBe('warn')
       expect(info.message).toMatch(
         /Loon 不支持 AnyTLS 节点 anytls auto 的 blockQuic=auto/,
@@ -116,9 +115,9 @@ test('getLoonNodes AnyTLS omits automatic QUIC blocking', () => {
         },
       ]),
     ).toBe('anytls auto = AnyTLS,example.com,8449,"password"')
-    expect(log.calledOnce).toBe(true)
+    expect(log).toHaveBeenCalledOnce()
   } finally {
-    log.restore()
+    log.mockRestore()
   }
 })
 

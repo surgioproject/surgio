@@ -1,14 +1,11 @@
 import { beforeEach, expect, test, vi } from 'vitest'
-import sinon from 'sinon'
 
 import { NodeTypeEnum, SupportProviderEnum } from '../../types'
 import * as config from '../../config'
 import CustomProvider from '../CustomProvider'
 
-const sandbox = sinon.createSandbox()
-
 beforeEach(() => {
-  sandbox.restore()
+  vi.restoreAllMocks()
   vi.spyOn(config, 'getConfig').mockReturnValue({} as any)
 })
 
@@ -237,7 +234,7 @@ test('CustomProvider with hooks', async () => {
       password: 'password',
     } as const,
   ]
-  const afterNodeListResponse = sinon.spy((nodeList) => {
+  const afterNodeListResponse = vi.fn((nodeList) => {
     // @ts-ignore
     nodeList[0].hostname = 'example.org'
   })
@@ -255,11 +252,11 @@ test('CustomProvider with hooks', async () => {
       hostname: 'example.org',
     },
   ])
-  expect(afterNodeListResponse.calledOnce).toBe(true)
+  expect(afterNodeListResponse).toHaveBeenCalledOnce()
 })
 
 test('CustomProvider nodeList function receives params', async () => {
-  const nodeListFn = sinon.stub().resolves([
+  const nodeListFn = vi.fn().mockResolvedValue([
     {
       type: NodeTypeEnum.Shadowsocks,
       nodeName: 'test',
@@ -277,8 +274,7 @@ test('CustomProvider nodeList function receives params', async () => {
   const params = { requestId: 'req-1' }
   await provider.getNodeList(params)
 
-  expect(nodeListFn.calledOnce).toBe(true)
-  expect(nodeListFn.firstCall.args[0]).toEqual(params)
+  expect(nodeListFn).toHaveBeenCalledExactlyOnceWith(params)
 })
 
 test('CustomProvider returns list from hook when provided', async () => {

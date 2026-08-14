@@ -1,25 +1,18 @@
-import sinon from 'sinon'
-import { afterAll, beforeEach, expect, test, vi } from 'vitest'
+import { beforeEach, expect, test, vi } from 'vitest'
 import MockRedis from 'ioredis-mock'
 
 import * as config from '../../config'
 import redis from '../../redis'
 import { unifiedCache } from '../cache'
 
-const sandbox = sinon.createSandbox()
-
 beforeEach(() => {
-  sandbox.restore()
-  sandbox.stub(redis, 'getRedis').returns(new MockRedis())
+  vi.restoreAllMocks()
+  vi.spyOn(redis, 'getRedis').mockReturnValue(new MockRedis())
   vi.spyOn(config, 'getConfig').mockReturnValue({
     cache: {
       type: 'redis',
     },
   } as any)
-})
-
-afterAll(() => {
-  sandbox.restore()
 })
 
 test('RedisCache should work', async () => {

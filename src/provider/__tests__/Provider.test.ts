@@ -1,12 +1,9 @@
 import { beforeEach, expect, test, vi } from 'vitest'
-import sinon from 'sinon'
 
 import * as config from '../../config'
 import { SupportProviderEnum } from '../../types'
 import { getUserAgent } from '../../utils/http-client'
 import Provider from '../Provider'
-
-const sandbox = sinon.createSandbox()
 
 class TestProvider extends Provider {
   constructor(name: string, config: any) {
@@ -25,7 +22,7 @@ class TestProvider extends Provider {
 }
 
 beforeEach(() => {
-  sandbox.restore()
+  vi.restoreAllMocks()
   vi.spyOn(config, 'getConfig').mockReturnValue({} as any)
 })
 

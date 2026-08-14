@@ -1,5 +1,4 @@
-import { beforeEach, expect, test } from 'vitest'
-import sinon from 'sinon'
+import { beforeEach, expect, test, vi } from 'vitest'
 import fs from 'fs-extra'
 
 import {
@@ -10,7 +9,7 @@ import {
 } from '../json-template'
 
 beforeEach(() => {
-  sinon.restore()
+  vi.restoreAllMocks()
 })
 
 test('extendOutbounds - extend string', () => {
@@ -85,7 +84,7 @@ test('extendOutbounds - extend array', () => {
 })
 
 test('extendOutbounds - extend function that returns object', () => {
-  const spy = sinon.spy(() => {
+  const spy = vi.fn(() => {
     expect(true).toBe(true)
     return 'something'
   })
@@ -110,7 +109,7 @@ test('extendOutbounds - extend function that returns object', () => {
       bar: 'something',
     },
   })
-  expect(spy.calledOnce).toBe(true)
+  expect(spy).toHaveBeenCalledOnce()
 })
 
 test('createExtendFunction - deep extend', () => {
@@ -202,7 +201,7 @@ test('combineExtendFunctions', () => {
 })
 
 test('render', () => {
-  sinon.stub(fs, 'readJsonSync').returns({
+  const readJsonSync = vi.spyOn(fs, 'readJsonSync').mockReturnValue({
     foo: 'foo',
     bar: 'bar',
   })
@@ -215,7 +214,5 @@ test('render', () => {
   )
 
   expect(result).toMatchSnapshot()
-  expect(
-    (fs.readJsonSync as sinon.SinonStub).calledOnceWith('templateDir/fileName'),
-  ).toBe(true)
+  expect(readJsonSync).toHaveBeenCalledExactlyOnceWith('templateDir/fileName')
 })
