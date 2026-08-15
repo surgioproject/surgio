@@ -11,7 +11,10 @@ const logger = createLogger({ service: 'surgio:utils:tmp-helper' })
 const tmpDir = path.join(os.tmpdir(), TMP_FOLDER_NAME)
 
 abstract class TmpHelper {
-  protected constructor(public cacheKey: string, public maxAge?: number) {}
+  protected constructor(
+    public cacheKey: string,
+    public maxAge?: number,
+  ) {}
 
   public abstract setContent(content: string): Promise<void>
 
@@ -19,7 +22,10 @@ abstract class TmpHelper {
 }
 
 export class TmpFile implements TmpHelper {
-  constructor(public cacheKey: string, public maxAge?: number) {
+  constructor(
+    public cacheKey: string,
+    public maxAge?: number,
+  ) {
     fs.accessSync(path.dirname(this.cacheKey), fs.constants.W_OK)
   }
 
@@ -62,7 +68,10 @@ export class TmpFile implements TmpHelper {
 export class TmpRedis implements TmpHelper {
   private redisClient: Redis
 
-  constructor(public cacheKey: string, public maxAge?: number) {
+  constructor(
+    public cacheKey: string,
+    public maxAge?: number,
+  ) {
     this.redisClient = redis.getRedis()
   }
 

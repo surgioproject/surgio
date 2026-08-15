@@ -1,5 +1,5 @@
 import chalk from 'chalk'
-import { fromZodError } from 'zod-validation-error'
+import { fromZodError } from 'zod-validation-error/v3'
 
 import BaseCommand from '../base-command'
 

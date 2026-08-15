@@ -836,8 +836,11 @@ function nodeListMapper(nodeConfig: PossibleNodeConfigType) {
 function resolveVmessHttpHeadersFromSurgioConfig(
   headers: Record<string, string>,
 ): Record<string, string[]> {
-  return Object.keys(headers).reduce((acc, key) => {
-    acc[key] = [headers[key]]
-    return acc
-  }, {} as Record<string, string[]>)
+  return Object.keys(headers).reduce(
+    (acc, key) => {
+      acc[key] = [headers[key]]
+      return acc
+    },
+    {} as Record<string, string[]>,
+  )
 }

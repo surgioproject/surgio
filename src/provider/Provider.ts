@@ -36,7 +36,10 @@ export default abstract class Provider {
   // Headers that will be passed to the upstream server
   private passGatewayRequestHeaders: string[]
 
-  protected constructor(public name: string, config: ProviderConfig) {
+  protected constructor(
+    public name: string,
+    config: ProviderConfig,
+  ) {
     const result = ProviderValidator.safeParse(config)
 
     /* istanbul ignore next -- @preserve */

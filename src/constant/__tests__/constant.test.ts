@@ -1,5 +1,5 @@
 import { assertType, test } from 'vitest'
-import { z } from 'zod'
+import { z } from 'zod/v3'
 
 import {
   CLASH_META_SUPPORTED_VMESS_NETWORK,

@@ -1,14 +1,14 @@
 import { promises as dns, RecordWithTtl } from 'dns'
 import { createLogger } from '@surgio/logger'
 import Bluebird from 'bluebird'
-import { caching } from 'cache-manager'
+import { createKeyv } from 'cacheable'
+import { createCache } from 'cache-manager'
 import ms from 'ms'
 
 import { getNetworkResolveTimeout } from './env-flag'
 
-const domainCache = caching('memory', {
-  ttl: ms('1d'),
-  max: 5000,
+const domainCache = createCache({
+  stores: [createKeyv({ ttl: ms('1d'), lruSize: 5000 })],
 })
 const logger = createLogger({ service: 'surgio:utils:dns' })
 
@@ -16,7 +16,7 @@ export const resolveDomain = async (
   domain: string,
   timeout: number = getNetworkResolveTimeout(),
 ): Promise<ReadonlyArray<string>> => {
-  const cached = await (await domainCache).get<string[]>(domain)
+  const cached = await domainCache.get<string[]>(domain)
 
   if (cached) {
     return cached
@@ -36,7 +36,7 @@ export const resolveDomain = async (
 
   if (records.length) {
     const address = records.map((item) => item.address)
-    await (await domainCache).set(domain, address, records[0].ttl) // ttl is in seconds
+    await domainCache.set(domain, address, records[0].ttl) // ttl is in seconds
     return address
   }
 

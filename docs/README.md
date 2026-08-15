@@ -26,7 +26,7 @@ npx surgio generate
 ```
 
 :::warning 注意
-目前 Surgio 仅支持 Node.js 版本 >= 22.0.0。
+目前 Surgio 仅支持 Node.js 版本 >= 22.22.2。
 :::
 
 ### 交流

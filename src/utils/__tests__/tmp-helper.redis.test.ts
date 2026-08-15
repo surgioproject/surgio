@@ -1,8 +1,24 @@
 import { afterAll, beforeAll, expect, test } from 'vitest'
-import MockRedis from 'ioredis-mock'
 
 import redis from '../../redis'
 import { createTmpFactory } from '../tmp-helper'
+
+class MockRedis {
+  readonly #values = new Map<string, string>()
+
+  async get(key: string): Promise<string | null> {
+    return this.#values.get(key) ?? null
+  }
+
+  async set(key: string, value: string): Promise<'OK'> {
+    this.#values.set(key, value)
+    return 'OK'
+  }
+
+  async quit(): Promise<'OK'> {
+    return 'OK'
+  }
+}
 
 beforeAll(() => {
   redis.createRedis('', MockRedis)

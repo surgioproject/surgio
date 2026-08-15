@@ -254,16 +254,16 @@ export class Artifact extends EventEmitter {
           ...renderContext,
         })
       : templateType === 'default'
-      ? targetTemplateEngine.render(`${template}.tpl`, {
-          templateEngine: targetTemplateEngine,
-          ...renderContext,
-        })
-      : renderJSON(
-          this.surgioConfig.templateDir,
-          `${template}.json`,
-          this.artifact.extendTemplate!,
-          renderContext,
-        )
+        ? targetTemplateEngine.render(`${template}.tpl`, {
+            templateEngine: targetTemplateEngine,
+            ...renderContext,
+          })
+        : renderJSON(
+            this.surgioConfig.templateDir,
+            `${template}.json`,
+            this.artifact.extendTemplate!,
+            renderContext,
+          )
 
     this.emit('renderArtifact', { artifact: this.artifact, result })
 

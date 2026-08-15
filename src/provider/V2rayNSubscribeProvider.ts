@@ -1,6 +1,6 @@
 import assert from 'assert'
 import { logger } from '@surgio/logger'
-import { z } from 'zod'
+import { z } from 'zod/v3'
 import _ from 'lodash'
 
 import {

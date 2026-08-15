@@ -98,10 +98,13 @@ export const render = (
     if (error instanceof Error) {
       throw new Error(
         `Error when rendering JSON template ${fileName}: ${error.message}`,
+        { cause: error },
       )
     }
 
     /* istanbul ignore next -- @preserve */
-    throw new Error(`Error when rendering JSON template ${fileName}`)
+    throw new Error(`Error when rendering JSON template ${fileName}`, {
+      cause: error,
+    })
   }
 }

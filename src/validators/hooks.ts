@@ -1,5 +1,5 @@
 import { Promisable } from 'type-fest'
-import { z } from 'zod'
+import { z } from 'zod/v3'
 
 import { GetNodeListParams } from '../provider'
 import { PossibleNodeConfigType } from '../types'

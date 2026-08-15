@@ -1,40 +1,41 @@
+import { createKeyv as createRedisKeyv } from '@keyv/redis'
+import { createKeyv as createMemoryKeyv } from 'cacheable'
+import { Cache, createCache } from 'cache-manager'
 import ms from 'ms'
-import { caching, MemoryCache, MemoryStore } from 'cache-manager'
-import {
-  redisInsStore,
-  RedisCache,
-  RedisStore,
-} from 'cache-manager-ioredis-yet'
 
 import { getConfig } from '../config'
-import redis from '../redis'
-
-type CacheType = MemoryCache | RedisCache
-type StoreType = MemoryStore | RedisStore
 
 export class UnifiedCache {
   #type: 'redis' | 'default' | undefined
-  #backend: Promise<CacheType> | undefined
+  #backend: Cache | undefined
 
-  async prepare(): Promise<CacheType> {
+  async prepare(): Promise<Cache> {
     if (!this.#type) {
       this.#type = getConfig()?.cache?.type || 'default'
     }
 
     if (this.#backend) {
       return this.#backend
-    } else {
-      switch (this.#type) {
-        case 'redis':
-          this.#backend = caching(redisInsStore(redis.getRedis()))
-          break
-        default:
-          this.#backend = caching('memory', {
-            ttl: ms('1d'),
-          })
-      }
-      return this.#backend
     }
+
+    switch (this.#type) {
+      case 'redis': {
+        const redisUrl = getConfig()?.cache?.redisUrl
+        if (!redisUrl) {
+          throw new Error('Redis cache URL is not configured')
+        }
+        this.#backend = createCache({
+          stores: [createRedisKeyv(redisUrl)],
+        })
+        break
+      }
+      default:
+        this.#backend = createCache({
+          stores: [createMemoryKeyv({ ttl: ms('1d') })],
+        })
+    }
+
+    return this.#backend
   }
 
   async getType() {
@@ -46,62 +47,73 @@ export class UnifiedCache {
     return this.prepare()
   }
 
-  get: CacheType['get'] = async (...args) => {
+  async get<T>(key: string): Promise<T | undefined> {
     const cache = await this.prepare()
-    return cache.get(...args)
+    return cache.get<T>(key)
   }
 
-  set: CacheType['set'] = async (...args) => {
+  async set<T>(key: string, value: T, ttl?: number): Promise<void> {
     const cache = await this.prepare()
-    return cache.set(...args)
+    await cache.set(key, value, ttl)
   }
 
-  del: CacheType['del'] = async (...args) => {
+  async del(key: string): Promise<void> {
     const cache = await this.prepare()
-    return cache.del(...args)
+    await cache.del(key)
   }
 
-  reset: CacheType['reset'] = async (...args) => {
+  async reset(): Promise<void> {
     const cache = await this.prepare()
-    return cache.reset(...args)
+    await cache.clear()
   }
 
-  wrap: CacheType['wrap'] = async (...args) => {
+  async wrap<T>(
+    key: string,
+    fn: () => T | Promise<T>,
+    ttl?: number | ((value: T) => number),
+  ): Promise<T> {
     const cache = await this.prepare()
-    return cache.wrap(...args)
+    return cache.wrap(key, fn, ttl)
   }
 
-  keys: StoreType['keys'] = async (...args) => {
+  async keys(): Promise<string[]> {
     const cache = await this.prepare()
-    return cache.store.keys(...args)
+    const iterator = cache.stores[0]?.iterator
+    if (!iterator) {
+      return []
+    }
+
+    const keys: string[] = []
+    for await (const [key] of iterator(undefined)) {
+      keys.push(key)
+    }
+    return keys
   }
 
-  mset: StoreType['mset'] = async (...args) => {
+  async mset(entries: [string, unknown][], ttl?: number): Promise<void> {
     const cache = await this.prepare()
-    return cache.store.mset(...args)
+    await cache.mset(
+      entries.map(([key, value]) => ({
+        key,
+        value,
+        ttl,
+      })),
+    )
   }
 
-  mget: StoreType['mget'] = async (...args) => {
+  async mget<T>(...keys: string[]): Promise<Array<T | undefined>> {
     const cache = await this.prepare()
-    return cache.store.mget(...args)
+    return cache.mget<T>(keys)
   }
 
-  mdel: StoreType['mdel'] = async (...args) => {
+  async mdel(...keys: string[]): Promise<void> {
     const cache = await this.prepare()
-    return cache.store.mdel(...args)
+    await cache.mdel(keys)
   }
 
   async has(key: string): Promise<boolean> {
-    await this.prepare()
-
-    if (this.#type === 'redis') {
-      const keys = await this.keys()
-      return keys.includes(key)
-    } else {
-      const redisClient = redis.getRedis()
-      const value = await redisClient.exists(key)
-      return value === 1
-    }
+    const cache = await this.prepare()
+    return cache.stores[0]?.has(key) ?? false
   }
 }
 

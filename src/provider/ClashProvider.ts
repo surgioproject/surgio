@@ -2,7 +2,7 @@ import assert from 'assert'
 import yaml from 'yaml'
 import _ from 'lodash'
 import { createLogger } from '@surgio/logger'
-import { z } from 'zod'
+import { z } from 'zod/v3'
 
 import {
   CLASH_META_SUPPORTED_VMESS_NETWORK,
@@ -982,10 +982,13 @@ function extractFirstPort(ports: string): number {
 function resolveVmessHttpHeaders(
   headers: Record<string, string[]>,
 ): Record<string, string> {
-  return Object.keys(headers).reduce((acc, key) => {
-    if (headers[key].length) {
-      acc[key] = headers[key][0]
-    }
-    return acc
-  }, {} as Record<string, string>)
+  return Object.keys(headers).reduce(
+    (acc, key) => {
+      if (headers[key].length) {
+        acc[key] = headers[key][0]
+      }
+      return acc
+    },
+    {} as Record<string, string>,
+  )
 }

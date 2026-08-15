@@ -1,4 +1,4 @@
-import { z } from 'zod'
+import { z } from 'zod/v3'
 
 import {
   CustomProviderConfig,
@@ -36,8 +36,7 @@ import {
 
 export default class CustomProvider extends Provider {
   public readonly nodeList:
-    | unknown[]
-    | ((params: GetNodeListParams) => Promise<unknown[]>)
+    unknown[] | ((params: GetNodeListParams) => Promise<unknown[]>)
   public readonly underlyingProxy?: string
 
   constructor(name: string, config: CustomProviderConfig) {

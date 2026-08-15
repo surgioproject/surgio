@@ -1,6 +1,6 @@
 import assert from 'assert'
 import { createLogger } from '@surgio/logger'
-import { z } from 'zod'
+import { z } from 'zod/v3'
 
 import {
   ShadowsocksrNodeConfig,

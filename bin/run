@@ -8,7 +8,7 @@ const fs = require('fs-extra');
 const envPath = resolve(process.cwd(), './.env')
 
 if (fs.existsSync(envPath)) {
-  dotenv.config({ path: envPath })
+  dotenv.config({ path: envPath, quiet: true })
 }
 
 void oclif.execute({ dir: resolve(__dirname, '..') });

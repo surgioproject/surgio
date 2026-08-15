@@ -9,7 +9,7 @@ const envPath = path.resolve(process.cwd(), './.env')
 const project = path.join(__dirname, '..', 'tsconfig.json');
 
 if (fs.existsSync(envPath)) {
-  dotenv.config({ path: envPath })
+  dotenv.config({ path: envPath, quiet: true })
 }
 
 require('ts-node').register({ project });

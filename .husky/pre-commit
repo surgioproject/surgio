@@ -1,0 +1,1 @@
+pnpm exec npm-debug-log-cleaner && pnpm exec lint-staged

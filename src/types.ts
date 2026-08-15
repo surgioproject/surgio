@@ -1,4 +1,4 @@
-import { z } from 'zod'
+import { z } from 'zod/v3'
 
 import {
   WireguardNodeConfigValidator,
@@ -138,8 +138,7 @@ export type AsyncCustomProviderNodeList = (
 export interface CustomProviderConfig extends ProviderConfig {
   readonly type: SupportProviderEnum.Custom
   readonly nodeList:
-    | ReadonlyArray<PossibleNodeConfigType>
-    | AsyncCustomProviderNodeList
+    ReadonlyArray<PossibleNodeConfigType> | AsyncCustomProviderNodeList
 }
 
 export interface TrojanProviderConfig extends ProviderConfig {
