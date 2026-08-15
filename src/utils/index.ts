@@ -7,7 +7,7 @@ import URLSafeBase64 from 'urlsafe-base64'
 import queryString from 'query-string'
 import fs from 'fs-extra'
 import { createLogger } from '@surgio/logger'
-import { camelCase, snakeCase, paramCase } from 'change-case'
+import { camelCase, kebabCase, snakeCase } from 'change-case'
 
 import {
   NodeFilterType,
@@ -394,7 +394,7 @@ export const changeCase = (
     case 'snakeCase':
       return snakeCase(str)
     case 'kebabCase':
-      return paramCase(str)
+      return kebabCase(str)
   }
 }
 

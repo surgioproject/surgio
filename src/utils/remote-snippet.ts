@@ -1,6 +1,6 @@
 import Bluebird from 'bluebird'
 import { logger } from '@surgio/logger'
-import detectNewline from 'detect-newline'
+import { detectNewline } from 'detect-newline'
 import ms from 'ms'
 import nunjucks from 'nunjucks'
 import * as babelParser from '@babel/parser'

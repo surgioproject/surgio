@@ -1,5 +1,5 @@
 import { join } from 'path'
-import execa from 'execa'
+import { execa } from 'execa'
 import fs from 'fs-extra'
 import ini from 'ini'
 import { runCommand } from '@oclif/test'

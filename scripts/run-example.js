@@ -1,6 +1,6 @@
 import { resolve } from 'path'
 import { fileURLToPath } from 'node:url'
-import execa from 'execa'
+import { execa } from 'execa'
 import fs from 'fs-extra'
 
 const { argv } = process

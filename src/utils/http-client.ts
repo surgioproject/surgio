@@ -1,14 +1,12 @@
 import http from 'http'
 import https from 'https'
+import got from 'got'
 import { HttpProxyAgent, HttpsProxyAgent } from 'hpagent'
 
 import pkg from '../../package.json' with { type: 'json' }
 import { NETWORK_SURGIO_UA } from '../constant/index.js'
 
 import { getNetworkRetry, getNetworkTimeout } from './env-flag.js'
-import { loadModuleSync } from './module-loader.js'
-
-const got = loadModuleSync<typeof import('got').default>('got')
 
 const httpProxy = hasHTTPProxy()
 const httpsProxy = hasHTTPSProxy()
@@ -45,8 +43,13 @@ export const getUserAgent = (str?: string): string =>
   `${str ? str + ' ' : ''}${NETWORK_SURGIO_UA}/${pkg.version}`
 
 const httpClient = got.extend({
-  timeout: getNetworkTimeout(),
-  retry: getNetworkRetry(),
+  timeout: {
+    request: getNetworkTimeout(),
+  },
+  retry: {
+    limit: getNetworkRetry(),
+  },
+  resolveBodyOnly: false,
   headers: {
     'user-agent': getUserAgent(),
   },

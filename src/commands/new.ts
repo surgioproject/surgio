@@ -2,10 +2,10 @@
 import { fileURLToPath } from 'node:url'
 import { Args } from '@oclif/core'
 import { runner, Logger } from '@royli/hygen'
-import execa from 'execa'
+import { execa } from 'execa'
+import inquirer from 'inquirer'
 
 import BaseCommand from '../base-command.js'
-import { loadModuleSync } from '../utils/module-loader.js'
 const defaultTemplates = fileURLToPath(
   new URL('../../hygen-template', import.meta.url),
 )
@@ -20,7 +20,7 @@ class NewCommand extends BaseCommand<typeof NewCommand> {
       templates: defaultTemplates,
       cwd: this.projectDir,
       logger: new Logger(console.log.bind(console)),
-      createPrompter: () => loadModuleSync<any>('inquirer'),
+      createPrompter: () => inquirer as any,
       exec: async (action, body) => {
         const opts = body && body.length > 0 ? { input: body } : {}
         await execa(action, opts)
