@@ -54,7 +54,6 @@ export enum SupportProviderEnum {
   ShadowsocksrSubscribe = 'shadowsocksr_subscribe',
   ShadowsocksJsonSubscribe = 'shadowsocks_json_subscribe',
   V2rayNSubscribe = 'v2rayn_subscribe',
-  BlackSSL = 'blackssl',
   Ssd = 'ssd',
   Trojan = 'trojan',
 }
@@ -84,12 +83,6 @@ export type ArtifactConfig = z.infer<typeof ArtifactValidator>
 export type ArtifactConfigInput = z.input<typeof ArtifactValidator>
 
 export type ProviderConfig = z.infer<typeof ProviderValidator>
-
-export interface BlackSSLProviderConfig extends ProviderConfig {
-  readonly type: SupportProviderEnum.BlackSSL
-  readonly username: string
-  readonly password: string
-}
 
 export interface ShadowsocksJsonSubscribeProviderConfig extends ProviderConfig {
   readonly type: SupportProviderEnum.ShadowsocksJsonSubscribe
@@ -285,7 +278,6 @@ export type PossibleNodeConfigType =
   | TrustTunnelNodeConfig
 
 export type PossibleProviderConfigType =
-  | BlackSSLProviderConfig
   | ClashProviderConfig
   | CustomProviderConfig
   | ShadowsocksJsonSubscribeProviderConfig

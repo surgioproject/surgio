@@ -1,7 +1,6 @@
 import { PossibleProviderConfigType, SupportProviderEnum } from '../types.js'
 import { ProviderDefineFunction } from '../configurables.js'
 
-import BlackSSLProvider from './BlackSSLProvider.js'
 import ClashProvider from './ClashProvider.js'
 import CustomProvider from './CustomProvider.js'
 import ShadowsocksJsonSubscribeProvider from './ShadowsocksJsonSubscribeProvider.js'
@@ -14,7 +13,6 @@ import { PossibleProviderType } from './types.js'
 import Provider from './Provider.js'
 
 export {
-  BlackSSLProvider,
   ClashProvider,
   CustomProvider,
   ShadowsocksJsonSubscribeProvider,
@@ -37,9 +35,6 @@ export async function getProvider(
   }
 
   switch (config.type) {
-    case SupportProviderEnum.BlackSSL:
-      return new BlackSSLProvider(name, config)
-
     case SupportProviderEnum.ShadowsocksJsonSubscribe:
       return new ShadowsocksJsonSubscribeProvider(name, config)
 

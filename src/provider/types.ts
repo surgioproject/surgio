@@ -2,7 +2,6 @@ import { IncomingHttpHeaders } from 'http'
 
 import { PossibleNodeConfigType, SubscriptionUserinfo } from '../types.js'
 
-import BlackSSLProvider from './BlackSSLProvider.js'
 import ClashProvider from './ClashProvider.js'
 import CustomProvider from './CustomProvider.js'
 import ShadowsocksJsonSubscribeProvider from './ShadowsocksJsonSubscribeProvider.js'
@@ -13,7 +12,6 @@ import TrojanProvider from './TrojanProvider.js'
 import V2rayNSubscribeProvider from './V2rayNSubscribeProvider.js'
 
 export type PossibleProviderType =
-  | BlackSSLProvider
   | ShadowsocksJsonSubscribeProvider
   | ShadowsocksSubscribeProvider
   | CustomProvider

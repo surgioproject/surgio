@@ -1,7 +1,6 @@
 import { Promisable } from 'type-fest'
 
 import {
-  BlackSSLProviderConfig,
   ClashProviderConfig,
   CommandConfigBeforeNormalize,
   CustomProviderConfig,
@@ -22,13 +21,6 @@ export type ProviderDefineFunction<
   T extends PossibleProviderConfigType,
   U = Omit<T, 'type'>,
 > = (config: U) => T | Promisable<T>
-
-export const defineBlackSSLProvider: ProviderDefineFunction<
-  BlackSSLProviderConfig
-> = (config) => ({
-  ...config,
-  type: SupportProviderEnum.BlackSSL,
-})
 
 export const defineClashProvider: ProviderDefineFunction<
   ClashProviderConfig
