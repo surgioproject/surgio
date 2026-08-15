@@ -2,12 +2,30 @@ import { join } from 'path'
 import { expect, test } from 'vitest'
 import nock from 'nock'
 
-import { loadConfig } from '../../config.js'
+import { loadConfig, normalizeConfig } from '../../config.js'
 import { NodeTypeEnum } from '../../types.js'
 import { Artifact } from '../artifact.js'
 import { getEngine } from '../template.js'
 
 const resolve = (p: string) => join(__dirname, '../../../test/fixture/', p)
+
+test('defaults to Mihomo while preserving explicit Clash cores', () => {
+  const fixture = resolve('plain')
+
+  expect(loadConfig(fixture).clashConfig?.clashCore).toBe('clash.meta')
+  expect(
+    normalizeConfig(fixture, {
+      artifacts: [],
+      clashConfig: { clashCore: 'clash' },
+    }).clashConfig?.clashCore,
+  ).toBe('clash')
+  expect(
+    normalizeConfig(fixture, {
+      artifacts: [],
+      clashConfig: { clashCore: 'stash' },
+    }).clashConfig?.clashCore,
+  ).toBe('stash')
+})
 
 test('new Artifact()', async () => {
   const fixture = resolve('plain')

@@ -18,6 +18,35 @@ test('CustomProvider should work', async () => {
   expect(await provider.getNodeList()).toEqual([])
 })
 
+test('CustomProvider normalizes mihomo Clash core alias', async () => {
+  const provider = new CustomProvider('test', {
+    type: SupportProviderEnum.Custom,
+    nodeList: [
+      {
+        type: NodeTypeEnum.Shadowsocks,
+        nodeName: 'mihomo-node',
+        hostname: 'example.com',
+        port: 443,
+        method: 'chacha20-ietf-poly1305',
+        password: 'password',
+        clashConfig: { clashCore: 'mihomo' },
+      },
+    ],
+  })
+
+  expect(await provider.getNodeList()).toEqual([
+    {
+      type: NodeTypeEnum.Shadowsocks,
+      nodeName: 'mihomo-node',
+      hostname: 'example.com',
+      port: 443,
+      method: 'chacha20-ietf-poly1305',
+      password: 'password',
+      clashConfig: { clashCore: 'clash.meta' },
+    },
+  ])
+})
+
 test('CustomProvider supports masque nodes', async () => {
   const provider = new CustomProvider('test', {
     type: SupportProviderEnum.Custom,

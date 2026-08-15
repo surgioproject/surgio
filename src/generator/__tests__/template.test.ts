@@ -39,7 +39,7 @@ for (const [expression, result] of [
     '- IP-CIDR6,2011:dab8:3456:82a0::/50,DIRECT,no-resolve',
   ],
   ['GEOIP,HK,DIRECT,no-resolve', '- GEOIP,HK,DIRECT,no-resolve'],
-  ['UID,123,DIRECT', ''],
+  ['UID,123,DIRECT', '- UID,123,DIRECT'],
 ] as Array<[string, string]>) {
   test(`clash - ${expression} => ${result}`, () => {
     expect(
@@ -49,6 +49,16 @@ for (const [expression, result] of [
     ).toBe(result)
   })
 }
+
+test('clash filter can explicitly target legacy Clash', () => {
+  const legacyClashEngine = getEngine(__dirname, { clashCore: 'clash' })
+
+  expect(
+    legacyClashEngine.renderString('{{ expression | clash }}', {
+      expression: 'UID,123,DIRECT',
+    }),
+  ).toBe('')
+})
 
 for (const [expression, result] of [
   [

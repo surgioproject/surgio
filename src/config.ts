@@ -113,7 +113,7 @@ export const normalizeConfig = (
       enableTuic: false,
       enableHysteria2: false,
       enableVless: false,
-      clashCore: 'clash',
+      clashCore: 'clash.meta',
     },
     quantumultXConfig: {
       vmessAEAD: true,

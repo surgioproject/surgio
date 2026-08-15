@@ -1487,6 +1487,15 @@ test('getClashNodes - Tailscale varies by clashCore', () => {
     tfo: true,
   }
 
+  expect(clash.getClashNodes([tailscaleNode])).toEqual(
+    clash.getClashNodes([
+      {
+        ...tailscaleNode,
+        clashConfig: { clashCore: 'clash.meta' },
+      },
+    ]),
+  )
+
   expect(
     clash.getClashNodes([
       {

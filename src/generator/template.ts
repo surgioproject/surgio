@@ -75,7 +75,7 @@ export function getEngine(
   if (options.clashCore) {
     engine.addFilter('clash', getClashFilter(options.clashCore))
   } else {
-    engine.addFilter('clash', getClashFilter('clash'))
+    engine.addFilter('clash', getClashFilter('clash.meta'))
   }
   engine.addFilter('clashMeta', getClashFilter('clash.meta'))
   engine.addFilter('stash', getClashFilter('stash'))

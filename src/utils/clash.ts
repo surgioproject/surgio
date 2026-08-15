@@ -3,6 +3,7 @@ import _ from 'lodash'
 
 import { ERR_INVALID_FILTER } from '../constant/index.js'
 import {
+  ClashCoreType,
   NodeFilterType,
   NodeTypeEnum,
   PossibleNodeConfigType,
@@ -19,12 +20,16 @@ import {
 
 const logger = createLogger({ service: 'surgio:utils:clash' })
 
+const getClashCore = (nodeConfig: PossibleNodeConfigType): ClashCoreType =>
+  nodeConfig.clashConfig?.clashCore ?? 'clash.meta'
+
 export const getClashNodes = function (
   list: ReadonlyArray<PossibleNodeConfigType>,
   filter?: NodeFilterType | SortedNodeFilterType,
 ) {
   return applyFilter(list, filter)
     .map((nodeConfig) => {
+      const clashCore = getClashCore(nodeConfig)
       const clashNode = nodeListMapper(nodeConfig)
 
       if (!clashNode) {
@@ -38,7 +43,7 @@ export const getClashNodes = function (
         clashNode.tfo = true
       }
 
-      if (nodeConfig?.clashConfig?.clashCore === 'clash.meta') {
+      if (clashCore === 'clash.meta') {
         if (nodeConfig.underlyingProxy) {
           clashNode['dialer-proxy'] = nodeConfig.underlyingProxy
         }
@@ -111,6 +116,7 @@ export const getClashNodeNames = function (
  */
 function nodeListMapper(nodeConfig: PossibleNodeConfigType) {
   const clashConfig = nodeConfig.clashConfig || {}
+  const clashCore = getClashCore(nodeConfig)
 
   switch (nodeConfig.type) {
     case NodeTypeEnum.Shadowsocks:
@@ -246,17 +252,17 @@ function nodeListMapper(nodeConfig: PossibleNodeConfigType) {
         if (nodeConfig.skipCertVerify) {
           vmessNode['skip-cert-verify'] = nodeConfig.skipCertVerify
         }
-        if (clashConfig.clashCore === 'clash' && nodeConfig.sni) {
+        if (clashCore === 'clash' && nodeConfig.sni) {
           vmessNode.servername = nodeConfig.sni
         }
-        if (clashConfig.clashCore === 'stash' && nodeConfig.sni) {
+        if (clashCore === 'stash' && nodeConfig.sni) {
           vmessNode.sni = nodeConfig.sni
           vmessNode.servername = nodeConfig.sni
         }
-        if (clashConfig.clashCore === 'clash.meta' && nodeConfig.sni) {
+        if (clashCore === 'clash.meta' && nodeConfig.sni) {
           vmessNode.servername = nodeConfig.sni
         }
-        if (clashConfig.clashCore === 'clash.meta' && nodeConfig.alpn) {
+        if (clashCore === 'clash.meta' && nodeConfig.alpn) {
           vmessNode.alpn = nodeConfig.alpn
         }
         if (nodeConfig.clientFingerprint) {
@@ -465,13 +471,12 @@ function nodeListMapper(nodeConfig: PossibleNodeConfigType) {
               keyFormat: 'kebabCase',
             },
           ),
-          ...(clashConfig.clashCore === 'stash' && nodeConfig.portHopping
+          ...(clashCore === 'stash' && nodeConfig.portHopping
             ? {
                 ports: nodeConfig.portHopping.replaceAll(';', ','),
               }
             : null),
-          ...(clashConfig.clashCore === 'stash' &&
-          nodeConfig.portHoppingInterval
+          ...(clashCore === 'stash' && nodeConfig.portHoppingInterval
             ? {
                 'hop-interval': nodeConfig.portHoppingInterval,
               }
@@ -493,12 +498,12 @@ function nodeListMapper(nodeConfig: PossibleNodeConfigType) {
             keyFormat: 'kebabCase',
           },
         ),
-        ...(clashConfig.clashCore === 'stash' && nodeConfig.portHopping
+        ...(clashCore === 'stash' && nodeConfig.portHopping
           ? {
               ports: nodeConfig.portHopping.replaceAll(';', ','),
             }
           : null),
-        ...(clashConfig.clashCore === 'stash' && nodeConfig.portHoppingInterval
+        ...(clashCore === 'stash' && nodeConfig.portHoppingInterval
           ? {
               'hop-interval': nodeConfig.portHoppingInterval,
             }
@@ -520,8 +525,7 @@ function nodeListMapper(nodeConfig: PossibleNodeConfigType) {
         name: nodeConfig.nodeName,
         server: nodeConfig.hostname,
         port: nodeConfig.port,
-        [clashConfig.clashCore === 'stash' ? 'auth' : 'password']:
-          nodeConfig.password,
+        [clashCore === 'stash' ? 'auth' : 'password']: nodeConfig.password,
         up: nodeConfig.uploadBandwidth || 0,
         down: nodeConfig.downloadBandwidth || 0,
         ...pickAndFormatKeys(
@@ -531,15 +535,13 @@ function nodeListMapper(nodeConfig: PossibleNodeConfigType) {
             keyFormat: 'kebabCase',
           },
         ),
-        ...((clashConfig.clashCore === 'stash' ||
-          clashConfig.clashCore === 'clash.meta') &&
+        ...((clashCore === 'stash' || clashCore === 'clash.meta') &&
         nodeConfig.portHopping
           ? {
               ports: nodeConfig.portHopping.replaceAll(';', ','),
             }
           : null),
-        ...((clashConfig.clashCore === 'stash' ||
-          clashConfig.clashCore === 'clash.meta') &&
+        ...((clashCore === 'stash' || clashCore === 'clash.meta') &&
         nodeConfig.portHoppingInterval
           ? {
               'hop-interval': nodeConfig.portHoppingInterval,
@@ -574,8 +576,6 @@ function nodeListMapper(nodeConfig: PossibleNodeConfigType) {
       } as const
 
     case NodeTypeEnum.Masque: {
-      const clashCore = clashConfig.clashCore ?? 'clash'
-
       if (nodeConfig.authMode !== 'key-pair') {
         logger.warn(
           `Stash 和 Clash Meta 仅支持 key-pair 模式的 MASQUE 节点，节点 ${nodeConfig.nodeName} 会被省略`,
@@ -645,8 +645,6 @@ function nodeListMapper(nodeConfig: PossibleNodeConfigType) {
     }
 
     case NodeTypeEnum.TrustTunnel: {
-      const clashCore = clashConfig.clashCore ?? 'clash'
-
       if (!['stash', 'clash.meta'].includes(clashCore)) {
         logger.warn(
           `Clash 不支持 TrustTunnel 节点，节点 ${nodeConfig.nodeName} 会被省略`,
@@ -774,7 +772,7 @@ function nodeListMapper(nodeConfig: PossibleNodeConfigType) {
         port: getPortFromHost(nodeConfig.peers[0].endpoint),
         'public-key': nodeConfig.peers[0].publicKey,
         ...(nodeConfig.peers[0].presharedKey
-          ? nodeConfig?.clashConfig?.clashCore === 'clash.meta'
+          ? clashCore === 'clash.meta'
             ? { 'pre-shared-key': nodeConfig.peers[0].presharedKey }
             : { 'preshared-key': nodeConfig.peers[0].presharedKey }
           : null),
@@ -786,7 +784,7 @@ function nodeListMapper(nodeConfig: PossibleNodeConfigType) {
       } as const
 
     case NodeTypeEnum.Tailscale: {
-      if (!['stash', 'clash.meta'].includes(clashConfig.clashCore ?? 'clash')) {
+      if (!['stash', 'clash.meta'].includes(clashCore)) {
         logger.warn(
           `Clash 不支持 Tailscale 节点，节点 ${nodeConfig.nodeName} 会被省略`,
         )
@@ -799,7 +797,7 @@ function nodeListMapper(nodeConfig: PossibleNodeConfigType) {
         { keyFormat: 'kebabCase' },
       )
 
-      if (clashConfig.clashCore === 'stash') {
+      if (clashCore === 'stash') {
         return {
           type: 'tailscale',
           name: nodeConfig.nodeName,

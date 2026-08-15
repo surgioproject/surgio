@@ -17,6 +17,7 @@ export const ClashCoreValidator = z.union([
   z.literal('clash'),
   z.literal('clash.meta'),
   z.literal('stash'),
+  z.literal('mihomo').transform(() => 'clash.meta' as const),
 ])
 
 export const RemoteSnippetValidator = z.object({

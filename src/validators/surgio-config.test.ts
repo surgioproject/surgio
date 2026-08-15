@@ -1,11 +1,36 @@
 import { expect, test } from 'vitest'
 
-import { UploadConfigValidator } from './surgio-config.js'
+import {
+  ClashCoreValidator,
+  SurgioConfigValidator,
+  UploadConfigValidator,
+} from './surgio-config.js'
 
 const credentials = {
   accessKeyId: 'access-key',
   accessKeySecret: 'access-secret',
 }
+
+test.each(['clash', 'clash.meta', 'stash'] as const)(
+  'preserves canonical Clash core value %s',
+  (clashCore) => {
+    expect(ClashCoreValidator.parse(clashCore)).toBe(clashCore)
+  },
+)
+
+test('normalizes mihomo Clash core alias', () => {
+  expect(ClashCoreValidator.parse('mihomo')).toBe('clash.meta')
+  expect(
+    SurgioConfigValidator.parse({
+      artifacts: [],
+      clashConfig: { clashCore: 'mihomo' },
+    }).clashConfig?.clashCore,
+  ).toBe('clash.meta')
+})
+
+test('rejects unknown Clash core values', () => {
+  expect(ClashCoreValidator.safeParse('clash-meta').success).toBe(false)
+})
 
 test('validates and defaults Alibaba OSS upload config', () => {
   expect(

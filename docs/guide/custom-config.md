@@ -372,21 +372,22 @@ module.exports = {
 > <Badge text="v3.2.0" vertical="middle" />
 
 - 类型：`string`
-- 默认值：`clash`
-- 可选值：`clash`, `clash.meta`, `stash`
+- 默认值：`clash.meta`
+- 可选值：`clash`, `clash.meta`, `mihomo`, `stash`
 
-Clash 核心版本。默认使用 Clash 核心，如果你希望输出针对 Clash Meta 内核或 Stash 的配置请修改此项。
+Clash 核心版本。默认使用 Mihomo（`clash.meta`）。`mihomo` 是 `clash.meta` 的别名，加载配置时会被归一化为 `clash.meta`。如果需要继续为旧版 Clash 生成配置，请显式设置为 `clash`。
 
 下面是目前支持的变化：
 
-| 核心 | 变化                                                           |
-| --- |--------------------------------------------------------------|
-| `clash` | 默认值                                                          |
-| `clash.meta` | 模板 `clash` 过滤器会改为过滤 Clash Meta 不支持的规则                        |
-| `stash` | - Hysteria 协议的密码字段改为 `auth`；模板 `clash` 过滤器会改为过滤 Stash 不支持的规则 |
+| 核心 | 变化 |
+| --- | --- |
+| `clash` | 使用旧版 Clash 的节点字段和规则过滤行为 |
+| `clash.meta` | 默认值；模板 `clash` 过滤器会改为过滤 Mihomo 不支持的规则 |
+| `mihomo` | `clash.meta` 的输入别名，加载后统一为 `clash.meta` |
+| `stash` | Hysteria 协议的密码字段改为 `auth`；模板 `clash` 过滤器会改为过滤 Stash 不支持的规则 |
 
 :::warning 注意
-`enableTuic`, `enableShadowTls`, `enableHysteria2`, `enableVless` 这几个配置项和 `clashCore` 目前互不影响，但是将来会合并到 `clashCore` 中。
+`enableTuic`, `enableShadowTls`, `enableHysteria2`, `enableVless` 这几个配置项和 `clashCore` 目前互不影响。将默认核心改为 Mihomo 不会自动开启这些协议。
 :::
 
 ## surfboardConfig
