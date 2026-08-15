@@ -1,10 +1,10 @@
 import { z } from 'zod/v3'
 
-import { ArtifactValidator } from './artifact'
+import { ArtifactValidator } from './artifact.js'
 import {
   NodeFilterTypeValidator,
   SortedNodeFilterTypeValidator,
-} from './filter'
+} from './filter.js'
 
 const isRegExp = (val: unknown): val is RegExp => {
   return val instanceof RegExp

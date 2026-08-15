@@ -1,7 +1,9 @@
 import { PackageJson } from 'type-fest'
 
-export { isZodError, isSurgioError, SurgioError } from './utils'
-export * from './utils/cache'
-export * from './types'
+import packageJsonValue from '../package.json' with { type: 'json' }
 
-export const packageJson = require('../package.json') as PackageJson
+export { isZodError, isSurgioError, SurgioError } from './utils/index.js'
+export * from './utils/cache.js'
+export * from './types.js'
+
+export const packageJson = packageJsonValue as PackageJson

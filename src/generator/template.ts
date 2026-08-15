@@ -4,8 +4,12 @@ import nunjucks from 'nunjucks'
 import { JsonObject } from 'type-fest'
 import YAML from 'yaml'
 
-import { ClashCoreType, RemoteSnippet } from '../types'
-import { decodeStringList, toBase64, addProxyToSurgeRuleSet } from '../utils'
+import { ClashCoreType, RemoteSnippet } from '../types.js'
+import {
+  decodeStringList,
+  toBase64,
+  addProxyToSurgeRuleSet,
+} from '../utils/index.js'
 import {
   QUANTUMULT_X_SUPPORTED_RULE,
   CLASH_SUPPORTED_RULE,
@@ -13,7 +17,7 @@ import {
   STASH_SUPPORTED_RULE,
   LOON_SUPPORTED_RULE,
   SURFBOARD_SUPPORTED_RULE,
-} from '../constant'
+} from '../constant/index.js'
 
 export function getEngine(
   templateDir: string,

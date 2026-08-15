@@ -1,8 +1,8 @@
 import { beforeEach, expect, test, vi } from 'vitest'
 
-import * as config from '../../config'
-import { getShadowsocksSubscription } from '../ShadowsocksSubscribeProvider'
-import { NodeTypeEnum } from '../../types'
+import * as config from '../../config.js'
+import { getShadowsocksSubscription } from '../ShadowsocksSubscribeProvider.js'
+import { NodeTypeEnum } from '../../types.js'
 
 beforeEach(() => {
   vi.restoreAllMocks()

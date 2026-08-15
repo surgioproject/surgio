@@ -4,7 +4,7 @@ import {
   formatSubscriptionUserInfo,
   parseSubscriptionNode,
   parseSubscriptionUserInfo,
-} from '../subscription'
+} from '../subscription.js'
 
 test('parseSubscriptionNode', () => {
   const result = parseSubscriptionNode(

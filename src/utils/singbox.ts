@@ -1,18 +1,21 @@
 import { createLogger } from '@surgio/logger'
 
-import { ERR_INVALID_FILTER } from '../constant'
+import { ERR_INVALID_FILTER } from '../constant/index.js'
 import {
   NodeFilterType,
   NodeTypeEnum,
   PossibleNodeConfigType,
   SortedNodeFilterType,
-} from '../types'
-import { applyFilter } from '../filters'
-import { MultiplexValidator, TlsNodeConfigValidator } from '../validators'
+} from '../types.js'
+import { applyFilter } from '../filters/index.js'
+import {
+  MultiplexValidator,
+  TlsNodeConfigValidator,
+} from '../validators/index.js'
 
-import { stringifySip003Options } from './ss'
+import { stringifySip003Options } from './ss.js'
 
-import { checkNotNullish, pickAndFormatKeys } from './'
+import { checkNotNullish, pickAndFormatKeys } from './index.js'
 
 const logger = createLogger({ service: 'surgio:utils:singbox' })
 

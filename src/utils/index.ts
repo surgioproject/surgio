@@ -17,24 +17,27 @@ import {
   ShadowsocksrNodeConfig,
   SortedNodeFilterType,
   VmessNodeConfig,
-} from '../types'
-import { ERR_INVALID_FILTER, V2RAYN_SUPPORTED_VMESS_NETWORK } from '../constant'
-import { applyFilter } from '../filters'
+} from '../types.js'
+import {
+  ERR_INVALID_FILTER,
+  V2RAYN_SUPPORTED_VMESS_NETWORK,
+} from '../constant/index.js'
+import { applyFilter } from '../filters/index.js'
 
-import { getIsGFWFree } from './env-flag'
+import { getIsGFWFree } from './env-flag.js'
 
-export * from './surge'
-export * from './surfboard'
-export * from './clash'
-export * from './singbox'
-export * from './quantumult'
-export * from './loon'
-export * from './remote-snippet'
-export * from './subscription'
-export * from './time'
-export * from './errors'
-export * from './env-flag'
-export { default as httpClient } from './http-client'
+export * from './surge.js'
+export * from './surfboard.js'
+export * from './clash.js'
+export * from './singbox.js'
+export * from './quantumult.js'
+export * from './loon.js'
+export * from './remote-snippet.js'
+export * from './subscription.js'
+export * from './time.js'
+export * from './errors.js'
+export * from './env-flag.js'
+export { default as httpClient } from './http-client.js'
 
 const logger = createLogger({ service: 'surgio:utils' })
 

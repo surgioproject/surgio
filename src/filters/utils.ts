@@ -5,12 +5,12 @@ import {
   NodeFilterType,
   PossibleNodeConfigType,
   SortedNodeFilterType,
-} from '../types'
+} from '../types.js'
 
 import {
   SortFilterWithSortedFilters,
   SortFilterWithSortedKeywords,
-} from './classes'
+} from './classes.js'
 
 export const validateFilter = (filter: unknown): boolean => {
   if (filter === null || filter === undefined) {

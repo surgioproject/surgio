@@ -2,9 +2,57 @@
   "name": "surgio",
   "description": "Generating rules for Surge, Clash, Quantumult like a PRO",
   "version": "3.19.0",
-  "type": "commonjs",
+  "type": "module",
   "main": "./build/index.js",
   "types": "./build/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./build/index.d.ts",
+      "module-sync": "./build/index.js",
+      "default": "./build/index.js"
+    },
+    "./internal": {
+      "types": "./build/internal.d.ts",
+      "module-sync": "./build/internal.js",
+      "default": "./build/internal.js"
+    },
+    "./generator": {
+      "types": "./build/generator/index.d.ts",
+      "module-sync": "./build/generator/index.js",
+      "default": "./build/generator/index.js"
+    },
+    "./provider": {
+      "types": "./build/provider/index.d.ts",
+      "module-sync": "./build/provider/index.js",
+      "default": "./build/provider/index.js"
+    },
+    "./constant": {
+      "types": "./build/constant/index.d.ts",
+      "module-sync": "./build/constant/index.js",
+      "default": "./build/constant/index.js"
+    },
+    "./utils": {
+      "types": "./build/utils/index.d.ts",
+      "module-sync": "./build/utils/index.js",
+      "default": "./build/utils/index.js"
+    },
+    "./config": {
+      "types": "./build/config.d.ts",
+      "module-sync": "./build/config.js",
+      "default": "./build/config.js"
+    },
+    "./index": "./build/index.js",
+    "./index.js": "./build/index.js",
+    "./internal.js": "./build/internal.js",
+    "./generator.js": "./build/generator/index.js",
+    "./provider.js": "./build/provider/index.js",
+    "./constant.js": "./build/constant/index.js",
+    "./utils.js": "./build/utils/index.js",
+    "./config.js": "./build/config.js",
+    "./build/*.js": "./build/*.js",
+    "./build/*": "./build/*.js",
+    "./package.json": "./package.json"
+  },
   "bin": {
     "surgio": "bin/run"
   },
@@ -14,21 +62,7 @@
   "files": [
     "bin",
     "build",
-    "hygen-template",
-    "index.js",
-    "index.d.ts",
-    "internal.js",
-    "internal.d.ts",
-    "generator.js",
-    "generator.d.ts",
-    "provider.js",
-    "provider.d.ts",
-    "constant.js",
-    "constant.d.ts",
-    "utils.js",
-    "utils.d.ts",
-    "config.js",
-    "config.d.ts"
+    "hygen-template"
   ],
   "bugs": {
     "url": "https://github.com/geekdada/surgio/issues"

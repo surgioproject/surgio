@@ -2,7 +2,7 @@ import { promises } from 'dns'
 import { afterEach, expect, test, vi } from 'vitest'
 import Bluebird from 'bluebird'
 
-import { resolveDomain } from '../dns'
+import { resolveDomain } from '../dns.js'
 
 afterEach(() => {
   vi.restoreAllMocks()

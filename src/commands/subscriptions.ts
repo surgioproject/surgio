@@ -1,20 +1,12 @@
 /* istanbul ignore file -- @preserve */
 import { promises as fsp } from 'fs'
-import { createRequire } from 'module'
 import { basename, join } from 'path'
 import { createLogger } from '@surgio/logger'
 
-import BaseCommand from '../base-command'
-import { getProvider, PossibleProviderType } from '../provider'
-import { formatSubscriptionUserInfo } from '../utils'
-
-const requireModule = createRequire(__filename)
-
-const loadCommonJsDefault = <T>(modulePath: string): T => {
-  const loadedModule = requireModule(modulePath)
-
-  return loadedModule?.__esModule ? loadedModule.default : loadedModule
-}
+import BaseCommand from '../base-command.js'
+import { getProvider, PossibleProviderType } from '../provider/index.js'
+import { formatSubscriptionUserInfo } from '../utils/index.js'
+import { loadModuleSync } from '../utils/module-loader.js'
 
 const logger = createLogger({
   service: 'surgio:SubscriptionsCommand',
@@ -59,7 +51,7 @@ class SubscriptionsCommand extends BaseCommand<typeof SubscriptionsCommand> {
 
       try {
         const providerName = basename(path, '.js')
-        const providerConfig = loadCommonJsDefault(path)
+        const providerConfig = loadModuleSync(path)
 
         logger.debug('read %s %s', providerName, path)
 

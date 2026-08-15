@@ -1,13 +1,15 @@
-import 'source-map-support/register'
 import { resolve } from 'path'
 import { Command, Flags, Interfaces, Config } from '@oclif/core'
 import { transports } from '@surgio/logger'
 import ora from 'ora'
 
-import redis from './redis'
-import { CommandConfig } from './types'
-import { loadConfig } from './config'
-import { errorHandler } from './utils/error-helper'
+import redis from './redis.js'
+import { CommandConfig } from './types.js'
+import { loadConfig } from './config.js'
+import { errorHandler } from './utils/error-helper.js'
+import { loadModuleSync } from './utils/module-loader.js'
+
+loadModuleSync('source-map-support/register.js')
 
 export type Flags<T extends typeof Command> = Interfaces.InferredFlags<
   (typeof BaseCommand)['baseFlags'] & T['flags']

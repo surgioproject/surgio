@@ -1,15 +1,18 @@
 import { createLogger } from '@surgio/logger'
 
-import { OBFS_UA, SURFBOARD_SUPPORTED_VMESS_NETWORK } from '../constant'
+import {
+  OBFS_UA,
+  SURFBOARD_SUPPORTED_VMESS_NETWORK,
+} from '../constant/index.js'
 import {
   NodeFilterType,
   NodeTypeEnum,
   PossibleNodeConfigType,
   SortedNodeFilterType,
-} from '../types'
-import { applyFilter } from '../filters'
+} from '../types.js'
+import { applyFilter } from '../filters/index.js'
 
-import { pickAndFormatStringList } from './index'
+import { pickAndFormatStringList } from './index.js'
 
 const logger = createLogger({ service: 'surgio:utils:surfboard' })
 

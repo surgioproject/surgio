@@ -1,8 +1,11 @@
 import { expect, test } from 'vitest'
 import fs from 'fs-extra'
 import path from 'path'
+import { createRequire } from 'node:module'
+import { fileURLToPath } from 'node:url'
 
-const projectRoot = path.resolve(__dirname, '..')
+const projectRoot = fileURLToPath(new URL('..', import.meta.url))
+const requireModule = createRequire(import.meta.url)
 
 const listFiles = (directory: string): string[] =>
   fs.readdirSync(directory, { withFileTypes: true }).flatMap((entry) => {
@@ -11,25 +14,35 @@ const listFiles = (directory: string): string[] =>
     return entry.isDirectory() ? listFiles(entryPath) : entryPath
   })
 
-test('published CommonJS entrypoints can be required', () => {
+test('published entrypoints can be imported as ESM', async () => {
+  const surgio = await import('surgio')
+
+  expect(surgio.defineSurgioConfig).toBeTypeOf('function')
+  expect(surgio.utils).toBeTypeOf('object')
+  expect(surgio.categories).toBeTypeOf('object')
+})
+
+test('published ESM entrypoints can be required from CommonJS', () => {
   const entrypoints = [
-    'index',
-    'internal',
-    'generator',
-    'provider',
-    'constant',
-    'utils',
-    'config',
+    'surgio',
+    'surgio/index.js',
+    'surgio/internal',
+    'surgio/generator',
+    'surgio/provider',
+    'surgio/constant',
+    'surgio/utils',
+    'surgio/config',
+    'surgio/build/provider/index',
   ]
 
   for (const entrypoint of entrypoints) {
-    const exportedValue = require(path.join(projectRoot, entrypoint))
+    const exportedValue = requireModule(entrypoint)
 
     expect(exportedValue).toBeTruthy()
   }
 })
 
-test('build emits only CommonJS package artifacts', () => {
+test('build emits only ESM package artifacts', () => {
   const sourceDirectory = path.join(projectRoot, 'src')
   const buildDirectory = path.join(projectRoot, 'build')
   const sourceFiles = listFiles(sourceDirectory)
@@ -49,7 +62,7 @@ test('build emits only CommonJS package artifacts', () => {
   for (const file of emittedFiles.filter((file) => file.endsWith('.js'))) {
     const source = fs.readFileSync(path.join(buildDirectory, file), 'utf8')
 
-    expect(source.startsWith('"use strict";')).toBe(true)
-    expect(source).not.toMatch(/^\s*(?:import|export)\s/m)
+    expect(source.startsWith('"use strict";')).toBe(false)
+    expect(source).not.toMatch(/\b(?:module\.exports|exports\.)/)
   }
 })

@@ -1,6 +1,6 @@
 import { z } from 'zod/v3'
 
-import type { PossibleNodeConfigType } from '../types'
+import type { PossibleNodeConfigType } from '../types.js'
 
 type NodeFilterType = (nodeConfig: PossibleNodeConfigType) => boolean
 

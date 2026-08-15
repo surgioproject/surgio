@@ -1,7 +1,7 @@
-import { FLAGS, TAIWAN } from '../misc/flag_cn'
-import { NodeFilterType, NodeTypeEnum } from '../types'
+import { FLAGS, TAIWAN } from '../misc/flag_cn.js'
+import { NodeFilterType, NodeTypeEnum } from '../types.js'
 
-import { reverseFilter, mergeFilters } from './utils'
+import { reverseFilter, mergeFilters } from './utils.js'
 
 export const netflixFilter: NodeFilterType = (item) => {
   return ['netflix', 'nf', 'hkbn', 'hkt', 'hgc', 'nbu'].some((key) =>

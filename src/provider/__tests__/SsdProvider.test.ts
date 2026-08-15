@@ -1,8 +1,8 @@
 import { beforeEach, expect, test, vi } from 'vitest'
 
-import { SupportProviderEnum } from '../../types'
-import * as config from '../../config'
-import SsdProvider from '../SsdProvider'
+import { SupportProviderEnum } from '../../types.js'
+import * as config from '../../config.js'
+import SsdProvider from '../SsdProvider.js'
 
 beforeEach(() => {
   vi.restoreAllMocks()

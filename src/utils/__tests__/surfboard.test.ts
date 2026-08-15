@@ -1,7 +1,7 @@
 import { expect, test } from 'vitest'
 
-import { NodeTypeEnum, PossibleNodeConfigType } from '../../types'
-import * as surfboard from '../surfboard'
+import { NodeTypeEnum, PossibleNodeConfigType } from '../../types.js'
+import * as surfboard from '../surfboard.js'
 
 test('getSurfboardExtendHeaders', () => {
   expect(

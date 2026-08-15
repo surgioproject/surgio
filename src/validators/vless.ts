@@ -1,12 +1,12 @@
 import { z } from 'zod/v3'
 
-import { NodeTypeEnum } from '../types'
+import { NodeTypeEnum } from '../types.js'
 
 import {
   MultiplexValidator,
   PortValidator,
   TlsNodeConfigValidator,
-} from './common'
+} from './common.js'
 import {
   VmessH2OptsValidator,
   VmessGRPCOptsValidator,
@@ -14,7 +14,7 @@ import {
   VmessWSOptsValidator,
   VmessQuicOptsValidator,
   VmessHttpUpgradeOptsValidator,
-} from './vmess'
+} from './vmess.js'
 
 export const VlessNetworkValidator = z.union([
   z.literal('tcp'),

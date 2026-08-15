@@ -1,8 +1,8 @@
 import { expect, test } from 'vitest'
 
-import { NodeTypeEnum, VmessNodeConfig } from '../../types'
-import * as filters from '../'
-import { internalFilters } from '../'
+import { NodeTypeEnum, VmessNodeConfig } from '../../types.js'
+import * as filters from '../index.js'
+import { internalFilters } from '../index.js'
 
 const nodeConfigDefaults = {
   hostname: 'example.com',

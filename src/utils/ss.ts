@@ -1,9 +1,9 @@
 import { URL } from 'url'
 import { createLogger } from '@surgio/logger'
 
-import { NodeTypeEnum, ShadowsocksNodeConfig } from '../types'
+import { NodeTypeEnum, ShadowsocksNodeConfig } from '../types.js'
 
-import { decodeStringList, fromUrlSafeBase64 } from './index'
+import { decodeStringList, fromUrlSafeBase64 } from './index.js'
 
 const logger = createLogger({ service: 'surgio:utils:ss' })
 

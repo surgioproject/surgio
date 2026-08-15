@@ -7,11 +7,14 @@ import {
   NodeTypeEnum,
   PossibleNodeConfigType,
   SortedNodeFilterType,
-} from '../types'
-import { ERR_INVALID_FILTER, LOON_SUPPORTED_VMESS_NETWORK } from '../constant'
-import { applyFilter, internalFilters } from '../filters'
+} from '../types.js'
+import {
+  ERR_INVALID_FILTER,
+  LOON_SUPPORTED_VMESS_NETWORK,
+} from '../constant/index.js'
+import { applyFilter, internalFilters } from '../filters/index.js'
 
-import { getHeader } from './index'
+import { getHeader } from './index.js'
 
 const {
   httpFilter,

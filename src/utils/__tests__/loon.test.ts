@@ -1,9 +1,9 @@
 import { expect, test, vi } from 'vitest'
 import { transports } from '@surgio/logger'
 
-import { NodeTypeEnum } from '../../types'
-import { ERR_INVALID_FILTER } from '../../constant'
-import { getLoonNodeNames, getLoonNodes } from '../loon'
+import { NodeTypeEnum } from '../../types.js'
+import { ERR_INVALID_FILTER } from '../../constant/index.js'
+import { getLoonNodeNames, getLoonNodes } from '../loon.js'
 
 test('getLoonNodes Hysteria2', () => {
   expect(

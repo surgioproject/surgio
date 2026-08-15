@@ -4,12 +4,12 @@ import { Flags } from '@oclif/core'
 import { Client } from 'minio'
 import dir from 'node-dir'
 
-import BaseCommand from '../base-command'
-import { setConfig } from '../config'
+import BaseCommand from '../base-command.js'
+import { setConfig } from '../config.js'
 import {
   resolveStorageBackend,
   synchronizeStorage,
-} from '../utils/object-storage'
+} from '../utils/object-storage.js'
 
 class UploadCommand extends BaseCommand<typeof UploadCommand> {
   static description = '上传规则到对象存储'

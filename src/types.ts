@@ -24,9 +24,9 @@ import {
   TailscaleNodeConfigValidator,
   MasqueNodeConfigValidator,
   TrustTunnelNodeConfigValidator,
-} from './validators'
+} from './validators/index.js'
 
-import type { Provider, GetNodeListParams } from './provider'
+import type { Provider, GetNodeListParams } from './provider/index.js'
 
 export enum NodeTypeEnum {
   HTTPS = 'https',

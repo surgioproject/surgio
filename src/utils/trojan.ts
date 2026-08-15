@@ -1,7 +1,7 @@
 import { URL } from 'url'
 import { createLogger } from '@surgio/logger'
 
-import { NodeTypeEnum, TrojanNodeConfig } from '../types'
+import { NodeTypeEnum, TrojanNodeConfig } from '../types.js'
 
 const logger = createLogger({ service: 'surgio:utils:trojan' })
 

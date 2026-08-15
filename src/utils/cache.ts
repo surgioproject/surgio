@@ -3,7 +3,7 @@ import { createKeyv as createMemoryKeyv } from 'cacheable'
 import { Cache, createCache } from 'cache-manager'
 import ms from 'ms'
 
-import { getConfig } from '../config'
+import { getConfig } from '../config.js'
 
 export class UnifiedCache {
   #type: 'redis' | 'default' | undefined

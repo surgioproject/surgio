@@ -1,8 +1,8 @@
 import { z } from 'zod/v3'
 
-import { NodeTypeEnum } from '../types'
+import { NodeTypeEnum } from '../types.js'
 
-import { IntegersVersionValidator, TlsNodeConfigValidator } from './common'
+import { IntegersVersionValidator, TlsNodeConfigValidator } from './common.js'
 
 export const TuicNodeV5ConfigValidator = TlsNodeConfigValidator.extend({
   type: z.literal(NodeTypeEnum.Tuic),

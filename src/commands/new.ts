@@ -1,10 +1,14 @@
 /* istanbul ignore file -- @preserve */
-import { join } from 'path'
+import { fileURLToPath } from 'node:url'
 import { Args } from '@oclif/core'
 import { runner, Logger } from '@royli/hygen'
+import execa from 'execa'
 
-import BaseCommand from '../base-command'
-const defaultTemplates = join(__dirname, '../../hygen-template')
+import BaseCommand from '../base-command.js'
+import { loadModuleSync } from '../utils/module-loader.js'
+const defaultTemplates = fileURLToPath(
+  new URL('../../hygen-template', import.meta.url),
+)
 
 class NewCommand extends BaseCommand<typeof NewCommand> {
   static description = '新建文件助手'
@@ -16,10 +20,10 @@ class NewCommand extends BaseCommand<typeof NewCommand> {
       templates: defaultTemplates,
       cwd: this.projectDir,
       logger: new Logger(console.log.bind(console)),
-      createPrompter: () => require('inquirer'),
+      createPrompter: () => loadModuleSync<any>('inquirer'),
       exec: async (action, body) => {
         const opts = body && body.length > 0 ? { input: body } : {}
-        await require('execa')(action, opts)
+        await execa(action, opts)
       },
     })
 

@@ -9,7 +9,7 @@ import {
   CLASH_META_SUPPORTED_VLESS_NETWORK,
   STASH_SUPPORTED_VMESS_NETWORK,
   STASH_SUPPORTED_VLESS_NETWORK,
-} from '../constant'
+} from '../constant/index.js'
 import {
   AnyTLSNodeConfig,
   AnyTLSNodeConfigInput,
@@ -35,14 +35,14 @@ import {
   MasqueNodeConfigInput,
   TrustTunnelNodeConfig,
   TrustTunnelNodeConfigInput,
-} from '../types'
+} from '../types.js'
 import {
   lowercaseHeaderKeys,
   SurgioError,
   getNetworkClashUA,
   parseBitrate,
-} from '../utils'
-import relayableUrl from '../utils/relayable-url'
+} from '../utils/index.js'
+import relayableUrl from '../utils/relayable-url.js'
 import {
   AnyTLSNodeConfigValidator,
   Hysteria2NodeConfigValidator,
@@ -50,16 +50,16 @@ import {
   TailscaleNodeConfigValidator,
   MasqueNodeConfigValidator,
   TrustTunnelNodeConfigValidator,
-} from '../validators'
+} from '../validators/index.js'
 
-import Provider from './Provider'
+import Provider from './Provider.js'
 import {
   DefaultProviderRequestHeaders,
   GetNodeListFunction,
   GetNodeListV2Function,
   GetNodeListV2Result,
   GetSubscriptionUserInfoFunction,
-} from './types'
+} from './types.js'
 
 type SupportConfigTypes =
   | ShadowsocksNodeConfig

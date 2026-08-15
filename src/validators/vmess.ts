@@ -1,13 +1,13 @@
 import { z } from 'zod/v3'
 
-import { NodeTypeEnum } from '../types'
+import { NodeTypeEnum } from '../types.js'
 
 import {
   PortValidator,
   SimpleNodeConfigValidator,
   AlterIdValiator,
   MultiplexValidator,
-} from './common'
+} from './common.js'
 
 export const VmessNetworkValidator = z.union([
   z.literal('tcp'),

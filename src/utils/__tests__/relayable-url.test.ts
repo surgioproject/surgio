@@ -1,6 +1,6 @@
 import { expect, test } from 'vitest'
 
-import relayableUrl from '../relayable-url'
+import relayableUrl from '../relayable-url.js'
 
 test('relayableUrl', () => {
   expect(

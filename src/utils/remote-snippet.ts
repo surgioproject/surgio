@@ -5,15 +5,18 @@ import ms from 'ms'
 import nunjucks from 'nunjucks'
 import * as babelParser from '@babel/parser'
 
-import { CACHE_KEYS } from '../constant'
-import { RemoteSnippet, RemoteSnippetConfig } from '../types'
+import { CACHE_KEYS } from '../constant/index.js'
+import { RemoteSnippet, RemoteSnippetConfig } from '../types.js'
 
-import { unifiedCache } from './cache'
-import { getNetworkConcurrency, getRemoteSnippetCacheMaxage } from './env-flag'
-import httpClient from './http-client'
-import { createTmpFactory } from './tmp-helper'
+import { unifiedCache } from './cache.js'
+import {
+  getNetworkConcurrency,
+  getRemoteSnippetCacheMaxage,
+} from './env-flag.js'
+import httpClient from './http-client.js'
+import { createTmpFactory } from './tmp-helper.js'
 
-import { toMD5 } from './index'
+import { toMD5 } from './index.js'
 
 export const parseMacro = (
   snippet: string,

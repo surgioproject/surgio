@@ -1,7 +1,7 @@
 import { expect, test } from 'vitest'
 
-import { NodeTypeEnum, PossibleNodeConfigType } from '../../types'
-import * as clash from '../clash'
+import { NodeTypeEnum, PossibleNodeConfigType } from '../../types.js'
+import * as clash from '../clash.js'
 
 test('getClashNodeNames', async () => {
   const nodeNameList: ReadonlyArray<PossibleNodeConfigType> = [

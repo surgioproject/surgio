@@ -1,2 +1,2 @@
-export * as internalFilters from './filters'
-export * from './utils'
+export * as internalFilters from './filters.js'
+export * from './utils.js'

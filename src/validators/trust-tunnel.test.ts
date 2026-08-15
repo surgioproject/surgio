@@ -1,8 +1,8 @@
 import { expect, test } from 'vitest'
 
-import { NodeTypeEnum } from '../types'
+import { NodeTypeEnum } from '../types.js'
 
-import { TrustTunnelNodeConfigValidator } from './trust-tunnel'
+import { TrustTunnelNodeConfigValidator } from './trust-tunnel.js'
 
 const h2Node = {
   type: NodeTypeEnum.TrustTunnel,

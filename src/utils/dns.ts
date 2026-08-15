@@ -5,7 +5,7 @@ import { createKeyv } from 'cacheable'
 import { createCache } from 'cache-manager'
 import ms from 'ms'
 
-import { getNetworkResolveTimeout } from './env-flag'
+import { getNetworkResolveTimeout } from './env-flag.js'
 
 const domainCache = createCache({
   stores: [createKeyv({ ttl: ms('1d'), lruSize: 5000 })],

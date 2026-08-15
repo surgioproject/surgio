@@ -1,8 +1,7 @@
-'use strict'
-
-const { resolve } = require('path')
-const execa = require('execa')
-const fs = require('fs-extra')
+import { resolve } from 'path'
+import { fileURLToPath } from 'node:url'
+import execa from 'execa'
+import fs from 'fs-extra'
 
 const { argv } = process
 const [, , example] = argv
@@ -12,8 +11,9 @@ if (!example) {
   process.exit(1)
 }
 
-const binPath = resolve(__dirname, '..', 'bin/run')
-const examplePath = resolve(__dirname, '..', 'examples', example)
+const scriptDir = fileURLToPath(new URL('.', import.meta.url))
+const binPath = resolve(scriptDir, '..', 'bin/run')
+const examplePath = resolve(scriptDir, '..', 'examples', example)
 const nodeModulesPath = resolve(examplePath, 'node_modules')
 
 fs.ensureDirSync(nodeModulesPath)

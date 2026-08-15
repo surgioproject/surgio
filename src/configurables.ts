@@ -13,7 +13,7 @@ import {
   SupportProviderEnum,
   TrojanProviderConfig,
   V2rayNSubscribeProviderConfig,
-} from './types'
+} from './types.js'
 
 export const defineSurgioConfig = (config: CommandConfigBeforeNormalize) =>
   config

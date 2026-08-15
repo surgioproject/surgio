@@ -5,8 +5,8 @@ vi.mock('@keyv/redis', async () => {
   return { createKeyv: vi.fn(() => new Keyv()) }
 })
 
-import * as config from '../../config'
-import { UnifiedCache, unifiedCache } from '../cache'
+import * as config from '../../config.js'
+import { UnifiedCache, unifiedCache } from '../cache.js'
 
 beforeEach(() => {
   vi.restoreAllMocks()

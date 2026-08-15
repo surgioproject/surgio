@@ -1,17 +1,20 @@
 import { createLogger } from '@surgio/logger'
-import Redis from 'ioredis'
 
-import { CACHE_KEYS } from './constant'
+import { CACHE_KEYS } from './constant/index.js'
+import { loadModuleSync } from './utils/module-loader.js'
+
+const Redis = loadModuleSync<typeof import('ioredis').default>('ioredis')
+type RedisClient = InstanceType<typeof Redis>
 
 const logger = createLogger({ service: 'surgio:redis' })
 
 const prepareRedis = () => {
-  let client: Redis | null = null
+  let client: RedisClient | null = null
   let redisURL: string | null = null
 
   return {
     hasRedis: () => !!client,
-    createRedis(_redisURL: string, customRedis?: any): Redis {
+    createRedis(_redisURL: string, customRedis?: any): RedisClient {
       if (client && redisURL) {
         logger.debug('Redis client already created with URL: %s', redisURL)
         return client
@@ -28,9 +31,9 @@ const prepareRedis = () => {
         )
       }
 
-      return client as Redis
+      return client as RedisClient
     },
-    getRedis(): Redis {
+    getRedis(): RedisClient {
       if (!client) {
         throw new Error('Redis client is not initialized')
       }

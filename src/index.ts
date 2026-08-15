@@ -9,21 +9,21 @@ import {
   isNow,
   isRailway,
   isVercel,
-} from './utils'
-import * as useragentUtils from './utils/useragent'
-import * as filters from './filters'
-import { CATEGORIES } from './constant'
+} from './utils/index.js'
+import * as useragentUtils from './utils/useragent.js'
+import * as filters from './filters/index.js'
+import { CATEGORIES } from './constant/index.js'
 
-export type { CommandConfigBeforeNormalize as SurgioConfig } from './types'
-export * from './configurables'
-export { default as httpClient } from './utils/http-client'
-export { unifiedCache as cache } from './utils/cache'
+export type { CommandConfigBeforeNormalize as SurgioConfig } from './types.js'
+export * from './configurables.js'
+export { default as httpClient } from './utils/http-client.js'
+export { unifiedCache as cache } from './utils/cache.js'
 export {
   extendOutbounds,
   extendEndpoints,
   createExtendFunction,
   combineExtendFunctions,
-} from './generator'
+} from './generator/index.js'
 
 const { internalFilters, ...filtersUtils } = filters
 

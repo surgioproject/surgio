@@ -6,20 +6,20 @@ import {
   ShadowsocksrNodeConfig,
   ShadowsocksrSubscribeProviderConfig,
   SubscriptionUserinfo,
-} from '../types'
-import { fromBase64, SurgioError } from '../utils'
-import relayableUrl from '../utils/relayable-url'
-import { parseSubscriptionNode } from '../utils/subscription'
-import { parseSSRUri } from '../utils/ssr'
+} from '../types.js'
+import { fromBase64, SurgioError } from '../utils/index.js'
+import relayableUrl from '../utils/relayable-url.js'
+import { parseSubscriptionNode } from '../utils/subscription.js'
+import { parseSSRUri } from '../utils/ssr.js'
 
-import Provider from './Provider'
+import Provider from './Provider.js'
 import {
   DefaultProviderRequestHeaders,
   GetNodeListFunction,
   GetNodeListV2Function,
   GetNodeListV2Result,
   GetSubscriptionUserInfoFunction,
-} from './types'
+} from './types.js'
 
 const logger = createLogger({
   service: 'surgio:ShadowsocksrSubscribeProvider',

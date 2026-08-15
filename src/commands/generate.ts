@@ -2,12 +2,12 @@ import path from 'path'
 import { Flags } from '@oclif/core'
 import fs from 'fs-extra'
 
-import BaseCommand from '../base-command'
-import { Artifact, getEngine } from '../generator'
-import { ArtifactConfig } from '../types'
-import { setConfig } from '../config'
-import { checkAndFix } from '../utils/linter'
-import { loadRemoteSnippetList } from '../utils'
+import BaseCommand from '../base-command.js'
+import { Artifact, getEngine } from '../generator/index.js'
+import { ArtifactConfig } from '../types.js'
+import { setConfig } from '../config.js'
+import { checkAndFix } from '../utils/linter.js'
+import { loadRemoteSnippetList } from '../utils/index.js'
 
 class GenerateCommand extends BaseCommand<typeof GenerateCommand> {
   static description = '生成规则'

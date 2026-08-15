@@ -1,8 +1,8 @@
 /* istanbul ignore file -- @preserve */
 import { Flags } from '@oclif/core'
 
-import BaseCommand from '../base-command'
-import { check, checkAndFix } from '../utils/linter'
+import BaseCommand from '../base-command.js'
+import { check, checkAndFix } from '../utils/linter.js'
 
 class LintCommand extends BaseCommand<typeof LintCommand> {
   static description = '运行 JS 语法检查'

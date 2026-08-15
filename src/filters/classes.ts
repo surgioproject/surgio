@@ -4,7 +4,7 @@ import {
   NodeFilterType,
   SortedNodeFilterType,
   PossibleNodeConfigType,
-} from '../types'
+} from '../types.js'
 
 // tslint:disable-next-line:max-classes-per-file
 export class SortFilterWithSortedFilters implements SortedNodeFilterType {

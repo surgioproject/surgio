@@ -1,8 +1,8 @@
 import { z } from 'zod/v3'
 
-import { NodeTypeEnum } from '../types'
+import { NodeTypeEnum } from '../types.js'
 
-import { TlsNodeConfigValidator } from './common'
+import { TlsNodeConfigValidator } from './common.js'
 
 const MasqueTlsNodeConfigValidator = TlsNodeConfigValidator.omit({
   tls13: true,

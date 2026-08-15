@@ -1,8 +1,8 @@
 import { Promisable } from 'type-fest'
 import { z } from 'zod/v3'
 
-import { GetNodeListParams } from '../provider'
-import { PossibleNodeConfigType } from '../types'
+import { GetNodeListParams } from '../provider/index.js'
+import { PossibleNodeConfigType } from '../types.js'
 
 type AfterNodeListResponse = <T extends PossibleNodeConfigType>(
   nodeList: T[],

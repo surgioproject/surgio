@@ -1,15 +1,17 @@
-import got from 'got'
 import http from 'http'
 import https from 'https'
 import { HttpProxyAgent, HttpsProxyAgent } from 'hpagent'
 
-import { NETWORK_SURGIO_UA } from '../constant'
+import pkg from '../../package.json' with { type: 'json' }
+import { NETWORK_SURGIO_UA } from '../constant/index.js'
 
-import { getNetworkRetry, getNetworkTimeout } from './env-flag'
+import { getNetworkRetry, getNetworkTimeout } from './env-flag.js'
+import { loadModuleSync } from './module-loader.js'
+
+const got = loadModuleSync<typeof import('got').default>('got')
 
 const httpProxy = hasHTTPProxy()
 const httpsProxy = hasHTTPSProxy()
-const pkg = require('../../package.json')
 const agent =
   !!httpProxy || !!httpsProxy
     ? {

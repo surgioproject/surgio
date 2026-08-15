@@ -1,6 +1,6 @@
 import { expect, test } from 'vitest'
 
-import { UploadConfigValidator } from './surgio-config'
+import { UploadConfigValidator } from './surgio-config.js'
 
 const credentials = {
   accessKeyId: 'access-key',

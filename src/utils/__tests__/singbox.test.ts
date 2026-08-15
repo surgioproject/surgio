@@ -1,7 +1,7 @@
 import { expect, test } from 'vitest'
 
-import { NodeTypeEnum, PossibleNodeConfigType } from '../../types'
-import * as singbox from '../singbox'
+import { NodeTypeEnum, PossibleNodeConfigType } from '../../types.js'
+import * as singbox from '../singbox.js'
 
 const nodeList: ReadonlyArray<PossibleNodeConfigType> = [
   {

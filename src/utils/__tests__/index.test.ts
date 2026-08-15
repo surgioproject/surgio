@@ -5,9 +5,9 @@ import {
   NodeTypeEnum,
   PossibleNodeConfigType,
   ShadowsocksNodeConfig,
-} from '../../types'
-import { fromBase64 } from '../index'
-import * as utils from '../index'
+} from '../../types.js'
+import { fromBase64 } from '../index.js'
+import * as utils from '../index.js'
 
 test('getNodeNames', async () => {
   const nodeList: ReadonlyArray<PossibleNodeConfigType> = [

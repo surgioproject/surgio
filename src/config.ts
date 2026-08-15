@@ -8,12 +8,13 @@ import {
   INTERNET_TEST_URL,
   PROXY_TEST_INTERVAL,
   PROXY_TEST_URL,
-} from './constant'
-import redis from './redis'
-import { CommandConfig, CommandConfigBeforeNormalize } from './types'
-import { SurgioConfigValidator } from './validators'
-import { addFlagMap } from './utils/flag'
-import { ensureConfigFolder } from './utils'
+} from './constant/index.js'
+import redis from './redis.js'
+import { CommandConfig, CommandConfigBeforeNormalize } from './types.js'
+import { SurgioConfigValidator } from './validators/index.js'
+import { addFlagMap } from './utils/flag.js'
+import { ensureConfigFolder } from './utils/index.js'
+import { loadModuleSync } from './utils/module-loader.js'
 
 let finalConfig: CommandConfig | null = null
 
@@ -28,7 +29,9 @@ export const loadConfig = (
     throw new Error(`配置文件 ${absPath} 不存在`)
   }
 
-  const userConfig = validateConfig(_.cloneDeep(require(absPath)))
+  const userConfig = validateConfig(
+    _.cloneDeep(loadModuleSync<Partial<CommandConfig>>(absPath)),
+  )
 
   if (userConfig.flags) {
     Object.keys(userConfig.flags).forEach((emoji) => {

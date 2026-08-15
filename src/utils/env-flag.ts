@@ -10,7 +10,7 @@ import {
   ENV_SURGIO_PROVIDER_CACHE_MAXAGE,
   ENV_SURGIO_REMOTE_SNIPPET_CACHE_MAXAGE,
   SURGIO_RENDERED_ARTIFACT_CACHE_MAXAGE,
-} from '../constant'
+} from '../constant/index.js'
 
 export const getNetworkTimeout = (): number =>
   process.env[ENV_NETWORK_TIMEOUT_KEY]

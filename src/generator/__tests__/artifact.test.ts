@@ -2,10 +2,10 @@ import { join } from 'path'
 import { expect, test } from 'vitest'
 import nock from 'nock'
 
-import { loadConfig } from '../../config'
-import { NodeTypeEnum } from '../../types'
-import { Artifact } from '../artifact'
-import { getEngine } from '../template'
+import { loadConfig } from '../../config.js'
+import { NodeTypeEnum } from '../../types.js'
+import { Artifact } from '../artifact.js'
+import { getEngine } from '../template.js'
 
 const resolve = (p: string) => join(__dirname, '../../../test/fixture/', p)
 

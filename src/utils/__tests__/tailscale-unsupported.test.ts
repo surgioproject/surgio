@@ -1,9 +1,9 @@
 import { expect, test } from 'vitest'
 
-import { NodeTypeEnum, PossibleNodeConfigType } from '../../types'
-import { getLoonNodes } from '../loon'
-import { getQuantumultXNodes } from '../quantumult'
-import { getSurfboardNodes } from '../surfboard'
+import { NodeTypeEnum, PossibleNodeConfigType } from '../../types.js'
+import { getLoonNodes } from '../loon.js'
+import { getQuantumultXNodes } from '../quantumult.js'
+import { getSurfboardNodes } from '../surfboard.js'
 
 test('unsupported generators omit Tailscale nodes', () => {
   const nodeList: ReadonlyArray<PossibleNodeConfigType> = [

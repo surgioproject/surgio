@@ -5,8 +5,8 @@ import {
   NodeTypeEnum,
   PossibleNodeConfigType,
   VmessNodeConfig,
-} from '../types'
-import { SurgioError } from '../utils'
+} from '../types.js'
+import { SurgioError } from '../utils/index.js'
 import {
   WireguardNodeConfigValidator,
   ShadowsocksNodeConfigValidator,
@@ -24,15 +24,15 @@ import {
   TailscaleNodeConfigValidator,
   MasqueNodeConfigValidator,
   TrustTunnelNodeConfigValidator,
-} from '../validators'
+} from '../validators/index.js'
 
-import Provider from './Provider'
+import Provider from './Provider.js'
 import {
   GetNodeListFunction,
   GetNodeListParams,
   GetNodeListV2Function,
   GetNodeListV2Result,
-} from './types'
+} from './types.js'
 
 export default class CustomProvider extends Provider {
   public readonly nodeList:

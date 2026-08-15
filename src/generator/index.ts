@@ -1,8 +1,8 @@
-export * from './artifact'
-export * from './template'
+export * from './artifact.js'
+export * from './template.js'
 export {
   extendOutbounds,
   extendEndpoints,
   createExtendFunction,
   combineExtendFunctions,
-} from './json-template'
+} from './json-template.js'

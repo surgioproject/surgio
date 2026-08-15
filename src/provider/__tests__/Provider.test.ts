@@ -1,9 +1,9 @@
 import { beforeEach, expect, test, vi } from 'vitest'
 
-import * as config from '../../config'
-import { SupportProviderEnum } from '../../types'
-import { getUserAgent } from '../../utils/http-client'
-import Provider from '../Provider'
+import * as config from '../../config.js'
+import { SupportProviderEnum } from '../../types.js'
+import { getUserAgent } from '../../utils/http-client.js'
+import Provider from '../Provider.js'
 
 class TestProvider extends Provider {
   constructor(name: string, config: any) {

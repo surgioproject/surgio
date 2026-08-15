@@ -1,16 +1,16 @@
 import { createLogger } from '@surgio/logger'
 import _ from 'lodash'
 
-import { QUANTUMULT_X_SUPPORTED_VMESS_NETWORK } from '../constant'
+import { QUANTUMULT_X_SUPPORTED_VMESS_NETWORK } from '../constant/index.js'
 import {
   NodeFilterType,
   NodeTypeEnum,
   PossibleNodeConfigType,
   SortedNodeFilterType,
-} from '../types'
-import { applyFilter } from '../filters'
+} from '../types.js'
+import { applyFilter } from '../filters/index.js'
 
-import { getHeader, pickAndFormatStringList } from './index'
+import { getHeader, pickAndFormatStringList } from './index.js'
 
 const logger = createLogger({ service: 'surgio:utils:quantumult' })
 

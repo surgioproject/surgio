@@ -10,7 +10,7 @@ import {
   isQuantumultX,
   isShadowrocket,
   isLoon,
-} from '../useragent'
+} from '../useragent.js'
 
 test('isSurgeIOS', () => {
   expect(isSurgeIOS('Surge iOS/2920')).toBe(true)

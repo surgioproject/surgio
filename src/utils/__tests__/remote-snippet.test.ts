@@ -1,7 +1,7 @@
 import { afterEach, beforeEach, expect, test, vi } from 'vitest'
 
-import * as config from '../../config'
-import * as utils from '../remote-snippet'
+import * as config from '../../config.js'
+import * as utils from '../remote-snippet.js'
 
 beforeEach(() => {
   vi.restoreAllMocks()

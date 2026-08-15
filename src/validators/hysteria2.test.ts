@@ -1,8 +1,8 @@
 import { expect, test } from 'vitest'
 
-import { NodeTypeEnum } from '../types'
+import { NodeTypeEnum } from '../types.js'
 
-import { Hysteria2NodeConfigValidator } from './hysteria2'
+import { Hysteria2NodeConfigValidator } from './hysteria2.js'
 
 test('Hysteria2NodeConfigValidator preserves udpRelay', () => {
   const result = Hysteria2NodeConfigValidator.parse({

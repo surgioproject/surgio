@@ -8,18 +8,18 @@ import {
   ShadowsocksNodeConfig,
   SsdProviderConfig,
   SubscriptionUserinfo,
-} from '../types'
-import { decodeStringList, fromBase64, SurgioError } from '../utils'
-import relayableUrl from '../utils/relayable-url'
+} from '../types.js'
+import { decodeStringList, fromBase64, SurgioError } from '../utils/index.js'
+import relayableUrl from '../utils/relayable-url.js'
 
-import Provider from './Provider'
+import Provider from './Provider.js'
 import {
   DefaultProviderRequestHeaders,
   GetNodeListFunction,
   GetNodeListV2Function,
   GetNodeListV2Result,
   GetSubscriptionUserInfoFunction,
-} from './types'
+} from './types.js'
 
 const logger = createLogger({
   service: 'surgio:SsdProvider',

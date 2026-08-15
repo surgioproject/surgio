@@ -1,7 +1,7 @@
 import { afterAll, beforeAll, expect, test } from 'vitest'
 
-import redis from '../../redis'
-import { createTmpFactory } from '../tmp-helper'
+import redis from '../../redis.js'
+import { createTmpFactory } from '../tmp-helper.js'
 
 class MockRedis {
   readonly #values = new Map<string, string>()

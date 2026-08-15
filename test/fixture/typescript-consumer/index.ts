@@ -3,7 +3,7 @@ import {
   defineSurgioConfig,
   utils,
   type SurgioConfig,
-} from '../../..'
+} from 'surgio'
 
 const config: SurgioConfig = {
   artifacts: [],

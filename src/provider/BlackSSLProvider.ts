@@ -8,19 +8,19 @@ import {
   HttpsNodeConfig,
   NodeTypeEnum,
   SubscriptionUserinfo,
-} from '../types'
-import { SurgioError } from '../utils'
-import { unifiedCache } from '../utils/cache'
-import { getProviderCacheMaxage } from '../utils/env-flag'
-import httpClient from '../utils/http-client'
+} from '../types.js'
+import { SurgioError } from '../utils/index.js'
+import { unifiedCache } from '../utils/cache.js'
+import { getProviderCacheMaxage } from '../utils/env-flag.js'
+import httpClient from '../utils/http-client.js'
 
-import Provider from './Provider'
+import Provider from './Provider.js'
 import {
   GetNodeListFunction,
   GetNodeListV2Function,
   GetNodeListV2Result,
   GetSubscriptionUserInfoFunction,
-} from './types'
+} from './types.js'
 
 export default class BlackSSLProvider extends Provider {
   public readonly username: string

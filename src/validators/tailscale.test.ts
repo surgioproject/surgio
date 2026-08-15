@@ -1,8 +1,8 @@
 import { expect, test } from 'vitest'
 
-import { NodeTypeEnum } from '../types'
+import { NodeTypeEnum } from '../types.js'
 
-import { TailscaleNodeConfigValidator } from './tailscale'
+import { TailscaleNodeConfigValidator } from './tailscale.js'
 
 test('TailscaleNodeConfigValidator accepts the documented field union', () => {
   const result = TailscaleNodeConfigValidator.parse({

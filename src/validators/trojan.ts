@@ -1,8 +1,8 @@
 import { z } from 'zod/v3'
 
-import { NodeTypeEnum } from '../types'
+import { NodeTypeEnum } from '../types.js'
 
-import { MultiplexValidator, TlsNodeConfigValidator } from './common'
+import { MultiplexValidator, TlsNodeConfigValidator } from './common.js'
 
 export const TrojanNodeConfigValidator = TlsNodeConfigValidator.extend({
   type: z.literal(NodeTypeEnum.Trojan),

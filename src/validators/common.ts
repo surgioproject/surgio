@@ -1,13 +1,13 @@
 import { z } from 'zod/v3'
 
-import { NodeTypeEnum } from '../types'
+import { NodeTypeEnum } from '../types.js'
 
 import {
   ClashConfigValidator,
   QuantumultXConfigValidator,
   SurfboardConfigValidator,
   SurgeConfigValidator,
-} from './surgio-config'
+} from './surgio-config.js'
 
 export const getPositiveIntegersNumberValidatior = (
   validator: (n: number) => boolean,

@@ -1,6 +1,6 @@
 import { expect, test } from 'vitest'
 
-import httpClient, { getUserAgent } from '../http-client'
+import httpClient, { getUserAgent } from '../http-client.js'
 
 test('getUserAgent', () => {
   const pkg = require('../../../package.json')

@@ -6,7 +6,7 @@ import {
   createExtendFunction,
   combineExtendFunctions,
   render,
-} from '../json-template'
+} from '../json-template.js'
 
 beforeEach(() => {
   vi.restoreAllMocks()

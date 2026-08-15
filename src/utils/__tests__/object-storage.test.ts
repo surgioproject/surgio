@@ -1,8 +1,8 @@
 import { EventEmitter } from 'node:events'
 import { expect, test, vi } from 'vitest'
 
-import { UploadConfigValidator } from '../../validators'
-import { resolveStorageBackend, synchronizeStorage } from '../object-storage'
+import { UploadConfigValidator } from '../../validators/index.js'
+import { resolveStorageBackend, synchronizeStorage } from '../object-storage.js'
 
 const configCredentials = {
   accessKeyId: 'config-access-key',

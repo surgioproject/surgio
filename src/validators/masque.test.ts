@@ -1,8 +1,8 @@
 import { expect, test } from 'vitest'
 
-import { NodeTypeEnum } from '../types'
+import { NodeTypeEnum } from '../types.js'
 
-import { MasqueNodeConfigValidator } from './masque'
+import { MasqueNodeConfigValidator } from './masque.js'
 
 const basicAuthNode = {
   type: NodeTypeEnum.Masque,

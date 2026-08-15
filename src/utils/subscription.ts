@@ -2,7 +2,7 @@ import { filesize } from 'filesize'
 import bytes from 'bytes'
 import { format, formatDistanceToNow } from 'date-fns'
 
-import { SubscriptionUserinfo } from '../types'
+import { SubscriptionUserinfo } from '../types.js'
 
 export const parseSubscriptionUserInfo = (
   str: string,

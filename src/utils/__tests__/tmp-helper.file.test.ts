@@ -3,8 +3,8 @@ import os from 'os'
 import { afterEach, expect, test, vi } from 'vitest'
 import fs from 'fs-extra'
 
-import { TMP_FOLDER_NAME } from '../../constant'
-import { createTmpFactory, TmpFile } from '../tmp-helper'
+import { TMP_FOLDER_NAME } from '../../constant/index.js'
+import { createTmpFactory, TmpFile } from '../tmp-helper.js'
 
 afterEach(async () => {
   vi.useRealTimers()

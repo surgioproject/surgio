@@ -11,7 +11,7 @@ import {
   GetNodeListParams,
   getProvider,
   PossibleProviderType,
-} from '../provider'
+} from '../provider/index.js'
 import {
   ArtifactConfig,
   ArtifactConfigInput,
@@ -22,7 +22,7 @@ import {
   RemoteSnippet,
   SubscriptionUserinfo,
   SupportProviderEnum,
-} from '../types'
+} from '../types.js'
 import {
   getClashNodeNames,
   getClashNodes,
@@ -53,14 +53,18 @@ import {
   getSingboxNodeNames,
   getSingboxNodes,
   getSingboxEndpoints,
-} from '../utils'
-import { resolveDomain } from '../utils/dns'
-import { internalFilters, validateFilter } from '../filters'
-import { prependFlag, removeFlag } from '../utils/flag'
-import { ArtifactValidator, MasqueNodeConfigValidator } from '../validators'
+} from '../utils/index.js'
+import { resolveDomain } from '../utils/dns.js'
+import { internalFilters, validateFilter } from '../filters/index.js'
+import { prependFlag, removeFlag } from '../utils/flag.js'
+import { loadModuleSync } from '../utils/module-loader.js'
+import {
+  ArtifactValidator,
+  MasqueNodeConfigValidator,
+} from '../validators/index.js'
 
-import { loadLocalSnippet } from './template'
-import { render as renderJSON } from './json-template'
+import { loadLocalSnippet } from './template.js'
+import { render as renderJSON } from './json-template.js'
 
 export interface ArtifactOptions {
   readonly remoteSnippetList?: ReadonlyArray<RemoteSnippet>
@@ -292,7 +296,7 @@ export class Artifact extends EventEmitter {
     let nodeConfigList: ReadonlyArray<PossibleNodeConfigType>
 
     try {
-      provider = await getProvider(providerName, require(filePath))
+      provider = await getProvider(providerName, loadModuleSync(filePath))
       this.providerMap.set(providerName, provider)
     } catch (_err) /* istanbul ignore next -- @preserve */ {
       const err = _err

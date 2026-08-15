@@ -1,5 +1,5 @@
 import type { Client, ClientOptions } from 'minio'
-import type { CommandConfig } from '../types'
+import type { CommandConfig } from '../types.js'
 
 type UploadConfig = NonNullable<CommandConfig['upload']>
 

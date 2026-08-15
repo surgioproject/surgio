@@ -5,17 +5,17 @@ import {
   NodeTypeEnum,
   ShadowsocksJsonSubscribeProviderConfig,
   ShadowsocksNodeConfig,
-} from '../types'
-import { SurgioError } from '../utils'
-import relayableUrl from '../utils/relayable-url'
+} from '../types.js'
+import { SurgioError } from '../utils/index.js'
+import relayableUrl from '../utils/relayable-url.js'
 
-import Provider from './Provider'
+import Provider from './Provider.js'
 import {
   DefaultProviderRequestHeaders,
   GetNodeListFunction,
   GetNodeListV2Function,
   GetNodeListV2Result,
-} from './types'
+} from './types.js'
 
 export default class ShadowsocksJsonSubscribeProvider extends Provider {
   readonly #originalUrl: string

@@ -5,8 +5,11 @@ import {
   CLASH_META_SUPPORTED_VMESS_NETWORK,
   CLASH_META_SUPPORTED_VLESS_NETWORK,
   V2RAYN_SUPPORTED_VMESS_NETWORK,
-} from '../'
-import { VlessNetworkValidator, VmessNetworkValidator } from '../../validators'
+} from '../index.js'
+import {
+  VlessNetworkValidator,
+  VmessNetworkValidator,
+} from '../../validators/index.js'
 
 test('constant', () => {
   for (const network of V2RAYN_SUPPORTED_VMESS_NETWORK) {

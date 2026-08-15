@@ -8,7 +8,7 @@ import {
   convertSurgeScriptRuleToQuantumultXRewriteRule,
   getEngine,
   loadLocalSnippet,
-} from '../template'
+} from '../template.js'
 
 const templateEngine = getEngine(__dirname)
 const assetDir = join(__dirname, '../../../test/asset/')

@@ -1,7 +1,7 @@
 import { expect, test } from 'vitest'
 
-import { NodeTypeEnum } from '../../types'
-import * as quantumult from '../quantumult'
+import { NodeTypeEnum } from '../../types.js'
+import * as quantumult from '../quantumult.js'
 
 test('getQuantumultXNodes', () => {
   const schemeList = quantumult

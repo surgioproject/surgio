@@ -1,6 +1,6 @@
 import { beforeAll, expect, test } from 'vitest'
 
-import { addFlagMap, prependFlag, removeFlag } from '../flag'
+import { addFlagMap, prependFlag, removeFlag } from '../flag.js'
 
 beforeAll(() => {
   addFlagMap(/foobar/i, '🚀')

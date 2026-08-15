@@ -9,6 +9,9 @@ title: 快速上手
 - 文档中出现的命令如无特殊说明都只能运行在 macOS, Linux 或者 WSL 上
 :::
 
+Surgio 本身以 ESM 发布，但现有 CommonJS 规则仓库无需迁移，配置文件和 Provider
+仍可继续使用 `require('surgio')` 与 `module.exports`。
+
 ## 安装 Node.js
 
 :::tip 提示

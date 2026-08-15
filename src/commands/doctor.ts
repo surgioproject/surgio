@@ -1,6 +1,6 @@
 /* istanbul ignore file -- @preserve */
-import BaseCommand from '../base-command'
-import { generateDoctorInfo } from '../utils/doctor'
+import BaseCommand from '../base-command.js'
+import { generateDoctorInfo } from '../utils/doctor.js'
 
 class DoctorCommand extends BaseCommand<typeof DoctorCommand> {
   static description = '检查运行环境'

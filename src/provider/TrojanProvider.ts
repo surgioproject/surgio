@@ -5,19 +5,19 @@ import {
   SubscriptionUserinfo,
   TrojanNodeConfig,
   TrojanProviderConfig,
-} from '../types'
-import { fromBase64, SurgioError } from '../utils'
-import relayableUrl from '../utils/relayable-url'
-import { parseTrojanUri } from '../utils/trojan'
+} from '../types.js'
+import { fromBase64, SurgioError } from '../utils/index.js'
+import relayableUrl from '../utils/relayable-url.js'
+import { parseTrojanUri } from '../utils/trojan.js'
 
-import Provider from './Provider'
+import Provider from './Provider.js'
 import {
   DefaultProviderRequestHeaders,
   GetNodeListFunction,
   GetNodeListV2Function,
   GetNodeListV2Result,
   GetSubscriptionUserInfoFunction,
-} from './types'
+} from './types.js'
 
 export default class TrojanProvider extends Provider {
   readonly #originalUrl: string

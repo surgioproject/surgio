@@ -2,10 +2,9 @@ import os from 'os'
 import path from 'path'
 import { createLogger } from '@surgio/logger'
 import fs from 'fs-extra'
-import Redis from 'ioredis'
 
-import { TMP_FOLDER_NAME } from '../constant'
-import redis from '../redis'
+import { TMP_FOLDER_NAME } from '../constant/index.js'
+import redis from '../redis.js'
 
 const logger = createLogger({ service: 'surgio:utils:tmp-helper' })
 const tmpDir = path.join(os.tmpdir(), TMP_FOLDER_NAME)
@@ -66,7 +65,7 @@ export class TmpFile implements TmpHelper {
 }
 
 export class TmpRedis implements TmpHelper {
-  private redisClient: Redis
+  private redisClient: ReturnType<typeof redis.getRedis>
 
   constructor(
     public cacheKey: string,

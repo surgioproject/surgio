@@ -5,19 +5,19 @@ import {
   ShadowsocksNodeConfig,
   ShadowsocksSubscribeProviderConfig,
   SubscriptionUserinfo,
-} from '../types'
-import { fromBase64, SurgioError } from '../utils'
-import relayableUrl from '../utils/relayable-url'
-import { parseSSUri } from '../utils/ss'
+} from '../types.js'
+import { fromBase64, SurgioError } from '../utils/index.js'
+import relayableUrl from '../utils/relayable-url.js'
+import { parseSSUri } from '../utils/ss.js'
 
-import Provider from './Provider'
+import Provider from './Provider.js'
 import {
   DefaultProviderRequestHeaders,
   GetNodeListFunction,
   GetNodeListV2Function,
   GetNodeListV2Result,
   GetSubscriptionUserInfoFunction,
-} from './types'
+} from './types.js'
 
 export default class ShadowsocksSubscribeProvider extends Provider {
   public readonly udpRelay?: boolean

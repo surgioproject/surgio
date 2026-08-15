@@ -1,21 +1,21 @@
 import { createLogger } from '@surgio/logger'
 import _ from 'lodash'
 
-import { ERR_INVALID_FILTER } from '../constant'
+import { ERR_INVALID_FILTER } from '../constant/index.js'
 import {
   NodeFilterType,
   NodeTypeEnum,
   PossibleNodeConfigType,
   SortedNodeFilterType,
-} from '../types'
-import { applyFilter } from '../filters'
+} from '../types.js'
+import { applyFilter } from '../filters/index.js'
 
 import {
   checkNotNullish,
   getHostnameFromHost,
   getPortFromHost,
   pickAndFormatKeys,
-} from './index'
+} from './index.js'
 
 const logger = createLogger({ service: 'surgio:utils:clash' })
 

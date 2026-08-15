@@ -1,6 +1,6 @@
 import { expect, test } from 'vitest'
 
-import * as index from '../'
+import * as index from '../index.js'
 
 test('exports.utils', () => {
   expect(index.utils).toMatchSnapshot()

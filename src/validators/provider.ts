@@ -1,15 +1,15 @@
 import { z } from 'zod/v3'
 
-import { SupportProviderEnum } from '../types'
+import { SupportProviderEnum } from '../types.js'
 
 import {
   NodeFilterTypeValidator,
   SortedNodeFilterTypeValidator,
-} from './filter'
+} from './filter.js'
 import {
   AfterNodeListResponseHookValidator,
   OnErrorHookValidator,
-} from './hooks'
+} from './hooks.js'
 
 export const ProviderValidator = z.object({
   type: z.nativeEnum(SupportProviderEnum),

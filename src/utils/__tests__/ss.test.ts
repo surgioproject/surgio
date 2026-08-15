@@ -1,7 +1,7 @@
 import { expect, test } from 'vitest'
 
-import { NodeTypeEnum } from '../../types'
-import { parseSSUri, stringifySip003Options } from '../ss'
+import { NodeTypeEnum } from '../../types.js'
+import { parseSSUri, stringifySip003Options } from '../ss.js'
 
 test('parseSSUri', () => {
   expect(

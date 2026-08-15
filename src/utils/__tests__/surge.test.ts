@@ -1,7 +1,7 @@
 import { expect, test } from 'vitest'
 
-import { NodeTypeEnum, PossibleNodeConfigType } from '../../types'
-import * as surge from '../surge'
+import { NodeTypeEnum, PossibleNodeConfigType } from '../../types.js'
+import * as surge from '../surge.js'
 
 test('getSurgeExtendHeaders', () => {
   expect(

@@ -1,8 +1,8 @@
 import { z } from 'zod/v3'
 
-import { NodeTypeEnum } from '../types'
+import { NodeTypeEnum } from '../types.js'
 
-import { SimpleNodeConfigValidator } from './common'
+import { SimpleNodeConfigValidator } from './common.js'
 
 const WireguardPeerConfigValidator = z.object({
   publicKey: z.string(),

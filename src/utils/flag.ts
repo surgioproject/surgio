@@ -1,7 +1,7 @@
 import EmojiRegex from 'emoji-regex'
 import _ from 'lodash'
 
-import { FLAGS } from '../misc/flag_cn'
+import { FLAGS } from '../misc/flag_cn.js'
 
 const flagMap: Map<string | RegExp, string> = new Map()
 const customFlagMap: Map<string | RegExp, string> = new Map()

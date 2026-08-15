@@ -1,10 +1,10 @@
 import { beforeEach, expect, test, vi } from 'vitest'
 
-import { SupportProviderEnum } from '../../types'
-import * as config from '../../config'
+import { SupportProviderEnum } from '../../types.js'
+import * as config from '../../config.js'
 import V2rayNSubscribeProvider, {
   getV2rayNSubscription,
-} from '../V2rayNSubscribeProvider'
+} from '../V2rayNSubscribeProvider.js'
 
 beforeEach(() => {
   vi.restoreAllMocks()

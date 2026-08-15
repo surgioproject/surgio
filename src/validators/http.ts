@@ -1,12 +1,12 @@
 import { z } from 'zod/v3'
 
-import { NodeTypeEnum } from '../types'
+import { NodeTypeEnum } from '../types.js'
 
 import {
   PortValidator,
   SimpleNodeConfigValidator,
   TlsNodeConfigValidator,
-} from './common'
+} from './common.js'
 
 export const HttpNodeConfigValidator = SimpleNodeConfigValidator.extend({
   type: z.literal(NodeTypeEnum.HTTP),
