@@ -27,5 +27,5 @@ module.exports = defineSurgioConfig({
   ],
   urlBase: 'https://config.example.com/',
   // https://surgio.js.org/guide/custom-config.html#upload
-  // upload: {},
+  // upload: { backend: 'oss', bucket: 'example-bucket', region: 'cn-hangzhou' },
 })

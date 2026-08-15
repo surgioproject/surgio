@@ -46,20 +46,59 @@ export const QuantumultXConfigValidator = z.object({
   vmessAEAD: z.oboolean(),
 })
 
+const UploadCommonShape = {
+  prefix: z.ostring(),
+  bucket: z.string().min(1),
+  accessKeyId: z.ostring(),
+  accessKeySecret: z.ostring(),
+}
+
+export const OssUploadConfigValidator = z
+  .object({
+    ...UploadCommonShape,
+    backend: z.literal('oss').optional(),
+    region: z.string().min(1).default('cn-hangzhou'),
+    endpointType: z
+      .union([
+        z.literal('public'),
+        z.literal('internal'),
+        z.literal('accelerate'),
+      ])
+      .optional(),
+    endpoint: z.ostring(),
+  })
+  .strict()
+
+export const R2UploadConfigValidator = z
+  .object({
+    ...UploadCommonShape,
+    backend: z.literal('r2'),
+    accountId: z.string().regex(/^[a-f\d]{32}$/i),
+    jurisdiction: z.union([z.literal('eu'), z.literal('fedramp')]).optional(),
+  })
+  .strict()
+
+export const S3UploadConfigValidator = z
+  .object({
+    ...UploadCommonShape,
+    backend: z.literal('s3'),
+    endpoint: z.string().url(),
+    region: z.string().min(1),
+    pathStyle: z.oboolean(),
+  })
+  .strict()
+
+export const UploadConfigValidator = z.union([
+  OssUploadConfigValidator,
+  R2UploadConfigValidator,
+  S3UploadConfigValidator,
+])
+
 export const SurgioConfigValidator = z.object({
   artifacts: z.array(ArtifactValidator),
   remoteSnippets: z.array(RemoteSnippetValidator).optional(),
   urlBase: z.ostring(),
-  upload: z
-    .object({
-      prefix: z.ostring(),
-      region: z.ostring(),
-      endpoint: z.ostring(),
-      bucket: z.string(),
-      accessKeyId: z.string(),
-      accessKeySecret: z.string(),
-    })
-    .optional(),
+  upload: UploadConfigValidator.optional(),
   binPath: z
     .object({
       shadowsocksr: z.string().regex(/^\//),

@@ -14,7 +14,6 @@ const { defineSurgioConfig } = require('surgio');
 module.exports = defineSurgioConfig({
   artifacts: [],
   urlBase: 'https://example.com/',
-  upload: {},
   binPath: {},
 });
 ```
@@ -23,7 +22,6 @@ module.exports = defineSurgioConfig({
 module.exports = {
   artifacts: [],
   urlBase: 'https://example.com/',
-  upload: {},
   binPath: {},
 };
 ```
@@ -106,13 +104,97 @@ module.exports = {
 - 类型：`object`
 - 默认值：`undefined`
 
-上传阿里云 OSS 的配置。
+上传到对象存储的配置。支持阿里云 OSS、Cloudflare R2 和其它 S3 兼容服务。
 
 :::warning 注意
-- 若删除了某个 Artifact，该规则文件会从 OSS 中删除
-- 每次上传都会覆盖原有的文件，所以请不要更改 OSS 中的文件
-- 请不要通过 CDN 访问 OSS 内的文件，这样会导致更新不即时且很难删除
+- 若删除了某个 Artifact，该规则文件会从对象存储中删除
+- 每次上传都会覆盖原有的文件，所以请不要更改对象存储中的文件
+- 上传命令会同步 `prefix` 下的直接子对象，请不要在同一前缀中放置其它文件
 :::
+
+访问凭证可以写入配置，也可以通过环境变量
+`S3_BACKEND_ACCESS_KEY_ID` 和 `S3_BACKEND_ACCESS_KEY_SECRET` 提供。环境变量优先。
+
+### 阿里云 OSS
+
+省略 `backend` 时默认使用 OSS。推荐使用通用 Region ID，例如 `cn-hangzhou`、
+`ap-southeast-1` 或 `eu-central-1`。旧格式 `oss-cn-hangzhou` 仍然可用。
+
+```js
+module.exports = {
+  upload: {
+    backend: 'oss',
+    bucket: 'example-bucket',
+    region: 'cn-hangzhou',
+    endpointType: 'public',
+    prefix: '/',
+  },
+};
+```
+
+`endpointType` 支持以下值：
+
+- `public`：公网 S3 兼容 Endpoint，默认值
+- `internal`：同 Region 阿里云内网 Endpoint
+- `accelerate`：传输加速 Endpoint，使用前需要为 Bucket 开启传输加速
+
+也可以通过 `endpoint` 覆盖自动生成的地址。该字段只接受服务级 OSS Endpoint，
+例如 `https://oss-cn-hangzhou-internal.aliyuncs.com` 或其
+`s3.oss-...` 形式；已知的旧 Endpoint 会自动转换为 S3 兼容形式。
+
+:::danger 中国内地 CNAME 限制
+当前上传实现不支持绑定到单个 Bucket 的 CNAME Endpoint。若阿里云账号要求通过
+CNAME 访问中国内地 Bucket，则不能使用 `surgio upload`。请勿将 CNAME 填入
+`upload.endpoint`，配置校验会拒绝该地址。
+:::
+
+### Cloudflare R2
+
+```js
+module.exports = {
+  upload: {
+    backend: 'r2',
+    bucket: 'example-bucket',
+    accountId: '0123456789abcdef0123456789abcdef',
+    prefix: '/',
+  },
+};
+```
+
+欧盟或 FedRAMP Jurisdiction Bucket 需要额外设置 `jurisdiction`：
+
+```js
+upload: {
+  backend: 'r2',
+  bucket: 'example-bucket',
+  accountId: '0123456789abcdef0123456789abcdef',
+  jurisdiction: 'eu', // 也可以是 'fedramp'
+}
+```
+
+### 其它 S3 兼容服务
+
+```js
+module.exports = {
+  upload: {
+    backend: 's3',
+    bucket: 'example-bucket',
+    endpoint: 'https://objects.example.com',
+    region: 'us-east-1',
+    pathStyle: true,
+    prefix: '/',
+  },
+};
+```
+
+`endpoint` 必须是 HTTP 或 HTTPS URL，不能包含路径、认证信息、查询参数或锚点。
+`pathStyle` 默认值为 `true`；若服务要求 Virtual-hosted-style 请求，请设置为
+`false`。
+
+### upload.backend
+
+- 类型：`'oss' | 'r2' | 's3'`
+- 默认值：`oss`
 
 ### upload.prefix
 
@@ -130,26 +212,51 @@ module.exports = {
 ### upload.region
 
 - 类型：`string`
-- 默认值：`oss-cn-hangzhou`
+- OSS 默认值：`cn-hangzhou`
+- S3 后端：必须
+
+### upload.endpoint
+
+- 类型：`string`
+- S3 后端：必须
+
+### upload.accountId
+
+- 类型：`string`
+- R2 后端：必须
+
+Cloudflare Account ID，为 32 位十六进制字符串。
+
+### upload.jurisdiction
+
+- 类型：`'eu' | 'fedramp'`
+- 默认值：`undefined`
+
+仅用于 R2 Jurisdiction Bucket。
+
+### upload.pathStyle
+
+- 类型：`boolean`
+- S3 后端默认值：`true`
+
+仅用于通用 S3 后端。
 
 ### upload.accessKeyId
 
 - 类型：`string`
 - 默认值：`undefined`
-- <Badge text="必须" vertical="middle" />
 
 :::warning 注意
-请不要将该字段上传至公共仓库。
+推荐使用 `S3_BACKEND_ACCESS_KEY_ID` 环境变量，不要将该字段上传至公共仓库。
 :::
 
 ### upload.accessKeySecret
 
 - 类型：`string`
 - 默认值：`undefined`
-- <Badge text="必须" vertical="middle" />
 
 :::warning 注意
-请不要将该字段上传至公共仓库。
+推荐使用 `S3_BACKEND_ACCESS_KEY_SECRET` 环境变量，不要将该字段上传至公共仓库。
 :::
 
 ## binPath
