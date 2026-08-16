@@ -86,10 +86,10 @@ const PORT = process.env.PORT || 3000
 
 ![](/images/railway-22.png)
 
-## 配置 Redis 缓存
+## 配置 Upstash REST 缓存
 
 :::tip 此步骤可选，推荐配置
-[教程](/guide/advance/redis-cache.md)
+[Upstash REST 缓存教程](/guide/advance/upstash-cache.md)
 :::
 
 ## 查看用量

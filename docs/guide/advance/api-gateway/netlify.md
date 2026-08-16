@@ -72,11 +72,11 @@ module.exports.handler = gateway.createLambdaHandler();
 
 点击 __Deploy site__ 按钮，即可部署。
 
-## 配置 Redis 缓存
+## 配置 Upstash REST 缓存
 
 :::tip 此步骤可选，推荐配置
 
-[教程](/guide/advance/redis-cache.md)
+[Upstash REST 缓存教程](/guide/advance/upstash-cache.md)
 :::
 
 ## 查看用量

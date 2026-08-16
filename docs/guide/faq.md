@@ -9,10 +9,12 @@ sidebarDepth: 0
 - `RequestError: connect ECONNREFUSED`
 - `RequestError: connect ECONNRESET`
 
-命令行默认不会通过代理请求，请在命令行内运行如下代码重试。端口号请根据自己的情况进行更改。
+命令行默认不会通过代理请求。Node.js 22.21 及以上版本可以通过 `NODE_USE_ENV_PROXY=1` 让 Fetch 读取代理环境变量；端口号请根据自己的情况进行更改。
 
 ```bash
-export https_proxy=http://127.0.0.1:6152;export http_proxy=http://127.0.0.1:6152;export all_proxy=socks5://127.0.0.1:6153
+export NODE_USE_ENV_PROXY=1
+export HTTPS_PROXY=http://127.0.0.1:6152
+export HTTP_PROXY=http://127.0.0.1:6152
 ```
 
 ## 安装依赖时出现 `[warn]` 日志

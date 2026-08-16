@@ -70,19 +70,13 @@ const PORT = process.env.PORT || 3000;
 
 你可以在这里生成一个 Zeabur 的域名，也可以使用自己的域名。
 
-## 配置 Redis 缓存
+## 配置 Upstash REST 缓存
 
 :::tip
 此步骤可选，推荐配置
 :::
 
-推荐直接使用 Zeabur 提供的 Redis 服务。
-
-### 新建 Redis 实例
-
-<video src="/images/zeabur-redis-create.mp4" controls style="width: 100%;" preload="none"></video>
-
-实例创建成功后，Zeabur 会自动将 Redis 的连接信息添加到项目的环境变量中。后面请参考 [Redis 缓存](/guide/advance/redis-cache.md) 进行配置。需要注意的是，Zeabur 注入的环境变量是 `REDIS_URI`。
+Surgio 不再支持 Redis TCP 连接。请改用 [Upstash REST 缓存](/guide/advance/upstash-cache.md)，并配置 Upstash REST URL 与 Token。
 
 ## 使用
 

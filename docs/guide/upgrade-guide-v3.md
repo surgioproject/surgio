@@ -161,11 +161,11 @@ Surgio 提供了下面的方法来支持 IDE 类型提示。他们的使用是�
 
 #### httpClient
 
-`httpClient` 是一个 [Got](https://github.com/sindresorhus/got) 实例，你可以使用它来发起 HTTP 请求。Surgio 内置了代理环境变量识别，如果你已经设置了 `http_proxy` 或 `https_proxy` 环境变量，那么 `httpClient` 会自动使用代理。
+Surgio v3 的 `httpClient` 是一个 Got 实例。当前版本已改为基于 [ky](https://github.com/sindresorhus/ky) 的跨运行时封装；`get` 返回 `{ body, headers, statusCode }`，Node.js 与 Cloudflare Worker 共用 Fetch、超时和重试逻辑。
 
 #### cache
 
-`cache` 是一个 [cache-manager](https://github.com/node-cache-manager/node-cache-manager) 实例，你可以使用它来缓存数据。假如你开启了 Redis 缓存，那么 `cache` 会自动使用 Redis，否则会使用内存缓存。
+Surgio v3 的 `cache` 是一个 cache-manager 实例，当时可以配置 Redis，否则使用内存缓存。当前版本已改用统一的 TtlCache，并移除了 Redis TCP 支持。
 
 - `cache.get`
 - `cache.set`

@@ -34,9 +34,14 @@ export default {
           },
           {
             text: '客户端规则维护指南',
-            children: ['/guide/client/sing-box', '/guide/client/clash', '/guide/client/examples'],
+            children: [
+              '/guide/client/sing-box',
+              '/guide/client/clash',
+              '/guide/client/examples',
+            ],
           },
           '/guide/api',
+          '/guide/worker',
           '/guide/cli',
           '/guide/faq',
           '/guide/upgrade-guide-v2',
@@ -62,13 +67,13 @@ export default {
               '/guide/advance/api-gateway/docker',
             ],
           },
-          '/guide/advance/redis-cache',
+          '/guide/advance/upstash-cache',
           {
             link: 'https://royli.dev/blog/2019/better-proxy-rules-for-apple-services',
-            text: '苹果服务的连接策略推荐'
-          }
+            text: '苹果服务的连接策略推荐',
+          },
         ],
       },
     ],
   }),
-} as Theme;
+} as Theme

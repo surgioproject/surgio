@@ -596,18 +596,17 @@ module.exports = {
 - 类型：`object`
 - 默认值：`undefined`
 
-定义缓存的实现方式。默认情况下，Surgio 将缓存持久化到系统临时目录中的文件；也可以使用 Redis 或 Upstash REST。所有实现共享同一套 TTL 行为，TTL 的单位为毫秒。
+定义缓存的实现方式。默认情况下，Surgio 将缓存持久化到系统临时目录中的文件；Serverless 环境可以使用 Upstash REST，Cloudflare Worker 可以注入 KV binding。所有实现共享同一套 TTL 行为，TTL 的单位为毫秒。
 
 ### cache.type
 
 - 类型：`string`
 - 默认值：`filesystem`
-- 可选值：`filesystem`, `redis`, `upstash`, `default`
+- 可选值：`filesystem`, `upstash`, `default`
 
 定义：
 
 - `filesystem`：使用本地文件存储，也是默认值
-- `redis`：使用 Redis TCP 连接
 - `upstash`：使用 Upstash Redis REST 接口
 - `default`：`filesystem` 的兼容别名
 
@@ -627,16 +626,6 @@ module.exports = {
   },
 };
 ```
-
-### cache.redisUrl
-
-- 类型：`string`
-- 默认值：`undefined`
-
-假如 `cache.type` 为 `redis`，则需要指定 Redis 的连接地址。这个属性支持的格式有：
-
-- `redis://xxx`
-- `rediss://xxx` (TLS)
 
 ### Upstash REST
 

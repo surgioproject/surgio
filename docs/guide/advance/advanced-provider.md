@@ -17,7 +17,7 @@ sidebarDepth: 2
 
 1. 请求订阅的客户端 UserAgent 会暴露在异步函数的 `customParams` 中，你可以通过 `customParams.requestUserAgent` 来获取
 2. 请求订阅的 URL 参数会暴露在异步函数的 `customParams` 中，你可以通过 `customParams.xxx` 来获取（它们的值都是字符串）
-3. Surgio 内置了 `httpClient` 工具方法，`httpClient` 是一个 [Got](https://github.com/sindresorhus/got) 实例，你可以使用它来发起 HTTP 请求
+3. Surgio 内置了基于 [ky](https://github.com/sindresorhus/ky) 的 `httpClient` 工具方法，可在 Node.js 和 Cloudflare Worker 中使用同一套 Fetch 请求逻辑
 4. Surgio 内置了一些判断客户端 UserAgent 的工具方法（v3.2.0 新增）
 
 ## 例子 🌰
