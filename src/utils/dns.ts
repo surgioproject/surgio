@@ -1,31 +1,23 @@
 import { promises as dns, RecordWithTtl } from 'dns'
 import { createLogger } from '@surgio/logger'
 import Bluebird from 'bluebird'
-import { createKeyv } from 'cacheable'
-import { createCache } from 'cache-manager'
-import ms from 'ms'
 
 import { getNetworkResolveTimeout } from './env-flag.js'
 
-const domainCache = createCache({
-  stores: [createKeyv({ ttl: ms('1d'), lruSize: 5000 })],
-})
 const logger = createLogger({ service: 'surgio:utils:dns' })
+const inFlightResolutions = new Map<
+  string,
+  Promise<ReadonlyArray<RecordWithTtl>>
+>()
 
 export const resolveDomain = async (
   domain: string,
   timeout: number = getNetworkResolveTimeout(),
 ): Promise<ReadonlyArray<string>> => {
-  const cached = await domainCache.get<string[]>(domain)
-
-  if (cached) {
-    return cached
-  }
-
   logger.debug(`try to resolve domain ${domain}`)
   const now = Date.now()
   const records = await Bluebird.race<ReadonlyArray<RecordWithTtl>>([
-    resolve4And6(domain),
+    resolve4And6Once(domain),
     Bluebird.delay(timeout).then(() => []),
   ])
   logger.debug(
@@ -35,13 +27,32 @@ export const resolveDomain = async (
   )
 
   if (records.length) {
-    const address = records.map((item) => item.address)
-    await domainCache.set(domain, address, records[0].ttl) // ttl is in seconds
-    return address
+    return records.map((item) => item.address)
   }
 
   /* istanbul ignore next -- @preserve */
   return []
+}
+
+const resolve4And6Once = (
+  domain: string,
+): Promise<ReadonlyArray<RecordWithTtl>> => {
+  const existing = inFlightResolutions.get(domain)
+  if (existing) {
+    return existing
+  }
+
+  const pending = resolve4And6(domain)
+  inFlightResolutions.set(domain, pending)
+
+  const removePending = () => {
+    if (inFlightResolutions.get(domain) === pending) {
+      inFlightResolutions.delete(domain)
+    }
+  }
+  void pending.then(removePending, removePending)
+
+  return pending
 }
 
 export const resolve4And6 = async (

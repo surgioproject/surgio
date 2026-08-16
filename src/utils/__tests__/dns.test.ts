@@ -45,3 +45,40 @@ test('resolveDomain timeout', async () => {
   const ips = await resolveDomain('timeout.example.com', 0)
   expect(ips.length).toBe(0)
 })
+
+test('coalesces concurrent resolutions for the same domain', async () => {
+  let resolveIpv4:
+    ((records: Array<{ address: string; ttl: number }>) => void) | undefined
+  const resolve4 = vi.spyOn(promises, 'resolve4').mockImplementation(
+    () =>
+      new Promise((resolve) => {
+        resolveIpv4 = resolve
+      }),
+  )
+  const resolve6 = vi.spyOn(promises, 'resolve6').mockResolvedValue([])
+
+  const first = resolveDomain('concurrent.example.com')
+  const second = resolveDomain('concurrent.example.com')
+  await vi.waitFor(() => expect(resolve4).toHaveBeenCalledTimes(1))
+  resolveIpv4?.([{ address: '127.0.0.3', ttl: 100 }])
+
+  await expect(Promise.all([first, second])).resolves.toEqual([
+    ['127.0.0.3'],
+    ['127.0.0.3'],
+  ])
+  expect(resolve4).toHaveBeenCalledTimes(1)
+  expect(resolve6).toHaveBeenCalledTimes(1)
+})
+
+test('queries the resolver again after an earlier resolution completes', async () => {
+  const resolve4 = vi
+    .spyOn(promises, 'resolve4')
+    .mockResolvedValue([{ address: '127.0.0.4', ttl: 100 }])
+  const resolve6 = vi.spyOn(promises, 'resolve6').mockResolvedValue([])
+
+  await resolveDomain('repeated.example.com')
+  await resolveDomain('repeated.example.com')
+
+  expect(resolve4).toHaveBeenCalledTimes(2)
+  expect(resolve6).toHaveBeenCalledTimes(2)
+})
