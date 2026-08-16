@@ -1,6 +1,7 @@
 import { expect, test } from 'vitest'
 
 import {
+  CacheConfigValidator,
   ClashCoreValidator,
   SurgioConfigValidator,
   UploadConfigValidator,
@@ -105,6 +106,44 @@ test('rejects missing and cross-backend fields', () => {
       backend: 'oss',
       bucket: 'example-bucket',
       pathStyle: false,
+    }).success,
+  ).toBe(false)
+})
+
+test('validates filesystem and legacy default cache configs', () => {
+  expect(CacheConfigValidator.parse({})).toEqual({})
+  expect(
+    CacheConfigValidator.parse({
+      type: 'filesystem',
+      directory: '/tmp/surgio-cache',
+    }),
+  ).toEqual({
+    type: 'filesystem',
+    directory: '/tmp/surgio-cache',
+  })
+  expect(CacheConfigValidator.safeParse({ type: 'default' }).success).toBe(true)
+})
+
+test('validates backend-specific Redis and Upstash cache configs', () => {
+  expect(
+    CacheConfigValidator.safeParse({
+      type: 'redis',
+      redisUrl: 'rediss://redis.example.com:6379',
+    }).success,
+  ).toBe(true)
+  expect(
+    CacheConfigValidator.safeParse({
+      type: 'upstash',
+      upstashRestUrl: 'https://example.upstash.io',
+      upstashRestToken: 'token',
+    }).success,
+  ).toBe(true)
+
+  expect(CacheConfigValidator.safeParse({ type: 'redis' }).success).toBe(false)
+  expect(
+    CacheConfigValidator.safeParse({
+      type: 'filesystem',
+      redisUrl: 'redis://localhost:6379',
     }).success,
   ).toBe(false)
 })

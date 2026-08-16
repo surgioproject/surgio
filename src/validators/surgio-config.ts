@@ -95,6 +95,28 @@ export const UploadConfigValidator = z.union([
   S3UploadConfigValidator,
 ])
 
+export const CacheConfigValidator = z.union([
+  z
+    .object({
+      type: z.union([z.literal('default'), z.literal('filesystem')]).optional(),
+      directory: z.string().min(1).optional(),
+    })
+    .strict(),
+  z
+    .object({
+      type: z.literal('redis'),
+      redisUrl: z.string().regex(/^rediss?:\/\//),
+    })
+    .strict(),
+  z
+    .object({
+      type: z.literal('upstash'),
+      upstashRestUrl: z.string().url().optional(),
+      upstashRestToken: z.string().min(1).optional(),
+    })
+    .strict(),
+])
+
 export const SurgioConfigValidator = z.object({
   artifacts: z.array(ArtifactValidator),
   remoteSnippets: z.array(RemoteSnippetValidator).optional(),
@@ -143,13 +165,5 @@ export const SurgioConfigValidator = z.object({
     .optional(),
   customParams: z.record(z.any()).optional(),
   analytics: z.oboolean(),
-  cache: z
-    .object({
-      type: z.union([z.literal('redis'), z.literal('default')]).optional(),
-      redisUrl: z
-        .string()
-        .regex(/rediss?/)
-        .optional(),
-    })
-    .optional(),
+  cache: CacheConfigValidator.optional(),
 })

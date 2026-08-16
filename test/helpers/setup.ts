@@ -1,7 +1,25 @@
+import os from 'node:os'
+import path from 'node:path'
 import './stub-axios.js'
 import { transports } from '@surgio/logger'
+import fs from 'fs-extra'
+import { afterAll } from 'vitest'
 
 process.env.NODE_ENV = 'development'
+
+const testCacheDirectory = path.join(
+  os.tmpdir(),
+  'surgio-vitest-cache',
+  `${process.pid}-${process.env.VITEST_POOL_ID ?? '0'}-${
+    process.env.VITEST_WORKER_ID ?? '0'
+  }`,
+)
+fs.removeSync(testCacheDirectory)
+process.env.SURGIO_CACHE_DIRECTORY = testCacheDirectory
+
+afterAll(async () => {
+  await fs.remove(testCacheDirectory)
+})
 
 // Aggregate imports attach one Surgio module logger to the shared transport.
 transports.console.setMaxListeners(100)

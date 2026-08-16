@@ -41,6 +41,11 @@
       "module-sync": "./build/config.js",
       "default": "./build/config.js"
     },
+    "./cache": {
+      "types": "./build/cache/index.d.ts",
+      "module-sync": "./build/cache/index.js",
+      "default": "./build/cache/index.js"
+    },
     "./index": "./build/index.js",
     "./index.js": "./build/index.js",
     "./internal.js": "./build/internal.js",
@@ -49,6 +54,7 @@
     "./constant.js": "./build/constant/index.js",
     "./utils.js": "./build/utils/index.js",
     "./config.js": "./build/config.js",
+    "./cache.js": "./build/cache/index.js",
     "./build/*.js": "./build/*.js",
     "./build/*": "./build/*.js",
     "./package.json": "./package.json"
@@ -69,7 +75,7 @@
   },
   "homepage": "https://surgio.js.org",
   "scripts": {
-    "dev": "pnpm run build -- --watch",
+    "dev": "pnpm run build --watch",
     "test": "run-s build test:types test:lint test:unit test:cli",
     "test:types": "tsc --noEmit && tsc6 --noEmit -p test/fixture/typescript-consumer/tsconfig.json && tsc --noEmit -p test/fixture/typescript-consumer/tsconfig.json",
     "test:lint": "eslint .",
@@ -109,16 +115,15 @@
   "dependencies": {
     "@babel/parser": "^8.0.4",
     "@brillout/import": "^0.2.6",
-    "@keyv/redis": "^5.1.6",
+    "@keyv/serialize": "^1.1.1",
     "@oclif/core": "^4.13.3",
     "@oclif/plugin-help": "^6.2.58",
     "@royli/hygen": "^6.2.0",
     "@surgio/eslint-config-surgio": "^2.1.0",
     "@surgio/logger": "^1.4.2",
+    "@upstash/redis": "^1.38.2",
     "bluebird": "^3.7.2",
     "bytes": "^3.1.2",
-    "cache-manager": "^7.2.9",
-    "cacheable": "^2.5.0",
     "chalk": "^6.0.0",
     "change-case": "^5.4.4",
     "check-node-version": "^4.2.1",
@@ -136,7 +141,6 @@
     "inquirer": "^14.0.2",
     "ioredis": "^6.0.0",
     "is-gzip": "^2.0.0",
-    "keyv": "^5.6.0",
     "lodash": "^4.18.1",
     "micromatch": "^4.0.8",
     "minio": "^8.0.7",

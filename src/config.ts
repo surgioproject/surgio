@@ -9,7 +9,6 @@ import {
   PROXY_TEST_INTERVAL,
   PROXY_TEST_URL,
 } from './constant/index.js'
-import redis from './redis.js'
 import { CommandConfig, CommandConfigBeforeNormalize } from './types.js'
 import { SurgioConfigValidator } from './validators/index.js'
 import { addFlagMap } from './utils/flag.js'
@@ -128,7 +127,7 @@ export const normalizeConfig = (
     checkHostname: false,
     resolveHostname: false,
     cache: {
-      type: 'default',
+      type: 'filesystem',
     },
     gateway: {
       passRequestUserAgent: false,
@@ -151,15 +150,6 @@ export const normalizeConfig = (
     config.publicUrl = urlObject.origin + '/'
   } else {
     config.publicUrl = '/'
-  }
-
-  /* istanbul ignore next -- @preserve */
-  if (config.cache && config.cache.type === 'redis') {
-    if (!config.cache.redisUrl) {
-      throw new Error('缓存配置错误，请检查 cache.redisUrl 配置')
-    }
-
-    redis.createRedis(config.cache.redisUrl)
   }
 
   /* istanbul ignore next -- @preserve */

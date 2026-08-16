@@ -3,7 +3,7 @@ import { Command, Flags, Interfaces, Config } from '@oclif/core'
 import { transports } from '@surgio/logger'
 import ora from 'ora'
 
-import redis from './redis.js'
+import { unifiedCache } from './cache/singleton.js'
 import { CommandConfig } from './types.js'
 import { loadConfig } from './config.js'
 import { errorHandler } from './utils/error-helper.js'
@@ -64,7 +64,7 @@ abstract class BaseCommand<T extends typeof Command> extends Command {
   }
 
   protected async cleanup(): Promise<void> {
-    await redis.destroyRedis()
+    await unifiedCache.close()
     if (this.ora.isSpinning) {
       this.ora.succeed()
     }

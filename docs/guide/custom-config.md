@@ -596,17 +596,37 @@ module.exports = {
 - 类型：`object`
 - 默认值：`undefined`
 
-定义缓存的实现方式。默认情况下使用本地缓存文件和内存的方式存储。如果你使用了 API 网关，非常推荐开启 Redis 缓存，可以有效降低冷启动的时间。
+定义缓存的实现方式。默认情况下，Surgio 将缓存持久化到系统临时目录中的文件；也可以使用 Redis 或 Upstash REST。所有实现共享同一套 TTL 行为，TTL 的单位为毫秒。
 
 ### cache.type
 
 - 类型：`string`
-- 默认值：`default`
-- 可选值：`default`, `redis`
+- 默认值：`filesystem`
+- 可选值：`filesystem`, `redis`, `upstash`, `default`
 
 定义：
-- `default`：使用本地缓存文件和内存的方式存储
-- `redis`: 使用 Redis 的方式存储
+
+- `filesystem`：使用本地文件存储，也是默认值
+- `redis`：使用 Redis TCP 连接
+- `upstash`：使用 Upstash Redis REST 接口
+- `default`：`filesystem` 的兼容别名
+
+### cache.directory
+
+- 类型：`string`
+- 默认值：系统临时目录中的 Surgio cache 目录
+
+仅适用于 `filesystem`。可以用它指定缓存文件的存储目录：
+
+```js
+module.exports = {
+  // ...
+  cache: {
+    type: 'filesystem',
+    directory: '/var/cache/surgio',
+  },
+};
+```
 
 ### cache.redisUrl
 
@@ -617,6 +637,52 @@ module.exports = {
 
 - `redis://xxx`
 - `rediss://xxx` (TLS)
+
+### Upstash REST
+
+将 `cache.type` 设置为 `upstash` 后，Surgio 优先读取配置中的 `upstashRestUrl` 和 `upstashRestToken`，未配置的字段再从 `UPSTASH_REDIS_REST_URL` 和 `UPSTASH_REDIS_REST_TOKEN` 环境变量读取。
+
+建议通过环境变量提供凭据：
+
+```js
+module.exports = {
+  // ...
+  cache: {
+    type: 'upstash',
+  },
+};
+```
+
+也可以显式配置 Upstash 实例：
+
+```js
+module.exports = {
+  // ...
+  cache: {
+    type: 'upstash',
+    upstashRestUrl: 'https://example.upstash.io',
+    upstashRestToken: process.env.MY_UPSTASH_TOKEN,
+  },
+};
+```
+
+### Cloudflare KV binding
+
+Cloudflare KV binding 是运行时对象，不写入 `surgio.conf.js`。在首次缓存访问前显式注入：
+
+```js
+import { env } from 'cloudflare:workers';
+import { cache } from 'surgio';
+import { createCloudflareKvStore } from 'surgio/cache';
+
+cache.useStore(createCloudflareKvStore(env.SURGIO_CACHE));
+```
+
+Cloudflare KV 是最终一致的存储：其他区域可能在最多约 60 秒内读到旧值，`keys` 和 `reset` 也受相同限制。Cloudflare 的物理过期最短为 60 秒；Surgio 会在缓存记录中保存精确的逻辑过期时间，因此不会返回逻辑上已经过期的值。
+
+:::warning 注意
+Cloudflare KV 适配器只代表 Surgio 的缓存模块可以使用 KV binding，并不表示 Surgio 的其它 Node.js 和文件系统功能可以直接运行在任意 Cloudflare Worker 环境中。
+:::
 
 ## 环境变量
 

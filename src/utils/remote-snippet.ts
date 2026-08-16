@@ -14,7 +14,6 @@ import {
   getRemoteSnippetCacheMaxage,
 } from './env-flag.js'
 import httpClient from './http-client.js'
-import { createTmpFactory } from './tmp-helper.js'
 
 import { toMD5 } from './index.js'
 
@@ -134,9 +133,6 @@ export const loadRemoteSnippetList = async (
   remoteSnippetList: ReadonlyArray<RemoteSnippetConfig>,
   cacheSnippet = true,
 ): Promise<ReadonlyArray<RemoteSnippet>> => {
-  const cacheType = await unifiedCache.getType()
-  const useLocalFile = cacheSnippet && cacheType === 'default'
-
   function load(url: string): Promise<string> {
     return httpClient
       .get(url)
@@ -156,35 +152,10 @@ export const loadRemoteSnippetList = async (
       const fileMd5 = toMD5(item.url)
       const isSurgioSnippet = item.surgioSnippet
 
-      if (useLocalFile) {
-        const tmpFactory = createTmpFactory(
-          CACHE_KEYS.RemoteSnippets,
-          'default',
-        )
-        const tmp = tmpFactory(fileMd5, getRemoteSnippetCacheMaxage())
-        const tmpContent = await tmp.getContent()
-        let snippet: string
-
-        if (tmpContent) {
-          snippet = tmpContent
-        } else {
-          snippet = await load(item.url)
-          await tmp.setContent(snippet)
-        }
-
-        return {
-          main: (...args: string[]) =>
-            isSurgioSnippet
-              ? renderSurgioSnippet(snippet, args)
-              : addProxyToSurgeRuleSet(snippet, args[0]),
-          name: item.name,
-          url: item.url,
-          text: snippet, // 原始内容
-        }
-      } else {
-        const cacheKey = `${CACHE_KEYS.RemoteSnippets}:${fileMd5}`
-        const cachedSnippet = await unifiedCache.get<string>(cacheKey)
-        const snippet: string = cachedSnippet
+      const cacheKey = `${CACHE_KEYS.RemoteSnippets}:${fileMd5}`
+      const cachedSnippet = await unifiedCache.get<string>(cacheKey)
+      const snippet: string =
+        cachedSnippet !== undefined
           ? cachedSnippet
           : await load(item.url)
               .then((res) => {
@@ -199,15 +170,14 @@ export const loadRemoteSnippetList = async (
               })
               .then(([, res]) => res)
 
-        return {
-          main: (...args: string[]) =>
-            isSurgioSnippet
-              ? renderSurgioSnippet(snippet, args)
-              : addProxyToSurgeRuleSet(snippet, args[0]),
-          name: item.name,
-          url: item.url,
-          text: snippet, // 原始内容
-        }
+      return {
+        main: (...args: string[]) =>
+          isSurgioSnippet
+            ? renderSurgioSnippet(snippet, args)
+            : addProxyToSurgeRuleSet(snippet, args[0]),
+        name: item.name,
+        url: item.url,
+        text: snippet, // 原始内容
       }
     },
     {
