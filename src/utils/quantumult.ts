@@ -1,4 +1,3 @@
-import { createLogger } from '@surgio/logger'
 import _ from 'lodash'
 
 import { QUANTUMULT_X_SUPPORTED_VMESS_NETWORK } from '../constant/index.js'
@@ -9,10 +8,11 @@ import {
   SortedNodeFilterType,
 } from '../types.js'
 import { applyFilter } from '../filters/index.js'
+import { consoleRuntimeLogger } from '../runtime/logger.js'
 
-import { getHeader, pickAndFormatStringList } from './index.js'
+import { getHeader, pickAndFormatStringList } from './portable.js'
 
-const logger = createLogger({ service: 'surgio:utils:quantumult' })
+const logger = consoleRuntimeLogger
 
 /**
  * @see https://github.com/crossutility/Quantumult-X/blob/master/sample.conf

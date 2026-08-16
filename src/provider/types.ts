@@ -1,5 +1,3 @@
-import { IncomingHttpHeaders } from 'http'
-
 import { PossibleNodeConfigType, SubscriptionUserinfo } from '../types.js'
 
 import ClashProvider from './ClashProvider.js'
@@ -11,6 +9,8 @@ import SsdProvider from './SsdProvider.js'
 import TrojanProvider from './TrojanProvider.js'
 import V2rayNSubscribeProvider from './V2rayNSubscribeProvider.js'
 
+import type { RuntimeHeaders } from '../runtime/types.js'
+
 export type PossibleProviderType =
   | ShadowsocksJsonSubscribeProvider
   | ShadowsocksSubscribeProvider
@@ -21,11 +21,11 @@ export type PossibleProviderType =
   | SsdProvider
   | TrojanProvider
 
-export type DefaultProviderRequestHeaders = IncomingHttpHeaders
+export type DefaultProviderRequestHeaders = RuntimeHeaders
 
 export type GetNodeListParams = Record<string, unknown> & {
   requestUserAgent?: string
-  requestHeaders?: IncomingHttpHeaders
+  requestHeaders?: RuntimeHeaders
 }
 
 export type GetNodeListFunction = (

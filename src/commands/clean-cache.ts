@@ -5,8 +5,8 @@ import { ux } from '@oclif/core'
 import fs from 'fs-extra'
 
 import BaseCommand from '../base-command.js'
+import { cleanCaches } from '../cache/singleton.js'
 import { TMP_FOLDER_NAME } from '../constant/index.js'
-import { cleanCaches } from '../utils/cache.js'
 
 class CleanCacheCommand extends BaseCommand<typeof CleanCacheCommand> {
   static description = '清除缓存'

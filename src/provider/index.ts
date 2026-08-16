@@ -1,5 +1,8 @@
 import { PossibleProviderConfigType, SupportProviderEnum } from '../types.js'
 import { ProviderDefineFunction } from '../configurables.js'
+import { getDefaultProviderRuntimeContext } from '../runtime/provider-context.js'
+import { getNetworkClashUA } from '../utils/env-flag.js'
+import './node-runtime.js'
 
 import ClashProvider from './ClashProvider.js'
 import CustomProvider from './CustomProvider.js'
@@ -9,6 +12,7 @@ import ShadowsocksSubscribeProvider from './ShadowsocksSubscribeProvider.js'
 import SsdProvider from './SsdProvider.js'
 import TrojanProvider from './TrojanProvider.js'
 import V2rayNSubscribeProvider from './V2rayNSubscribeProvider.js'
+import { createProvider } from './create-provider.js'
 import { PossibleProviderType } from './types.js'
 import Provider from './Provider.js'
 
@@ -25,6 +29,7 @@ export {
 
 export type { Provider }
 export type * from './types.js'
+export { createProvider }
 
 export async function getProvider(
   name: string,
@@ -34,32 +39,18 @@ export async function getProvider(
     config = await config()
   }
 
-  switch (config.type) {
-    case SupportProviderEnum.ShadowsocksJsonSubscribe:
-      return new ShadowsocksJsonSubscribeProvider(name, config)
+  const provider = await createProvider(
+    name,
+    config,
+    getDefaultProviderRuntimeContext(),
+  )
 
-    case SupportProviderEnum.ShadowsocksSubscribe:
-      return new ShadowsocksSubscribeProvider(name, config)
-
-    case SupportProviderEnum.ShadowsocksrSubscribe:
-      return new ShadowsocksrSubscribeProvider(name, config)
-
-    case SupportProviderEnum.Custom:
-      return new CustomProvider(name, config)
-
-    case SupportProviderEnum.V2rayNSubscribe:
-      return new V2rayNSubscribeProvider(name, config)
-
-    case SupportProviderEnum.Clash:
-      return new ClashProvider(name, config)
-
-    case SupportProviderEnum.Ssd:
-      return new SsdProvider(name, config)
-
-    case SupportProviderEnum.Trojan:
-      return new TrojanProvider(name, config)
-
-    default:
-      throw new Error(`Unsupported provider type: ${(config as any).type}`)
+  if (
+    provider.type === SupportProviderEnum.Clash &&
+    provider.config.requestUserAgent === 'clash'
+  ) {
+    provider.config.requestUserAgent = getNetworkClashUA()
   }
+
+  return provider
 }

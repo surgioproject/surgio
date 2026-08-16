@@ -6,7 +6,8 @@ import {
   TrojanNodeConfig,
   TrojanProviderConfig,
 } from '../types.js'
-import { fromBase64, SurgioError } from '../utils/index.js'
+import { SurgioError } from '../utils/errors.js'
+import { fromBase64 } from '../utils/portable.js'
 import relayableUrl from '../utils/relayable-url.js'
 import { parseTrojanUri } from '../utils/trojan.js'
 
@@ -18,6 +19,8 @@ import {
   GetNodeListV2Result,
   GetSubscriptionUserInfoFunction,
 } from './types.js'
+
+import type { ProviderRuntimeContext } from '../runtime/types.js'
 
 export default class TrojanProvider extends Provider {
   readonly #originalUrl: string
@@ -71,6 +74,7 @@ export default class TrojanProvider extends Provider {
       tls13: this.tls13,
       requestHeaders,
       cacheKey,
+      runtime: this.runtime,
     })
 
     if (subscriptionUserInfo) {
@@ -93,6 +97,7 @@ export default class TrojanProvider extends Provider {
       tls13: this.tls13,
       requestHeaders,
       cacheKey,
+      runtime: this.runtime,
     })
 
     if (this.config.hooks?.afterNodeListResponse) {
@@ -124,6 +129,7 @@ export default class TrojanProvider extends Provider {
       tls13: this.tls13,
       requestHeaders,
       cacheKey,
+      runtime: this.runtime,
     })
 
     if (this.config.hooks?.afterNodeListResponse) {
@@ -150,12 +156,14 @@ export const getTrojanSubscription = async ({
   tls13,
   requestHeaders,
   cacheKey,
+  runtime,
 }: {
   url: string
   udpRelay?: boolean
   tls13?: boolean
   requestHeaders: DefaultProviderRequestHeaders
   cacheKey: string
+  runtime?: ProviderRuntimeContext
 }): Promise<{
   readonly nodeList: Array<TrojanNodeConfig>
   readonly subscriptionUserInfo?: SubscriptionUserinfo
@@ -166,13 +174,14 @@ export const getTrojanSubscription = async ({
     url,
     requestHeaders,
     cacheKey,
+    runtime,
   )
   const config = fromBase64(response.body)
   const nodeList = config
     .split('\n')
     .filter((item) => !!item && item.startsWith('trojan://'))
     .map((item): TrojanNodeConfig => {
-      const nodeConfig = parseTrojanUri(item)
+      const nodeConfig = parseTrojanUri(item, runtime?.logger)
 
       return {
         ...nodeConfig,

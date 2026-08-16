@@ -124,13 +124,7 @@ test('validates filesystem and legacy default cache configs', () => {
   expect(CacheConfigValidator.safeParse({ type: 'default' }).success).toBe(true)
 })
 
-test('validates backend-specific Redis and Upstash cache configs', () => {
-  expect(
-    CacheConfigValidator.safeParse({
-      type: 'redis',
-      redisUrl: 'rediss://redis.example.com:6379',
-    }).success,
-  ).toBe(true)
+test('validates the Upstash cache config and rejects removed Redis configs', () => {
   expect(
     CacheConfigValidator.safeParse({
       type: 'upstash',
@@ -139,7 +133,12 @@ test('validates backend-specific Redis and Upstash cache configs', () => {
     }).success,
   ).toBe(true)
 
-  expect(CacheConfigValidator.safeParse({ type: 'redis' }).success).toBe(false)
+  expect(
+    CacheConfigValidator.safeParse({
+      type: 'redis',
+      redisUrl: 'redis://localhost:6379',
+    }).success,
+  ).toBe(false)
   expect(
     CacheConfigValidator.safeParse({
       type: 'filesystem',

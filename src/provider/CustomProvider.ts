@@ -6,7 +6,7 @@ import {
   PossibleNodeConfigType,
   VmessNodeConfig,
 } from '../types.js'
-import { SurgioError } from '../utils/index.js'
+import { SurgioError } from '../utils/errors.js'
 import {
   WireguardNodeConfigValidator,
   ShadowsocksNodeConfigValidator,

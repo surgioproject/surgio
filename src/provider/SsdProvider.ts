@@ -1,5 +1,4 @@
 import assert from 'assert'
-import { createLogger } from '@surgio/logger'
 import bytes from 'bytes'
 import { z } from 'zod/v3'
 
@@ -9,7 +8,9 @@ import {
   SsdProviderConfig,
   SubscriptionUserinfo,
 } from '../types.js'
-import { decodeStringList, fromBase64, SurgioError } from '../utils/index.js'
+import { consoleRuntimeLogger } from '../runtime/logger.js'
+import { SurgioError } from '../utils/errors.js'
+import { decodeStringList, fromBase64 } from '../utils/portable.js'
 import relayableUrl from '../utils/relayable-url.js'
 
 import Provider from './Provider.js'
@@ -21,9 +22,9 @@ import {
   GetSubscriptionUserInfoFunction,
 } from './types.js'
 
-const logger = createLogger({
-  service: 'surgio:SsdProvider',
-})
+import type { ProviderRuntimeContext, RuntimeLogger } from '../runtime/types.js'
+
+const logger = consoleRuntimeLogger
 
 export default class SsdProvider extends Provider {
   readonly #originalUrl: string
@@ -69,6 +70,7 @@ export default class SsdProvider extends Provider {
       requestHeaders,
       cacheKey,
       this.udpRelay,
+      this.runtime,
     )
 
     if (subscriptionUserInfo) {
@@ -90,6 +92,7 @@ export default class SsdProvider extends Provider {
       requestHeaders,
       cacheKey,
       this.udpRelay,
+      this.runtime,
     )
 
     if (this.config.hooks?.afterNodeListResponse) {
@@ -120,6 +123,7 @@ export default class SsdProvider extends Provider {
       requestHeaders,
       cacheKey,
       this.udpRelay,
+      this.runtime,
     )
 
     if (this.config.hooks?.afterNodeListResponse) {
@@ -143,6 +147,7 @@ export const getSsdSubscription = async (
   requestHeaders: DefaultProviderRequestHeaders,
   cacheKey: string,
   udpRelay?: boolean,
+  runtime?: ProviderRuntimeContext,
 ): Promise<{
   readonly nodeList: Array<ShadowsocksNodeConfig>
   readonly subscriptionUserInfo?: SubscriptionUserinfo
@@ -153,6 +158,7 @@ export const getSsdSubscription = async (
     url,
     requestHeaders,
     cacheKey,
+    runtime,
   )
 
   /* istanbul ignore next -- @preserve */
@@ -165,7 +171,7 @@ export const getSsdSubscription = async (
   const { servers, traffic_used, traffic_total, expiry } = data
   const nodeList: ReadonlyArray<ShadowsocksNodeConfig | undefined> =
     servers.map((server): ShadowsocksNodeConfig | undefined =>
-      parseSsdConfig(data, server, udpRelay),
+      parseSsdConfig(data, server, udpRelay, runtime?.logger),
     )
 
   if (
@@ -194,6 +200,7 @@ export const parseSsdConfig = (
   globalConfig: SsdSubscription,
   server: SsdServer,
   udpRelay?: boolean,
+  runtimeLogger: RuntimeLogger = logger,
 ): ShadowsocksNodeConfig | undefined => {
   const { airport, port, encryption, password } = globalConfig
   const plugin = server.plugin ?? globalConfig.plugin
@@ -204,7 +211,7 @@ export const parseSsdConfig = (
 
   /* istanbul ignore next -- @preserve */
   if (plugin && !['simple-obfs', 'v2ray-plugin'].includes(plugin)) {
-    logger.warn(
+    runtimeLogger.warn(
       `不支持从 SSD 订阅中读取 ${plugin} 类型的 Shadowsocks 节点，节点 ${server.remarks} 会被省略`,
     )
     return undefined
@@ -214,7 +221,7 @@ export const parseSsdConfig = (
     plugin === 'v2ray-plugin' &&
     (pluginOpts.mode as string).toLowerCase() === 'quic'
   ) {
-    logger.warn(
+    runtimeLogger.warn(
       `不支持从 SSD 订阅中读取 QUIC 模式的 Shadowsocks 节点，节点 ${server.remarks} 会被省略`,
     )
     return undefined

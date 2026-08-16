@@ -1,5 +1,4 @@
 import { isIPv4 } from 'net'
-import { createLogger } from '@surgio/logger'
 import _ from 'lodash'
 
 import {
@@ -13,8 +12,9 @@ import {
   LOON_SUPPORTED_VMESS_NETWORK,
 } from '../constant/index.js'
 import { applyFilter, internalFilters } from '../filters/index.js'
+import { consoleRuntimeLogger } from '../runtime/logger.js'
 
-import { getHeader } from './index.js'
+import { getHeader } from './portable.js'
 
 const {
   httpFilter,
@@ -28,7 +28,7 @@ const {
   anytlsFilter,
   hysteria2Filter,
 } = internalFilters
-const logger = createLogger({ service: 'surgio:utils:loon' })
+const logger = consoleRuntimeLogger
 
 // https://nsloon.app/docs/Node/#%E8%8A%82%E7%82%B9%E6%A0%BC%E5%BC%8F
 export const getLoonNodes = function (

@@ -2,13 +2,11 @@ import { promises as dns, RecordWithTtl } from 'dns'
 import { createLogger } from '@surgio/logger'
 import Bluebird from 'bluebird'
 
+import { coalesceAsync } from '../runtime/dns.js'
+
 import { getNetworkResolveTimeout } from './env-flag.js'
 
 const logger = createLogger({ service: 'surgio:utils:dns' })
-const inFlightResolutions = new Map<
-  string,
-  Promise<ReadonlyArray<RecordWithTtl>>
->()
 
 export const resolveDomain = async (
   domain: string,
@@ -34,27 +32,6 @@ export const resolveDomain = async (
   return []
 }
 
-const resolve4And6Once = (
-  domain: string,
-): Promise<ReadonlyArray<RecordWithTtl>> => {
-  const existing = inFlightResolutions.get(domain)
-  if (existing) {
-    return existing
-  }
-
-  const pending = resolve4And6(domain)
-  inFlightResolutions.set(domain, pending)
-
-  const removePending = () => {
-    if (inFlightResolutions.get(domain) === pending) {
-      inFlightResolutions.delete(domain)
-    }
-  }
-  void pending.then(removePending, removePending)
-
-  return pending
-}
-
 export const resolve4And6 = async (
   domain: string,
 ): Promise<ReadonlyArray<RecordWithTtl>> => {
@@ -70,3 +47,5 @@ export const resolve4And6 = async (
 
   return [...ipv4, ...ipv6]
 }
+
+const resolve4And6Once = coalesceAsync(resolve4And6)

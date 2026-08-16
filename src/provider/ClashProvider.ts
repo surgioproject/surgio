@@ -1,7 +1,6 @@
 import assert from 'assert'
 import yaml from 'yaml'
 import _ from 'lodash'
-import { createLogger } from '@surgio/logger'
 import { z } from 'zod/v3'
 
 import {
@@ -36,12 +35,9 @@ import {
   TrustTunnelNodeConfig,
   TrustTunnelNodeConfigInput,
 } from '../types.js'
-import {
-  lowercaseHeaderKeys,
-  SurgioError,
-  getNetworkClashUA,
-  parseBitrate,
-} from '../utils/index.js'
+import { lowercaseHeaderKeys, parseBitrate } from '../utils/portable.js'
+import { SurgioError } from '../utils/errors.js'
+import { consoleRuntimeLogger } from '../runtime/logger.js'
 import relayableUrl from '../utils/relayable-url.js'
 import {
   AnyTLSNodeConfigValidator,
@@ -61,6 +57,10 @@ import {
   GetSubscriptionUserInfoFunction,
 } from './types.js'
 
+import type { ProviderRuntimeContext, RuntimeLogger } from '../runtime/types.js'
+
+const logger = consoleRuntimeLogger
+
 type SupportConfigTypes =
   | ShadowsocksNodeConfig
   | VmessNodeConfig
@@ -77,10 +77,6 @@ type SupportConfigTypes =
   | TailscaleNodeConfig
   | MasqueNodeConfig
   | TrustTunnelNodeConfig
-
-const logger = createLogger({
-  service: 'surgio:ClashProvider',
-})
 
 export default class ClashProvider extends Provider {
   readonly #originalUrl: string
@@ -111,7 +107,7 @@ export default class ClashProvider extends Provider {
     this.supportGetSubscriptionUserInfo = true
 
     if (!this.config.requestUserAgent) {
-      this.config.requestUserAgent = getNetworkClashUA()
+      this.config.requestUserAgent = 'clash'
     }
   }
 
@@ -134,6 +130,7 @@ export default class ClashProvider extends Provider {
       tls13: this.tls13,
       requestHeaders,
       cacheKey,
+      runtime: this.runtime,
     })
 
     if (subscriptionUserInfo) {
@@ -157,6 +154,7 @@ export default class ClashProvider extends Provider {
       tls13: this.tls13,
       requestHeaders,
       cacheKey,
+      runtime: this.runtime,
     })
 
     if (this.config.hooks?.afterNodeListResponse) {
@@ -188,6 +186,7 @@ export default class ClashProvider extends Provider {
       tls13: this.tls13,
       requestHeaders,
       cacheKey,
+      runtime: this.runtime,
     })
 
     if (this.config.hooks?.afterNodeListResponse) {
@@ -211,12 +210,14 @@ export const getClashSubscription = async ({
   tls13,
   requestHeaders,
   cacheKey,
+  runtime,
 }: {
   url: string
   requestHeaders: DefaultProviderRequestHeaders
   udpRelay?: boolean
   tls13?: boolean
   cacheKey: string
+  runtime?: ProviderRuntimeContext
 }): Promise<{
   readonly nodeList: Array<SupportConfigTypes>
   readonly subscriptionUserInfo?: SubscriptionUserinfo
@@ -227,6 +228,7 @@ export const getClashSubscription = async ({
     url,
     requestHeaders,
     cacheKey,
+    runtime,
   )
   let clashConfig
 
@@ -268,7 +270,7 @@ export const getClashSubscription = async ({
   }
 
   return {
-    nodeList: parseClashConfig(proxyList, udpRelay, tls13),
+    nodeList: parseClashConfig(proxyList, udpRelay, tls13, runtime?.logger),
     subscriptionUserInfo: response.subscriptionUserInfo,
   }
 }
@@ -277,6 +279,7 @@ export const parseClashConfig = (
   proxyList: Array<any>,
   udpRelay?: boolean,
   tls13?: boolean,
+  runtimeLogger: RuntimeLogger = logger,
 ): Array<SupportConfigTypes> => {
   const nodeList: Array<SupportConfigTypes | undefined> = proxyList.map(
     (item) => {
@@ -284,7 +287,7 @@ export const parseClashConfig = (
         case 'ss': {
           /* istanbul ignore next -- @preserve */
           if (item.plugin && !['obfs', 'v2ray-plugin'].includes(item.plugin)) {
-            logger.warn(
+            runtimeLogger.warn(
               `不支持从 Clash 订阅中读取 ${item.plugin} 类型的 Shadowsocks 节点，节点 ${item.name} 会被省略`,
             )
             return undefined
@@ -294,7 +297,7 @@ export const parseClashConfig = (
             item.plugin === 'v2ray-plugin' &&
             item['plugin-opts'].mode.toLowerCase() === 'quic'
           ) {
-            logger.warn(
+            runtimeLogger.warn(
               `不支持从 Clash 订阅中读取 QUIC 模式的 Shadowsocks 节点，节点 ${item.name} 会被省略`,
             )
             return undefined
@@ -370,7 +373,7 @@ export const parseClashConfig = (
                 ]
 
           if (item.network && !supportedNetworks.includes(item.network)) {
-            logger.warn(
+            runtimeLogger.warn(
               `不支持从 Clash 订阅中读取 network 类型为 ${item.network} 的 ${item.type} 节点，节点 ${item.name} 会被省略`,
             )
             return undefined
@@ -398,7 +401,7 @@ export const parseClashConfig = (
           }
 
           if (vmessNode.type === NodeTypeEnum.Vless && item.tls !== true) {
-            logger.warn(
+            runtimeLogger.warn(
               `未经 TLS 传输的 VLESS 协议不安全并且不被 Surgio 支持，节点 ${item.name} 会被省略`,
             )
             return undefined
@@ -448,7 +451,7 @@ export const parseClashConfig = (
               }
 
               if (!vmessNode.clientFingerprint) {
-                logger.warn(
+                runtimeLogger.warn(
                   `VLESS + Reality 协议需要设置 clientFingerprint 字段，节点 ${item.name} 会被省略`,
                 )
                 return undefined
@@ -492,7 +495,7 @@ export const parseClashConfig = (
               break
             case 'xhttp':
               if (vmessNode.type !== NodeTypeEnum.Vless) {
-                logger.warn(
+                runtimeLogger.warn(
                   `mihomo 仅支持 VLESS 使用 xhttp 传输层，节点 ${item.name} 会被省略`,
                 )
                 return undefined
@@ -955,7 +958,7 @@ export const parseClashConfig = (
         }
 
         default:
-          logger.warn(
+          runtimeLogger.warn(
             `不支持从 Clash 订阅中读取 ${item.type} 的节点，节点 ${item.name} 会被省略`,
           )
           return undefined

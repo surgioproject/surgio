@@ -1,12 +1,17 @@
 import { URL } from 'url'
-import { createLogger } from '@surgio/logger'
 
+import { consoleRuntimeLogger } from '../runtime/logger.js'
 import { NodeTypeEnum, TrojanNodeConfig } from '../types.js'
 
-const logger = createLogger({ service: 'surgio:utils:trojan' })
+import type { RuntimeLogger } from '../runtime/types.js'
 
-export const parseTrojanUri = (str: string): TrojanNodeConfig => {
-  logger.debug('Trojan URI', str)
+const logger = consoleRuntimeLogger
+
+export const parseTrojanUri = (
+  str: string,
+  runtimeLogger: RuntimeLogger = logger,
+): TrojanNodeConfig => {
+  runtimeLogger.debug('Trojan URI', str)
 
   const scheme = new URL(str)
 

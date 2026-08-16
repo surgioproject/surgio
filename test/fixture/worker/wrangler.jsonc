@@ -1,0 +1,13 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "surgio-worker-fixture",
+  "main": "worker.ts",
+  "compatibility_date": "2026-08-16",
+  "compatibility_flags": ["nodejs_compat"],
+  "kv_namespaces": [
+    {
+      "binding": "SURGIO_CACHE",
+      "id": "00000000000000000000000000000000",
+    },
+  ],
+}

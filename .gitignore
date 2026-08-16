@@ -21,6 +21,7 @@ node_modules/
 /dist/
 /build/
 /binary-build/
+/.surgio/
 *.tsbuildinfo
 .buildinfo
 
@@ -28,6 +29,7 @@ node_modules/
 .nyc_output
 coverage/
 /test/fixture/**/dist
+/test/fixture/**/.surgio
 /test/benchmark/playground.js
 
 # IDE

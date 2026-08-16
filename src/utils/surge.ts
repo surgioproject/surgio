@@ -1,6 +1,5 @@
-import { createLogger } from '@surgio/logger'
-
 import { OBFS_UA, SURGE_SUPPORTED_VMESS_NETWORK } from '../constant/index.js'
+import { consoleRuntimeLogger } from '../runtime/logger.js'
 import {
   NodeFilterType,
   NodeTypeEnum,
@@ -9,9 +8,9 @@ import {
 } from '../types.js'
 import { applyFilter } from '../filters/index.js'
 
-import { isIp, pickAndFormatStringList } from './index.js'
+import { isIp, pickAndFormatStringList } from './portable.js'
 
-const logger = createLogger({ service: 'surgio:utils:surge' })
+const logger = consoleRuntimeLogger
 
 export const getSurgeExtendHeaders = (
   headers: Record<string, string>,

@@ -1,4 +1,3 @@
-import { createLogger } from '@surgio/logger'
 import _ from 'lodash'
 
 import { ERR_INVALID_FILTER } from '../constant/index.js'
@@ -10,15 +9,16 @@ import {
   SortedNodeFilterType,
 } from '../types.js'
 import { applyFilter } from '../filters/index.js'
+import { consoleRuntimeLogger } from '../runtime/logger.js'
 
 import {
   checkNotNullish,
   getHostnameFromHost,
   getPortFromHost,
   pickAndFormatKeys,
-} from './index.js'
+} from './portable.js'
 
-const logger = createLogger({ service: 'surgio:utils:clash' })
+const logger = consoleRuntimeLogger
 
 const getClashCore = (nodeConfig: PossibleNodeConfigType): ClashCoreType =>
   nodeConfig.clashConfig?.clashCore ?? 'clash.meta'

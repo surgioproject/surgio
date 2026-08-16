@@ -1,9 +1,8 @@
-import { createLogger } from '@surgio/logger'
-
 import {
   OBFS_UA,
   SURFBOARD_SUPPORTED_VMESS_NETWORK,
 } from '../constant/index.js'
+import { consoleRuntimeLogger } from '../runtime/logger.js'
 import {
   NodeFilterType,
   NodeTypeEnum,
@@ -12,9 +11,9 @@ import {
 } from '../types.js'
 import { applyFilter } from '../filters/index.js'
 
-import { pickAndFormatStringList } from './index.js'
+import { pickAndFormatStringList } from './portable.js'
 
-const logger = createLogger({ service: 'surgio:utils:surfboard' })
+const logger = consoleRuntimeLogger
 
 export const getSurfboardExtendHeaders = (
   wsHeaders: Record<string, string>,

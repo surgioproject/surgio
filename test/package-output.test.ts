@@ -14,11 +14,8 @@ const listFiles = (directory: string): string[] =>
     return entry.isDirectory() ? listFiles(entryPath) : entryPath
   })
 
-test('cache entrypoint does not eagerly load Redis clients', async () => {
-  const clientPaths = [
-    requireModule.resolve('ioredis'),
-    requireModule.resolve('@upstash/redis'),
-  ]
+test('cache entrypoint does not eagerly load the Upstash client', async () => {
+  const clientPaths = [requireModule.resolve('@upstash/redis')]
 
   for (const clientPath of clientPaths) {
     expect(requireModule.cache[clientPath]).toBeUndefined()
@@ -49,6 +46,13 @@ test('published ESM entrypoints can be required from CommonJS', () => {
     'surgio/config',
     'surgio/cache',
     'surgio/cache.js',
+    'surgio/cache/core',
+    'surgio/cache/cloudflare',
+    'surgio/cache/filesystem',
+    'surgio/cache/upstash',
+    'surgio/worker',
+    'surgio/worker/build',
+    'surgio/worker/config',
     'surgio/build/provider/index',
   ]
 

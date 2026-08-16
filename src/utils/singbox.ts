@@ -1,6 +1,5 @@
-import { createLogger } from '@surgio/logger'
-
 import { ERR_INVALID_FILTER } from '../constant/index.js'
+import { consoleRuntimeLogger } from '../runtime/logger.js'
 import {
   NodeFilterType,
   NodeTypeEnum,
@@ -14,10 +13,9 @@ import {
 } from '../validators/index.js'
 
 import { stringifySip003Options } from './ss.js'
+import { checkNotNullish, pickAndFormatKeys } from './portable.js'
 
-import { checkNotNullish, pickAndFormatKeys } from './index.js'
-
-const logger = createLogger({ service: 'surgio:utils:singbox' })
+const logger = consoleRuntimeLogger
 
 export const getSingboxNodes = function (
   list: ReadonlyArray<PossibleNodeConfigType>,

@@ -16,6 +16,8 @@ export default tseslint.config(
       'docs/.vuepress/.temp/**',
       'coverage/**',
       'node_modules/**',
+      '.surgio/**',
+      'test/fixture/**/.surgio/**',
       'examples/**',
       'hygen-template/**',
       // Root-level re-export files
@@ -234,6 +236,14 @@ export default tseslint.config(
         },
       ],
       'prettier/prettier': 'error',
+    },
+  },
+
+  // Ambient declarations for untyped third-party internals
+  {
+    files: ['types/**/*.d.ts'],
+    rules: {
+      '@typescript-eslint/no-explicit-any': 'off',
     },
   },
 

@@ -1,14 +1,19 @@
 import { URL } from 'url'
-import { createLogger } from '@surgio/logger'
 
+import { consoleRuntimeLogger } from '../runtime/logger.js'
 import { NodeTypeEnum, ShadowsocksNodeConfig } from '../types.js'
 
-import { decodeStringList, fromUrlSafeBase64 } from './index.js'
+import { decodeStringList, fromUrlSafeBase64 } from './portable.js'
 
-const logger = createLogger({ service: 'surgio:utils:ss' })
+import type { RuntimeLogger } from '../runtime/types.js'
 
-export const parseSSUri = (str: string): ShadowsocksNodeConfig => {
-  logger.debug('Shadowsocks URI', str)
+const logger = consoleRuntimeLogger
+
+export const parseSSUri = (
+  str: string,
+  runtimeLogger: RuntimeLogger = logger,
+): ShadowsocksNodeConfig => {
+  runtimeLogger.debug('Shadowsocks URI', str)
 
   const scheme = new URL(str)
   const pluginString = scheme.searchParams.get('plugin')

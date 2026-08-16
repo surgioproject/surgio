@@ -6,7 +6,7 @@ import {
   ShadowsocksJsonSubscribeProviderConfig,
   ShadowsocksNodeConfig,
 } from '../types.js'
-import { SurgioError } from '../utils/index.js'
+import { SurgioError } from '../utils/errors.js'
 import relayableUrl from '../utils/relayable-url.js'
 
 import Provider from './Provider.js'
@@ -16,6 +16,8 @@ import {
   GetNodeListV2Function,
   GetNodeListV2Result,
 } from './types.js'
+
+import type { ProviderRuntimeContext } from '../runtime/types.js'
 
 export default class ShadowsocksJsonSubscribeProvider extends Provider {
   readonly #originalUrl: string
@@ -64,6 +66,7 @@ export default class ShadowsocksJsonSubscribeProvider extends Provider {
       requestHeaders,
       cacheKey,
       this.udpRelay,
+      this.runtime,
     )
 
     if (this.config.hooks?.afterNodeListResponse) {
@@ -93,6 +96,7 @@ export const getShadowsocksJSONConfig = async (
   requestHeaders: DefaultProviderRequestHeaders,
   cacheKey: string,
   udpRelay?: boolean,
+  runtime?: ProviderRuntimeContext,
 ): Promise<Array<ShadowsocksNodeConfig>> => {
   assert(url, '未指定订阅地址 url')
 
@@ -103,6 +107,7 @@ export const getShadowsocksJSONConfig = async (
       url,
       requestHeaders,
       cacheKey,
+      runtime,
     )
     const config = JSON.parse(response.body) as {
       configs?: ReadonlyArray<any>

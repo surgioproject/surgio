@@ -1,6 +1,4 @@
-import { createLogger } from '@surgio/logger'
 import _ from 'lodash'
-import { IncomingHttpHeaders } from 'http'
 
 import {
   CACHE_KEYS,
@@ -11,15 +9,11 @@ import {
   SubsciptionCacheItem,
   SupportProviderEnum,
 } from '../types.js'
-import { unifiedCache } from '../utils/cache.js'
-import { getConfig } from '../config.js'
-import { getProviderCacheMaxage } from '../utils/env-flag.js'
-import httpClient, { getUserAgent } from '../utils/http-client.js'
-import {
-  toMD5,
-  parseSubscriptionUserInfo,
-  SurgioError,
-} from '../utils/index.js'
+import { getDefaultProviderRuntimeContext } from '../runtime/provider-context.js'
+import { getRuntimeUserAgent } from '../runtime/user-agent.js'
+import { parseSubscriptionUserInfoHeader } from '../runtime/subscription.js'
+import { SurgioError } from '../utils/errors.js'
+import { toMD5 } from '../utils/portable.js'
 import { ProviderValidator } from '../validators/index.js'
 
 import {
@@ -29,9 +23,10 @@ import {
   GetSubscriptionUserInfoFunction,
 } from './types.js'
 
-const logger = createLogger({
-  service: 'surgio:Provider',
-})
+import type {
+  ProviderRuntimeContext,
+  RuntimeHeaders,
+} from '../runtime/types.js'
 
 export default abstract class Provider {
   public readonly type: SupportProviderEnum
@@ -42,6 +37,7 @@ export default abstract class Provider {
 
   // Headers that will be passed to the upstream server
   private passGatewayRequestHeaders: string[]
+  #runtime?: ProviderRuntimeContext
 
   protected constructor(
     public name: string,
@@ -59,21 +55,32 @@ export default abstract class Provider {
 
     this.config = result.data satisfies ProviderConfig
     this.type = result.data.type
-    this.passGatewayRequestHeaders = (
-      getConfig()?.gateway?.passRequestHeaders ?? []
-    ).map((header) => header.toLowerCase())
-
-    if (getConfig()?.gateway?.passRequestUserAgent) {
-      if (!this.passGatewayRequestHeaders.includes('user-agent')) {
-        this.passGatewayRequestHeaders.push('user-agent')
-      }
-    }
-
+    this.passGatewayRequestHeaders = []
     for (const header of PASS_GATEWAY_REQUEST_HEADERS_WHITELIST) {
       if (!this.passGatewayRequestHeaders.includes(header)) {
         this.passGatewayRequestHeaders.push(header)
       }
     }
+  }
+
+  public useRuntime(context: ProviderRuntimeContext): this {
+    this.#runtime = context
+    this.passGatewayRequestHeaders = (
+      context.config.gateway?.passRequestHeaders ?? []
+    ).map((header) => header.toLowerCase())
+    if (context.config.gateway?.passRequestUserAgent) {
+      this.passGatewayRequestHeaders.push('user-agent')
+    }
+    for (const header of PASS_GATEWAY_REQUEST_HEADERS_WHITELIST) {
+      if (!this.passGatewayRequestHeaders.includes(header)) {
+        this.passGatewayRequestHeaders.push(header)
+      }
+    }
+    return this
+  }
+
+  protected get runtime(): ProviderRuntimeContext {
+    return this.#runtime ?? getDefaultProviderRuntimeContext()
   }
 
   /**
@@ -111,12 +118,17 @@ export default abstract class Provider {
     url: string,
     headers: DefaultProviderRequestHeaders,
     cacheKey: string = this.getResourceCacheKey(headers, url),
+    runtime: ProviderRuntimeContext = getDefaultProviderRuntimeContext(),
   ): Promise<SubsciptionCacheItem> {
-    logger.debug('requestCacheableResource: %s %j %s', url, headers, cacheKey)
+    runtime.logger.debug(
+      'requestCacheableResource: %s %j %s',
+      url,
+      headers,
+      cacheKey,
+    )
 
     const requestResource = async () => {
-      const res = await httpClient.get(url, {
-        responseType: 'text',
+      const res = await runtime.httpClient.get(url, {
         headers,
       })
       const subsciptionCacheItem: SubsciptionCacheItem = {
@@ -124,10 +136,11 @@ export default abstract class Provider {
       }
 
       if (res.headers['subscription-userinfo']) {
-        subsciptionCacheItem.subscriptionUserInfo = parseSubscriptionUserInfo(
-          res.headers['subscription-userinfo'] as string,
-        )
-        logger.debug(
+        subsciptionCacheItem.subscriptionUserInfo =
+          parseSubscriptionUserInfoHeader(
+            res.headers['subscription-userinfo'] as string,
+          )
+        runtime.logger.debug(
           '%s received subscription userinfo - raw: %s | parsed: %j',
           url,
           res.headers['subscription-userinfo'],
@@ -138,10 +151,10 @@ export default abstract class Provider {
       return subsciptionCacheItem
     }
 
-    const cachedValue = await unifiedCache.get<SubsciptionCacheItem>(cacheKey)
+    const cachedValue = await runtime.cache.get<SubsciptionCacheItem>(cacheKey)
 
     if (cachedValue) {
-      logger.debug(
+      runtime.logger.debug(
         'requestCacheableResource: %s %j %s: cached',
         url,
         headers,
@@ -154,12 +167,12 @@ export default abstract class Provider {
         ? cachedValue
         : await (async () => {
             const subsciptionCacheItem = await requestResource()
-            await unifiedCache.set(
+            await runtime.cache.set(
               cacheKey,
               subsciptionCacheItem,
-              getProviderCacheMaxage(),
+              runtime.providerCacheTtl,
             )
-            logger.debug(
+            runtime.logger.debug(
               'requestCacheableResource: %s %j %s: not cached',
               url,
               headers,
@@ -168,7 +181,7 @@ export default abstract class Provider {
             return subsciptionCacheItem
           })()
     } catch (error) {
-      logger.error(
+      runtime.logger.error(
         'requestCacheableResource: %s %j %s',
         url,
         headers,
@@ -209,16 +222,20 @@ export default abstract class Provider {
    */
   public determineRequestHeaders(
     requestUserAgent?: string | undefined,
-    requestHeaders?: IncomingHttpHeaders | undefined,
+    requestHeaders?: RuntimeHeaders | undefined,
   ): DefaultProviderRequestHeaders {
     const passRequestUserAgent =
       this.passGatewayRequestHeaders.includes('user-agent')
-    const userAgent = getUserAgent(
+    const headerUserAgent = requestHeaders?.['user-agent']
+    const userAgent = getRuntimeUserAgent(
       passRequestUserAgent
         ? requestUserAgent ||
-            requestHeaders?.['user-agent'] ||
+            (Array.isArray(headerUserAgent)
+              ? headerUserAgent[0]
+              : headerUserAgent) ||
             this.config.requestUserAgent
         : this.config.requestUserAgent,
+      this.runtime.version,
     )
 
     // Normalize incoming headers to lowercase keys for case-insensitive matching

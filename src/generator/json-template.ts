@@ -1,81 +1,9 @@
 import { join } from 'path'
-import { JsonObject } from 'type-fest'
-import _ from 'lodash'
 import fs from 'fs-extra'
 
-type ExtendContext = Record<string, any>
+import type { ExtendContext, ExtendFunction } from './json-extend.js'
 
-type PremitiveValue = string | number | boolean
-type ExtendValue =
-  | JsonObject[]
-  | JsonObject
-  | PremitiveValue[]
-  | PremitiveValue
-  | ((
-      extendContext: ExtendContext,
-    ) => JsonObject[] | JsonObject | PremitiveValue[] | PremitiveValue)
-
-type ExtendFunction = (
-  extendValue: ExtendValue,
-) => (jsonInput: JsonObject, extendContext?: ExtendContext) => JsonObject
-
-export const createExtendFunction = (extendKey: string) => {
-  const extendFunction: ExtendFunction = (extendValue) => {
-    return (jsonInput, extendContext = {}) => {
-      const jsonInputCopy = _.cloneDeep(jsonInput)
-      const isExist = _.get(jsonInputCopy, extendKey)
-      const extendValueIsFunction = _.isFunction(extendValue)
-      const valueToExtend = extendValueIsFunction
-        ? extendValue(extendContext)
-        : extendValue
-
-      if (isExist) {
-        if (_.isArray(isExist)) {
-          if (_.isArray(valueToExtend)) {
-            _.set(jsonInputCopy, extendKey, [...isExist, ...valueToExtend])
-          } else {
-            _.set(jsonInputCopy, extendKey, [...isExist, valueToExtend])
-          }
-        } else if (_.isPlainObject(isExist) && _.isPlainObject(valueToExtend)) {
-          _.set(
-            jsonInputCopy,
-            extendKey,
-            _.mergeWith(
-              {},
-              isExist,
-              valueToExtend,
-              (objValue: unknown, srcValue: unknown) => {
-                if (_.isArray(objValue) && _.isArray(srcValue)) {
-                  return [...objValue, ...srcValue]
-                }
-                return undefined
-              },
-            ),
-          )
-        } else {
-          _.set(jsonInputCopy, extendKey, valueToExtend)
-        }
-      } else {
-        _.set(jsonInputCopy, extendKey, valueToExtend)
-      }
-
-      return jsonInputCopy
-    }
-  }
-
-  return extendFunction
-}
-
-export const extendOutbounds = createExtendFunction('outbounds')
-export const extendEndpoints = createExtendFunction('endpoints')
-
-export const combineExtendFunctions = (
-  ...args: ReturnType<ExtendFunction>[]
-): ReturnType<ExtendFunction> => {
-  return (jsonInput, extendContext = {}) => {
-    return args.reduce((acc, extend) => extend(acc, extendContext), jsonInput)
-  }
-}
+export * from './json-extend.js'
 
 export const render = (
   templateDir: string,

@@ -1,0 +1,17 @@
+{
+  "extends": "../../../tsconfig.json",
+  "compilerOptions": {
+    "composite": false,
+    "declaration": false,
+    "noEmit": true,
+    "rootDir": "../../..",
+    "types": ["node"]
+  },
+  "include": [
+    ".surgio/worker-manifest.d.mts",
+    "vitest.config.ts",
+    "worker.test.ts",
+    "worker.ts"
+  ],
+  "exclude": []
+}

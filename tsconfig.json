@@ -31,7 +31,8 @@
       "ES2022"
     ],
     "types": [
-      "node"
+      "node",
+      "nunjucks-internals"
     ],
     "typeRoots": [
       "./node_modules/@types",
@@ -43,7 +44,8 @@
     "test/**/*.ts",
   ],
   "exclude": [
-    "./node_modules/**"
+    "./node_modules/**",
+    "test/fixture/worker/**"
   ],
   "compileOnSave": false,
 }

@@ -104,12 +104,6 @@ export const CacheConfigValidator = z.union([
     .strict(),
   z
     .object({
-      type: z.literal('redis'),
-      redisUrl: z.string().regex(/^rediss?:\/\//),
-    })
-    .strict(),
-  z
-    .object({
       type: z.literal('upstash'),
       upstashRestUrl: z.string().url().optional(),
       upstashRestToken: z.string().min(1).optional(),

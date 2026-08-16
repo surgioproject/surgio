@@ -945,6 +945,7 @@ test('ClashProvider requestUserAgent', async () => {
       'user-agent': expect.stringMatching(/^test useragent surgio\//),
     }),
     expect.any(String),
+    expect.any(Object),
   )
 })
 
@@ -970,6 +971,7 @@ test('ClashProvider requestUserAgent with passGatewayRequestHeaders', async () =
       'user-agent': expect.stringMatching(/^test useragent surgio\//),
     }),
     expect.any(String),
+    expect.any(Object),
   )
 })
 
@@ -993,6 +995,7 @@ test('ClashProvider requestUserAgent without passGatewayRequestHeaders', async (
       'user-agent': expect.stringMatching(/^clash surgio\//),
     }),
     expect.any(String),
+    expect.any(Object),
   )
 })
 

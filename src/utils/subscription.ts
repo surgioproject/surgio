@@ -3,32 +3,9 @@ import bytes from 'bytes'
 import { format, formatDistanceToNow } from 'date-fns'
 
 import { SubscriptionUserinfo } from '../types.js'
+import { parseSubscriptionUserInfoHeader } from '../runtime/subscription.js'
 
-export const parseSubscriptionUserInfo = (
-  str: string,
-): SubscriptionUserinfo => {
-  const res = {
-    upload: 0,
-    download: 0,
-    total: 0,
-    expire: 0,
-  }
-
-  str.split(';').forEach((item) => {
-    if (!item) {
-      return
-    }
-    const pair = item.split('=')
-    const key = pair[0].trim()
-    const value = Number(pair[1].trim())
-
-    if (key in res && !Number.isNaN(value)) {
-      res[key as keyof typeof res] = value
-    }
-  })
-
-  return res
-}
+export const parseSubscriptionUserInfo = parseSubscriptionUserInfoHeader
 
 export const parseSubscriptionNode = (
   dataString: string,

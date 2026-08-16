@@ -6,7 +6,8 @@ import {
   ShadowsocksSubscribeProviderConfig,
   SubscriptionUserinfo,
 } from '../types.js'
-import { fromBase64, SurgioError } from '../utils/index.js'
+import { SurgioError } from '../utils/errors.js'
+import { fromBase64 } from '../utils/portable.js'
 import relayableUrl from '../utils/relayable-url.js'
 import { parseSSUri } from '../utils/ss.js'
 
@@ -18,6 +19,8 @@ import {
   GetNodeListV2Result,
   GetSubscriptionUserInfoFunction,
 } from './types.js'
+
+import type { ProviderRuntimeContext } from '../runtime/types.js'
 
 export default class ShadowsocksSubscribeProvider extends Provider {
   public readonly udpRelay?: boolean
@@ -63,6 +66,7 @@ export default class ShadowsocksSubscribeProvider extends Provider {
       requestHeaders,
       cacheKey,
       this.udpRelay,
+      this.runtime,
     )
 
     if (subscriptionUserInfo) {
@@ -84,6 +88,7 @@ export default class ShadowsocksSubscribeProvider extends Provider {
       requestHeaders,
       cacheKey,
       this.udpRelay,
+      this.runtime,
     )
 
     if (this.config.hooks?.afterNodeListResponse) {
@@ -114,6 +119,7 @@ export default class ShadowsocksSubscribeProvider extends Provider {
       requestHeaders,
       cacheKey,
       this.udpRelay,
+      this.runtime,
     )
 
     if (this.config.hooks?.afterNodeListResponse) {
@@ -139,6 +145,7 @@ export const getShadowsocksSubscription = async (
   requestHeaders: DefaultProviderRequestHeaders,
   cacheKey: string,
   udpRelay?: boolean,
+  runtime?: ProviderRuntimeContext,
 ): Promise<{
   readonly nodeList: Array<ShadowsocksNodeConfig>
   readonly subscriptionUserInfo?: SubscriptionUserinfo
@@ -149,12 +156,13 @@ export const getShadowsocksSubscription = async (
     url,
     requestHeaders,
     cacheKey,
+    runtime,
   )
   const nodeList = fromBase64(response.body)
     .split('\n')
     .filter((item) => !!item && item.startsWith('ss://'))
     .map((item): ShadowsocksNodeConfig => {
-      const nodeConfig = parseSSUri(item)
+      const nodeConfig = parseSSUri(item, runtime?.logger)
 
       if (udpRelay !== void 0) {
         ;(nodeConfig.udpRelay as boolean) = udpRelay

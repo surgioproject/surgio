@@ -3,7 +3,7 @@ import path from 'node:path'
 import './stub-axios.js'
 import { transports } from '@surgio/logger'
 import fs from 'fs-extra'
-import { afterAll } from 'vitest'
+import { afterAll, beforeAll } from 'vitest'
 
 process.env.NODE_ENV = 'development'
 
@@ -16,6 +16,10 @@ const testCacheDirectory = path.join(
 )
 fs.removeSync(testCacheDirectory)
 process.env.SURGIO_CACHE_DIRECTORY = testCacheDirectory
+
+beforeAll(async () => {
+  await import('../../src/provider/node-runtime.js')
+})
 
 afterAll(async () => {
   await fs.remove(testCacheDirectory)

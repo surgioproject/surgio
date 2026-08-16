@@ -1,5 +1,4 @@
 import assert from 'assert'
-import { createLogger } from '@surgio/logger'
 import { z } from 'zod/v3'
 
 import {
@@ -7,7 +6,9 @@ import {
   ShadowsocksrSubscribeProviderConfig,
   SubscriptionUserinfo,
 } from '../types.js'
-import { fromBase64, SurgioError } from '../utils/index.js'
+import { consoleRuntimeLogger } from '../runtime/logger.js'
+import { SurgioError } from '../utils/errors.js'
+import { fromBase64 } from '../utils/portable.js'
 import relayableUrl from '../utils/relayable-url.js'
 import { parseSubscriptionNode } from '../utils/subscription.js'
 import { parseSSRUri } from '../utils/ssr.js'
@@ -21,9 +22,9 @@ import {
   GetSubscriptionUserInfoFunction,
 } from './types.js'
 
-const logger = createLogger({
-  service: 'surgio:ShadowsocksrSubscribeProvider',
-})
+import type { ProviderRuntimeContext } from '../runtime/types.js'
+
+const logger = consoleRuntimeLogger
 
 export default class ShadowsocksrSubscribeProvider extends Provider {
   public readonly udpRelay?: boolean
@@ -69,6 +70,7 @@ export default class ShadowsocksrSubscribeProvider extends Provider {
       requestHeaders,
       cacheKey,
       this.udpRelay,
+      this.runtime,
     )
 
     if (subscriptionUserInfo) {
@@ -90,6 +92,7 @@ export default class ShadowsocksrSubscribeProvider extends Provider {
       requestHeaders,
       cacheKey,
       this.udpRelay,
+      this.runtime,
     )
 
     if (this.config.hooks?.afterNodeListResponse) {
@@ -121,6 +124,7 @@ export default class ShadowsocksrSubscribeProvider extends Provider {
         requestHeaders,
         cacheKey,
         this.udpRelay,
+        this.runtime,
       )
 
     if (this.config.hooks?.afterNodeListResponse) {
@@ -143,22 +147,25 @@ export const getShadowsocksrSubscription = async (
   requestHeaders: DefaultProviderRequestHeaders,
   cacheKey: string,
   udpRelay?: boolean,
+  runtime?: ProviderRuntimeContext,
 ): Promise<{
   readonly nodeList: Array<ShadowsocksrNodeConfig>
   readonly subscriptionUserInfo?: SubscriptionUserinfo
 }> => {
   assert(url, '未指定订阅地址 url')
+  const runtimeLogger = runtime?.logger ?? logger
 
   const response = await Provider.requestCacheableResource(
     url,
     requestHeaders,
     cacheKey,
+    runtime,
   )
   const nodeList = fromBase64(response.body)
     .split('\n')
     .filter((item) => !!item && item.startsWith('ssr://'))
     .map<ShadowsocksrNodeConfig>((str) => {
-      const nodeConfig = parseSSRUri(str)
+      const nodeConfig = parseSSRUri(str, runtimeLogger)
 
       if (udpRelay !== void 0) {
         nodeConfig.udpRelay = udpRelay
@@ -177,7 +184,7 @@ export const getShadowsocksrSubscription = async (
       dataNode.nodeName,
       expireNode.nodeName,
     )
-    logger.debug(
+    runtimeLogger.debug(
       '%s received subscription node - raw: %s %s | parsed: %j',
       url,
       dataNode.nodeName,

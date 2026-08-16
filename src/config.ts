@@ -1,14 +1,8 @@
 import path from 'path'
-import { URL } from 'url'
 import fs from 'fs-extra'
 import _ from 'lodash'
 
-import {
-  INTERNET_TEST_INTERVAL,
-  INTERNET_TEST_URL,
-  PROXY_TEST_INTERVAL,
-  PROXY_TEST_URL,
-} from './constant/index.js'
+import { normalizeCommonConfig } from './config-normalize.js'
 import { CommandConfig, CommandConfigBeforeNormalize } from './types.js'
 import { SurgioConfigValidator } from './validators/index.js'
 import { addFlagMap } from './utils/flag.js'
@@ -96,45 +90,14 @@ export const normalizeConfig = (
   cwd: string,
   userConfig: Partial<CommandConfigBeforeNormalize>,
 ): CommandConfig => {
-  const defaultConfig: Partial<CommandConfig> = {
-    artifacts: [],
-    urlBase: '/',
+  const config = {
+    ...normalizeCommonConfig(userConfig),
     output: path.join(cwd, './dist'),
     templateDir: path.join(cwd, './template'),
     providerDir: path.join(cwd, './provider'),
     configDir: ensureConfigFolder(),
-    surgeConfig: {
-      resolveHostname: false,
-      vmessAEAD: true,
-    },
-    clashConfig: {
-      enableShadowTls: false,
-      enableTuic: false,
-      enableHysteria2: false,
-      enableVless: false,
-      clashCore: 'clash.meta',
-    },
-    quantumultXConfig: {
-      vmessAEAD: true,
-    },
-    surfboardConfig: {
-      vmessAEAD: true,
-    },
-    proxyTestUrl: PROXY_TEST_URL,
-    proxyTestInterval: PROXY_TEST_INTERVAL,
-    internetTestUrl: INTERNET_TEST_URL,
-    internetTestInterval: INTERNET_TEST_INTERVAL,
-    checkHostname: false,
-    resolveHostname: false,
-    cache: {
-      type: 'filesystem',
-    },
-    gateway: {
-      passRequestUserAgent: false,
-      passRequestHeaders: [],
-    },
-  }
-  const config: CommandConfig = _.defaultsDeep(userConfig, defaultConfig)
+    cache: userConfig.cache ?? { type: 'filesystem' },
+  } as CommandConfig
 
   /* istanbul ignore next -- @preserve */
   if (!fs.existsSync(config.templateDir)) {
@@ -145,26 +108,11 @@ export const normalizeConfig = (
     throw new Error(`仓库内缺少 ${config.providerDir} 目录`)
   }
 
-  if (/http/i.test(config.urlBase)) {
-    const urlObject = new URL(config.urlBase)
-    config.publicUrl = urlObject.origin + '/'
-  } else {
-    config.publicUrl = '/'
-  }
-
   /* istanbul ignore next -- @preserve */
   if (config.gateway) {
     if (config.gateway.auth && !config.gateway.accessToken) {
       throw new Error('请检查 gateway.accessToken 配置')
     }
-  }
-
-  /* istanbul ignore next -- @preserve */
-  if (
-    config.gateway?.passRequestUserAgent &&
-    !config.gateway.passRequestHeaders.includes('user-agent')
-  ) {
-    config.gateway.passRequestHeaders.push('user-agent')
   }
 
   return config

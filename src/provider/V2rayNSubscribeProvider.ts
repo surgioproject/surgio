@@ -1,5 +1,4 @@
 import assert from 'assert'
-import { logger } from '@surgio/logger'
 import { z } from 'zod/v3'
 import _ from 'lodash'
 
@@ -9,7 +8,9 @@ import {
   V2rayNSubscribeProviderConfig,
   VmessNodeConfig,
 } from '../types.js'
-import { fromBase64, SurgioError } from '../utils/index.js'
+import { consoleRuntimeLogger as logger } from '../runtime/logger.js'
+import { SurgioError } from '../utils/errors.js'
+import { fromBase64 } from '../utils/portable.js'
 import relayableUrl from '../utils/relayable-url.js'
 import { parseSSUri } from '../utils/ss.js'
 
@@ -20,6 +21,8 @@ import {
   GetNodeListV2Function,
   GetNodeListV2Result,
 } from './types.js'
+
+import type { ProviderRuntimeContext, RuntimeLogger } from '../runtime/types.js'
 
 export default class V2rayNSubscribeProvider extends Provider {
   public readonly compatibleMode?: boolean
@@ -77,6 +80,7 @@ export default class V2rayNSubscribeProvider extends Provider {
       isCompatibleMode: this.compatibleMode,
       requestHeaders,
       cacheKey,
+      runtime: this.runtime,
     })
 
     if (this.config.hooks?.afterNodeListResponse) {
@@ -112,6 +116,7 @@ export const getV2rayNSubscription = async ({
   udpRelay,
   requestHeaders,
   cacheKey,
+  runtime,
 }: {
   url: string
   isCompatibleMode?: boolean
@@ -120,11 +125,13 @@ export const getV2rayNSubscription = async ({
   tls13?: boolean
   requestHeaders: DefaultProviderRequestHeaders
   cacheKey: string
+  runtime?: ProviderRuntimeContext
 }): Promise<Array<VmessNodeConfig | ShadowsocksNodeConfig>> => {
   assert(url, '未指定订阅地址 url')
+  const runtimeLogger = runtime?.logger ?? logger
 
   if (isCompatibleMode) {
-    logger.warn('运行在兼容模式，请注意生成的节点是否正确。')
+    runtimeLogger.warn('运行在兼容模式，请注意生成的节点是否正确。')
   }
 
   async function requestConfigFromRemote(): Promise<
@@ -134,6 +141,7 @@ export const getV2rayNSubscription = async ({
       url,
       requestHeaders,
       cacheKey,
+      runtime,
     )
     const configString = response.body
 
@@ -144,7 +152,7 @@ export const getV2rayNSubscription = async ({
         const pick = item.startsWith('vmess://') || item.startsWith('ss://')
 
         if (!pick) {
-          logger.warn(
+          runtimeLogger.warn(
             `不支持读取 V2rayN 订阅中的节点 ${item}，该节点会被省略。`,
           )
         }
@@ -161,12 +169,13 @@ export const getV2rayNSubscription = async ({
             skipCertVerify,
             udpRelay,
             tls13,
+            runtimeLogger,
           )
         }
 
         if (item.startsWith('ss://')) {
           return {
-            ...parseSSUri(item),
+            ...parseSSUri(item, runtimeLogger),
             udpRelay: udpRelay === true,
             skipCertVerify: skipCertVerify === true,
             tls13: tls13 === true,
@@ -187,6 +196,7 @@ export const parseJSONConfig = (
   skipCertVerify?: boolean | undefined,
   udpRelay?: boolean | undefined,
   tls13?: boolean | undefined,
+  runtimeLogger: RuntimeLogger = logger,
 ): VmessNodeConfig | undefined => {
   const config = JSON.parse(json)
 
@@ -199,7 +209,7 @@ export const parseJSONConfig = (
 
   /* istanbul ignore next -- @preserve */
   if (!['tcp', 'ws', 'h2', 'grpc'].includes(config.net)) {
-    logger.warn(
+    runtimeLogger.warn(
       `不支持读取 network 类型为 ${config.net} 的 Vmess 节点，节点 ${config.ps} 会被省略。`,
     )
     return undefined
@@ -207,7 +217,7 @@ export const parseJSONConfig = (
 
   /* istanbul ignore next -- @preserve */
   if (!['none', 'http'].includes(config.type)) {
-    logger.warn(
+    runtimeLogger.warn(
       `不支持读取 type 类型为 ${config.type} 的 Vmess 节点，节点 ${config.ps} 会被省略。`,
     )
     return undefined

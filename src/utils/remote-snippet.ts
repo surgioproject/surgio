@@ -1,14 +1,16 @@
 import Bluebird from 'bluebird'
 import { logger } from '@surgio/logger'
-import { detectNewline } from 'detect-newline'
 import ms from 'ms'
-import nunjucks from 'nunjucks'
-import * as babelParser from '@babel/parser'
 
+import { unifiedCache } from '../cache/singleton.js'
 import { CACHE_KEYS } from '../constant/index.js'
 import { RemoteSnippet, RemoteSnippetConfig } from '../types.js'
+import {
+  parseRestrictedSnippet,
+  renderRestrictedSnippet,
+} from '../runtime/snippet-interpreter.js'
+import { addProxyToRuleSet } from '../runtime/ruleset.js'
 
-import { unifiedCache } from './cache.js'
 import {
   getNetworkConcurrency,
   getRemoteSnippetCacheMaxage,
@@ -23,110 +25,23 @@ export const parseMacro = (
   functionName: string
   arguments: string[]
 } => {
-  const regex = /{%\s?macro(.*)\s?%}/gm
-  const match = regex.exec(snippet)
-
-  if (!match) {
-    throw new Error('该片段不包含可用的宏')
-  }
-
-  const ast = babelParser.parse(match[1], {})
-  let statement
-
-  if (ast.errors?.length) {
-    throw new Error('该片段不包含可用的宏')
-  }
-
-  for (const node of ast.program.body) {
-    if (node.type === 'ExpressionStatement') {
-      statement = node
-      break
-    }
-  }
-
-  if (
-    statement &&
-    statement.expression.type === 'CallExpression' &&
-    'name' in statement.expression.callee &&
-    statement.expression.callee.name === 'main'
-  ) {
+  try {
     return {
-      functionName: statement.expression.callee.name,
-      arguments: statement.expression.arguments.map((item) => {
-        if (item.type === 'Identifier') {
-          return item.name
-        } else {
-          throw new Error('该片段不包含可用的宏')
-        }
-      }),
+      functionName: 'main',
+      arguments: [...parseRestrictedSnippet(snippet).arguments],
     }
+  } catch (error) {
+    throw new Error('该片段不包含可用的宏', { cause: error })
   }
-
-  throw new Error('该片段不包含可用的宏')
 }
 
 export const addProxyToSurgeRuleSet = (
   str: string,
   proxyName?: string,
-): string => {
-  if (!proxyName) {
-    throw new Error('必须为片段指定一个策略')
-  }
-
-  const eol = detectNewline(str) || '\n'
-
-  return str
-    .split(eol)
-    .map((item) => {
-      if (item.trim() === '' || item.startsWith('#') || item.startsWith('//')) {
-        return item
-      }
-
-      const rule = item.split(',')
-
-      switch (rule[0].trim().toUpperCase()) {
-        case 'URL-REGEX':
-        case 'AND':
-        case 'OR':
-        case 'NOT':
-          return `${item},${proxyName}`
-        case 'IP-CIDR':
-        case 'IP-CIDR6':
-        case 'IP-ASN':
-        case 'GEOIP':
-          rule.splice(2, 0, proxyName)
-          return rule.join(',')
-        default:
-          if (
-            rule[rule.length - 1].includes('#') ||
-            rule[rule.length - 1].includes('//')
-          ) {
-            rule[rule.length - 1] = rule[rule.length - 1]
-              .replace(/(#|\/\/)(.*)/, '')
-              .trim()
-          }
-          return [...rule, proxyName].join(',')
-      }
-    })
-    .join(eol)
-}
+): string => addProxyToRuleSet(str, proxyName)
 
 export const renderSurgioSnippet = (str: string, args: string[]): string => {
-  const macro = parseMacro(str)
-
-  macro.arguments.forEach((key, index) => {
-    if (typeof args[index] === 'undefined') {
-      throw new Error('Surgio 片段参数不足，缺少 ' + key)
-    } else if (typeof args[index] !== 'string') {
-      throw new Error(`Surgio 片段参数 ${key} 不为字符串`)
-    }
-  })
-  const template = [
-    `${str}`,
-    `{{ main(${args.map((item) => JSON.stringify(item)).join(',')}) }}`,
-  ].join('\n')
-
-  return nunjucks.renderString(template, {}).trim()
+  return renderRestrictedSnippet(str, args)
 }
 
 export const loadRemoteSnippetList = async (
