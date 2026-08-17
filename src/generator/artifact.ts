@@ -2,13 +2,18 @@ import { EventEmitter } from 'events'
 import path from 'path'
 import { logger } from '@surgio/logger'
 import fs from 'fs-extra'
-import { Environment } from 'nunjucks'
 
 import {
   GetNodeListParams,
   getProvider,
   PossibleProviderType,
 } from '../provider/index.js'
+import {
+  createArtifactRenderContext,
+  mapConcurrent,
+  mergeObjects,
+  prepareProvider,
+} from '../runtime/artifact.js'
 import {
   ArtifactConfig,
   ArtifactConfigInput,
@@ -17,12 +22,6 @@ import {
   RemoteSnippet,
   SubscriptionUserinfo,
 } from '../types.js'
-import {
-  createArtifactRenderContext,
-  mapConcurrent,
-  mergeObjects,
-  prepareProvider,
-} from '../runtime/artifact.js'
 import {
   isError,
   isSurgioError,
@@ -34,11 +33,12 @@ import { loadModuleSync } from '../utils/module-loader.js'
 import { ArtifactValidator } from '../validators/index.js'
 
 import { loadLocalSnippet } from './template.js'
-import { render as renderJSON } from './json-template.js'
+
+import type { Renderer } from '../runtime/renderer.js'
 
 export interface ArtifactOptions {
   readonly remoteSnippetList?: ReadonlyArray<RemoteSnippet>
-  readonly templateEngine?: Environment
+  readonly renderer?: Renderer
 }
 
 export type ExtendableRenderContext = Record<string, string>
@@ -144,45 +144,16 @@ export class Artifact extends EventEmitter {
     return Object.freeze(merged)
   }
 
-  public render(
-    templateEngine?: Environment,
-    extendRenderContext?: ExtendableRenderContext,
-  ): string {
+  public render(extendRenderContext?: ExtendableRenderContext): string {
     if (!this.isReady) {
       throw new Error('Artifact 还未初始化')
     }
 
-    const targetTemplateEngine = templateEngine || this.options.templateEngine
-
-    if (!targetTemplateEngine) {
-      throw new Error('没有可用的 Nunjucks 环境')
-    }
-
-    if (
-      this.artifact.templateType === 'json' &&
-      !this.artifact.extendTemplate
-    ) {
-      throw new Error('JSON 模板需要提供 extendTemplate 函数')
-    }
+    const renderer = this.options.renderer
+    if (!renderer) throw new Error('没有可用的 Renderer')
 
     const renderContext = this.getRenderContext(extendRenderContext)
-    const { templateString, template, templateType } = this.artifact
-    const result = templateString
-      ? targetTemplateEngine.renderString(templateString, {
-          templateEngine: targetTemplateEngine,
-          ...renderContext,
-        })
-      : templateType === 'default'
-        ? targetTemplateEngine.render(`${template}.tpl`, {
-            templateEngine: targetTemplateEngine,
-            ...renderContext,
-          })
-        : renderJSON(
-            this.surgioConfig.templateDir,
-            `${template}.json`,
-            this.artifact.extendTemplate!,
-            renderContext,
-          )
+    const result = renderer.renderArtifact(this.artifact, renderContext)
 
     this.emit('renderArtifact', { artifact: this.artifact, result })
 

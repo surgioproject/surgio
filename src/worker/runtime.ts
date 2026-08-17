@@ -30,7 +30,7 @@ import { getSurgeNodes } from '../utils/surge.js'
 import { ArtifactValidator } from '../validators/index.js'
 
 import { normalizeWorkerConfig } from './normalize-config.js'
-import { createWorkerTemplateEngine } from './template-engine.js'
+import { createPrecompiledRenderer } from './template-engine.js'
 
 import type {
   ArtifactConfig,
@@ -131,7 +131,7 @@ export const createSurgioRuntime = (
     providerCacheTtl: network.providerCacheTtl ?? 10 * 60_000,
     version: manifest.surgioVersion,
   }
-  const engine = createWorkerTemplateEngine(manifest.templates, {
+  const renderer = createPrecompiledRenderer(manifest, {
     clashCore: config.clashConfig?.clashCore,
   })
 
@@ -269,29 +269,9 @@ export const createSurgioRuntime = (
                 NodeFilterType | SortedNodeFilterType | undefined,
             ),
           )
-        } else if (artifact.templateType === 'json') {
-          const template = manifest.jsonTemplates[`${artifact.template}.json`]
-          if (template === undefined) {
-            throw new Error(`JSON 模板 ${artifact.template}.json 不存在`)
-          }
-          if (!artifact.extendTemplate) {
-            throw new Error('JSON 模板需要提供 extendTemplate 函数')
-          }
-          const input = JSON.parse(JSON.stringify(template))
-          body = JSON.stringify(
-            artifact.extendTemplate(input, renderContext),
-            null,
-            2,
-          )
         } else {
-          const templateName =
-            manifest.artifactTemplates[artifact.name] ??
-            `${artifact.template}.tpl`
           body = withRuntimeLogger(logger, () =>
-            engine.render(templateName, {
-              templateEngine: engine,
-              ...renderContext,
-            }),
+            renderer.renderArtifact(artifact, renderContext),
           )
         }
         return { body, subscriptionUserInfo, subscriptionUserInfoMap }
@@ -325,7 +305,10 @@ export const createSurgioRuntime = (
     },
     async renderTemplate(name, context = {}) {
       return withRuntimeLogger(logger, () =>
-        engine.render(name.endsWith('.tpl') ? name : `${name}.tpl`, context),
+        renderer.renderTemplate(
+          name.endsWith('.tpl') ? name : `${name}.tpl`,
+          context,
+        ),
       )
     },
     listArtifacts() {

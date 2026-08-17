@@ -3,7 +3,7 @@ import { Flags } from '@oclif/core'
 import fs from 'fs-extra'
 
 import BaseCommand from '../base-command.js'
-import { Artifact, getEngine } from '../generator/index.js'
+import { Artifact, createNodeRenderer } from '../generator/index.js'
 import { ArtifactConfig } from '../types.js'
 import { setConfig } from '../config.js'
 import { checkAndFix } from '../utils/linter.js'
@@ -46,7 +46,8 @@ class GenerateCommand extends BaseCommand<typeof GenerateCommand> {
       remoteSnippetsConfig,
       cacheSnippet,
     )
-    const templateEngine = getEngine(config.templateDir, {
+    const renderer = createNodeRenderer(config.templateDir, {
+      artifacts: artifactList,
       clashCore: config.clashConfig?.clashCore,
     })
 
@@ -58,6 +59,7 @@ class GenerateCommand extends BaseCommand<typeof GenerateCommand> {
       try {
         const artifactInstance = new Artifact(config, artifact, {
           remoteSnippetList,
+          renderer,
         })
 
         artifactInstance.once('initProvider:end', () => {
@@ -66,7 +68,7 @@ class GenerateCommand extends BaseCommand<typeof GenerateCommand> {
 
         await artifactInstance.init()
 
-        const result = artifactInstance.render(templateEngine)
+        const result = artifactInstance.render()
         const destFilePath = path.join(config.output, artifact.name)
 
         if (artifact.destDir) {

@@ -8,7 +8,7 @@ import type { WorkerCompiledTemplate } from './types.js'
 
 type Callback<T> = (error: Error | null, value?: T | null) => void
 type RenderFunction = (
-  environment: WorkerTemplateEnvironment,
+  environment: PrecompiledTemplateEnvironment,
   context: TemplateContext,
   frame: any,
   runtime: any,
@@ -46,7 +46,7 @@ const resolveRelativeName = (parent: string, name: string): string => {
 }
 
 class TemplateContext {
-  readonly env: WorkerTemplateEnvironment
+  readonly env: PrecompiledTemplateEnvironment
   readonly ctx: Record<string, unknown>
   readonly blocks: Record<string, RenderFunction[]>
   readonly exported: string[] = []
@@ -54,7 +54,7 @@ class TemplateContext {
   constructor(
     context: Record<string, unknown>,
     blocks: Record<string, RenderFunction>,
-    environment: WorkerTemplateEnvironment,
+    environment: PrecompiledTemplateEnvironment,
   ) {
     this.env = environment
     this.ctx = { ...context }
@@ -84,7 +84,7 @@ class TemplateContext {
     return block
   }
   getSuper(
-    environment: WorkerTemplateEnvironment,
+    environment: PrecompiledTemplateEnvironment,
     name: string,
     block: RenderFunction,
     frame: any,
@@ -112,7 +112,7 @@ class PrecompiledTemplate {
 
   constructor(
     readonly props: WorkerCompiledTemplate,
-    readonly environment: WorkerTemplateEnvironment,
+    readonly environment: PrecompiledTemplateEnvironment,
     readonly path: string,
   ) {
     this.#root = props.root as RenderFunction
@@ -124,8 +124,6 @@ class PrecompiledTemplate {
       ),
     )
   }
-
-  compile(): void {}
 
   render(
     context: Record<string, unknown> = {},
@@ -191,7 +189,7 @@ class PrecompiledTemplate {
   }
 }
 
-export class WorkerTemplateEnvironment {
+export class PrecompiledTemplateEnvironment {
   readonly opts = {
     autoescape: false,
     dev: false,
@@ -200,9 +198,6 @@ export class WorkerTemplateEnvironment {
     lstripBlocks: false,
   }
   readonly globals = createGlobals()
-  readonly asyncFilters: string[] = []
-  readonly extensions: Record<string, unknown> = {}
-  readonly extensionsList: unknown[] = []
   readonly #filters: Record<string, (...args: any[]) => any> = { ...filters }
   readonly #tests: Record<string, (...args: any[]) => any> = { ...tests }
   readonly #cache = new Map<string, PrecompiledTemplate>()
@@ -220,28 +215,10 @@ export class WorkerTemplateEnvironment {
     if (!filter) throw new Error(`filter not found: ${name}`)
     return filter
   }
-  addTest(name: string, test: (...args: any[]) => any): this {
-    this.#tests[name] = test
-    return this
-  }
   getTest(name: string): (...args: any[]) => any {
     const test = this.#tests[name]
     if (!test) throw new Error(`test not found: ${name}`)
     return test
-  }
-  addGlobal(name: string, value: unknown): this {
-    this.globals[name] = value
-    return this
-  }
-  getGlobal(name: string): unknown {
-    if (!(name in this.globals)) throw new Error(`global not found: ${name}`)
-    return this.globals[name]
-  }
-  getExtension(name: string): unknown {
-    return this.extensions[name]
-  }
-  hasExtension(name: string): boolean {
-    return name in this.extensions
   }
   waterfall(
     tasks: ReadonlyArray<(...args: any[]) => void>,

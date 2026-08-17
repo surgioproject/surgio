@@ -1,16 +1,10 @@
-import { beforeEach, expect, test, vi } from 'vitest'
-import fs from 'fs-extra'
+import { expect, test, vi } from 'vitest'
 
 import {
   extendOutbounds,
   createExtendFunction,
   combineExtendFunctions,
-  render,
-} from '../json-template.js'
-
-beforeEach(() => {
-  vi.restoreAllMocks()
-})
+} from '../json-extend.js'
 
 test('extendOutbounds - extend string', () => {
   const extend = extendOutbounds('new-value')
@@ -198,21 +192,4 @@ test('combineExtendFunctions', () => {
       qux: 'qux',
     },
   })
-})
-
-test('render', () => {
-  const readJsonSync = vi.spyOn(fs, 'readJsonSync').mockReturnValue({
-    foo: 'foo',
-    bar: 'bar',
-  })
-
-  const result = render(
-    'templateDir',
-    'fileName',
-    extendOutbounds('new-value'),
-    { baz: 'baz' },
-  )
-
-  expect(result).toMatchSnapshot()
-  expect(readJsonSync).toHaveBeenCalledExactlyOnceWith('templateDir/fileName')
 })

@@ -5,7 +5,7 @@ import nock from 'nock'
 import { loadConfig, normalizeConfig } from '../../config.js'
 import { NodeTypeEnum } from '../../types.js'
 import { Artifact } from '../artifact.js'
-import { getEngine } from '../template.js'
+import { createNodeRenderer } from '../template.js'
 
 const resolve = (p: string) => join(__dirname, '../../../test/fixture/', p)
 
@@ -30,19 +30,22 @@ test('defaults to Mihomo while preserving explicit Clash cores', () => {
 test('new Artifact()', async () => {
   const fixture = resolve('plain')
   const config = loadConfig(fixture)
-  const artifact = new Artifact(config, {
-    name: 'new_path.conf',
-    template: 'test',
-    provider: 'ss_json',
-  })
-  const templateEngine = getEngine(config.templateDir)
+  const artifact = new Artifact(
+    config,
+    {
+      name: 'new_path.conf',
+      template: 'test',
+      provider: 'ss_json',
+    },
+    { renderer: createNodeRenderer(config.templateDir) },
+  )
 
   expect(artifact.isReady).toBe(false)
   await artifact.init()
   expect(artifact.isReady).toBe(true)
 
   expect(() => {
-    artifact.render(templateEngine)
+    artifact.render()
   }).not.toThrow()
 
   await expect(async () => {
@@ -50,7 +53,7 @@ test('new Artifact()', async () => {
   }).rejects.toThrow()
 })
 
-test('Artifact without templateEngine', async () => {
+test('Artifact without renderer', async () => {
   const fixture = resolve('plain')
   const config = loadConfig(fixture)
   const artifact = new Artifact(config, {
@@ -58,7 +61,7 @@ test('Artifact without templateEngine', async () => {
     template: 'test',
     provider: 'ss_json',
   })
-  const templateEngine = getEngine(config.templateDir)
+  const renderer = createNodeRenderer(config.templateDir)
 
   expect(() => {
     artifact.render()
@@ -69,9 +72,6 @@ test('Artifact without templateEngine', async () => {
   expect(() => {
     artifact.render()
   }).toThrow()
-  expect(() => {
-    artifact.render(templateEngine)
-  }).not.toThrow()
   const instance = await new Artifact(
     config,
     {
@@ -79,7 +79,7 @@ test('Artifact without templateEngine', async () => {
       template: 'test',
       provider: 'ss_json',
     },
-    { templateEngine },
+    { renderer },
   ).init()
   instance.render()
 })
@@ -87,7 +87,7 @@ test('Artifact without templateEngine', async () => {
 test('render with extendRenderContext', async () => {
   const fixture = resolve('plain')
   const config = loadConfig(fixture)
-  const templateEngine = getEngine(config.templateDir)
+  const renderer = createNodeRenderer(config.templateDir)
 
   {
     const artifact = new Artifact(
@@ -97,7 +97,7 @@ test('render with extendRenderContext', async () => {
         template: 'extend-render-context',
         provider: 'ss_json',
       },
-      { templateEngine },
+      { renderer },
     )
     await artifact.init()
 
@@ -115,7 +115,7 @@ test('render with extendRenderContext', async () => {
           foo: 'bar',
         },
       },
-      { templateEngine },
+      { renderer },
     )
     await artifact.init()
 
@@ -133,12 +133,12 @@ test('render with extendRenderContext', async () => {
           foo: 'bar',
         },
       },
-      { templateEngine },
+      { renderer },
     )
     await artifact.init()
 
     expect(
-      artifact.render(undefined, {
+      artifact.render({
         foo: 'foo',
       }),
     ).toMatchSnapshot()
@@ -148,7 +148,7 @@ test('render with extendRenderContext', async () => {
 test('getRenderContext', async () => {
   const fixture = resolve('plain')
   const config = loadConfig(fixture)
-  const templateEngine = getEngine(config.templateDir)
+  const renderer = createNodeRenderer(config.templateDir)
   const artifact = new Artifact(
     config,
     {
@@ -156,7 +156,7 @@ test('getRenderContext', async () => {
       template: 'extend-render-context',
       provider: 'ss_json',
     },
-    { templateEngine },
+    { renderer },
   )
 
   await artifact.init()
@@ -197,7 +197,7 @@ test('getRenderContext', async () => {
 test('Artifact with underlyingProxy', async () => {
   const fixture = resolve('plain')
   const config = loadConfig(fixture)
-  const templateEngine = getEngine(config.templateDir)
+  const renderer = createNodeRenderer(config.templateDir)
 
   const artifact = new Artifact(
     config,
@@ -206,7 +206,7 @@ test('Artifact with underlyingProxy', async () => {
       template: 'test',
       provider: 'ss_with_up',
     },
-    { templateEngine },
+    { renderer },
   )
   await artifact.init()
 

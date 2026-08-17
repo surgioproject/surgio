@@ -5,11 +5,14 @@ import fs from 'fs-extra'
 import { afterEach, describe, expect, test, vi } from 'vitest'
 
 import { TtlCache } from '../cache/core.js'
+import { createNodeRenderer } from '../generator/template.js'
 import { SupportProviderEnum } from '../types.js'
+import { ArtifactValidator } from '../validators/index.js'
 
 import { buildWorkerManifest } from './build.js'
 import { defineWorkerProject } from './config.js'
 import { createSurgioRuntime } from './runtime.js'
+import { createPrecompiledRenderer } from './template-engine.js'
 
 import type { KvStore } from '../cache/types.js'
 import type { WorkerManifest, WorkerProviderFormat } from './types.js'
@@ -98,10 +101,29 @@ describe('Worker project', () => {
     const imported = await import(
       `${pathToFileURL(outfile).href}?test=${Date.now()}`
     )
+    const manifest = imported.default as WorkerManifest
+    const nodeRenderer = createNodeRenderer(path.join(directory, 'template'))
+    const precompiledRenderer = createPrecompiledRenderer(manifest)
+    const renderContext = {
+      artifactName: 'main',
+      nodeList: [{ nodeName: 'Demo' }],
+      getNodeNames: (nodes: ReadonlyArray<{ nodeName: string }>) =>
+        nodes.map((node) => node.nodeName).join(', '),
+      remoteSnippets: {
+        rules: { main: (rule: string) => `DOMAIN,example.com,${rule}` },
+      },
+    }
+    for (const input of manifest.config.artifacts) {
+      const artifact = ArtifactValidator.parse(input)
+      expect(precompiledRenderer.renderArtifact(artifact, renderContext)).toBe(
+        nodeRenderer.renderArtifact(artifact, renderContext),
+      )
+    }
+
     const store = new MemoryStore()
     const cache = new TtlCache({ store })
     const fetchMock = vi.fn(async () => new Response('DOMAIN,example.com'))
-    const runtime = createSurgioRuntime(imported.default as WorkerManifest, {
+    const runtime = createSurgioRuntime(manifest, {
       cache,
       fetch: fetchMock,
       network: { artifactCacheTtl: 60_000 },

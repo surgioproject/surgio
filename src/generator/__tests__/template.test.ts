@@ -6,11 +6,32 @@ import fs from 'fs-extra'
 import {
   convertNewSurgeScriptRuleToQuantumultXRewriteRule,
   convertSurgeScriptRuleToQuantumultXRewriteRule,
-  getEngine,
+  createNodeRenderer,
   loadLocalSnippet,
 } from '../template.js'
 
-const templateEngine = getEngine(__dirname)
+import type { ArtifactConfig } from '../../types.js'
+
+let templateId = 0
+const createTestEngine = (clashCore?: 'clash') => {
+  const renderer = createNodeRenderer(__dirname, { clashCore })
+  return {
+    renderString(source: string, context: Readonly<Record<string, unknown>>) {
+      return renderer.renderArtifact(
+        {
+          name: `__test__${templateId++}`,
+          provider: 'test',
+          template: '',
+          templateString: source,
+          templateType: 'default',
+        } as ArtifactConfig,
+        context,
+      )
+    },
+  }
+}
+
+const templateEngine = createTestEngine()
 const assetDir = join(__dirname, '../../../test/asset/')
 
 for (const [expression, result] of [
@@ -51,7 +72,7 @@ for (const [expression, result] of [
 }
 
 test('clash filter can explicitly target legacy Clash', () => {
-  const legacyClashEngine = getEngine(__dirname, { clashCore: 'clash' })
+  const legacyClashEngine = createTestEngine('clash')
 
   expect(
     legacyClashEngine.renderString('{{ expression | clash }}', {
