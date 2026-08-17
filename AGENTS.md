@@ -50,6 +50,15 @@ pnpm test:cli:update
 
 # 运行测试覆盖率
 pnpm coverage
+
+# 在真实 workerd 环境中运行 Worker 集成测试
+pnpm test:worker
+
+# 生成 Worker manifest
+pnpm worker:manifest
+
+# 检查 Wrangler 生产构建
+pnpm worker:dry-run
 ```
 
 ### 文档相关
@@ -87,7 +96,10 @@ surgio/
 ├── src/                    # 源代码目录
 │   ├── commands/          # CLI 命令实现 (基于 oclif)
 │   ├── provider/          # 数据提供者 (支持各种订阅格式)
-│   ├── generator/         # 配置文件生成器
+│   ├── generator/         # Node 侧 Artifact 与模板适配器
+│   ├── runtime/           # 平台无关的执行核心与 Renderer 接口
+│   ├── worker/            # Worker manifest、运行时与预编译模板适配器
+│   ├── cache/             # TtlCache、KvStore 及平台存储适配器
 │   ├── utils/             # 工具函数集合
 │   ├── filters/           # 节点过滤器
 │   ├── validators/        # 数据验证器 (基于 zod)
@@ -109,11 +121,34 @@ surgio/
   - `V2rayNSubscribeProvider`: 解析 V2rayN 格式订阅
   - `CustomProvider`: 自定义节点定义
 
-#### Generator/Artifact 系统
+#### Generator/Artifact 与统一渲染层
 
-- `Artifact` 表示一个输出配置文件，结合 Provider 数据和模板生成最终配置
-- `Template` 使用 Nunjucks 模板引擎，支持自定义模板函数和过滤器
-- JSON Template 支持对 JSON 格式配置文件的扩展和合并
+- `Artifact` 负责组合 Provider 数据和模板，但不直接持有或操作 Nunjucks engine
+- 统一渲染边界位于 `src/runtime/renderer.ts`，公开的 `Renderer` 只提供 `renderArtifact` 和 `renderTemplate`
+- Node 适配器 `createNodeRenderer` 位于 `src/generator/template.ts`，负责文件模板、内联模板、JSON 模板、filters 和 globals
+- Worker 适配器 `createPrecompiledRenderer` 位于 `src/worker/template-engine.ts`，只消费 manifest 中的预编译模板和 JSON 资源
+- `.tpl`、artifact `templateString` 和 `.json` 都必须通过 `Renderer` 渲染，不能在调用方按运行时自行分支
+- `Artifact` 通过 `{ renderer }` 注入渲染器，并使用 `render(context?)`；不要重新引入 `getEngine`、`templateEngine` 或 `render(engine, context)`
+- Node 与 Worker 渲染器应使用同输入、同输出的 contract 测试验证兼容性，测试不应访问渲染器内部 engine
+
+#### Worker 运行时
+
+- Worker 项目使用 ESM 配置和构建期 manifest，Provider 必须显式注册，运行时不扫描目录
+- `.tpl` 和 `templateString` 在构建期由 Nunjucks 预编译；manifest 只包含静态函数，运行时不得使用 `eval` 或 `new Function`
+- `src/worker/precompiled-environment.ts` 是刻意收窄的预编译运行时。只有生成后的模板代码确实需要某项能力时才能扩展，并且必须增加 contract 测试
+- Worker 依赖图不得包含完整 Nunjucks compiler、Node renderer、`fs-extra`、动态模块加载器或其他 Node-only 实现
+- Worker runtime 的缓存、HTTP、DNS 和日志均通过 runtime context 注入；不要回退到 Node 单例或在 Worker 模块中直接加载 Node adapter
+- Node 与 Worker 共用 `src/runtime/http-client.ts` 中基于 `ky` 的 HTTP 实现，通过注入 `fetch` 适配环境；不要增加 Got 或 Worker 专用 HTTP 分支
+- DNS resolver 允许通过 runtime context 替换；默认实现只合并单进程并发查询，不增加持久缓存
+- Worker 入口需要启用 Cloudflare `nodejs_compat`，但核心执行路径不能依赖运行时文件系统或动态代码执行
+
+#### 缓存系统
+
+- 缓存抽象位于 `src/cache/`：`TtlCache` 负责序列化和逻辑 TTL，`KvStore` 只负责字符串 KV 的 `get`、`put`、`delete`、`list` 和 `close`
+- 支持 filesystem、Upstash REST 和 Cloudflare KV；项目不再支持 Redis/ioredis
+- Node 默认缓存可以使用 filesystem；Worker 必须显式注入 `TtlCache` 和 `createCloudflareKvStore(env.SURGIO_CACHE)`
+- Worker Provider、remote snippet 和 artifact 缓存必须共用 runtime 注入的缓存实例，不能访问 Node 的全局缓存对象
+- Worker 代码只应导入 `surgio/cache/core` 和 `surgio/cache/cloudflare` 等明确子路径，避免把 filesystem 或 Upstash 客户端带入 Worker bundle
 
 #### 过滤器系统
 
