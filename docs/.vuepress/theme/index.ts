@@ -52,7 +52,6 @@ export default {
       {
         text: '进阶',
         children: [
-          '/guide/advance/surge-advance',
           '/guide/advance/custom-filter',
           '/guide/advance/advanced-provider',
           '/guide/advance/automation',

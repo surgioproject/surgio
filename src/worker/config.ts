@@ -21,7 +21,6 @@ const nodeOnlyConfigFields = [
   'output',
   'providerDir',
   'configDir',
-  'binPath',
   'upload',
   'cache',
 ] as const

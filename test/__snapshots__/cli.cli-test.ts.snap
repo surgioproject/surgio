@@ -70,7 +70,6 @@ anytls node = anytls, anytls.example.com, 443, password=password
 ss1 = ss, server, 443, encrypt-method=chacha20-ietf-poly1305, password=password, udp-relay=true
 ss2 = ss, server, 443, encrypt-method=chacha20-ietf-poly1305, password=password, udp-relay=false, obfs=tls, obfs-host=www.bing.com
 ss4 = ss, server, 443, encrypt-method=chacha20-ietf-poly1305, password=password, udp-relay=false, obfs=tls, obfs-host=example.com
-测试中文 = external, exec = "/usr/local/bin/ssr-local", args = "-s", args = "127.0.0.1", args = "-p", args = "1234", args = "-m", args = "aes-128-cfb", args = "-o", args = "tls1.2_ticket_auth", args = "-O", args = "auth_aes128_md5", args = "-k", args = "aaabbb", args = "-l", args = "61100", args = "-b", args = "127.0.0.1", args = "-g", args = "breakwa11.moe", local-port = 61100, addresses = 127.0.0.1, tfo=true
 US GIA = ss, 45.45.45.45, 444, encrypt-method=aes-128-gcm, password=password, udp-relay=false, obfs=tls, obfs-host=www.taobao.com
 HK GIA = ss, 55.55.55.55, 444, encrypt-method=aes-128-gcm, password=password, udp-relay=false, obfs=http, obfs-host=www.taobao.com
 ----
@@ -129,7 +128,7 @@ shadowsocks=45.45.45.45:444, method=aes-128-gcm, password=password, obfs=tls, ob
 shadowsocks=55.55.55.55:444, method=aes-128-gcm, password=password, obfs=http, obfs-host=www.taobao.com, tag=HK GIA
 ----
 getSurgeNodes
-测试中文 = external, exec = "/usr/local/bin/ssr-local", args = "-s", args = "127.0.0.1", args = "-p", args = "1234", args = "-m", args = "aes-128-cfb", args = "-o", args = "tls1.2_ticket_auth", args = "-O", args = "auth_aes128_md5", args = "-k", args = "aaabbb", args = "-l", args = "61100", args = "-b", args = "127.0.0.1", args = "-g", args = "breakwa11.moe", local-port = 61100, addresses = 127.0.0.1, tfo=true
+
 ----
 getLoonNodes
 🇺🇸US 1 = Shadowsocks,us.example.com,443,chacha20-ietf-poly1305,"password",tls,gateway-carry.icloud.com,fast-open=true

@@ -25,7 +25,6 @@ export const normalizeCommonConfig = (
     urlBase,
     publicUrl: /^https?:/i.test(urlBase) ? new URL(urlBase).origin + '/' : '/',
     surgeConfig: {
-      resolveHostname: false,
       vmessAEAD: true,
       ...input.surgeConfig,
     },

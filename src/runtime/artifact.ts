@@ -53,7 +53,6 @@ import type {
 } from './types.js'
 
 type ArtifactRuntimeConfig = CommandConfigAfterNormalize & {
-  readonly binPath?: Readonly<Record<string, string>>
   readonly publicUrl: string
   readonly urlBase: string
 }
@@ -170,14 +169,6 @@ export const prepareProvider = async (options: {
         return undefined
       }
 
-      if (
-        config.binPath &&
-        node.type === NodeTypeEnum.Shadowsocksr &&
-        config.binPath[node.type]
-      ) {
-        node.binPath = config.binPath[node.type]
-        node.localPort = provider.nextPort
-      }
       node.provider = provider
       node.surgeConfig = Object.freeze({
         ...config.surgeConfig,
@@ -247,7 +238,6 @@ export const prepareProvider = async (options: {
             return undefined
           }
           if (addresses.length) {
-            node.hostnameIp = addresses
             if (config.resolveHostname) node.hostname = addresses[0]
           }
         } catch {

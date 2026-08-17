@@ -8,7 +8,7 @@ import {
 } from '../types.js'
 import { applyFilter } from '../filters/index.js'
 
-import { isIp, pickAndFormatStringList } from './portable.js'
+import { pickAndFormatStringList } from './portable.js'
 
 const logger = consoleRuntimeLogger
 
@@ -273,73 +273,6 @@ function nodeListMapper(
             ),
           ].join(', '),
         ].join(' = '),
-      ]
-    }
-
-    case NodeTypeEnum.Shadowsocksr: {
-      /* istanbul ignore next -- @preserve */
-      if (!nodeConfig.binPath) {
-        throw new Error(
-          '请按照文档 https://url.royli.dev/vdGh2 添加 Shadowsocksr 二进制文件路径',
-        )
-      }
-
-      const args = [
-        '-s',
-        nodeConfig.hostname,
-        '-p',
-        `${nodeConfig.port}`,
-        '-m',
-        nodeConfig.method,
-        '-o',
-        nodeConfig.obfs,
-        '-O',
-        nodeConfig.protocol,
-        '-k',
-        nodeConfig.password,
-        '-l',
-        `${nodeConfig.localPort}`,
-        '-b',
-        '127.0.0.1',
-      ]
-
-      if (nodeConfig.protoparam) {
-        args.push('-G', nodeConfig.protoparam)
-      }
-      if (nodeConfig.obfsparam) {
-        args.push('-g', nodeConfig.obfsparam)
-      }
-
-      const nodeConfigString = [
-        'external',
-        `exec = ${JSON.stringify(nodeConfig.binPath)}`,
-        ...args.map((arg) => `args = ${JSON.stringify(arg)}`),
-        `local-port = ${nodeConfig.localPort}`,
-      ]
-
-      if (nodeConfig.localPort === 0) {
-        throw new Error(
-          `为 Surge 生成 SSR 配置时必须为 Provider ${nodeConfig.provider?.name} 设置 startPort，参考 https://url.royli.dev/bWcpe`,
-        )
-      }
-
-      if (
-        nodeConfig?.surgeConfig?.resolveHostname &&
-        nodeConfig.hostnameIp &&
-        nodeConfig.hostnameIp.length
-      ) {
-        nodeConfigString.push(
-          ...nodeConfig.hostnameIp.map((item) => `addresses = ${item}`),
-        )
-      }
-
-      if (isIp(nodeConfig.hostname)) {
-        nodeConfigString.push(`addresses = ${nodeConfig.hostname}`)
-      }
-
-      return [
-        nodeConfig.nodeName,
-        [nodeConfig.nodeName, nodeConfigString.join(', ')].join(' = '),
       ]
     }
 

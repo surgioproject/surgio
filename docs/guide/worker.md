@@ -26,7 +26,7 @@ export default defineWorkerProject({
 })
 ```
 
-配置和 Provider 只支持 ESM。每个 Provider 都必须在 `providers` 中显式注册；Worker 不扫描 `provider` 目录。`output`、`providerDir`、`configDir`、`binPath`、`upload` 和 `cache` 是 Node-only 配置，构建器会拒绝它们。
+配置和 Provider 只支持 ESM。每个 Provider 都必须在 `providers` 中显式注册；Worker 不扫描 `provider` 目录。`output`、`providerDir`、`configDir`、`upload` 和 `cache` 是 Node-only 配置，构建器会拒绝它们。
 
 ## 构建 manifest
 

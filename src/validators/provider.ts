@@ -22,7 +22,6 @@ export const ProviderValidator = z.object({
     .union([z.literal('auto'), z.literal('on'), z.literal('off')])
     .optional(),
   underlyingProxy: z.ostring(),
-  startPort: z.number().min(1024).max(65535).optional(),
   relayUrl: z.string().url().optional(),
   requestUserAgent: z.ostring(),
   renameNode: z

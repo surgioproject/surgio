@@ -28,9 +28,7 @@ afterEach(async () => {
   delete process.env.ENV_SURGIO_PROJECT_DIR
   await fs.remove(resolve('plain/dist'))
   await fs.remove(resolve('template-error/dist'))
-  await fs.remove(resolve('not-specify-binPath/dist'))
   await fs.remove(resolve('template-variables-functions/dist'))
-  await fs.remove(resolve('assign-local-port/dist'))
   await fs.remove(resolve('custom-filter/dist'))
 })
 
@@ -106,7 +104,7 @@ describe('generate command', () => {
 
       expect(fs.existsSync(resolve('plain/dist/new_path.conf'))).toBe(true)
       expect(fs.existsSync(resolve('plain/dist/ss.conf'))).toBe(true)
-      expect(fs.existsSync(resolve('plain/dist/ssr.conf'))).toBe(true)
+      expect(fs.existsSync(resolve('plain/dist/ssr.conf'))).toBe(false)
       expect(fs.existsSync(resolve('plain/dist/v2rayn.conf'))).toBe(true)
       expect(fs.existsSync(resolve('plain/dist/custom.conf'))).toBe(true)
       expect(fs.existsSync(resolve('plain/dist/ssd.conf'))).toBe(true)
@@ -147,18 +145,6 @@ describe('generate command', () => {
     })
   })
 
-  describe('not specify binPath', () => {
-    it('fails to run generate cmd', async () => {
-      const { error, stderr } = await runCommand([
-        'generate',
-        `--project=${resolve('not-specify-binPath')}`,
-      ])
-
-      expect(error?.oclif?.exit).toBe(1)
-      expect(stderr).toContain('添加 Shadowsocksr 二进制文件路径')
-    })
-  })
-
   describe('template variables and functions', () => {
     it('runs generate cmd', async () => {
       const { error } = await runCommand([
@@ -187,26 +173,6 @@ describe('generate command', () => {
         'http://example.com/ss.conf\n'
 
       expect(confString).toBe(result)
-    })
-  })
-
-  describe('assign local port', () => {
-    it('runs generate cmd', async () => {
-      const { error } = await runCommand([
-        'generate',
-        `--project=${resolve('assign-local-port')}`,
-      ])
-
-      expect(error).toBeUndefined()
-      const confString = fs.readFileSync(
-        resolve('assign-local-port/dist/ssr.conf'),
-        {
-          encoding: 'utf8',
-        },
-      )
-      const conf = ini.decode(confString)
-
-      expect(conf.Proxy.测试中文.includes('local-port = 5000')).toBe(true)
     })
   })
 

@@ -14,7 +14,6 @@ const { defineSurgioConfig } = require('surgio');
 module.exports = defineSurgioConfig({
   artifacts: [],
   urlBase: 'https://example.com/',
-  binPath: {},
 });
 ```
 
@@ -22,7 +21,6 @@ module.exports = defineSurgioConfig({
 module.exports = {
   artifacts: [],
   urlBase: 'https://example.com/',
-  binPath: {},
 };
 ```
 
@@ -259,17 +257,6 @@ Cloudflare Account ID，为 32 位十六进制字符串。
 推荐使用 `S3_BACKEND_ACCESS_KEY_SECRET` 环境变量，不要将该字段上传至公共仓库。
 :::
 
-## binPath
-
-如果需要生成针对 Surge 的 SSR 订阅，需要额外配置此项。
-
-### binPath.shadowsocksr
-
-- 类型：`string`
-- 默认值：`undefined`
-
-SSR 的可执行文件地址。请使用 libev 版本的二进制文件，可以在 [这篇文章](/guide/advance/surge-advance.md) 找到下载地址和使用方法。
-
 ## surgeConfig
 
 - 类型：`object`
@@ -281,17 +268,6 @@ module.exports = {
   surgeConfig: {},
 };
 ```
-
-### surgeConfig.resolveHostname
-
-- 类型：`boolean`
-- 默认值：`false`
-
-如果你已经开启了全局的 `resolveHostname`，可以不开启此项。
-
-为了不让代理进程（如 ssr-local）的流量经过 Surge 的 TUN 模块，需要额外指定 `addresses` 参数。在之前版本的 Surgio 里，生成的配置不会对域名进行解析，导致实际使用中仍然会造成额外的性能损耗。
-
-打开这个选项后，Surgio 会在生成配置的时候解析域名。不过，这必然会造成生成时间延长，所以请按照个人的需要进行选择。
 
 ### surgeConfig.vmessAEAD
 
@@ -560,7 +536,7 @@ module.exports = {
 - 类型：`boolean`
 - 默认值：`false`
 
-是否解析节点的域名。开启此功能后 Surgio 会将节点的域名解析为 IP 地址，这样可能可以加速节点的连接速度。请注意，这个选项和 `surgeConfig.resolveHostname` 不同，前者是全局配置，后者供生成 Surge 使用的 SSR 配置。假如你已经打开了 `surgeConfig.resolveHostname`，那开启 `resolveHostname` 后可以删除 `surgeConfig.resolveHostname`
+是否解析节点的域名。开启此功能后 Surgio 会将节点的域名解析为 IP 地址，这样可能可以加速节点的连接速度。
 
 打开这个选项后，Surgio 会在生成配置的时候解析域名，这必然会造成生成时间延长，所以请按照个人的需要进行选择。另外，开启此选项后将失去节点的负载均衡功能（如有）和 DNS 解析的灵活性，所以请**谨慎使用**。
 

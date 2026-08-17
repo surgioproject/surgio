@@ -260,13 +260,6 @@ export default abstract class Provider {
     } as DefaultProviderRequestHeaders
   }
 
-  public get nextPort(): number {
-    if (this.config.startPort) {
-      return this.config.startPort++
-    }
-    return 0
-  }
-
   /* istanbul ignore next -- @preserve */
   public getSubscriptionUserInfo: GetSubscriptionUserInfoFunction =
     async () => {

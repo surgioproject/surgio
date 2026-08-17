@@ -35,7 +35,6 @@ export const ClashConfigValidator = z.object({
 })
 
 export const SurgeConfigValidator = z.object({
-  resolveHostname: z.oboolean(),
   vmessAEAD: z.oboolean(),
 })
 
@@ -116,11 +115,6 @@ export const SurgioConfigValidator = z.object({
   remoteSnippets: z.array(RemoteSnippetValidator).optional(),
   urlBase: z.ostring(),
   upload: UploadConfigValidator.optional(),
-  binPath: z
-    .object({
-      shadowsocksr: z.string().regex(/^\//),
-    })
-    .optional(),
   flags: z
     .record(
       z.union([

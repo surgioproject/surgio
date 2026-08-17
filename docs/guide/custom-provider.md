@@ -1203,14 +1203,6 @@ module.exports = {
 你现在可以定义 [全局的过滤器](/guide/custom-config.md#customfilters) 了！
 :::
 
-### provider.startPort
-
-- 类型：`number`
-
-在调用 `getSurgeNodes` 时会强制要求设置该值。建议大于 10000。
-
-在生成 Surge 的 Shadowsocksr 和 Vmess 配置文件时，本地监听端口会根据此配置递增。这样做的好处是切换配置文件时不会遇到端口冲突。同一个 Provider 被用在不同的 Artifact 中也会进行递增。
-
 ### provider.addFlag
 
 - 类型：`boolean`

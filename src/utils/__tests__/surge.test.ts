@@ -1,5 +1,6 @@
-import { expect, test } from 'vitest'
+import { expect, test, vi } from 'vitest'
 
+import { silentRuntimeLogger, withRuntimeLogger } from '../../runtime/logger.js'
 import { NodeTypeEnum, PossibleNodeConfigType } from '../../types.js'
 import * as surge from '../surge.js'
 
@@ -41,20 +42,6 @@ test('getSurgeNodes', async () => {
       port: '443',
       method: 'chacha20-ietf-poly1305',
       password: 'password',
-    },
-    {
-      nodeName: '测试中文',
-      type: NodeTypeEnum.Shadowsocksr,
-      hostname: '127.0.0.1',
-      port: '1234',
-      method: 'aes-128-cfb',
-      password: 'aaabbb',
-      obfs: 'tls1.2_ticket_auth',
-      obfsparam: 'breakwa11.moe',
-      protocol: 'auth_aes128_md5',
-      protoparam: '',
-      binPath: '/usr/local/bin/ssr-local',
-      localPort: 61100,
     },
     {
       type: NodeTypeEnum.Vmess,
@@ -185,33 +172,30 @@ test('getSurgeNodes', async () => {
     'Test Node 2 = ss, example2.com, 443, encrypt-method=chacha20-ietf-poly1305, password=password',
   )
   expect(txt1[2]).toBe(
-    '测试中文 = external, exec = "/usr/local/bin/ssr-local", args = "-s", args = "127.0.0.1", args = "-p", args = "1234", args = "-m", args = "aes-128-cfb", args = "-o", args = "tls1.2_ticket_auth", args = "-O", args = "auth_aes128_md5", args = "-k", args = "aaabbb", args = "-l", args = "61100", args = "-b", args = "127.0.0.1", args = "-g", args = "breakwa11.moe", local-port = 61100, addresses = 127.0.0.1',
-  )
-  expect(txt1[3]).toBe(
     '测试 3 = vmess, 1.1.1.1, 8080, username=1386f85e-657b-4d6e-9d56-78badb75e1fd, ws=true, ws-path=/, ws-headers="user-agent:Mozilla/5.0 (iPhone; CPU iPhone OS 13_5 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/13.1.1 Mobile/15E148 Safari/604.1", vmess-aead=false',
   )
-  expect(txt1[4]).toBe(
+  expect(txt1[3]).toBe(
     '测试 4 = vmess, 1.1.1.1, 8080, username=1386f85e-657b-4d6e-9d56-78badb75e1fd, ws=true, ws-path=/, ws-headers="user-agent:Mozilla/5.0 (iPhone; CPU iPhone OS 13_5 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/13.1.1 Mobile/15E148 Safari/604.1", tls=true, vmess-aead=false',
   )
-  expect(txt1[5]).toBe(
+  expect(txt1[4]).toBe(
     '测试 5 = vmess, 1.1.1.1, 8080, username=1386f85e-657b-4d6e-9d56-78badb75e1fd, encrypt-method=aes-128-gcm, vmess-aead=false',
   )
-  expect(txt1[6]).toBe(
+  expect(txt1[5]).toBe(
     'Test Node 4 = ss, example.com, 443, encrypt-method=chacha20-ietf-poly1305, password=password, udp-relay=true, obfs=tls, obfs-host=example.com, mptcp=true',
   )
-  expect(txt1[7]).toBe(
+  expect(txt1[6]).toBe(
     'Test Node 5 = ss, example2.com, 443, encrypt-method=chacha20-ietf-poly1305, password=password, mptcp=false',
   )
-  expect(txt1[8]).toBe(
+  expect(txt1[7]).toBe(
     'Test Node 6 = ss, example2.com, 443, encrypt-method=chacha20-ietf-poly1305, password=password',
   )
-  expect(txt1[9]).toBe(
+  expect(txt1[8]).toBe(
     'Test Node 7 = ss, example2.com, 443, encrypt-method=chacha20-ietf-poly1305, password=password, tfo=true, mptcp=true',
   )
-  expect(txt1[10]).toBe(
+  expect(txt1[9]).toBe(
     '测试 6 = vmess, 1.1.1.1, 8080, username=1386f85e-657b-4d6e-9d56-78badb75e1fd, ws=true, ws-path=/, ws-headers="user-agent:Mozilla/5.0 (iPhone; CPU iPhone OS 13_5 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/13.1.1 Mobile/15E148 Safari/604.1", tls=true, vmess-aead=false, tfo=true, mptcp=true, tls13=true, skip-cert-verify=true',
   )
-  expect(txt1[11]).toBe(
+  expect(txt1[10]).toBe(
     '测试 7 = vmess, 1.1.1.1, 8080, username=1386f85e-657b-4d6e-9d56-78badb75e1fd, ws=true, ws-path=/, ws-headers="user-agent:Mozilla/5.0 (iPhone; CPU iPhone OS 13_5 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/13.1.1 Mobile/15E148 Safari/604.1", tls=true, vmess-aead=false, tfo=true, mptcp=true, underlying-proxy=another-proxy, tls13=true, skip-cert-verify=true',
   )
 
@@ -423,8 +407,6 @@ test('getSurgeNodes', async () => {
         skipCertVerify: true,
         host: '',
         uuid: '1386f85e-657b-4d6e-9d56-78badb75e1fd',
-        binPath: '/usr/local/bin/v2ray',
-        localPort: 61101,
         tfo: true,
         mptcp: true,
         testUrl: 'http://www.google.com',
@@ -865,6 +847,46 @@ test('Surge Tailscale generation requires authKey', () => {
     expect(generate).toThrow('interactive-tailnet')
     expect(generate).toThrow('authKey')
   }
+})
+
+test('Surge omits Shadowsocksr nodes', () => {
+  const warn = vi.fn()
+  const nodeList: ReadonlyArray<PossibleNodeConfigType> = [
+    {
+      nodeName: 'SSR Node',
+      type: NodeTypeEnum.Shadowsocksr,
+      hostname: '127.0.0.1',
+      port: 1234,
+      method: 'aes-128-cfb',
+      password: 'password',
+      obfs: 'plain',
+      obfsparam: '',
+      protocol: 'origin',
+      protoparam: '',
+    },
+    {
+      nodeName: 'SS Node',
+      type: NodeTypeEnum.Shadowsocks,
+      hostname: 'example.com',
+      port: 443,
+      method: 'chacha20-ietf-poly1305',
+      password: 'password',
+    },
+  ]
+
+  const result = withRuntimeLogger({ ...silentRuntimeLogger, warn }, () => ({
+    names: surge.getSurgeNodeNames(nodeList),
+    nodes: surge.getSurgeNodes(nodeList),
+  }))
+
+  expect(result.nodes).toBe(
+    'SS Node = ss, example.com, 443, encrypt-method=chacha20-ietf-poly1305, password=password',
+  )
+  expect(result.names).toBe('SS Node')
+  expect(warn).toHaveBeenCalledTimes(2)
+  expect(warn).toHaveBeenCalledWith(
+    '不支持为 Surge 生成 shadowsocksr 的节点，节点 SSR Node 会被省略',
+  )
 })
 
 test('getSurgeNodeNames', () => {
