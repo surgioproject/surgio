@@ -32,6 +32,20 @@ afterEach(async () => {
   await fs.remove(resolve('custom-filter/dist'))
 })
 
+describe('new command', () => {
+  it('rejects legacy projects with a migration message', async () => {
+    const { error, stderr } = await runCommand([
+      'new',
+      'template',
+      `--project=${resolve('plain')}`,
+    ])
+
+    expect(error?.oclif?.exit).toBe(1)
+    expect(stderr).toContain('仅支持 v4 surgio.project.*')
+    expect(stderr).toContain('迁移为 Surgio Project')
+  })
+})
+
 describe('doctor command', () => {
   it('runs doctor cmd', async () => {
     const { error, stdout } = await runCommand([

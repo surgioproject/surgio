@@ -109,8 +109,7 @@
   "license": "MIT",
   "files": [
     "bin",
-    "build",
-    "hygen-template"
+    "build"
   ],
   "bugs": {
     "url": "https://github.com/geekdada/surgio/issues"
@@ -163,7 +162,6 @@
     "@keyv/serialize": "^1.1.1",
     "@oclif/core": "^4.13.3",
     "@oclif/plugin-help": "^6.2.58",
-    "@royli/hygen": "^6.2.0",
     "@surgio/eslint-config-surgio": "^2.1.0",
     "@surgio/logger": "link:../../surgioproject/packages/packages/logger",
     "@upstash/redis": "^1.38.2",
@@ -184,6 +182,7 @@
     "is-gzip": "^2.0.0",
     "ky": "^2.0.2",
     "lodash": "^4.18.1",
+    "magicast": "^0.5.4",
     "micromatch": "^4.0.8",
     "minio": "^8.0.7",
     "ms": "^2.1.3",

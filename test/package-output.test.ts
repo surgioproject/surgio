@@ -34,6 +34,17 @@ test('published entrypoints can be imported as ESM', async () => {
   expect(surgio.categories).toBeTypeOf('object')
 })
 
+test('published package metadata excludes Hygen templates and dependencies', () => {
+  const manifest = fs.readJsonSync(path.join(projectRoot, 'package.json')) as {
+    dependencies: Record<string, string>
+    files: string[]
+  }
+
+  expect(manifest.files).not.toContain('hygen-template')
+  expect(manifest.dependencies).not.toHaveProperty('@royli/hygen')
+  expect(manifest.dependencies).toHaveProperty('magicast')
+})
+
 test('published ESM entrypoints can be required from CommonJS', () => {
   const entrypoints = [
     'surgio',

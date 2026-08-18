@@ -19,7 +19,6 @@ export default tseslint.config(
       '.surgio/**',
       'test/fixture/**/.surgio/**',
       'examples/**',
-      'hygen-template/**',
       // Root-level re-export files
       '*.js',
       '*.d.ts',
