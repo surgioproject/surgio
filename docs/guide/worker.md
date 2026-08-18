@@ -1,134 +1,234 @@
 # 在 Cloudflare Workers 中运行 Surgio
 
-`surgio/worker` 是不依赖 CLI、运行时文件系统和动态模块加载的核心运行时。TypeScript ESM 项目使用一份 `surgio.project.ts`，同时供本地 CLI、Node Gateway 和 Worker manifest 使用。Node.js 22.22.2 及以上版本会直接执行其中可擦除的 TypeScript 语法，不需要 Bun、tsx 或运行时编译器。
+Surgio v4 的本地 CLI、Node Gateway 和 Cloudflare Worker 共用同一个
+`surgio.project.ts`。Worker 部署使用 `@surgio/gateway`。
 
-Worker 必须启用 [`nodejs_compat`](https://developers.cloudflare.com/workers/runtime-apis/nodejs/)。这项兼容标志用于 `Buffer`、`node:crypto`、`node:net` 和 `node:dns`，并不允许 Worker 在运行时读取 Surgio 项目目录。
+## 准备 Project
 
-## 定义统一 Project
-
-新建 `surgio.project.ts`：
+项目只需要维护一份配置：
 
 ```ts
+// surgio.project.ts
 import {
   defineClashProvider,
   defineSurgioProject,
   env,
+  type SurgioNodeOptions,
 } from 'surgio/project'
 
 export default defineSurgioProject({
-  artifacts: [{ name: 'demo.conf', provider: 'demo', template: 'surge' }],
+  artifacts: [
+    {
+      name: 'demo.conf',
+      provider: 'demo',
+      template: 'surge',
+    },
+  ],
   providers: {
     demo: () =>
       defineClashProvider({
         url: env('DEMO_SUBSCRIPTION_URL'),
       }),
   },
-  templateDir: './template',
 })
 
-export const nodeOptions = async () => ({
+export const nodeOptions = async (): Promise<SurgioNodeOptions> => ({
   output: './dist',
   cache: { type: 'filesystem' },
-  upload: {
-    accessKeyId: env('UPLOAD_ACCESS_KEY_ID'),
-    accessKeySecret: env('UPLOAD_ACCESS_KEY_SECRET'),
-  },
 })
 ```
 
-Project 和 Provider 只支持 ESM。Surgio 配置字段直接写在 Project 顶层，`providers` 和 `templateDir` 是 Project 元数据。每个 Provider 都必须在 `providers` 中显式注册；Worker 不扫描 `provider` 目录。`output`、文件系统或 Upstash cache、upload 等 Node-only 设置放在命名导出的 `nodeOptions` 中。CLI 和 Node runtime 会读取它，Worker manifest 只读取默认导出的共享配置。
+`providers` 必须显式注册。`templateDir` 可以省略，默认是 `./template`。
+`nodeOptions()` 只供本地 CLI 和 Node Gateway 使用，不会进入 Worker manifest。
 
-`env(name)` 从 `process.env` 读取字符串，缺失时抛错。Provider factory 在 runtime 创建 Provider 时执行，适合读取只存在于部署环境的变量；`nodeOptions()` 只在 Node 侧执行。Cloudflare Worker 必须使用 `nodejs_compat` 和不早于 `2025-04-01` 的 compatibility date，使文本变量和 Secrets 自动进入 `process.env`。KV、Assets 等结构化 binding 仍通过 Worker adapter 显式注入。
+必需的文本变量和 Secrets 可以通过 `env(name)` 读取。Worker 需要启用
+[`nodejs_compat`](https://developers.cloudflare.com/workers/runtime-apis/nodejs/)，KV 和
+Assets binding 则在 Worker 入口中传入。
 
-## 构建 manifest
+## 构建 Worker
 
-构建脚本只在 Node 构建环境中运行：
+创建构建脚本：
 
 ```ts
-// scripts/build-surgio-worker.ts
-import { buildWorkerManifest } from 'surgio/worker/build'
+// scripts/build-worker.ts
+import { buildGatewayWorker } from '@surgio/gateway/worker/build'
 
-await buildWorkerManifest({
-  configFile: 'surgio.project.ts',
-  outfile: '.surgio/worker-manifest.mjs',
-})
+await buildGatewayWorker()
 ```
 
-构建器会读取 `.tpl` 和 `.json` 模板，检查 Artifact、Provider 和模板引用，并把 Nunjucks 模板及 `templateString` 预编译。include、import、本地 snippet 和模板 filters 在运行时仍可用。
+运行后会生成：
 
-Worker runtime 不公开 `renderString`，也不包含 Nunjucks compiler、`eval` 或 `new Function`。因此 `.surgio/worker-manifest.mjs` 必须在 Wrangler 打包前生成，不能在 Worker 中生成。
+- `.surgio/worker-manifest.mjs`
+- `.surgio/gateway-assets`
 
-## 创建 runtime
+`buildGatewayWorker()` 会自动读取当前目录的 `surgio.project.ts`，通常不需要传入任何
+选项。
+
+## 创建 Worker 入口
 
 ```ts
-import manifest from './.surgio/worker-manifest.mjs'
-import { TtlCache } from 'surgio/cache/core'
+// worker.ts
+import { createWorkerGateway } from '@surgio/gateway/worker'
 import { createCloudflareKvStore } from 'surgio/cache/cloudflare'
-import { createSurgioRuntime } from 'surgio/worker'
+import { TtlCache } from 'surgio/cache/core'
 
-interface Env {
-  SURGIO_CACHE: KVNamespace
-}
+import manifest from './.surgio/worker-manifest.mjs'
 
-export default {
-  async fetch(request: Request, env: Env): Promise<Response> {
-    const cache = new TtlCache()
-    cache.useStore(createCloudflareKvStore(env.SURGIO_CACHE))
-
-    const runtime = createSurgioRuntime(manifest, { cache, fetch })
-    const result = await runtime.renderArtifact('demo.conf', {
-      getNodeListParams: {
-        requestUserAgent: request.headers.get('user-agent') ?? undefined,
-        requestHeaders: Object.fromEntries(request.headers),
-      },
-    })
-
-    return new Response(result.body)
+export default createWorkerGateway<Env>(manifest, {
+  bindings(env) {
+    return {
+      cache: new TtlCache({
+        store: createCloudflareKvStore(env.SURGIO_CACHE),
+      }),
+      assets: env.ASSETS,
+    }
   },
-}
+})
 ```
 
-`cache` 是必需依赖。Worker Provider、远程 snippet 和 Artifact 结果都使用这个实例，不会访问 Node 的 `unifiedCache` 单例。
+这里的 `Env` 由 Wrangler 根据配置生成。runtime 和缓存的复用由 Gateway 处理。
 
-`createSurgioRuntime` 还允许注入 `fetch`、`resolveDomain`、`logger` 和 `network`。`logger` 直接使用 `@surgio/logger` 的 `Logger` 接口；未注入时使用该包的默认 logger，注入后会显式传递给 Provider、formatter 和 Artifact 模板，不依赖全局切换。默认 HTTP adapter 使用基于 Fetch 的 ky，与 Node.js 共用文本响应、headers、超时和有限重试逻辑。默认 DNS adapter 使用 `node:dns` 的 `resolve4` 和 `resolve6`，只合并同一进程内的并发查询，不做持久缓存；每次 DNS 查询都会计入 [Worker subrequest](https://developers.cloudflare.com/workers/runtime-apis/nodejs/dns/)。
+## 配置 Wrangler
 
-## Runtime API
-
-- `renderArtifact(name, options)` 渲染已定义 Artifact。
-- `renderProviders(options)` 直接导出一组 Provider。
-- `renderTemplate(name, context)` 渲染一个预编译模板。
-- `listArtifacts()` 和 `listProviders()` 返回 manifest 中的静态目录。
-- `getProviderSubscription(name, params)` 读取订阅元数据。
-- `getGatewayConfig()` 返回 Gateway 所需的只读配置元数据。
-- `resetCache()` 清理当前 Surgio namespace。
-- `close()` 关闭调用方提供的缓存。
-
-渲染结果是 `{ body, artifact, subscriptionUserInfo, subscriptionUserInfoMap }`，调用方不需要持有或观察可变的 `Artifact` 实例。
-
-## 远程 snippet 限制
-
-普通远程 ruleset 会按 TTL 下载并缓存。标记为 `surgioSnippet` 的远程模板使用安全子集解释器，仅支持：
-
-- 一个 `main(arg, ...)` 宏；
-- 文本、注释和 Nunjucks 空白控制；
-- `{{ identifier }}` 参数插值。
-
-属性访问、函数调用、filters、include、循环、条件和其它控制块会被拒绝，并报告行列位置。需要完整 Nunjucks 能力的 snippet 应改为本地 `.tpl`，由 manifest 构建器预编译。
-
-## Wrangler 配置
+在项目根目录创建 `wrangler.jsonc`：
 
 ```json
 {
+  "$schema": "node_modules/wrangler/config-schema.json",
   "name": "surgio-worker",
-  "main": "src/worker.ts",
+  "main": "worker.ts",
   "compatibility_date": "2026-08-17",
   "compatibility_flags": ["nodejs_compat"],
-  "kv_namespaces": [{ "binding": "SURGIO_CACHE", "id": "<KV namespace id>" }]
+  "kv_namespaces": [
+    {
+      "binding": "SURGIO_CACHE",
+      "id": "<KV namespace id>"
+    }
+  ],
+  "assets": {
+    "binding": "ASSETS",
+    "directory": ".surgio/gateway-assets",
+    "not_found_handling": "single-page-application",
+    "run_worker_first": [
+      "/api/*",
+      "/get-artifact/*",
+      "/export-providers",
+      "/render"
+    ]
+  }
 }
 ```
 
-Cloudflare KV 是最终一致存储，跨区域读取、key list 和 reset 不能提供 Redis 的强一致语义。Surgio 在记录内执行精确的逻辑 TTL；Cloudflare 的物理过期只用于后端清理。
+部署时请更新 `compatibility_date`。KV namespace id 会在下一步创建 KV 时获得。
 
-上线前运行 `wrangler deploy --dry-run --outfile .surgio/dist/worker.js --metafile .surgio/dist/meta.json`，检查 bundle 不包含 Node-only 后端依赖或动态代码，并确认 gzip 后低于当前 Worker 套餐限制。测试建议使用 [Cloudflare Workers Vitest integration](https://developers.cloudflare.com/workers/testing/) 在 workerd 中验证真实 binding。
+在 `package.json` 中加入常用命令：
 
-现有 gateway 的迁移边界见 [Gateway Worker checklist](/gateway-worker-checklist.md)。
+```json
+{
+  "scripts": {
+    "build:worker": "node scripts/build-worker.ts",
+    "types:worker": "wrangler types worker-configuration.d.ts",
+    "worker:dev": "pnpm build:worker && wrangler dev",
+    "worker:test": "pnpm build:worker && wrangler deploy --dry-run --outdir .surgio/dry-run",
+    "worker:deploy": "pnpm build:worker && wrangler deploy"
+  }
+}
+```
+
+## 第一次部署
+
+### 1. 安装 Wrangler 并登录
+
+```bash
+pnpm add -D wrangler
+pnpm wrangler login
+```
+
+`login` 会打开浏览器，请选择准备部署 Surgio 的 Cloudflare 账号并授权。
+
+### 2. 创建缓存空间
+
+```bash
+pnpm wrangler kv namespace create SURGIO_CACHE
+```
+
+命令完成后会输出一段包含 `id` 的配置。把这个 `id` 填入
+`wrangler.jsonc` 中的 `<KV namespace id>`。
+
+KV 只需要创建一次。以后重新部署代码时继续使用同一个 id。
+
+### 3. 生成类型
+
+```bash
+pnpm wrangler types worker-configuration.d.ts
+```
+
+在 `tsconfig.json` 中包含生成的 `worker-configuration.d.ts`，之后就可以直接使用
+`Env`、`SURGIO_CACHE` 和 `ASSETS` 的类型。
+
+### 4. 准备本地变量
+
+如果 Project 使用了 `env('DEMO_SUBSCRIPTION_URL')`，在项目根目录创建 `.dev.vars`：
+
+```bash
+DEMO_SUBSCRIPTION_URL="https://example.com/subscription"
+```
+
+把项目实际使用的其它变量也放进这个文件，并将 `.dev.vars*` 加入 `.gitignore`，不要
+提交真实订阅地址、密码或 token。
+
+现在可以在本地预览：
+
+```bash
+pnpm worker:dev
+```
+
+Wrangler 会在终端显示本地访问地址。
+
+### 5. 首次发布
+
+创建一个不会提交到 Git 的 `.env.production`，写入正式环境需要的变量：
+
+```bash
+DEMO_SUBSCRIPTION_URL="https://example.com/production-subscription"
+```
+
+然后执行：
+
+```bash
+pnpm build:worker
+pnpm wrangler deploy --secrets-file .env.production
+```
+
+部署成功后，Wrangler 会显示类似
+`https://surgio-worker.<your-subdomain>.workers.dev` 的访问地址。打开这个地址即可使用
+Gateway。
+
+记得将 `.env.production` 和其它 `.env*` 文件加入 `.gitignore`。
+
+### 6. 以后更新
+
+只修改了配置、Provider 或模板时，直接运行：
+
+```bash
+pnpm worker:deploy
+```
+
+已有 Secrets 会继续保留。如果只需要修改某个 Secret，可以运行：
+
+```bash
+pnpm wrangler secret put DEMO_SUBSCRIPTION_URL
+```
+
+按照提示粘贴新值即可。
+
+## 部署前检查
+
+```bash
+pnpm types:worker
+pnpm build:worker
+pnpm worker:test
+```
+
+检查通过后运行 `pnpm worker:deploy`。如果部署失败，先确认已经登录、KV id 已填写，
+以及 `.surgio/worker-manifest.mjs` 已由 `pnpm build:worker` 生成。
