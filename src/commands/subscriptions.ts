@@ -39,6 +39,13 @@ class SubscriptionsCommand extends BaseCommand<typeof SubscriptionsCommand> {
   }
 
   private async listProviders(): Promise<ReadonlyArray<PossibleProviderType>> {
+    if (this.surgioProject.providers) {
+      return Promise.all(
+        Object.entries(this.surgioProject.providers).map(([name, definition]) =>
+          getProvider(name, definition),
+        ),
+      )
+    }
     const files = await fsp.readdir(this.surgioConfig.providerDir, {
       encoding: 'utf8',
     })
@@ -51,7 +58,7 @@ class SubscriptionsCommand extends BaseCommand<typeof SubscriptionsCommand> {
 
       try {
         const providerName = basename(path, '.js')
-        const providerConfig = loadModuleSync(path)
+        const providerConfig = loadModuleSync<any>(path)
 
         logger.debug('read %s %s', providerName, path)
 

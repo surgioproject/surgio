@@ -152,10 +152,7 @@ const notUSAndNotBGP = mergeReversedFilters(
 
 ### IDE 类型提示支持
 
-Surgio 提供了下面的方法来支持 IDE 类型提示。他们的使用是完全可选的，你可以根据自己的喜好来使用。
-
-- `defineSurgioConfig`
-- `defineXxxxProvider` (例如 `defineClashProvider`)
+TypeScript Project 使用 `satisfies SurgioProjectConfig` 检查共享配置。Provider authoring helper 仍可按需使用，例如 `defineClashProvider`。
 
 ### 内置工具
 

@@ -5,7 +5,7 @@ import ora from 'ora'
 
 import { unifiedCache } from './cache/singleton.js'
 import { CommandConfig } from './types.js'
-import { loadConfig } from './config.js'
+import { loadSurgioProject, type LoadedSurgioProject } from './project/index.js'
 import { errorHandler } from './utils/error-helper.js'
 import { loadModuleSync } from './utils/module-loader.js'
 
@@ -20,6 +20,7 @@ abstract class BaseCommand<T extends typeof Command> extends Command {
   protected flags!: Flags<T>
   protected args!: Args<T>
   protected surgioConfig!: CommandConfig
+  protected surgioProject!: LoadedSurgioProject
   public ora = ora({
     stream: process.stdout,
   })
@@ -52,7 +53,8 @@ abstract class BaseCommand<T extends typeof Command> extends Command {
     }
 
     this.projectDir = flags.project
-    this.surgioConfig = loadConfig(this.projectDir)
+    this.surgioProject = await loadSurgioProject(this.projectDir)
+    this.surgioConfig = this.surgioProject.config
   }
 
   protected async catch(err: Error & { exitCode?: number }): Promise<any> {

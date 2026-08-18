@@ -1,8 +1,6 @@
 'use strict'
 
-const { defineSurgioConfig } = require('surgio')
-
-module.exports = defineSurgioConfig({
+module.exports = {
   remoteSnippets: [
     {
       name: 'youtube',
@@ -28,4 +26,4 @@ module.exports = defineSurgioConfig({
   urlBase: 'https://config.example.com/',
   // https://surgio.js.org/guide/custom-config.html#upload
   // upload: { backend: 'oss', bucket: 'example-bucket', region: 'cn-hangzhou' },
-})
+}

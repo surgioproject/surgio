@@ -1,8 +1,5 @@
-import { Promisable } from 'type-fest'
-
 import {
   ClashProviderConfig,
-  CommandConfigBeforeNormalize,
   CustomProviderConfig,
   PossibleProviderConfigType,
   ShadowsocksJsonSubscribeProviderConfig,
@@ -13,14 +10,12 @@ import {
   TrojanProviderConfig,
   V2rayNSubscribeProviderConfig,
 } from './types.js'
-
-export const defineSurgioConfig = (config: CommandConfigBeforeNormalize) =>
-  config
+export { defineSurgioProject, env } from './project/core.js'
 
 export type ProviderDefineFunction<
   T extends PossibleProviderConfigType,
   U = Omit<T, 'type'>,
-> = (config: U) => T | Promisable<T>
+> = (config: U) => T
 
 export const defineClashProvider: ProviderDefineFunction<
   ClashProviderConfig

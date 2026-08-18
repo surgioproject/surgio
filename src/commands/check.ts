@@ -55,10 +55,13 @@ class CheckCommand extends BaseCommand<typeof CheckCommand> {
     ux.action.start('正在获取 Provider 信息')
 
     const config = getConfig()
+    const definition = this.surgioProject.providers?.[providerName]
     const filePath = path.resolve(config.providerDir, `./${providerName}.js`)
-    const file: any | Error = fs.existsSync(filePath)
-      ? loadModuleSync(filePath)
-      : new Error('找不到该 Provider')
+    const file: any | Error = definition
+      ? definition
+      : fs.existsSync(filePath)
+        ? loadModuleSync(filePath)
+        : new Error('找不到该 Provider')
 
     if (file instanceof Error) {
       throw file

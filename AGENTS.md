@@ -96,6 +96,7 @@ surgio/
 ├── src/                    # 源代码目录
 │   ├── commands/          # CLI 命令实现 (基于 oclif)
 │   ├── provider/          # 数据提供者 (支持各种订阅格式)
+│   ├── project/           # 统一 Project 定义、secret 引用与 Node loader
 │   ├── generator/         # Node 侧 Artifact 与模板适配器
 │   ├── runtime/           # 平台无关的执行核心与 Renderer 接口
 │   ├── worker/            # Worker manifest、运行时与预编译模板适配器
@@ -110,6 +111,18 @@ surgio/
 ```
 
 ### 关键架构概念
+
+#### 统一 Project 与 Runtime
+
+- 新项目默认使用唯一的 ESM `surgio.project.ts`，通过 Node 原生 TypeScript type stripping 运行；`defineSurgioProject` 的 Surgio 配置字段直接位于顶层，`providers` 和 `templateDir` 作为 Project 元数据；`.mts`、`.mjs`、`.js` 仍作为兼容入口
+- Project loader 必须先剥离 `providers` 和 `templateDir` 再校验业务配置；Node loaded project 和 Worker manifest 内部仍可使用 `{ config, providers }` 投影，不得把 Provider registry 送入 Zod 配置校验
+- 独立 TypeScript 配置对象使用 `satisfies SurgioProjectConfig`；不要增加只返回输入值的配置 identity helper，legacy JavaScript 直接导出普通对象
+- Node-only 的 output、cache 和 upload 放在具名导出的 `nodeOptions()`；Worker manifest 构建不得导入或序列化 `nodeOptions`
+- CLI 优先加载唯一的 `surgio.project.ts | .mts | .mjs | .js`，仅在 Project 入口不存在时兼容 `surgio.conf.js + provider/`；多个 Project 入口或新旧入口并存必须报错
+- `env(name)` 是读取字符串环境变量的唯一语法糖，缺失时抛错；不要重新引入特殊 secret 标记、递归配置替换或专用 resolver
+- Worker 依靠 `nodejs_compat` 将文本变量和 Secrets 暴露给 `process.env`；KV、Assets 等结构化 binding 仍由平台 adapter 显式注入
+- Node 与 Worker 分别通过 `createNodeSurgioRuntime` 和 `createSurgioRuntime` 实现同一个 `SurgioRuntime` 接口；调用方不得依赖 `Artifact`、Provider 目录或模板 engine 内部对象
+- Gateway 只消费 `SurgioRuntime`。HTTP 路由位于独立的 `@surgio/gateway` Hono 模块，Node、Worker 和 Lambda 只负责平台 adapter
 
 #### Provider 系统
 

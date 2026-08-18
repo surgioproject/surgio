@@ -6,16 +6,7 @@ sidebarDepth: 1
 
 Surgio 的配置文件位于目录内的 `surgio.conf.js`。
 
-Surgio 内置了 `defineSurgioConfig` 方法，可以让 IDE 智能提示配置项，不过你也可以不使用这样的语法糖。下面两种写法都是可以的。
-
-```js
-const { defineSurgioConfig } = require('surgio');
-
-module.exports = defineSurgioConfig({
-  artifacts: [],
-  urlBase: 'https://example.com/',
-});
-```
+JavaScript 配置直接导出普通对象：
 
 ```js
 module.exports = {
@@ -23,6 +14,8 @@ module.exports = {
   urlBase: 'https://example.com/',
 };
 ```
+
+TypeScript Project 可以使用 `satisfies SurgioProjectConfig` 获得配置检查和 IDE 提示，同时保留对象自身的精确类型推断。
 
 ## artifacts
 

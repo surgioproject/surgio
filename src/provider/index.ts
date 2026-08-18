@@ -1,5 +1,4 @@
 import { PossibleProviderConfigType, SupportProviderEnum } from '../types.js'
-import { ProviderDefineFunction } from '../configurables.js'
 import { getDefaultProviderRuntimeContext } from '../runtime/provider-context.js'
 import { getNetworkClashUA } from '../utils/env-flag.js'
 import './node-runtime.js'
@@ -15,6 +14,8 @@ import V2rayNSubscribeProvider from './V2rayNSubscribeProvider.js'
 import { createProvider } from './create-provider.js'
 import { PossibleProviderType } from './types.js'
 import Provider from './Provider.js'
+
+import type { ProjectProviderDefinition } from '../project/types.js'
 
 export {
   ClashProvider,
@@ -33,12 +34,8 @@ export { createProvider }
 
 export async function getProvider(
   name: string,
-  config: ReturnType<ProviderDefineFunction<any>> | PossibleProviderConfigType,
+  config: ProjectProviderDefinition | PossibleProviderConfigType,
 ): Promise<PossibleProviderType> {
-  if (typeof config === 'function') {
-    config = await config()
-  }
-
   const provider = await createProvider(
     name,
     config,

@@ -1,5 +1,7 @@
 import { z } from 'zod/v3'
 
+import type { ExtendFunction } from '../generator/json-extend.js'
+
 export const ArtifactValidator = z.object({
   name: z.string(),
   template: z.string(),
@@ -7,9 +9,10 @@ export const ArtifactValidator = z.object({
     .union([z.literal('default'), z.literal('json')])
     .default('default'),
   extendTemplate: z
-    .function()
-    .args(z.unknown())
-    .returns(z.unknown())
+    .custom<ReturnType<ExtendFunction>>(
+      (value) => typeof value === 'function',
+      'extendTemplate must be a function',
+    )
     .optional(),
   provider: z.string(),
   categories: z.array(z.string()).optional(),

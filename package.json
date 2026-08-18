@@ -41,6 +41,20 @@
       "module-sync": "./build/config.js",
       "default": "./build/config.js"
     },
+    "./project": {
+      "types": "./build/project/index.d.ts",
+      "module-sync": "./build/project/index.js",
+      "default": "./build/project/index.js"
+    },
+    "./runtime": {
+      "types": "./build/runtime/index.d.ts",
+      "default": "./build/runtime/index.js"
+    },
+    "./runtime/node": {
+      "types": "./build/runtime/node.d.ts",
+      "module-sync": "./build/runtime/node.js",
+      "default": "./build/runtime/node.js"
+    },
     "./cache": {
       "types": "./build/cache/index.d.ts",
       "module-sync": "./build/cache/index.js",
@@ -116,7 +130,7 @@
     "coverage": "vitest run --coverage",
     "clean": "pnpm run build --clean",
     "build": "tsc --build tsconfig.build.json",
-    "worker:manifest": "node -e \"import('./build/worker/build.js').then(({ buildWorkerManifest }) => buildWorkerManifest({ configFile: 'test/fixture/worker/surgio.worker.mjs', outfile: 'test/fixture/worker/.surgio/worker-manifest.mjs' }))\"",
+    "worker:manifest": "node -e \"import('./build/worker/build.js').then(({ buildWorkerManifest }) => buildWorkerManifest({ configFile: 'test/fixture/worker/surgio.project.ts', outfile: 'test/fixture/worker/.surgio/worker-manifest.mjs' }))\"",
     "worker:dry-run": "pnpm run build && pnpm run worker:manifest && node -e \"import('node:fs/promises').then(({ mkdir }) => mkdir('.surgio/dist', { recursive: true }))\" && wrangler deploy --dry-run --config test/fixture/worker/wrangler.jsonc --outfile .surgio/dist/worker.js --metafile .surgio/dist/meta.json",
     "prepublishOnly": "pnpm run clean && pnpm run build",
     "changelog": "conventional-changelog -p angular -i CHANGELOG.md -s -r 0",
@@ -180,6 +194,7 @@
     "rimraf": "^6.1.3",
     "source-map-support": "^0.5.21",
     "type-fest": "^5.8.0",
+    "typescript-eslint": "^8.67.0",
     "update-notifier": "^7.3.1",
     "yaml": "^2.9.0",
     "zod": "^4.4.3",
@@ -239,7 +254,6 @@
     "search-insights": "^2.17.3",
     "ts-node": "^10.9.2",
     "typescript": "npm:@typescript/typescript6@6.0.2",
-    "typescript-eslint": "^8.67.0",
     "vitest": "^4.1.10",
     "vue": "^3.5.26",
     "vuepress": "2.0.0-rc.19",

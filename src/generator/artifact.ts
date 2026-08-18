@@ -5,6 +5,7 @@ import fs from 'fs-extra'
 
 import {
   GetNodeListParams,
+  createProvider,
   getProvider,
   PossibleProviderType,
 } from '../provider/index.js'
@@ -35,10 +36,14 @@ import { ArtifactValidator } from '../validators/index.js'
 import { loadLocalSnippet } from './template.js'
 
 import type { Renderer } from '../runtime/renderer.js'
+import type { ProjectProviderDefinition } from '../project/types.js'
+import type { ProviderRuntimeContext } from '../runtime/types.js'
 
 export interface ArtifactOptions {
   readonly remoteSnippetList?: ReadonlyArray<RemoteSnippet>
   readonly renderer?: Renderer
+  readonly providers?: Readonly<Record<string, ProjectProviderDefinition>>
+  readonly providerRuntime?: ProviderRuntimeContext
 }
 
 export type ExtendableRenderContext = Record<string, string>
@@ -166,21 +171,35 @@ export class Artifact extends EventEmitter {
   ): Promise<void> {
     const config = this.surgioConfig
     const mainProviderName = this.artifact.provider
-    const filePath = path.resolve(config.providerDir, `${providerName}.js`)
+    const definition = this.options.providers?.[providerName]
+    if (this.options.providers && !definition) {
+      throw new Error(`Provider ${providerName} 未在 Surgio Project 中注册`)
+    }
+    const filePath = definition
+      ? `surgio.project.ts#providers.${providerName}`
+      : path.resolve(config.providerDir, `${providerName}.js`)
 
     this.emit('initProvider:start', {
       artifact: this.artifact,
       providerName,
     })
 
-    if (!fs.existsSync(filePath)) {
+    if (!definition && !fs.existsSync(filePath)) {
       throw new Error(`文件 ${filePath} 不存在`)
     }
 
     let provider: PossibleProviderType
 
     try {
-      provider = await getProvider(providerName, loadModuleSync(filePath))
+      const providerDefinition =
+        definition ?? loadModuleSync<ProjectProviderDefinition>(filePath)
+      provider = this.options.providerRuntime
+        ? await createProvider(
+            providerName,
+            providerDefinition,
+            this.options.providerRuntime,
+          )
+        : await getProvider(providerName, providerDefinition)
       this.providerMap.set(providerName, provider)
     } catch (_err) /* istanbul ignore next -- @preserve */ {
       const err = _err
@@ -213,6 +232,7 @@ export class Artifact extends EventEmitter {
         concurrency: getNetworkConcurrency(),
         resolveDomain,
         logger,
+        providerRuntime: this.options.providerRuntime,
       })
     } catch (err) /* istanbul ignore next -- @preserve */ {
       if (isSurgioError(err)) {

@@ -11,6 +11,21 @@ import { loadModuleSync } from './utils/module-loader.js'
 
 let finalConfig: CommandConfig | null = null
 
+const applyConfigSideEffects = (userConfig: CommandConfigBeforeNormalize) => {
+  if (userConfig.flags) {
+    Object.keys(userConfig.flags).forEach((emoji) => {
+      const names = userConfig.flags?.[emoji]
+      if (typeof names === 'string') {
+        addFlagMap(names, emoji)
+      } else if (_.isRegExp(names)) {
+        addFlagMap(names, emoji)
+      } else {
+        names?.forEach((name) => addFlagMap(name, emoji))
+      }
+    })
+  }
+}
+
 export const loadConfig = (
   cwd: string,
   override?: Partial<CommandConfig>,
@@ -26,23 +41,7 @@ export const loadConfig = (
     _.cloneDeep(loadModuleSync<Partial<CommandConfig>>(absPath)),
   )
 
-  if (userConfig.flags) {
-    Object.keys(userConfig.flags).forEach((emoji) => {
-      if (userConfig.flags) {
-        if (typeof userConfig.flags[emoji] === 'string') {
-          addFlagMap(userConfig.flags[emoji] as string, emoji)
-        } else if (_.isRegExp(userConfig.flags[emoji])) {
-          addFlagMap(userConfig.flags[emoji] as RegExp, emoji)
-        } else {
-          ;(userConfig.flags[emoji] as ReadonlyArray<string | RegExp>).forEach(
-            (name) => {
-              addFlagMap(name, emoji)
-            },
-          )
-        }
-      }
-    })
-  }
+  applyConfigSideEffects(userConfig)
 
   if (override) {
     return {
@@ -63,6 +62,12 @@ export const getConfig = () => {
   }
 
   return finalConfig
+}
+
+export const setLoadedConfig = (config: CommandConfig): CommandConfig => {
+  finalConfig = config
+  applyConfigSideEffects(config)
+  return config
 }
 
 export const setConfig = <T extends keyof CommandConfig>(
@@ -118,8 +123,43 @@ export const normalizeConfig = (
   return config
 }
 
+export const normalizeProjectConfig = (
+  cwd: string,
+  userConfig: Partial<CommandConfigBeforeNormalize>,
+  options: {
+    readonly templateDir?: string
+    readonly output?: string
+    readonly cache?: CommandConfigBeforeNormalize['cache']
+    readonly upload?: CommandConfigBeforeNormalize['upload']
+  } = {},
+): CommandConfig => {
+  const validated = validateConfig({
+    ...userConfig,
+    ...(options.cache ? { cache: options.cache } : null),
+    ...(options.upload ? { upload: options.upload } : null),
+  })
+  const resolveFromProject = (value: string): string =>
+    path.isAbsolute(value) ? value : path.resolve(cwd, value)
+  const config = {
+    ...normalizeCommonConfig(validated),
+    output: resolveFromProject(options.output ?? './dist'),
+    templateDir: resolveFromProject(options.templateDir ?? './template'),
+    providerDir: path.join(cwd, './provider'),
+    configDir: ensureConfigFolder(),
+    cache: validated.cache ?? { type: 'filesystem' },
+  } as CommandConfig
+
+  if (!fs.existsSync(config.templateDir)) {
+    throw new Error(`仓库内缺少 ${config.templateDir} 目录`)
+  }
+  if (config.gateway?.auth && !config.gateway.accessToken) {
+    throw new Error('请检查 gateway.accessToken 配置')
+  }
+  return setLoadedConfig(config)
+}
+
 export const validateConfig = (
-  userConfig: Partial<CommandConfig>,
+  userConfig: Partial<CommandConfigBeforeNormalize>,
 ): CommandConfigBeforeNormalize => {
   const result = SurgioConfigValidator.safeParse(userConfig)
 

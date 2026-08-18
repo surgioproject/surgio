@@ -16,7 +16,7 @@ exports[`exports.categories 1`] = `
 
 exports[`exports.define* 1`] = `
 [
-  "defineSurgioConfig",
+  "defineSurgioProject",
   "defineClashProvider",
   "defineCustomProvider",
   "defineShadowsocksJsonSubscribeProvider",

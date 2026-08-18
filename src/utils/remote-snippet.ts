@@ -19,6 +19,17 @@ import httpClient from './http-client.js'
 
 import { toMD5 } from './index.js'
 
+import type { TtlCache } from '../cache/core.js'
+import type { RuntimeHttpClient, RuntimeLogger } from '../runtime/types.js'
+
+export interface RemoteSnippetRuntimeOptions {
+  readonly cache?: Pick<TtlCache, 'get' | 'set'>
+  readonly cacheTtl?: number
+  readonly concurrency?: number
+  readonly httpClient?: RuntimeHttpClient
+  readonly logger?: RuntimeLogger
+}
+
 export const parseMacro = (
   snippet: string,
 ): {
@@ -47,16 +58,21 @@ export const renderSurgioSnippet = (str: string, args: string[]): string => {
 export const loadRemoteSnippetList = async (
   remoteSnippetList: ReadonlyArray<RemoteSnippetConfig>,
   cacheSnippet = true,
+  runtime: RemoteSnippetRuntimeOptions = {},
 ): Promise<ReadonlyArray<RemoteSnippet>> => {
+  const cache = runtime.cache ?? unifiedCache
+  const client = runtime.httpClient ?? httpClient
+  const runtimeLogger = runtime.logger ?? logger
+
   function load(url: string): Promise<string> {
-    return httpClient
+    return client
       .get(url)
       .then((data) => {
-        logger.info(`远程片段下载成功：${url}`)
+        runtimeLogger.info(`远程片段下载成功：${url}`)
         return data.body
       })
       .catch((err) => {
-        logger.error(`远程片段下载失败：${url}`)
+        runtimeLogger.error(`远程片段下载失败：${url}`)
         throw err
       })
   }
@@ -68,17 +84,19 @@ export const loadRemoteSnippetList = async (
       const isSurgioSnippet = item.surgioSnippet
 
       const cacheKey = `${CACHE_KEYS.RemoteSnippets}:${fileMd5}`
-      const cachedSnippet = await unifiedCache.get<string>(cacheKey)
+      const cachedSnippet = await cache.get<string>(cacheKey)
       const snippet: string =
         cachedSnippet !== undefined
           ? cachedSnippet
           : await load(item.url)
               .then((res) => {
                 return Promise.all([
-                  unifiedCache.set(
+                  cache.set(
                     cacheKey,
                     res,
-                    cacheSnippet ? getRemoteSnippetCacheMaxage() : ms('1m'),
+                    cacheSnippet
+                      ? (runtime.cacheTtl ?? getRemoteSnippetCacheMaxage())
+                      : ms('1m'),
                   ),
                   res,
                 ])
@@ -96,7 +114,7 @@ export const loadRemoteSnippetList = async (
       }
     },
     {
-      concurrency: getNetworkConcurrency(),
+      concurrency: runtime.concurrency ?? getNetworkConcurrency(),
     },
   )
 }

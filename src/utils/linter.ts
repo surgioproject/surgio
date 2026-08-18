@@ -1,16 +1,48 @@
 /* istanbul ignore file -- @preserve */
 
 import { ESLint } from 'eslint'
-import _ from 'lodash'
 // @ts-expect-error - no types available
 import surgioConfig from '@surgio/eslint-config-surgio'
+import _ from 'lodash'
+import tseslint from 'typescript-eslint'
+
+import { findSurgioProjectFiles } from '../project/file.js'
 
 export const createCli = (cliConfig?: ESLint.Options): ESLint => {
+  const projectUsesEsm =
+    cliConfig?.cwd !== undefined &&
+    findSurgioProjectFiles(cliConfig.cwd).length > 0
   const linterConfig: ESLint.Options = {
     // In ESLint 9 flat config, we use overrideConfigFile to specify a config array
     // When in test mode, we only use the surgioConfig without reading user's config files
     overrideConfigFile: true,
-    overrideConfig: surgioConfig,
+    overrideConfig: [
+      ...surgioConfig,
+      { ignores: ['.surgio/**', 'dist/**', 'node_modules/**'] },
+      ...(projectUsesEsm
+        ? [
+            {
+              files: ['**/*.{js,mjs}'],
+              languageOptions: {
+                ecmaVersion: 'latest' as const,
+                sourceType: 'module' as const,
+              },
+            },
+            {
+              files: ['**/*.{ts,mts}'],
+              ignores: ['**/*.d.ts'],
+              languageOptions: {
+                ecmaVersion: 'latest' as const,
+                parser: tseslint.parser,
+                sourceType: 'module' as const,
+              },
+              rules: {
+                'no-undef': 'off' as const,
+              },
+            },
+          ]
+        : []),
+    ],
   }
 
   return new ESLint({

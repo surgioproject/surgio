@@ -2,9 +2,9 @@
 
 const path = require('path')
 
-const { extendOutbounds, defineSurgioConfig } = require('../../../')
+const { extendOutbounds } = require('../../../')
 
-module.exports = defineSurgioConfig({
+module.exports = {
   artifacts: [
     {
       name: 'new_path.conf',
@@ -111,4 +111,4 @@ module.exports = defineSurgioConfig({
   },
   proxyTestUrl: 'http://www.google.com/generate_204',
   proxyTestInterval: 2400,
-})
+}

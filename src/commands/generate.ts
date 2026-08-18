@@ -60,6 +60,7 @@ class GenerateCommand extends BaseCommand<typeof GenerateCommand> {
         const artifactInstance = new Artifact(config, artifact, {
           remoteSnippetList,
           renderer,
+          providers: this.surgioProject.providers,
         })
 
         artifactInstance.once('initProvider:end', () => {

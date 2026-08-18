@@ -1,7 +1,5 @@
 'use strict'
 
-const { defineSurgioConfig } = require('../../../')
-
-module.exports = defineSurgioConfig({
+module.exports = {
   artifacts: [],
-})
+}

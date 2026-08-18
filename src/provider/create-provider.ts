@@ -9,19 +9,23 @@ import SsdProvider from './SsdProvider.js'
 import TrojanProvider from './TrojanProvider.js'
 import V2rayNSubscribeProvider from './V2rayNSubscribeProvider.js'
 
-import type { PossibleProviderConfigType } from '../types.js'
+import type { ProjectProviderDefinition } from '../project/types.js'
 import type { ProviderRuntimeContext } from '../runtime/types.js'
 import type { PossibleProviderType } from './types.js'
 
 export const createProvider = async (
   name: string,
-  definition:
-    | PossibleProviderConfigType
-    | (() => PossibleProviderConfigType | Promise<PossibleProviderConfigType>),
+  definition: ProjectProviderDefinition,
   runtime: ProviderRuntimeContext,
 ): Promise<PossibleProviderType> => {
   const config =
-    typeof definition === 'function' ? await definition() : definition
+    typeof definition === 'function'
+      ? await definition({
+          cache: runtime.cache,
+          httpClient: runtime.httpClient,
+          logger: runtime.logger,
+        })
+      : definition
 
   const provider = (() => {
     switch (config.type) {

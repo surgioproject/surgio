@@ -29,7 +29,7 @@ test('cache entrypoint does not eagerly load the Upstash client', async () => {
 test('published entrypoints can be imported as ESM', async () => {
   const surgio = await import('surgio')
 
-  expect(surgio.defineSurgioConfig).toBeTypeOf('function')
+  expect(surgio).not.toHaveProperty('defineSurgioConfig')
   expect(surgio.utils).toBeTypeOf('object')
   expect(surgio.categories).toBeTypeOf('object')
 })
