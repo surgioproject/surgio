@@ -1,13 +1,10 @@
-'use strict'
-
-const { defineClashProvider } = require('surgio')
+import { defineClashProvider, NodeTypeEnum } from 'surgio/project'
 
 /**
  * 这是一个一定会失败的示例
  */
-module.exports = defineClashProvider({
+export default defineClashProvider({
   url: 'https://raw.githubusercontent.com/surgioproject/surgio/master/test/asset/not-exist.yaml',
-  type: 'clash',
   udpRelay: true,
   addFlag: true,
   hooks: {
@@ -15,7 +12,7 @@ module.exports = defineClashProvider({
       return [
         {
           nodeName: 'Fallback',
-          type: 'shadowsocks',
+          type: NodeTypeEnum.Shadowsocks,
           hostname: 'fallback.example.com',
           port: 443,
           method: 'chacha20-ietf-poly1305',

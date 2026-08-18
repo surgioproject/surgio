@@ -117,9 +117,10 @@
   "homepage": "https://surgio.js.org",
   "scripts": {
     "dev": "pnpm run build --watch",
-    "test": "run-s build test:types test:lint test:unit test:cli",
+    "test": "run-s build test:types test:lint test:examples test:unit test:cli",
     "test:types": "tsc --noEmit && tsc6 --noEmit -p test/fixture/typescript-consumer/tsconfig.json && tsc --noEmit -p test/fixture/typescript-consumer/tsconfig.json",
     "test:lint": "eslint .",
+    "test:examples": "tsc --noEmit -p examples/tsconfig.json && node ./bin/run lint --project ./examples/clash-remote-snippet && node ./bin/run lint --project ./examples/hooks && node ./bin/run lint --project ./examples/quantumultx",
     "test:unit": "vitest run",
     "test:worker": "pnpm run build && pnpm run worker:manifest && pnpm run test:worker:types && vitest run --config test/fixture/worker/vitest.config.ts",
     "test:worker:types": "tsc --noEmit -p test/fixture/worker/tsconfig.json",

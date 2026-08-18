@@ -1,6 +1,20 @@
-'use strict'
+import { defineSurgioProject } from 'surgio/project'
 
-module.exports = {
+import demo from './provider/demo.ts'
+import error from './provider/error.ts'
+
+import type { ArtifactConfigInput } from 'surgio/project'
+
+const artifacts = [
+  {
+    name: 'Clash.yaml',
+    template: 'clash',
+    provider: 'demo',
+    combineProviders: ['error'],
+  },
+] satisfies ArtifactConfigInput[]
+
+export default defineSurgioProject({
   remoteSnippets: [
     {
       name: 'youtube',
@@ -15,15 +29,8 @@ module.exports = {
       url: 'https://git.royli.dev/me/lhie1_Rules/raw/branch/master/Surge/Surge%203/Provider/Media/Netflix.list',
     },
   ],
-  artifacts: [
-    {
-      name: 'Clash.yaml',
-      template: 'clash',
-      provider: 'demo',
-      combineProviders: ['error'],
-    },
-  ],
+  artifacts,
   urlBase: 'https://config.example.com/',
-  // https://surgio.js.org/guide/custom-config.html#upload
-  // upload: { backend: 'oss', bucket: 'example-bucket', region: 'cn-hangzhou' },
-}
+  providers: { demo, error },
+  templateDir: './template',
+})

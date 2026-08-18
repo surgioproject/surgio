@@ -1,11 +1,10 @@
-'use strict'
+import { defineCustomProvider, NodeTypeEnum } from 'surgio/project'
 
-module.exports = {
-  type: 'custom',
+export default defineCustomProvider({
   nodeList: [
     {
       nodeName: '🇺🇸US',
-      type: 'shadowsocks',
+      type: NodeTypeEnum.Shadowsocks,
       hostname: 'us.example.com',
       port: '443',
       method: 'chacha20-ietf-poly1305',
@@ -16,7 +15,7 @@ module.exports = {
     },
     {
       nodeName: '🇭🇰HK Netflix',
-      type: 'shadowsocks',
+      type: NodeTypeEnum.Shadowsocks,
       hostname: 'hk.example.com',
       port: '443',
       method: 'chacha20-ietf-poly1305',
@@ -26,4 +25,4 @@ module.exports = {
       udpRelay: true,
     },
   ],
-}
+})
