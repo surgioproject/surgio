@@ -163,7 +163,7 @@
     "@keyv/serialize": "^1.1.1",
     "@oclif/core": "^4.13.3",
     "@oclif/plugin-help": "^6.2.58",
-    "@surgio/eslint-config-surgio": "^2.1.0",
+    "@surgio/eslint-config-surgio": "link:../../surgioproject/packages/packages/eslint-config-surgio",
     "@surgio/logger": "link:../../surgioproject/packages/packages/logger",
     "@upstash/redis": "^1.38.2",
     "bluebird": "^3.7.2",
