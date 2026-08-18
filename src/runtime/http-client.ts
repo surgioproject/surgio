@@ -1,5 +1,10 @@
 import ky from 'ky'
 
+import packageJson from '../../package.json' with { type: 'json' }
+import { getNetworkRetry, getNetworkTimeout } from '../utils/env-flag.js'
+
+import { getRuntimeUserAgent } from './user-agent.js'
+
 import type {
   RuntimeHeaders,
   RuntimeHttpClient,
@@ -32,8 +37,11 @@ export const createHttpClient = (
   options: HttpClientOptions = {},
 ): RuntimeHttpClient => {
   const client = ky.create({
-    fetch: options.fetch ?? globalThis.fetch,
-    headers: createHeaders(options.headers),
+    fetch: (options.fetch ?? globalThis.fetch).bind(globalThis),
+    headers: createHeaders({
+      'user-agent': getRuntimeUserAgent(undefined, packageJson.version),
+      ...options.headers,
+    }),
     retry: {
       limit: Math.max(0, options.retry ?? 2),
       retryOnTimeout: true,
@@ -55,3 +63,8 @@ export const createHttpClient = (
     },
   }
 }
+
+export const httpClient: RuntimeHttpClient = createHttpClient({
+  retry: getNetworkRetry(),
+  timeout: getNetworkTimeout(),
+})

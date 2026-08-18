@@ -16,7 +16,6 @@ export * from './subscription.js'
 export * from './time.js'
 export * from './errors.js'
 export * from './env-flag.js'
-export { default as httpClient } from './http-client.js'
 
 export const ensureConfigFolder = (dir: string = os.homedir()): string => {
   let baseDir

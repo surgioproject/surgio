@@ -1,6 +1,7 @@
 import {
   categories,
   defineCustomProvider,
+  httpClient,
   utils,
   type SurgioConfig,
 } from 'surgio'
@@ -45,6 +46,7 @@ defineCustomProvider({
 utils.useKeywords(['Hong Kong'])
 
 const category: string = categories.CLASH
+const defaultHttpClient = httpClient
 const cacheType: typeof TtlCache = TtlCache
 const storeFactory: (binding: CloudflareKvNamespace) => KvStore =
   createCloudflareKvStore
@@ -76,6 +78,7 @@ const manifestBuilder: typeof buildWorkerManifest = buildWorkerManifest
 const manifest = null as WorkerManifest | null
 
 void category
+void defaultHttpClient
 void config
 void cacheType
 void storeFactory

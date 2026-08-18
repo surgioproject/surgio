@@ -1,9 +1,13 @@
 import { beforeEach, expect, test, vi } from 'vitest'
 
+import packageJson from '../../../package.json' with { type: 'json' }
 import * as config from '../../config.js'
+import { getRuntimeUserAgent } from '../../runtime/user-agent.js'
 import { SupportProviderEnum } from '../../types.js'
-import { getUserAgent } from '../../utils/http-client.js'
 import Provider from '../Provider.js'
+
+const getUserAgent = (value?: string): string =>
+  getRuntimeUserAgent(value, packageJson.version)
 
 class TestProvider extends Provider {
   constructor(name: string, config: any) {

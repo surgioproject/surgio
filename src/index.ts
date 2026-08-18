@@ -16,7 +16,7 @@ import { CATEGORIES } from './constant/index.js'
 
 export type { CommandConfigBeforeNormalize as SurgioConfig } from './types.js'
 export * from './configurables.js'
-export { default as httpClient } from './utils/http-client.js'
+export { httpClient } from './runtime/http-client.js'
 export { unifiedCache as cache } from './cache/singleton.js'
 export {
   extendOutbounds,

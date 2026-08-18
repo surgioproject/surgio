@@ -10,12 +10,12 @@ import {
   renderRestrictedSnippet,
 } from '../runtime/snippet-interpreter.js'
 import { addProxyToRuleSet } from '../runtime/ruleset.js'
+import { httpClient } from '../runtime/http-client.js'
 
 import {
   getNetworkConcurrency,
   getRemoteSnippetCacheMaxage,
 } from './env-flag.js'
-import httpClient from './http-client.js'
 
 import { toMD5 } from './index.js'
 
