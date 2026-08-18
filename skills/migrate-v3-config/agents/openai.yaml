@@ -1,0 +1,4 @@
+interface:
+  display_name: "迁移 Surgio v3 配置"
+  short_description: "先确认部署方式，再迁移为统一 TypeScript Project"
+  default_prompt: "Use $migrate-v3-config to confirm whether this repo should keep its Worker or non-Worker deployment, then migrate it to native TypeScript and verify parity."
