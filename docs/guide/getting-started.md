@@ -9,8 +9,9 @@ title: 快速上手
 - 文档中出现的命令如无特殊说明都只能运行在 macOS, Linux 或者 WSL 上
 :::
 
-Surgio 本身以 ESM 发布，但现有 CommonJS 规则仓库无需迁移，配置文件和 Provider
-仍可继续使用 `require('surgio')` 与 `module.exports`。
+Surgio 本身以 ESM 发布。新项目使用唯一的 `surgio.project.ts`，Provider registry
+和 Artifact 配置都直接写在 Project 中。现有 CommonJS 规则仓库仍可运行，但需要
+迁移为 Project 后才能使用 `surgio new`。
 
 ## 安装 Node.js
 
@@ -55,17 +56,17 @@ Surgio 生成出的规则就是「产品」。
 
 ## 目录结构
 
-```txt {5,6,7}
+```txt {5,6}
 ./my-rule-store
 ├── node_modules
 ├── package-lock.json
 ├── package.json
-├── provider
-├── surgio.conf.js
+├── surgio.project.ts
 └── template
 ```
 
-你只需要关心高亮的 *surgio.conf.js*, *provider* 和 *template* 三个东西。
+你只需要关心高亮的 *surgio.project.ts* 和 *template*。Provider 和 Artifact
+都在 Project 内以结构化配置注册，不再为 Provider 创建单独的 CommonJS 文件。
 
 仓库中已经包含了一些用于演示的代码。我们会在后面一节说明如何自定义它们。
 
@@ -105,6 +106,11 @@ Surgio 提供了一个新建组件的助手命令，你可以通过它来初始�
 npx surgio new [artifact|provider|template]
 ```
 
+助手只支持 v4 Project。它只会编辑能够静态确认的 `providers` 对象和
+`artifacts` 数组；遇到动态配置时不会写入文件，而是给出可手工粘贴的片段。
+Template 可以建立在 `templateDir` 的相对子目录中，已有文件不会被覆盖。完整规则
+参见 [`new` 命令说明](/guide/cli.md#new)。
+
 ## 样例
 
 除了你使用 init 命令生成的初始仓库之外，你还可以在 [这里](https://github.com/geekdada/surgio/tree/master/examples) 找到其它使用样例。
@@ -125,4 +131,18 @@ $ npm install @surgio/gateway@latest
 
 ## 配置文件
 
-Surgio 的配置文件位于目录内的 `surgio.conf.js`。
+Surgio v4 的配置入口是目录内唯一的 `surgio.project.ts`（也支持 `.mts`、`.mjs`
+和 `.js`）。默认导出使用 `defineSurgioProject` 定义 Project：
+
+```ts
+import { defineSurgioProject } from 'surgio/project'
+
+export default defineSurgioProject({
+  artifacts: [],
+  providers: {},
+  templateDir: 'template',
+})
+```
+
+CLI 仅在 Project 入口不存在时兼容读取 `surgio.conf.js + provider/`；新旧入口不能
+同时存在。

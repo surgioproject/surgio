@@ -46,6 +46,7 @@ export default {
           '/guide/faq',
           '/guide/upgrade-guide-v2',
           '/guide/upgrade-guide-v3',
+          '/guide/upgrade-guide-v4',
           '/guide/learning-resources',
         ],
       },

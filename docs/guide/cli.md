@@ -59,14 +59,31 @@ $ npx surgio subscriptions
 
 ## `new`
 
-> 新建助手
+> 为 Surgio Project 新建 Provider、Artifact 或 Template
 
 ```bash
 $ npx surgio new provider|artifact|template
 ```
 
-:::tip 提示
-1. 目前新建 Artifact 助手无法识别 `artifacts: require(...)` 这样的配置文件，可能会破坏文件结构；
+该命令只操作 v4 的 `surgio.project.ts`、`.mts`、`.mjs` 或 `.js`，不再修改
+legacy `surgio.conf.js`。运行前请先完成 [Project 配置迁移](/guide/getting-started.md#配置文件)。
+
+- `new provider` 将配置直接写入 Project 的 `providers` registry。远程 Provider
+  仅接受 HTTP/HTTPS URL；`custom` Provider 从空 `nodeList` 开始。
+- `new artifact` 从当前 registry 选择主 Provider 和额外 Provider，并从实际的
+  `templateDir` 递归读取 `.tpl` 与 `.json`。选择 JSON 时会自动设置
+  `templateType: 'json'`。
+- `new template` 在 `templateDir` 中创建空 `.tpl`，允许使用安全的相对子目录，
+  但不会接受绝对路径、`..` 路径或覆盖已有文件。
+
+自动编辑支持默认导出的静态对象或 `defineSurgioProject({...})`，也支持
+TypeScript `satisfies`，以及引用同文件顶层静态 `const` 的 `providers` 对象和
+`artifacts` 数组。动态函数、外部导入的容器或其他无法可靠定位的结构不会被
+改写；命令会保持原文件不变并输出可手工粘贴的配置片段。
+
+:::warning 注意
+Provider registry key 和 Artifact 名称必须唯一。命令发现重复项时不会覆盖或修改
+Project。
 :::
 
 ## `doctor`
