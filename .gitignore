@@ -51,3 +51,6 @@ coverage/
 *.tgz
 .eslintcache
 .cache/
+
+# pnpm
+.pnpm-store/
