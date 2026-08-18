@@ -1,3 +1,4 @@
+import type { Logger } from '@surgio/logger'
 import type { TtlCache } from '../cache/ttl-cache.js'
 import type { CommandConfigAfterNormalize } from '../types.js'
 
@@ -17,18 +18,15 @@ export interface RuntimeHttpClient {
   ): Promise<RuntimeHttpResponse>
 }
 
-export interface RuntimeLogger {
-  debug(message: string, ...args: unknown[]): void
-  info(message: string, ...args: unknown[]): void
-  warn(message: string, ...args: unknown[]): void
-  error(message: string, ...args: unknown[]): void
+export interface FormatterOptions {
+  readonly logger?: Logger
 }
 
 export interface ProviderRuntimeContext {
   readonly cache: Pick<TtlCache, 'get' | 'set' | 'wrap'>
   readonly config: Pick<CommandConfigAfterNormalize, 'gateway'>
   readonly httpClient: RuntimeHttpClient
-  readonly logger: RuntimeLogger
+  readonly logger: Logger
   readonly providerCacheTtl: number
   readonly version: string
 }

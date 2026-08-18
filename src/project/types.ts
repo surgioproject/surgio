@@ -1,14 +1,15 @@
+import type { Logger } from '@surgio/logger'
 import type { TtlCache } from '../cache/core.js'
 import type {
   CommandConfigBeforeNormalize,
   PossibleProviderConfigType,
 } from '../types.js'
-import type { RuntimeHttpClient, RuntimeLogger } from '../runtime/types.js'
+import type { RuntimeHttpClient } from '../runtime/types.js'
 
 export interface ProjectProviderContext {
   readonly cache: Pick<TtlCache, 'get' | 'set' | 'wrap'>
   readonly httpClient: RuntimeHttpClient
-  readonly logger: RuntimeLogger
+  readonly logger: Logger
 }
 
 export type ProjectProviderDefinition =

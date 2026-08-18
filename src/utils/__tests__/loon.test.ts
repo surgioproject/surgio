@@ -1,5 +1,4 @@
 import { expect, test, vi } from 'vitest'
-import { transports } from '@surgio/logger'
 
 import { NodeTypeEnum } from '../../types.js'
 import { ERR_INVALID_FILTER } from '../../constant/index.js'
@@ -92,19 +91,12 @@ test('getLoonNodes AnyTLS', () => {
 })
 
 test('getLoonNodes AnyTLS omits automatic QUIC blocking', () => {
-  const log = vi
-    .spyOn(transports.console, 'log')
-    .mockImplementation((info, callback) => {
-      expect(info[Symbol.for('level')]).toBe('warn')
-      expect(info.message).toMatch(
-        /Loon 不支持 AnyTLS 节点 anytls auto 的 blockQuic=auto/,
-      )
-      callback()
-    })
+  const warn = vi.fn()
+  const logger = { debug: vi.fn(), info: vi.fn(), warn, error: vi.fn() }
 
-  try {
-    expect(
-      getLoonNodes([
+  expect(
+    getLoonNodes(
+      [
         {
           type: NodeTypeEnum.AnyTLS,
           nodeName: 'anytls auto',
@@ -113,12 +105,15 @@ test('getLoonNodes AnyTLS omits automatic QUIC blocking', () => {
           password: 'password',
           blockQuic: 'auto',
         },
-      ]),
-    ).toBe('anytls auto = AnyTLS,example.com,8449,"password"')
-    expect(log).toHaveBeenCalledOnce()
-  } finally {
-    log.mockRestore()
-  }
+      ],
+      undefined,
+      { logger },
+    ),
+  ).toBe('anytls auto = AnyTLS,example.com,8449,"password"')
+  expect(warn).toHaveBeenCalledOnce()
+  expect(warn).toHaveBeenCalledWith(
+    'Loon 不支持 AnyTLS 节点 anytls auto 的 blockQuic=auto，将省略 block-quic 参数',
+  )
 })
 
 test('getLoonNodes', () => {

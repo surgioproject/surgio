@@ -85,6 +85,10 @@ export default {
     demo: {
       type: 'custom',
       nodeList: [{ type: 'shadowsocks', nodeName: 'Demo', hostname: 'example.com', port: 443, method: 'aes-128-gcm', password: 'secret' }]
+    },
+    unsupported: {
+      type: 'custom',
+      nodeList: [{ type: 'shadowsocksr', nodeName: 'SSR Demo', hostname: 'example.com', port: 443, method: 'aes-128-cfb', password: 'secret', obfs: 'plain', obfsparam: '', protocol: 'origin', protoparam: '' }]
     }
   },
   urlBase: 'https://example.com/',
@@ -92,6 +96,7 @@ export default {
   artifacts: [
     { name: 'main', provider: projectName, template: 'main', destDir: './dist', destDirs: ['./backup'] },
     { name: 'inline', provider: 'demo', template: '', templateString: 'inline={{ getNodeNames(nodeList) }}' },
+    { name: 'warning', provider: 'unsupported', template: '', templateString: '{{ getSurgeNodes(nodeList) }}' },
     { name: 'json', provider: 'demo', template: 'base', templateType: 'json', extendTemplate(input, context) { return { ...input, nodes: context.nodeList.length } } }
   ]
 }`,
@@ -113,6 +118,7 @@ export default {
       nodeList: [{ nodeName: 'Demo' }],
       getNodeNames: (nodes: ReadonlyArray<{ nodeName: string }>) =>
         nodes.map((node) => node.nodeName).join(', '),
+      getSurgeNodes: () => '',
       remoteSnippets: {
         rules: { main: (rule: string) => `DOMAIN,example.com,${rule}` },
       },
@@ -163,8 +169,38 @@ export default {
         (await runtime.renderProviders({ providers: 'demo', format })).body,
       ).toBeTypeOf('string')
     }
-    expect(runtime.listArtifacts()).toHaveLength(3)
-    expect(runtime.listProviders()).toEqual(['demo'])
+    const firstWarn = vi.fn()
+    const secondWarn = vi.fn()
+    const createIsolatedRuntime = (
+      warn: (message: unknown, ...args: unknown[]) => void,
+    ) =>
+      createSurgioRuntime(manifest, {
+        cache: new TtlCache({ store: new MemoryStore() }),
+        fetch: async () => new Response('DOMAIN,example.com'),
+        logger: { debug: vi.fn(), info: vi.fn(), warn, error: vi.fn() },
+      })
+    const firstRuntime = createIsolatedRuntime(firstWarn)
+    const secondRuntime = createIsolatedRuntime(secondWarn)
+
+    const [firstWarning, secondWarning] = await Promise.all([
+      firstRuntime.renderArtifact('warning'),
+      secondRuntime.renderArtifact('warning'),
+    ])
+
+    expect(firstWarning.body).toBe('')
+    expect(secondWarning.body).toBe('')
+    expect(firstWarn).toHaveBeenCalledOnce()
+    expect(secondWarn).toHaveBeenCalledOnce()
+    expect(firstWarn).toHaveBeenCalledWith(
+      expect.stringContaining('SSR Demo 会被省略'),
+    )
+    expect(secondWarn).toHaveBeenCalledWith(
+      expect.stringContaining('SSR Demo 会被省略'),
+    )
+    await Promise.all([firstRuntime.close(), secondRuntime.close()])
+
+    expect(runtime.listArtifacts()).toHaveLength(4)
+    expect(runtime.listProviders()).toEqual(['demo', 'unsupported'])
     expect(fetchMock).toHaveBeenCalledTimes(1)
 
     await runtime.close()

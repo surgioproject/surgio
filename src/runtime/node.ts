@@ -130,6 +130,7 @@ export const createNodeSurgioRuntime = (
               : null),
           },
           {
+            logger,
             providers: project.providers,
             providerRuntime,
             remoteSnippetList: snippets,
@@ -161,6 +162,7 @@ export const createNodeSurgioRuntime = (
               artifact.nodeList,
               selectedFilter as
                 NodeFilterType | SortedNodeFilterType | undefined,
+              { logger },
             )
           : artifact.render(renderOptions.customParams as Record<string, any>)
         return {

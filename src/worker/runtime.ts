@@ -1,3 +1,5 @@
+import { logger as defaultLogger } from '@surgio/logger'
+
 import { CACHE_KEYS } from '../constant/index.js'
 import { createProvider } from '../provider/create-provider.js'
 import {
@@ -8,7 +10,6 @@ import {
 } from '../runtime/artifact.js'
 import { createDefaultDomainResolver } from '../runtime/dns.js'
 import { createHttpClient } from '../runtime/http-client.js'
-import { consoleRuntimeLogger, withRuntimeLogger } from '../runtime/logger.js'
 import { addProxyToRuleSet } from '../runtime/ruleset.js'
 import { renderRestrictedSnippet } from '../runtime/snippet-interpreter.js'
 import { formatProviderNodes } from '../runtime/format.js'
@@ -57,7 +58,7 @@ export const createSurgioRuntime = (
   const config = normalizeWorkerConfig(
     manifest.config as import('../types.js').CommandConfigBeforeNormalize,
   )
-  const logger = options.logger ?? consoleRuntimeLogger
+  const logger = options.logger ?? defaultLogger
   const network = options.network ?? {}
   const concurrency = network.concurrency ?? 5
   const resolveDomain = options.resolveDomain ?? createDefaultDomainResolver()
@@ -198,6 +199,7 @@ export const createSurgioRuntime = (
               main: (rule: string) => addProxyToRuleSet(text, rule),
             }
           },
+          logger,
         })
         const selectedFilter =
           typeof renderOptions.filter === 'string'
@@ -209,18 +211,14 @@ export const createSurgioRuntime = (
 
         let body: string
         if (renderOptions.format) {
-          body = withRuntimeLogger(logger, () =>
-            formatProviderNodes(
-              renderOptions.format!,
-              nodeList,
-              selectedFilter as
-                NodeFilterType | SortedNodeFilterType | undefined,
-            ),
+          body = formatProviderNodes(
+            renderOptions.format,
+            nodeList,
+            selectedFilter as NodeFilterType | SortedNodeFilterType | undefined,
+            { logger },
           )
         } else {
-          body = withRuntimeLogger(logger, () =>
-            renderer.renderArtifact(artifact, renderContext),
-          )
+          body = renderer.renderArtifact(artifact, renderContext)
         }
         return { body, subscriptionUserInfo, subscriptionUserInfoMap }
       },
@@ -252,11 +250,9 @@ export const createSurgioRuntime = (
       })
     },
     async renderTemplate(name, context = {}) {
-      return withRuntimeLogger(logger, () =>
-        renderer.renderTemplate(
-          name.endsWith('.tpl') ? name : `${name}.tpl`,
-          context,
-        ),
+      return renderer.renderTemplate(
+        name.endsWith('.tpl') ? name : `${name}.tpl`,
+        context,
       )
     },
     listArtifacts() {

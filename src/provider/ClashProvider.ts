@@ -2,6 +2,7 @@ import assert from 'assert'
 import yaml from 'yaml'
 import _ from 'lodash'
 import { z } from 'zod/v3'
+import { logger } from '@surgio/logger'
 
 import {
   CLASH_META_SUPPORTED_VMESS_NETWORK,
@@ -37,7 +38,6 @@ import {
 } from '../types.js'
 import { lowercaseHeaderKeys, parseBitrate } from '../utils/portable.js'
 import { SurgioError } from '../utils/errors.js'
-import { consoleRuntimeLogger } from '../runtime/logger.js'
 import relayableUrl from '../utils/relayable-url.js'
 import {
   AnyTLSNodeConfigValidator,
@@ -57,9 +57,8 @@ import {
   GetSubscriptionUserInfoFunction,
 } from './types.js'
 
-import type { ProviderRuntimeContext, RuntimeLogger } from '../runtime/types.js'
-
-const logger = consoleRuntimeLogger
+import type { Logger } from '@surgio/logger'
+import type { ProviderRuntimeContext } from '../runtime/types.js'
 
 type SupportConfigTypes =
   | ShadowsocksNodeConfig
@@ -279,7 +278,7 @@ export const parseClashConfig = (
   proxyList: Array<any>,
   udpRelay?: boolean,
   tls13?: boolean,
-  runtimeLogger: RuntimeLogger = logger,
+  runtimeLogger: Logger = logger,
 ): Array<SupportConfigTypes> => {
   const nodeList: Array<SupportConfigTypes | undefined> = proxyList.map(
     (item) => {

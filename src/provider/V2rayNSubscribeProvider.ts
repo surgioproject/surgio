@@ -1,6 +1,7 @@
 import assert from 'assert'
 import { z } from 'zod/v3'
 import _ from 'lodash'
+import { logger } from '@surgio/logger'
 
 import {
   NodeTypeEnum,
@@ -8,7 +9,6 @@ import {
   V2rayNSubscribeProviderConfig,
   VmessNodeConfig,
 } from '../types.js'
-import { consoleRuntimeLogger as logger } from '../runtime/logger.js'
 import { SurgioError } from '../utils/errors.js'
 import { fromBase64 } from '../utils/portable.js'
 import relayableUrl from '../utils/relayable-url.js'
@@ -22,7 +22,8 @@ import {
   GetNodeListV2Result,
 } from './types.js'
 
-import type { ProviderRuntimeContext, RuntimeLogger } from '../runtime/types.js'
+import type { Logger } from '@surgio/logger'
+import type { ProviderRuntimeContext } from '../runtime/types.js'
 
 export default class V2rayNSubscribeProvider extends Provider {
   public readonly compatibleMode?: boolean
@@ -196,7 +197,7 @@ export const parseJSONConfig = (
   skipCertVerify?: boolean | undefined,
   udpRelay?: boolean | undefined,
   tls13?: boolean | undefined,
-  runtimeLogger: RuntimeLogger = logger,
+  runtimeLogger: Logger = logger,
 ): VmessNodeConfig | undefined => {
   const config = JSON.parse(json)
 

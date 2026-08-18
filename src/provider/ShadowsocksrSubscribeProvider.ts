@@ -1,12 +1,12 @@
 import assert from 'assert'
 import { z } from 'zod/v3'
+import { logger } from '@surgio/logger'
 
 import {
   ShadowsocksrNodeConfig,
   ShadowsocksrSubscribeProviderConfig,
   SubscriptionUserinfo,
 } from '../types.js'
-import { consoleRuntimeLogger } from '../runtime/logger.js'
 import { SurgioError } from '../utils/errors.js'
 import { fromBase64 } from '../utils/portable.js'
 import relayableUrl from '../utils/relayable-url.js'
@@ -23,8 +23,6 @@ import {
 } from './types.js'
 
 import type { ProviderRuntimeContext } from '../runtime/types.js'
-
-const logger = consoleRuntimeLogger
 
 export default class ShadowsocksrSubscribeProvider extends Provider {
   public readonly udpRelay?: boolean

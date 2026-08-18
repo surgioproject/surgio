@@ -1,3 +1,4 @@
+import type { Logger } from '@surgio/logger'
 import type { TtlCache } from '../cache/core.js'
 import type {
   ArtifactConfig,
@@ -5,11 +6,7 @@ import type {
   SortedNodeFilterType,
   SubscriptionUserinfo,
 } from '../types.js'
-import type {
-  RuntimeDomainResolver,
-  RuntimeLogger,
-  RuntimeNetworkOptions,
-} from './types.js'
+import type { RuntimeDomainResolver, RuntimeNetworkOptions } from './types.js'
 
 export type ProviderFormat =
   | 'clash'
@@ -92,6 +89,6 @@ export interface RuntimeOptions {
   readonly cache: TtlCache
   readonly fetch?: typeof globalThis.fetch
   readonly resolveDomain?: RuntimeDomainResolver
-  readonly logger?: RuntimeLogger
+  readonly logger?: Logger
   readonly network?: RuntimeNetworkOptions
 }

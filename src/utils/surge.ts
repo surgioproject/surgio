@@ -1,5 +1,6 @@
+import { logger as defaultLogger } from '@surgio/logger'
+
 import { OBFS_UA, SURGE_SUPPORTED_VMESS_NETWORK } from '../constant/index.js'
-import { consoleRuntimeLogger } from '../runtime/logger.js'
 import {
   NodeFilterType,
   NodeTypeEnum,
@@ -10,7 +11,8 @@ import { applyFilter } from '../filters/index.js'
 
 import { pickAndFormatStringList } from './portable.js'
 
-const logger = consoleRuntimeLogger
+import type { Logger } from '@surgio/logger'
+import type { FormatterOptions } from '../runtime/types.js'
 
 export const getSurgeExtendHeaders = (
   headers: Record<string, string>,
@@ -26,10 +28,12 @@ export const getSurgeExtendHeaders = (
 export const getSurgeNodes = function (
   nodeList: ReadonlyArray<PossibleNodeConfigType>,
   filter?: NodeFilterType | SortedNodeFilterType,
+  options: FormatterOptions = {},
 ): string {
+  const logger = options.logger ?? defaultLogger
   const result: string[] = applyFilter(nodeList, filter)
     .map((nodeConfig) => {
-      const result = nodeListMapper(nodeConfig)
+      const result = nodeListMapper(nodeConfig, logger)
 
       if (!result) {
         return undefined
@@ -178,9 +182,11 @@ export const getSurgeTailscaleNodes = (
 export const getSurgeNodeNames = function (
   nodeList: ReadonlyArray<PossibleNodeConfigType>,
   filter?: NodeFilterType | SortedNodeFilterType,
+  options: FormatterOptions = {},
 ): string {
+  const logger = options.logger ?? defaultLogger
   const result: string[] = applyFilter(nodeList, filter)
-    .map(nodeListMapper)
+    .map((nodeConfig) => nodeListMapper(nodeConfig, logger))
     .filter(
       (item): item is NonNullable<ReturnType<typeof nodeListMapper>> =>
         item !== undefined,
@@ -192,6 +198,7 @@ export const getSurgeNodeNames = function (
 
 function nodeListMapper(
   nodeConfig: PossibleNodeConfigType,
+  logger: Logger,
 ): [string, string] | undefined {
   switch (nodeConfig.type) {
     case NodeTypeEnum.Shadowsocks: {

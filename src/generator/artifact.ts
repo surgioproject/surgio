@@ -1,6 +1,6 @@
 import { EventEmitter } from 'events'
 import path from 'path'
-import { logger } from '@surgio/logger'
+import { logger as defaultLogger } from '@surgio/logger'
 import fs from 'fs-extra'
 
 import {
@@ -38,8 +38,10 @@ import { loadLocalSnippet } from './template.js'
 import type { Renderer } from '../runtime/renderer.js'
 import type { ProjectProviderDefinition } from '../project/types.js'
 import type { ProviderRuntimeContext } from '../runtime/types.js'
+import type { Logger } from '@surgio/logger'
 
 export interface ArtifactOptions {
+  readonly logger?: Logger
   readonly remoteSnippetList?: ReadonlyArray<RemoteSnippet>
   readonly renderer?: Renderer
   readonly providers?: Readonly<Record<string, ProjectProviderDefinition>>
@@ -95,6 +97,10 @@ export class Artifact extends EventEmitter {
       remoteSnippetList: this.options.remoteSnippetList,
       loadSnippet: (filePath) =>
         loadLocalSnippet(this.surgioConfig.templateDir, filePath),
+      logger:
+        this.options.logger ??
+        this.options.providerRuntime?.logger ??
+        defaultLogger,
     })
   }
 
@@ -231,7 +237,10 @@ export class Artifact extends EventEmitter {
         config,
         concurrency: getNetworkConcurrency(),
         resolveDomain,
-        logger,
+        logger:
+          this.options.logger ??
+          this.options.providerRuntime?.logger ??
+          defaultLogger,
         providerRuntime: this.options.providerRuntime,
       })
     } catch (err) /* istanbul ignore next -- @preserve */ {

@@ -1,5 +1,4 @@
 import {
-  defineSurgioProject,
   defineClashProvider,
   defineCustomProvider,
   defineShadowsocksJsonSubscribeProvider,
@@ -32,9 +31,6 @@ export const assertWorkerConfig = (config: object): void => {
     }
   }
 }
-
-/** @deprecated Use defineSurgioProject from surgio/project. */
-export const defineWorkerProject = defineSurgioProject
 
 export {
   defineClashProvider,

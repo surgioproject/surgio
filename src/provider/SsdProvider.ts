@@ -1,6 +1,7 @@
 import assert from 'assert'
 import bytes from 'bytes'
 import { z } from 'zod/v3'
+import { logger } from '@surgio/logger'
 
 import {
   NodeTypeEnum,
@@ -8,7 +9,6 @@ import {
   SsdProviderConfig,
   SubscriptionUserinfo,
 } from '../types.js'
-import { consoleRuntimeLogger } from '../runtime/logger.js'
 import { SurgioError } from '../utils/errors.js'
 import { decodeStringList, fromBase64 } from '../utils/portable.js'
 import relayableUrl from '../utils/relayable-url.js'
@@ -22,9 +22,8 @@ import {
   GetSubscriptionUserInfoFunction,
 } from './types.js'
 
-import type { ProviderRuntimeContext, RuntimeLogger } from '../runtime/types.js'
-
-const logger = consoleRuntimeLogger
+import type { Logger } from '@surgio/logger'
+import type { ProviderRuntimeContext } from '../runtime/types.js'
 
 export default class SsdProvider extends Provider {
   readonly #originalUrl: string
@@ -200,7 +199,7 @@ export const parseSsdConfig = (
   globalConfig: SsdSubscription,
   server: SsdServer,
   udpRelay?: boolean,
-  runtimeLogger: RuntimeLogger = logger,
+  runtimeLogger: Logger = logger,
 ): ShadowsocksNodeConfig | undefined => {
   const { airport, port, encryption, password } = globalConfig
   const plugin = server.plugin ?? globalConfig.plugin

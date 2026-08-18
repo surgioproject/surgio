@@ -1,4 +1,5 @@
 import _ from 'lodash'
+import { logger as defaultLogger } from '@surgio/logger'
 
 import { QUANTUMULT_X_SUPPORTED_VMESS_NETWORK } from '../constant/index.js'
 import {
@@ -8,11 +9,11 @@ import {
   SortedNodeFilterType,
 } from '../types.js'
 import { applyFilter } from '../filters/index.js'
-import { consoleRuntimeLogger } from '../runtime/logger.js'
 
 import { getHeader, pickAndFormatStringList } from './portable.js'
 
-const logger = consoleRuntimeLogger
+import type { Logger } from '@surgio/logger'
+import type { FormatterOptions } from '../runtime/types.js'
 
 /**
  * @see https://github.com/crossutility/Quantumult-X/blob/master/sample.conf
@@ -20,9 +21,11 @@ const logger = consoleRuntimeLogger
 export const getQuantumultXNodes = function (
   nodeList: ReadonlyArray<PossibleNodeConfigType>,
   filter?: NodeFilterType | SortedNodeFilterType,
+  options: FormatterOptions = {},
 ): string {
+  const logger = options.logger ?? defaultLogger
   const result: ReadonlyArray<string> = applyFilter(nodeList, filter)
-    .map(nodeListMapper)
+    .map((nodeConfig) => nodeListMapper(nodeConfig, logger))
     .filter((item): item is [string, string] => item !== undefined)
     .map((item) => item[1])
 
@@ -32,9 +35,11 @@ export const getQuantumultXNodes = function (
 export const getQuantumultXNodeNames = function (
   nodeList: ReadonlyArray<PossibleNodeConfigType>,
   filter?: NodeFilterType | SortedNodeFilterType,
+  options: FormatterOptions = {},
 ): string {
+  const logger = options.logger ?? defaultLogger
   return applyFilter(nodeList, filter)
-    .map(nodeListMapper)
+    .map((nodeConfig) => nodeListMapper(nodeConfig, logger))
     .filter((item): item is [string, string] => item !== undefined)
     .map((item) => item[0])
     .join(', ')
@@ -42,6 +47,7 @@ export const getQuantumultXNodeNames = function (
 
 function nodeListMapper(
   nodeConfig: PossibleNodeConfigType,
+  logger: Logger,
 ): [string, string] | undefined {
   switch (nodeConfig.type) {
     case NodeTypeEnum.Vless:

@@ -1,6 +1,5 @@
 import { expect, test, vi } from 'vitest'
 
-import { silentRuntimeLogger, withRuntimeLogger } from '../../runtime/logger.js'
 import { NodeTypeEnum, PossibleNodeConfigType } from '../../types.js'
 import * as surge from '../surge.js'
 
@@ -851,6 +850,7 @@ test('Surge Tailscale generation requires authKey', () => {
 
 test('Surge omits Shadowsocksr nodes', () => {
   const warn = vi.fn()
+  const logger = { debug: vi.fn(), info: vi.fn(), warn, error: vi.fn() }
   const nodeList: ReadonlyArray<PossibleNodeConfigType> = [
     {
       nodeName: 'SSR Node',
@@ -874,10 +874,10 @@ test('Surge omits Shadowsocksr nodes', () => {
     },
   ]
 
-  const result = withRuntimeLogger({ ...silentRuntimeLogger, warn }, () => ({
-    names: surge.getSurgeNodeNames(nodeList),
-    nodes: surge.getSurgeNodes(nodeList),
-  }))
+  const result = {
+    names: surge.getSurgeNodeNames(nodeList, undefined, { logger }),
+    nodes: surge.getSurgeNodes(nodeList, undefined, { logger }),
+  }
 
   expect(result.nodes).toBe(
     'SS Node = ss, example.com, 443, encrypt-method=chacha20-ietf-poly1305, password=password',

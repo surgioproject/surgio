@@ -19,15 +19,16 @@ import httpClient from './http-client.js'
 
 import { toMD5 } from './index.js'
 
+import type { Logger } from '@surgio/logger'
 import type { TtlCache } from '../cache/core.js'
-import type { RuntimeHttpClient, RuntimeLogger } from '../runtime/types.js'
+import type { RuntimeHttpClient } from '../runtime/types.js'
 
 export interface RemoteSnippetRuntimeOptions {
   readonly cache?: Pick<TtlCache, 'get' | 'set'>
   readonly cacheTtl?: number
   readonly concurrency?: number
   readonly httpClient?: RuntimeHttpClient
-  readonly logger?: RuntimeLogger
+  readonly logger?: Logger
 }
 
 export const parseMacro = (

@@ -1,6 +1,6 @@
 import { resolve } from 'path'
 import { Command, Flags, Interfaces, Config } from '@oclif/core'
-import { transports } from '@surgio/logger'
+import { setLogLevel } from '@surgio/logger'
 import ora from 'ora'
 
 import { unifiedCache } from './cache/singleton.js'
@@ -45,7 +45,7 @@ abstract class BaseCommand<T extends typeof Command> extends Command {
 
     /* istanbul ignore next -- @preserve */
     if (flags.verbose) {
-      transports.console.level = 'debug'
+      setLogLevel('debug')
     }
 
     if (flags.project.startsWith('.')) {

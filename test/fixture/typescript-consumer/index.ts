@@ -22,6 +22,8 @@ import {
   type ProjectProviderContext,
 } from 'surgio/project'
 
+import type { Logger } from '@surgio/logger'
+
 const config: SurgioConfig = {
   artifacts: [],
   clashConfig: { clashCore: 'mihomo' },
@@ -64,6 +66,12 @@ const params = {} satisfies GetNodeListParams
 const json = {} satisfies JsonObject
 const nodes = [] satisfies PossibleNodeConfigInputType[]
 const runtimeFactory: typeof createSurgioRuntime = createSurgioRuntime
+const runtimeLogger = {
+  debug() {},
+  info() {},
+  warn() {},
+  error() {},
+} satisfies Logger
 const manifestBuilder: typeof buildWorkerManifest = buildWorkerManifest
 const manifest = null as WorkerManifest | null
 
@@ -79,5 +87,6 @@ void params
 void json
 void nodes
 void runtimeFactory
+void runtimeLogger
 void manifestBuilder
 void manifest

@@ -90,7 +90,7 @@ export default {
 
 `cache` 是必需依赖。Worker Provider、远程 snippet 和 Artifact 结果都使用这个实例，不会访问 Node 的 `unifiedCache` 单例。
 
-`createSurgioRuntime` 还允许注入 `fetch`、`resolveDomain`、`logger` 和 `network`。默认 HTTP adapter 使用基于 Fetch 的 ky，与 Node.js 共用文本响应、headers、超时和有限重试逻辑。默认 DNS adapter 使用 `node:dns` 的 `resolve4` 和 `resolve6`，只合并同一进程内的并发查询，不做持久缓存；每次 DNS 查询都会计入 [Worker subrequest](https://developers.cloudflare.com/workers/runtime-apis/nodejs/dns/)。
+`createSurgioRuntime` 还允许注入 `fetch`、`resolveDomain`、`logger` 和 `network`。`logger` 直接使用 `@surgio/logger` 的 `Logger` 接口；未注入时使用该包的默认 logger，注入后会显式传递给 Provider、formatter 和 Artifact 模板，不依赖全局切换。默认 HTTP adapter 使用基于 Fetch 的 ky，与 Node.js 共用文本响应、headers、超时和有限重试逻辑。默认 DNS adapter 使用 `node:dns` 的 `resolve4` 和 `resolve6`，只合并同一进程内的并发查询，不做持久缓存；每次 DNS 查询都会计入 [Worker subrequest](https://developers.cloudflare.com/workers/runtime-apis/nodejs/dns/)。
 
 ## Runtime API
 

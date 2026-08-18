@@ -1,5 +1,6 @@
+import { logger as defaultLogger } from '@surgio/logger'
+
 import { ERR_INVALID_FILTER } from '../constant/index.js'
-import { consoleRuntimeLogger } from '../runtime/logger.js'
 import {
   NodeFilterType,
   NodeTypeEnum,
@@ -15,14 +16,17 @@ import {
 import { stringifySip003Options } from './ss.js'
 import { checkNotNullish, pickAndFormatKeys } from './portable.js'
 
-const logger = consoleRuntimeLogger
+import type { Logger } from '@surgio/logger'
+import type { FormatterOptions } from '../runtime/types.js'
 
 export const getSingboxNodes = function (
   list: ReadonlyArray<PossibleNodeConfigType>,
   filter?: NodeFilterType | SortedNodeFilterType,
+  options: FormatterOptions = {},
 ) {
+  const logger = options.logger ?? defaultLogger
   return applyFilter(list, filter)
-    .flatMap(nodeListMapper)
+    .flatMap((nodeConfig) => nodeListMapper(nodeConfig, logger))
     .filter((item): item is Record<string, any> => checkNotNullish(item))
 }
 
@@ -44,6 +48,7 @@ export const getSingboxEndpoints = function (
 export const getSingboxNodeNames = function (
   list: ReadonlyArray<PossibleNodeConfigType>,
   filter?: NodeFilterType | SortedNodeFilterType,
+  options: FormatterOptions = {},
 ): ReadonlyArray<string> {
   /* istanbul ignore next -- @preserve */
   if (arguments.length === 2 && typeof filter === 'undefined') {
@@ -51,7 +56,7 @@ export const getSingboxNodeNames = function (
   }
 
   return [
-    ...getSingboxNodes(list, filter),
+    ...getSingboxNodes(list, filter, options),
     ...getSingboxEndpoints(list, filter),
   ].map((item) => item.tag)
 }
@@ -73,7 +78,7 @@ const typeMap = {
 /**
  * @see https://sing-box.sagernet.org/configuration/outbound/
  */
-function nodeListMapper(nodeConfig: PossibleNodeConfigType) {
+function nodeListMapper(nodeConfig: PossibleNodeConfigType, logger: Logger) {
   // Tailscale 以 endpoint 的形式生成，由 getSingboxEndpoints 处理，不应出现在 outbounds 中
   if (nodeConfig.type === NodeTypeEnum.Tailscale) {
     return null

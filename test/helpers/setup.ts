@@ -1,7 +1,6 @@
 import os from 'node:os'
 import path from 'node:path'
 import './stub-axios.js'
-import { transports } from '@surgio/logger'
 import fs from 'fs-extra'
 import { afterAll, beforeAll } from 'vitest'
 
@@ -24,9 +23,6 @@ beforeAll(async () => {
 afterAll(async () => {
   await fs.remove(testCacheDirectory)
 })
-
-// Aggregate imports attach one Surgio module logger to the shared transport.
-transports.console.setMaxListeners(100)
 
 const globalWithOclif = globalThis as typeof globalThis & {
   oclif?: { columns?: number }

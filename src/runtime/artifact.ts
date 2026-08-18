@@ -35,11 +35,14 @@ import {
 import { SurgioError } from '../utils/errors.js'
 import { MasqueNodeConfigValidator } from '../validators/index.js'
 
+import type { Logger } from '@surgio/logger'
 import type {
   ArtifactConfig,
   CommandConfigAfterNormalize,
+  NodeFilterType,
   PossibleNodeConfigType,
   RemoteSnippet,
+  SortedNodeFilterType,
   SubscriptionUserinfo,
 } from '../types.js'
 import type {
@@ -47,9 +50,9 @@ import type {
   PossibleProviderType,
 } from '../provider/types.js'
 import type {
+  FormatterOptions,
   ProviderRuntimeContext,
   RuntimeDomainResolver,
-  RuntimeLogger,
 } from './types.js'
 
 type ArtifactRuntimeConfig = CommandConfigAfterNormalize & {
@@ -113,7 +116,7 @@ export const prepareProvider = async (options: {
   readonly config: ArtifactRuntimeConfig
   readonly concurrency: number
   readonly resolveDomain: RuntimeDomainResolver
-  readonly logger: RuntimeLogger
+  readonly logger: Logger
   readonly providerRuntime?: ProviderRuntimeContext
 }): Promise<PreparedProvider> => {
   const {
@@ -272,6 +275,7 @@ export const createArtifactRenderContext = (options: {
   readonly remoteSnippetList?: ReadonlyArray<RemoteSnippet>
   readonly loadSnippet: (name: string) => RemoteSnippet
   readonly downloadUrl?: string
+  readonly logger: Logger
 }) => {
   const {
     artifact,
@@ -283,7 +287,53 @@ export const createArtifactRenderContext = (options: {
     remoteSnippetList = [],
     loadSnippet,
     downloadUrl,
+    logger,
   } = options
+  const formatterOptions = { logger }
+  const bindFormatter =
+    <T>(
+      formatter: (
+        list: ReadonlyArray<PossibleNodeConfigType>,
+        filter?: NodeFilterType | SortedNodeFilterType,
+        options?: FormatterOptions,
+      ) => T,
+    ) =>
+    (
+      list: ReadonlyArray<PossibleNodeConfigType>,
+      filter?: NodeFilterType | SortedNodeFilterType,
+    ): T =>
+      formatter(list, filter, formatterOptions)
+  const bindFilterAwareFormatter = <T>(
+    formatter: (
+      list: ReadonlyArray<PossibleNodeConfigType>,
+      filter?: NodeFilterType | SortedNodeFilterType,
+      options?: FormatterOptions,
+    ) => T,
+  ) =>
+    function (
+      list: ReadonlyArray<PossibleNodeConfigType>,
+      filter?: NodeFilterType | SortedNodeFilterType,
+    ): T {
+      return arguments.length === 2 && filter === undefined
+        ? formatter(list, filter)
+        : formatter(list, filter, formatterOptions)
+    }
+  const boundGetClashNodeNames = function (
+    list: ReadonlyArray<PossibleNodeConfigType>,
+    filter?: NodeFilterType | SortedNodeFilterType,
+    prependNodeNames?: ReadonlyArray<string>,
+    defaultNodeNames?: ReadonlyArray<string>,
+  ): ReadonlyArray<string> {
+    return arguments.length === 2 && filter === undefined
+      ? getClashNodeNames(list, filter)
+      : getClashNodeNames(
+          list,
+          filter,
+          prependNodeNames,
+          defaultNodeNames,
+          formatterOptions,
+        )
+  }
   const gatewayToken =
     config.gateway?.viewerToken ?? config.gateway?.accessToken
 
@@ -308,24 +358,24 @@ export const createArtifactRenderContext = (options: {
       getDownloadUrl(config.urlBase, name, true, gatewayToken),
     getUrl: (path: string) => getUrl(config.publicUrl, path, gatewayToken),
     getNodeNames,
-    getClashNodes,
-    getClashNodeNames,
-    getSingboxNodes,
-    getSingboxNodeNames,
+    getClashNodes: bindFormatter(getClashNodes),
+    getClashNodeNames: boundGetClashNodeNames,
+    getSingboxNodes: bindFormatter(getSingboxNodes),
+    getSingboxNodeNames: bindFilterAwareFormatter(getSingboxNodeNames),
     getSingboxEndpoints,
-    getSurgeNodes,
-    getSurgeNodeNames,
+    getSurgeNodes: bindFormatter(getSurgeNodes),
+    getSurgeNodeNames: bindFormatter(getSurgeNodeNames),
     getSurgeTailscaleNodes,
     getSurgeWireguardNodes,
-    getSurfboardNodes,
-    getSurfboardNodeNames,
+    getSurfboardNodes: bindFormatter(getSurfboardNodes),
+    getSurfboardNodeNames: bindFormatter(getSurfboardNodeNames),
     getShadowsocksNodes,
     getShadowsocksNodesJSON,
     getShadowsocksrNodes,
     getV2rayNNodes,
-    getQuantumultXNodes,
-    getQuantumultXNodeNames,
-    getLoonNodes,
+    getQuantumultXNodes: bindFormatter(getQuantumultXNodes),
+    getQuantumultXNodeNames: bindFormatter(getQuantumultXNodeNames),
+    getLoonNodes: bindFilterAwareFormatter(getLoonNodes),
     getLoonNodeNames,
     toUrlSafeBase64,
     toBase64,

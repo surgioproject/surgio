@@ -1,5 +1,6 @@
 import { isIPv4 } from 'net'
 import _ from 'lodash'
+import { logger as defaultLogger } from '@surgio/logger'
 
 import {
   NodeFilterType,
@@ -12,9 +13,10 @@ import {
   LOON_SUPPORTED_VMESS_NETWORK,
 } from '../constant/index.js'
 import { applyFilter, internalFilters } from '../filters/index.js'
-import { consoleRuntimeLogger } from '../runtime/logger.js'
 
 import { getHeader } from './portable.js'
+
+import type { FormatterOptions } from '../runtime/types.js'
 
 const {
   httpFilter,
@@ -28,17 +30,17 @@ const {
   anytlsFilter,
   hysteria2Filter,
 } = internalFilters
-const logger = consoleRuntimeLogger
-
 // https://nsloon.app/docs/Node/#%E8%8A%82%E7%82%B9%E6%A0%BC%E5%BC%8F
 export const getLoonNodes = function (
   list: ReadonlyArray<PossibleNodeConfigType>,
   filter?: NodeFilterType | SortedNodeFilterType,
+  options: FormatterOptions = {},
 ): string {
   if (arguments.length === 2 && typeof filter === 'undefined') {
     throw new Error(ERR_INVALID_FILTER)
   }
 
+  const logger = options.logger ?? defaultLogger
   const result: ReadonlyArray<string> = applyFilter(list, filter)
     .map((nodeConfig): string | undefined => {
       switch (nodeConfig.type) {

@@ -150,7 +150,7 @@ surgio/
 - `.tpl` 和 `templateString` 在构建期由 Nunjucks 预编译；manifest 只包含静态函数，运行时不得使用 `eval` 或 `new Function`
 - `src/worker/precompiled-environment.ts` 是刻意收窄的预编译运行时。只有生成后的模板代码确实需要某项能力时才能扩展，并且必须增加 contract 测试
 - Worker 依赖图不得包含完整 Nunjucks compiler、Node renderer、`fs-extra`、动态模块加载器或其他 Node-only 实现
-- Worker runtime 的缓存、HTTP、DNS 和日志均通过 runtime context 注入；不要回退到 Node 单例或在 Worker 模块中直接加载 Node adapter
+- Worker runtime 的缓存、HTTP、DNS 和日志均通过 runtime context 注入；日志类型直接使用 `@surgio/logger` 的 `Logger`，默认使用该包的 logger，注入值必须显式传到 Provider、formatter 和 Artifact 模板；不要重新引入全局可变 logger facade 或在 Worker 模块中加载 Node adapter
 - Node 与 Worker 共用 `src/runtime/http-client.ts` 中基于 `ky` 的 HTTP 实现，通过注入 `fetch` 适配环境；不要增加 Got 或 Worker 专用 HTTP 分支
 - DNS resolver 允许通过 runtime context 替换；默认实现只合并单进程并发查询，不增加持久缓存
 - Worker 入口需要启用 Cloudflare `nodejs_compat`，但核心执行路径不能依赖运行时文件系统或动态代码执行

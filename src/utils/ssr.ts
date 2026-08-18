@@ -1,11 +1,10 @@
-import { consoleRuntimeLogger } from '../runtime/logger.js'
+import { logger } from '@surgio/logger'
+
 import { NodeTypeEnum, ShadowsocksrNodeConfig } from '../types.js'
 
 import { fromUrlSafeBase64 } from './portable.js'
 
-import type { RuntimeLogger } from '../runtime/types.js'
-
-const logger = consoleRuntimeLogger
+import type { Logger } from '@surgio/logger'
 
 /**
  * 协议：https://github.com/shadowsocksr-backup/shadowsocks-rss/wiki/SSR-QRcode-scheme
@@ -14,7 +13,7 @@ const logger = consoleRuntimeLogger
  */
 export const parseSSRUri = (
   str: string,
-  runtimeLogger: RuntimeLogger = logger,
+  runtimeLogger: Logger = logger,
 ): ShadowsocksrNodeConfig => {
   const scheme = fromUrlSafeBase64(str.replace('ssr://', ''))
   const configArray = scheme.split('/')

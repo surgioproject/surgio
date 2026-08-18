@@ -1,4 +1,5 @@
 import _ from 'lodash'
+import { logger as defaultLogger } from '@surgio/logger'
 
 import { ERR_INVALID_FILTER } from '../constant/index.js'
 import {
@@ -9,7 +10,6 @@ import {
   SortedNodeFilterType,
 } from '../types.js'
 import { applyFilter } from '../filters/index.js'
-import { consoleRuntimeLogger } from '../runtime/logger.js'
 
 import {
   checkNotNullish,
@@ -18,7 +18,8 @@ import {
   pickAndFormatKeys,
 } from './portable.js'
 
-const logger = consoleRuntimeLogger
+import type { Logger } from '@surgio/logger'
+import type { FormatterOptions } from '../runtime/types.js'
 
 const getClashCore = (nodeConfig: PossibleNodeConfigType): ClashCoreType =>
   nodeConfig.clashConfig?.clashCore ?? 'clash.meta'
@@ -26,11 +27,13 @@ const getClashCore = (nodeConfig: PossibleNodeConfigType): ClashCoreType =>
 export const getClashNodes = function (
   list: ReadonlyArray<PossibleNodeConfigType>,
   filter?: NodeFilterType | SortedNodeFilterType,
+  options: FormatterOptions = {},
 ) {
+  const logger = options.logger ?? defaultLogger
   return applyFilter(list, filter)
     .map((nodeConfig) => {
       const clashCore = getClashCore(nodeConfig)
-      const clashNode = nodeListMapper(nodeConfig)
+      const clashNode = nodeListMapper(nodeConfig, logger)
 
       if (!clashNode) {
         return clashNode
@@ -89,6 +92,7 @@ export const getClashNodeNames = function (
   filter?: NodeFilterType | SortedNodeFilterType,
   prependNodeNames?: ReadonlyArray<string>,
   defaultNodeNames?: ReadonlyArray<string>,
+  options: FormatterOptions = {},
 ): ReadonlyArray<string> {
   /* istanbul ignore next -- @preserve */
   if (arguments.length === 2 && typeof filter === 'undefined') {
@@ -101,7 +105,9 @@ export const getClashNodeNames = function (
     result = result.concat(prependNodeNames)
   }
 
-  result = result.concat(getClashNodes(list, filter).map((item) => item.name))
+  result = result.concat(
+    getClashNodes(list, filter, options).map((item) => item.name),
+  )
 
   if (result.length === 0 && defaultNodeNames) {
     result = result.concat(defaultNodeNames)
@@ -114,7 +120,7 @@ export const getClashNodeNames = function (
  * @see https://wiki.metacubex.one/config/proxies/
  * @see https://stash.wiki/proxy-protocols/proxy-types
  */
-function nodeListMapper(nodeConfig: PossibleNodeConfigType) {
+function nodeListMapper(nodeConfig: PossibleNodeConfigType, logger: Logger) {
   const clashConfig = nodeConfig.clashConfig || {}
   const clashCore = getClashCore(nodeConfig)
 
