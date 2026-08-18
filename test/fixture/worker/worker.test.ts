@@ -4,6 +4,11 @@ import { SELF } from 'cloudflare:test'
 import { describe, expect, test } from 'vitest'
 
 describe('Surgio Worker fixture', () => {
+  test('reads a Worker text binding through env()', async () => {
+    const response = await SELF.fetch('https://example.com/environment')
+    expect(await response.text()).toBe('worker-value')
+  })
+
   test('persists Buffer and object values in a real KV binding', async () => {
     const response = await SELF.fetch('https://example.com/cache')
     expect(await response.json()).toEqual({

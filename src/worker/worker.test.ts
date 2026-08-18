@@ -6,11 +6,11 @@ import { afterEach, describe, expect, test, vi } from 'vitest'
 
 import { TtlCache } from '../cache/core.js'
 import { createNodeRenderer } from '../generator/template.js'
+import { defineSurgioProject } from '../project/core.js'
 import { SupportProviderEnum } from '../types.js'
 import { ArtifactValidator } from '../validators/index.js'
 
 import { buildWorkerManifest } from './build.js'
-import { defineWorkerProject } from './config.js'
 import { createSurgioRuntime } from './runtime.js'
 import { createPrecompiledRenderer } from './template-engine.js'
 
@@ -46,13 +46,14 @@ afterEach(async () => {
 })
 
 describe('Worker project', () => {
-  test('rejects Node-only configuration at definition time', () => {
-    expect(() =>
-      defineWorkerProject({
-        config: { artifacts: [], output: './dist' } as any,
-        providers: {},
-      }),
-    ).toThrow('Node-only 字段 output')
+  test('keeps shared configuration flat in the project definition', () => {
+    const project = defineSurgioProject({
+      artifacts: [],
+      urlBase: 'https://example.com/',
+      providers: {},
+    })
+
+    expect(project.urlBase).toBe('https://example.com/')
   })
 
   test('builds an ESM manifest and renders all Worker template forms', async () => {
@@ -74,10 +75,11 @@ describe('Worker project', () => {
     await fs.writeJson(path.join(directory, 'template', 'base.json'), {
       version: 1,
     })
-    const configFile = path.join(directory, 'surgio.worker.mjs')
+    const configFile = path.join(directory, 'surgio.project.ts')
     await fs.writeFile(
       configFile,
-      `export default {
+      `const projectName: string = 'demo';
+export default {
   templateDir: './template',
   providers: {
     demo: {
@@ -85,15 +87,13 @@ describe('Worker project', () => {
       nodeList: [{ type: 'shadowsocks', nodeName: 'Demo', hostname: 'example.com', port: 443, method: 'aes-128-gcm', password: 'secret' }]
     }
   },
-  config: {
-    urlBase: 'https://example.com/',
-    remoteSnippets: [{ name: 'rules', url: 'https://rules.example/list' }],
-    artifacts: [
-      { name: 'main', provider: 'demo', template: 'main' },
-      { name: 'inline', provider: 'demo', template: '', templateString: 'inline={{ getNodeNames(nodeList) }}' },
-      { name: 'json', provider: 'demo', template: 'base', templateType: 'json', extendTemplate(input, context) { return { ...input, nodes: context.nodeList.length } } }
-    ]
-  }
+  urlBase: 'https://example.com/',
+  remoteSnippets: [{ name: 'rules', url: 'https://rules.example/list' }],
+  artifacts: [
+    { name: 'main', provider: projectName, template: 'main', destDir: './dist', destDirs: ['./backup'] },
+    { name: 'inline', provider: 'demo', template: '', templateString: 'inline={{ getNodeNames(nodeList) }}' },
+    { name: 'json', provider: 'demo', template: 'base', templateType: 'json', extendTemplate(input, context) { return { ...input, nodes: context.nodeList.length } } }
+  ]
 }`,
     )
     const outfile = path.join(directory, '.surgio', 'worker-manifest.mjs')
@@ -102,6 +102,10 @@ describe('Worker project', () => {
       `${pathToFileURL(outfile).href}?test=${Date.now()}`
     )
     const manifest = imported.default as WorkerManifest
+    expect(manifest.config).not.toHaveProperty('providers')
+    expect(manifest.config).not.toHaveProperty('templateDir')
+    expect(manifest.config.artifacts[0]).not.toHaveProperty('destDir')
+    expect(manifest.config.artifacts[0]).not.toHaveProperty('destDirs')
     const nodeRenderer = createNodeRenderer(path.join(directory, 'template'))
     const precompiledRenderer = createPrecompiledRenderer(manifest)
     const renderContext = {
@@ -201,10 +205,10 @@ describe('Worker project', () => {
     const directory = await fs.mkdtemp(path.join(os.tmpdir(), 'surgio-worker-'))
     temporaryDirectories.push(directory)
     await fs.ensureDir(path.join(directory, 'template'))
-    const configFile = path.join(directory, 'surgio.worker.mjs')
+    const configFile = path.join(directory, 'surgio.project.ts')
     await fs.writeFile(
       configFile,
-      `export default { providers: {}, config: { artifacts: [{ name: 'bad', provider: 'missing', template: 'missing' }] } }`,
+      `export default { providers: {}, artifacts: [{ name: 'bad', provider: 'missing', template: 'missing' }] }`,
     )
     await expect(buildWorkerManifest({ configFile })).rejects.toThrow(
       '未注册的 Provider missing',

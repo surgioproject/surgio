@@ -1,5 +1,3 @@
-import YAML from 'yaml'
-
 import { CACHE_KEYS } from '../constant/index.js'
 import { createProvider } from '../provider/create-provider.js'
 import {
@@ -13,20 +11,9 @@ import { createHttpClient } from '../runtime/http-client.js'
 import { consoleRuntimeLogger, withRuntimeLogger } from '../runtime/logger.js'
 import { addProxyToRuleSet } from '../runtime/ruleset.js'
 import { renderRestrictedSnippet } from '../runtime/snippet-interpreter.js'
+import { formatProviderNodes } from '../runtime/format.js'
 import { addFlagMap } from '../utils/flag.js'
-import { getClashNodes } from '../utils/clash.js'
-import { getLoonNodes } from '../utils/loon.js'
-import {
-  getShadowsocksNodes,
-  getShadowsocksNodesJSON,
-  getShadowsocksrNodes,
-  getV2rayNNodes,
-  toMD5,
-} from '../utils/portable.js'
-import { getQuantumultXNodes } from '../utils/quantumult.js'
-import { getSingboxEndpoints, getSingboxNodes } from '../utils/singbox.js'
-import { getSurfboardNodes } from '../utils/surfboard.js'
-import { getSurgeNodes } from '../utils/surge.js'
+import { toMD5 } from '../utils/portable.js'
 import { ArtifactValidator } from '../validators/index.js'
 
 import { normalizeWorkerConfig } from './normalize-config.js'
@@ -35,7 +22,6 @@ import { createPrecompiledRenderer } from './template-engine.js'
 import type {
   ArtifactConfig,
   NodeFilterType,
-  PossibleNodeConfigType,
   RemoteSnippet,
   SortedNodeFilterType,
   SubscriptionUserinfo,
@@ -50,7 +36,6 @@ import type {
   RenderProvidersOptions,
   SurgioRuntime,
   WorkerManifest,
-  WorkerProviderFormat,
   WorkerRenderResult,
   WorkerRuntimeOptions,
 } from './types.js'
@@ -63,53 +48,15 @@ interface RenderData {
   >
 }
 
-const formatProviders = (
-  format: WorkerProviderFormat,
-  nodeList: ReadonlyArray<PossibleNodeConfigType>,
-  filter?: NodeFilterType | SortedNodeFilterType,
-): string => {
-  const callFormatter = <T>(formatter: (...args: any[]) => T): T =>
-    filter === undefined ? formatter(nodeList) : formatter(nodeList, filter)
-
-  switch (format) {
-    case 'clash':
-    case 'clash-provider':
-      return YAML.stringify({ proxies: callFormatter(getClashNodes) })
-    case 'singbox':
-      return JSON.stringify(
-        {
-          outbounds: callFormatter(getSingboxNodes),
-          endpoints: callFormatter(getSingboxEndpoints),
-        },
-        null,
-        2,
-      )
-    case 'surge':
-      return callFormatter(getSurgeNodes)
-    case 'surfboard':
-      return callFormatter(getSurfboardNodes)
-    case 'quantumultx':
-      return callFormatter(getQuantumultXNodes)
-    case 'loon':
-      return callFormatter(getLoonNodes)
-    case 'shadowsocks':
-      return callFormatter(getShadowsocksNodes)
-    case 'shadowsocks-json':
-      return callFormatter(getShadowsocksNodesJSON)
-    case 'shadowsocksr':
-      return callFormatter(getShadowsocksrNodes)
-    case 'v2rayn':
-      return callFormatter(getV2rayNNodes)
-  }
-}
-
 export const createSurgioRuntime = (
   manifest: WorkerManifest,
   options: WorkerRuntimeOptions,
 ): SurgioRuntime => {
   if (!options?.cache) throw new Error('Worker runtime 必须注入 cache')
 
-  const config = normalizeWorkerConfig(manifest.config)
+  const config = normalizeWorkerConfig(
+    manifest.config as import('../types.js').CommandConfigBeforeNormalize,
+  )
   const logger = options.logger ?? consoleRuntimeLogger
   const network = options.network ?? {}
   const concurrency = network.concurrency ?? 5
@@ -252,17 +199,18 @@ export const createSurgioRuntime = (
             }
           },
         })
-        const selectedFilter = renderOptions.filter
-          ? customFilters[renderOptions.filter]
-          : undefined
-        if (renderOptions.filter && !selectedFilter) {
+        const selectedFilter =
+          typeof renderOptions.filter === 'string'
+            ? customFilters[renderOptions.filter]
+            : renderOptions.filter
+        if (typeof renderOptions.filter === 'string' && !selectedFilter) {
           throw new Error(`Filter ${renderOptions.filter} 不存在`)
         }
 
         let body: string
         if (renderOptions.format) {
           body = withRuntimeLogger(logger, () =>
-            formatProviders(
+            formatProviderNodes(
               renderOptions.format!,
               nodeList,
               selectedFilter as
@@ -317,9 +265,32 @@ export const createSurgioRuntime = (
     listProviders() {
       return Object.keys(manifest.providers)
     },
+    async getProviderInfo(name) {
+      if (!manifest.providers[name]) return undefined
+      const provider = await getProvider(name)
+      return {
+        name: provider.name,
+        type: provider.type,
+        ...('url' in provider.config && typeof provider.config.url === 'string'
+          ? { url: provider.config.url }
+          : null),
+        supportGetSubscriptionUserInfo: provider.supportGetSubscriptionUserInfo,
+      }
+    },
     async getProviderSubscription(name, params = {}) {
       const provider = await getProvider(name)
       return provider.getSubscriptionUserInfo(params as GetNodeListParams)
+    },
+    getGatewayConfig() {
+      return {
+        urlBase: config.urlBase,
+        publicUrl: config.publicUrl,
+        coreVersion: manifest.surgioVersion,
+        ...config.gateway,
+      }
+    },
+    resetCache() {
+      return options.cache.reset()
     },
     close() {
       return options.cache.close()

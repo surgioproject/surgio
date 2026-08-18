@@ -1,43 +1,55 @@
 # 在 Cloudflare Workers 中运行 Surgio
 
-`surgio/worker` 是不依赖 CLI、运行时文件系统和动态模块加载的核心运行时。Node CLI 与现有 CommonJS 项目不需要迁移；只有 Worker 项目必须使用 ESM、构建期 manifest 和显式 Provider registry。
+`surgio/worker` 是不依赖 CLI、运行时文件系统和动态模块加载的核心运行时。TypeScript ESM 项目使用一份 `surgio.project.ts`，同时供本地 CLI、Node Gateway 和 Worker manifest 使用。Node.js 22.22.2 及以上版本会直接执行其中可擦除的 TypeScript 语法，不需要 Bun、tsx 或运行时编译器。
 
 Worker 必须启用 [`nodejs_compat`](https://developers.cloudflare.com/workers/runtime-apis/nodejs/)。这项兼容标志用于 `Buffer`、`node:crypto`、`node:net` 和 `node:dns`，并不允许 Worker 在运行时读取 Surgio 项目目录。
 
-## 定义 Worker 项目
+## 定义统一 Project
 
-新建 `surgio.worker.mjs`：
+新建 `surgio.project.ts`：
 
-```js
-import { defineClashProvider, defineWorkerProject } from 'surgio/worker/config'
+```ts
+import {
+  defineClashProvider,
+  defineSurgioProject,
+  env,
+} from 'surgio/project'
 
-const demoProvider = defineClashProvider({
-  url: 'https://example.com/subscription',
-})
-
-export default defineWorkerProject({
-  config: {
-    artifacts: [{ name: 'demo.conf', provider: 'demo', template: 'surge' }],
-  },
+export default defineSurgioProject({
+  artifacts: [{ name: 'demo.conf', provider: 'demo', template: 'surge' }],
   providers: {
-    demo: demoProvider,
+    demo: () =>
+      defineClashProvider({
+        url: env('DEMO_SUBSCRIPTION_URL'),
+      }),
   },
   templateDir: './template',
 })
+
+export const nodeOptions = async () => ({
+  output: './dist',
+  cache: { type: 'filesystem' },
+  upload: {
+    accessKeyId: env('UPLOAD_ACCESS_KEY_ID'),
+    accessKeySecret: env('UPLOAD_ACCESS_KEY_SECRET'),
+  },
+})
 ```
 
-配置和 Provider 只支持 ESM。每个 Provider 都必须在 `providers` 中显式注册；Worker 不扫描 `provider` 目录。`output`、`providerDir`、`configDir`、`upload` 和 `cache` 是 Node-only 配置，构建器会拒绝它们。
+Project 和 Provider 只支持 ESM。Surgio 配置字段直接写在 Project 顶层，`providers` 和 `templateDir` 是 Project 元数据。每个 Provider 都必须在 `providers` 中显式注册；Worker 不扫描 `provider` 目录。`output`、文件系统或 Upstash cache、upload 等 Node-only 设置放在命名导出的 `nodeOptions` 中。CLI 和 Node runtime 会读取它，Worker manifest 只读取默认导出的共享配置。
+
+`env(name)` 从 `process.env` 读取字符串，缺失时抛错。Provider factory 在 runtime 创建 Provider 时执行，适合读取只存在于部署环境的变量；`nodeOptions()` 只在 Node 侧执行。Cloudflare Worker 必须使用 `nodejs_compat` 和不早于 `2025-04-01` 的 compatibility date，使文本变量和 Secrets 自动进入 `process.env`。KV、Assets 等结构化 binding 仍通过 Worker adapter 显式注入。
 
 ## 构建 manifest
 
 构建脚本只在 Node 构建环境中运行：
 
-```js
-// scripts/build-surgio-worker.mjs
+```ts
+// scripts/build-surgio-worker.ts
 import { buildWorkerManifest } from 'surgio/worker/build'
 
 await buildWorkerManifest({
-  configFile: 'surgio.worker.mjs',
+  configFile: 'surgio.project.ts',
   outfile: '.surgio/worker-manifest.mjs',
 })
 ```
@@ -87,6 +99,8 @@ export default {
 - `renderTemplate(name, context)` 渲染一个预编译模板。
 - `listArtifacts()` 和 `listProviders()` 返回 manifest 中的静态目录。
 - `getProviderSubscription(name, params)` 读取订阅元数据。
+- `getGatewayConfig()` 返回 Gateway 所需的只读配置元数据。
+- `resetCache()` 清理当前 Surgio namespace。
 - `close()` 关闭调用方提供的缓存。
 
 渲染结果是 `{ body, artifact, subscriptionUserInfo, subscriptionUserInfoMap }`，调用方不需要持有或观察可变的 `Artifact` 实例。
@@ -107,7 +121,7 @@ export default {
 {
   "name": "surgio-worker",
   "main": "src/worker.ts",
-  "compatibility_date": "2026-08-16",
+  "compatibility_date": "2026-08-17",
   "compatibility_flags": ["nodejs_compat"],
   "kv_namespaces": [{ "binding": "SURGIO_CACHE", "id": "<KV namespace id>" }]
 }

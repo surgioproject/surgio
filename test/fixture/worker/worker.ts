@@ -1,5 +1,6 @@
 import { TtlCache } from '../../../build/cache/core.js'
 import { createCloudflareKvStore } from '../../../build/cache/cloudflare.js'
+import { env as readEnv } from '../../../build/project/index.js'
 import { createSurgioRuntime } from '../../../build/worker/index.js'
 
 import manifest from './.surgio/worker-manifest.mjs'
@@ -32,6 +33,10 @@ export default {
     const cache = new TtlCache()
     cache.useStore(createCloudflareKvStore(env.SURGIO_CACHE))
     const url = new URL(request.url)
+
+    if (url.pathname === '/environment') {
+      return new Response(readEnv('SURGIO_ENV_TEST'))
+    }
 
     if (url.pathname === '/cache') {
       await cache.set(

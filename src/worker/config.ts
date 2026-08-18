@@ -1,4 +1,5 @@
 import {
+  defineSurgioProject,
   defineClashProvider,
   defineCustomProvider,
   defineShadowsocksJsonSubscribeProvider,
@@ -9,7 +10,6 @@ import {
   defineV2rayNSubscribeProvider,
 } from '../configurables.js'
 
-import type { WorkerProjectDefinition } from './types.js'
 export {
   combineExtendFunctions,
   createExtendFunction,
@@ -33,18 +33,8 @@ export const assertWorkerConfig = (config: object): void => {
   }
 }
 
-export const defineWorkerProject = <T extends WorkerProjectDefinition>(
-  project: T,
-): T => {
-  if (!project || typeof project !== 'object') {
-    throw new TypeError('Worker project 必须是对象')
-  }
-  if (!project.config || !project.providers) {
-    throw new Error('Worker project 必须提供 config 和 providers')
-  }
-  assertWorkerConfig(project.config)
-  return project
-}
+/** @deprecated Use defineSurgioProject from surgio/project. */
+export const defineWorkerProject = defineSurgioProject
 
 export {
   defineClashProvider,

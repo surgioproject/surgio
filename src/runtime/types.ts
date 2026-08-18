@@ -25,7 +25,7 @@ export interface RuntimeLogger {
 }
 
 export interface ProviderRuntimeContext {
-  readonly cache: Pick<TtlCache, 'get' | 'set'>
+  readonly cache: Pick<TtlCache, 'get' | 'set' | 'wrap'>
   readonly config: Pick<CommandConfigAfterNormalize, 'gateway'>
   readonly httpClient: RuntimeHttpClient
   readonly logger: RuntimeLogger
