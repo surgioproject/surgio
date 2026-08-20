@@ -40,14 +40,14 @@ Cursor、OpenCode 等多种 coding agent。
 在 Surgio 配置仓库根目录运行：
 
 ```bash
-npx skills add https://github.com/geekdada/surgio/tree/master/skills/migrate-v3-config
+npx skills add geekdada/surgio --skill migrate-v3-config
 ```
 
 CLI 会检测本机安装的 coding agent，并在需要时让你选择目标。默认执行项目级安装，
 适合随配置仓库共享；若希望在所有仓库中使用，可以增加 `--global`：
 
 ```bash
-npx skills add https://github.com/geekdada/surgio/tree/master/skills/migrate-v3-config --global
+npx skills add geekdada/surgio --skill migrate-v3-config --global
 ```
 
 如果安装后没有出现在 agent 的 Skill 列表中，请重新启动该 agent。
@@ -66,11 +66,11 @@ agent 的显式 Skill 语法可能不同，因此下面使用通用的自然语�
 先保存 Artifact 和服务响应基线，迁移后验证行为一致。
 ```
 
-只保留现有 Cloudflare Worker 部署：
+升级并且切换至 Cloudflare Worker 部署：
 
 ```text
-请使用 migrate-v3-config skill 将当前仓库升级到 Surgio v4，沿用现有 Cloudflare Worker
-部署、bindings、Assets、路由和域名，并验证 workerd 与 Wrangler dry-run。
+请使用 migrate-v3-config skill 将当前仓库升级到 Surgio v4，并切换至 Cloudflare Worker
+部署、配置 bindings、Assets、路由和域名，并验证 workerd 与 Wrangler dry-run 结果一致。
 ```
 
 同时支持本地/Node 与 Worker：
