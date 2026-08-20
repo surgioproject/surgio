@@ -5,7 +5,6 @@ import CustomProvider from './CustomProvider.js'
 import ShadowsocksJsonSubscribeProvider from './ShadowsocksJsonSubscribeProvider.js'
 import ShadowsocksrSubscribeProvider from './ShadowsocksrSubscribeProvider.js'
 import ShadowsocksSubscribeProvider from './ShadowsocksSubscribeProvider.js'
-import SsdProvider from './SsdProvider.js'
 import TrojanProvider from './TrojanProvider.js'
 import V2rayNSubscribeProvider from './V2rayNSubscribeProvider.js'
 
@@ -18,7 +17,6 @@ export type PossibleProviderType =
   | V2rayNSubscribeProvider
   | ShadowsocksrSubscribeProvider
   | ClashProvider
-  | SsdProvider
   | TrojanProvider
 
 export type DefaultProviderRequestHeaders = RuntimeHeaders

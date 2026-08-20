@@ -5,7 +5,6 @@ import CustomProvider from './CustomProvider.js'
 import ShadowsocksJsonSubscribeProvider from './ShadowsocksJsonSubscribeProvider.js'
 import ShadowsocksrSubscribeProvider from './ShadowsocksrSubscribeProvider.js'
 import ShadowsocksSubscribeProvider from './ShadowsocksSubscribeProvider.js'
-import SsdProvider from './SsdProvider.js'
 import TrojanProvider from './TrojanProvider.js'
 import V2rayNSubscribeProvider from './V2rayNSubscribeProvider.js'
 
@@ -41,8 +40,6 @@ export const createProvider = async (
         return new V2rayNSubscribeProvider(name, config)
       case SupportProviderEnum.Clash:
         return new ClashProvider(name, config)
-      case SupportProviderEnum.Ssd:
-        return new SsdProvider(name, config)
       case SupportProviderEnum.Trojan:
         return new TrojanProvider(name, config)
       default:

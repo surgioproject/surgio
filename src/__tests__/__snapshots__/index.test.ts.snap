@@ -22,7 +22,6 @@ exports[`exports.define* 1`] = `
   "defineShadowsocksJsonSubscribeProvider",
   "defineShadowsocksSubscribeProvider",
   "defineShadowsocksrSubscribeProvider",
-  "defineSsdProvider",
   "defineTrojanProvider",
   "defineV2rayNSubscribeProvider",
 ]

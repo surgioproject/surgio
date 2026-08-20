@@ -34,6 +34,24 @@ test('published entrypoints can be imported as ESM', async () => {
   expect(surgio.categories).toBeTypeOf('object')
 })
 
+test('published entrypoints exclude the removed SSD provider', async () => {
+  const [surgio, project, workerConfig, provider, internal] = await Promise.all(
+    [
+      import('surgio'),
+      import('surgio/project'),
+      import('surgio/worker/config'),
+      import('surgio/provider'),
+      import('surgio/internal'),
+    ],
+  )
+
+  for (const entrypoint of [surgio, project, workerConfig]) {
+    expect(entrypoint).not.toHaveProperty('defineSsdProvider')
+  }
+  expect(provider).not.toHaveProperty('SsdProvider')
+  expect(internal.SupportProviderEnum).not.toHaveProperty('Ssd')
+})
+
 test('published package metadata excludes Hygen templates and dependencies', () => {
   const manifest = fs.readJsonSync(path.join(projectRoot, 'package.json')) as {
     dependencies: Record<string, string>

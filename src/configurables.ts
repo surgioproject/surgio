@@ -5,7 +5,6 @@ import {
   ShadowsocksJsonSubscribeProviderConfig,
   ShadowsocksrSubscribeProviderConfig,
   ShadowsocksSubscribeProviderConfig,
-  SsdProviderConfig,
   SupportProviderEnum,
   TrojanProviderConfig,
   V2rayNSubscribeProviderConfig,
@@ -50,13 +49,6 @@ export const defineShadowsocksrSubscribeProvider: ProviderDefineFunction<
 > = (config) => ({
   ...config,
   type: SupportProviderEnum.ShadowsocksrSubscribe,
-})
-
-export const defineSsdProvider: ProviderDefineFunction<SsdProviderConfig> = (
-  config,
-) => ({
-  ...config,
-  type: SupportProviderEnum.Ssd,
 })
 
 export const defineTrojanProvider: ProviderDefineFunction<

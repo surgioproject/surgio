@@ -4,7 +4,6 @@ import {
   defineShadowsocksJsonSubscribeProvider,
   defineShadowsocksrSubscribeProvider,
   defineShadowsocksSubscribeProvider,
-  defineSsdProvider,
   defineTrojanProvider,
   defineV2rayNSubscribeProvider,
 } from '../configurables.js'
@@ -38,7 +37,6 @@ export {
   defineShadowsocksJsonSubscribeProvider,
   defineShadowsocksrSubscribeProvider,
   defineShadowsocksSubscribeProvider,
-  defineSsdProvider,
   defineTrojanProvider,
   defineV2rayNSubscribeProvider,
 }

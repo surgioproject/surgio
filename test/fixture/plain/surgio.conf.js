@@ -43,11 +43,6 @@ module.exports = {
       provider: 'clash_mod',
     },
     {
-      name: 'ssd.conf',
-      template: 'test',
-      provider: 'ssd',
-    },
-    {
       name: 'template-functions.conf',
       template: 'template-functions',
       provider: 'ss',
@@ -57,7 +52,6 @@ module.exports = {
         'v2rayn',
         'clash',
         'ssr_with_udp',
-        'ssd',
       ],
       customParams: {
         globalVariableWillBeRewritten: 'barbar',

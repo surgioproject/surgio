@@ -5,6 +5,14 @@ Gateway 和 Cloudflare Worker 可以共用同一份配置。由于配置入口�
 缓存和 Gateway 都有变化，建议把升级当作一次有基线、有验证的迁移，而不是只修改
 `package.json` 中的版本号。
 
+## SSD 订阅已移除
+
+Surgio v4 不再支持 `type: 'ssd'`，也不再导出 `defineSsdProvider` 或
+`SsdProvider`。优先向订阅服务提供方获取 Clash 订阅，并使用
+`defineClashProvider` 注册。只有 SSD 地址时，应先通过外部工具转换为 Clash
+订阅，或使用 `defineCustomProvider` 自行读取和转换节点。需要继续直接读取 SSD
+订阅的项目应暂留 Surgio v3。
+
 **目录**
 
 [[toc]]

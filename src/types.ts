@@ -54,7 +54,6 @@ export enum SupportProviderEnum {
   ShadowsocksrSubscribe = 'shadowsocksr_subscribe',
   ShadowsocksJsonSubscribe = 'shadowsocks_json_subscribe',
   V2rayNSubscribe = 'v2rayn_subscribe',
-  Ssd = 'ssd',
   Trojan = 'trojan',
 }
 
@@ -116,12 +115,6 @@ export interface ClashProviderConfig extends ProviderConfig {
   readonly url: string
   readonly udpRelay?: boolean
   readonly tls13?: boolean
-}
-
-export interface SsdProviderConfig extends ProviderConfig {
-  readonly type: SupportProviderEnum.Ssd
-  readonly url: string
-  readonly udpRelay?: boolean
 }
 
 export type AsyncCustomProviderNodeList = (
@@ -301,7 +294,6 @@ export type PossibleProviderConfigType =
   | ShadowsocksJsonSubscribeProviderConfig
   | ShadowsocksrSubscribeProviderConfig
   | ShadowsocksSubscribeProviderConfig
-  | SsdProviderConfig
   | TrojanProviderConfig
   | V2rayNSubscribeProviderConfig
 

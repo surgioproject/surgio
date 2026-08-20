@@ -56,7 +56,6 @@ module.exports = defineCustomProvider(async function () {
 |             `shadowsocks_subscribe`              | 通用的 Shadowsocks 订阅地址                |                                                                                                                              |
 |             `shadowsocksr_subscribe`             | 通用的 Shadowsocksr 订阅地址               |                                                                                                                              |
 |                `v2rayn_subscribe`                | V2rayN 订阅地址                            | 支持 V2Ray, Shadowsocks, [协议](https://github.com/2dust/v2rayN/wiki/%E8%AE%A2%E9%98%85%E5%8A%9F%E8%83%BD%E8%AF%B4%E6%98%8E) |
-|                      `ssd`                       | SSD 订阅                                   | 支持 Shadowsocks                                                                                                             |
 
 ## Clash 订阅 <Badge text="推荐" vertical="middle" />
 
@@ -770,33 +769,6 @@ Stash 和 Mihomo 默认使用 HTTP/2，`quic: true` 时切换到 HTTP/3。Stash 
   reuse: true, // 可选，仅 Surge 输出生效
 }
 ```
-
-## SSD 订阅
-
-```js
-module.exports = {
-  type: 'ssd',
-  url: '',
-  udpRelay: true,
-}
-```
-
-:::warning 注意
-1. Surgio 支持读取 `simple-obfs` 和 `v2ray-plugin` 两种 SIP003 插件配置；
-2. 仅支持 `v2ray-plugin` 的 WebSocket 模式；
-:::
-
-### url
-
-- 类型：`string`
-- <Badge text="必须" vertical="middle" />
-
-### udpRelay
-
-- 类型：`boolean`
-- 默认值：`false`
-
-你可以通过配置这个属性来强制设定节点的 UDP 转发支持情况。
 
 ## Shadowsocks JSON 订阅
 

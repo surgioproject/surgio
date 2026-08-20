@@ -121,7 +121,6 @@ describe('generate command', () => {
       expect(fs.existsSync(resolve('plain/dist/ssr.conf'))).toBe(false)
       expect(fs.existsSync(resolve('plain/dist/v2rayn.conf'))).toBe(true)
       expect(fs.existsSync(resolve('plain/dist/custom.conf'))).toBe(true)
-      expect(fs.existsSync(resolve('plain/dist/ssd.conf'))).toBe(true)
       expect(fs.existsSync(resolve('plain/dist/singbox.json'))).toBe(true)
       expect(confString1.split('\n')[0]).toBe(
         '#!MANAGED-CONFIG https://example.com/ss_json.conf?access_token=abcd interval=43200 strict=false',
