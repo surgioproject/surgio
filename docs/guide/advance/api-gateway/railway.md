@@ -1,8 +1,6 @@
 # 部署 - Railway
 
-[[toc]]
-
-:::tip 提示
+:::tip[提示]
 1. 该方法要求代码仓库由 GitHub 托管，可为私有仓库
 2. 已经部署 Vercel 的项目可以经过简单修改部署至 Railway
 3. 已经部署 Heroku 的项目可以直接部署至 Railway
@@ -15,11 +13,11 @@
 
 ### 开启接口鉴权
 
-:::warning 注意
+:::warning[注意]
 不建议关闭鉴权！
 :::
 
-请阅读 [这里](/guide/api.md#打开鉴权)。
+请阅读 [这里](/guide/api#打开鉴权)。
 
 ### 增加平台配置
 
@@ -68,7 +66,7 @@ const PORT = process.env.PORT || 3000
 
 ![](/images/railway-13.png)
 
-:::tip 不要忘记！
+:::tip[不要忘记！]
 请不要忘记将 `surgio.conf.js` 中 `urlBase` 改为 Railway 的域名路径。
 :::
 
@@ -88,8 +86,8 @@ const PORT = process.env.PORT || 3000
 
 ## 配置 Upstash REST 缓存
 
-:::tip 此步骤可选，推荐配置
-[Upstash REST 缓存教程](/guide/advance/upstash-cache.md)
+:::tip[此步骤可选，推荐配置]
+[Upstash REST 缓存教程](/guide/advance/upstash-cache)
 :::
 
 ## 查看用量
@@ -104,6 +102,6 @@ Railway 每月有 5 刀的免费用量，足够单个 Surgio 项目使用。你�
 https://surgio-demo.railway.app/get-artifact/
 ```
 
-:::tip 移步至
-[托管 API 的功能介绍](/guide/api.md)
+:::tip[移步至]
+[托管 API 的功能介绍](/guide/api)
 :::

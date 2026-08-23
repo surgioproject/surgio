@@ -1,0 +1,64 @@
+---
+title: 一站式各类代理规则生成器
+description: Surgio 将 Provider 数据和模板组合成 Surge、Clash、Quantumult X、sing-box 等客户端配置。
+hide_table_of_contents: true
+---
+
+import Admonition from '@theme/Admonition';
+import CodeBlock from '@theme/CodeBlock';
+import Link from '@docusaurus/Link';
+
+<div className="home-page">
+  <section className="home-hero">
+    <img className="home-wordmark" src="/surgio-icon.png" alt="Surgio" />
+    <h1>一站式各类代理规则生成器</h1>
+    <p className="home-summary">
+      {'用同一套 Provider 和模板生成 Surge、Clash、Quantumult X、sing-box 等客户端配置。'}
+    </p>
+    <div className="home-actions">
+      <Link className="button button--primary button--lg" to="/guide">
+        {'快速上手'}
+      </Link>
+      <a
+        className="github-button"
+        href="https://github.com/geekdada/surgio"
+        data-icon="octicon-star"
+        data-size="large"
+        data-show-count="true"
+        aria-label="Star geekdada/surgio on GitHub"
+      >
+        {'Star'}
+      </a>
+    </div>
+    <div className="home-pipeline" aria-label="Surgio 生成流程">
+      <span>Provider</span>
+      <i aria-hidden="true">→</i>
+      <span>Template</span>
+      <i aria-hidden="true">→</i>
+      <span>Artifact</span>
+    </div>
+  </section>
+
+  <section className="home-quickstart">
+    <h2>马上开始</h2>
+    <CodeBlock language="bash">{`# 安装
+npm init surgio-store my-rule-store
+
+# 或使用国内镜像安装
+npm init surgio-store my-rule-store --use-cnpm
+
+# 生成一批规则
+cd my-rule-store
+npx surgio generate`}</CodeBlock>
+    <Admonition type="warning" title="注意">
+      <span>Surgio 仅支持 Node.js 版本 &gt;= 22.22.2。</span>
+    </Admonition>
+  </section>
+
+  <section className="home-community">
+    <h2>交流</h2>
+    <a href="https://url.royli.dev/surgiotg">
+      <img src="/join-telegram.png" width="207" alt="加入 Surgio Telegram 群组" />
+    </a>
+  </section>
+</div>

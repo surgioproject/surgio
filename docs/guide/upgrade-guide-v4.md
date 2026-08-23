@@ -15,8 +15,6 @@ Surgio v4 不再支持 `type: 'ssd'`，也不再导出 `defineSsdProvider` 或
 
 **目录**
 
-[[toc]]
-
 ## 升级前准备
 
 Surgio v4 要求 Node.js `>=22.22.2`。Project 直接由 Node.js 运行可擦除的
@@ -349,7 +347,7 @@ Worker Provider、远程 snippet 和 Artifact 缓存必须共用上例中的 `Tt
 Worker 代码只从 `surgio/cache/core` 和 `surgio/cache/cloudflare` 导入所需能力，
 不要加载 Node cache 聚合入口、filesystem、Upstash、CLI 或运行时模板编译器。
 
-完整的 manifest、Wrangler 和模板限制参见 [Cloudflare Worker 指南](/guide/worker.md)。
+完整的 manifest、Wrangler 和模板限制参见 [Cloudflare Worker 指南](/guide/worker)。
 
 ### Node 与 Worker 并存
 
@@ -383,8 +381,8 @@ Redis TCP、ioredis、`cache.type: 'redis'` 和 `redisUrl` 已删除：
 
 缓存数据属于可丢弃数据，v3 的 Redis 或临时文件记录不会迁移。升级后的首次运行出现
 cold miss 属于正常行为。详细配置参见
-[Upstash REST 缓存](/guide/advance/upstash-cache.md) 和
-[缓存配置](/guide/custom-config.md#cache)。
+[Upstash REST 缓存](/guide/advance/upstash-cache) 和
+[缓存配置](/guide/custom-config#cache)。
 
 ### HTTP 客户端
 

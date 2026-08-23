@@ -1,18 +1,16 @@
 # 部署 - Zeabur
 
-[[toc]]
-
 ## 准备
 
 确保 `surgio` 升级至 `v2.17.0` 或以上; `@surgio/gateway` 升级至 `v1.5.0` 或以上。
 
 ### 开启接口鉴权
 
-:::warning 注意
+:::warning[注意]
 不建议关闭鉴权！
 :::
 
-请阅读 [这里](/guide/api.md#打开鉴权)。
+请阅读 [这里](/guide/api#打开鉴权)。
 
 ### 增加平台配置
 
@@ -54,7 +52,7 @@ const PORT = process.env.PORT || 3000;
 
 ![](/images/zeabur-config.png)
 
-:::tip 提示
+:::tip[提示]
 - `Build Command` 可不存在
 - `Node Version` 大于等于 18 即可
 - `Start Command` 必须为 `npm start` 或 `yarn start`
@@ -72,11 +70,10 @@ const PORT = process.env.PORT || 3000;
 
 ## 配置 Upstash REST 缓存
 
-:::tip
-此步骤可选，推荐配置
+:::tip[此步骤可选，推荐配置]
 :::
 
-Surgio 不再支持 Redis TCP 连接。请改用 [Upstash REST 缓存](/guide/advance/upstash-cache.md)，并配置 Upstash REST URL 与 Token。
+Surgio 不再支持 Redis TCP 连接。请改用 [Upstash REST 缓存](/guide/advance/upstash-cache)，并配置 Upstash REST URL 与 Token。
 
 ## 使用
 
@@ -86,6 +83,6 @@ Surgio 不再支持 Redis TCP 连接。请改用 [Upstash REST 缓存](/guide/ad
 https://surgio-demo.zeabur.app/get-artifact/
 ```
 
-:::tip 移步至
-[托管 API 的功能介绍](/guide/api.md)
+:::tip[移步至]
+[托管 API 的功能介绍](/guide/api)
 :::

@@ -1,0 +1,46 @@
+{
+  "name": "surgio-docs",
+  "private": true,
+  "version": "0.0.0",
+  "scripts": {
+    "start": "docusaurus start",
+    "build": "docusaurus build --out-dir ../docs/.vuepress/dist",
+    "clear": "docusaurus clear",
+    "serve": "docusaurus serve --dir ../docs/.vuepress/dist",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@docusaurus/core": "3.10.2",
+    "@docusaurus/faster": "3.10.2",
+    "@docusaurus/preset-classic": "3.10.2",
+    "@mdx-js/react": "^3.1.1",
+    "prism-react-renderer": "^2.4.1",
+    "react": "^19.2.0",
+    "react-dom": "^19.2.0",
+    "search-insights": "^2.17.3"
+  },
+  "devDependencies": {
+    "@docusaurus/module-type-aliases": "3.10.2",
+    "@docusaurus/tsconfig": "3.10.2",
+    "@docusaurus/types": "3.10.2",
+    "@types/node": "^22.20.1",
+    "@types/react": "^19.2.0",
+    "@types/react-dom": "^19.2.0",
+    "typescript": "5.9.3"
+  },
+  "engines": {
+    "node": ">=22.22.2"
+  },
+  "browserslist": {
+    "production": [
+      ">0.5%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 3 chrome versions",
+      "last 3 firefox versions",
+      "last 5 safari versions"
+    ]
+  }
+}

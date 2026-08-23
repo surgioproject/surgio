@@ -1,0 +1,5 @@
+{
+  "name": "surgio-docs-output",
+  "private": true,
+  "description": "Keep Docusaurus server output in CommonJS scope when building into this directory."
+}

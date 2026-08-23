@@ -1,11 +1,9 @@
 ---
 title: Clash
-sidebarDepth: 2
+
 ---
 
 # Clash
-
-[[toc]]
 
 本文旨在教大家如何使用 Surgio 维护 Clash 的规则。本文编写时 Surgio 支持两种维护 Clash 规则的方法，我们推荐您使用第一种方法，另一种方法可能会在将来废弃掉。
 
@@ -31,7 +29,7 @@ rules:
 
 ### 编写 Proxy
 
-我们利用 `getClashNodes`（[文档](/guide/custom-template.md#getclashnodes)）来获取完整的节点信息，然后把它转换成 JSON 格式。
+我们利用 `getClashNodes`（[文档](/guide/custom-template#getclashnodes)）来获取完整的节点信息，然后把它转换成 JSON 格式。
 
 ```yaml {7}
 allow-lan: true
@@ -49,11 +47,11 @@ rules:
 
 ### 编写 Proxy Group
 
-:::warning 注意
+:::warning[注意]
 不同于旧的方法，过滤器需要按照模板的规则来使用，例如内置过滤器为 `netflixFilter`，自定义过滤器为 `customFilters.myFilter`。
 :::
 
-Clash 的 Proxy Group 有多种类型，这里分别举例。代码中的 `getClashNodeNames`（[文档](/guide/custom-template.md#getclashnodenames)）用于获取节点名。
+Clash 的 Proxy Group 有多种类型，这里分别举例。代码中的 `getClashNodeNames`（[文档](/guide/custom-template#getclashnodenames)）用于获取节点名。
 
 ```yaml {9-23}
 allow-lan: true

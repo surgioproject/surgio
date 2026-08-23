@@ -1,11 +1,9 @@
 ---
 title: 编写更复杂的自定义 Provider
-sidebarDepth: 2
+
 ---
 
 # 编写更复杂的自定义 Provider
-
-[[toc]]
 
 ## 介绍
 

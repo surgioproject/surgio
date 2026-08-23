@@ -1,6 +1,6 @@
 ---
 title: 自动化更新规则仓库
-sidebarDepth: 2
+
 ---
 
 # 自动化更新规则仓库
@@ -30,8 +30,7 @@ dist
 .DS_Store
 ```
 
-:::tip
-我们会让 Git 忽略生成规则的目录，因为通常 Git 仓库只保存源码而不保存产物或中间产物。我也建议你这么做。
+:::tip[我们会让 Git 忽略生成规则的目录，因为通常 Git 仓库只保存源码而不保存产物或中间产物。我也建议你这么做。]
 :::
 
 在 Terminal 中打开仓库目录，运行命令：
@@ -82,7 +81,7 @@ build:
 
 保存即可。你的配置会在每天凌晨 4 点自动更新。你也可以配置自己的 Cron 规则，让它在任何时候自动触发更新。
 
-:::warning 注意
+:::warning[注意]
 如果你使用 Surgio 来生成 Surge 使用的 Vmess 订阅，并且开启了 `external` 模式，就不能使用自动化管理。因为 Surgio 会在本地生成额外的文件，这对 Surge 来说是必须的。
 :::
 
@@ -102,8 +101,7 @@ build:
 
 ![](https://dada-oss.dacdn.top/drops/CleanShot-2019-10-09-at-23.59.17-2x-sZLizB0clYjEzcHS1zJINVpfMS730PlW9ck6rXmbLIZjvcoEpYfeTqSYWUMNNjYq9ZYvCRn8bMa3gdam3jxtt9Jo3boaeO5UZkOq.png#396f166b9f13f4b76df6a3240a0b1a21ec8072e05cde3f5def31f2be8a0186cb)
 
-:::tip
-- `TOKEN` 即为上面一串长长的字符串
+:::tip[- `TOKEN` 即为上面一串长长的字符串]
 - `REF_NAME` 为 `master`
 :::
 

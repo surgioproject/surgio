@@ -1,6 +1,6 @@
 ---
 title: 代码示例
-sidebarDepth: 2
+
 ---
 
 # 代码示例

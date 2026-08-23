@@ -1,0 +1,242 @@
+:root {
+  --surgio-green: #3eaf7c;
+  --surgio-ink: #18221d;
+  --surgio-muted: #56625b;
+  --surgio-surface: #f4f8f5;
+  --ifm-color-primary: #287a57;
+  --ifm-color-primary-dark: #246e4e;
+  --ifm-color-primary-darker: #226849;
+  --ifm-color-primary-darkest: #1c563d;
+  --ifm-color-primary-light: #2c8660;
+  --ifm-color-primary-lighter: #2e8c65;
+  --ifm-color-primary-lightest: #34a072;
+  --ifm-background-color: #ffffff;
+  --ifm-font-family-base: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+  --ifm-font-family-monospace: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+  --ifm-font-size-base: 16px;
+  --ifm-line-height-base: 1.75;
+  --ifm-heading-font-weight: 650;
+  --ifm-code-font-size: 88%;
+  --ifm-navbar-shadow: 0 1px 0 rgb(24 34 29 / 9%);
+  --ifm-toc-border-color: #dfe8e2;
+}
+
+[data-theme='dark'] {
+  --surgio-ink: #edf5f0;
+  --surgio-muted: #aebdb4;
+  --surgio-surface: #1d2922;
+  --ifm-color-primary: #6ed9a5;
+  --ifm-color-primary-dark: #55d094;
+  --ifm-color-primary-darker: #48cc8c;
+  --ifm-color-primary-darkest: #31ad73;
+  --ifm-color-primary-light: #87e2b6;
+  --ifm-color-primary-lighter: #94e5bd;
+  --ifm-color-primary-lightest: #b9efd3;
+  --ifm-background-color: #151b18;
+  --ifm-background-surface-color: #1b2420;
+  --ifm-navbar-background-color: #151b18;
+  --ifm-footer-background-color: #151b18;
+  --ifm-toc-border-color: #304039;
+}
+
+body {
+  color: var(--surgio-ink);
+  text-rendering: optimizeLegibility;
+}
+
+.navbar__logo img {
+  border-radius: 5px;
+}
+
+.navbar__title {
+  letter-spacing: -0.015em;
+}
+
+.theme-doc-markdown {
+  max-width: 780px;
+  margin-inline: auto;
+}
+
+.theme-doc-markdown > h1:first-child {
+  letter-spacing: -0.025em;
+}
+
+.theme-doc-markdown h2 {
+  border-bottom: 1px solid var(--ifm-toc-border-color);
+  padding-bottom: 0.35rem;
+}
+
+.theme-doc-markdown p,
+.theme-doc-markdown li {
+  text-wrap: pretty;
+}
+
+.theme-doc-markdown pre,
+.theme-doc-markdown table {
+  line-height: 1.6;
+}
+
+.theme-doc-markdown table {
+  display: table;
+  width: 100%;
+}
+
+.support-center {
+  padding-top: 1.25rem;
+  text-align: center;
+}
+
+.support-center img,
+.support-qr {
+  max-width: 100%;
+  height: auto;
+}
+
+.surgio-badge {
+  display: inline-block;
+  margin-inline: 0.14em;
+  border: 1px solid color-mix(in srgb, var(--ifm-color-primary) 45%, transparent);
+  border-radius: 4px;
+  background: color-mix(in srgb, var(--ifm-color-primary) 12%, transparent);
+  color: var(--ifm-color-primary-darkest);
+  font-size: 0.72em;
+  font-weight: 650;
+  line-height: 1.35;
+  padding: 0.08em 0.4em;
+  white-space: nowrap;
+}
+
+[data-theme='dark'] .surgio-badge {
+  color: var(--ifm-color-primary-lightest);
+}
+
+.home-page {
+  width: min(100% - 2rem, 940px);
+  margin: 0 auto;
+  padding: clamp(2rem, 5vw, 4.75rem) 0 4rem;
+}
+
+.home-hero {
+  border-top: 5px solid var(--surgio-green);
+  background: var(--surgio-surface);
+  padding: clamp(1.5rem, 5vw, 3.5rem);
+}
+
+.home-wordmark {
+  display: block;
+  width: min(230px, 62vw);
+  height: auto;
+  margin-bottom: 2.25rem;
+}
+
+.home-hero h1 {
+  max-width: 13em;
+  margin: 0;
+  font-size: clamp(2.15rem, 6vw, 4.25rem);
+  letter-spacing: -0.045em;
+  line-height: 1.05;
+}
+
+.home-summary {
+  max-width: 39rem;
+  margin: 1.35rem 0 0;
+  color: var(--surgio-muted);
+  font-size: clamp(1.05rem, 2vw, 1.25rem);
+}
+
+.home-actions {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-top: 2rem;
+}
+
+.home-actions .button {
+  border-radius: 5px;
+  box-shadow: none;
+}
+
+.home-pipeline {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-top: 3rem;
+  color: var(--surgio-muted);
+  font-family: var(--ifm-font-family-monospace);
+  font-size: 0.83rem;
+  letter-spacing: 0.035em;
+}
+
+.home-pipeline span {
+  border-bottom: 1px solid color-mix(in srgb, var(--surgio-muted) 45%, transparent);
+  padding-bottom: 0.2rem;
+}
+
+.home-pipeline i {
+  color: var(--surgio-green);
+  font-style: normal;
+}
+
+.home-quickstart,
+.home-community {
+  max-width: 780px;
+  margin: 3.5rem auto 0;
+}
+
+.home-quickstart h2,
+.home-community h2 {
+  margin-bottom: 1.25rem;
+  letter-spacing: -0.025em;
+}
+
+.home-community img {
+  display: block;
+  height: auto;
+}
+
+.footer--light {
+  border-top: 1px solid var(--ifm-toc-border-color);
+}
+
+@media (max-width: 996px) {
+  .theme-doc-markdown {
+    max-width: 100%;
+  }
+
+  .theme-doc-markdown table {
+    display: block;
+    overflow-x: auto;
+  }
+}
+
+@media (max-width: 560px) {
+  .home-page {
+    width: min(100% - 1.25rem, 940px);
+    padding-top: 1.25rem;
+  }
+
+  .home-hero {
+    padding: 1.5rem 1.25rem;
+  }
+
+  .home-pipeline {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 0.45rem;
+  }
+
+  .home-pipeline i {
+    transform: rotate(90deg);
+    transform-origin: center;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
+  }
+}

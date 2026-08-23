@@ -1,3 +1,9 @@
+---
+title: TrustTunnel cross-client configuration research
+pagination_prev: null
+pagination_next: null
+---
+
 # TrustTunnel cross-client configuration research
 
 This note records the official behavior used by Surgio's shared TrustTunnel

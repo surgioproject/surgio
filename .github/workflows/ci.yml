@@ -18,6 +18,8 @@ jobs:
 
     steps:
       - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
 
       - name: Set up pnpm and Node.js ${{ matrix.node-version }}
         uses: pnpm/setup@v2
@@ -36,6 +38,7 @@ jobs:
           pnpm test:lint
           pnpm test:cli
           pnpm coverage
+          pnpm docs:typecheck
           pnpm docs:build
 
       - uses: codecov/codecov-action@v1

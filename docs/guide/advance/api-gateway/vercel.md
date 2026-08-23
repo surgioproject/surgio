@@ -1,8 +1,6 @@
 # 部署 - Vercel
 
-[[toc]]
-
-:::warning 警告
+:::warning[警告]
 由于 Surgio 违反 Vercel [合理使用条款](https://vercel.com/docs/concepts/limits/fair-use-policy#never-fair-use) 中「服务不可用于 Proxies and VPNs」的规定，将 Surgio 部署至 Vercel 可能引起账号封禁。
 :::
 
@@ -25,7 +23,7 @@ $ npm i -g vercel
 $ npm i @surgio/gateway --save
 ```
 
-:::tip 提示
+:::tip[提示]
 之前已经使用了测试版的朋友请使用下面的命令升级到正式版。
 
 ```bash
@@ -95,7 +93,7 @@ module.exports = gateway.createHttpServer();
 
 ### 接口鉴权
 
-:::warning 注意
+:::warning[注意]
 不建议关闭鉴权！
 :::
 
@@ -110,8 +108,8 @@ module.exports = {
 }
 ```
 
-:::tip 提示
-1. 完整的 gateway 配置可以在 [这里](/guide/custom-config.md#gateway) 查看。
+:::tip[提示]
+1. 完整的 gateway 配置可以在 [这里](/guide/custom-config#gateway) 查看。
 2. 对于已经部署了托管接口的用户，推荐不要第一时间打开鉴权功能，而是配置 `accessToken` 一段时间后再将 `auth` 改为 `true`。这样可以让已经下载过旧托管文件的客户端更新到新的包含有 `access_token` 参数的托管文件。
 :::
 
@@ -141,8 +139,8 @@ $ vercel --prod
 
 ## 使用
 
-:::tip 移步至
-[托管 API 的功能介绍](/guide/api.md)
+:::tip[移步至]
+[托管 API 的功能介绍](/guide/api)
 :::
 
 ## 最后

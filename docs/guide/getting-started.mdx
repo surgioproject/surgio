@@ -4,7 +4,7 @@ title: 快速上手
 
 # 快速上手
 
-:::warning 注意
+:::warning[注意]
 - 目前 Surgio 仅支持 Node.js 版本 >= 22.22.2
 - 文档中出现的命令如无特殊说明都只能运行在 macOS, Linux 或者 WSL 上
 :::
@@ -15,7 +15,7 @@ Surgio 本身以 ESM 发布。新项目使用唯一的 `surgio.project.ts`，Pro
 
 ## 安装 Node.js
 
-:::tip 提示
+:::tip[提示]
 如果已安装可跳过
 :::
 
@@ -50,7 +50,7 @@ Surgio 根据模板来渲染指定的文件。
 
 Surgio 生成出的规则就是「产品」。
 
-:::tip 提示
+:::tip[提示]
 以上三者的关系简单来说就是：Surgio 根据 Artifact 的定义将 Provider 的节点用 Template 生成出来可用的配置。
 :::
 
@@ -78,7 +78,7 @@ npx surgio generate
 
 规则已经生成到 `dist` 目录了。
 
-<img src="/images/generate-result.png" width="318">
+<img src="/images/generate-result.png" width={318} alt="Surgio 生成结果" />
 
 ## 上传规则
 
@@ -92,7 +92,7 @@ npx surgio upload
 npm run update
 ```
 
-:::warning 注意
+:::warning[注意]
 请确保已配置对象存储上传后端。
 :::
 
@@ -109,7 +109,7 @@ npx surgio new [artifact|provider|template]
 助手只支持 v4 Project。它只会编辑能够静态确认的 `providers` 对象和
 `artifacts` 数组；遇到动态配置时不会写入文件，而是给出可手工粘贴的片段。
 Template 可以建立在 `templateDir` 的相对子目录中，已有文件不会被覆盖。完整规则
-参见 [`new` 命令说明](/guide/cli.md#new)。
+参见 [`new` 命令说明](/guide/cli#new)。
 
 ## 样例
 

@@ -1,5 +1,5 @@
 ---
-sidebarDepth: 1
+toc_max_heading_level: 2
 ---
 
 # 配置文件
@@ -23,7 +23,7 @@ TypeScript Project 可以使用 `satisfies SurgioProjectConfig` 获得配置检�
 - 默认值：`undefined`
 - <Badge text="必须" vertical="middle" />
 
-数组内容见 [自定义 Artifact](/guide/custom-artifact.md)。
+数组内容见 [自定义 Artifact](/guide/custom-artifact)。
 
 ## urlBase
 
@@ -32,7 +32,7 @@ TypeScript Project 可以使用 `satisfies SurgioProjectConfig` 获得配置检�
 
 规则文件的下载地址前缀。
 
-:::warning 注意
+:::warning[注意]
 以 `/` 结尾，如：`https://example.com/` 。
 :::
 
@@ -42,7 +42,7 @@ TypeScript Project 可以使用 `satisfies SurgioProjectConfig` 获得配置检�
 - 类型：`RemoteSnippet[]`
 - 默认值：`undefined`
 
-:::tip 提示
+:::tip[提示]
 这个功能和 Surge 本身的 `RULE-SET` 功能无关，所以生成出来的规则可以在老版本的 Surge 和其它客户端中使用。
 :::
 
@@ -66,9 +66,9 @@ module.exports = {
 - [Hackl0us/SS-Rule-Snippet](https://github.com/Hackl0us/SS-Rule-Snippet/tree/master/Rulesets)
 - [lhie1/Rules](https://github.com/lhie1/Rules/tree/master/Surge3)
 
-从 v2.7.0 开始，你可以在这里配置符合 [Surgio 片段](/guide/custom-template.md#片段-snippet) 格式的文件。我们以 Surgio 推荐的 [苹果服务规则](https://github.com/geekdada/surge-list/blob/master/surgio-snippet/apple.tpl) 为例。
+从 v2.7.0 开始，你可以在这里配置符合 [Surgio 片段](/guide/custom-template#片段-snippet) 格式的文件。我们以 Surgio 推荐的 [苹果服务规则](https://github.com/geekdada/surge-list/blob/master/surgio-snippet/apple.tpl) 为例。
 
-```js{6}
+```js {6}
 module.exports = {
   remoteSnippets: [
     {
@@ -86,7 +86,7 @@ module.exports = {
 {{ remoteSnippets.apple.main('🚀 Proxy', '🍎 Apple', '🍎 Apple CDN', 'DIRECT', '🚀 Proxy') }}
 ```
 
-:::warning 注意
+:::warning[注意]
 片段中宏的入参需要和 `main` 方法调用时的入参 **一一对应**，一个都不能少。
 :::
 
@@ -97,7 +97,7 @@ module.exports = {
 
 上传到对象存储的配置。支持阿里云 OSS、Cloudflare R2 和其它 S3 兼容服务。
 
-:::warning 注意
+:::warning[注意]
 - 若删除了某个 Artifact，该规则文件会从对象存储中删除
 - 每次上传都会覆盖原有的文件，所以请不要更改对象存储中的文件
 - 上传命令会同步 `prefix` 下的直接子对象，请不要在同一前缀中放置其它文件
@@ -133,7 +133,7 @@ module.exports = {
 例如 `https://oss-cn-hangzhou-internal.aliyuncs.com` 或其
 `s3.oss-...` 形式；已知的旧 Endpoint 会自动转换为 S3 兼容形式。
 
-:::danger 中国内地 CNAME 限制
+:::danger[中国内地 CNAME 限制]
 当前上传实现不支持绑定到单个 Bucket 的 CNAME Endpoint。若阿里云账号要求通过
 CNAME 访问中国内地 Bucket，则不能使用 `surgio upload`。请勿将 CNAME 填入
 `upload.endpoint`，配置校验会拒绝该地址。
@@ -237,7 +237,7 @@ Cloudflare Account ID，为 32 位十六进制字符串。
 - 类型：`string`
 - 默认值：`undefined`
 
-:::warning 注意
+:::warning[注意]
 推荐使用 `S3_BACKEND_ACCESS_KEY_ID` 环境变量，不要将该字段上传至公共仓库。
 :::
 
@@ -246,7 +246,7 @@ Cloudflare Account ID，为 32 位十六进制字符串。
 - 类型：`string`
 - 默认值：`undefined`
 
-:::warning 注意
+:::warning[注意]
 推荐使用 `S3_BACKEND_ACCESS_KEY_SECRET` 环境变量，不要将该字段上传至公共仓库。
 :::
 
@@ -302,12 +302,16 @@ module.exports = {
 };
 ```
 
+<a id="clashconfig-enabletuic"></a>
+
 ### clashConfig.enableTuic
 
 - 类型：`boolean`
 - 默认值：`false`
 
 目前仅 Clash Meta 内核和 Stash 支持 Tuic，如果你希望在 Clash 订阅中输出 Tuic 节点请开启此项。
+
+<a id="clashconfig-enableshadowtls"></a>
 
 ### clashConfig.enableShadowTls
 
@@ -355,7 +359,7 @@ Clash 核心版本。默认使用 Mihomo（`clash.meta`）。`mihomo` 是 `clash
 | `mihomo` | `clash.meta` 的输入别名，加载后统一为 `clash.meta` |
 | `stash` | Hysteria 协议的密码字段改为 `auth`；模板 `clash` 过滤器会改为过滤 Stash 不支持的规则 |
 
-:::warning 注意
+:::warning[注意]
 `enableTuic`, `enableShadowTls`, `enableHysteria2`, `enableVless` 这几个配置项和 `clashCore` 目前互不影响。将默认核心改为 Mihomo 不会自动开启这些协议。
 :::
 
@@ -426,7 +430,7 @@ module.exports = {
 
 如果 Artifact 中的某个 Provider 经常请求错误则建议开启这个选项，可以避免 Clash 等客户端在配置文件请求报错的时候崩溃。
 
-:::warning 注意
+:::warning[注意]
 1. 应用重启后缓存会失效。
 2. 适用缓存的接口有 `/get-artifact` 和 `/export-providers`。
 :::
@@ -460,7 +464,7 @@ module.exports = {
 };
 ```
 
-:::tip 提示
+:::tip[提示]
 `passRequestUserAgent` 为 `true` 时会自动包含 `user-agent`，无需重复配置。
 :::
 
@@ -471,7 +475,7 @@ module.exports = {
 
 全局自定义 Filter。关于自定义 Filter 的用法，请阅读 [进阶 - 自定义 Filter](/guide/advance/custom-filter)。
 
-:::warning 注意
+:::warning[注意]
 全局的过滤器优先级没有 Provider 中定义的过滤器高，如果遇到同名的过滤器则这里定义的值会被覆盖。
 :::
 
@@ -510,8 +514,8 @@ module.exports = {
 
 自定义的 **全局** 模板变量。可以在模板中获取，方便定制化模板。
 
-:::tip 提示
-1. 全局模板变量的用法和 Artifact 中定义的模板变量相同，相关文档请查阅 [这里](/guide/custom-artifact.md#customparams)；
+:::tip[提示]
+1. 全局模板变量的用法和 Artifact 中定义的模板变量相同，相关文档请查阅 [这里](/guide/custom-artifact#customparams)；
 2. 在合并全局、局部模板变量和面板 URL 参数时的优先级为：URL 参数 > 局部 > 全局；
 :::
 
@@ -555,7 +559,7 @@ module.exports = {
 };
 ```
 
-:::tip 提示
+:::tip[提示]
 1. 字符串的匹配方式是「包含」；
 2. 英文字母请使用大写；
 :::
@@ -638,10 +642,10 @@ cache.useStore(createCloudflareKvStore(env.SURGIO_CACHE));
 
 Cloudflare KV 是最终一致的存储：其他区域可能在最多约 60 秒内读到旧值，`keys` 和 `reset` 也受相同限制。Cloudflare 的物理过期最短为 60 秒；Surgio 会在缓存记录中保存精确的逻辑过期时间，因此不会返回逻辑上已经过期的值。
 
-:::warning 注意
+:::warning[注意]
 Cloudflare KV 适配器只代表 Surgio 的缓存模块可以使用 KV binding，并不表示 Surgio 的其它 Node.js 和文件系统功能可以直接运行在任意 Cloudflare Worker 环境中。
 :::
 
 ## 环境变量
 
-Surgio 支持使用 [环境变量](/guide/env.md) 来调整没有公开的配置，但属于高级用法，请酌情使用。
+Surgio 支持使用 [环境变量](/guide/env) 来调整没有公开的配置，但属于高级用法，请酌情使用。

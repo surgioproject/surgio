@@ -1,13 +1,11 @@
 ---
-sidebarDepth: 2
+
 ---
 
 # 托管 API 功能
 
-[[toc]]
-
-:::tip 提示
-请先参考 [文档](/guide/advance/api-gateway.md) 搭建托管 API
+:::tip[提示]
+请先参考 [文档](/guide/advance/api-gateway) 搭建托管 API
 :::
 
 ## 接口鉴权
@@ -26,8 +24,8 @@ module.exports = {
 }
 ```
 
-:::tip 提示
-完整的 gateway 配置可以在 [这里](/guide/custom-config.md#gateway) 查看。
+:::tip[提示]
+完整的 gateway 配置可以在 [这里](/guide/custom-config#gateway) 查看。
 :::
 
 ### 请求需要鉴权的接口
@@ -121,7 +119,7 @@ GET /get-artifact/<artifactName>
 - `qx-server` QuantumultX 远程节点
 - `clash-provider` [Clash Provider](https://www.notion.so/New-Feature-Clash-Proxy-Provider-ff8d1955f6234ad3a779fecd3b3ea007)
 
-:::tip 提示
+:::tip[提示]
 1. `format` 使用的是内置的模板，所以你不需要额外定义模板格式，不过仍然需要定义一个完整的 Artifact。我的建议是定义一个有完整节点的 Artifact，然后根据需要过滤出节点；
 2. `filter` 的值为过滤器的名称。你可以直接使用内置的过滤器，例如 `hkFilter`；也可以使用自定义的过滤器，例如 `customFilters.myFilter`；
 :::
@@ -138,7 +136,7 @@ https://example.now.sh/get-artifact/Surge.conf?access_token=token&foo=bar
 
 那模板变量 `customParams.foo` 值为 `bar`。如果已经在 Artifact 中定义了这个 Key，那预先定义的值将被覆盖。
 
-:::warning 注意
+:::warning[注意]
 1. URL 参数中的值的类型都是字符串，形如 `true`、`1` 这样的值在模板中是 `"true"` 和 `"1"`；
 2. `access_token`, `format`, `filter`, `dl` 为保留 Key 无法被定义；
 :::
@@ -175,7 +173,7 @@ GET /export-providers
 https://example.com/export-providers?providers=maying,dlercloud&format=surge-policy
 ```
 
-:::tip 提示
+:::tip[提示]
 合并多个 Provider 时，第一个 Provider 为主 Provider，遵循过滤器的合并规则。
 :::
 
@@ -183,7 +181,7 @@ https://example.com/export-providers?providers=maying,dlercloud&format=surge-pol
 
 你可以通过增加 URL 参数 `template` 来制定使用某个 Template 来导出 Provider。值得一提的是，这种方法不需要新定义 Artifact。
 
-:::warning 注意
+:::warning[注意]
 1. 参数 `template` 和 `format` 不能同时出现；
 2. `filter` 的值为过滤器的名称。你可以直接使用内置的过滤器，例如 `hkFilter`；也可以使用自定义的过滤器，例如 `customFilters.myFilter`；
 :::
@@ -202,7 +200,7 @@ https://example.com/render?template=static
 
 这样 Surgio 就会渲染仓库目录下 _./template/static.tpl_ 的内容。
 
-:::tip 提示
+:::tip[提示]
 1. 只有 `downloadUrl` 和 `getUrl` 这两个模板变量（方法）有效；
 2. 你不可以在这里的模板中引用 `nodeList` 之类的变量，因为根本不会解析节点；
 3. 子目录下的模板也是可以直接渲染的；

@@ -1,5 +1,5 @@
 ---
-sidebarDepth: 1
+toc_max_heading_level: 2
 ---
 
 # 开启 Upstash REST 缓存
@@ -43,4 +43,4 @@ module.exports = {
 
 Upstash adapter 使用 Surgio 的统一 TTL 记录和 `surgio` namespace。清理缓存不会删除其他应用的数据。
 
-Cloudflare Worker 项目应优先使用 KV binding，配置方式参见 [Cloudflare Worker](/guide/worker.md)。
+Cloudflare Worker 项目应优先使用 KV binding，配置方式参见 [Cloudflare Worker](/guide/worker)。

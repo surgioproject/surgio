@@ -39,10 +39,10 @@ coverage/
 *.swo
 *~
 
-# VuePress docs
+# Documentation site
 /docs/.vuepress/dist
-/docs/.vuepress/.cache
-/docs/.vuepress/.temp
+/website/.docusaurus
+/website/build
 
 # Examples
 /examples/**/dist

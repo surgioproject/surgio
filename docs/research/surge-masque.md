@@ -1,3 +1,9 @@
+---
+title: MASQUE node specifications across Surge, Stash, and Mihomo
+pagination_prev: null
+pagination_next: null
+---
+
 # MASQUE node specifications across Surge, Stash, and Mihomo
 
 Research date: 2026-08-11

@@ -1,11 +1,11 @@
 ---
 title: 环境变量
-sidebarDepth: 2
+
 ---
 
 # 环境变量
 
-:::warning 注意
+:::warning[注意]
 以下环境变量仅供调试使用
 :::
 
@@ -23,6 +23,8 @@ sidebarDepth: 2
 ### `SURGIO_NETWORK_CONCURRENCY`
 
 - 默认值: `5`
+
+<a id="surgio-remote-snippet-cache-maxage"></a>
 
 ### `SURGIO_REMOTE_SNIPPET_CACHE_MAXAGE`
 

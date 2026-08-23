@@ -2,15 +2,13 @@
 
 在 v3.0.0 中对原有的一些接口和行为进行了修改，你可能要花一些时间来解决这些问题。相信我，会很快。
 
-:::warning 注意
+:::warning[注意]
 - 请不要在 package.json 中直接更改版本号
 - 请不要修改完直接提交代码
 - 请确认在本地运行 `npx surgio generate` 后没有报错再提交代码
 :::
 
 **目录**
-
-[[toc]]
 
 ## Node 版本升级
 
@@ -61,13 +59,13 @@ npm i surgio@latest @surgio/gateway@latest --save
 
 你可以通过开启 `clashConfig.enableTuic` 来为 Clash 订阅中的节点增加 Tuic 特性。
 
-> [文档](/guide/custom-config.md#clashconfig-enabletuic)
+> [文档](/guide/custom-config#clashconfigenabletuic)
 
 #### Shadow TLS
 
 你可以通过开启 `clashConfig.enableShadowTls` 来为 Clash 订阅中的节点增加 ShadowTls 特性。
 
-> [文档](/guide/custom-config.md#clashconfig-enableshadowtls)
+> [文档](/guide/custom-config#clashconfigenableshadowtls)
 
 ### Clash 特性
 
@@ -136,19 +134,19 @@ const notUSAndNotBGP = mergeReversedFilters(
 
 该钩子函数会在成功获取到远程订阅内容后执行。
 
-> [文档](/guide/custom-provider.md#hooks-afternodelistresponse)
+> [文档](/guide/custom-provider#hooksafternodelistresponse)
 
 #### `onError`
 
 该钩子函数会在获取远程订阅内容失败后执行。
 
-> [文档](/guide/custom-provider.md#hooks-onerror)
+> [文档](/guide/custom-provider#hooksonerror)
 
 ### 自定义 Provider 增强
 
 `nodeList` 参数支持使用异步函数，这意味着你能够动态生成节点列表，更棒的是，你能获取到当前节点获取请求的 URL 参数。例如，你可以在请求中包含参数 `hbo=1` 时输出包含 HBO 节点的订阅。
 
-> [文档](/guide/custom-provider.md#异步模式)
+> [文档](/guide/custom-provider#异步模式)
 
 ### IDE 类型提示支持
 

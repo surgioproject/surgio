@@ -1,8 +1,6 @@
 # 部署 - Netlify Functions
 
-[[toc]]
-
-:::tip 提示
+:::tip[提示]
 1. 该方法不要求代码托管平台，可为私有仓库（文章以 GitHub 为例）
 2. 已经部署其它平台的仓库可以修改之后增加部署到 Netlify Functions，互不影响
 3. 我们有一个运行的示例供你参考：[netlify-demo](https://github.com/surgioproject/netlify-demo)
@@ -14,11 +12,11 @@
 
 ### 开启接口鉴权
 
-:::warning 注意
+:::warning[注意]
 不建议关闭鉴权！
 :::
 
-请阅读 [这里](/guide/api.md#打开鉴权)。
+请阅读 [这里](/guide/api#打开鉴权)。
 
 ### 增加平台配置
 
@@ -74,9 +72,9 @@ module.exports.handler = gateway.createLambdaHandler();
 
 ## 配置 Upstash REST 缓存
 
-:::tip 此步骤可选，推荐配置
+:::tip[此步骤可选，推荐配置]
 
-[Upstash REST 缓存教程](/guide/advance/upstash-cache.md)
+[Upstash REST 缓存教程](/guide/advance/upstash-cache)
 :::
 
 ## 查看用量
@@ -91,6 +89,6 @@ module.exports.handler = gateway.createLambdaHandler();
 https://surgio-demo.netlify.app/get-artifact/
 ```
 
-:::tip 移步至
-[托管 API 的功能介绍](/guide/api.md)
+:::tip[移步至]
+[托管 API 的功能介绍](/guide/api)
 :::

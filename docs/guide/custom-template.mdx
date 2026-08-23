@@ -1,6 +1,6 @@
 ---
 title: Template 模板
-sidebarDepth: 2
+
 ---
 
 # Template 模板
@@ -11,7 +11,7 @@ Surgio 为了能够灵活地定义模板而引入了 [Nunjucks](https://nunjucks
 
 目录中默认已经包含针对 Surge，Quantumult 和 Clash 的模板和一些网友维护的规则片段 Snippet。
 
-:::tip 提示
+:::tip[提示]
 欢迎大家参与到默认规则的修订中！
 
 [项目地址](https://github.com/geekdada/create-surgio-store/tree/master/template/template)
@@ -66,7 +66,7 @@ Surgio 为了能够灵活地定义模板而引入了 [Nunjucks](https://nunjucks
 
 - 类型：`object`
 
-远程模板片段。假如你已经配置了一个像 [这样](/guide/custom-config.md#remotesnippets) 的远程片段，那就能够以下面的方式使用。
+远程模板片段。假如你已经配置了一个像 [这样](/guide/custom-config#remotesnippets) 的远程片段，那就能够以下面的方式使用。
 
 ```
 {{ remoteSnippets.cn.main('DIRECT') }}
@@ -105,7 +105,7 @@ DOMAIN-KEYWORD,baidu,DIRECT
 
 - 类型：`object`
 
-获取自定义的模板参数。请 [先在 Artifact 中定义](/guide/custom-artifact.md#customparams) 再使用。
+获取自定义的模板参数。请 [先在 Artifact 中定义](/guide/custom-artifact#customparams) 再使用。
 
 ## 过滤器
 
@@ -191,7 +191,7 @@ Youtube Premium 节点过滤器。Surgio 默认会将名称中包含 *日*, *美
 
 `getSurgeNodes(nodeList, filter?)`
 
-:::tip 提示
+:::tip[提示]
 
 - `filter` 为可选参数
 - 支持输出 Shadowsocks, HTTPS, Snell, Vmess, Trojan 节点
@@ -229,7 +229,7 @@ Proxy = select, {{ getSurgeNodeNames(nodeList) }}
 {{ getSurgeWireguardNodes(nodeList) }}
 ```
 
-:::tip 提示
+:::tip[提示]
 [Surge - WireGuard 官方文档](https://manual.nssurge.com/policy/wireguard.html)
 :::
 
@@ -253,7 +253,7 @@ Proxy = select, {{ getSurgeNodeNames(nodeList, customFilters.tailnet) }}
 
 Tailscale 节点用于 Surge 时必须配置 `authKey`，否则模板生成会报错。
 
-:::tip 提示
+:::tip[提示]
 [Surge - Tailscale 官方文档](https://manual.nssurge.com/policy/tailscale.html)
 :::
 
@@ -269,7 +269,7 @@ Tailscale 节点用于 Surge 时必须配置 `authKey`，否则模板生成会�
 
 `getShadowsocksNodes(nodeList, providerName)`
 
-:::tip 提示
+:::tip[提示]
 
 - 第二个入参为 Group 名称
 :::
@@ -292,7 +292,7 @@ ss://cmM0LW1kNTpwYXNzd29yZA@hk.com:1234/?group=subscribe_demo#%F0%9F%87%AD%F0%9F
 
 `getQuantumultXNodes(nodeList, filter?)`
 
-:::tip 提示
+:::tip[提示]
 
 - 第二个参数可选，可传入标准的过滤器或自定义的过滤器
 - 支持输出 Shadowsocks, Shadowsocksr, Vmess, HTTPS, Trojan, AnyTLS 节点
@@ -315,9 +315,9 @@ ss://cmM0LW1kNTpwYXNzd29yZA@hk.com:1234/?group=subscribe_demo#%F0%9F%87%AD%F0%9F
 
 该方法会返回一个包含有节点信息的数组，用于编写 Clash 规则。
 
-:::tip 提示
+:::tip[提示]
 
-- [Clash 规则维护指南](/guide/client/clash.md)
+- [Clash 规则维护指南](/guide/client/clash)
 - 支持输出 Shadowsocks, Shadowsocksr, HTTPS, Snell, Vmess, Trojan 节点
 :::
 
@@ -325,12 +325,12 @@ ss://cmM0LW1kNTpwYXNzd29yZA@hk.com:1234/?group=subscribe_demo#%F0%9F%87%AD%F0%9F
 
 `getClashNodeNames(nodeList, filter?, prependNodeNames?, defaultNodeNames?)`
 
-:::tip 提示
+:::tip[提示]
 
 - `filter` 为可选参数
 - `prependNodeNames` 为可选参数。可以通过这个参数在过滤结果前加入自定义节点名
 - `defaultNodeNames` 为可选参数。可以通过这个参数实现在过滤结果为空的情况下，使用默认的自定义节点名
-- [Clash 规则维护指南](/guide/client/clash.md)
+- [Clash 规则维护指南](/guide/client/clash)
 :::
 
 该方法会返回一个包含有节点名称的数组，用于编写 Clash 规则。
@@ -361,7 +361,7 @@ getClashNodeNames(nodeList, netflixFilter, [], ['默认节点']);
 
 该方法会返回一个包含有节点信息的数组，可用于编写 sing-box 规则。
 
-:::tip 提示
+:::tip[提示]
 
 - `filter` 为可选参数
 :::
@@ -374,7 +374,7 @@ getClashNodeNames(nodeList, netflixFilter, [], ['默认节点']);
 
 sing-box 将 Tailscale 等节点视为 [endpoint](https://sing-box.sagernet.org/configuration/endpoint/tailscale) 而非 outbound。该方法会返回一个包含 endpoint 信息的数组，需要放入配置文件的 `endpoints` 字段中（通常配合 `extendEndpoints` 使用）。
 
-:::tip 提示
+:::tip[提示]
 
 - `filter` 为可选参数
 - 目前仅支持 Tailscale 节点
@@ -388,7 +388,7 @@ sing-box 将 Tailscale 等节点视为 [endpoint](https://sing-box.sagernet.org/
 
 该方法会返回一个包含有节点名称的数组，用于编写 sing-box 规则。返回的名称同时包含 outbound 与 endpoint（如 Tailscale）节点，方便在 `selector`、`urltest` 中引用。
 
-:::tip 提示
+:::tip[提示]
 
 - `filter` 为可选参数
 :::
@@ -403,7 +403,7 @@ getSingboxNodeNames(nodeList, netflixFilter);
 
 `getLoonNodes(nodeList, filter?)`
 
-:::tip 提示
+:::tip[提示]
 
 - 第二个参数可选，可传入标准的过滤器或自定义的过滤器
 - 支持输出 Shadowsocks, Shadowsocksr, HTTPS, HTTP, Vmess, Vless, Trojan, WireGuard, Hysteria 2, AnyTLS 节点
@@ -430,7 +430,7 @@ getSingboxNodeNames(nodeList, netflixFilter);
 
 `getSurfboardNodes(nodeList, filter?)`
 
-:::tip 提示
+:::tip[提示]
 
 - `filter` 为可选参数，可传入标准的过滤器或自定义的过滤器
 - 支持输出 Shadowsocks, HTTPS, HTTP, Vmess, Trojan 节点
@@ -457,7 +457,7 @@ getSingboxNodeNames(nodeList, netflixFilter);
 
 `getNodeNames(nodeList, filter?, separator?)`
 
-:::tip 提示
+:::tip[提示]
 
 - 不同于 `getXxxxNodeNames` 方法，该方法不会根据节点类型进行过滤
 - `filter` 为可选参数
@@ -498,7 +498,7 @@ getDownloadUrl('example.conf'); // https://example.com/example.conf
 getDownloadUrl('example.conf?foo=bar'); // https://example.com/example.conf?foo=bar
 ```
 
-:::tip 提示
+:::tip[提示]
 请不用担心参数中的 `access_token`，如果需要会自动加上的 👌。
 :::
 
@@ -518,7 +518,7 @@ getUrl('/export-provider?format=surge-policy');
 
 方便将本地的 Surge 规则片段转换为类似远程片段用法，免去人工创建特定的片段格式（即后面提到的宏）。
 
-:::tip 提示
+:::tip[提示]
 
 - 文件路径均相对于 template 目录进行提取，这和 Nunjucks 的路径写法有所不同；
 - 通过这个方法获取的片段只能有一种策略，相对于正规片段有所限制；
@@ -659,7 +659,7 @@ const combined = combineExtendFunctions(
 }
 ```
 
-:::tip 提示
+:::tip[提示]
 
 - 拓展数组时新的配置会被追加到原有配置的后面
 :::
@@ -683,7 +683,7 @@ DOMAIN-SUFFIX,ytimg.com,{{ rule }}
 {% endmacro %}
 ```
 
-:::tip 提示
+:::tip[提示]
 
 - 宏暴露了一个 `main` 方法，传入一个字符串变量
 - 你可以使用 Nunjucks 宏的其它特性
@@ -790,7 +790,7 @@ http-response ^https?://(sdk|wb)app\.uve\.weibo\.com(/interface/sdk/sdkad.php|/w
 {{ surge_script.main() | quantumultx }}
 ```
 
-:::warning 注意
+:::warning[注意]
 Surgio 不会处理类似 `[rewrite_local]` 这样的标题，所以请 __不要__ 将它们也放到片段中。
 :::
 

@@ -1,13 +1,11 @@
 ---
 title: 自定义过滤器
-sidebarDepth: 2
+
 ---
 
 # 自定义过滤器
 
-[[toc]]
-
-在之前的版本里，我们允许用户使用内置的几个过滤器进行节点过滤。现在 Surgio 已经支持在 Provider 和 Surgio 配置中自定义 Filter。需要提醒一下大家，原来内置的国别过滤器已经拓展了不少，可以在 [这里](/guide/custom-template.md#过滤器) 查看。
+在之前的版本里，我们允许用户使用内置的几个过滤器进行节点过滤。现在 Surgio 已经支持在 Provider 和 Surgio 配置中自定义 Filter。需要提醒一下大家，原来内置的国别过滤器已经拓展了不少，可以在 [这里](/guide/custom-template#过滤器) 查看。
 
 ## 如何自定义
 
@@ -25,7 +23,7 @@ module.exports = {
 };
 ```
 
-:::tip 提示
+:::tip[提示]
 这里只是举个例子，并不推荐你重复实现 Surgio 已经内置的过滤器。
 :::
 
@@ -83,7 +81,7 @@ module.exports = {
 };
 ```
 
-:::warning 注意
+:::warning[注意]
 该过滤器不保证顺序。
 :::
 
@@ -91,7 +89,7 @@ module.exports = {
 
 生成一个反向关键词过滤器。第二个入参是开启严格模式。
 
-:::warning 注意
+:::warning[注意]
 `discardKeywords` 的目的是 **过滤掉**，`useKeywords` 的目的是 **过滤出**。
 :::
 
@@ -99,7 +97,7 @@ module.exports = {
 
 生成一个正则表达式过滤器。
 
-:::tip 提示
+:::tip[提示]
 [JavaScript 正则表达式文档](https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Guide/Regular_Expressions)
 :::
 
@@ -151,7 +149,7 @@ module.exports = {
 };
 ```
 
-:::warning 注意
+:::warning[注意]
 1. 不能合并排序型过滤器；
 2. 若某个节点同时匹配多个规则，只会出现在第一次匹配的位置；
 3. Provider 的配置项 `nodeFilter` 也支持排序类型的过滤器，但我们并不建议您这么用，因为 Provider 的 `nodeFilter` 配置项仅针对当前 Provider 而非合并进来的所有的节点，再者如果你同时在 `nodeFilter` 和 `getNodeNames`（包括但不限于）中使用排序过滤器，会进行多次排序，很难避免不出错。所以请尽可能在 `nodeFilter` 中使用普通的过滤器；
@@ -175,7 +173,7 @@ module.exports = {
 };
 ```
 
-:::warning 注意
+:::warning[注意]
 1. 该过滤器不保证顺序；
 2. 默认开启严格模式；
 :::
@@ -198,7 +196,7 @@ module.exports = {
 };
 ```
 
-:::warning 注意
+:::warning[注意]
 1. 该过滤器不保证顺序；
 2. 默认开启严格模式；
 :::
@@ -266,7 +264,7 @@ const notUSAndNotBGP = mergeReversedFilters(
 
 ## 如何在自定义过滤器时引用内置的过滤器
 
-你可能需要在自定义过滤器时引用内置的过滤器（你可以在 [这里](/guide/custom-template.md#过滤器) 找到所有内置的过滤器）。
+你可能需要在自定义过滤器时引用内置的过滤器（你可以在 [这里](/guide/custom-template#过滤器) 找到所有内置的过滤器）。
 
 假设我需要增强内置的 `netflixFilter`，使得所有满足内置 `netflixFilter` 的节点或者名称包含「流媒体」的节点，作为新的 `netflixFilter`。
 

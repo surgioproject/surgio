@@ -4,15 +4,13 @@
 
 **目录**
 
-[[toc]]
-
 ## Node 版本升级
 
 新版 Surgio 不再支持 Node v10，推荐使用 v12。
 
 ## Gateway 面板
 
-旧版的面板已经不再提供，请按照 [文档](/guide/advance/api-gateway.md) 部署新版面板。
+旧版的面板已经不再提供，请按照 [文档](/guide/advance/api-gateway) 部署新版面板。
 
 ## Surgio 配置修改
 
@@ -28,7 +26,7 @@
 
 #### 协议过滤器名称修改
 
-由于疏忽，有一些 [协议过滤器](/guide/custom-template.md#协议过滤器) 命名未符合规范，已修改。
+由于疏忽，有一些 [协议过滤器](/guide/custom-template#协议过滤器) 命名未符合规范，已修改。
 
 ## 自定义过滤器
 
