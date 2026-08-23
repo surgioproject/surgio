@@ -1,17 +1,16 @@
-import assert from 'assert'
 import { z } from 'zod/v3'
 
 import {
+  NodeTypeEnum,
   SubscriptionUserinfo,
   TrojanNodeConfig,
   TrojanProviderConfig,
 } from '../types.js'
 import { SurgioError } from '../utils/errors.js'
-import { fromBase64 } from '../utils/portable.js'
 import relayableUrl from '../utils/relayable-url.js'
-import { parseTrojanUri } from '../utils/trojan.js'
 
 import Provider from './Provider.js'
+import { getV2rayNSubscriptionResult } from './V2rayNSubscribeProvider.js'
 import {
   DefaultProviderRequestHeaders,
   GetNodeListFunction,
@@ -147,9 +146,6 @@ export default class TrojanProvider extends Provider {
   }
 }
 
-/**
- * @see https://github.com/trojan-gfw/trojan-url/blob/master/trojan-url.py
- */
 export const getTrojanSubscription = async ({
   url,
   udpRelay,
@@ -168,30 +164,20 @@ export const getTrojanSubscription = async ({
   readonly nodeList: Array<TrojanNodeConfig>
   readonly subscriptionUserInfo?: SubscriptionUserinfo
 }> => {
-  assert(url, '未指定订阅地址 url')
-
-  const response = await Provider.requestCacheableResource(
+  const result = await getV2rayNSubscriptionResult({
     url,
+    allowedNodeTypes: new Set([NodeTypeEnum.Trojan]),
+    udpRelay,
+    tls13,
     requestHeaders,
     cacheKey,
     runtime,
-  )
-  const config = fromBase64(response.body)
-  const nodeList = config
-    .split('\n')
-    .filter((item) => !!item && item.startsWith('trojan://'))
-    .map((item): TrojanNodeConfig => {
-      const nodeConfig = parseTrojanUri(item, runtime?.logger)
-
-      return {
-        ...nodeConfig,
-        udpRelay,
-        tls13,
-      }
-    })
+  })
 
   return {
-    nodeList,
-    subscriptionUserInfo: response.subscriptionUserInfo,
+    nodeList: result.nodeList.filter(
+      (node): node is TrojanNodeConfig => node.type === NodeTypeEnum.Trojan,
+    ),
+    subscriptionUserInfo: result.subscriptionUserInfo,
   }
 }

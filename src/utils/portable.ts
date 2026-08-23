@@ -147,7 +147,7 @@ export const getV2rayNNodes = (list: ReadonlyArray<VmessNodeConfig>): string =>
         output.host = getHeader(node.httpOpts.headers, 'host') ?? ''
       } else if (node.network === 'h2' && node.h2Opts) {
         output.path = node.h2Opts.path
-        output.host = node.h2Opts.host[0]
+        if (node.h2Opts.host?.[0]) output.host = node.h2Opts.host[0]
       } else if (node.network === 'grpc' && node.grpcOpts) {
         output.path = node.grpcOpts.serviceName
       }

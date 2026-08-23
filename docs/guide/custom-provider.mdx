@@ -51,11 +51,11 @@ module.exports = defineCustomProvider(async function () {
 | :----------------------------------------------: | ------------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------- |
 | `custom` <Badge text="推荐" vertical="middle" /> | 自己维护的节点                             | 支持 Shadowsocks, Shadowsocksr, Snell, HTTPS, HTTP, Vmess, Vless, Hysteria 2, AnyTLS, Socks5, Tuic, Trojan, Wireguard                    |
 | `clash` <Badge text="推荐" vertical="middle" />  | Clash 配置                                 | 支持 Shadowsocks, Shadowsocksr, Snell, HTTPS, HTTP, Vmess, Vless, Hysteria 2, AnyTLS, Socks5, Tuic, Trojan, Wireguard                  |
-|                     `trojan`                     | Trojan 订阅                                | Shadowrocket 支持的 Trojan 订阅格式                                                                                          |
+|                     `trojan`                     | Trojan 订阅                                | 使用 V2rayN 订阅解析器，但只保留 Trojan 节点                                                                                |
 |           `shadowsocks_json_subscribe`           | 针对 Windows 客户端的 Shadowsocks 订阅地址 | 通常命名为 _gui-config.json_                                                                                                 |
 |             `shadowsocks_subscribe`              | 通用的 Shadowsocks 订阅地址                |                                                                                                                              |
 |             `shadowsocksr_subscribe`             | 通用的 Shadowsocksr 订阅地址               |                                                                                                                              |
-|                `v2rayn_subscribe`                | V2rayN 订阅地址                            | 支持 V2Ray, Shadowsocks, [协议](https://github.com/2dust/v2rayN/wiki/%E8%AE%A2%E9%98%85%E5%8A%9F%E8%83%BD%E8%AF%B4%E6%98%8E) |
+|                `v2rayn_subscribe`                | V2rayN 订阅地址                            | 支持 VMess、Shadowsocks、SOCKS、VLESS、Trojan、Hysteria 2、TUIC、WireGuard 和 AnyTLS                                         |
 
 ## Clash 订阅 <Badge text="推荐" vertical="middle" />
 
@@ -862,7 +862,11 @@ module.exports = {
 :::warning[注意]
 - Quantumult 的订阅格式和 V2rayN 的订阅格式有差异，不可以混用；
 - 如果你正在使用 [DlerCloud](https://dlercloud.com/auth/register?affid=45071)，可以使用「通用」类型的订阅地址；
-- 订阅中的 V2Ray 和 Shadowsocks 节点会被读取；
+- 订阅可以是明文或整段 Base64，节点可以使用协议标准 URI 或 `v2rayn://` 内部节点格式；
+- 支持读取 VMess、Shadowsocks、SOCKS、VLESS、Trojan、Hysteria 2、TUIC、WireGuard 和 AnyTLS。内部格式的 HTTP/HTTPS 节点也可以读取；
+- v2rayN 内部格式中的策略组、链式代理和 Outbound 不是独立代理节点，因此会被省略；
+- 内部 WireGuard 节点没有提供 `WgInterfaceAddress` 时，使用与 v2rayN 相同的 `172.16.0.2/32` 默认地址；
+- 若协议使用 Surgio 节点模型尚未表达的传输或混淆参数，该节点会被省略并记录警告，不会降级成错误配置；
 :::
 
 ### compatibleMode
@@ -902,9 +906,7 @@ module.exports = {
 }
 ```
 
-:::warning[注意]
-该订阅方式仅支持标准的 Trojan 协议，不支持 WebSocket 和 GRPC
-:::
+`trojan` Provider 与 `v2rayn_subscribe` 共用同一套订阅解析器，但只返回 Trojan 节点。它支持明文或整段 Base64 订阅，以及标准 URI 和 `v2rayn://` 内部节点格式；目前可映射 TCP 和 WebSocket 传输，其他传输会被省略并记录警告。
 
 ### url
 
