@@ -1006,6 +1006,7 @@ test('getClashNodes', async () => {
         hostname: '1.1.1.1',
         port: 443,
         token: 'password',
+        congestionControl: 'bbr',
       },
       {
         nodeName: 'tuic',
@@ -1032,6 +1033,7 @@ test('getClashNodes', async () => {
       port: 443,
       token: 'password',
       udp: true,
+      'congestion-controller': 'bbr',
     },
     {
       type: 'tuic',

@@ -9,11 +9,13 @@ export const TuicNodeV5ConfigValidator = TlsNodeConfigValidator.extend({
   password: z.string(),
   uuid: z.string(),
   version: IntegersVersionValidator,
+  congestionControl: z.string().min(1).optional(),
 })
 
 export const TuicNodeV4ConfigValidator = TlsNodeConfigValidator.extend({
   type: z.literal(NodeTypeEnum.Tuic),
   token: z.string(),
+  congestionControl: z.string().min(1).optional(),
 })
 
 export const TuicNodeConfigValidator = z.union([

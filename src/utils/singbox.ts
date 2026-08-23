@@ -271,7 +271,7 @@ function nodeListMapper(nodeConfig: PossibleNodeConfigType, logger: Logger) {
       }
       node.uuid = nodeConfig.uuid
       node.password = nodeConfig.password
-      // congestion_control: 'cubic',
+      node.congestion_control = nodeConfig.congestionControl
       // udp_relay_mode: 'native',
       // udp_over_stream: false,
       // zero_rtt_handshake: false,

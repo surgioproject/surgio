@@ -536,6 +536,7 @@ const nodeList: ReadonlyArray<PossibleNodeConfigType> = [
     skipCertVerify: true,
     alpn: ['h2', 'http/1.1'],
     clientFingerprint: 'chrome2',
+    congestionControl: 'bbr',
   },
   {
     nodeName: 'hysteria2',
@@ -990,6 +991,7 @@ const expectedNodes: Record<string, any>[] = [
     server_port: 443,
     uuid: '1386f85e-657b-4d6e-9d56-78badb75e1fd',
     password: 'password',
+    congestion_control: 'bbr',
     tls: {
       enabled: true,
       server_name: 'example.com',

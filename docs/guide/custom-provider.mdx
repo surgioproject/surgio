@@ -573,6 +573,7 @@ sing-box 将 Tailscale 视为 [endpoint](https://sing-box.sagernet.org/configura
   sni: 'sni.example.com', // 可选
   skipCertVerify: true, // 可选
   alpn: ['h3'], // 可选，Stash 不支持空值
+  congestionControl: 'bbr', // 可选，Clash 和 sing-box 支持
   udpRelay: false, // 可选，仅 Clash 支持更改，Surge 默认开启
 }
 ```
@@ -589,6 +590,7 @@ sing-box 将 Tailscale 视为 [endpoint](https://sing-box.sagernet.org/configura
   sni: 'sni.example.com', // 可选
   skipCertVerify: true, // 可选
   alpn: ['h3'], // 可选，Stash 不支持空值
+  congestionControl: 'bbr', // 可选，Clash 支持
   udpRelay: false, // 可选，仅 Clash 支持更改，Surge 默认开启
 }
 ```

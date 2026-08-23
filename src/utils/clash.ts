@@ -488,6 +488,9 @@ function nodeListMapper(nodeConfig: PossibleNodeConfigType, logger: Logger) {
               }
             : null),
           ...(nodeConfig.alpn ? { alpn: nodeConfig.alpn } : null),
+          ...(nodeConfig.congestionControl
+            ? { 'congestion-controller': nodeConfig.congestionControl }
+            : null),
         } as const
       }
 
@@ -515,6 +518,9 @@ function nodeListMapper(nodeConfig: PossibleNodeConfigType, logger: Logger) {
             }
           : null),
         ...(nodeConfig.alpn ? { alpn: nodeConfig.alpn } : null),
+        ...(nodeConfig.congestionControl
+          ? { 'congestion-controller': nodeConfig.congestionControl }
+          : null),
       } as const
 
     case NodeTypeEnum.Hysteria2:

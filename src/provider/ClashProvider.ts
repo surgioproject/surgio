@@ -619,6 +619,9 @@ export const parseClashConfig = (
             ...('hop-interval' in item
               ? { portHoppingInterval: item['hop-interval'] }
               : null),
+            ...('congestion-controller' in item
+              ? { congestionControl: item['congestion-controller'] }
+              : null),
           }
 
           if (item.uuid) {

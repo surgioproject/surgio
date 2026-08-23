@@ -1149,6 +1149,7 @@ test('parseClashConfig tuic configurations', () => {
         alpn: ['h3'],
         ports: '4000-5000',
         'hop-interval': 5,
+        'congestion-controller': 'bbr',
       },
       {
         type: 'tuic',
@@ -1161,6 +1162,7 @@ test('parseClashConfig tuic configurations', () => {
         alpn: ['h3'],
         ports: '4000-5000',
         'hop-interval': 5,
+        'congestion-controller': 'cubic',
       },
     ]),
   ).toEqual([
@@ -1178,6 +1180,7 @@ test('parseClashConfig tuic configurations', () => {
       alpn: ['h3'],
       portHopping: '4000-5000',
       portHoppingInterval: 5,
+      congestionControl: 'bbr',
     },
     {
       type: NodeTypeEnum.Tuic,
@@ -1191,6 +1194,7 @@ test('parseClashConfig tuic configurations', () => {
       alpn: ['h3'],
       portHopping: '4000-5000',
       portHoppingInterval: 5,
+      congestionControl: 'cubic',
     },
   ])
 })
