@@ -29,6 +29,12 @@ import {
   VmessNodeConfig,
   Socks5NodeConfig,
   TuicNodeConfigInput,
+  TailscaleNodeConfig,
+  TailscaleNodeConfigInput,
+  MasqueNodeConfig,
+  MasqueNodeConfigInput,
+  TrustTunnelNodeConfig,
+  TrustTunnelNodeConfigInput,
 } from '../types'
 import {
   lowercaseHeaderKeys,
@@ -41,6 +47,9 @@ import {
   AnyTLSNodeConfigValidator,
   Hysteria2NodeConfigValidator,
   TuicNodeConfigValidator,
+  TailscaleNodeConfigValidator,
+  MasqueNodeConfigValidator,
+  TrustTunnelNodeConfigValidator,
 } from '../validators'
 
 import Provider from './Provider'
@@ -65,6 +74,9 @@ type SupportConfigTypes =
   | Hysteria2NodeConfig
   | Socks5NodeConfig
   | AnyTLSNodeConfig
+  | TailscaleNodeConfig
+  | MasqueNodeConfig
+  | TrustTunnelNodeConfig
 
 const logger = createLogger({
   service: 'surgio:ClashProvider',
@@ -747,6 +759,192 @@ export const parseClashConfig = (
           // istanbul ignore next
           if (!result.success) {
             throw new SurgioError('AnyTLS 节点配置校验失败', {
+              cause: result.error,
+            })
+          }
+
+          return result.data
+        }
+
+        case 'masque': {
+          const input: MasqueNodeConfigInput = {
+            type: NodeTypeEnum.Masque,
+            authMode: 'key-pair',
+            nodeName: item.name,
+            hostname: item.server,
+            port: item.port,
+            privateKey: item['private-key'],
+            publicKey: item['public-key'],
+            ...('ip' in item ? { ip: item.ip } : null),
+            ...('ipv6' in item ? { ipv6: item.ipv6 } : null),
+            ...('dns' in item
+              ? {
+                  dnsServers: Array.isArray(item.dns) ? item.dns : [item.dns],
+                }
+              : null),
+            ...('network' in item
+              ? {
+                  network: item.network === 'quic' ? 'h3' : item.network,
+                }
+              : null),
+            ...('sni' in item ? { sni: item.sni } : null),
+            ...('connect-uri' in item
+              ? { connectUri: item['connect-uri'] }
+              : null),
+            ...('mtu' in item ? { mtu: item.mtu } : null),
+            ...('keepalive' in item ? { keepalive: item.keepalive } : null),
+            ...('udp' in item ? { udpRelay: item.udp } : null),
+            ...('remote-dns-resolve' in item
+              ? { remoteDnsResolve: item['remote-dns-resolve'] }
+              : null),
+            ...('congestion-controller' in item
+              ? { congestionController: item['congestion-controller'] }
+              : null),
+            ...('bbr-profile' in item
+              ? { bbrProfile: item['bbr-profile'] }
+              : null),
+            ...('handshake-timeout' in item
+              ? { handshakeTimeout: item['handshake-timeout'] }
+              : null),
+            ...('dialer-proxy' in item
+              ? { underlyingProxy: item['dialer-proxy'] }
+              : null),
+          }
+
+          const result = MasqueNodeConfigValidator.safeParse(input)
+
+          // istanbul ignore next
+          if (!result.success) {
+            throw new SurgioError('MASQUE 节点配置校验失败', {
+              cause: result.error,
+            })
+          }
+
+          return result.data
+        }
+
+        case 'trusttunnel': {
+          const port =
+            item.port ?? (item.ports ? extractFirstPort(item.ports) : undefined)
+
+          if (!port) {
+            throw new SurgioError(
+              'TrustTunnel 节点配置校验失败，未指定端口或端口范围',
+            )
+          }
+
+          const certificateFingerprint =
+            item['server-cert-fingerprint'] ?? item.fingerprint
+          const input: TrustTunnelNodeConfigInput = {
+            type: NodeTypeEnum.TrustTunnel,
+            nodeName: item.name,
+            hostname: item.server,
+            port,
+            username: item.username,
+            password: item.password,
+            ...('quic' in item ? { quic: item.quic } : null),
+            ...('udp' in item ? { udpRelay: item.udp } : null),
+            ...('sni' in item ? { sni: item.sni } : null),
+            ...('alpn' in item ? { alpn: item.alpn } : null),
+            ...('skip-cert-verify' in item
+              ? { skipCertVerify: item['skip-cert-verify'] === true }
+              : null),
+            ...(certificateFingerprint
+              ? { serverCertFingerprintSha256: certificateFingerprint }
+              : null),
+            ...('client-fingerprint' in item
+              ? { clientFingerprint: item['client-fingerprint'] }
+              : null),
+            ...('health-check' in item
+              ? { healthCheck: item['health-check'] }
+              : null),
+            ...('name-cert-verify' in item
+              ? { nameCertVerify: item['name-cert-verify'] }
+              : null),
+            ...('congestion-controller' in item
+              ? { congestionController: item['congestion-controller'] }
+              : null),
+            ...('bbr-profile' in item
+              ? { bbrProfile: item['bbr-profile'] }
+              : null),
+            ...('max-connections' in item
+              ? { maxConnections: item['max-connections'] }
+              : null),
+            ...('min-streams' in item
+              ? { minStreams: item['min-streams'] }
+              : null),
+            ...('max-streams' in item
+              ? { maxStreams: item['max-streams'] }
+              : null),
+            ...('ports' in item ? { portHopping: item.ports } : null),
+            ...('hop-interval' in item
+              ? { portHoppingInterval: item['hop-interval'] }
+              : null),
+            ...('dialer-proxy' in item
+              ? { underlyingProxy: item['dialer-proxy'] }
+              : null),
+            ...('interface-name' in item
+              ? { interfaceName: item['interface-name'] }
+              : null),
+            ...('ip-version' in item
+              ? { ipVersion: item['ip-version'] }
+              : null),
+            ...('tfo' in item ? { tfo: item.tfo } : null),
+            ...('mptcp' in item ? { mptcp: item.mptcp } : null),
+          }
+
+          const result = TrustTunnelNodeConfigValidator.safeParse(input)
+
+          // istanbul ignore next
+          if (!result.success) {
+            throw new SurgioError('TrustTunnel 节点配置校验失败', {
+              cause: result.error,
+            })
+          }
+
+          return result.data
+        }
+
+        case 'tailscale': {
+          const input: TailscaleNodeConfigInput = {
+            type: NodeTypeEnum.Tailscale,
+            nodeName: item.name,
+            ...('auth-key' in item ? { authKey: item['auth-key'] } : null),
+            ...('hostname' in item ? { hostname: item.hostname } : null),
+            ...('control-url' in item
+              ? { controlUrl: item['control-url'] }
+              : null),
+            ...('exit-node' in item ? { exitNode: item['exit-node'] } : null),
+            ...('ephemeral' in item ? { ephemeral: item.ephemeral } : null),
+            ...('state-dir' in item ? { stateDir: item['state-dir'] } : null),
+            ...('udp' in item ? { udpRelay: item.udp } : null),
+            ...('accept-routes' in item
+              ? { acceptRoutes: item['accept-routes'] }
+              : null),
+            ...('exit-node-allow-lan-access' in item
+              ? {
+                  exitNodeAllowLanAccess: item['exit-node-allow-lan-access'],
+                }
+              : null),
+            ...('dialer-proxy' in item
+              ? { underlyingProxy: item['dialer-proxy'] }
+              : null),
+            ...('interface-name' in item
+              ? { interfaceName: item['interface-name'] }
+              : null),
+            ...('routing-mark' in item
+              ? { routingMark: item['routing-mark'] }
+              : null),
+            ...('ip-version' in item
+              ? { ipVersion: item['ip-version'] }
+              : null),
+          }
+
+          const result = TailscaleNodeConfigValidator.safeParse(input)
+
+          // istanbul ignore next
+          if (!result.success) {
+            throw new SurgioError('Tailscale 节点配置校验失败', {
               cause: result.error,
             })
           }

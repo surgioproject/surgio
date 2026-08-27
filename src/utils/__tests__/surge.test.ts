@@ -465,6 +465,99 @@ test('getSurgeNodes', async (t) => {
   )
 })
 
+test('getSurgeNodes supports masque nodes', (t) => {
+  t.is(
+    surge.getSurgeNodes([
+      {
+        type: NodeTypeEnum.Masque,
+        authMode: 'basic-auth',
+        nodeName: 'MASQUE',
+        hostname: 'masque.example.com',
+        port: 443,
+        username: 'user',
+        password: 'pass',
+        alpn: ['h3', 'h3-29'],
+        sni: 'sni.example.com',
+        skipCertVerify: true,
+        ecn: false,
+        portHopping: '1234;5000-6000',
+        portHoppingInterval: 20,
+      },
+    ]),
+    'MASQUE = masque, masque.example.com, 443, username=user, password=pass, alpn="h3,h3-29", ecn=false, skip-cert-verify=true, sni=sni.example.com, port-hopping=1234;5000-6000, port-hopping-interval=20',
+  )
+
+  t.is(
+    surge.getSurgeNodes([
+      {
+        type: NodeTypeEnum.Masque,
+        authMode: 'basic-auth',
+        nodeName: 'MASQUE without auth',
+        hostname: 'masque.example.com',
+        port: 443,
+      },
+    ]),
+    'MASQUE without auth = masque, masque.example.com, 443',
+  )
+
+  t.is(
+    surge.getSurgeNodes([
+      {
+        type: NodeTypeEnum.Masque,
+        authMode: 'key-pair',
+        nodeName: 'WARP MASQUE',
+        hostname: 'masque.example.com',
+        port: 443,
+        privateKey: 'private-key',
+        publicKey: 'public-key',
+        ip: '172.16.0.2/32',
+      },
+    ]),
+    '',
+  )
+})
+
+test('getSurgeNodes supports HTTP/2 TrustTunnel nodes', (t) => {
+  t.is(
+    surge.getSurgeNodes([
+      {
+        type: NodeTypeEnum.TrustTunnel,
+        nodeName: 'TrustTunnel',
+        hostname: 'trust.example.com',
+        port: 443,
+        username: 'user',
+        password: 'pass',
+        alpn: ['h2'],
+        headers: {
+          'X-Client': 'Surge',
+          'X-Token': 'token',
+        },
+        maxStreams: 3,
+        skipCertVerify: true,
+        sni: 'sni.example.com',
+        serverCertFingerprintSha256: 'sha256',
+        underlyingProxy: 'upstream',
+      },
+    ]),
+    'TrustTunnel = trust-tunnel, trust.example.com, 443, username=user, password=pass, max-streams=3, alpn="h2", headers=X-Client:Surge;X-Token:token, underlying-proxy=upstream, skip-cert-verify=true, sni=sni.example.com, server-cert-fingerprint-sha256=sha256',
+  )
+
+  t.is(
+    surge.getSurgeNodes([
+      {
+        type: NodeTypeEnum.TrustTunnel,
+        nodeName: 'TrustTunnel QUIC',
+        hostname: 'trust.example.com',
+        port: 443,
+        username: 'user',
+        password: 'pass',
+        quic: true,
+      },
+    ]),
+    '',
+  )
+})
+
 test('getSurgeNodes - AnyTLS', (t) => {
   t.is(
     surge.getSurgeNodes([
@@ -707,6 +800,81 @@ test('getSurgeWireguardNodes', (t) => {
       },
     ]),
   )
+})
+
+test('getSurgeNodes and getSurgeTailscaleNodes generate Tailscale policy', (t) => {
+  const nodeList: ReadonlyArray<PossibleNodeConfigType> = [
+    {
+      type: NodeTypeEnum.Tailscale,
+      nodeName: 'tailnet',
+      authKey: 'tskey-auth-example',
+      hostname: 'surge-mac',
+      controlUrl: 'https://controlplane.tailscale.com',
+      derpOnly: false,
+      exitNode: 'none',
+      idleKeepalive: 0,
+      preferIpv6: false,
+      dnsServers: ['100.100.100.100', '[fd7a:115c:a1e0::53]:53'],
+      mtu: 1280,
+      underlyingProxy: 'upstream',
+      testUrl: 'http://100.64.0.1/',
+      testTimeout: 0,
+      ecn: false,
+      noErrorAlert: false,
+      tfo: true,
+    },
+    {
+      type: NodeTypeEnum.Tailscale,
+      nodeName: 'disabled-tailnet',
+      authKey: 'tskey-auth-disabled',
+      enable: false,
+    },
+    {
+      type: NodeTypeEnum.Tailscale,
+      nodeName: 'filtered-tailnet',
+      authKey: 'tskey-auth-filtered',
+    },
+  ]
+  const filter = (node: PossibleNodeConfigType) =>
+    node.nodeName !== 'filtered-tailnet'
+
+  t.is(
+    surge.getSurgeNodes(nodeList, filter),
+    'tailnet = tailscale, section-name=tailnet, underlying-proxy=upstream, test-url=http://100.64.0.1/, test-timeout=0, ecn=false, no-error-alert=false',
+  )
+  t.is(
+    surge.getSurgeTailscaleNodes(nodeList, filter),
+    [
+      '[Tailscale tailnet]',
+      'auth-key=tskey-auth-example',
+      'control-url=https://controlplane.tailscale.com',
+      'hostname=surge-mac',
+      'derp-only=false',
+      'exit-node=none',
+      'idle-keepalive=0',
+      'prefer-ipv6=false',
+      'dns-server=100.100.100.100, [fd7a:115c:a1e0::53]:53',
+      'mtu=1280',
+    ].join('\n'),
+  )
+})
+
+test('Surge Tailscale generation requires authKey', (t) => {
+  const nodeList: ReadonlyArray<PossibleNodeConfigType> = [
+    {
+      type: NodeTypeEnum.Tailscale,
+      nodeName: 'interactive-tailnet',
+    },
+  ]
+
+  for (const generate of [
+    () => surge.getSurgeNodes(nodeList),
+    () => surge.getSurgeTailscaleNodes(nodeList),
+  ]) {
+    const error = t.throws(generate)
+    t.true(error?.message.includes('interactive-tailnet'))
+    t.true(error?.message.includes('authKey'))
+  }
 })
 
 test('getSurgeNodeNames', (t) => {

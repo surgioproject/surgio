@@ -113,3 +113,42 @@ module.exports = {
 ```
 
 你可以在 [这里](/guide/custom-template.md#模板方法) 查看这篇文章中提到的所有模板方法的文档。
+
+## Tailscale 等 endpoint 节点
+
+sing-box 将 [Tailscale](https://sing-box.sagernet.org/configuration/endpoint/tailscale) 视为 endpoint，需要放入配置文件顶层的 `endpoints` 字段，而不是 `outbounds`。使用 `getSingboxEndpoints` 生成 endpoint 节点，并配合 `extendEndpoints` 与 `combineExtendFunctions` 一起填充：
+
+```js
+const {
+  combineExtendFunctions,
+  extendOutbounds,
+  extendEndpoints,
+} = require('surgio');
+
+module.exports = {
+  artifacts: [
+    {
+      name: 'singbox.json',
+      template: 'singbox',
+      templateType: 'json',
+      extendTemplate: combineExtendFunctions(
+        extendOutbounds(
+          ({ getSingboxNodes, getSingboxNodeNames, nodeList }) => [
+            {
+              type: 'selector',
+              tag: 'proxy',
+              // getSingboxNodeNames 同时包含 outbound 和 Tailscale endpoint 的 tag
+              outbounds: getSingboxNodeNames(nodeList),
+            },
+            ...getSingboxNodes(nodeList),
+          ],
+        ),
+        extendEndpoints(({ getSingboxEndpoints, nodeList }) =>
+          getSingboxEndpoints(nodeList),
+        ),
+      ),
+      provider: 'ss',
+    },
+  ]
+}
+```

@@ -1,31 +1,131 @@
 import test from 'ava'
+import sinon from 'sinon'
+import { transports } from '@surgio/logger'
 
 import { NodeTypeEnum } from '../../types'
 import { ERR_INVALID_FILTER } from '../../constant'
 import { getLoonNodeNames, getLoonNodes } from '../loon'
 
-test('getLoonNodes', (t) => {
-  //anytls://5af6f92a-08d6-46b2-a142-4fcacae7c5fd@hkzz.yuyan.vin:11001?security=tls&type=tcp&packetEncoding=none&allowInsecure=1&sni=www.apple.com&udp=1&insecure=1&ecn=true&test_url=http%3A%2F%2F1.0.0.1%2Fgenerate_204#%5BYuYan%5D%20%F0%9F%87%AD%F0%9F%87%B0%20%E9%A6%99%E6%B8%AFA%7CBGP%E4%BC%98%E5%8C%96
+test('getLoonNodes Hysteria2', (t) => {
+  t.is(
+    getLoonNodes([
+      {
+        type: NodeTypeEnum.Hysteria2,
+        nodeName: 'hysteria2',
+        hostname: 'example.com',
+        port: 9898,
+        password: 'pa"ssword',
+        sni: 'sni.example.com',
+        skipCertVerify: true,
+        tfo: true,
+        obfs: 'salamander',
+        obfsPassword: 'obfs"password',
+        udpRelay: true,
+        downloadBandwidth: 100,
+        uploadBandwidth: 50,
+        portHopping: '5000-6000',
+        portHoppingInterval: 10,
+        alpn: ['h3'],
+      },
+    ]),
+    'hysteria2 = Hysteria2,example.com,9898,"pa\\"ssword",sni=sni.example.com,skip-cert-verify=true,fast-open=true,salamander-password="obfs\\"password",udp=true',
+  )
+
+  t.is(
+    getLoonNodes([
+      {
+        type: NodeTypeEnum.Hysteria2,
+        nodeName: 'hysteria2 minimal',
+        hostname: 'example.com',
+        port: 443,
+        password: 'password',
+      },
+    ]),
+    'hysteria2 minimal = Hysteria2,example.com,443,"password"',
+  )
+})
+
+test('getLoonNodes AnyTLS', (t) => {
   t.is(
     getLoonNodes([
       {
         type: NodeTypeEnum.AnyTLS,
-        nodeName: '测试',
-        hostname: '1.1.1.1',
-        port: 443,
-        sni: 'sni',
+        nodeName: 'anytls',
+        hostname: 'example.com',
+        port: 8449,
+        sni: 'example.com',
         password: 'password',
-        udpRelay: false,
+        udpRelay: true,
         skipCertVerify: true,
+        blockQuic: 'on',
         idleSessionCheckInterval: 0,
         idleSessionTimeout: 0,
         minIdleSessions: 0,
         tfo: true,
       },
     ]),
-    //anytlsimac = AnyTLS,192.168.2.254,8443,"qwertyuiop",idle-session-check-interval=30,idle-session-timeout=30,min-idle-session=1,max-stream-count=1
-    '测试 = AnyTLS,1.1.1.1,443,"password",sni=sni,skip-cert-verify=true,idle-session-check-interval=0,idle-session-timeout=0,min-idle-session=0,fast-open=true',
+    'anytls = AnyTLS,example.com,8449,"password",sni=example.com,skip-cert-verify=true,udp=true,block-quic=true,fast-open=true',
   )
+  t.is(
+    getLoonNodes([
+      {
+        type: NodeTypeEnum.AnyTLS,
+        nodeName: 'anytls off',
+        hostname: 'example.com',
+        port: 8449,
+        password: 'password',
+        blockQuic: 'off',
+      },
+    ]),
+    'anytls off = AnyTLS,example.com,8449,"password",block-quic=false',
+  )
+  t.is(
+    getLoonNodes([
+      {
+        type: NodeTypeEnum.AnyTLS,
+        nodeName: 'anytls defaults',
+        hostname: 'example.com',
+        port: 8449,
+        password: 'password',
+      },
+    ]),
+    'anytls defaults = AnyTLS,example.com,8449,"password"',
+  )
+})
+
+test.serial('getLoonNodes AnyTLS omits automatic QUIC blocking', (t) => {
+  const log = sinon
+    .stub(transports.console, 'log')
+    .callsFake((info, callback) => {
+      t.is(info[Symbol.for('level')], 'warn')
+      t.regex(
+        info.message,
+        /Loon 不支持 AnyTLS 节点 anytls auto 的 blockQuic=auto/,
+      )
+      callback()
+    })
+
+  try {
+    t.is(
+      getLoonNodes([
+        {
+          type: NodeTypeEnum.AnyTLS,
+          nodeName: 'anytls auto',
+          hostname: 'example.com',
+          port: 8449,
+          password: 'password',
+          blockQuic: 'auto',
+        },
+      ]),
+      'anytls auto = AnyTLS,example.com,8449,"password"',
+    )
+    t.true(log.calledOnce)
+  } finally {
+    log.restore()
+  }
+})
+
+test('getLoonNodes', (t) => {
   t.is(
     getLoonNodes([
       {
@@ -309,7 +409,14 @@ test('getLoonNodeNames', (t) => {
         method: 'chacha20-ietf-poly1305',
         password: 'password',
       },
+      {
+        nodeName: 'Hysteria 2',
+        type: NodeTypeEnum.Hysteria2,
+        hostname: 'hysteria.example.com',
+        port: 443,
+        password: 'password',
+      },
     ]),
-    ['Test Node 1, Test Node 2'].join(', '),
+    ['Test Node 1, Test Node 2, Hysteria 2'].join(', '),
   )
 })

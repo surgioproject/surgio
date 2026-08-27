@@ -124,3 +124,6 @@ export const vlessFilter: NodeFilterType = (item) =>
 // istanbul ignore next
 export const anytlsFilter: NodeFilterType = (item) =>
   item.type === NodeTypeEnum.AnyTLS
+// istanbul ignore next
+export const tailscaleFilter: NodeFilterType = (item) =>
+  item.type === NodeTypeEnum.Tailscale

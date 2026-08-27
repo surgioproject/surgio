@@ -39,6 +39,7 @@ import {
   getSurfboardNodes,
   getSurgeNodeNames,
   getSurgeNodes,
+  getSurgeTailscaleNodes,
   getSurgeWireguardNodes,
   getUrl,
   getV2rayNNodes,
@@ -51,11 +52,12 @@ import {
   getNetworkConcurrency,
   getSingboxNodeNames,
   getSingboxNodes,
+  getSingboxEndpoints,
 } from '../utils'
 import { resolveDomain } from '../utils/dns'
 import { internalFilters, validateFilter } from '../filters'
 import { prependFlag, removeFlag } from '../utils/flag'
-import { ArtifactValidator } from '../validators'
+import { ArtifactValidator, MasqueNodeConfigValidator } from '../validators'
 
 import { loadLocalSnippet } from './template'
 import { render as renderJSON } from './json-template'
@@ -143,8 +145,10 @@ export class Artifact extends EventEmitter {
       getClashNodeNames,
       getSingboxNodes,
       getSingboxNodeNames,
+      getSingboxEndpoints,
       getSurgeNodes,
       getSurgeNodeNames,
+      getSurgeTailscaleNodes,
       getSurgeWireguardNodes,
       getSurfboardNodes,
       getSurfboardNodeNames,
@@ -376,7 +380,7 @@ export class Artifact extends EventEmitter {
     }
 
     nodeConfigList = (
-      await Bluebird.map(nodeConfigList, async (nodeConfig) => {
+      await Bluebird.map(nodeConfigList, async (nodeConfig, nodeIndex) => {
         let isValid = false
 
         if (nodeConfig.enable === false) {
@@ -470,10 +474,24 @@ export class Artifact extends EventEmitter {
             nodeConfig.underlyingProxy = provider.config.underlyingProxy
           }
 
+          if (nodeConfig.type === NodeTypeEnum.Masque) {
+            const result = MasqueNodeConfigValidator.safeParse(nodeConfig)
+
+            if (!result.success) {
+              throw new SurgioError('节点配置校验失败', {
+                providerName,
+                providerPath: filePath,
+                nodeIndex,
+                cause: result.error,
+              })
+            }
+          }
+
           // Check whether the hostname resolves in case of blocking clash's node heurestic
           if (
             config?.checkHostname &&
             'hostname' in nodeConfig &&
+            typeof nodeConfig.hostname === 'string' &&
             !isIp(nodeConfig.hostname)
           ) {
             try {
@@ -497,6 +515,7 @@ export class Artifact extends EventEmitter {
           if (
             config?.resolveHostname &&
             'hostname' in nodeConfig &&
+            typeof nodeConfig.hostname === 'string' &&
             !isIp(nodeConfig.hostname)
           ) {
             /* istanbul ignore next */

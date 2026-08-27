@@ -31,7 +31,10 @@ export const getClashNodes = function (
         return clashNode
       }
 
-      if (nodeConfig.tfo) {
+      if (
+        nodeConfig.tfo &&
+        ![NodeTypeEnum.Masque, NodeTypeEnum.Tailscale].includes(nodeConfig.type)
+      ) {
         clashNode.tfo = true
       }
 
@@ -328,7 +331,7 @@ function nodeListMapper(nodeConfig: PossibleNodeConfigType) {
 
     case NodeTypeEnum.Snell:
       // Istanbul ignore next
-      if (Number(nodeConfig.version) >= 4) {
+      if (Number(nodeConfig.version) >= 6) {
         logger.warn(
           `Clash 尚不支持 Snell v${nodeConfig.version}，节点 ${nodeConfig.nodeName} 会被省略。`,
         )
@@ -570,6 +573,184 @@ function nodeListMapper(nodeConfig: PossibleNodeConfigType) {
           : null),
       } as const
 
+    case NodeTypeEnum.Masque: {
+      const clashCore = clashConfig.clashCore ?? 'clash'
+
+      if (nodeConfig.authMode !== 'key-pair') {
+        logger.warn(
+          `Stash 和 Clash Meta 仅支持 key-pair 模式的 MASQUE 节点，节点 ${nodeConfig.nodeName} 会被省略`,
+        )
+        return null
+      }
+
+      if (!['stash', 'clash.meta'].includes(clashCore)) {
+        logger.warn(
+          `Clash 不支持 MASQUE 节点，节点 ${nodeConfig.nodeName} 会被省略`,
+        )
+        return null
+      }
+
+      if (clashCore === 'stash' && nodeConfig.network === 'h3-l4proxy') {
+        logger.warn(
+          `Stash 不支持 h3-l4proxy 模式的 MASQUE 节点，节点 ${nodeConfig.nodeName} 会被省略`,
+        )
+        return null
+      }
+
+      const sharedConfig = {
+        type: 'masque' as const,
+        name: nodeConfig.nodeName,
+        server: nodeConfig.hostname,
+        port: nodeConfig.port,
+        'private-key': nodeConfig.privateKey,
+        'public-key': nodeConfig.publicKey,
+        ...pickAndFormatKeys(nodeConfig, ['ip', 'ipv6', 'sni', 'mtu'], {
+          keyFormat: 'kebabCase',
+        }),
+        ...(nodeConfig.dnsServers ? { dns: nodeConfig.dnsServers } : null),
+      }
+
+      if (clashCore === 'stash') {
+        return {
+          ...sharedConfig,
+          ...(nodeConfig.network ? { network: nodeConfig.network } : null),
+          ...pickAndFormatKeys(nodeConfig, ['connectUri', 'keepalive'], {
+            keyFormat: 'kebabCase',
+          }),
+        } as const
+      }
+
+      return {
+        ...sharedConfig,
+        ...(nodeConfig.network
+          ? {
+              network:
+                nodeConfig.network === 'h3' ? 'quic' : nodeConfig.network,
+            }
+          : null),
+        ...(nodeConfig.udpRelay !== undefined
+          ? { udp: nodeConfig.udpRelay }
+          : null),
+        ...pickAndFormatKeys(
+          nodeConfig,
+          [
+            'remoteDnsResolve',
+            'congestionController',
+            'bbrProfile',
+            'handshakeTimeout',
+          ],
+          { keyFormat: 'kebabCase' },
+        ),
+      } as const
+    }
+
+    case NodeTypeEnum.TrustTunnel: {
+      const clashCore = clashConfig.clashCore ?? 'clash'
+
+      if (!['stash', 'clash.meta'].includes(clashCore)) {
+        logger.warn(
+          `Clash 不支持 TrustTunnel 节点，节点 ${nodeConfig.nodeName} 会被省略`,
+        )
+        return null
+      }
+
+      if (nodeConfig.shadowTls) {
+        logger.warn(
+          `Stash 和 Clash Meta 不支持 TrustTunnel 使用 Shadow TLS，节点 ${nodeConfig.nodeName} 会被省略`,
+        )
+        return null
+      }
+
+      if (
+        clashCore === 'clash.meta' &&
+        (nodeConfig.portHopping || nodeConfig.portHoppingInterval !== undefined)
+      ) {
+        logger.warn(
+          `Clash Meta 不支持 TrustTunnel 端口跳跃，节点 ${nodeConfig.nodeName} 会被省略`,
+        )
+        return null
+      }
+
+      if (
+        clashCore === 'stash' &&
+        nodeConfig.underlyingProxy &&
+        nodeConfig.interfaceName
+      ) {
+        logger.warn(
+          `Stash 的 TrustTunnel 节点不能同时配置 underlyingProxy 和 interfaceName，节点 ${nodeConfig.nodeName} 会被省略`,
+        )
+        return null
+      }
+
+      const sharedConfig = {
+        type: 'trusttunnel' as const,
+        name: nodeConfig.nodeName,
+        server: nodeConfig.hostname,
+        port: nodeConfig.port,
+        username: nodeConfig.username,
+        password: nodeConfig.password,
+        ...(nodeConfig.quic !== undefined ? { quic: nodeConfig.quic } : null),
+        ...(nodeConfig.sni ? { sni: nodeConfig.sni } : null),
+        ...(nodeConfig.alpn ? { alpn: nodeConfig.alpn } : null),
+        ...(nodeConfig.skipCertVerify !== undefined
+          ? { 'skip-cert-verify': nodeConfig.skipCertVerify }
+          : null),
+      }
+
+      if (clashCore === 'stash') {
+        return {
+          ...sharedConfig,
+          ...(nodeConfig.serverCertFingerprintSha256
+            ? {
+                'server-cert-fingerprint':
+                  nodeConfig.serverCertFingerprintSha256,
+              }
+            : null),
+          ...(nodeConfig.underlyingProxy
+            ? { 'dialer-proxy': nodeConfig.underlyingProxy }
+            : null),
+          ...(nodeConfig.interfaceName
+            ? { 'interface-name': nodeConfig.interfaceName }
+            : null),
+          ...(nodeConfig.quic && nodeConfig.portHopping
+            ? { ports: nodeConfig.portHopping.replaceAll(';', ',') }
+            : null),
+          ...(nodeConfig.quic && nodeConfig.portHoppingInterval !== undefined
+            ? { 'hop-interval': nodeConfig.portHoppingInterval }
+            : null),
+        } as const
+      }
+
+      return {
+        ...sharedConfig,
+        ...(nodeConfig.serverCertFingerprintSha256
+          ? { fingerprint: nodeConfig.serverCertFingerprintSha256 }
+          : null),
+        ...(nodeConfig.clientFingerprint
+          ? { 'client-fingerprint': nodeConfig.clientFingerprint }
+          : null),
+        ...(nodeConfig.udpRelay !== undefined
+          ? { udp: nodeConfig.udpRelay }
+          : null),
+        ...(nodeConfig.mptcp !== undefined
+          ? { mptcp: nodeConfig.mptcp }
+          : null),
+        ...pickAndFormatKeys(
+          nodeConfig,
+          [
+            'healthCheck',
+            'nameCertVerify',
+            'congestionController',
+            'bbrProfile',
+            'maxConnections',
+            'minStreams',
+            'maxStreams',
+          ],
+          { keyFormat: 'kebabCase' },
+        ),
+      } as const
+    }
+
     case NodeTypeEnum.Wireguard:
       // istanbul ignore next
       if (nodeConfig.peers.length > 1) {
@@ -603,6 +784,43 @@ function nodeListMapper(nodeConfig: PossibleNodeConfigType) {
             }
           : null),
       } as const
+
+    case NodeTypeEnum.Tailscale: {
+      if (!['stash', 'clash.meta'].includes(clashConfig.clashCore ?? 'clash')) {
+        logger.warn(
+          `Clash 不支持 Tailscale 节点，节点 ${nodeConfig.nodeName} 会被省略`,
+        )
+        return null
+      }
+
+      const sharedConfig = pickAndFormatKeys(
+        nodeConfig,
+        ['authKey', 'hostname', 'controlUrl', 'ephemeral', 'exitNode'],
+        { keyFormat: 'kebabCase' },
+      )
+
+      if (clashConfig.clashCore === 'stash') {
+        return {
+          type: 'tailscale',
+          name: nodeConfig.nodeName,
+          ...sharedConfig,
+        } as const
+      }
+
+      return {
+        type: 'tailscale',
+        name: nodeConfig.nodeName,
+        ...sharedConfig,
+        ...pickAndFormatKeys(
+          nodeConfig,
+          ['stateDir', 'acceptRoutes', 'exitNodeAllowLanAccess', 'routingMark'],
+          { keyFormat: 'kebabCase' },
+        ),
+        ...(nodeConfig.udpRelay !== undefined
+          ? { udp: nodeConfig.udpRelay }
+          : null),
+      } as const
+    }
 
     // istanbul ignore next
     default:

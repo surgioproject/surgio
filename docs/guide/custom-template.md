@@ -155,6 +155,7 @@ Surgio 内置多个节点名国别/地区过滤器。除非是火星文，Surgio
 - socks5Filter
 - tuicFilter
 - wireguardFilter
+- tailscaleFilter
 
 ### netflixFilter
 
@@ -231,6 +232,30 @@ Proxy = select, {{ getSurgeNodeNames(nodeList) }}
 
 :::tip 提示
 [Surge - WireGuard 官方文档](https://manual.nssurge.com/policy/wireguard.html)
+:::
+
+### getSurgeTailscaleNodes
+
+> <Badge text="v3.17.0" vertical="middle" />
+
+`getSurgeTailscaleNodes(nodeList, filter?)`
+
+Surge 的 Tailscale 节点由 `[Proxy]` 中的策略声明和独立的 `[Tailscale <section-name>]` 两部分组成。模板必须同时调用 `getSurgeNodes` 和 `getSurgeTailscaleNodes`；使用过滤器时应向两个方法传入同一个过滤器。
+
+```txt
+[Proxy]
+{{ getSurgeNodes(nodeList, customFilters.tailnet) }}
+
+[Proxy Group]
+Proxy = select, {{ getSurgeNodeNames(nodeList, customFilters.tailnet) }}
+
+{{ getSurgeTailscaleNodes(nodeList, customFilters.tailnet) }}
+```
+
+Tailscale 节点用于 Surge 时必须配置 `authKey`，否则模板生成会报错。
+
+:::tip 提示
+[Surge - Tailscale 官方文档](https://manual.nssurge.com/policy/tailscale.html)
 :::
 
 ### getSurgeNodeNames
@@ -342,13 +367,27 @@ getClashNodeNames(nodeList, netflixFilter, [], ['默认节点']);
 - `filter` 为可选参数
 :::
 
+### getSingboxEndpoints
+
+> <Badge text="v3.17.0" vertical="middle" />
+
+`getSingboxEndpoints(nodeList, filter?)`
+
+sing-box 将 Tailscale 等节点视为 [endpoint](https://sing-box.sagernet.org/configuration/endpoint/tailscale) 而非 outbound。该方法会返回一个包含 endpoint 信息的数组，需要放入配置文件的 `endpoints` 字段中（通常配合 `extendEndpoints` 使用）。
+
+:::tip 提示
+
+- `filter` 为可选参数
+- 目前仅支持 Tailscale 节点
+:::
+
 ### getSingboxNodeNames
 
 > <Badge text="v3.7.0" vertical="middle" />
 
 `getSingboxNodeNames(nodeList, filter?)`
 
-该方法会返回一个包含有节点名称的数组，用于编写 sing-box 规则。
+该方法会返回一个包含有节点名称的数组，用于编写 sing-box 规则。返回的名称同时包含 outbound 与 endpoint（如 Tailscale）节点，方便在 `selector`、`urltest` 中引用。
 
 :::tip 提示
 
@@ -368,10 +407,10 @@ getSingboxNodeNames(nodeList, netflixFilter);
 :::tip 提示
 
 - 第二个参数可选，可传入标准的过滤器或自定义的过滤器
-- 支持输出 Shadowsocks, Shadowsocksr, HTTPS, HTTP, Vmess, Trojan 节点
+- 支持输出 Shadowsocks, Shadowsocksr, HTTPS, HTTP, Vmess, Vless, Trojan, WireGuard, Hysteria 2, AnyTLS 节点
 :::
 
-生成符合 `[Proxy]` 规范的节点信息，使用时请参考 [文档](https://www.notion.so/1-9809ce5acf524d868affee8dd5fc0a6e)。
+生成符合 `[Proxy]` 规范的节点信息，使用时请参考 [Loon 节点文档](https://nsloon.app/docs/Node/)。
 
 示例：
 

@@ -25,6 +25,21 @@ export const getSingboxNodes = function (
     .filter((item): item is Record<string, any> => checkNotNullish(item))
 }
 
+/**
+ * sing-box 将 Tailscale 等节点视为 endpoint 而非 outbound，需要单独放入配置的
+ * `endpoints` 字段中。
+ *
+ * @see https://sing-box.sagernet.org/configuration/endpoint/tailscale
+ */
+export const getSingboxEndpoints = function (
+  list: ReadonlyArray<PossibleNodeConfigType>,
+  filter?: NodeFilterType | SortedNodeFilterType,
+) {
+  return applyFilter(list, filter)
+    .flatMap(endpointMapper)
+    .filter((item): item is Record<string, any> => checkNotNullish(item))
+}
+
 export const getSingboxNodeNames = function (
   list: ReadonlyArray<PossibleNodeConfigType>,
   filter?: NodeFilterType | SortedNodeFilterType,
@@ -34,7 +49,10 @@ export const getSingboxNodeNames = function (
     throw new Error(ERR_INVALID_FILTER)
   }
 
-  return getSingboxNodes(list, filter).map((item) => item.tag)
+  return [
+    ...getSingboxNodes(list, filter),
+    ...getSingboxEndpoints(list, filter),
+  ].map((item) => item.tag)
 }
 
 const typeMap = {
@@ -55,6 +73,10 @@ const typeMap = {
  * @see https://sing-box.sagernet.org/configuration/outbound/
  */
 function nodeListMapper(nodeConfig: PossibleNodeConfigType) {
+  // Tailscale 以 endpoint 的形式生成，由 getSingboxEndpoints 处理，不应出现在 outbounds 中
+  if (nodeConfig.type === NodeTypeEnum.Tailscale) {
+    return null
+  }
   if (nodeConfig.type in typeMap === false) {
     logger.warn(
       `不支持为 sing-box 生成 ${nodeConfig.type} 的节点，节点 ${nodeConfig.nodeName} 会被忽略`,
@@ -403,6 +425,35 @@ function nodeListMapper(nodeConfig: PossibleNodeConfigType) {
       },
     }),
   ]
+}
+
+/**
+ * @see https://sing-box.sagernet.org/configuration/endpoint/tailscale
+ */
+function endpointMapper(nodeConfig: PossibleNodeConfigType) {
+  if (nodeConfig.type !== NodeTypeEnum.Tailscale) {
+    return null
+  }
+
+  const endpoint: Record<string, any> = {
+    type: 'tailscale',
+    tag: nodeConfig.nodeName,
+    auth_key: nodeConfig.authKey,
+    control_url: nodeConfig.controlUrl,
+    ephemeral: nodeConfig.ephemeral,
+    hostname: nodeConfig.hostname,
+    accept_routes: nodeConfig.acceptRoutes,
+    exit_node: nodeConfig.exitNode,
+    exit_node_allow_lan_access: nodeConfig.exitNodeAllowLanAccess,
+    state_directory: nodeConfig.stateDir,
+    routing_mark: nodeConfig.routingMark,
+  }
+
+  if (nodeConfig.underlyingProxy) {
+    endpoint.detour = nodeConfig.underlyingProxy
+  }
+
+  return prune(endpoint)
 }
 
 function normalizeHeaders(headers: Record<string, string> | undefined) {
