@@ -46,14 +46,6 @@ export const QuantumultXConfigValidator = z.object({
   vmessAEAD: z.oboolean(),
 })
 
-export const UploadR2ConfigValidator = z.object({
-  accountId: z.ostring(),
-  endpoint: z.ostring(),
-  bucket: z.ostring(),
-  accessKeyId: z.ostring(),
-  secretAccessKey: z.ostring(),
-})
-
 export const SurgioConfigValidator = z.object({
   artifacts: z.array(ArtifactValidator),
   remoteSnippets: z.array(RemoteSnippetValidator).optional(),
@@ -65,8 +57,10 @@ export const SurgioConfigValidator = z.object({
       endpoint: z.ostring(),
       bucket: z.ostring(),
       accessKeyId: z.ostring(),
+      secretAccessKey: z.ostring(),
+      forcePathStyle: z.oboolean(),
+      /** @deprecated 阿里云 OSS 的旧字段名，等价于 secretAccessKey */
       accessKeySecret: z.ostring(),
-      r2: UploadR2ConfigValidator.optional(),
     })
     .optional(),
   binPath: z
