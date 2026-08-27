@@ -1,14 +1,37 @@
 import test from 'ava'
 
-import { OssUploadCredentials, resolveUploadCredentials } from '../upload'
+import { describeUploadTarget, resolveUploadCredentials } from '../upload'
 
 test('throws when nothing is configured', (t) => {
   t.throws(() => resolveUploadCredentials(undefined, {}), {
-    message: /阿里云 OSS|Cloudflare R2/,
+    message: /accessKeyId/,
   })
 })
 
-test('resolves OSS credentials from config', (t) => {
+test('resolves generic S3 credentials from config', (t) => {
+  const credentials = resolveUploadCredentials(
+    {
+      endpoint: 'https://s3.example.com',
+      bucket: 'my-bucket',
+      accessKeyId: 'key',
+      secretAccessKey: 'secret',
+    },
+    {},
+  )
+
+  t.deepEqual(credentials, {
+    prefix: '/',
+    keyPrefix: '',
+    bucket: 'my-bucket',
+    region: 'auto',
+    endpoint: 'https://s3.example.com',
+    accessKeyId: 'key',
+    secretAccessKey: 'secret',
+    forcePathStyle: false,
+  })
+})
+
+test('derives the Aliyun OSS endpoint from a legacy OSS config', (t) => {
   const credentials = resolveUploadCredentials(
     {
       bucket: 'my-bucket',
@@ -19,44 +42,88 @@ test('resolves OSS credentials from config', (t) => {
     {},
   )
 
-  t.deepEqual(credentials, {
-    type: 'oss',
-    prefix: '/',
-    bucket: 'my-bucket',
-    region: 'oss-cn-hangzhou',
-    endpoint: undefined,
-    accessKeyId: 'oss-key',
-    accessKeySecret: 'oss-secret',
-  })
+  t.is(credentials.endpoint, 'https://oss-cn-hangzhou.aliyuncs.com')
+  t.is(credentials.region, 'oss-cn-hangzhou')
+  t.is(credentials.secretAccessKey, 'oss-secret')
+  t.is(describeUploadTarget(credentials), '阿里云 OSS')
 })
 
-test('resolves OSS credentials from env vars and env overrides config', (t) => {
+test('keeps a real AWS region without an endpoint', (t) => {
   const credentials = resolveUploadCredentials(
     {
       bucket: 'my-bucket',
+      region: 'us-east-1',
+      accessKeyId: 'key',
+      secretAccessKey: 'secret',
+    },
+    {},
+  )
+
+  t.is(credentials.region, 'us-east-1')
+  t.is(credentials.endpoint, undefined)
+  t.is(describeUploadTarget(credentials), 'Amazon S3')
+})
+
+test('env vars override the config, and OSS_* still works', (t) => {
+  const credentials = resolveUploadCredentials(
+    {
+      endpoint: 'https://config.example.com',
+      bucket: 'config-bucket',
       accessKeyId: 'config-key',
       accessKeySecret: 'config-secret',
     },
     {
+      S3_ENDPOINT: 'https://env.example.com',
+      S3_BUCKET: 'env-bucket',
       OSS_ACCESS_KEY_ID: 'env-key',
       OSS_ACCESS_KEY_SECRET: 'env-secret',
     },
   )
 
-  t.is(credentials.type, 'oss')
-
-  const oss = credentials as OssUploadCredentials
-  t.is(oss.accessKeyId, 'env-key')
-  t.is(oss.accessKeySecret, 'env-secret')
+  t.is(credentials.endpoint, 'https://env.example.com')
+  t.is(credentials.bucket, 'env-bucket')
+  t.is(credentials.accessKeyId, 'env-key')
+  t.is(credentials.secretAccessKey, 'env-secret')
 })
 
-test('throws when OSS keys are present but bucket is missing', (t) => {
+test('S3_* takes precedence over OSS_*', (t) => {
+  const credentials = resolveUploadCredentials(
+    { endpoint: 'https://s3.example.com', bucket: 'my-bucket' },
+    {
+      S3_ACCESS_KEY_ID: 's3-key',
+      S3_SECRET_ACCESS_KEY: 's3-secret',
+      OSS_ACCESS_KEY_ID: 'oss-key',
+      OSS_ACCESS_KEY_SECRET: 'oss-secret',
+    },
+  )
+
+  t.is(credentials.accessKeyId, 's3-key')
+  t.is(credentials.secretAccessKey, 's3-secret')
+})
+
+test('secretAccessKey wins over the deprecated accessKeySecret', (t) => {
+  const credentials = resolveUploadCredentials(
+    {
+      endpoint: 'https://s3.example.com',
+      bucket: 'my-bucket',
+      accessKeyId: 'key',
+      secretAccessKey: 'new-secret',
+      accessKeySecret: 'legacy-secret',
+    },
+    {},
+  )
+
+  t.is(credentials.secretAccessKey, 'new-secret')
+})
+
+test('throws when keys are present but bucket is missing', (t) => {
   t.throws(
     () =>
       resolveUploadCredentials(
         {
-          accessKeyId: 'oss-key',
-          accessKeySecret: 'oss-secret',
+          endpoint: 'https://s3.example.com',
+          accessKeyId: 'key',
+          secretAccessKey: 'secret',
         },
         {},
       ),
@@ -64,7 +131,66 @@ test('throws when OSS keys are present but bucket is missing', (t) => {
   )
 })
 
-test('falls back to Cloudflare R2 when OSS keys are not configured', (t) => {
+test('throws when neither endpoint nor region is configured', (t) => {
+  t.throws(
+    () =>
+      resolveUploadCredentials(
+        {
+          bucket: 'my-bucket',
+          accessKeyId: 'key',
+          secretAccessKey: 'secret',
+        },
+        {},
+      ),
+    { message: /endpoint/ },
+  )
+})
+
+test('reads forcePathStyle from the config and the env', (t) => {
+  const base = {
+    endpoint: 'https://minio.example.com',
+    bucket: 'my-bucket',
+    accessKeyId: 'key',
+    secretAccessKey: 'secret',
+  }
+
+  t.true(
+    resolveUploadCredentials({ ...base, forcePathStyle: true }, {})
+      .forcePathStyle,
+  )
+  t.true(
+    resolveUploadCredentials(base, { S3_FORCE_PATH_STYLE: 'true' })
+      .forcePathStyle,
+  )
+  t.false(
+    resolveUploadCredentials(
+      { ...base, forcePathStyle: true },
+      { S3_FORCE_PATH_STYLE: 'false' },
+    ).forcePathStyle,
+  )
+})
+
+test('normalizes the prefix into an object key prefix', (t) => {
+  const base = {
+    endpoint: 'https://s3.example.com',
+    bucket: 'my-bucket',
+    accessKeyId: 'key',
+    secretAccessKey: 'secret',
+  }
+
+  t.is(
+    resolveUploadCredentials({ ...base, prefix: 'sub/' }, {}).keyPrefix,
+    'sub/',
+  )
+  t.is(
+    resolveUploadCredentials({ ...base, prefix: '/sub/' }, {}).keyPrefix,
+    'sub/',
+  )
+  t.is(resolveUploadCredentials({ ...base, prefix: '/' }, {}).keyPrefix, '')
+  t.is(resolveUploadCredentials(base, {}).prefix, '/')
+})
+
+test('still understands the deprecated r2 shorthand', (t) => {
   const credentials = resolveUploadCredentials(
     {
       r2: {
@@ -78,16 +204,19 @@ test('falls back to Cloudflare R2 when OSS keys are not configured', (t) => {
   )
 
   t.deepEqual(credentials, {
-    type: 'r2',
     prefix: '/',
+    keyPrefix: '',
     bucket: 'r2-bucket',
+    region: 'auto',
     endpoint: 'https://account-id.r2.cloudflarestorage.com',
     accessKeyId: 'r2-key',
     secretAccessKey: 'r2-secret',
+    forcePathStyle: false,
   })
+  t.is(describeUploadTarget(credentials), 'Cloudflare R2')
 })
 
-test('resolves Cloudflare R2 credentials purely from env vars', (t) => {
+test('still understands the deprecated R2_* env vars', (t) => {
   const credentials = resolveUploadCredentials(undefined, {
     R2_ACCOUNT_ID: 'account-id',
     R2_BUCKET: 'r2-bucket',
@@ -95,34 +224,11 @@ test('resolves Cloudflare R2 credentials purely from env vars', (t) => {
     R2_SECRET_ACCESS_KEY: 'r2-secret',
   })
 
-  t.deepEqual(credentials, {
-    type: 'r2',
-    prefix: '/',
-    bucket: 'r2-bucket',
-    endpoint: 'https://account-id.r2.cloudflarestorage.com',
-    accessKeyId: 'r2-key',
-    secretAccessKey: 'r2-secret',
-  })
+  t.is(credentials.endpoint, 'https://account-id.r2.cloudflarestorage.com')
+  t.is(credentials.bucket, 'r2-bucket')
 })
 
-test('allows overriding the R2 endpoint explicitly', (t) => {
-  const credentials = resolveUploadCredentials(
-    {
-      r2: {
-        endpoint: 'https://custom.example.com',
-        bucket: 'r2-bucket',
-        accessKeyId: 'r2-key',
-        secretAccessKey: 'r2-secret',
-      },
-    },
-    {},
-  )
-
-  t.is(credentials.type, 'r2')
-  t.is(credentials.endpoint, 'https://custom.example.com')
-})
-
-test('throws when R2 keys are present but accountId/endpoint is missing', (t) => {
+test('throws when the r2 shorthand has no accountId or endpoint', (t) => {
   t.throws(
     () =>
       resolveUploadCredentials(
@@ -139,29 +245,13 @@ test('throws when R2 keys are present but accountId/endpoint is missing', (t) =>
   )
 })
 
-test('throws when R2 keys are present but bucket is missing', (t) => {
-  t.throws(
-    () =>
-      resolveUploadCredentials(
-        {
-          r2: {
-            accountId: 'account-id',
-            accessKeyId: 'r2-key',
-            secretAccessKey: 'r2-secret',
-          },
-        },
-        {},
-      ),
-    { message: /bucket/ },
-  )
-})
-
-test('prefers OSS credentials when both OSS and R2 are configured', (t) => {
+test('prefers the generic config over the r2 shorthand', (t) => {
   const credentials = resolveUploadCredentials(
     {
-      bucket: 'oss-bucket',
-      accessKeyId: 'oss-key',
-      accessKeySecret: 'oss-secret',
+      endpoint: 'https://s3.example.com',
+      bucket: 'my-bucket',
+      accessKeyId: 'key',
+      secretAccessKey: 'secret',
       r2: {
         accountId: 'account-id',
         bucket: 'r2-bucket',
@@ -172,22 +262,6 @@ test('prefers OSS credentials when both OSS and R2 are configured', (t) => {
     {},
   )
 
-  t.is(credentials.type, 'oss')
-})
-
-test('respects custom prefix', (t) => {
-  const credentials = resolveUploadCredentials(
-    {
-      prefix: 'sub/',
-      r2: {
-        accountId: 'account-id',
-        bucket: 'r2-bucket',
-        accessKeyId: 'r2-key',
-        secretAccessKey: 'r2-secret',
-      },
-    },
-    {},
-  )
-
-  t.is(credentials.prefix, 'sub/')
+  t.is(credentials.accessKeyId, 'key')
+  t.is(credentials.bucket, 'my-bucket')
 })

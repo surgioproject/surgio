@@ -46,6 +46,9 @@ export const QuantumultXConfigValidator = z.object({
   vmessAEAD: z.oboolean(),
 })
 
+/**
+ * @deprecated Cloudflare R2 也是 S3 兼容存储，请直接使用 upload 下的通用字段。
+ */
 export const UploadR2ConfigValidator = z.object({
   accountId: z.ostring(),
   endpoint: z.ostring(),
@@ -65,7 +68,11 @@ export const SurgioConfigValidator = z.object({
       endpoint: z.ostring(),
       bucket: z.ostring(),
       accessKeyId: z.ostring(),
+      secretAccessKey: z.ostring(),
+      forcePathStyle: z.oboolean(),
+      /** @deprecated 阿里云 OSS 的旧字段名，等价于 secretAccessKey */
       accessKeySecret: z.ostring(),
+      /** @deprecated 请改用 upload 下的通用字段 */
       r2: UploadR2ConfigValidator.optional(),
     })
     .optional(),

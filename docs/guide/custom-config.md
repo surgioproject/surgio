@@ -106,11 +106,30 @@ module.exports = {
 - 类型：`object`
 - 默认值：`undefined`
 
-上传规则文件至对象存储，支持阿里云 OSS 和 Cloudflare R2：
+上传规则文件至对象存储。`surgio upload` 统一通过 S3 兼容 API 上传，因此任何提供 S3 兼容接口的对象存储都可以使用，例如 Amazon S3、阿里云 OSS、Cloudflare R2、腾讯云 COS、MinIO 等。
 
-- 若配置了（或通过环境变量提供了）阿里云 OSS 的 `accessKeyId` 和 `accessKeySecret`，`surgio upload` 会优先上传至阿里云 OSS
-- 否则，若配置了（或通过环境变量提供了）Cloudflare R2 的 `accessKeyId` 和 `secretAccessKey`，会改为上传至 Cloudflare R2
-- 若两者都未配置，`surgio upload` 会报错提示缺少凭证
+最简配置只需要 endpoint、bucket 和一对密钥：
+
+```js
+module.exports = {
+  upload: {
+    endpoint: 'https://<accountId>.r2.cloudflarestorage.com',
+    bucket: 'my-bucket',
+    accessKeyId: '...',
+    secretAccessKey: '...',
+  },
+}
+```
+
+常见服务商的 endpoint：
+
+| 服务商 | endpoint | 备注 |
+| --- | --- | --- |
+| 阿里云 OSS | `https://oss-cn-hangzhou.aliyuncs.com` | 也可以只填 `region: 'oss-cn-hangzhou'`，Surgio 会自动推导 endpoint |
+| Cloudflare R2 | `https://<accountId>.r2.cloudflarestorage.com` | 在 R2 控制台的「S3 API」中可以找到 |
+| Amazon S3 | 可以省略 | 改为填写 `region`，如 `us-east-1` |
+| 腾讯云 COS | `https://cos.ap-guangzhou.myqcloud.com` | |
+| MinIO 等自建服务 | 自建地址 | 通常还需要 `forcePathStyle: true` |
 
 :::warning 注意
 - 若删除了某个 Artifact，该规则文件会从对象存储中删除
@@ -123,90 +142,73 @@ module.exports = {
 - 类型：`string`
 - 默认值：`/`
 
-默认保存至根目录，可以修改子目录名，以 / 结尾。该配置对阿里云 OSS 和 Cloudflare R2 均生效。
+默认保存至根目录，可以修改子目录名，以 / 结尾。
 
-### 阿里云 OSS
+### upload.endpoint
+
+- 类型：`string`
+- 默认值：`undefined`
+- <Badge text="必须" vertical="middle" />
+
+对象存储的 S3 兼容 Endpoint，也可以通过环境变量 `S3_ENDPOINT` 提供。
+
+使用 Amazon S3 时可以省略，改为填写 `upload.region`；填写了阿里云 OSS 的 `upload.region`（形如 `oss-cn-hangzhou`）时也可以省略，Surgio 会推导出 `https://<region>.aliyuncs.com`。
+
+### upload.region
+
+- 类型：`string`
+- 默认值：`auto`
+
+签名所用的 region，也可以通过环境变量 `S3_REGION` 提供。大部分 S3 兼容服务并不校验它，保持默认即可；使用 Amazon S3 时请填写真实的 region。
 
 ### upload.bucket
 
 - 类型：`string`
 - 默认值：`undefined`
+- <Badge text="必须" vertical="middle" />
 
-使用阿里云 OSS 时为 <Badge text="必须" vertical="middle" />。
-
-### upload.region
-
-- 类型：`string`
-- 默认值：`oss-cn-hangzhou`
+也可以通过环境变量 `S3_BUCKET` 提供。
 
 ### upload.accessKeyId
 
 - 类型：`string`
 - 默认值：`undefined`
+- <Badge text="必须" vertical="middle" />
 
-使用阿里云 OSS 时为 <Badge text="必须" vertical="middle" />，也可以通过环境变量 `OSS_ACCESS_KEY_ID` 提供。
-
-:::warning 注意
-请不要将该字段上传至公共仓库。
-:::
-
-### upload.accessKeySecret
-
-- 类型：`string`
-- 默认值：`undefined`
-
-使用阿里云 OSS 时为 <Badge text="必须" vertical="middle" />，也可以通过环境变量 `OSS_ACCESS_KEY_SECRET` 提供。
+也可以通过环境变量 `S3_ACCESS_KEY_ID` 提供。
 
 :::warning 注意
 请不要将该字段上传至公共仓库。
 :::
 
-### Cloudflare R2
-
-只要不配置（或不提供环境变量）阿里云 OSS 的 `accessKeyId`/`accessKeySecret`，并按下方配置好 Cloudflare R2 的凭证，`surgio upload` 即会上传到 Cloudflare R2。
-
-### upload.r2.accountId
+### upload.secretAccessKey
 
 - 类型：`string`
 - 默认值：`undefined`
+- <Badge text="必须" vertical="middle" />
 
-Cloudflare 账户 ID，用于拼接默认的 R2 Endpoint（`https://<accountId>.r2.cloudflarestorage.com`）。也可以通过环境变量 `R2_ACCOUNT_ID` 提供。若已配置 `upload.r2.endpoint`（或环境变量 `R2_ENDPOINT`），可省略此项。
-
-### upload.r2.bucket
-
-- 类型：`string`
-- 默认值：`undefined`
-
-使用 Cloudflare R2 时为 <Badge text="必须" vertical="middle" />，也可以通过环境变量 `R2_BUCKET` 提供。
-
-### upload.r2.endpoint
-
-- 类型：`string`
-- 默认值：`https://<accountId>.r2.cloudflarestorage.com`
-
-自定义 R2 的 S3 兼容 Endpoint（例如使用了特定区域的 Jurisdiction Endpoint 时）。也可以通过环境变量 `R2_ENDPOINT` 提供。
-
-### upload.r2.accessKeyId
-
-- 类型：`string`
-- 默认值：`undefined`
-
-使用 Cloudflare R2 时为 <Badge text="必须" vertical="middle" />，也可以通过环境变量 `R2_ACCESS_KEY_ID` 提供。
+也可以通过环境变量 `S3_SECRET_ACCESS_KEY` 提供。
 
 :::warning 注意
 请不要将该字段上传至公共仓库。
 :::
 
-### upload.r2.secretAccessKey
+### upload.forcePathStyle
 
-- 类型：`string`
-- 默认值：`undefined`
+- 类型：`boolean`
+- 默认值：`false`
 
-使用 Cloudflare R2 时为 <Badge text="必须" vertical="middle" />，也可以通过环境变量 `R2_SECRET_ACCESS_KEY` 提供。
+是否使用 path-style 寻址（`https://endpoint/bucket/key`）。MinIO 等自建服务通常需要开启。也可以通过环境变量 `S3_FORCE_PATH_STYLE` 提供。
 
-:::warning 注意
-请不要将该字段上传至公共仓库。
-:::
+### 兼容旧版配置
+
+以下写法仍然有效，但不建议在新配置中使用：
+
+- `upload.accessKeySecret`：等价于 `upload.secretAccessKey`
+- 环境变量 `OSS_ACCESS_KEY_ID`、`OSS_ACCESS_KEY_SECRET`：等价于 `S3_ACCESS_KEY_ID`、`S3_SECRET_ACCESS_KEY`
+- `upload.r2.accountId`、`upload.r2.endpoint`、`upload.r2.bucket`、`upload.r2.accessKeyId`、`upload.r2.secretAccessKey`，以及对应的环境变量 `R2_ACCOUNT_ID`、`R2_ENDPOINT`、`R2_BUCKET`、`R2_ACCESS_KEY_ID`、`R2_SECRET_ACCESS_KEY`：等价于 `upload` 下的同名通用字段，其中 `accountId` 会被拼接成 `https://<accountId>.r2.cloudflarestorage.com`
+
+同时配置了通用字段和 `upload.r2` 时，以通用字段为准。
 
 ## binPath
 
