@@ -190,78 +190,30 @@ test('normalizes the prefix into an object key prefix', (t) => {
   t.is(resolveUploadCredentials(base, {}).prefix, '/')
 })
 
-test('still understands the deprecated r2 shorthand', (t) => {
-  const credentials = resolveUploadCredentials(
-    {
-      r2: {
-        accountId: 'account-id',
-        bucket: 'r2-bucket',
-        accessKeyId: 'r2-key',
-        secretAccessKey: 'r2-secret',
-      },
-    },
-    {},
-  )
-
-  t.deepEqual(credentials, {
-    prefix: '/',
-    keyPrefix: '',
-    bucket: 'r2-bucket',
-    region: 'auto',
-    endpoint: 'https://account-id.r2.cloudflarestorage.com',
-    accessKeyId: 'r2-key',
-    secretAccessKey: 'r2-secret',
-    forcePathStyle: false,
-  })
-  t.is(describeUploadTarget(credentials), 'Cloudflare R2')
-})
-
-test('still understands the deprecated R2_* env vars', (t) => {
-  const credentials = resolveUploadCredentials(undefined, {
-    R2_ACCOUNT_ID: 'account-id',
-    R2_BUCKET: 'r2-bucket',
-    R2_ACCESS_KEY_ID: 'r2-key',
-    R2_SECRET_ACCESS_KEY: 'r2-secret',
-  })
-
-  t.is(credentials.endpoint, 'https://account-id.r2.cloudflarestorage.com')
-  t.is(credentials.bucket, 'r2-bucket')
-})
-
-test('throws when the r2 shorthand has no accountId or endpoint', (t) => {
+test('ignores R2_* env vars', (t) => {
   t.throws(
     () =>
-      resolveUploadCredentials(
-        {
-          r2: {
-            bucket: 'r2-bucket',
-            accessKeyId: 'r2-key',
-            secretAccessKey: 'r2-secret',
-          },
-        },
-        {},
-      ),
-    { message: /accountId|endpoint/ },
+      resolveUploadCredentials(undefined, {
+        R2_ACCOUNT_ID: 'account-id',
+        R2_BUCKET: 'r2-bucket',
+        R2_ACCESS_KEY_ID: 'r2-key',
+        R2_SECRET_ACCESS_KEY: 'r2-secret',
+      }),
+    { message: /accessKeyId/ },
   )
 })
 
-test('prefers the generic config over the r2 shorthand', (t) => {
+test('labels a Cloudflare R2 endpoint configured the generic way', (t) => {
   const credentials = resolveUploadCredentials(
     {
-      endpoint: 'https://s3.example.com',
-      bucket: 'my-bucket',
+      endpoint: 'https://account-id.r2.cloudflarestorage.com',
+      bucket: 'r2-bucket',
       accessKeyId: 'key',
       secretAccessKey: 'secret',
-      r2: {
-        accountId: 'account-id',
-        bucket: 'r2-bucket',
-        accessKeyId: 'r2-key',
-        secretAccessKey: 'r2-secret',
-      },
     },
     {},
   )
 
-  t.is(credentials.accessKeyId, 'key')
-  t.is(credentials.bucket, 'my-bucket')
+  t.is(credentials.region, 'auto')
+  t.is(describeUploadTarget(credentials), 'Cloudflare R2')
 })

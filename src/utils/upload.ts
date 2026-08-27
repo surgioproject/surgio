@@ -13,21 +13,6 @@ export interface S3UploadCredentials {
   readonly forcePathStyle: boolean
 }
 
-interface CredentialCandidate {
-  readonly accessKeyId?: string
-  readonly secretAccessKey?: string
-  readonly bucket?: string
-  readonly region?: string
-  readonly endpoint?: string
-  /** 该来源缺少 endpoint 时的报错提示 */
-  readonly endpointHint: string
-}
-
-type ResolvedCandidate = CredentialCandidate & {
-  readonly accessKeyId: string
-  readonly secretAccessKey: string
-}
-
 /** 阿里云 OSS 的 region，形如 oss-cn-hangzhou、vpc100-oss-cn-hangzhou */
 const ALIYUN_OSS_REGION = /^(vpc100-)?oss-/
 
@@ -45,99 +30,49 @@ const isTruthy = (value: string | undefined): boolean | undefined => {
 }
 
 /**
- * 通用的 S3 配置来源，同时兼容上游遗留的阿里云 OSS 字段：
- * accessKeySecret 等价于 secretAccessKey，只填 region 时按 ali-oss 的规则推导 endpoint。
- */
-const resolveS3Candidate = (
-  uploadConfig: CommandConfig['upload'],
-  env: NodeJS.ProcessEnv,
-): CredentialCandidate => {
-  const region = env.S3_REGION ?? uploadConfig?.region
-  const endpoint =
-    env.S3_ENDPOINT ??
-    uploadConfig?.endpoint ??
-    (region && ALIYUN_OSS_REGION.test(region)
-      ? `https://${region}.aliyuncs.com`
-      : undefined)
-
-  return {
-    accessKeyId:
-      env.S3_ACCESS_KEY_ID ??
-      env.OSS_ACCESS_KEY_ID ??
-      uploadConfig?.accessKeyId,
-    secretAccessKey:
-      env.S3_SECRET_ACCESS_KEY ??
-      env.OSS_ACCESS_KEY_SECRET ??
-      uploadConfig?.secretAccessKey ??
-      uploadConfig?.accessKeySecret,
-    bucket: env.S3_BUCKET ?? uploadConfig?.bucket,
-    region,
-    endpoint,
-    endpointHint:
-      '请配置对象存储的 upload.endpoint，' +
-      '或通过环境变量 S3_ENDPOINT 提供；使用 Amazon S3 时也可以只配置 upload.region',
-  }
-}
-
-/**
- * Cloudflare R2 的简写来源，只是替用户把 accountId 拼成 endpoint。
- * 保留它是为了兼容已有配置，新配置直接写通用的 upload.endpoint 即可。
- */
-const resolveR2Candidate = (
-  uploadConfig: CommandConfig['upload'],
-  env: NodeJS.ProcessEnv,
-): CredentialCandidate => {
-  const r2Config = uploadConfig?.r2
-  const accountId = env.R2_ACCOUNT_ID ?? r2Config?.accountId
-
-  return {
-    accessKeyId: env.R2_ACCESS_KEY_ID ?? r2Config?.accessKeyId,
-    secretAccessKey: env.R2_SECRET_ACCESS_KEY ?? r2Config?.secretAccessKey,
-    bucket:
-      env.R2_BUCKET ??
-      r2Config?.bucket ??
-      env.S3_BUCKET ??
-      uploadConfig?.bucket,
-    region: DEFAULT_REGION,
-    endpoint:
-      env.R2_ENDPOINT ??
-      r2Config?.endpoint ??
-      (accountId ? `https://${accountId}.r2.cloudflarestorage.com` : undefined),
-    endpointHint: '请配置 Cloudflare R2 的 accountId 或 endpoint',
-  }
-}
-
-/**
  * 解析上传凭证。所有对象存储都通过 S3 兼容 API 上传，
- * 因此这里只需要把各种配置来源归一成一份 S3 凭证。
+ * 因此这里只需要把配置归一成一份 S3 凭证。
+ *
+ * 同时兼容阿里云 OSS 的旧字段：accessKeySecret 等价于 secretAccessKey，
+ * OSS_* 环境变量等价于 S3_*，只填 region 时按 ali-oss 的规则推导 endpoint。
  */
 export const resolveUploadCredentials = (
   uploadConfig: CommandConfig['upload'],
   env: NodeJS.ProcessEnv = process.env,
 ): S3UploadCredentials => {
-  const candidates = [
-    resolveS3Candidate(uploadConfig, env),
-    resolveR2Candidate(uploadConfig, env),
-  ]
-  const candidate = candidates.find(
-    (item): item is ResolvedCandidate =>
-      Boolean(item.accessKeyId) && Boolean(item.secretAccessKey),
-  )
+  const accessKeyId =
+    env.S3_ACCESS_KEY_ID ?? env.OSS_ACCESS_KEY_ID ?? uploadConfig?.accessKeyId
+  const secretAccessKey =
+    env.S3_SECRET_ACCESS_KEY ??
+    env.OSS_ACCESS_KEY_SECRET ??
+    uploadConfig?.secretAccessKey ??
+    uploadConfig?.accessKeySecret
 
-  if (!candidate) {
+  if (!accessKeyId || !secretAccessKey) {
     throw new Error(
       '请在配置文件中配置对象存储的 accessKeyId 和 secretAccessKey，' +
         '也可以通过环境变量 S3_ACCESS_KEY_ID / S3_SECRET_ACCESS_KEY 提供',
     )
   }
 
-  const region = candidate.region || DEFAULT_REGION
+  const region = env.S3_REGION || uploadConfig?.region || DEFAULT_REGION
+  const endpoint =
+    env.S3_ENDPOINT ??
+    uploadConfig?.endpoint ??
+    (ALIYUN_OSS_REGION.test(region)
+      ? `https://${region}.aliyuncs.com`
+      : undefined)
 
-  if (!candidate.endpoint && region === DEFAULT_REGION) {
-    throw new Error(candidate.endpointHint)
+  if (!endpoint && region === DEFAULT_REGION) {
+    throw new Error(
+      '请在配置文件中配置对象存储的 endpoint，' +
+        '也可以通过环境变量 S3_ENDPOINT 提供；使用 Amazon S3 时也可以只配置 region',
+    )
   }
 
-  if (!candidate.bucket) {
+  const bucket = env.S3_BUCKET ?? uploadConfig?.bucket
+
+  if (!bucket) {
     throw new Error(
       '请在配置文件中配置对象存储的 bucket，也可以通过环境变量 S3_BUCKET 提供',
     )
@@ -148,11 +83,11 @@ export const resolveUploadCredentials = (
   return {
     prefix,
     keyPrefix: prefix === '/' ? '' : prefix.replace(/^\/+/, ''),
-    bucket: candidate.bucket,
+    bucket,
     region,
-    endpoint: candidate.endpoint,
-    accessKeyId: candidate.accessKeyId,
-    secretAccessKey: candidate.secretAccessKey,
+    endpoint,
+    accessKeyId,
+    secretAccessKey,
     forcePathStyle:
       isTruthy(env.S3_FORCE_PATH_STYLE) ??
       uploadConfig?.forcePathStyle ??

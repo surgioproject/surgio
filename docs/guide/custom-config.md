@@ -126,7 +126,7 @@ module.exports = {
 | 服务商 | endpoint | 备注 |
 | --- | --- | --- |
 | 阿里云 OSS | `https://oss-cn-hangzhou.aliyuncs.com` | 也可以只填 `region: 'oss-cn-hangzhou'`，Surgio 会自动推导 endpoint |
-| Cloudflare R2 | `https://<accountId>.r2.cloudflarestorage.com` | 在 R2 控制台的「S3 API」中可以找到 |
+| Cloudflare R2 | `https://<accountId>.r2.cloudflarestorage.com` | `accountId` 在 R2 控制台的「S3 API」中可以找到 |
 | Amazon S3 | 可以省略 | 改为填写 `region`，如 `us-east-1` |
 | 腾讯云 COS | `https://cos.ap-guangzhou.myqcloud.com` | |
 | MinIO 等自建服务 | 自建地址 | 通常还需要 `forcePathStyle: true` |
@@ -202,13 +202,15 @@ module.exports = {
 
 ### 兼容旧版配置
 
-以下写法仍然有效，但不建议在新配置中使用：
+阿里云 OSS 的以下写法仍然有效，但不建议在新配置中使用：
 
 - `upload.accessKeySecret`：等价于 `upload.secretAccessKey`
 - 环境变量 `OSS_ACCESS_KEY_ID`、`OSS_ACCESS_KEY_SECRET`：等价于 `S3_ACCESS_KEY_ID`、`S3_SECRET_ACCESS_KEY`
-- `upload.r2.accountId`、`upload.r2.endpoint`、`upload.r2.bucket`、`upload.r2.accessKeyId`、`upload.r2.secretAccessKey`，以及对应的环境变量 `R2_ACCOUNT_ID`、`R2_ENDPOINT`、`R2_BUCKET`、`R2_ACCESS_KEY_ID`、`R2_SECRET_ACCESS_KEY`：等价于 `upload` 下的同名通用字段，其中 `accountId` 会被拼接成 `https://<accountId>.r2.cloudflarestorage.com`
+- 只配置 `upload.region`（形如 `oss-cn-hangzhou`）时，会推导出 `https://<region>.aliyuncs.com` 作为 endpoint
 
-同时配置了通用字段和 `upload.r2` 时，以通用字段为准。
+:::warning 注意
+`upload.r2` 以及 `R2_ACCOUNT_ID`、`R2_ENDPOINT`、`R2_BUCKET`、`R2_ACCESS_KEY_ID`、`R2_SECRET_ACCESS_KEY` 等环境变量已被移除。使用 Cloudflare R2 请改为配置 `upload` 下的通用字段，把 `endpoint` 填成 `https://<accountId>.r2.cloudflarestorage.com`。
+:::
 
 ## binPath
 
