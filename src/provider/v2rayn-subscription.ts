@@ -133,6 +133,8 @@ const getUrl = (value: string): URL => {
   }
 }
 
+const getUrlHostname = (url: URL): string => url.hostname.replace(/^\[|]$/g, '')
+
 const getCredentials = (url: URL): [string, string] => [
   decodeURIComponentSafe(url.username),
   decodeURIComponentSafe(url.password),
@@ -163,8 +165,9 @@ const applyTlsOptions = <
   if (sni) node.sni = sni
   if (alpn) node.alpn = alpn as [string, ...string[]]
   if (query.get('fp')) node.clientFingerprint = query.get('fp')!
-  if (query.get('pinSHA256')) {
-    node.serverCertFingerprintSha256 = query.get('pinSHA256')!
+  const certificateFingerprint = query.get('pcs') || query.get('pinSHA256')
+  if (certificateFingerprint) {
+    node.serverCertFingerprintSha256 = certificateFingerprint
   }
   if (insecure || options.skipCertVerify) node.skipCertVerify = true
   if (options.tls13) node.tls13 = true
@@ -256,7 +259,7 @@ const parseVmessUrl = (
   const node: VmessNodeConfig = {
     type: NodeTypeEnum.Vmess,
     nodeName: decodeName(url),
-    hostname: url.hostname,
+    hostname: getUrlHostname(url),
     port: url.port,
     uuid,
     alterId: url.searchParams.get('aid') || '0',
@@ -296,7 +299,7 @@ const parseSocksUrl = (
   const node: Socks5NodeConfig = {
     type: NodeTypeEnum.Socks5,
     nodeName: decodeName(url),
-    hostname: url.hostname,
+    hostname: getUrlHostname(url),
     port: url.port,
     ...(username ? { username } : null),
     ...(password ? { password } : null),
@@ -317,7 +320,7 @@ const parseVlessUrl = (
   const node: VlessNodeConfig = {
     type: NodeTypeEnum.Vless,
     nodeName: decodeName(url),
-    hostname: url.hostname,
+    hostname: getUrlHostname(url),
     port: url.port,
     method: 'none',
     uuid,
@@ -357,7 +360,7 @@ const parseTrojanUrl = (
   const node: TrojanNodeConfig = {
     type: NodeTypeEnum.Trojan,
     nodeName: decodeName(url),
-    hostname: url.hostname,
+    hostname: getUrlHostname(url),
     port: url.port,
     password,
     udpRelay: options.udpRelay,
@@ -387,7 +390,7 @@ const parseHysteria2Url = (
   const node: Hysteria2NodeConfig = {
     type: NodeTypeEnum.Hysteria2,
     nodeName: decodeName(url),
-    hostname: url.hostname,
+    hostname: getUrlHostname(url),
     port: url.port,
     password,
     udpRelay: options.udpRelay,
@@ -416,7 +419,7 @@ const parseTuicUrl = (
     ? {
         type: NodeTypeEnum.Tuic,
         nodeName: decodeName(url),
-        hostname: url.hostname,
+        hostname: getUrlHostname(url),
         port: url.port,
         uuid,
         password,
@@ -426,7 +429,7 @@ const parseTuicUrl = (
     : {
         type: NodeTypeEnum.Tuic,
         nodeName: decodeName(url),
-        hostname: url.hostname,
+        hostname: getUrlHostname(url),
         port: url.port,
         token: uuid,
         ...(congestionControl ? { congestionControl } : null),
@@ -439,6 +442,7 @@ const stripCidr = (value: string): string => value.replace(/\/.+$/, '')
 
 const parseWireguardUrl = (value: string): WireguardNodeConfig => {
   const url = getUrl(value)
+  const hostname = getUrlHostname(url)
   const [privateKey] = getCredentials(url)
   const addresses = splitList(url.searchParams.get('address')) ?? []
   const selfIp = addresses.find((address) => !address.includes(':'))
@@ -446,6 +450,7 @@ const parseWireguardUrl = (value: string): WireguardNodeConfig => {
   const publicKey = url.searchParams.get('publickey')
   if (!publicKey) throw new Error('WireGuard 节点缺少 publickey')
   const reservedBits = splitList(url.searchParams.get('reserved'))?.map(Number)
+  const dnsServers = splitList(url.searchParams.get('dns'))
   return {
     type: NodeTypeEnum.Wireguard,
     nodeName: decodeName(url),
@@ -461,10 +466,11 @@ const parseWireguardUrl = (value: string): WireguardNodeConfig => {
     ...(url.searchParams.get('mtu')
       ? { mtu: Number(url.searchParams.get('mtu')) }
       : null),
+    ...(dnsServers ? { dnsServers } : null),
     peers: [
       {
         publicKey,
-        endpoint: `${url.hostname.includes(':') ? `[${url.hostname}]` : url.hostname}:${url.port}`,
+        endpoint: `${hostname.includes(':') ? `[${hostname}]` : hostname}:${url.port}`,
         ...(url.searchParams.get('presharedkey')
           ? { presharedKey: url.searchParams.get('presharedkey')! }
           : null),
@@ -483,7 +489,7 @@ const parseAnyTlsUrl = (
   const node: AnyTLSNodeConfig = {
     type: NodeTypeEnum.AnyTLS,
     nodeName: decodeName(url),
-    hostname: url.hostname,
+    hostname: getUrlHostname(url),
     port: url.port,
     password,
     udpRelay: options.udpRelay,
@@ -730,6 +736,9 @@ const parseInternalUrl = (
         ...(getStringValue(protocolExtra, 'WgMtu', 'Mtu')
           ? { mtu: getStringValue(protocolExtra, 'WgMtu', 'Mtu') }
           : null),
+        ...(getStringValue(protocolExtra, 'WgDns', 'Dns')
+          ? { dns: getStringValue(protocolExtra, 'WgDns', 'Dns') }
+          : null),
       })
       return parseWireguardUrl(
         `wireguard://${encodeUserInfo(password)}@${urlHostname}:${port}?${wireguardQuery}#${hash}`,
@@ -932,10 +941,11 @@ const parseVmessJsonConfig = (
     query.set('alpn', getStringValue(config, 'alpn'))
   if (getStringValue(config, 'fp'))
     query.set('fp', getStringValue(config, 'fp'))
-  if (getStringValue(config, 'pinSHA256')) {
-    query.set('pinSHA256', getStringValue(config, 'pinSHA256'))
+  const certificateFingerprint = getStringValue(config, 'pcs', 'pinSHA256')
+  if (certificateFingerprint) {
+    query.set('pcs', certificateFingerprint)
   }
-  if (parseBoolean(getStringValue(config, 'allowInsecure'))) {
+  if (parseBoolean(getStringValue(config, 'insecure', 'allowInsecure'))) {
     query.set('allowInsecure', '1')
   }
 
