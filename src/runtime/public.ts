@@ -14,7 +14,6 @@ export type ProviderFormat =
   | 'loon'
   | 'quantumultx'
   | 'shadowsocks'
-  | 'shadowsocks-json'
   | 'shadowsocksr'
   | 'singbox'
   | 'surfboard'

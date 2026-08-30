@@ -52,7 +52,6 @@ export enum SupportProviderEnum {
   Custom = 'custom',
   ShadowsocksSubscribe = 'shadowsocks_subscribe',
   ShadowsocksrSubscribe = 'shadowsocksr_subscribe',
-  ShadowsocksJsonSubscribe = 'shadowsocks_json_subscribe',
   V2rayNSubscribe = 'v2rayn_subscribe',
   Trojan = 'trojan',
 }
@@ -82,12 +81,6 @@ export type ArtifactConfig = z.infer<typeof ArtifactValidator>
 export type ArtifactConfigInput = z.input<typeof ArtifactValidator>
 
 export type ProviderConfig = z.infer<typeof ProviderValidator>
-
-export interface ShadowsocksJsonSubscribeProviderConfig extends ProviderConfig {
-  readonly type: SupportProviderEnum.ShadowsocksJsonSubscribe
-  readonly url: string
-  readonly udpRelay?: boolean
-}
 
 export interface ShadowsocksSubscribeProviderConfig extends ProviderConfig {
   readonly type: SupportProviderEnum.ShadowsocksSubscribe
@@ -291,7 +284,6 @@ export type PossibleNodeConfigInputType =
 export type PossibleProviderConfigType =
   | ClashProviderConfig
   | CustomProviderConfig
-  | ShadowsocksJsonSubscribeProviderConfig
   | ShadowsocksrSubscribeProviderConfig
   | ShadowsocksSubscribeProviderConfig
   | TrojanProviderConfig

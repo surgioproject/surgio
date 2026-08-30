@@ -93,7 +93,7 @@ describe('generate command', () => {
       ])
 
       expect(error).toBeUndefined()
-      const confString1 = fs.readFileSync(resolve('plain/dist/ss_json.conf'), {
+      const confString1 = fs.readFileSync(resolve('plain/dist/ss.conf'), {
         encoding: 'utf8',
       })
       const confString2 = fs.readFileSync(resolve('plain/dist/custom.conf'), {
@@ -123,10 +123,10 @@ describe('generate command', () => {
       expect(fs.existsSync(resolve('plain/dist/custom.conf'))).toBe(true)
       expect(fs.existsSync(resolve('plain/dist/singbox.json'))).toBe(true)
       expect(confString1.split('\n')[0]).toBe(
-        '#!MANAGED-CONFIG https://example.com/ss_json.conf?access_token=abcd interval=43200 strict=false',
+        '#!MANAGED-CONFIG https://example.com/ss.conf?access_token=abcd interval=43200 strict=false',
       )
       expect(confString2.includes('select, 🇺🇸 US')).toBe(true)
-      expect(Object.keys(conf.Proxy).length).toBe(4)
+      expect(Object.keys(conf.Proxy).length).toBe(2)
       expect(confString3).toMatchSnapshot()
       expect(confString5).toMatchSnapshot()
       expect(singboxConfString).toMatchSnapshot()

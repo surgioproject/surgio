@@ -13,7 +13,6 @@ export {
 export {
   defineClashProvider,
   defineCustomProvider,
-  defineShadowsocksJsonSubscribeProvider,
   defineShadowsocksrSubscribeProvider,
   defineShadowsocksSubscribeProvider,
   defineTrojanProvider,

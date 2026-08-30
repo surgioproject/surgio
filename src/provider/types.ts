@@ -2,7 +2,6 @@ import { PossibleNodeConfigType, SubscriptionUserinfo } from '../types.js'
 
 import ClashProvider from './ClashProvider.js'
 import CustomProvider from './CustomProvider.js'
-import ShadowsocksJsonSubscribeProvider from './ShadowsocksJsonSubscribeProvider.js'
 import ShadowsocksrSubscribeProvider from './ShadowsocksrSubscribeProvider.js'
 import ShadowsocksSubscribeProvider from './ShadowsocksSubscribeProvider.js'
 import TrojanProvider from './TrojanProvider.js'
@@ -11,7 +10,6 @@ import V2rayNSubscribeProvider from './V2rayNSubscribeProvider.js'
 import type { RuntimeHeaders } from '../runtime/types.js'
 
 export type PossibleProviderType =
-  | ShadowsocksJsonSubscribeProvider
   | ShadowsocksSubscribeProvider
   | CustomProvider
   | V2rayNSubscribeProvider

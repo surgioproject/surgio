@@ -1,7 +1,6 @@
 import {
   defineClashProvider,
   defineCustomProvider,
-  defineShadowsocksJsonSubscribeProvider,
   defineShadowsocksrSubscribeProvider,
   defineShadowsocksSubscribeProvider,
   defineTrojanProvider,
@@ -34,7 +33,6 @@ export const assertWorkerConfig = (config: object): void => {
 export {
   defineClashProvider,
   defineCustomProvider,
-  defineShadowsocksJsonSubscribeProvider,
   defineShadowsocksrSubscribeProvider,
   defineShadowsocksSubscribeProvider,
   defineTrojanProvider,

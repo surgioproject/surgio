@@ -13,6 +13,18 @@ Surgio v4 不再支持 `type: 'ssd'`，也不再导出 `defineSsdProvider` 或
 订阅，或使用 `defineCustomProvider` 自行读取和转换节点。需要继续直接读取 SSD
 订阅的项目应暂留 Surgio v3。
 
+## Shadowsocks JSON 订阅已移除
+
+Surgio v4 不再支持 `type: 'shadowsocks_json_subscribe'`，也不再导出
+`defineShadowsocksJsonSubscribeProvider` 或
+`ShadowsocksJsonSubscribeProvider`。这个 Provider 读取的是 Shadowsocks for
+Windows 的旧 `gui-config.json`，不是 SIP008。优先改用 Clash 或普通 Shadowsocks
+订阅。只有 `gui-config.json` 地址时，应先通过外部工具转换，或使用
+`defineCustomProvider` 自行读取和转换节点。需要继续直接读取该格式的项目应暂留
+Surgio v3。Gateway 的 `format=shadowsocks-json` 输出和模板中的
+`getShadowsocksNodesJSON` helper 也已移除；需要 JSON 输出时应使用 Clash 或
+sing-box 格式。
+
 **目录**
 
 ## 升级前准备

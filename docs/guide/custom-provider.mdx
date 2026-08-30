@@ -52,7 +52,6 @@ module.exports = defineCustomProvider(async function () {
 | `custom` <Badge text="推荐" vertical="middle" /> | 自己维护的节点                             | 支持 Shadowsocks, Shadowsocksr, Snell, HTTPS, HTTP, Vmess, Vless, Hysteria 2, AnyTLS, Socks5, Tuic, Trojan, Wireguard                    |
 | `clash` <Badge text="推荐" vertical="middle" />  | Clash 配置                                 | 支持 Shadowsocks, Shadowsocksr, Snell, HTTPS, HTTP, Vmess, Vless, Hysteria 2, AnyTLS, Socks5, Tuic, Trojan, Wireguard                  |
 |                     `trojan`                     | Trojan 订阅                                | 使用 V2rayN 订阅解析器，但只保留 Trojan 节点                                                                                |
-|           `shadowsocks_json_subscribe`           | 针对 Windows 客户端的 Shadowsocks 订阅地址 | 通常命名为 _gui-config.json_                                                                                                 |
 |             `shadowsocks_subscribe`              | 通用的 Shadowsocks 订阅地址                |                                                                                                                              |
 |             `shadowsocksr_subscribe`             | 通用的 Shadowsocksr 订阅地址               |                                                                                                                              |
 |                `v2rayn_subscribe`                | V2rayN 订阅地址                            | 支持 VMess、Shadowsocks、SOCKS、VLESS、Trojan、Hysteria 2、TUIC、WireGuard 和 AnyTLS                                         |
@@ -771,34 +770,6 @@ Stash 和 Mihomo 默认使用 HTTP/2，`quic: true` 时切换到 HTTP/3。Stash 
   reuse: true, // 可选，仅 Surge 输出生效
 }
 ```
-
-## Shadowsocks JSON 订阅
-
-```js
-module.exports = {
-  type: 'shadowsocks_json_subscribe',
-  url: '',
-  udpRelay: true,
-}
-```
-
-### url
-
-- 类型：`string`
-- <Badge text="必须" vertical="middle" />
-
-若机场没有提供这种订阅地址，推荐使用 Fndroid 的 [接口](https://github.com/Fndroid/jsbox_script/wiki/%E5%BC%80%E6%94%BE%E6%8E%A5%E5%8F%A3%E4%BD%BF%E7%94%A8%E5%8F%8A%E8%AF%B4%E6%98%8E#surge%E6%89%98%E7%AE%A1%E8%BD%AC%E6%8D%A2shadowsockswindows%E9%85%8D%E7%BD%AE) 进行转换。
-
-:::warning[注意]
-- 如果你正在使用 [DlerCloud](https://dlercloud.com/auth/register?affid=45071)，可以使用 Surge 的托管订阅地址，然后使用 `surge2sswin` 转换
-:::
-
-### udpRelay
-
-- 类型：`boolean`
-- 默认值：`false`
-
-由于这种订阅协议不支持定义 UDP 转发的支持情况，所以单独出来进行配置。UDP 转发可以应用在 Surge 中。
 
 ## Shadowsocks 订阅
 

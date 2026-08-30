@@ -2,7 +2,6 @@ import { SupportProviderEnum } from '../types.js'
 
 import ClashProvider from './ClashProvider.js'
 import CustomProvider from './CustomProvider.js'
-import ShadowsocksJsonSubscribeProvider from './ShadowsocksJsonSubscribeProvider.js'
 import ShadowsocksrSubscribeProvider from './ShadowsocksrSubscribeProvider.js'
 import ShadowsocksSubscribeProvider from './ShadowsocksSubscribeProvider.js'
 import TrojanProvider from './TrojanProvider.js'
@@ -28,8 +27,6 @@ export const createProvider = async (
 
   const provider = (() => {
     switch (config.type) {
-      case SupportProviderEnum.ShadowsocksJsonSubscribe:
-        return new ShadowsocksJsonSubscribeProvider(name, config)
       case SupportProviderEnum.ShadowsocksSubscribe:
         return new ShadowsocksSubscribeProvider(name, config)
       case SupportProviderEnum.ShadowsocksrSubscribe:

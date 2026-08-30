@@ -2,7 +2,6 @@ import {
   ClashProviderConfig,
   CustomProviderConfig,
   PossibleProviderConfigType,
-  ShadowsocksJsonSubscribeProviderConfig,
   ShadowsocksrSubscribeProviderConfig,
   ShadowsocksSubscribeProviderConfig,
   SupportProviderEnum,
@@ -28,13 +27,6 @@ export const defineCustomProvider: ProviderDefineFunction<
 > = (config) => ({
   ...config,
   type: SupportProviderEnum.Custom,
-})
-
-export const defineShadowsocksJsonSubscribeProvider: ProviderDefineFunction<
-  ShadowsocksJsonSubscribeProviderConfig
-> = (config) => ({
-  ...config,
-  type: SupportProviderEnum.ShadowsocksJsonSubscribe,
 })
 
 export const defineShadowsocksSubscribeProvider: ProviderDefineFunction<

@@ -19,7 +19,6 @@ exports[`exports.define* 1`] = `
   "defineSurgioProject",
   "defineClashProvider",
   "defineCustomProvider",
-  "defineShadowsocksJsonSubscribeProvider",
   "defineShadowsocksSubscribeProvider",
   "defineShadowsocksrSubscribeProvider",
   "defineTrojanProvider",

@@ -5,7 +5,6 @@ import './node-runtime.js'
 
 import ClashProvider from './ClashProvider.js'
 import CustomProvider from './CustomProvider.js'
-import ShadowsocksJsonSubscribeProvider from './ShadowsocksJsonSubscribeProvider.js'
 import ShadowsocksrSubscribeProvider from './ShadowsocksrSubscribeProvider.js'
 import ShadowsocksSubscribeProvider from './ShadowsocksSubscribeProvider.js'
 import TrojanProvider from './TrojanProvider.js'
@@ -19,7 +18,6 @@ import type { ProjectProviderDefinition } from '../project/types.js'
 export {
   ClashProvider,
   CustomProvider,
-  ShadowsocksJsonSubscribeProvider,
   ShadowsocksrSubscribeProvider,
   ShadowsocksSubscribeProvider,
   TrojanProvider,

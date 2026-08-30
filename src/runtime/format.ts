@@ -4,7 +4,6 @@ import { getClashNodes } from '../utils/clash.js'
 import { getLoonNodes } from '../utils/loon.js'
 import {
   getShadowsocksNodes,
-  getShadowsocksNodesJSON,
   getShadowsocksrNodes,
   getV2rayNNodes,
 } from '../utils/portable.js'
@@ -60,11 +59,11 @@ export const formatProviderNodes = (
       return callFormatter(getLoonNodes, options)
     case 'shadowsocks':
       return callFormatter(getShadowsocksNodes)
-    case 'shadowsocks-json':
-      return callFormatter(getShadowsocksNodesJSON)
     case 'shadowsocksr':
       return callFormatter(getShadowsocksrNodes)
     case 'v2rayn':
       return callFormatter(getV2rayNNodes)
+    default:
+      throw new Error(`Unsupported provider format: ${format}`)
   }
 }

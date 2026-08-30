@@ -35,7 +35,7 @@ test('new Artifact()', async () => {
     {
       name: 'new_path.conf',
       template: 'test',
-      provider: 'ss_json',
+      provider: 'ss',
     },
     { renderer: createNodeRenderer(config.templateDir) },
   )
@@ -59,7 +59,7 @@ test('Artifact without renderer', async () => {
   const artifact = new Artifact(config, {
     name: 'new_path.conf',
     template: 'test',
-    provider: 'ss_json',
+    provider: 'ss',
   })
   const renderer = createNodeRenderer(config.templateDir)
 
@@ -77,7 +77,7 @@ test('Artifact without renderer', async () => {
     {
       name: 'new_path.conf',
       template: 'test',
-      provider: 'ss_json',
+      provider: 'ss',
     },
     { renderer },
   ).init()
@@ -95,7 +95,7 @@ test('render with extendRenderContext', async () => {
       {
         name: 'new_path.conf',
         template: 'extend-render-context',
-        provider: 'ss_json',
+        provider: 'ss',
       },
       { renderer },
     )
@@ -110,7 +110,7 @@ test('render with extendRenderContext', async () => {
       {
         name: 'new_path.conf',
         template: 'extend-render-context',
-        provider: 'ss_json',
+        provider: 'ss',
         customParams: {
           foo: 'bar',
         },
@@ -128,7 +128,7 @@ test('render with extendRenderContext', async () => {
       {
         name: 'new_path.conf',
         template: 'extend-render-context',
-        provider: 'ss_json',
+        provider: 'ss',
         customParams: {
           foo: 'bar',
         },
@@ -154,7 +154,7 @@ test('getRenderContext', async () => {
     {
       name: 'new_path.conf',
       template: 'extend-render-context',
-      provider: 'ss_json',
+      provider: 'ss',
     },
     { renderer },
   )

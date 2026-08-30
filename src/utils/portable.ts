@@ -155,36 +155,6 @@ export const getV2rayNNodes = (list: ReadonlyArray<VmessNodeConfig>): string =>
     })
     .join('\n')
 
-export const getShadowsocksNodesJSON = (
-  list: ReadonlyArray<ShadowsocksNodeConfig>,
-): string =>
-  JSON.stringify(
-    list
-      .filter(
-        (node) =>
-          node.enable !== false && node.type === NodeTypeEnum.Shadowsocks,
-      )
-      .map((node) => ({
-        remarks: node.nodeName,
-        server: node.hostname,
-        server_port: node.port,
-        method: node.method,
-        remarks_base64: toUrlSafeBase64(node.nodeName),
-        password: node.password,
-        tcp_over_udp: false,
-        udp_over_tcp: false,
-        enable: true,
-        ...(node.obfs && node.obfsHost
-          ? {
-              plugin: 'obfs-local',
-              'plugin-opts': `obfs=${node.obfs};obfs-host=${node.obfsHost}`,
-            }
-          : {}),
-      })),
-    null,
-    2,
-  )
-
 export function getNodeNames(
   list: ReadonlyArray<PossibleNodeConfigType>,
   filter?: NodeFilterType | SortedNodeFilterType,

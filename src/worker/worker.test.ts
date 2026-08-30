@@ -157,7 +157,6 @@ export default {
       'loon',
       'quantumultx',
       'shadowsocks',
-      'shadowsocks-json',
       'shadowsocksr',
       'singbox',
       'surfboard',

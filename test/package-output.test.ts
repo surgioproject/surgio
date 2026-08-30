@@ -52,6 +52,33 @@ test('published entrypoints exclude the removed SSD provider', async () => {
   expect(internal.SupportProviderEnum).not.toHaveProperty('Ssd')
 })
 
+test('published entrypoints exclude removed Shadowsocks JSON support', async () => {
+  const [surgio, project, workerConfig, provider, internal, utils, runtime] =
+    await Promise.all([
+      import('surgio'),
+      import('surgio/project'),
+      import('surgio/worker/config'),
+      import('surgio/provider'),
+      import('surgio/internal'),
+      import('surgio/utils'),
+      import('surgio/runtime'),
+    ])
+
+  for (const entrypoint of [surgio, project, workerConfig]) {
+    expect(entrypoint).not.toHaveProperty(
+      'defineShadowsocksJsonSubscribeProvider',
+    )
+  }
+  expect(provider).not.toHaveProperty('ShadowsocksJsonSubscribeProvider')
+  expect(internal.SupportProviderEnum).not.toHaveProperty(
+    'ShadowsocksJsonSubscribe',
+  )
+  expect(utils).not.toHaveProperty('getShadowsocksNodesJSON')
+  expect(() =>
+    runtime.formatProviderNodes('shadowsocks-json' as never, []),
+  ).toThrow('Unsupported provider format: shadowsocks-json')
+})
+
 test('published package metadata excludes Hygen templates and dependencies', () => {
   const manifest = fs.readJsonSync(path.join(projectRoot, 'package.json')) as {
     dependencies: Record<string, string>

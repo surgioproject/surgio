@@ -9,13 +9,8 @@ module.exports = {
     {
       name: 'new_path.conf',
       template: 'test',
-      provider: 'ss_json',
+      provider: 'ss',
       destDir: path.join(__dirname, './dist'),
-    },
-    {
-      name: 'ss_json.conf',
-      template: 'test',
-      provider: 'ss_json',
     },
     {
       name: 'ss.conf',
@@ -46,13 +41,7 @@ module.exports = {
       name: 'template-functions.conf',
       template: 'template-functions',
       provider: 'ss',
-      combineProviders: [
-        'custom',
-        'ss_json',
-        'v2rayn',
-        'clash',
-        'ssr_with_udp',
-      ],
+      combineProviders: ['custom', 'v2rayn', 'clash', 'ssr_with_udp'],
       customParams: {
         globalVariableWillBeRewritten: 'barbar',
         subLevel: {

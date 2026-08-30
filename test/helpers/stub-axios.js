@@ -5,13 +5,6 @@ const path = require('path')
 const nock = require('nock')
 
 const scope = nock('http://example.com')
-  .get(/\/gui-config\.json/)
-  .reply(
-    200,
-    fs.readFileSync(path.join(__dirname, '../asset/gui-config-1.json'), {
-      encoding: 'utf8',
-    }),
-  )
   .get(/\/test-ss-sub\.txt/)
   .reply(
     200,
