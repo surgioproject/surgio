@@ -288,6 +288,17 @@ ss://cmM0LW1kNTpwYXNzd29yZA@hk.com:1234/?group=subscribe_demo#%F0%9F%87%AD%F0%9F
 {{ getShadowsocksNodes(nodeList, providerName) | base64 }}
 ```
 
+### getV2rayNNodes
+
+`getV2rayNNodes(nodeList, filter?)`
+
+生成逐行排列的 v2rayN 分享链接。该方法支持 VMess、Shadowsocks、
+SOCKS5、VLESS、Trojan、Hysteria 2、TUIC、WireGuard、AnyTLS、HTTP 和
+HTTPS。HTTP/HTTPS 使用 v2rayN 内部格式，其余节点使用协议分享链接。
+
+`filter` 为可选参数。格式无法表达节点的部分连接字段时，Surgio 仍会
+输出节点，并在日志中列出被省略的字段。
+
 ### getQuantumultXNodes
 
 `getQuantumultXNodes(nodeList, filter?)`

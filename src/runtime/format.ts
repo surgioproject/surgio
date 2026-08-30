@@ -2,15 +2,12 @@ import YAML from 'yaml'
 
 import { getClashNodes } from '../utils/clash.js'
 import { getLoonNodes } from '../utils/loon.js'
-import {
-  getShadowsocksNodes,
-  getShadowsocksrNodes,
-  getV2rayNNodes,
-} from '../utils/portable.js'
+import { getShadowsocksNodes, getShadowsocksrNodes } from '../utils/portable.js'
 import { getQuantumultXNodes } from '../utils/quantumult.js'
 import { getSingboxEndpoints, getSingboxNodes } from '../utils/singbox.js'
 import { getSurfboardNodes } from '../utils/surfboard.js'
 import { getSurgeNodes } from '../utils/surge.js'
+import { getV2rayNNodes } from '../utils/v2rayn.js'
 
 import type {
   NodeFilterType,
@@ -62,7 +59,7 @@ export const formatProviderNodes = (
     case 'shadowsocksr':
       return callFormatter(getShadowsocksrNodes)
     case 'v2rayn':
-      return callFormatter(getV2rayNNodes)
+      return callFormatter(getV2rayNNodes, options)
     default:
       throw new Error(`Unsupported provider format: ${format}`)
   }

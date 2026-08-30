@@ -10,7 +10,6 @@ import {
   getShadowsocksNodes,
   getShadowsocksrNodes,
   getUrl,
-  getV2rayNNodes,
   isIp,
   toBase64,
   toUrlSafeBase64,
@@ -31,6 +30,7 @@ import {
   getSurgeTailscaleNodes,
   getSurgeWireguardNodes,
 } from '../utils/surge.js'
+import { getV2rayNNodes } from '../utils/v2rayn.js'
 import { SurgioError } from '../utils/errors.js'
 import { MasqueNodeConfigValidator } from '../validators/index.js'
 
@@ -370,7 +370,7 @@ export const createArtifactRenderContext = (options: {
     getSurfboardNodeNames: bindFormatter(getSurfboardNodeNames),
     getShadowsocksNodes,
     getShadowsocksrNodes,
-    getV2rayNNodes,
+    getV2rayNNodes: bindFormatter(getV2rayNNodes),
     getQuantumultXNodes: bindFormatter(getQuantumultXNodes),
     getQuantumultXNodeNames: bindFormatter(getQuantumultXNodeNames),
     getLoonNodes: bindFilterAwareFormatter(getLoonNodes),

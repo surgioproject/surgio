@@ -1,5 +1,5 @@
 import { join } from 'path'
-import { expect, test } from 'vitest'
+import { expect, test, vi } from 'vitest'
 import nock from 'nock'
 
 import { loadConfig, normalizeConfig } from '../../config.js'
@@ -192,6 +192,45 @@ test('getRenderContext', async () => {
       },
     ]),
   ).toBe('[Tailscale tailnet]\nauth-key=tskey-auth-example')
+})
+
+test('getRenderContext injects the artifact logger into getV2rayNNodes', async () => {
+  const fixture = resolve('plain')
+  const config = loadConfig(fixture)
+  const warn = vi.fn()
+  const artifact = new Artifact(
+    config,
+    {
+      name: 'new_path.conf',
+      template: 'test',
+      provider: 'ss',
+    },
+    {
+      renderer: createNodeRenderer(config.templateDir),
+      logger: {
+        debug: vi.fn(),
+        info: vi.fn(),
+        warn,
+        error: vi.fn(),
+      },
+    },
+  )
+  await artifact.init()
+  const context = artifact.getRenderContext()
+
+  expect(
+    context.getV2rayNNodes([
+      {
+        type: NodeTypeEnum.Hysteria2,
+        nodeName: 'lossy node',
+        hostname: 'hy2.example.com',
+        port: 443,
+        password: 'password',
+        uploadBandwidth: 100,
+      },
+    ]),
+  ).toContain('hysteria2://')
+  expect(warn).toHaveBeenCalledWith(expect.stringContaining('uploadBandwidth'))
 })
 
 test('Artifact with underlyingProxy', async () => {

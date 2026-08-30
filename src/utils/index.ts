@@ -5,6 +5,7 @@ import fs from 'fs-extra'
 import { getIsGFWFree } from './env-flag.js'
 
 export * from './portable.js'
+export * from './v2rayn.js'
 export * from './surge.js'
 export * from './surfboard.js'
 export * from './clash.js'

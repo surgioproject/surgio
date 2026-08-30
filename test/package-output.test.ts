@@ -27,11 +27,15 @@ test('cache entrypoint does not eagerly load the Upstash client', async () => {
 })
 
 test('published entrypoints can be imported as ESM', async () => {
-  const surgio = await import('surgio')
+  const [surgio, utils] = await Promise.all([
+    import('surgio'),
+    import('surgio/utils'),
+  ])
 
   expect(surgio).not.toHaveProperty('defineSurgioConfig')
   expect(surgio.utils).toBeTypeOf('object')
   expect(surgio.categories).toBeTypeOf('object')
+  expect(utils.getV2rayNNodes).toBeTypeOf('function')
 })
 
 test('published entrypoints exclude the removed SSD provider', async () => {

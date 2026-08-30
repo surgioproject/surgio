@@ -148,6 +148,8 @@ export const V2RAYN_SUPPORTED_VMESS_NETWORK = [
   'ws',
   'h2',
   'grpc',
+  'quic',
+  'httpupgrade',
 ] as const
 
 export const CLASH_META_SUPPORTED_VMESS_NETWORK = [

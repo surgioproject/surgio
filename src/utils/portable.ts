@@ -2,10 +2,7 @@ import crypto from 'node:crypto'
 import net from 'node:net'
 import { camelCase, kebabCase, snakeCase } from 'change-case'
 
-import {
-  ERR_INVALID_FILTER,
-  V2RAYN_SUPPORTED_VMESS_NETWORK,
-} from '../constant/index.js'
+import { ERR_INVALID_FILTER } from '../constant/index.js'
 import { applyFilter } from '../filters/index.js'
 import { NodeTypeEnum } from '../types.js'
 
@@ -15,7 +12,6 @@ import type {
   ShadowsocksNodeConfig,
   ShadowsocksrNodeConfig,
   SortedNodeFilterType,
-  VmessNodeConfig,
 } from '../types.js'
 
 export const getDownloadUrl = (
@@ -111,47 +107,6 @@ export const getShadowsocksrNodes = (
         uot: '0',
       })
       return `ssr://${toUrlSafeBase64(`${base}/?${params.toString()}`)}`
-    })
-    .join('\n')
-
-export const getV2rayNNodes = (list: ReadonlyArray<VmessNodeConfig>): string =>
-  list
-    .filter(
-      (node) =>
-        node.enable !== false &&
-        node.type === NodeTypeEnum.Vmess &&
-        V2RAYN_SUPPORTED_VMESS_NETWORK.includes(node.network as never),
-    )
-    .map((node) => {
-      const output: Record<string, string> = {
-        v: '2',
-        ps: node.nodeName,
-        add: node.hostname,
-        port: String(node.port),
-        id: node.uuid,
-        aid: String(node.alterId ?? 0),
-        scy: node.method,
-        net: node.network === 'http' ? 'tcp' : node.network,
-        type: node.network === 'http' ? 'http' : 'none',
-      }
-      if (node.tls) {
-        output.tls = 'tls'
-        if (node.sni) output.sni = node.sni
-        if (node.alpn) output.alpn = node.alpn.join(',')
-      }
-      if (node.network === 'ws' && node.wsOpts) {
-        output.path = node.wsOpts.path
-        output.host = getHeader(node.wsOpts.headers, 'host') ?? ''
-      } else if (node.network === 'http' && node.httpOpts) {
-        output.path = node.httpOpts.path[0]
-        output.host = getHeader(node.httpOpts.headers, 'host') ?? ''
-      } else if (node.network === 'h2' && node.h2Opts) {
-        output.path = node.h2Opts.path
-        if (node.h2Opts.host?.[0]) output.host = node.h2Opts.host[0]
-      } else if (node.network === 'grpc' && node.grpcOpts) {
-        output.path = node.grpcOpts.serviceName
-      }
-      return `vmess://${toBase64(JSON.stringify(output))}`
     })
     .join('\n')
 
