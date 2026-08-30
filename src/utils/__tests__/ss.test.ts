@@ -1,7 +1,11 @@
 import { expect, test } from 'vitest'
 
 import { NodeTypeEnum } from '../../types.js'
-import { parseSSUri, stringifySip003Options } from '../ss.js'
+import {
+  parseSip003Options,
+  parseSSUri,
+  stringifySip003Options,
+} from '../ss.js'
 
 test('parseSSUri', () => {
   expect(
@@ -61,4 +65,18 @@ test('stringifySip003Options', () => {
   )
   expect(stringifySip003Options({})).toBe('')
   expect(stringifySip003Options()).toBe('')
+})
+
+test('parseSip003Options', () => {
+  expect(
+    parseSip003Options(
+      'v2ray-plugin;host=a.example;path=/foo\\;bar\\=baz;tls;mux=0',
+    ),
+  ).toEqual({
+    'v2ray-plugin': true,
+    host: 'a.example',
+    path: '/foo;bar=baz',
+    tls: true,
+    mux: '0',
+  })
 })
