@@ -34,6 +34,7 @@ export const getSingboxNodes = function (
  * sing-box 将 Tailscale 等节点视为 endpoint 而非 outbound，需要单独放入配置的
  * `endpoints` 字段中。
  *
+ * @see https://sing-box.sagernet.org/configuration/endpoint/wireguard
  * @see https://sing-box.sagernet.org/configuration/endpoint/tailscale
  */
 export const getSingboxEndpoints = function (
@@ -70,17 +71,58 @@ const typeMap = {
   [NodeTypeEnum.Trojan]: 'trojan',
   [NodeTypeEnum.Socks5]: 'socks',
   [NodeTypeEnum.Tuic]: 'tuic',
-  [NodeTypeEnum.Wireguard]: 'wireguard',
   [NodeTypeEnum.Hysteria2]: 'hysteria2',
   [NodeTypeEnum.AnyTLS]: 'anytls',
 } as const
+
+const networkNodeTypes: ReadonlySet<NodeTypeEnum> = new Set([
+  NodeTypeEnum.Shadowsocks,
+  NodeTypeEnum.Vmess,
+  NodeTypeEnum.Vless,
+  NodeTypeEnum.Trojan,
+  NodeTypeEnum.Socks5,
+  NodeTypeEnum.Tuic,
+  NodeTypeEnum.Hysteria2,
+])
+
+const tlsNodeTypes: ReadonlySet<NodeTypeEnum> = new Set([
+  NodeTypeEnum.HTTPS,
+  NodeTypeEnum.Vmess,
+  NodeTypeEnum.Vless,
+  NodeTypeEnum.Trojan,
+  NodeTypeEnum.Tuic,
+  NodeTypeEnum.Hysteria2,
+  NodeTypeEnum.AnyTLS,
+])
+
+const requiredTlsNodeTypes: ReadonlySet<NodeTypeEnum> = new Set([
+  NodeTypeEnum.HTTPS,
+  NodeTypeEnum.Tuic,
+  NodeTypeEnum.Hysteria2,
+  NodeTypeEnum.AnyTLS,
+])
+
+const singboxUtlsFingerprints = new Set([
+  'chrome',
+  'firefox',
+  'edge',
+  'safari',
+  '360',
+  'qq',
+  'ios',
+  'android',
+  'random',
+  'randomized',
+])
 
 /**
  * @see https://sing-box.sagernet.org/configuration/outbound/
  */
 function nodeListMapper(nodeConfig: PossibleNodeConfigType, logger: Logger) {
-  // Tailscale 以 endpoint 的形式生成，由 getSingboxEndpoints 处理，不应出现在 outbounds 中
-  if (nodeConfig.type === NodeTypeEnum.Tailscale) {
+  if (
+    nodeConfig.type === NodeTypeEnum.Tailscale ||
+    nodeConfig.type === NodeTypeEnum.Wireguard
+  ) {
     return null
   }
   if (nodeConfig.type in typeMap === false) {
@@ -99,7 +141,11 @@ function nodeListMapper(nodeConfig: PossibleNodeConfigType, logger: Logger) {
   if ('port' in nodeConfig) {
     node.server_port = Number(nodeConfig.port)
   }
-  if ('udpRelay' in nodeConfig && nodeConfig.udpRelay === false) {
+  if (
+    networkNodeTypes.has(nodeConfig.type) &&
+    'udpRelay' in nodeConfig &&
+    nodeConfig.udpRelay === false
+  ) {
     node.network = 'tcp'
   }
 
@@ -153,7 +199,6 @@ function nodeListMapper(nodeConfig: PossibleNodeConfigType, logger: Logger) {
         if (nodeConfig.realityOpts) {
           setTls('utls', {
             enabled: true,
-            fingerprint: nodeConfig.clientFingerprint,
           })
           setTls('reality', {
             enabled: true,
@@ -238,6 +283,9 @@ function nodeListMapper(nodeConfig: PossibleNodeConfigType, logger: Logger) {
       node.password = nodeConfig.password
       if (nodeConfig.network) {
         switch (nodeConfig.network) {
+          case 'tcp':
+            break
+
           case 'ws':
             node.transport = {
               type: 'ws',
@@ -281,15 +329,18 @@ function nodeListMapper(nodeConfig: PossibleNodeConfigType, logger: Logger) {
     case NodeTypeEnum.Hysteria2:
       node.up_mbps = nodeConfig.uploadBandwidth
       node.down_mbps = nodeConfig.downloadBandwidth
-      node.obfs = {
-        type: nodeConfig.obfs,
-        password: nodeConfig.obfsPassword,
+      if (nodeConfig.obfs) {
+        node.obfs = {
+          type: nodeConfig.obfs,
+          password: nodeConfig.obfsPassword,
+        }
       }
       node.password = nodeConfig.password
 
       if (nodeConfig.portHopping) {
         const ports = nodeConfig.portHopping
-          .split(',')
+          .split(/[;,]/)
+          .map((portConfig) => portConfig.trim())
           .filter((portConfig) => portConfig.includes('-'))
           .map((portConfig) => portConfig.replace(/-/g, ':'))
         node.server_ports = ports
@@ -304,82 +355,51 @@ function nodeListMapper(nodeConfig: PossibleNodeConfigType, logger: Logger) {
     case NodeTypeEnum.AnyTLS:
       node.password = nodeConfig.password
       if (nodeConfig.idleSessionCheckInterval !== undefined) {
-        node.idle_session_check_interval = nodeConfig.idleSessionCheckInterval
+        node.idle_session_check_interval = `${nodeConfig.idleSessionCheckInterval}s`
       }
       if (nodeConfig.idleSessionTimeout !== undefined) {
-        node.idle_session_timeout = nodeConfig.idleSessionTimeout
+        node.idle_session_timeout = `${nodeConfig.idleSessionTimeout}s`
       }
       if (nodeConfig.minIdleSessions !== undefined) {
         node.min_idle_session = nodeConfig.minIdleSessions
       }
       break
-
-    case NodeTypeEnum.Wireguard:
-      // const sample = {
-      //   system_interface: false,
-      //   gso: false,
-      //   interface_name: 'wg0',
-      //   address: ['10.0.0.2/32'],
-      //   private_key: 'YNXtAzepDqRv9H52osJVDQnznT5AM11eCK3ESpwSt04=',
-      //   peers: [
-      //     {
-      //       address: '127.0.0.1',
-      //       port: 1080,
-      //       public_key: 'Z1XXLsKYkYxuiYjJIkRvtIKFepCYHTgON+GwPq7SOV4=',
-      //       pre_shared_key: '31aIhAPwktDGpH4JDhA8GNvjFXEf/a6+UaQRyOAiyfM=',
-      //       allowed_ips: ['0.0.0.0/0'],
-      //       reserved: [0, 0, 0],
-      //     },
-      //   ],
-      //   peer_public_key: 'Z1XXLsKYkYxuiYjJIkRvtIKFepCYHTgON+GwPq7SOV4=',
-      //   pre_shared_key: '31aIhAPwktDGpH4JDhA8GNvjFXEf/a6+UaQRyOAiyfM=',
-      //   reserved: [0, 0, 0],
-      //   workers: 4,
-      //   mtu: 1408,
-      // }
-      node.address = [`${nodeConfig.selfIp}/32`]
-      if (nodeConfig.selfIpV6) {
-        node.address.push(`${nodeConfig.selfIpV6}/128`)
-      }
-      node.private_key = nodeConfig.privateKey
-      node.peers = nodeConfig.peers.map((peer) => {
-        const endpoint = new URL(`http://${peer.endpoint}`)
-        return {
-          address: endpoint.hostname,
-          port: Number(endpoint.port),
-          public_key: peer.publicKey,
-          pre_shared_key: peer.presharedKey,
-          allowed_ips: peer.allowedIps?.split(',').map((ip) => ip.trim()),
-          reserved: peer.reservedBits,
-        }
-      })
-      node.mtu = nodeConfig.mtu
-      break
   }
 
-  if ('tls' in nodeConfig && nodeConfig.tls) {
+  if (requiredTlsNodeTypes.has(nodeConfig.type)) {
     setTls('enabled', true)
   }
-  const r = TlsNodeConfigValidator.safeParse(nodeConfig)
-  if (r.success) {
-    const tlsConfig = r.data
-    if (tlsConfig.sni) {
-      setTls('server_name', tlsConfig.sni)
+
+  if (tlsNodeTypes.has(nodeConfig.type)) {
+    if ('tls' in nodeConfig && nodeConfig.tls) {
+      setTls('enabled', true)
     }
-    if (tlsConfig.skipCertVerify) {
-      setTls('insecure', true)
-    }
-    if (tlsConfig.alpn) {
-      setTls('alpn', tlsConfig.alpn)
-    }
-    if (tlsConfig.tls13) {
-      setTls('min_version', '1.3')
-    }
-    if (tlsConfig.clientFingerprint) {
-      setTls('utls', {
-        enabled: true,
-        fingerprint: tlsConfig.clientFingerprint,
-      })
+    const r = TlsNodeConfigValidator.safeParse(nodeConfig)
+    if (r.success) {
+      const tlsConfig = r.data
+      if (tlsConfig.sni) {
+        setTls('server_name', tlsConfig.sni)
+      }
+      if (tlsConfig.skipCertVerify) {
+        setTls('insecure', true)
+      }
+      if (tlsConfig.alpn) {
+        setTls('alpn', tlsConfig.alpn)
+      }
+      if (tlsConfig.tls13) {
+        setTls('min_version', '1.3')
+      }
+      if (tlsConfig.clientFingerprint) {
+        const utls: Record<string, unknown> = { enabled: true }
+        if (singboxUtlsFingerprints.has(tlsConfig.clientFingerprint)) {
+          utls.fingerprint = tlsConfig.clientFingerprint
+        } else {
+          logger.warn(
+            `sing-box 不支持 uTLS fingerprint=${tlsConfig.clientFingerprint}，节点 ${nodeConfig.nodeName} 将使用默认 fingerprint`,
+          )
+        }
+        setTls('utls', utls)
+      }
     }
   }
   if ('multiplex' in nodeConfig) {
@@ -393,16 +413,23 @@ function nodeListMapper(nodeConfig: PossibleNodeConfigType, logger: Logger) {
       )
       node.multiplex.enabled = true
       if (multiplexConfig.brutal) {
-        node.multiplex.brutal = pickAndFormatKeys(
-          multiplexConfig.brutal,
-          ['upMbps', 'downMbps'],
-          { keyFormat: 'snakeCase' },
-        )
+        node.multiplex.brutal = {
+          enabled: true,
+          ...pickAndFormatKeys(multiplexConfig.brutal, ['upMbps', 'downMbps'], {
+            keyFormat: 'snakeCase',
+          }),
+        }
       }
     }
   }
   if (nodeConfig.tfo) {
-    node.tcp_fast_open = true
+    if (nodeConfig.type === NodeTypeEnum.AnyTLS) {
+      logger.warn(
+        `sing-box 的 AnyTLS 不支持 TCP Fast Open，节点 ${nodeConfig.nodeName} 将忽略 tfo`,
+      )
+    } else {
+      node.tcp_fast_open = true
+    }
   }
   if (nodeConfig.mptcp) {
     node.tcp_multi_path = true
@@ -434,32 +461,95 @@ function nodeListMapper(nodeConfig: PossibleNodeConfigType, logger: Logger) {
 }
 
 /**
+ * @see https://sing-box.sagernet.org/configuration/endpoint/wireguard
  * @see https://sing-box.sagernet.org/configuration/endpoint/tailscale
  */
 function endpointMapper(nodeConfig: PossibleNodeConfigType) {
-  if (nodeConfig.type !== NodeTypeEnum.Tailscale) {
-    return null
-  }
+  switch (nodeConfig.type) {
+    case NodeTypeEnum.Tailscale:
+      return prune(
+        applyEndpointDialOptions(
+          {
+            type: 'tailscale',
+            tag: nodeConfig.nodeName,
+            auth_key: nodeConfig.authKey,
+            control_url: nodeConfig.controlUrl,
+            ephemeral: nodeConfig.ephemeral,
+            hostname: nodeConfig.hostname,
+            accept_routes: nodeConfig.acceptRoutes,
+            exit_node: nodeConfig.exitNode,
+            exit_node_allow_lan_access: nodeConfig.exitNodeAllowLanAccess,
+            state_directory: nodeConfig.stateDir,
+            routing_mark: nodeConfig.routingMark,
+          },
+          nodeConfig,
+        ),
+      )
 
-  const endpoint: Record<string, any> = {
-    type: 'tailscale',
-    tag: nodeConfig.nodeName,
-    auth_key: nodeConfig.authKey,
-    control_url: nodeConfig.controlUrl,
-    ephemeral: nodeConfig.ephemeral,
-    hostname: nodeConfig.hostname,
-    accept_routes: nodeConfig.acceptRoutes,
-    exit_node: nodeConfig.exitNode,
-    exit_node_allow_lan_access: nodeConfig.exitNodeAllowLanAccess,
-    state_directory: nodeConfig.stateDir,
-    routing_mark: nodeConfig.routingMark,
-  }
+    case NodeTypeEnum.Wireguard: {
+      const address = [`${nodeConfig.selfIp}/32`]
+      if (nodeConfig.selfIpV6) {
+        address.push(`${nodeConfig.selfIpV6}/128`)
+      }
+      const defaultAllowedIps = nodeConfig.selfIpV6
+        ? ['0.0.0.0/0', '::/0']
+        : ['0.0.0.0/0']
 
+      return prune(
+        applyEndpointDialOptions(
+          {
+            type: 'wireguard',
+            tag: nodeConfig.nodeName,
+            address,
+            private_key: nodeConfig.privateKey,
+            peers: nodeConfig.peers.map((peer) => {
+              const endpoint = new URL(`http://${peer.endpoint}`)
+              const allowedIps = peer.allowedIps
+                ?.split(',')
+                .map((ip) => ip.trim())
+                .filter(Boolean)
+              return {
+                address: endpoint.hostname,
+                port: Number(endpoint.port),
+                public_key: peer.publicKey,
+                pre_shared_key: peer.presharedKey,
+                allowed_ips:
+                  allowedIps && allowedIps.length > 0
+                    ? allowedIps
+                    : defaultAllowedIps,
+                persistent_keepalive_interval:
+                  peer.keepalive !== undefined
+                    ? `${peer.keepalive}s`
+                    : undefined,
+                reserved: peer.reservedBits,
+              }
+            }),
+            mtu: nodeConfig.mtu,
+          },
+          nodeConfig,
+        ),
+      )
+    }
+
+    default:
+      return null
+  }
+}
+
+function applyEndpointDialOptions(
+  endpoint: Record<string, any>,
+  nodeConfig: PossibleNodeConfigType,
+) {
+  if (nodeConfig.tfo) {
+    endpoint.tcp_fast_open = true
+  }
+  if (nodeConfig.mptcp) {
+    endpoint.tcp_multi_path = true
+  }
   if (nodeConfig.underlyingProxy) {
     endpoint.detour = nodeConfig.underlyingProxy
   }
-
-  return prune(endpoint)
+  return endpoint
 }
 
 function normalizeHeaders(headers: Record<string, string> | undefined) {
@@ -485,9 +575,9 @@ function prune(obj: Record<string, any>): Record<string, any> {
           prunedObj[key] = value
         }
       } else if (typeof value === 'object') {
-        // Check if the object is empty
-        if (Object.keys(value).length > 0) {
-          prunedObj[key] = prune(value) // Recursively prune the object
+        const nested = prune(value)
+        if (Object.keys(nested).length > 0) {
+          prunedObj[key] = nested
         }
       } else if (typeof value === 'string') {
         // Check if the string is not empty

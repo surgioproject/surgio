@@ -1,6 +1,7 @@
-import { expect, test } from 'vitest'
+import { expect, test, vi } from 'vitest'
 
 import { NodeTypeEnum, PossibleNodeConfigType } from '../../types.js'
+import { Hysteria2NodeConfigValidator } from '../../validators/index.js'
 import * as singbox from '../singbox.js'
 
 const nodeList: ReadonlyArray<PossibleNodeConfigType> = [
@@ -166,7 +167,7 @@ const nodeList: ReadonlyArray<PossibleNodeConfigType> = [
     tls13: true,
     skipCertVerify: true,
     alpn: ['h2', 'http/1.1'],
-    clientFingerprint: 'chrome2',
+    clientFingerprint: 'chrome',
     multiplex: {
       protocol: 'smux',
       maxConnections: 2,
@@ -272,7 +273,7 @@ const nodeList: ReadonlyArray<PossibleNodeConfigType> = [
       publicKey: 'publicKey',
       shortId: 'shortId',
     },
-    clientFingerprint: 'chrome2',
+    clientFingerprint: 'chrome',
     network: 'tcp',
   },
   {
@@ -287,7 +288,7 @@ const nodeList: ReadonlyArray<PossibleNodeConfigType> = [
       publicKey: 'publicKey',
       shortId: 'shortId',
     },
-    clientFingerprint: 'chrome2',
+    clientFingerprint: 'chrome',
     network: 'h2',
     h2Opts: {
       path: '/foo',
@@ -306,7 +307,7 @@ const nodeList: ReadonlyArray<PossibleNodeConfigType> = [
       publicKey: 'publicKey',
       shortId: 'shortId',
     },
-    clientFingerprint: 'chrome2',
+    clientFingerprint: 'chrome',
     network: 'ws',
     wsOpts: {
       path: '/foo',
@@ -350,7 +351,7 @@ const nodeList: ReadonlyArray<PossibleNodeConfigType> = [
       publicKey: 'publicKey',
       shortId: 'shortId',
     },
-    clientFingerprint: 'chrome2',
+    clientFingerprint: 'chrome',
     network: 'http',
     httpOpts: {
       path: ['/foo'],
@@ -372,7 +373,7 @@ const nodeList: ReadonlyArray<PossibleNodeConfigType> = [
       publicKey: 'publicKey',
       shortId: 'shortId',
     },
-    clientFingerprint: 'chrome2',
+    clientFingerprint: 'chrome',
     network: 'ws',
     wsOpts: {
       path: '/foo',
@@ -393,7 +394,7 @@ const nodeList: ReadonlyArray<PossibleNodeConfigType> = [
       publicKey: 'publicKey',
       shortId: 'shortId',
     },
-    clientFingerprint: 'chrome2',
+    clientFingerprint: 'chrome',
     network: 'quic',
   },
   {
@@ -408,7 +409,7 @@ const nodeList: ReadonlyArray<PossibleNodeConfigType> = [
       publicKey: 'publicKey',
       shortId: 'shortId',
     },
-    clientFingerprint: 'chrome2',
+    clientFingerprint: 'chrome',
     network: 'grpc',
     grpcOpts: {
       serviceName: 'example',
@@ -426,7 +427,7 @@ const nodeList: ReadonlyArray<PossibleNodeConfigType> = [
       publicKey: 'publicKey',
       shortId: 'shortId',
     },
-    clientFingerprint: 'chrome2',
+    clientFingerprint: 'chrome',
     network: 'httpupgrade',
     httpUpgradeOpts: {
       path: '/foo',
@@ -463,10 +464,10 @@ const nodeList: ReadonlyArray<PossibleNodeConfigType> = [
     tls13: true,
     skipCertVerify: true,
     alpn: ['h2', 'http/1.1'],
-    clientFingerprint: 'chrome2',
+    clientFingerprint: 'chrome',
   },
   {
-    nodeName: 'trojan.tcpNotSupported',
+    nodeName: 'trojan.tcp',
     type: NodeTypeEnum.Trojan,
     hostname: 'example.com',
     port: 443,
@@ -488,7 +489,7 @@ const nodeList: ReadonlyArray<PossibleNodeConfigType> = [
     tls13: true,
     skipCertVerify: true,
     alpn: ['h2', 'http/1.1'],
-    clientFingerprint: 'chrome2',
+    clientFingerprint: 'chrome',
     multiplex: {
       protocol: 'smux',
       maxConnections: 2,
@@ -514,7 +515,7 @@ const nodeList: ReadonlyArray<PossibleNodeConfigType> = [
     tls13: true,
     skipCertVerify: true,
     alpn: ['h2', 'http/1.1'],
-    clientFingerprint: 'chrome2',
+    clientFingerprint: 'chrome',
   },
   {
     nodeName: 'tuic.versionNotSupported',
@@ -535,7 +536,7 @@ const nodeList: ReadonlyArray<PossibleNodeConfigType> = [
     tls13: true,
     skipCertVerify: true,
     alpn: ['h2', 'http/1.1'],
-    clientFingerprint: 'chrome2',
+    clientFingerprint: 'chrome',
     congestionControl: 'bbr',
   },
   {
@@ -554,7 +555,18 @@ const nodeList: ReadonlyArray<PossibleNodeConfigType> = [
     tls13: true,
     skipCertVerify: true,
     alpn: ['h2', 'http/1.1'],
-    clientFingerprint: 'chrome2',
+    clientFingerprint: 'chrome',
+  },
+  {
+    nodeName: 'anytls',
+    type: NodeTypeEnum.AnyTLS,
+    hostname: 'example.com',
+    port: 443,
+    password: 'password',
+    udpRelay: false,
+    idleSessionCheckInterval: 30,
+    idleSessionTimeout: 45,
+    minIdleSessions: 0,
   },
   {
     nodeName: 'wg',
@@ -568,6 +580,7 @@ const nodeList: ReadonlyArray<PossibleNodeConfigType> = [
         publicKey: 'publicKey1',
         endpoint: 'wg1.example.com:51820',
         allowedIps: '0.0.0.0/0, ::/0',
+        keepalive: 25,
         presharedKey: 'presharedKey1',
         reservedBits: [1, 2, 3],
       },
@@ -588,7 +601,6 @@ const nodeList: ReadonlyArray<PossibleNodeConfigType> = [
       {
         publicKey: 'publicKey4',
         endpoint: '[2606:4700:d0:0:8537:1837:8101:92fd]:942',
-        allowedIps: '0.0.0.0/0, ::/0',
         presharedKey: 'presharedKey4',
         reservedBits: [4, 2, 3],
       },
@@ -612,7 +624,6 @@ const expectedNodes: Record<string, any>[] = [
     password: 'password',
     plugin: 'obfs-local',
     plugin_opts: 'obfs=http;obfs-host=example.com',
-    tls: { enabled: true, insecure: true, min_version: '1.3' },
     multiplex: {
       protocol: 'smux',
       max_connections: 2,
@@ -620,7 +631,7 @@ const expectedNodes: Record<string, any>[] = [
       max_streams: 0,
       padding: true,
       enabled: true,
-      brutal: { up_mbps: 100, down_mbps: 100 },
+      brutal: { enabled: true, up_mbps: 100, down_mbps: 100 },
     },
     tcp_fast_open: true,
     tcp_multi_path: true,
@@ -706,7 +717,7 @@ const expectedNodes: Record<string, any>[] = [
       insecure: true,
       alpn: ['h2', 'http/1.1'],
       min_version: '1.3',
-      utls: { enabled: true, fingerprint: 'chrome2' },
+      utls: { enabled: true, fingerprint: 'chrome' },
     },
     multiplex: {
       protocol: 'smux',
@@ -715,7 +726,7 @@ const expectedNodes: Record<string, any>[] = [
       max_streams: 0,
       padding: true,
       enabled: true,
-      brutal: { up_mbps: 100, down_mbps: 100 },
+      brutal: { enabled: true, up_mbps: 100, down_mbps: 100 },
     },
     tcp_fast_open: true,
     tcp_multi_path: true,
@@ -794,7 +805,7 @@ const expectedNodes: Record<string, any>[] = [
     flow: 'xtls-rprx-vision',
     tls: {
       enabled: true,
-      utls: { enabled: true, fingerprint: 'chrome2' },
+      utls: { enabled: true, fingerprint: 'chrome' },
       reality: { enabled: true, public_key: 'publicKey', short_id: 'shortId' },
     },
   },
@@ -805,7 +816,7 @@ const expectedNodes: Record<string, any>[] = [
     flow: 'xtls-rprx-vision',
     tls: {
       enabled: true,
-      utls: { enabled: true, fingerprint: 'chrome2' },
+      utls: { enabled: true, fingerprint: 'chrome' },
       reality: { enabled: true, public_key: 'publicKey', short_id: 'shortId' },
       server_name: 'example.com',
       insecure: true,
@@ -820,7 +831,7 @@ const expectedNodes: Record<string, any>[] = [
       max_streams: 0,
       padding: true,
       enabled: true,
-      brutal: { up_mbps: 100, down_mbps: 100 },
+      brutal: { enabled: true, up_mbps: 100, down_mbps: 100 },
     },
     tcp_fast_open: true,
     tcp_multi_path: true,
@@ -844,7 +855,7 @@ const expectedNodes: Record<string, any>[] = [
     flow: 'xtls-rprx-vision',
     tls: {
       enabled: true,
-      utls: { enabled: true, fingerprint: 'chrome2' },
+      utls: { enabled: true, fingerprint: 'chrome' },
       reality: { enabled: true, public_key: 'publicKey', short_id: 'shortId' },
     },
     transport: {
@@ -863,7 +874,7 @@ const expectedNodes: Record<string, any>[] = [
     flow: 'xtls-rprx-vision',
     tls: {
       enabled: true,
-      utls: { enabled: true, fingerprint: 'chrome2' },
+      utls: { enabled: true, fingerprint: 'chrome' },
       reality: { enabled: true, public_key: 'publicKey', short_id: 'shortId' },
     },
     transport: { type: 'ws', path: '/foo', headers: { Host: ['example.com'] } },
@@ -877,7 +888,7 @@ const expectedNodes: Record<string, any>[] = [
     flow: 'xtls-rprx-vision',
     tls: {
       enabled: true,
-      utls: { enabled: true, fingerprint: 'chrome2' },
+      utls: { enabled: true, fingerprint: 'chrome' },
       reality: { enabled: true, public_key: 'publicKey', short_id: 'shortId' },
     },
     transport: { type: 'quic' },
@@ -891,7 +902,7 @@ const expectedNodes: Record<string, any>[] = [
     flow: 'xtls-rprx-vision',
     tls: {
       enabled: true,
-      utls: { enabled: true, fingerprint: 'chrome2' },
+      utls: { enabled: true, fingerprint: 'chrome' },
       reality: { enabled: true, public_key: 'publicKey', short_id: 'shortId' },
     },
     transport: { type: 'grpc', service_name: 'example' },
@@ -905,7 +916,7 @@ const expectedNodes: Record<string, any>[] = [
     flow: 'xtls-rprx-vision',
     tls: {
       enabled: true,
-      utls: { enabled: true, fingerprint: 'chrome2' },
+      utls: { enabled: true, fingerprint: 'chrome' },
       reality: { enabled: true, public_key: 'publicKey', short_id: 'shortId' },
     },
     transport: {
@@ -940,8 +951,15 @@ const expectedNodes: Record<string, any>[] = [
       insecure: true,
       alpn: ['h2', 'http/1.1'],
       min_version: '1.3',
-      utls: { enabled: true, fingerprint: 'chrome2' },
+      utls: { enabled: true, fingerprint: 'chrome' },
     },
+  },
+  {
+    type: 'trojan',
+    tag: 'trojan.tcp',
+    server: 'example.com',
+    server_port: 443,
+    password: 'password',
   },
   {
     type: 'trojan',
@@ -956,7 +974,7 @@ const expectedNodes: Record<string, any>[] = [
       insecure: true,
       alpn: ['h2', 'http/1.1'],
       min_version: '1.3',
-      utls: { enabled: true, fingerprint: 'chrome2' },
+      utls: { enabled: true, fingerprint: 'chrome' },
     },
     multiplex: {
       protocol: 'smux',
@@ -965,7 +983,7 @@ const expectedNodes: Record<string, any>[] = [
       max_streams: 0,
       padding: true,
       enabled: true,
-      brutal: { up_mbps: 100, down_mbps: 100 },
+      brutal: { enabled: true, up_mbps: 100, down_mbps: 100 },
     },
   },
   {
@@ -975,14 +993,6 @@ const expectedNodes: Record<string, any>[] = [
     server_port: 8080,
     username: 'username',
     password: 'password',
-    tls: {
-      enabled: true,
-      server_name: 'example.com',
-      insecure: true,
-      alpn: ['h2', 'http/1.1'],
-      min_version: '1.3',
-      utls: { enabled: true, fingerprint: 'chrome2' },
-    },
   },
   {
     type: 'tuic',
@@ -998,7 +1008,7 @@ const expectedNodes: Record<string, any>[] = [
       insecure: true,
       alpn: ['h2', 'http/1.1'],
       min_version: '1.3',
-      utls: { enabled: true, fingerprint: 'chrome2' },
+      utls: { enabled: true, fingerprint: 'chrome' },
     },
   },
   {
@@ -1018,53 +1028,66 @@ const expectedNodes: Record<string, any>[] = [
       insecure: true,
       alpn: ['h2', 'http/1.1'],
       min_version: '1.3',
-      utls: { enabled: true, fingerprint: 'chrome2' },
+      utls: { enabled: true, fingerprint: 'chrome' },
     },
   },
   {
-    type: 'wireguard',
-    tag: 'wg',
-    address: ['10.0.0.1/32', '2001:db8:85a3::8a2e:370:7334/128'],
-    private_key: 'privateKey',
-    peers: [
-      {
-        address: 'wg1.example.com',
-        port: 51820,
-        public_key: 'publicKey1',
-        pre_shared_key: 'presharedKey1',
-        allowed_ips: ['0.0.0.0/0', '::/0'],
-        reserved: [1, 2, 3],
-      },
-      {
-        address: 'wg2.example.com',
-        port: 51820,
-        public_key: 'publicKey2',
-        pre_shared_key: 'presharedKey2',
-        allowed_ips: ['0.0.0.0/0', '::/0'],
-        reserved: [2, 2, 3],
-      },
-      {
-        address: '162.159.195.115',
-        port: 7156,
-        public_key: 'publicKey3',
-        pre_shared_key: 'presharedKey3',
-        allowed_ips: ['0.0.0.0/0', '::/0'],
-        reserved: [3, 2, 3],
-      },
-      {
-        address: '[2606:4700:d0:0:8537:1837:8101:92fd]',
-        port: 942,
-        public_key: 'publicKey4',
-        pre_shared_key: 'presharedKey4',
-        allowed_ips: ['0.0.0.0/0', '::/0'],
-        reserved: [4, 2, 3],
-      },
-    ],
-    mtu: 1420,
+    type: 'anytls',
+    tag: 'anytls',
+    server: 'example.com',
+    server_port: 443,
+    password: 'password',
+    idle_session_check_interval: '30s',
+    idle_session_timeout: '45s',
+    min_idle_session: 0,
+    tls: { enabled: true },
   },
 ]
 
-const expectedNodeNames = expectedNodes
+const wireguardEndpoint = {
+  type: 'wireguard',
+  tag: 'wg',
+  address: ['10.0.0.1/32', '2001:db8:85a3::8a2e:370:7334/128'],
+  private_key: 'privateKey',
+  peers: [
+    {
+      address: 'wg1.example.com',
+      port: 51820,
+      public_key: 'publicKey1',
+      persistent_keepalive_interval: '25s',
+      pre_shared_key: 'presharedKey1',
+      allowed_ips: ['0.0.0.0/0', '::/0'],
+      reserved: [1, 2, 3],
+    },
+    {
+      address: 'wg2.example.com',
+      port: 51820,
+      public_key: 'publicKey2',
+      pre_shared_key: 'presharedKey2',
+      allowed_ips: ['0.0.0.0/0', '::/0'],
+      reserved: [2, 2, 3],
+    },
+    {
+      address: '162.159.195.115',
+      port: 7156,
+      public_key: 'publicKey3',
+      pre_shared_key: 'presharedKey3',
+      allowed_ips: ['0.0.0.0/0', '::/0'],
+      reserved: [3, 2, 3],
+    },
+    {
+      address: '[2606:4700:d0:0:8537:1837:8101:92fd]',
+      port: 942,
+      public_key: 'publicKey4',
+      pre_shared_key: 'presharedKey4',
+      allowed_ips: ['0.0.0.0/0', '::/0'],
+      reserved: [4, 2, 3],
+    },
+  ],
+  mtu: 1420,
+}
+
+const expectedNodeNames = [...expectedNodes, wireguardEndpoint]
   .map((node) => node.tag as string)
   .filter((name) => !['NotSupported', 'disabled'].some((n) => name.includes(n)))
 
@@ -1088,6 +1111,122 @@ test('getSingboxNodes', async () => {
       (nodeConfig) => nodeConfig.nodeName === 'ss',
     ),
   ).toEqual([expectedNodes[0]])
+})
+
+test('getSingboxEndpoints emits WireGuard endpoints', () => {
+  expect(singbox.getSingboxEndpoints(nodeList)).toEqual([wireguardEndpoint])
+  expect(
+    singbox.getSingboxNodes(nodeList).some((node) => node.type === 'wireguard'),
+  ).toBe(false)
+})
+
+test('required-TLS protocols always enable TLS and omit empty obfs', () => {
+  expect(
+    singbox.getSingboxNodes([
+      {
+        type: NodeTypeEnum.Tuic,
+        nodeName: 'minimal-tuic',
+        hostname: 'tuic.example.com',
+        port: 443,
+        uuid: '1386f85e-657b-4d6e-9d56-78badb75e1fd',
+        password: 'password',
+        version: 5,
+      },
+      {
+        type: NodeTypeEnum.Hysteria2,
+        nodeName: 'minimal-hysteria2',
+        hostname: 'hysteria2.example.com',
+        port: 443,
+        password: 'password',
+        uploadBandwidth: 100,
+        downloadBandwidth: 100,
+      },
+    ]),
+  ).toEqual([
+    {
+      type: 'tuic',
+      tag: 'minimal-tuic',
+      server: 'tuic.example.com',
+      server_port: 443,
+      uuid: '1386f85e-657b-4d6e-9d56-78badb75e1fd',
+      password: 'password',
+      tls: { enabled: true },
+    },
+    {
+      type: 'hysteria2',
+      tag: 'minimal-hysteria2',
+      server: 'hysteria2.example.com',
+      server_port: 443,
+      up_mbps: 100,
+      down_mbps: 100,
+      password: 'password',
+      tls: { enabled: true },
+    },
+  ])
+})
+
+test('handles provider-normalized Hysteria2 port hopping', () => {
+  const node = Hysteria2NodeConfigValidator.parse({
+    type: NodeTypeEnum.Hysteria2,
+    nodeName: 'hysteria2-port-hopping',
+    hostname: 'hysteria2.example.com',
+    port: 443,
+    password: 'password',
+    uploadBandwidth: 100,
+    downloadBandwidth: 100,
+    portHopping: '5000-6000,8000-9000',
+  })
+
+  expect(node.portHopping).toBe('5000-6000;8000-9000')
+  expect(singbox.getSingboxNodes([node])[0].server_ports).toEqual([
+    '5000:6000',
+    '8000:9000',
+  ])
+})
+
+test('omits unsupported AnyTLS TCP Fast Open with a warning', () => {
+  const warn = vi.fn()
+  const [node] = singbox.getSingboxNodes(
+    [
+      {
+        type: NodeTypeEnum.AnyTLS,
+        nodeName: 'anytls-tfo',
+        hostname: 'anytls.example.com',
+        port: 443,
+        password: 'password',
+        tfo: true,
+      },
+    ],
+    undefined,
+    { logger: { warn } as any },
+  )
+
+  expect(node).not.toHaveProperty('tcp_fast_open')
+  expect(warn).toHaveBeenCalledWith(
+    expect.stringContaining('AnyTLS 不支持 TCP Fast Open'),
+  )
+})
+
+test('uses the default uTLS fingerprint for unsupported values', () => {
+  const warn = vi.fn()
+  const [node] = singbox.getSingboxNodes(
+    [
+      {
+        type: NodeTypeEnum.HTTPS,
+        nodeName: 'https-unsupported-fingerprint',
+        hostname: 'https.example.com',
+        port: 443,
+        clientFingerprint: 'chrome2',
+      },
+    ],
+    undefined,
+    { logger: { warn } as any },
+  )
+
+  expect(node.tls.utls).toEqual({ enabled: true })
+  expect(warn).toHaveBeenCalledWith(
+    expect.stringContaining('不支持 uTLS fingerprint=chrome2'),
+  )
 })
 
 const tailscaleEndpoint = {
