@@ -12,4 +12,12 @@ export const Hysteria2NodeConfigValidator = TlsNodeConfigValidator.extend({
   obfs: z.literal('salamander').optional(),
   obfsPassword: z.string().optional(),
   udpRelay: z.oboolean(),
+}).superRefine((config, ctx) => {
+  if (config.obfs && !config.obfsPassword) {
+    ctx.addIssue({
+      code: z.ZodIssueCode.custom,
+      path: ['obfsPassword'],
+      message: 'Hysteria2 启用 obfs 时必须设置 obfsPassword',
+    })
+  }
 })
