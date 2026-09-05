@@ -459,7 +459,7 @@ Vless 节点遵循和 Vmess 类似的配置规则，除了以下几个差异：
 
 ### Wireguard
 
-理论上你可以设置多个 Peer，但是目前仅 Surge 支持多个 Peer 的配置，其它客户端需要自行分拆成多个相互独立的配置。
+Surge、Loon 和 sing-box 支持输出多个 Peer；Stash 和 Clash 只会使用第一个 Peer。sing-box 会将 WireGuard 输出到顶层 `endpoints` 字段；模板需要使用 `getSingboxEndpoints`。
 
 ```json5
 {
@@ -471,7 +471,7 @@ Vless 节点遵循和 Vmess 类似的配置规则，除了以下几个差异：
     {
       publicKey: 'eOyyaXrwVTHwo62x98Is6v5Fo=',
       endpoint: 'wg.example.com:54321',
-      allowedIps: '172.16.0.0/24', // 可选
+      allowedIps: '172.16.0.0/24', // 可选；sing-box 默认根据本地地址使用全路由
       keepalive: 25, // 可选
       presharedKey: 'eOyyaXrwVTHwo62x98Is6v5Fo=', // 可选
       reservedBits: [16], // 可选
@@ -614,7 +614,7 @@ Loon 支持输出 `sni`、`skipCertVerify`、`tfo`、`obfsPassword` 和 `udpRela
   downloadBandwidth: 40, // 可选，Mbps
   uploadBandwidth: 40, // 可选，Mbps
   obfs: 'salamander', // 可选
-  obfsPassword: 'obfs-password', // 可选，Loon 输出为 salamander-password
+  obfsPassword: 'obfs-password', // 启用 obfs 时必填，Loon 输出为 salamander-password
   sni: 'sni.example.com', // 可选
   skipCertVerify: true, // 可选
   tfo: true, // 可选，Loon 输出为 fast-open=true
@@ -764,8 +764,8 @@ Stash 和 Mihomo 默认使用 HTTP/2，`quic: true` 时切换到 HTTP/3。Stash 
   }, // 可选，仅 Quantumult X Reality TLS 输出使用
   alpn: ['h2', 'http/1.1'], // 可选
   skipCertVerify: false, // 可选
-  idleSessionCheckInterval: 0, // 可选
-  idleSessionTimeout: 0, // 可选
+  idleSessionCheckInterval: 0, // 可选，单位为秒
+  idleSessionTimeout: 0, // 可选，单位为秒
   minIdleSessions: 0, // 可选
   reuse: true, // 可选，仅 Surge 输出生效
 }

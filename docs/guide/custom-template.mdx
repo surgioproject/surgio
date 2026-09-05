@@ -370,7 +370,7 @@ getClashNodeNames(nodeList, netflixFilter, [], ['默认节点']);
 
 `getSingboxNodes(nodeList, filter?)`
 
-该方法会返回一个包含有节点信息的数组，可用于编写 sing-box 规则。
+该方法会返回一个包含 outbound 节点信息的数组，可用于编写 sing-box 规则。WireGuard 和 Tailscale 等 endpoint 节点需要使用 `getSingboxEndpoints`。
 
 :::tip[提示]
 
@@ -383,12 +383,12 @@ getClashNodeNames(nodeList, netflixFilter, [], ['默认节点']);
 
 `getSingboxEndpoints(nodeList, filter?)`
 
-sing-box 将 Tailscale 等节点视为 [endpoint](https://sing-box.sagernet.org/configuration/endpoint/tailscale) 而非 outbound。该方法会返回一个包含 endpoint 信息的数组，需要放入配置文件的 `endpoints` 字段中（通常配合 `extendEndpoints` 使用）。
+sing-box 将 [WireGuard](https://sing-box.sagernet.org/configuration/endpoint/wireguard) 和 [Tailscale](https://sing-box.sagernet.org/configuration/endpoint/tailscale) 等节点视为 endpoint 而非 outbound。该方法会返回一个包含 endpoint 信息的数组，需要放入配置文件的 `endpoints` 字段中（通常配合 `extendEndpoints` 使用）。
 
 :::tip[提示]
 
 - `filter` 为可选参数
-- 目前仅支持 Tailscale 节点
+- 目前支持 WireGuard 和 Tailscale 节点
 :::
 
 ### getSingboxNodeNames
@@ -397,7 +397,7 @@ sing-box 将 Tailscale 等节点视为 [endpoint](https://sing-box.sagernet.org/
 
 `getSingboxNodeNames(nodeList, filter?)`
 
-该方法会返回一个包含有节点名称的数组，用于编写 sing-box 规则。返回的名称同时包含 outbound 与 endpoint（如 Tailscale）节点，方便在 `selector`、`urltest` 中引用。
+该方法会返回一个包含有节点名称的数组，用于编写 sing-box 规则。返回的名称同时包含 outbound 与 endpoint（如 WireGuard、Tailscale）节点，方便在 `selector`、`urltest` 中引用。
 
 :::tip[提示]
 
