@@ -8,8 +8,6 @@
 - 请确认在本地运行 `npx surgio generate` 后没有报错再提交代码
 :::
 
-**目录**
-
 ## Node 版本升级
 
 新版 Surgio 不再支持 Node v12，请使用 v18.0.0 以上版本。
