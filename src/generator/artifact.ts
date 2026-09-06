@@ -19,8 +19,10 @@ import {
   ArtifactConfig,
   ArtifactConfigInput,
   CommandConfig,
+  NodeFilterType,
   PossibleNodeConfigType,
   RemoteSnippet,
+  SortedNodeFilterType,
   SubscriptionUserinfo,
 } from '../types.js'
 import {
@@ -48,7 +50,7 @@ export interface ArtifactOptions {
   readonly providerRuntime?: ProviderRuntimeContext
 }
 
-export type ExtendableRenderContext = Record<string, string>
+export type ExtendableRenderContext = Record<string, any>
 
 export class Artifact extends EventEmitter {
   public initProgress = 0
@@ -62,7 +64,8 @@ export class Artifact extends EventEmitter {
   public subscriptionUserInfo?: SubscriptionUserinfo
   public subscriptionUserInfoMap: Map<string, SubscriptionUserinfo> = new Map()
 
-  private customFilters: Record<string, unknown> = {}
+  private customFilters: Record<string, NodeFilterType | SortedNodeFilterType> =
+    {}
 
   constructor(
     public surgioConfig: CommandConfig,

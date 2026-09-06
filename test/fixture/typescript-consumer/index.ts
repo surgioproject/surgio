@@ -16,6 +16,8 @@ import { buildWorkerManifest } from 'surgio/worker/build'
 import {
   defineSurgioProject,
   env,
+  extendOutbounds,
+  type ExtendContext,
   type ArtifactConfigInput,
   type GetNodeListParams,
   type JsonObject,
@@ -24,6 +26,21 @@ import {
 } from 'surgio/project'
 
 import type { Logger } from '@surgio/logger'
+import type { Artifact } from 'surgio/generator'
+
+const renderWithCustomParams = (artifact: Artifact) => {
+  const params = { count: 3, enabled: true, foo: { bar: ['node'] } }
+  artifact.render(params)
+  const context = artifact.getRenderContext(params)
+  const names: string[] = context.customParams.foo.bar
+  return names
+}
+const extendWithCustomParams = extendOutbounds(({ customParams }) => {
+  const names: string[] = customParams.foo.bar
+  return [{ type: 'selector', tag: 'Custom', outbounds: names }]
+})
+void renderWithCustomParams
+void extendWithCustomParams
 
 const config: SurgioConfig = {
   artifacts: [],
@@ -45,6 +62,37 @@ defineCustomProvider({
 })
 utils.useKeywords(['Hong Kong'])
 
+const customFilters = {
+  hongKong: utils.mergeFilters([utils.useKeywords(['Hong Kong'])]),
+  sorted: utils.useSortedKeywords(['Hong Kong', 'Japan']),
+}
+const extendWithCustomFilters = extendOutbounds(
+  ({
+    nodeList,
+    customFilters,
+    getSingboxNodeNames,
+  }: ExtendContext): JsonObject[] => [
+    {
+      type: 'urltest',
+      tag: 'Hong Kong',
+      outbounds: [...getSingboxNodeNames(nodeList, customFilters.hongKong)],
+    },
+    {
+      type: 'selector',
+      tag: 'Sorted',
+      outbounds: [...getSingboxNodeNames(nodeList, customFilters.sorted)],
+    },
+  ],
+)
+const contextFilters: ExtendContext['customFilters'] = customFilters
+const invalidContextFilters: ExtendContext['customFilters'] = {
+  // @ts-expect-error Custom filters must be node filters, not arbitrary values.
+  invalid: 'filter',
+}
+void contextFilters
+void invalidContextFilters
+void extendWithCustomFilters
+
 const category: string = categories.CLASH
 const defaultHttpClient = httpClient
 const cacheType: typeof TtlCache = TtlCache
@@ -63,6 +111,8 @@ const artifact = {
   name: 'demo.conf',
   provider: 'demo',
   template: 'demo',
+  customFilters,
+  extendTemplate: extendWithCustomFilters,
 } satisfies ArtifactConfigInput
 const params = {} satisfies GetNodeListParams
 const json = {} satisfies JsonObject

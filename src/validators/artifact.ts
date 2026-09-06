@@ -1,5 +1,10 @@
 import { z } from 'zod/v3'
 
+import {
+  NodeFilterTypeValidator,
+  SortedNodeFilterTypeValidator,
+} from './filter.js'
+
 import type { ExtendFunction } from '../generator/json-extend.js'
 
 export const ArtifactValidator = z.object({
@@ -18,7 +23,9 @@ export const ArtifactValidator = z.object({
   categories: z.array(z.string()).optional(),
   combineProviders: z.array(z.string()).optional(),
   customParams: z.record(z.any()).optional(),
-  customFilters: z.record(z.function()).optional(),
+  customFilters: z
+    .record(z.union([NodeFilterTypeValidator, SortedNodeFilterTypeValidator]))
+    .optional(),
   destDir: z.ostring(),
   destDirs: z.array(z.string()).optional(),
   downloadUrl: z.ostring(),

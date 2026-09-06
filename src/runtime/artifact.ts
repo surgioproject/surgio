@@ -273,8 +273,10 @@ export const createArtifactRenderContext = (options: {
   readonly config: ArtifactRuntimeConfig
   readonly nodeList: ReadonlyArray<PossibleNodeConfigType>
   readonly mainProvider: PossibleProviderType
-  readonly customFilters: Readonly<Record<string, unknown>>
-  readonly customParams: Readonly<Record<string, unknown>>
+  readonly customFilters: Readonly<
+    Record<string, NodeFilterType | SortedNodeFilterType>
+  >
+  readonly customParams: Readonly<Record<string, any>>
   readonly remoteSnippetList?: ReadonlyArray<RemoteSnippet>
   readonly loadSnippet: (name: string) => RemoteSnippet
   readonly downloadUrl?: string

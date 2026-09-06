@@ -4,10 +4,43 @@ import nock from 'nock'
 
 import { loadConfig, normalizeConfig } from '../../config.js'
 import { NodeTypeEnum } from '../../types.js'
+import {
+  mergeFilters,
+  useKeywords,
+  useSortedKeywords,
+} from '../../filters/index.js'
 import { Artifact } from '../artifact.js'
 import { createNodeRenderer } from '../template.js'
 
 const resolve = (p: string) => join(__dirname, '../../../test/fixture/', p)
+
+test('artifact custom filters support predicates and sorted filters', async () => {
+  const config = loadConfig(resolve('plain'))
+  const customFilters = {
+    merged: mergeFilters([useKeywords(['test'])]),
+    sorted: useSortedKeywords(['test']),
+  }
+  const artifact = new Artifact(config, {
+    name: 'filters.json',
+    template: 'test',
+    provider: 'ss',
+    customFilters,
+  })
+  await artifact.init()
+  const context = artifact.getRenderContext()
+
+  for (const name of ['merged', 'sorted']) {
+    expect(context.customFilters[name]).toBe(
+      customFilters[name as keyof typeof customFilters],
+    )
+    expect(() =>
+      context.getSingboxNodeNames(
+        context.nodeList,
+        context.customFilters[name],
+      ),
+    ).not.toThrow()
+  }
+})
 
 test('defaults to Mihomo while preserving explicit Clash cores', () => {
   const fixture = resolve('plain')
