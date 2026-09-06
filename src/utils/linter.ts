@@ -18,7 +18,15 @@ export const createCli = (cliConfig?: ESLint.Options): ESLint => {
     overrideConfigFile: true,
     overrideConfig: [
       ...surgioConfig,
-      { ignores: ['.surgio/**', 'dist/**', 'node_modules/**'] },
+      {
+        ignores: [
+          '.surgio/**',
+          'dist/**',
+          'node_modules/**',
+          'worker-configuration.d.ts',
+          '.wrangler/**',
+        ],
+      },
       ...(projectUsesEsm
         ? [
             {
