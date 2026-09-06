@@ -118,7 +118,7 @@
   "scripts": {
     "dev": "pnpm run build --watch",
     "test": "run-s build test:types test:lint test:examples test:unit test:cli",
-    "test:types": "tsc --noEmit && tsc6 --noEmit -p test/fixture/typescript-consumer/tsconfig.json && tsc --noEmit -p test/fixture/typescript-consumer/tsconfig.json",
+    "test:types": "tsc --noEmit && tsc --noEmit -p test/fixture/typescript-consumer/tsconfig.json",
     "test:lint": "eslint .",
     "test:examples": "tsc --noEmit -p examples/tsconfig.json && node ./bin/run lint --project ./examples/clash-remote-snippet && node ./bin/run lint --project ./examples/hooks && node ./bin/run lint --project ./examples/quantumultx",
     "test:unit": "vitest run",
