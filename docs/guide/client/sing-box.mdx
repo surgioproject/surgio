@@ -152,3 +152,125 @@ module.exports = {
   ]
 }
 ```
+
+## 维护规则
+
+> <Badge text="v4.0.0" vertical="middle" />
+
+前面介绍了如何把节点写入 `outbounds`，而规则则可以复用现有的 Surge 格式规则片段。Surgio 提供了两个新的模板方法：
+
+- `getSingboxRules(ruleText, outbound?)` —— 把 Surge 格式的规则文本转换成 `route.rules` 需要的规则对象数组。每行末尾的策略列会被转换成 `outbound`（`REJECT` 系列策略会转换成 `action: 'reject'`），也可以通过第二个参数强制指定策略；
+- `getSingboxHeadlessRules(ruleText)` —— 转换成不含策略的 headless 规则，用于生成 rule-set 文件（见下文）。
+
+配合 `extendRoute` 就可以把规则片段直接写入 sing-box 配置：
+
+```js
+const {
+  combineExtendFunctions,
+  extendOutbounds,
+  extendRoute,
+} = require('surgio');
+
+module.exports = {
+  artifacts: [
+    {
+      name: 'singbox.json',
+      template: 'singbox',
+      templateType: 'json',
+      extendTemplate: combineExtendFunctions(
+        extendOutbounds(/* ... */),
+        extendRoute(({ getSingboxRules, remoteSnippets, snippet }) => ({
+          rules: [
+            // 远程片段，策略为 REJECT
+            ...getSingboxRules(remoteSnippets.reject.main('REJECT')),
+            // 本地片段 template/snippet/direct.tpl，策略为 DIRECT
+            ...getSingboxRules(snippet('snippet/direct.tpl').main('DIRECT')),
+            // 远程片段，策略为 proxy
+            ...getSingboxRules(remoteSnippets.proxy.main('proxy')),
+          ],
+          // 对应 Surge 规则中的 FINAL
+          final: 'proxy',
+        })),
+      ),
+      provider: 'ss',
+    },
+  ]
+}
+```
+
+`extendRoute` 会把 `rules` 追加到模板已有的 `route.rules` 之后，并覆盖 `route.final` 等标量字段。
+
+### 生成 rule-set 文件
+
+sing-box 支持把规则放到独立的 rule-set 文件中，主配置通过引用的方式使用它们。以 Netflix 规则集为例：
+
+1. 新建模板 `template/singbox-ruleset.json`：
+
+```json
+{
+  "version": 3,
+  "rules": []
+}
+```
+
+2. 新建 Artifact，用 `extendRuleSet` 填充 `rules` 字段。headless 规则不包含策略，所以直接读取片段原文（`.text`）：
+
+```js
+const { extendRuleSet } = require('surgio');
+
+module.exports = {
+  artifacts: [
+    {
+      name: 'ruleset/netflix.json',
+      template: 'singbox-ruleset',
+      templateType: 'json',
+      extendTemplate: extendRuleSet(
+        ({ getSingboxHeadlessRules, remoteSnippets }) =>
+          getSingboxHeadlessRules(remoteSnippets.netflix.text),
+      ),
+      provider: 'ss',
+    },
+  ]
+}
+```
+
+3. 在主配置的 `route` 中声明并引用这个 rule-set：
+
+```js
+extendRoute(({ getUrl }) => ({
+  rule_set: [
+    {
+      type: 'remote',
+      tag: 'netflix',
+      format: 'source',
+      url: getUrl('ruleset/netflix.json'),
+    },
+  ],
+  rules: [{ rule_set: ['netflix'], outbound: 'proxy' }],
+}))
+```
+
+### 规则类型对照
+
+| Surge 规则类型 | sing-box 字段 | 备注 |
+| --- | --- | --- |
+| DOMAIN | domain | |
+| DOMAIN-SUFFIX | domain_suffix | |
+| DOMAIN-KEYWORD | domain_keyword | |
+| DOMAIN-WILDCARD | domain_regex | `*`、`?` 会被转换为正则表达式 |
+| IP-CIDR / IP-CIDR6 | ip_cidr | `no-resolve` 会被忽略 |
+| GEOIP | rule_set | 生成 `geoip-<代码>` 引用 |
+| RULE-SET | rule_set | 原样引用第二列的值 |
+| PROCESS-NAME | process_name | |
+| DEST-PORT | port | |
+| SRC-PORT | source_port | |
+| SRC-IP | source_ip_cidr | |
+| PROTOCOL | network | 仅支持 TCP 和 UDP |
+| AND / OR / NOT | 逻辑规则 | 转换为 sing-box 的 logical rule |
+
+:::warning[注意]
+
+- `GEOIP` 和 `RULE-SET` 只会生成对 rule-set 的引用（例如 `geoip-cn`），你需要像上面的例子一样在 `route.rule_set` 中自行声明这些 rule-set；
+- sing-box 无法表达的规则（例如 `USER-AGENT`、`URL-REGEX`、`IP-ASN`、`SCRIPT`）会被跳过，并在生成时输出警告日志；
+- `FINAL` 规则请使用 `route.final`，如上面的 `final: 'proxy'`。
+:::

@@ -410,6 +410,24 @@ sing-box 将 [WireGuard](https://sing-box.sagernet.org/configuration/endpoint/wi
 getSingboxNodeNames(nodeList, netflixFilter);
 ```
 
+### getSingboxRules
+
+> <Badge text="v4.0.0" vertical="middle" />
+
+`getSingboxRules(ruleText, outbound?)`
+
+将 Surge 格式的规则文本转换为 sing-box `route.rules` 的规则对象数组。每行末尾的策略列会被转换为 `outbound`（`REJECT` 系列策略转换为 `action: 'reject'`），也可以通过第二个参数强制指定所有规则的策略。sing-box 无法表达的规则（例如 `USER-AGENT`、`URL-REGEX`、`IP-ASN`）会被跳过并输出警告日志。
+
+该方法一般在 JSON 模板中配合 `extendRoute` 使用，请参考 [sing-box 规则维护指南](/guide/client/sing-box#维护规则)。
+
+### getSingboxHeadlessRules
+
+> <Badge text="v4.0.0" vertical="middle" />
+
+`getSingboxHeadlessRules(ruleText)`
+
+和 `getSingboxRules` 类似，但生成的是不含策略的 headless 规则，用于生成 sing-box 的 rule-set 文件，通常配合 `extendRuleSet` 使用。
+
 ### getLoonNodes
 
 `getLoonNodes(nodeList, filter?)`
@@ -573,6 +591,15 @@ extendOutbounds((props) => {
 }) 
 ```
 
+在 TypeScript 项目中，`props` 会自动推断为完整的模板上下文类型，`getSingboxNodes`、`getSingboxRules`、`remoteSnippets`、`snippet` 等方法和变量都带有类型提示。需要单独声明时可以从 `surgio/project` 导入 `ExtendContext`：
+
+```ts
+import type { ExtendContext, SingboxRouteRule } from 'surgio/project'
+
+const buildRules = (props: ExtendContext): SingboxRouteRule[] =>
+  props.getSingboxRules(props.remoteSnippets.proxy.main('proxy'))
+```
+
 #### 对象类型
 
 ```js
@@ -597,6 +624,45 @@ extendOutbounds([
 `extendEndpoints(function|object)`
 
 用于拓展 sing-box 规则的 `endpoints` 字段。该方法和 `extendOutbounds` 类似，用于适配 sing-box v1.11.0 之后的配置格式。
+
+### extendRoute
+
+> <Badge text="v4.0.0" vertical="middle" />
+
+`extendRoute(function|object)`
+
+用于拓展 sing-box 规则的 `route` 字段。模板中已有的 `route.rules` 数组会被追加，`route.final` 等标量字段会被覆盖。通常配合 `getSingboxRules` 使用：
+
+```js
+extendRoute(({ getSingboxRules, remoteSnippets }) => ({
+  rules: getSingboxRules(remoteSnippets.proxy.main('proxy')),
+  final: 'proxy',
+}))
+```
+
+### extendDns
+
+> <Badge text="v4.0.0" vertical="middle" />
+
+`extendDns(function|object)`
+
+用于拓展 sing-box 规则的 `dns` 字段，数组合并、标量覆盖的规则与 `extendRoute` 相同。
+
+### extendInbounds
+
+> <Badge text="v4.0.0" vertical="middle" />
+
+`extendInbounds(function|object)`
+
+用于拓展 sing-box 规则的 `inbounds` 字段。
+
+### extendRuleSet
+
+> <Badge text="v4.0.0" vertical="middle" />
+
+`extendRuleSet(function|object)`
+
+用于拓展 sing-box rule-set 文件的 `rules` 字段，配合 `getSingboxHeadlessRules` 生成 rule-set 文件，用法请参考 [sing-box 规则维护指南](/guide/client/sing-box#维护规则)。
 
 ### createExtendFunction
 
@@ -825,4 +891,27 @@ Surgio 不会处理类似 `[rewrite_local]` 这样的标题，所以请 __不要
 {% import './snippet/blocked_rules.tpl' as blocked_rules %}
 
 {{ blocked_rules.main('🚀 Proxy') | surfboard }}
+```
+
+### sing-box 规则处理
+
+> <Badge text="v4.0.0" vertical="middle" />
+
+将 Surge 格式的规则转换为 sing-box `route.rules` 的 JSON 片段（不含外层的方括号），可以直接嵌入 `.tpl` 模板中已有的 `"rules": []` 数组。不支持的规则会被静默跳过。
+
+```html
+<!-- .tpl 文件 -->
+{% import './snippet/blocked_rules.tpl' as blocked_rules %}
+
+"rules": [
+  {{ blocked_rules.main('🚀 Proxy') | singbox }}
+]
+```
+
+最终得到的规则是：
+
+```json
+"rules": [
+  {"domain_keyword":["bitly","blogspot","dropbox"],"domain_suffix":["twitpic.com","youtu.be","ytimg.com"],"outbound":"🚀 Proxy"}
+]
 ```

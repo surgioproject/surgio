@@ -407,6 +407,111 @@ exports[`generate command > default > runs generate cmd 3`] = `
 }"
 `;
 
+exports[`generate command > sing-box rules > converts Surge rules into sing-box route rules 1`] = `
+{
+  "outbounds": [
+    {
+      "tag": "direct",
+      "type": "direct",
+    },
+    {
+      "tag": "block",
+      "type": "block",
+    },
+    {
+      "outbounds": [
+        "US",
+        "HK",
+      ],
+      "tag": "proxy",
+      "type": "selector",
+    },
+    {
+      "method": "chacha20-ietf-poly1305",
+      "password": "password",
+      "server": "us.example.com",
+      "server_port": 443,
+      "tag": "US",
+      "type": "shadowsocks",
+    },
+    {
+      "method": "chacha20-ietf-poly1305",
+      "password": "password",
+      "server": "hk.example.com",
+      "server_port": 443,
+      "tag": "HK",
+      "type": "shadowsocks",
+    },
+  ],
+  "route": {
+    "final": "proxy",
+    "rule_set": [
+      {
+        "format": "binary",
+        "tag": "geoip-cn",
+        "type": "remote",
+        "url": "https://cdn.jsdelivr.net/gh/SagerNet/sing-geoip@rule-set/geoip-cn.srs",
+      },
+      {
+        "format": "source",
+        "tag": "netflix",
+        "type": "remote",
+        "url": "http://example.com/ruleset/netflix.json",
+      },
+    ],
+    "rules": [
+      {
+        "ip_is_private": true,
+        "outbound": "direct",
+      },
+      {
+        "outbound": "proxy",
+        "rule_set": [
+          "netflix",
+        ],
+      },
+      {
+        "ip_cidr": [
+          "91.108.56.0/22",
+          "91.108.4.0/22",
+          "91.108.8.0/22",
+          "109.239.140.0/24",
+          "149.154.160.0/20",
+          "149.154.164.0/22",
+          "149.154.172.0/22",
+          "91.108.12.0/22",
+        ],
+        "outbound": "proxy",
+      },
+      {
+        "domain_keyword": [
+          "baidu",
+        ],
+        "domain_suffix": [
+          "cn",
+        ],
+        "ip_cidr": [
+          "192.168.0.0/16",
+        ],
+        "outbound": "direct",
+      },
+      {
+        "outbound": "direct",
+        "rule_set": [
+          "geoip-cn",
+        ],
+      },
+      {
+        "action": "reject",
+        "domain_suffix": [
+          "ads.example.com",
+        ],
+      },
+    ],
+  },
+}
+`;
+
 exports[`generate command > v2ray tls options > runs generate cmd 1`] = `
 "getSurgeNodes
 🇺🇸US 1 = ss, us.example.com, 443, encrypt-method=chacha20-ietf-poly1305, password=password, udp-relay=false, obfs=tls, obfs-host=gateway-carry.icloud.com, tls13=false, skip-cert-verify=false

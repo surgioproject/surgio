@@ -30,6 +30,7 @@ afterEach(async () => {
   await fs.remove(resolve('template-error/dist'))
   await fs.remove(resolve('template-variables-functions/dist'))
   await fs.remove(resolve('custom-filter/dist'))
+  await fs.remove(resolve('singbox-rules/dist'))
 })
 
 describe('new command', () => {
@@ -186,6 +187,91 @@ describe('generate command', () => {
         'http://example.com/ss.conf\n'
 
       expect(confString).toBe(result)
+    })
+  })
+
+  describe('sing-box rules', () => {
+    const readJson = (file: string) =>
+      fs.readJsonSync(resolve(`singbox-rules/dist/${file}`))
+
+    it('converts Surge rules into sing-box route rules', async () => {
+      const { error } = await runCommand([
+        'generate',
+        `--project=${resolve('singbox-rules')}`,
+      ])
+
+      expect(error).toBeUndefined()
+      const config = readJson('singbox.json')
+
+      expect(config.outbounds.map((item: any) => item.tag)).toEqual([
+        'direct',
+        'block',
+        'proxy',
+        'US',
+        'HK',
+      ])
+      expect(config.route.final).toBe('proxy')
+      expect(config.route.rule_set.map((item: any) => item.tag)).toEqual([
+        'geoip-cn',
+        'netflix',
+      ])
+      expect(config.route.rule_set[1].url).toBe(
+        'http://example.com/ruleset/netflix.json',
+      )
+      expect(config.route.rules[0]).toEqual({
+        ip_is_private: true,
+        outbound: 'direct',
+      })
+      expect(config.route.rules[1]).toEqual({
+        rule_set: ['netflix'],
+        outbound: 'proxy',
+      })
+      expect(config.route.rules[2].outbound).toBe('proxy')
+      expect(config.route.rules[2].ip_cidr).toContain('91.108.56.0/22')
+      expect(config.route.rules.at(-1)).toEqual({
+        domain_suffix: ['ads.example.com'],
+        action: 'reject',
+      })
+      expect(JSON.stringify(config)).not.toContain('USER-AGENT')
+      expect(config).toMatchSnapshot()
+    })
+
+    it('generates a headless rule-set file', async () => {
+      const { error } = await runCommand([
+        'generate',
+        `--project=${resolve('singbox-rules')}`,
+      ])
+
+      expect(error).toBeUndefined()
+      const ruleSet = readJson('ruleset/netflix.json')
+
+      expect(ruleSet.version).toBe(3)
+      expect(ruleSet.rules).toHaveLength(1)
+      expect(ruleSet.rules[0].domain_suffix).toContain('netflix.com')
+      expect(ruleSet.rules[0]).not.toHaveProperty('outbound')
+    })
+
+    it('renders the singbox template filter inside a .tpl file', async () => {
+      const { error } = await runCommand([
+        'generate',
+        `--project=${resolve('singbox-rules')}`,
+      ])
+
+      expect(error).toBeUndefined()
+      const config = readJson('singbox-filter.json')
+
+      expect(config.route.rules).toHaveLength(3)
+      expect(config.route.rules[0].outbound).toBe('proxy')
+      expect(config.route.rules[1]).toEqual({
+        domain_suffix: ['cn'],
+        domain_keyword: ['baidu'],
+        ip_cidr: ['192.168.0.0/16'],
+        outbound: 'direct',
+      })
+      expect(config.route.rules[2]).toEqual({
+        rule_set: ['geoip-cn'],
+        outbound: 'direct',
+      })
     })
   })
 
