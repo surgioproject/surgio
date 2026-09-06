@@ -453,6 +453,8 @@ getSingboxNodeNames(nodeList, netflixFilter);
 
 `getLoonNodeNames(nodeList, filter?)`
 
+仅包含可以生成 Loon 配置的节点；不支持的 VMess/VLESS 传输类型和 Shadowsocks 混淆节点会被省略，避免策略组引用不存在的节点。
+
 和 `getLoonNodes` 一样，只不过输出的是节点名称列表。
 
 ### getSurfboardNodes
@@ -873,7 +875,9 @@ Surgio 不会处理类似 `[rewrite_local]` 这样的标题，所以请 __不要
 
 ### Loon 规则处理
 
-处理后的规则仅包含 [这里](https://www.notion.so/2-967c1a07462c43ab88906162bec475a4) 列出的几种规则类型。
+保留 Loon 支持的域名、`USER-AGENT`、`URL-REGEX`、`IP-CIDR`、`IP-CIDR6`、`IP-ASN`、`GEOIP`、`SRC-PORT`、`DEST-PORT`、`PROTOCOL`、`AND`、`OR`、`NOT` 和 `FINAL` 规则。不支持的规则类型会被省略。端口、协议及逻辑规则需要 Loon 3.1.7 或更新版本，详见 [Loon 规则文档](https://nsloon.app/docs/category/规则/)。
+
+行尾注释的 `//` 前需要有空白，例如 `DOMAIN,example.com,Proxy // 注释`。URL 和正则表达式中不带前置空白的 `//` 会原样保留。
 
 ```html
 <!-- .tpl 文件 -->

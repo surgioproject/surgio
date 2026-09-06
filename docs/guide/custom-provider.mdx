@@ -943,7 +943,9 @@ module.exports = {
 - 类型：`object`
 - 默认值：`undefined`
 
-目前仅 Surge 和 Stash 支持这一特性。
+可用于 Loon 的 Shadowsocks 节点，包括 SS2022。生成 Loon 配置时会输出 `shadow-tls-password` 和 `shadow-tls-sni`；设置 `version` 时还会输出 `shadow-tls-version`，可指定为 `2` 或 `3`。
+
+其他客户端的支持情况取决于协议和客户端实现。
 
 ### nodeConfig.shadowTls.password
 
