@@ -9,6 +9,7 @@ import {
   SURFBOARD_SUPPORTED_RULE,
 } from '../constant/index.js'
 import { decodeStringList, toBase64 } from '../utils/portable.js'
+import { convertRulesToSingbox } from '../utils/singbox-rules.js'
 
 import type { ClashCoreType } from '../types.js'
 
@@ -114,6 +115,13 @@ const quantumultXRules = (value?: string): string => {
     .join('\n')
 }
 
+const singboxRules = (value?: string): string => {
+  if (!value) return ''
+  return convertRulesToSingbox(value)
+    .map((rule) => JSON.stringify(rule))
+    .join(',\n')
+}
+
 export const createTemplateFilters = (
   options: { readonly clashCore?: ClashCoreType } = {},
 ): Readonly<Record<string, (...args: any[]) => unknown>> => ({
@@ -123,6 +131,7 @@ export const createTemplateFilters = (
   quantumultx: quantumultXRules,
   loon: filterRules(LOON_SUPPORTED_RULE, '', true),
   surfboard: filterRules(SURFBOARD_SUPPORTED_RULE),
+  singbox: singboxRules,
   yaml: (value: unknown) => YAML.stringify(value),
   base64: (value: string) => toBase64(value),
   json: (value: unknown) => JSON.stringify(value),

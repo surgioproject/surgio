@@ -23,6 +23,10 @@ import {
   getSingboxNodeNames,
   getSingboxNodes,
 } from '../utils/singbox.js'
+import {
+  convertRulesToSingbox,
+  convertRulesToSingboxHeadless,
+} from '../utils/singbox-rules.js'
 import { getSurfboardNodeNames, getSurfboardNodes } from '../utils/surfboard.js'
 import {
   getSurgeNodeNames,
@@ -335,6 +339,9 @@ export const createArtifactRenderContext = (options: {
   }
   const gatewayToken =
     config.gateway?.viewerToken ?? config.gateway?.accessToken
+  const onUnsupportedSingboxRule = (line: string, reason: string): void => {
+    logger.warn('sing-box 不支持的规则已忽略: %s (%s)', line, reason)
+  }
 
   return {
     proxyTestUrl: config.proxyTestUrl,
@@ -362,6 +369,15 @@ export const createArtifactRenderContext = (options: {
     getSingboxNodes: bindFormatter(getSingboxNodes),
     getSingboxNodeNames: bindFilterAwareFormatter(getSingboxNodeNames),
     getSingboxEndpoints,
+    getSingboxRules: (ruleText: string, outbound?: string) =>
+      convertRulesToSingbox(ruleText, {
+        outbound,
+        onUnsupported: onUnsupportedSingboxRule,
+      }),
+    getSingboxHeadlessRules: (ruleText: string) =>
+      convertRulesToSingboxHeadless(ruleText, {
+        onUnsupported: onUnsupportedSingboxRule,
+      }),
     getSurgeNodes: bindFormatter(getSurgeNodes),
     getSurgeNodeNames: bindFormatter(getSurgeNodeNames),
     getSurgeTailscaleNodes,
@@ -388,3 +404,8 @@ export const createArtifactRenderContext = (options: {
     customParams,
   } as const
 }
+
+/** 渲染模板和 `extendTemplate` 回调时拿到的完整上下文。 */
+export type ArtifactRenderContext = ReturnType<
+  typeof createArtifactRenderContext
+>

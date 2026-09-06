@@ -10,8 +10,12 @@ import {
 export {
   combineExtendFunctions,
   createExtendFunction,
+  extendDns,
   extendEndpoints,
+  extendInbounds,
   extendOutbounds,
+  extendRoute,
+  extendRuleSet,
 } from '../generator/json-extend.js'
 
 const nodeOnlyConfigFields = [

@@ -21,6 +21,10 @@ export { unifiedCache as cache } from './cache/singleton.js'
 export {
   extendOutbounds,
   extendEndpoints,
+  extendRoute,
+  extendDns,
+  extendInbounds,
+  extendRuleSet,
   createExtendFunction,
   combineExtendFunctions,
 } from './generator/index.js'

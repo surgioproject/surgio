@@ -7,8 +7,12 @@ export { NodeTypeEnum } from '../types.js'
 export {
   combineExtendFunctions,
   createExtendFunction,
+  extendDns,
   extendEndpoints,
+  extendInbounds,
   extendOutbounds,
+  extendRoute,
+  extendRuleSet,
 } from '../generator/json-extend.js'
 export {
   defineClashProvider,
@@ -31,6 +35,10 @@ export const categories = CATEGORIES
 
 export type { JsonObject } from 'type-fest'
 export type { ExtendContext } from '../generator/json-extend.js'
+export type {
+  SingboxHeadlessRule,
+  SingboxRouteRule,
+} from '../utils/singbox-rules.js'
 export type { GetNodeListParams } from '../provider/types.js'
 export type {
   ArtifactConfigInput,

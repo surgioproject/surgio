@@ -1,10 +1,16 @@
 import { expect, test, vi } from 'vitest'
 
+import { createArtifactRenderContext } from '../../runtime/artifact.js'
+import { addProxyToRuleSet } from '../../runtime/ruleset.js'
 import {
   extendOutbounds,
+  extendRoute,
   createExtendFunction,
   combineExtendFunctions,
 } from '../json-extend.js'
+
+import type { Logger } from '@surgio/logger'
+import type { ArtifactConfig } from '../../types.js'
 
 test('extendOutbounds - extend string', () => {
   const extend = extendOutbounds('new-value')
@@ -78,32 +84,40 @@ test('extendOutbounds - extend array', () => {
 })
 
 test('extendOutbounds - extend function that returns object', () => {
-  const spy = vi.fn(() => {
-    expect(true).toBe(true)
-    return 'something'
+  const getUrl = vi.fn((path: string) => `https://example.com/${path}`)
+  const extend = extendOutbounds((context) => ({
+    url: context.getUrl('sub.json'),
+  }))
+
+  expect(extend({ foo: 'foo' }, { getUrl })).toEqual({
+    foo: 'foo',
+    outbounds: { url: 'https://example.com/sub.json' },
   })
-  const extend = extendOutbounds(({ getSomething }) => {
-    return {
-      bar: getSomething(),
-    }
+  expect(getUrl).toHaveBeenCalledOnce()
+})
+
+test('extendRoute - append rules and override final', () => {
+  const extend = extendRoute({
+    rules: [{ domain_suffix: ['example.com'], outbound: 'proxy' }],
+    final: 'proxy',
   })
 
   expect(
-    extend(
-      {
-        foo: 'foo',
+    extend({
+      route: {
+        rules: [{ domain: ['prefilled.com'], outbound: 'direct' }],
+        final: 'direct',
       },
-      {
-        getSomething: spy,
-      },
-    ),
+    }),
   ).toEqual({
-    foo: 'foo',
-    outbounds: {
-      bar: 'something',
+    route: {
+      rules: [
+        { domain: ['prefilled.com'], outbound: 'direct' },
+        { domain_suffix: ['example.com'], outbound: 'proxy' },
+      ],
+      final: 'proxy',
     },
   })
-  expect(spy).toHaveBeenCalledOnce()
 })
 
 test('createExtendFunction - deep extend', () => {
@@ -192,4 +206,63 @@ test('combineExtendFunctions', () => {
       qux: 'qux',
     },
   })
+})
+
+test('extendRoute with getSingboxRules - end to end', () => {
+  const warn = vi.fn()
+  const snippetText = 'DOMAIN-SUFFIX,example.com\nUSER-AGENT,SomeApp'
+  const context = createArtifactRenderContext({
+    artifact: { name: 'singbox.json', provider: 'demo' } as ArtifactConfig,
+    config: {
+      urlBase: 'https://example.com/',
+      publicUrl: 'https://example.com/',
+    } as any,
+    nodeList: [],
+    mainProvider: { config: {} } as any,
+    customFilters: {},
+    customParams: {},
+    remoteSnippetList: [
+      {
+        name: 'x',
+        url: 'https://example.com/x.list',
+        text: snippetText,
+        main: (policy?: string) => addProxyToRuleSet(snippetText, policy),
+      },
+    ],
+    loadSnippet: () => {
+      throw new Error('not used')
+    },
+    logger: { warn } as unknown as Logger,
+  })
+  const extendTemplate = extendRoute(({ getSingboxRules, remoteSnippets }) => ({
+    rules: getSingboxRules(remoteSnippets.x.main('proxy')),
+    final: 'proxy',
+  }))
+
+  expect(
+    extendTemplate(
+      {
+        outbounds: [],
+        route: {
+          rules: [{ domain: ['prefilled.com'], outbound: 'direct' }],
+          final: 'direct',
+        },
+      },
+      context,
+    ),
+  ).toEqual({
+    outbounds: [],
+    route: {
+      rules: [
+        { domain: ['prefilled.com'], outbound: 'direct' },
+        { domain_suffix: ['example.com'], outbound: 'proxy' },
+      ],
+      final: 'proxy',
+    },
+  })
+  expect(warn).toHaveBeenCalledWith(
+    'sing-box 不支持的规则已忽略: %s (%s)',
+    'USER-AGENT,SomeApp,proxy',
+    expect.stringContaining('USER-AGENT'),
+  )
 })
