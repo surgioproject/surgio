@@ -74,18 +74,18 @@ class GenerateCommand extends BaseCommand<typeof GenerateCommand> {
 
         if (artifact.destDir) {
           fs.accessSync(artifact.destDir, fs.constants.W_OK)
-          await fs.writeFile(path.join(artifact.destDir, artifact.name), result)
+          await fs.outputFile(
+            path.join(artifact.destDir, artifact.name),
+            result,
+          )
         } else {
-          await fs.writeFile(destFilePath, result)
+          await fs.outputFile(destFilePath, result)
         }
 
         if (artifact.destDirs) {
           for (const destDir of artifact.destDirs) {
             fs.accessSync(destDir, fs.constants.W_OK)
-            await fs.promises.writeFile(
-              path.join(destDir, artifact.name),
-              result,
-            )
+            await fs.outputFile(path.join(destDir, artifact.name), result)
           }
         }
         this.ora.succeed(`规则 ${artifact.name} 生成成功`)
