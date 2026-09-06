@@ -42,7 +42,9 @@ description: 将 Surgio v3 配置仓库迁移为原生 TypeScript ESM Project，
    - Artifact、模板目录、JSON `extendTemplate`；
    - Gateway、server、Lambda、Worker 和容器入口；
    - 若存在 Worker，盘点 Wrangler KV、Assets 和 secrets；
-   - Bun、tsx、Got、Redis/ioredis、全局缓存和动态模块加载。
+   - Bun、tsx、Got、Redis/ioredis、全局缓存和动态模块加载；
+   - `OSS_ACCESS_KEY_ID`、`OSS_ACCESS_KEY_SECRET`、`upload.endpoint`；
+   - CI、部署脚本和本地文档中的 `HTTP_PROXY`、`HTTPS_PROXY`。
 3. 先在原配置上执行本地生成，记录所有 `dist` 文件数量和 SHA-256：
 
    ```bash
@@ -140,6 +142,25 @@ export const nodeOptions = async (): Promise<SurgioNodeOptions> => ({
 - 把远程服务客户端改为 runtime `httpClient` + runtime `cache`，同时保留原 TTL。
 
 确认统一 Project 可用后，再删除 `surgio.conf.js` 和旧的运行时 Provider 扫描依赖。不要留下第二份 Worker 配置。
+
+`surgio new` 在 v4 中直接编辑 `surgio.project.ts` 的 `providers` registry 和
+`artifacts` 数组，对 `surgio.conf.js` 不再工作。迁移过程中不要用它生成中间产物；
+把 Project 结构保持为静态对象或 `defineSurgioProject({...})`，让用户升级后仍能使用
+该命令。
+
+## 迁移上传与网络配置
+
+- `surgio upload` 使用 S3 兼容客户端。把凭据环境变量从 `OSS_ACCESS_KEY_ID` 和
+  `OSS_ACCESS_KEY_SECRET` 改为 `S3_BACKEND_ACCESS_KEY_ID` 和
+  `S3_BACKEND_ACCESS_KEY_SECRET`，仓库、CI secrets 和部署平台三处都要改。
+- `upload` 和 `cache` 配置为严格校验。删除 v3 时期被忽略的多余字段，不要靠关闭
+  校验绕过。
+- `upload.endpoint` 只接受服务级 OSS Endpoint。发现绑定到单个 Bucket 的 CNAME 时
+  告知用户 `surgio upload` 无法使用，并保留原字段等待用户决定，不要自行改写成
+  其它地址。
+- `region` 可以保留 `oss-cn-hangzhou` 这类旧格式。
+- Surgio 不再读取 `HTTP_PROXY` 和 `HTTPS_PROXY`。原来依赖代理生成的项目，在生成
+  命令或本地文档中补上 `NODE_USE_ENV_PROXY=1`，保留原有代理地址。
 
 ## 将应用源码迁移为严格 TypeScript
 
@@ -314,20 +335,23 @@ await buildWorkerManifest({
 
    文件数量和全部哈希必须一致。若上游远程数据可能变化，在同一缓存和尽可能短的时间窗口内比较，并调查每个差异，不能直接更新基线。
 
-3. 非 Worker 分支：运行原部署 build/start/handler 流程，用真实 HTTP 请求或平台 adapter 测试确认成功，并在验证后终止临时进程。不要要求 Wrangler 或 workerd。
-4. Worker 分支：运行 `pnpm types:worker`、`pnpm build`、`pnpm worker:test`、真实 workerd integration 和 Wrangler dry-run。
-5. 双运行时分支：完整执行第 3、4 步，并比较两端代表性 Artifact/Provider 响应。
-6. 在 Surgio 运行：类型消费者、unit、CLI、文档构建和 package-output consumer；只有修改或使用 Worker 能力时才运行 Worker types、workerd 和 Wrangler dry-run。
-7. 在 Gateway 运行：build、lint、unit、e2e 和 packed package consumer；只运行所选 adapter 的集成测试。
-8. Worker 分支扫描 Surgio fixture 与配置仓库两个生产 Worker bundle：
+3. 配置了 `upload` 的仓库：在新凭据环境变量下执行一次 `surgio upload`，或在无法
+   触碰生产 Bucket 时至少让配置通过校验，并确认 CI secrets 已经改名。
+4. 非 Worker 分支：运行原部署 build/start/handler 流程，用真实 HTTP 请求或平台 adapter 测试确认成功，并在验证后终止临时进程。不要要求 Wrangler 或 workerd。
+5. Worker 分支：运行 `pnpm types:worker`、`pnpm build`、`pnpm worker:test`、真实 workerd integration 和 Wrangler dry-run。
+6. 双运行时分支：完整执行第 4、5 步，并比较两端代表性 Artifact/Provider 响应。
+7. 在 Surgio 运行：类型消费者、unit、CLI、文档构建和 package-output consumer；只有修改或使用 Worker 能力时才运行 Worker types、workerd 和 Wrangler dry-run。
+8. 在 Gateway 运行：build、lint、unit、e2e 和 packed package consumer；只运行所选 adapter 的集成测试。
+9. Worker 分支扫描 Surgio fixture 与配置仓库两个生产 Worker bundle：
 
    ```bash
    rg -n "ioredis|@upstash/redis|fs-extra|winston|from ['\"]got|new Function|eval\(" .surgio/**/worker.js
    ```
 
    期望没有匹配。确认 gzip 体积低于部署套餐限制。
-9. 扫描配置仓库，确认没有 Bun、tsx、重复 Project、遗留 `.js` 应用入口、特殊 secret 标记或专用 resolver。非 Worker 分支不应出现无授权新增的 Wrangler/Worker 文件。
-10. 运行所有涉及仓库的 `git diff --check`，区分本次改动与原有 dirty worktree，保留用户无关改动。
+10. 扫描配置仓库，确认没有 Bun、tsx、重复 Project、遗留 `.js` 应用入口、旧上传
+    环境变量、特殊 secret 标记或专用 resolver。非 Worker 分支不应出现无授权新增的 Wrangler/Worker 文件。
+11. 运行所有涉及仓库的 `git diff --check`，区分本次改动与原有 dirty worktree，保留用户无关改动。
 
 ## 处理常见失败
 
@@ -336,6 +360,11 @@ await buildWorkerManifest({
 - `Env is not defined`：先生成 Wrangler 类型；TS ESLint 配置关闭核心 `no-undef`。
 - ESLint 扫描 `.surgio/dry-run/worker.js`：使用 flat-config 全局 ignore，而不只依赖 `.gitignore`。
 - `No files matching **/*.{ts,mts}`：不要为 legacy 项目向 ESLint 传强制 pattern；依靠 flat config 的 `files` 让目录扫描发现 TS。
+- 本地生成报 `connect ECONNREFUSED` 或 `connect ECONNRESET`：Surgio 不再内置代理
+  agent，为生成命令补上 `NODE_USE_ENV_PROXY=1`。
+- `surgio upload` 报缺少凭据：仍在使用 `OSS_ACCESS_KEY_ID`；改为
+  `S3_BACKEND_ACCESS_KEY_ID` 和 `S3_BACKEND_ACCESS_KEY_SECRET`。
+- `upload` 或 `cache` 配置校验失败：这两处已改为严格校验，删除多余字段。
 - 协议 `type` 被拓宽为 `string`：使用 `NodeTypeEnum` 和显式节点数组类型。
 - conditional spread 仍拓宽 enum：让分支数组 `satisfies PossibleNodeConfigInputType[]`，或先构造有类型的局部数组。
 - JSON extension 出现 `undefined` 不兼容：为回调提供 `JsonObject[]` 上下文类型。

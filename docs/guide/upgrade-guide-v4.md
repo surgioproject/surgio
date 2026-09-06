@@ -25,8 +25,6 @@ Surgio v3。Gateway 的 `format=shadowsocks-json` 输出和模板中的
 `getShadowsocksNodesJSON` helper 也已移除；需要 JSON 输出时应使用 Clash 或
 sing-box 格式。
 
-**目录**
-
 ## 升级前准备
 
 Surgio v4 要求 Node.js `>=22.22.2`。Project 直接由 Node.js 运行可擦除的
@@ -396,6 +394,22 @@ cold miss 属于正常行为。详细配置参见
 [Upstash REST 缓存](/guide/advance/upstash-cache) 和
 [缓存配置](/guide/custom-config#cache)。
 
+### 对象存储上传
+
+`surgio upload` 的实现从 ali-oss 换成了 S3 兼容客户端，现在同时支持阿里云 OSS、
+Cloudflare R2 和其它 S3 服务。升级时需要处理三点：
+
+- 凭据环境变量改名为 `S3_BACKEND_ACCESS_KEY_ID` 和
+  `S3_BACKEND_ACCESS_KEY_SECRET`。旧的 `OSS_ACCESS_KEY_ID` 和
+  `OSS_ACCESS_KEY_SECRET` 不再读取，只在 CI 中升级版本会让上传失败。
+- `upload` 和 `cache` 配置改为严格校验。v3 中被忽略的多余字段现在会让配置校验
+  直接失败。
+- `upload.endpoint` 只接受服务级 OSS Endpoint。绑定到单个 Bucket 的 CNAME 地址会被
+  拒绝，依赖 CNAME 访问中国内地 Bucket 的项目无法使用 `surgio upload`。
+
+`region` 仍然接受 `oss-cn-hangzhou` 这类旧格式，加载后会归一化。完整字段见
+[upload 配置](/guide/custom-config#upload)。
+
 ### HTTP 客户端
 
 `httpClient` 不再是 Got 实例，而是 Node 和 Worker 共用的 ky/Fetch 封装：
@@ -411,6 +425,18 @@ response.statusCode // number
 删除 Got 专用的 agent、timeout、retry 和 response API 用法。Provider factory 应优先
 使用 runtime 注入的 `httpClient`。
 
+Surgio 也不再内置代理 agent，因此不会自己读取 `HTTP_PROXY` 和 `HTTPS_PROXY`。需要
+经本地代理访问订阅源时，交给 Node.js 处理：
+
+```bash
+export NODE_USE_ENV_PROXY=1
+export HTTPS_PROXY=http://127.0.0.1:6152
+export HTTP_PROXY=http://127.0.0.1:6152
+```
+
+如果只升级版本而没有加上 `NODE_USE_ENV_PROXY=1`，v3 下能正常生成的项目会开始报
+`connect ECONNREFUSED` 或 `connect ECONNRESET`。
+
 ### Clash 默认核心
 
 `clashConfig.clashCore` 的默认值由旧 Clash 改为 Mihomo（内部值为
@@ -424,12 +450,21 @@ clashConfig: {
 
 `'mihomo'` 也可以作为输入别名，加载后会归一化为 `'clash.meta'`。
 
+### `surgio new`
+
+`surgio new` 改为直接编辑 `surgio.project.ts`，把配置写入 `providers` registry 和
+`artifacts` 数组，不再在 `provider/` 下生成独立文件，也不再改写
+`surgio.conf.js`。遇到动态构造的 registry 时，命令会保持文件原样并输出可以手工
+粘贴的配置片段。
+
 ### 已删除的 Provider 和 Surge SSR 输出
 
 - BlackSSL Provider 已完全删除；使用该类型会得到“不支持的 Provider 类型”错误。
 - Surge 不再生成 ShadowsocksR external proxy。混合订阅中的 SSR 节点会被警告并
   省略，其它节点继续输出。
 - 删除 `binPath`、`surgeConfig.resolveHostname` 和 `provider.startPort`。
+- 节点配置上的 `binPath`、`localPort` 和 `hostnameIp` 字段一并删除。`CustomProvider`
+  中手写过这些字段的节点会在类型检查时报错，生成时它们会被忽略。
 - ShadowsocksR 的节点模型、订阅解析及 Clash、Quantumult X、Loon、portable 和
   Worker 输出仍然保留。
 
@@ -459,5 +494,6 @@ diff -u /tmp/surgio-v3.sha256 /tmp/surgio-v4.sha256
 - **双运行时**：比较 Node 与 Worker 的代表性 Artifact 和 Provider 响应。
 
 Worker bundle 不应包含 filesystem、完整 Nunjucks compiler、动态模块加载器、Got、
-ioredis 或 Upstash client。最终还应搜索仓库，确认没有重复 Project、
-`defineWorkerProject`、Redis 配置或只为 Surge SSR 保留的字段。
+ioredis 或 Upstash client。最终还应搜索仓库和 CI 配置，确认没有重复 Project、
+`defineWorkerProject`、Redis 配置、`OSS_ACCESS_KEY_ID` 一类的旧上传变量，以及只为
+Surge SSR 保留的字段。
