@@ -1,3 +1,10 @@
+# [4.0.0-beta.2](https://github.com/geekdada/surgio/compare/v4.0.0-beta.1...v4.0.0-beta.2) (2026-09-06)
+
+### Bug Fixes
+
+* **artifact:** type customFilters and customParams in render context ([d05738f](https://github.com/geekdada/surgio/commit/d05738fdce43b795dd5db6f6f223cbc41de2a676))
+* **linter:** update ignored files in ESLint configuration ([70150fd](https://github.com/geekdada/surgio/commit/70150fd2eb4d10a4c1c5e980ac840dfcfffb0913))
+
 # [4.0.0-beta.1](https://github.com/geekdada/surgio/compare/v3.19.0...v4.0.0-beta.1) (2026-09-06)
 
 ### Bug Fixes
