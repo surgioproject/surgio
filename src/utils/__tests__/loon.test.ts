@@ -4,6 +4,35 @@ import { NodeTypeEnum } from '../../types.js'
 import { ERR_INVALID_FILTER } from '../../constant/index.js'
 import { getLoonNodeNames, getLoonNodes } from '../loon.js'
 
+test.each([2, 3, undefined])(
+  'getLoonNodes Shadowsocks Shadow TLS version %s',
+  (version) => {
+    for (const method of ['aes-128-gcm', '2022-blake3-aes-128-gcm']) {
+      expect(
+        getLoonNodes([
+          {
+            type: NodeTypeEnum.Shadowsocks,
+            nodeName: 'ss',
+            hostname: 'example.com',
+            port: 443,
+            method,
+            password: 'MjdlZmY4YWIyZDU0OGNkNw==:YmY2N2QzZjctMjYxMi00MA==',
+            tfo: true,
+            udpRelay: true,
+            shadowTls: {
+              password: 'shadow,"password',
+              sni: 'tls.example.com',
+              version,
+            },
+          },
+        ]),
+      ).toBe(
+        `ss = Shadowsocks,example.com,443,${method},"MjdlZmY4YWIyZDU0OGNkNw==:YmY2N2QzZjctMjYxMi00MA==",fast-open=true,udp=true,shadow-tls-password="shadow,\\"password",shadow-tls-sni=tls.example.com${version === undefined ? '' : `,shadow-tls-version=${version}`}`,
+      )
+    }
+  },
+)
+
 test('getLoonNodes Hysteria2', () => {
   expect(
     getLoonNodes([
@@ -134,7 +163,7 @@ test('getLoonNodes', () => {
       },
     ]),
   ).toBe(
-    '测试 = vmess,1.1.1.1,443,chacha20-poly1305,"1386f85e-657b-4d6e-9d56-78badb75e1fd",transport=tcp,over-tls=true,udp=true',
+    '测试 = vmess,1.1.1.1,443,chacha20-poly1305,"1386f85e-657b-4d6e-9d56-78badb75e1fd",transport=tcp,alterId=64,over-tls=true,udp=true',
   )
   expect(
     getLoonNodes([
@@ -160,7 +189,7 @@ test('getLoonNodes', () => {
       },
     ]),
   ).toBe(
-    '测试 = vmess,1.1.1.1,443,chacha20-poly1305,"1386f85e-657b-4d6e-9d56-78badb75e1fd",transport=http,path=/test,host=example.com,over-tls=true,udp=true',
+    '测试 = vmess,1.1.1.1,443,chacha20-poly1305,"1386f85e-657b-4d6e-9d56-78badb75e1fd",transport=http,alterId=64,path=/test,host=example.com,over-tls=true,udp=true',
   )
   expect(
     getLoonNodes([
@@ -183,7 +212,7 @@ test('getLoonNodes', () => {
       },
     ]),
   ).toBe(
-    '测试 = vmess,1.1.1.1,443,chacha20-poly1305,"1386f85e-657b-4d6e-9d56-78badb75e1fd",transport=ws,path=/test,over-tls=true,udp=true',
+    '测试 = vmess,1.1.1.1,443,chacha20-poly1305,"1386f85e-657b-4d6e-9d56-78badb75e1fd",transport=ws,alterId=64,path=/test,over-tls=true,udp=true',
   )
   expect(
     getLoonNodes([

@@ -123,9 +123,9 @@ trojan node = trojan,trojan.example.com,443,"password",sni=trojan.example.com,sk
 anytls node = AnyTLS,anytls.example.com,443,"password"
 🇺🇸US 1 = Shadowsocks,us.example.com,443,chacha20-ietf-poly1305,"password",tls,gateway-carry.icloud.com
 🇺🇸US 2 = Shadowsocks,us.example.com,443,chacha20-ietf-poly1305,"password"
-测试 1 = vmess,1.1.1.1,8080,chacha20-poly1305,"1386f85e-657b-4d6e-9d56-78badb75e1fd",transport=ws,path=/,host=example.com
-测试 2 = vmess,1.1.1.1,8080,chacha20-poly1305,"1386f85e-657b-4d6e-9d56-78badb75e1fd",transport=tcp
-测试 tls = vmess,example.com,443,chacha20-poly1305,"1386f85e-657b-4d6e-9d56-78badb75e1fd",transport=ws,path=/,host=example.com,over-tls=true
+测试 1 = vmess,1.1.1.1,8080,chacha20-poly1305,"1386f85e-657b-4d6e-9d56-78badb75e1fd",transport=ws,alterId=64,path=/,host=example.com
+测试 2 = vmess,1.1.1.1,8080,chacha20-poly1305,"1386f85e-657b-4d6e-9d56-78badb75e1fd",transport=tcp,alterId=64
+测试 tls = vmess,example.com,443,chacha20-poly1305,"1386f85e-657b-4d6e-9d56-78badb75e1fd",transport=ws,alterId=64,path=/,host=example.com,over-tls=true
 ss1 = Shadowsocks,server,443,chacha20-ietf-poly1305,"password",udp=true
 ss2 = Shadowsocks,server,443,chacha20-ietf-poly1305,"password",tls,www.bing.com
 ss4 = Shadowsocks,server,443,chacha20-ietf-poly1305,"password",tls,example.com
@@ -182,9 +182,9 @@ getSurgeNodes
 getLoonNodes
 🇺🇸US 1 = Shadowsocks,us.example.com,443,chacha20-ietf-poly1305,"password",tls,gateway-carry.icloud.com
 🇺🇸US 2 = Shadowsocks,us.example.com,443,chacha20-ietf-poly1305,"password"
-测试 1 = vmess,1.1.1.1,8080,chacha20-poly1305,"1386f85e-657b-4d6e-9d56-78badb75e1fd",transport=ws,path=/,host=example.com
-测试 2 = vmess,1.1.1.1,8080,chacha20-poly1305,"1386f85e-657b-4d6e-9d56-78badb75e1fd",transport=tcp
-测试 tls = vmess,example.com,443,chacha20-poly1305,"1386f85e-657b-4d6e-9d56-78badb75e1fd",transport=ws,path=/,host=example.com,over-tls=true
+测试 1 = vmess,1.1.1.1,8080,chacha20-poly1305,"1386f85e-657b-4d6e-9d56-78badb75e1fd",transport=ws,alterId=64,path=/,host=example.com
+测试 2 = vmess,1.1.1.1,8080,chacha20-poly1305,"1386f85e-657b-4d6e-9d56-78badb75e1fd",transport=tcp,alterId=64
+测试 tls = vmess,example.com,443,chacha20-poly1305,"1386f85e-657b-4d6e-9d56-78badb75e1fd",transport=ws,alterId=64,path=/,host=example.com,over-tls=true
 ----
 proxyTestUrl
 http://www.google.com/generate_204
@@ -543,9 +543,9 @@ getSurgeNodes
 getLoonNodes
 🇺🇸US 1 = Shadowsocks,us.example.com,443,chacha20-ietf-poly1305,"password",tls,gateway-carry.icloud.com
 🇺🇸US 2 = Shadowsocks,us.example.com,443,chacha20-ietf-poly1305,"password"
-测试 1 = vmess,1.1.1.1,8080,chacha20-poly1305,"1386f85e-657b-4d6e-9d56-78badb75e1fd",transport=ws,path=/,host=example.com
-测试 2 = vmess,1.1.1.1,8080,chacha20-poly1305,"1386f85e-657b-4d6e-9d56-78badb75e1fd",transport=tcp
-测试 tls = vmess,example.com,443,chacha20-poly1305,"1386f85e-657b-4d6e-9d56-78badb75e1fd",transport=ws,path=/,host=example.com,over-tls=true
+测试 1 = vmess,1.1.1.1,8080,chacha20-poly1305,"1386f85e-657b-4d6e-9d56-78badb75e1fd",transport=ws,alterId=64,path=/,host=example.com
+测试 2 = vmess,1.1.1.1,8080,chacha20-poly1305,"1386f85e-657b-4d6e-9d56-78badb75e1fd",transport=tcp,alterId=64
+测试 tls = vmess,example.com,443,chacha20-poly1305,"1386f85e-657b-4d6e-9d56-78badb75e1fd",transport=ws,alterId=64,path=/,host=example.com,over-tls=true
 ----
 proxyTestUrl
 http://www.google.com/generate_204
@@ -613,9 +613,9 @@ getSurgeNodes
 getLoonNodes
 ss1 = Shadowsocks,server,443,chacha20-ietf-poly1305,"password",udp=true
 ss2 = Shadowsocks,server,443,chacha20-ietf-poly1305,"password",tls,www.bing.com,udp=true
-vmess = vmess,server,443,chacha20-poly1305,"uuid",transport=tcp,udp=true
-vmess new format = vmess,server,443,chacha20-poly1305,"uuid",transport=ws,path=/path,host=v2ray.com,over-tls=true,skip-cert-verify=true,udp=true
-vmess custom header = vmess,server,443,chacha20-poly1305,"uuid",transport=ws,path=/path,over-tls=true,udp=true
+vmess = vmess,server,443,chacha20-poly1305,"uuid",transport=tcp,alterId=32,udp=true
+vmess new format = vmess,server,443,chacha20-poly1305,"uuid",transport=ws,alterId=32,path=/path,host=v2ray.com,over-tls=true,skip-cert-verify=true,udp=true
+vmess custom header = vmess,server,443,chacha20-poly1305,"uuid",transport=ws,alterId=32,path=/path,over-tls=true,udp=true
 http 1 = https,server,443,username,"password",sni=server,skip-cert-verify=false
 http 2 = http,server,443,username,"password"
 ss4 = Shadowsocks,server,443,chacha20-ietf-poly1305,"password",tls,example.com,udp=true
