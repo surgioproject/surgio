@@ -342,7 +342,7 @@ export const createArtifactRenderContext = (options: {
   const gatewayToken =
     config.gateway?.viewerToken ?? config.gateway?.accessToken
   const onUnsupportedSingboxRule = (line: string, reason: string): void => {
-    logger.warn('sing-box 不支持的规则已忽略: %s (%s)', line, reason)
+    logger.warn('sing-box 不支持的规则已忽略：%s (%s)', line, reason)
   }
 
   return {
