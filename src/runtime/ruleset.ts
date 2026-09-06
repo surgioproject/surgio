@@ -2,7 +2,7 @@ export const addProxyToRuleSet = (
   source: string,
   proxyName?: string,
 ): string => {
-  if (!proxyName) throw new Error('必须为片段指定一个策略')
+  if (!proxyName) return source
   const eol = source.includes('\r\n') ? '\r\n' : '\n'
   return source
     .split(eol)

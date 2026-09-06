@@ -47,9 +47,7 @@ test('loadRemoteSnippetList', async () => {
   expect(remoteSnippetList[3].main('Proxy')).toMatchSnapshot()
   expect(remoteSnippetList[4].main('PROXY', 'DIRECT')).toMatchSnapshot()
 
-  expect(() => {
-    remoteSnippetList[0].main()
-  }).toThrow('必须为片段指定一个策略')
+  expect(remoteSnippetList[0].main()).toBe(remoteSnippetList[0].text)
 
   expect(() => {
     remoteSnippetList[4].main('PROXY')
