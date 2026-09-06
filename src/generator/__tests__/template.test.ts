@@ -223,12 +223,12 @@ test('loon filter 2', () => {
 
 test('loon filter 3', () => {
   const body = `{{ str | loon }}`
-  const str = `IP-CIDR6,xxxxxxxxxxxx`
+  const str = `IP-CIDR6,2001:db8::/32,Proxy,no-resolve`
   const result = templateEngine.renderString(body, {
     str,
   })
 
-  expect(result).toBe('')
+  expect(result).toBe(str)
 })
 
 test('surfboard filter 1', () => {

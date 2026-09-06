@@ -28,7 +28,8 @@ const filterRules = (
         if (!normalized || normalized.startsWith('#')) return line
         const type = normalized.match(/^([\w-]+),/)?.[1]
         if (!type || !supported.has(type)) return undefined
-        const output = stripComments ? line.replace(/\/\/.*$/, '') : line
+        // Inline comments require whitespace so URL and regex slashes survive.
+        const output = stripComments ? line.replace(/\s+\/\/.*$/, '') : line
         return `${prefix}${output.trim()}`
       })
       .filter((line): line is string => Boolean(line))
