@@ -1,4 +1,4 @@
-import { beforeAll, expect, test } from 'vitest'
+import { beforeAll, expect, test, vi } from 'vitest'
 
 import { addFlagMap, prependFlag, removeFlag } from '../flag.js'
 
@@ -45,4 +45,35 @@ test('removeFlag', () => {
   expect(removeFlag('🚀 测试节点')).toBe('测试节点')
   expect(removeFlag('节点 🇨🇳')).toBe('节点')
   expect(removeFlag('🇸🇬 新加坡 🇸🇬')).toBe('新加坡')
+})
+
+test('custom mappings override built-ins and retain their registration priority', async () => {
+  vi.resetModules()
+  const flags = await import('../flag.js')
+  flags.addFlagMap('US', '🚀')
+  flags.addFlagMap('priority', '🏁')
+  expect(flags.prependFlag('US priority')).toBe('🚀 US priority')
+  flags.addFlagMap('US', '🌟')
+  expect(flags.prependFlag('US priority')).toBe('🌟 US priority')
+})
+
+test.each(['g', 'y'])(
+  'custom regex with %s matches consistently across calls',
+  async (mode) => {
+    vi.resetModules()
+    const flags = await import('../flag.js')
+    const pattern = new RegExp('custom-node', mode)
+    flags.addFlagMap(pattern, '🚀')
+    pattern.lastIndex = 5
+    expect(flags.prependFlag('custom-node')).toBe('🚀 custom-node')
+    expect(flags.prependFlag('custom-node')).toBe('🚀 custom-node')
+  },
+)
+
+test('preserves string regex syntax and word boundaries', async () => {
+  vi.resetModules()
+  const flags = await import('../flag.js')
+  flags.addFlagMap('custom[0-9]+', '🚀')
+  expect(flags.prependFlag('CUSTOM12')).toBe('🚀 CUSTOM12')
+  expect(flags.prependFlag('prefixCUSTOM12suffix')).toBe('prefixCUSTOM12suffix')
 })

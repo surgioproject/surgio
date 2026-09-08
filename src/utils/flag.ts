@@ -3,20 +3,44 @@ import _ from 'lodash'
 
 import { FLAGS } from '../misc/flag_cn.js'
 
-const flagMap: Map<string | RegExp, string> = new Map()
-const customFlagMap: Map<string | RegExp, string> = new Map()
+interface FlagMatcher {
+  emoji: string
+  matches: (str: string, uppercase: string) => boolean
+}
+
+const createFlagMatcher = (
+  name: string | RegExp,
+  emoji: string,
+): FlagMatcher => {
+  if (!_.isRegExp(name) && /[\u4E00-\u9FA5]/.test(name)) {
+    return { emoji, matches: (_str, uppercase) => uppercase.includes(name) }
+  }
+
+  const regex = _.isRegExp(name)
+    ? name
+    : new RegExp(`(^|\\b)${name}(\\b|$)`, 'i')
+  return {
+    emoji,
+    matches: (str) => {
+      regex.lastIndex = 0
+      return regex.test(str)
+    },
+  }
+}
+
+const flagMap = new Map<string | RegExp, FlagMatcher>()
+const customFlagMap = new Map<string | RegExp, FlagMatcher>()
 
 for (const [key, value] of Object.entries(FLAGS)) {
   value.forEach((name: string) => {
-    flagMap.set(name, key)
+    flagMap.set(name, createFlagMatcher(name, key))
   })
 }
 
 export const addFlagMap = (name: string | RegExp, emoji: string): void => {
-  if (flagMap.has(name)) {
-    flagMap.delete(name)
-  }
-  customFlagMap.set(name, emoji)
+  const matcher = createFlagMatcher(name, emoji)
+  flagMap.delete(name)
+  customFlagMap.set(name, matcher)
 }
 
 export const prependFlag = (
@@ -36,37 +60,16 @@ export const prependFlag = (
     }
   }
 
-  for (const [key, value] of customFlagMap.entries()) {
-    if (_.isRegExp(key)) {
-      if (key.test(str)) {
-        return `${value} ${str}`
-      }
-    } else {
-      const isKeyChineseCharacters = /[\u4E00-\u9FA5]/.test(key)
-      const regex = new RegExp(`(^|\\b)${key}(\\b|$)`, 'i')
-
-      if (isKeyChineseCharacters && str.toUpperCase().includes(key)) {
-        return `${value} ${str}`
-      } else if (!isKeyChineseCharacters && regex.test(str)) {
-        return `${value} ${str}`
-      }
+  const uppercase = str.toUpperCase()
+  for (const { matches, emoji } of customFlagMap.values()) {
+    if (matches(str, uppercase)) {
+      return `${emoji} ${str}`
     }
   }
 
-  for (const [key, value] of flagMap.entries()) {
-    if (_.isRegExp(key)) {
-      if (key.test(str)) {
-        return `${value} ${str}`
-      }
-    } else {
-      const isKeyChineseCharacters = /[\u4E00-\u9FA5]/.test(key)
-      const regex = new RegExp(`(^|\\b)${key}(\\b|$)`, 'i')
-
-      if (isKeyChineseCharacters && str.toUpperCase().includes(key)) {
-        return `${value} ${str}`
-      } else if (!isKeyChineseCharacters && regex.test(str)) {
-        return `${value} ${str}`
-      }
+  for (const { matches, emoji } of flagMap.values()) {
+    if (matches(str, uppercase)) {
+      return `${emoji} ${str}`
     }
   }
 
