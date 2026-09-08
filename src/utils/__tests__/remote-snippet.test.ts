@@ -1,7 +1,31 @@
 import { afterEach, beforeEach, expect, test, vi } from 'vitest'
 
 import * as config from '../../config.js'
+import * as interpreter from '../../runtime/snippet-interpreter.js'
 import * as utils from '../remote-snippet.js'
+
+import type { TtlCache } from '../../cache/core.js'
+
+const snippetConfig = {
+  name: 'injected',
+  url: 'https://example.com/injected.list',
+}
+
+const createRuntime = (body = 'DOMAIN,example.com', cached?: string) => {
+  const cache = {
+    async get<T>(_key: string): Promise<T | undefined> {
+      return cached as T | undefined
+    },
+    set: vi.fn<TtlCache['set']>().mockResolvedValue(undefined),
+  }
+  return {
+    cache,
+    cacheGet: vi.spyOn(cache, 'get'),
+    httpClient: {
+      get: vi.fn().mockResolvedValue({ body, headers: {}, statusCode: 200 }),
+    },
+  }
+}
 
 beforeEach(() => {
   vi.restoreAllMocks()
@@ -163,4 +187,95 @@ test('parseMacro', () => {
 {% endmacro %}
     `)
   }).not.toThrow()
+})
+
+test.each(['DOMAIN,cached.example.com', ''])(
+  'uses cached text %j even when long-lived caching is disabled',
+  async (text) => {
+    const runtime = createRuntime(undefined, text)
+    const [snippet] = await utils.loadRemoteSnippetList(
+      [snippetConfig],
+      false,
+      runtime,
+    )
+    expect(snippet.text).toBe(text)
+    expect(snippet.main()).toBe(text)
+    expect(runtime.httpClient.get).not.toHaveBeenCalled()
+    expect(runtime.cache.set).not.toHaveBeenCalled()
+  },
+)
+
+test.each([
+  [true, 1234, 1234],
+  [true, 0, 0],
+  [false, 1234, 60_000],
+])(
+  'preserves cache TTL with cacheSnippet=%s and cacheTtl=%s',
+  async (cacheSnippet, cacheTtl, expectedTtl) => {
+    const runtime = { ...createRuntime(), cacheTtl }
+    const [snippet] = await utils.loadRemoteSnippetList(
+      [snippetConfig],
+      cacheSnippet,
+      runtime,
+    )
+    expect(runtime.httpClient.get).toHaveBeenCalledExactlyOnceWith(
+      snippetConfig.url,
+    )
+    expect(runtime.cache.set).toHaveBeenCalledExactlyOnceWith(
+      runtime.cacheGet.mock.calls[0][0],
+      snippet.text,
+      expectedTtl,
+    )
+  },
+)
+
+test('propagates cache write errors', async () => {
+  const runtime = createRuntime()
+  const error = new Error('cache write failed')
+  runtime.cache.set.mockRejectedValue(error)
+  await expect(
+    utils.loadRemoteSnippetList([snippetConfig], true, runtime),
+  ).rejects.toBe(error)
+})
+
+test('parses a macro lazily once and renders fresh arguments on each call', async () => {
+  const parse = vi.spyOn(interpreter, 'parseRestrictedSnippet')
+  const runtime = createRuntime(
+    '{% macro main(proxy) %}DOMAIN,example.com,{{ proxy }}{% endmacro %}',
+  )
+  const [snippet] = await utils.loadRemoteSnippetList(
+    [{ ...snippetConfig, surgioSnippet: true }],
+    true,
+    runtime,
+  )
+  expect(parse).not.toHaveBeenCalled()
+  expect(snippet.main('PROXY')).toBe('DOMAIN,example.com,PROXY')
+  expect(() => snippet.main()).toThrow('Surgio 片段参数不足，缺少 proxy')
+  expect(snippet.main('DIRECT')).toBe('DOMAIN,example.com,DIRECT')
+  expect(parse).toHaveBeenCalledTimes(1)
+
+  runtime.httpClient.get.mockResolvedValue({
+    body: '{% macro main(proxy) %}DOMAIN,new.example.com,{{ proxy }}{% endmacro %}',
+    headers: {},
+    statusCode: 200,
+  })
+  const [updated] = await utils.loadRemoteSnippetList(
+    [{ ...snippetConfig, surgioSnippet: true }],
+    true,
+    runtime,
+  )
+  expect(updated.main('REJECT')).toBe('DOMAIN,new.example.com,REJECT')
+  expect(snippet.main('DIRECT')).toBe('DOMAIN,example.com,DIRECT')
+  expect(parse).toHaveBeenCalledTimes(2)
+})
+
+test('defers invalid macro errors until main is called', async () => {
+  const runtime = createRuntime('{% macro wrong(proxy) %}{% endmacro %}')
+  const [snippet] = await utils.loadRemoteSnippetList(
+    [{ ...snippetConfig, surgioSnippet: true }],
+    true,
+    runtime,
+  )
+  expect(() => snippet.main('PROXY')).toThrow()
+  expect(() => snippet.main('DIRECT')).toThrow()
 })

@@ -16,12 +16,12 @@ import {
   getNetworkConcurrency,
   getRemoteSnippetCacheMaxage,
 } from './env-flag.js'
-
-import { toMD5 } from './index.js'
+import { toMD5 } from './portable.js'
 
 import type { Logger } from '@surgio/logger'
 import type { TtlCache } from '../cache/core.js'
 import type { RuntimeHttpClient } from '../runtime/types.js'
+import type { RestrictedSnippetMacro } from '../runtime/snippet-interpreter.js'
 
 export interface RemoteSnippetRuntimeOptions {
   readonly cache?: Pick<TtlCache, 'get' | 'set'>
@@ -65,17 +65,15 @@ export const loadRemoteSnippetList = async (
   const client = runtime.httpClient ?? httpClient
   const runtimeLogger = runtime.logger ?? logger
 
-  function load(url: string): Promise<string> {
-    return client
-      .get(url)
-      .then((data) => {
-        runtimeLogger.info(`远程片段下载成功：${url}`)
-        return data.body
-      })
-      .catch((err) => {
-        runtimeLogger.error(`远程片段下载失败：${url}`)
-        throw err
-      })
+  async function load(url: string): Promise<string> {
+    try {
+      const data = await client.get(url)
+      runtimeLogger.info(`远程片段下载成功：${url}`)
+      return data.body
+    } catch (err) {
+      runtimeLogger.error(`远程片段下载失败：${url}`)
+      throw err
+    }
   }
 
   return Bluebird.map(
@@ -85,30 +83,28 @@ export const loadRemoteSnippetList = async (
       const isSurgioSnippet = item.surgioSnippet
 
       const cacheKey = `${CACHE_KEYS.RemoteSnippets}:${fileMd5}`
-      const cachedSnippet = await cache.get<string>(cacheKey)
-      const snippet: string =
-        cachedSnippet !== undefined
-          ? cachedSnippet
-          : await load(item.url)
-              .then((res) => {
-                return Promise.all([
-                  cache.set(
-                    cacheKey,
-                    res,
-                    cacheSnippet
-                      ? (runtime.cacheTtl ?? getRemoteSnippetCacheMaxage())
-                      : ms('1m'),
-                  ),
-                  res,
-                ])
-              })
-              .then(([, res]) => res)
+      let snippet = await cache.get<string>(cacheKey)
+      if (snippet === undefined) {
+        snippet = await load(item.url)
+        await cache.set(
+          cacheKey,
+          snippet,
+          cacheSnippet
+            ? (runtime.cacheTtl ?? getRemoteSnippetCacheMaxage())
+            : ms('1m'),
+        )
+      }
+
+      let macro: RestrictedSnippetMacro | undefined
 
       return {
-        main: (...args: string[]) =>
-          isSurgioSnippet
-            ? renderSurgioSnippet(snippet, args)
-            : addProxyToSurgeRuleSet(snippet, args[0]),
+        main: (...args: string[]) => {
+          if (isSurgioSnippet) {
+            macro ??= parseRestrictedSnippet(snippet)
+            return macro.render(args)
+          }
+          return addProxyToSurgeRuleSet(snippet, args[0])
+        },
         name: item.name,
         url: item.url,
         text: snippet, // 原始内容
