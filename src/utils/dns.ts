@@ -1,6 +1,5 @@
 import { promises as dns, RecordWithTtl } from 'dns'
 import { createLogger } from '@surgio/logger'
-import Bluebird from 'bluebird'
 
 import { coalesceAsync } from '../runtime/dns.js'
 
@@ -14,10 +13,18 @@ export const resolveDomain = async (
 ): Promise<ReadonlyArray<string>> => {
   logger.debug(`try to resolve domain ${domain}`)
   const now = Date.now()
-  const records = await Bluebird.race<ReadonlyArray<RecordWithTtl>>([
-    resolve4And6Once(domain),
-    Bluebird.delay(timeout).then(() => []),
-  ])
+  let timer: ReturnType<typeof setTimeout> | undefined
+  let records: ReadonlyArray<RecordWithTtl>
+  try {
+    records = await Promise.race([
+      resolve4And6Once(domain),
+      new Promise<ReadonlyArray<RecordWithTtl>>((resolve) => {
+        timer = setTimeout(() => resolve([]), timeout)
+      }),
+    ])
+  } finally {
+    if (timer !== undefined) clearTimeout(timer)
+  }
   logger.debug(
     `resolved domain ${domain}: ${JSON.stringify(records)} ${
       Date.now() - now

@@ -1,11 +1,11 @@
 import { promises } from 'dns'
 import { afterEach, expect, test, vi } from 'vitest'
-import Bluebird from 'bluebird'
 
 import { resolveDomain } from '../dns.js'
 
 afterEach(() => {
   vi.restoreAllMocks()
+  vi.useRealTimers()
 })
 
 test('resolveDomain ipv4', async () => {
@@ -33,17 +33,49 @@ test('resolveDomain ipv6', async () => {
 })
 
 test('resolveDomain timeout', async () => {
-  vi.spyOn(promises, 'resolve4').mockImplementation(async () => {
-    await Bluebird.delay(1000)
-    return [{ address: '127.0.0.2', ttl: 1000 }]
-  })
-  vi.spyOn(promises, 'resolve6').mockImplementation(async () => {
-    await Bluebird.delay(1000)
-    return [{ address: '::2', ttl: 1000 }]
-  })
+  vi.useFakeTimers()
+  let finish:
+    ((records: Array<{ address: string; ttl: number }>) => void) | undefined
+  vi.spyOn(promises, 'resolve4').mockImplementation(
+    () =>
+      new Promise((resolve) => {
+        finish = resolve
+      }),
+  )
+  vi.spyOn(promises, 'resolve6').mockResolvedValue([])
 
-  const ips = await resolveDomain('timeout.example.com', 0)
-  expect(ips.length).toBe(0)
+  const pending = resolveDomain('timeout.example.com', 100)
+  await vi.advanceTimersByTimeAsync(100)
+  await expect(pending).resolves.toEqual([])
+  expect(vi.getTimerCount()).toBe(0)
+  finish?.([{ address: '127.0.0.2', ttl: 1000 }])
+  await vi.advanceTimersByTimeAsync(0)
+  expect(vi.getTimerCount()).toBe(0)
+})
+
+test('clears the timeout when DNS finishes early', async () => {
+  vi.useFakeTimers()
+  vi.spyOn(promises, 'resolve4').mockResolvedValue([
+    { address: '127.0.0.1', ttl: 100 },
+  ])
+  vi.spyOn(promises, 'resolve6').mockResolvedValue([
+    { address: '::1', ttl: 100 },
+  ])
+
+  await expect(resolveDomain('early.example.com', 10_000)).resolves.toEqual([
+    '127.0.0.1',
+    '::1',
+  ])
+  expect(vi.getTimerCount()).toBe(0)
+})
+
+test('clears the timeout when both DNS queries fail', async () => {
+  vi.useFakeTimers()
+  vi.spyOn(promises, 'resolve4').mockRejectedValue(new Error('DNS unavailable'))
+  vi.spyOn(promises, 'resolve6').mockRejectedValue(new Error('DNS unavailable'))
+
+  await expect(resolveDomain('failed.example.com')).resolves.toEqual([])
+  expect(vi.getTimerCount()).toBe(0)
 })
 
 test('coalesces concurrent resolutions for the same domain', async () => {
