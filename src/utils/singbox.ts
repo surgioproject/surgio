@@ -67,6 +67,7 @@ const typeMap = {
   [NodeTypeEnum.Wireguard]: 'wireguard',
   [NodeTypeEnum.Hysteria2]: 'hysteria2',
   [NodeTypeEnum.AnyTLS]: 'anytls',
+  [NodeTypeEnum.Snell]: 'snell',
 } as const
 
 /**
@@ -255,6 +256,50 @@ function nodeListMapper(nodeConfig: PossibleNodeConfigType) {
       node.username = nodeConfig.username
       node.password = nodeConfig.password
       break
+
+    case NodeTypeEnum.Snell: {
+      // sing-box 的 Snell outbound 支持 version 4 和 6。
+      // 由于 sing-box 刻意不支持 Snell v5 的 QUIC 模式，v5 的线路协议与 v4
+      // 完全一致，因此 v5 服务端可以直接使用 v4 客户端连接。
+      // @see https://sing-box.sagernet.org/configuration/outbound/snell/
+      const snellVersion = Number(nodeConfig.version)
+
+      if (snellVersion !== 4 && snellVersion !== 6) {
+        logger.warn(
+          `sing-box 的 snell 节点仅支持 version 4 或 6，节点 ${nodeConfig.nodeName} 会被忽略`,
+        )
+        return null
+      }
+
+      node.version = snellVersion
+      node.psk = nodeConfig.psk
+
+      if (nodeConfig.userkey) {
+        node.userkey = nodeConfig.userkey
+      }
+
+      if (snellVersion >= 6) {
+        // snell v6 要求 psk 长度为 12 到 255 字节
+        if (nodeConfig.psk.length < 12 || nodeConfig.psk.length > 255) {
+          logger.warn(
+            `snell v6 要求 psk 长度为 12 到 255 字节，节点 ${nodeConfig.nodeName} 可能无法工作`,
+          )
+        }
+        if (nodeConfig.mode) {
+          node.mode = nodeConfig.mode
+        }
+      } else if (nodeConfig.obfs === 'http') {
+        node.obfs_mode = 'http'
+        if (nodeConfig.obfsHost) {
+          node.obfs_host = nodeConfig.obfsHost
+        }
+      }
+
+      if (nodeConfig.reuse) {
+        node.reuse = true
+      }
+      break
+    }
 
     case NodeTypeEnum.Tuic:
       if ('uuid' in nodeConfig === false) {
