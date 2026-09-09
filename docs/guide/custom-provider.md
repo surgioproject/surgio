@@ -379,6 +379,8 @@ Vless 节点遵循和 Vmess 类似的配置规则，除了以下几个差异：
   obfsHost: 'gateway-carry.icloud.com', // 可选
   version: 4, // 可选，默认不传以 Surge 为准
   reuse: true, // 可选，默认 false
+  userkey: 'user-password', // 可选，snell v6 多用户模式下用户的 key，仅 sing-box 支持
+  mode: 'default', // 可选，snell v6 的流量整形模式（default / unshaped / unsafe-raw），仅 sing-box 支持
 }
 ```
 
