@@ -261,7 +261,7 @@ test('extendRoute with getSingboxRules - end to end', () => {
     },
   })
   expect(warn).toHaveBeenCalledWith(
-    'sing-box 不支持的规则已忽略: %s (%s)',
+    'sing-box 不支持的规则已忽略：%s (%s)',
     'USER-AGENT,SomeApp,proxy',
     expect.stringContaining('USER-AGENT'),
   )
