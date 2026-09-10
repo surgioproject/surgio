@@ -22,6 +22,44 @@ export const getSurgeExtendHeaders = (
     .join('|')
 }
 
+interface SurgeNode {
+  name: string
+  proxy: string
+  wireguard?: string
+}
+
+function formatNodes(
+  nodeList: ReadonlyArray<PossibleNodeConfigType>,
+  filter: NodeFilterType | SortedNodeFilterType | undefined,
+  options: FormatterOptions,
+): SurgeNode[] {
+  const logger = options.logger ?? defaultLogger
+
+  return applyFilter(nodeList, filter).flatMap((nodeConfig) => {
+    const mapped = nodeListMapper(nodeConfig, logger)
+
+    if (!mapped) {
+      return []
+    }
+
+    const [name, policy] = mapped
+
+    return [
+      {
+        name,
+        proxy:
+          nodeConfig.type === NodeTypeEnum.Tailscale
+            ? policy
+            : appendCommonConfig(policy, nodeConfig),
+        wireguard:
+          nodeConfig.type === NodeTypeEnum.Wireguard
+            ? formatWireguardSection(nodeConfig)
+            : undefined,
+      },
+    ]
+  })
+}
+
 /**
  * @see https://manual.nssurge.com/policy/proxy.html
  */
@@ -31,110 +69,98 @@ export const getSurgeNodes = function (
   options: FormatterOptions = {},
 ): string {
   const logger = options.logger ?? defaultLogger
-  const result: string[] = applyFilter(nodeList, filter)
-    .map((nodeConfig) => {
-      const result = nodeListMapper(nodeConfig, logger)
 
-      if (!result) {
-        return undefined
-      }
-
-      const [nodeName, nodeConfigString] = result
-
-      return [
-        nodeName,
-        nodeConfig.type === NodeTypeEnum.Tailscale
-          ? nodeConfigString
-          : appendCommonConfig(nodeConfigString, nodeConfig),
-      ]
-    })
-    .filter(
-      (item): item is NonNullable<ReturnType<typeof nodeListMapper>> =>
-        item !== undefined,
-    )
-    .map((item) => item[1])
-
-  return result.join('\n')
-}
-
-export const getSurgeWireguardNodes = (
-  nodeList: ReadonlyArray<PossibleNodeConfigType>,
-): string => {
-  const result = nodeList
-    .map((nodeConfig) => {
-      if (
-        nodeConfig.type !== NodeTypeEnum.Wireguard ||
-        nodeConfig.enable === false
-      ) {
-        return undefined
-      }
-
-      const nodeConfigSection: string[] = [
-        `[WireGuard ${nodeConfig.nodeName}]`,
-        `self-ip=${nodeConfig.selfIp}`,
-        `private-key=${nodeConfig.privateKey}`,
-      ]
-      const optionalKeys: Array<keyof typeof nodeConfig> = [
-        'mtu',
-        'preferIpv6',
-        'selfIpV6',
-      ]
-
-      for (const key of optionalKeys) {
-        if (nodeConfig[key] !== undefined) {
-          nodeConfigSection.push(
-            ...pickAndFormatStringList(nodeConfig, [key], {
-              keyFormat: 'kebabCase',
-            }),
-          )
-        }
-      }
-
-      if (nodeConfig.dnsServers) {
-        nodeConfigSection.push(
-          `dns-server=${JSON.stringify(nodeConfig.dnsServers.join(', '))}`,
+  return formatNodes(nodeList, filter, options)
+    .map((node) => {
+      if (node.wireguard !== undefined) {
+        logger.info(
+          `请配合使用 getSurgeWireguardNodes 生成 ${node.name} 节点配置`,
         )
       }
 
-      const peerList: string[] = []
-
-      for (const peer of nodeConfig.peers) {
-        const peerConfig: string[] = [
-          `endpoint=${peer.endpoint}`,
-          `public-key=${JSON.stringify(peer.publicKey)}`,
-        ]
-        const optionalPeerConfigKeys: Array<keyof typeof peer> = [
-          'presharedKey',
-          'allowedIps',
-          'keepalive',
-        ]
-
-        for (const key of optionalPeerConfigKeys) {
-          if (peer[key] !== undefined) {
-            peerConfig.push(
-              ...pickAndFormatStringList(peer, [key], {
-                keyFormat: 'kebabCase',
-                stringifyValue: true,
-              }),
-            )
-          }
-        }
-
-        /* istanbul ignore next -- @preserve */
-        if (peer.reservedBits) {
-          peerConfig.push(`client-id=${peer.reservedBits.join('/')}`)
-        }
-
-        peerList.push(`(${peerConfig.join(', ')})`)
-      }
-
-      nodeConfigSection.push(`peer=${peerList.join(', ')}`)
-
-      return nodeConfigSection.join('\n')
+      return node.proxy
     })
-    .filter((item): item is string => item !== undefined)
+    .join('\n')
+}
 
-  return result.join('\n\n')
+/**
+ * 生成独立的 `[WireGuard ...]` 配置段，与 getSurgeNodes 输出的 section-name 引用配套使用。
+ * 两者必须使用相同的节点列表和过滤器。
+ */
+export const getSurgeWireguardNodes = (
+  nodeList: ReadonlyArray<PossibleNodeConfigType>,
+  filter?: NodeFilterType | SortedNodeFilterType,
+  options: FormatterOptions = {},
+): string =>
+  formatNodes(nodeList, filter, options)
+    .flatMap((node) => (node.wireguard === undefined ? [] : [node.wireguard]))
+    .join('\n\n')
+
+function formatWireguardSection(
+  nodeConfig: Extract<PossibleNodeConfigType, { type: NodeTypeEnum.Wireguard }>,
+): string {
+  const nodeConfigSection: string[] = [
+    `[WireGuard ${nodeConfig.nodeName}]`,
+    `self-ip=${nodeConfig.selfIp}`,
+    `private-key=${nodeConfig.privateKey}`,
+  ]
+  const optionalKeys: Array<keyof typeof nodeConfig> = [
+    'mtu',
+    'preferIpv6',
+    'selfIpV6',
+  ]
+
+  for (const key of optionalKeys) {
+    if (nodeConfig[key] !== undefined) {
+      nodeConfigSection.push(
+        ...pickAndFormatStringList(nodeConfig, [key], {
+          keyFormat: 'kebabCase',
+        }),
+      )
+    }
+  }
+
+  if (nodeConfig.dnsServers) {
+    nodeConfigSection.push(
+      `dns-server=${JSON.stringify(nodeConfig.dnsServers.join(', '))}`,
+    )
+  }
+
+  const peerList: string[] = []
+
+  for (const peer of nodeConfig.peers) {
+    const peerConfig: string[] = [
+      `endpoint=${peer.endpoint}`,
+      `public-key=${JSON.stringify(peer.publicKey)}`,
+    ]
+    const optionalPeerConfigKeys: Array<keyof typeof peer> = [
+      'presharedKey',
+      'allowedIps',
+      'keepalive',
+    ]
+
+    for (const key of optionalPeerConfigKeys) {
+      if (peer[key] !== undefined) {
+        peerConfig.push(
+          ...pickAndFormatStringList(peer, [key], {
+            keyFormat: 'kebabCase',
+            stringifyValue: true,
+          }),
+        )
+      }
+    }
+
+    /* istanbul ignore next -- @preserve */
+    if (peer.reservedBits) {
+      peerConfig.push(`client-id=${peer.reservedBits.join('/')}`)
+    }
+
+    peerList.push(`(${peerConfig.join(', ')})`)
+  }
+
+  nodeConfigSection.push(`peer=${peerList.join(', ')}`)
+
+  return nodeConfigSection.join('\n')
 }
 
 export const getSurgeTailscaleNodes = (
@@ -179,22 +205,14 @@ export const getSurgeTailscaleNodes = (
     .join('\n\n')
 }
 
-export const getSurgeNodeNames = function (
+export const getSurgeNodeNames = (
   nodeList: ReadonlyArray<PossibleNodeConfigType>,
   filter?: NodeFilterType | SortedNodeFilterType,
   options: FormatterOptions = {},
-): string {
-  const logger = options.logger ?? defaultLogger
-  const result: string[] = applyFilter(nodeList, filter)
-    .map((nodeConfig) => nodeListMapper(nodeConfig, logger))
-    .filter(
-      (item): item is NonNullable<ReturnType<typeof nodeListMapper>> =>
-        item !== undefined,
-    )
-    .map((item) => item[0])
-
-  return result.join(', ')
-}
+): string =>
+  formatNodes(nodeList, filter, options)
+    .map((node) => node.name)
+    .join(', ')
 
 function nodeListMapper(
   nodeConfig: PossibleNodeConfigType,
@@ -552,10 +570,6 @@ function nodeListMapper(
     }
 
     case NodeTypeEnum.Wireguard:
-      logger.info(
-        `请配合使用 getSurgeWireguardNodes 生成 ${nodeConfig.nodeName} 节点配置`,
-      )
-
       return [
         nodeConfig.nodeName,
         [

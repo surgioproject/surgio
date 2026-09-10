@@ -914,3 +914,28 @@ test('getSurgeNodeNames', () => {
     ]),
   ).toBe('Test Node 1, Test Node 2')
 })
+
+test('getSurgeWireguardNodes shares filtering with getSurgeNodes', () => {
+  const wg = (nodeName: string, enable?: boolean): PossibleNodeConfigType => ({
+    type: NodeTypeEnum.Wireguard,
+    nodeName,
+    enable,
+    privateKey: 'privateKey',
+    selfIp: '10.0.0.1',
+    peers: [{ endpoint: 'wg.example.com:51820', publicKey: 'publicKey' }],
+  })
+  const nodeList: ReadonlyArray<PossibleNodeConfigType> = [
+    wg('kept'),
+    wg('filtered'),
+    wg('disabled', false),
+  ]
+  const filter = (node: PossibleNodeConfigType) => node.nodeName !== 'filtered'
+
+  expect(surge.getSurgeNodes(nodeList, filter)).toBe(
+    'kept = wireguard, section-name = kept',
+  )
+  expect(surge.getSurgeNodeNames(nodeList, filter)).toBe('kept')
+  expect(
+    surge.getSurgeWireguardNodes(nodeList, filter).match(/\[WireGuard .+\]/g),
+  ).toEqual(['[WireGuard kept]'])
+})
