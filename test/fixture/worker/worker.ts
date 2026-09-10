@@ -55,7 +55,9 @@ export default {
       fetch: runtimeFetch,
       network: { artifactCacheTtl: 60_000 },
     })
-    const result = await runtime.renderArtifact('demo.conf')
+    const result = await runtime.renderArtifact(
+      url.pathname === '/surfboard' ? 'surfboard.conf' : 'demo.conf',
+    )
     return new Response(result.body, {
       headers: result.subscriptionUserInfo
         ? {

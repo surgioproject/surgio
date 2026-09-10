@@ -7,6 +7,8 @@ import { afterEach, describe, expect, test, vi } from 'vitest'
 import { TtlCache } from '../cache/core.js'
 import { createNodeRenderer } from '../generator/template.js'
 import { defineSurgioProject } from '../project/core.js'
+import { loadSurgioProject } from '../project/node.js'
+import { createNodeSurgioRuntime } from '../runtime/node.js'
 import { SupportProviderEnum } from '../types.js'
 import { ArtifactValidator } from '../validators/index.js'
 
@@ -46,6 +48,44 @@ afterEach(async () => {
 })
 
 describe('Worker project', () => {
+  test('Node and Worker render the same complete Surfboard artifact', async () => {
+    const directory = await fs.mkdtemp(
+      path.join(os.tmpdir(), 'surgio-surfboard-'),
+    )
+    temporaryDirectories.push(directory)
+    const fixture = path.resolve(
+      import.meta.dirname,
+      '../../test/fixture/worker',
+    )
+    const outfile = path.join(await fs.realpath(directory), 'manifest.mjs')
+    await buildWorkerManifest({
+      configFile: path.join(fixture, 'surgio.project.ts'),
+      outfile,
+    })
+    const manifest = (await import(pathToFileURL(outfile).href))
+      .default as WorkerManifest
+    const project = await loadSurgioProject(fixture)
+    const options = () => ({
+      cache: new TtlCache({ store: new MemoryStore() }),
+      fetch: async () => new Response('DOMAIN,example.com'),
+    })
+    const nodeRuntime = createNodeSurgioRuntime(project, options())
+    const workerRuntime = createSurgioRuntime(manifest, options())
+    try {
+      const node = await nodeRuntime.renderArtifact('surfboard.conf')
+      const worker = await workerRuntime.renderArtifact('surfboard.conf')
+      expect(worker.body).toBe(node.body)
+      expect(worker.body).toContain('[WireGuard wg]')
+      expect(worker.body).toContain('gecko-password=global-gecko')
+      expect(worker.body).toContain('gecko-password=node-gecko')
+      expect(worker.body).toContain(
+        'Proxy = select, wg, anytls, tuic, snell, gecko-global, gecko-node',
+      )
+    } finally {
+      await Promise.all([nodeRuntime.close(), workerRuntime.close()])
+    }
+  })
+
   test('keeps shared configuration flat in the project definition', () => {
     const project = defineSurgioProject({
       artifacts: [],
