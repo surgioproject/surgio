@@ -366,6 +366,8 @@ Vless 节点遵循和 Vmess 类似的配置规则，除了以下几个差异：
 
 ### Snell
 
+Surfboard 支持 v1～v4，省略版本时采用客户端默认的 v1。v5 会告警并输出为 v4，与 Surfboard 官方说明一致。可设置 `obfsUri`，仅在 HTTP 混淆时输出；`udpRelay` 仅在 v3/v4 时生效。
+
 ```json5
 {
   type: 'snell',
@@ -556,6 +558,8 @@ sing-box 将 Tailscale 视为 [endpoint](https://sing-box.sagernet.org/configura
 
 ### Tuic
 
+Surfboard 仅支持 v5，可设置 `udpRelay`、端口跳跃和 TLS 参数。`alpn` 缺省时由客户端采用 `h3`，目前仅接受一个值；多值 ALPN 的 Surfboard 语法尚未确认，因此会省略对应节点。
+
 #### V5
 
 > <Badge text="Surgio v3.0.0" vertical="middle" />
@@ -573,7 +577,7 @@ sing-box 将 Tailscale 视为 [endpoint](https://sing-box.sagernet.org/configura
   skipCertVerify: true, // 可选
   alpn: ['h3'], // 可选，Stash 不支持空值
   congestionControl: 'bbr', // 可选，Clash 和 sing-box 支持
-  udpRelay: false, // 可选，仅 Clash 支持更改，Surge 默认开启
+  udpRelay: false, // 可选，Surfboard v5 支持显式关闭，Surge 默认开启
 }
 ```
 
@@ -598,11 +602,13 @@ sing-box 将 Tailscale 视为 [endpoint](https://sing-box.sagernet.org/configura
 
 > <Badge text="Surgio v3.1.0" vertical="middle" />
 
-Surgio 只支持 Hysteria v2 协议。请注意，Hysteria v2 协议和 v1 协议完全不兼容。当前可以为 Clash、Surge、sing-box 和 Loon 生成此节点。
+Surgio 只支持 Hysteria v2 协议。请注意，Hysteria v2 协议和 v1 协议完全不兼容。当前可以为 Clash、Surge、sing-box、Loon 和 Surfboard 生成此节点。
 
 Clash 需要在配置中开启 `clashConfig.enableHysteria2`。
 
 Loon 支持输出 `sni`、`skipCertVerify`、`tfo`、`obfsPassword` 和 `udpRelay`。Loon 文档未支持的带宽、端口跳跃和 `alpn` 参数不会输出。
+
+Surfboard 支持 `downloadBandwidth`、`portHopping`、`portHoppingInterval`、TLS 参数和 `udpRelay`，不输出 `uploadBandwidth`。Salamander 使用 `obfs: 'salamander'` 和 `obfsPassword`；Gecko 使用 `surfboardConfig.geckoPassword`，同时设置时优先 Gecko。
 
 ```json5
 {
@@ -743,6 +749,8 @@ Stash 和 Mihomo 默认使用 HTTP/2，`quic: true` 时切换到 HTTP/3。Stash 
 版本要求：Surge Mac 6.4.4+；`headers` 和 `maxStreams` 需要 Surge Mac 6.6.0+，自定义 ALPN 需要 6.7.0+。Stash iOS 3.4.0+、macOS 4.2.0+。Mihomo 1.19.21+；连接池字段需要 1.19.23+，`bbrProfile` 需要 1.19.24+。Stash tvOS 和 Surge iOS 的官方文档尚未给出可靠的最低版本。
 
 ### AnyTLS
+
+Surfboard 支持密码、TLS 参数、`reuse` 和 `udpRelay`，后两项缺省时由客户端默认开启。配置 Reality 的节点不会输出到 Surfboard。
 
 > <Badge text="Surgio v3.13.0" vertical="middle" />
 
@@ -991,7 +999,7 @@ module.exports = {
 - 类型：`string`
 - 默认值：`undefined`
 
-开启 Tuic、Hysteria、Surge MASQUE 和 Stash TrustTunnel QUIC 协议端口跳跃，目前仅 Surge, Sing-box, Stash 和 Mihomo 支持这一特性。例如 `5000,6000-7000`。该配置支持逗号或分号分割的端口列表，以及连字符分割的端口范围，Surgio 会自动转换成 Surge 和 Stash 支持的格式。Sing-box 的 Hysteria 协议也支持端口跳跃，但仅支持 `6000-7000` 这样连字符分割的端口范围，单个端口的配置会被忽略。MASQUE 端口跳跃仅输出到 Surge，且不能与 `underlyingProxy` 同时使用。TrustTunnel 端口跳跃仅输出到 Stash，并要求 `quic: true`。
+开启 Tuic、Hysteria、Surge MASQUE 和 Stash TrustTunnel QUIC 协议端口跳跃，目前 Surge、sing-box、Stash、Mihomo 和 Surfboard 支持这一特性，Surfboard 适用于 TUIC v5 和 Hysteria2。例如 `5000,6000-7000`。该配置支持逗号或分号分割的端口列表，以及连字符分割的端口范围，Surgio 会自动转换成 Surge 和 Stash 支持的格式。Sing-box 的 Hysteria 协议也支持端口跳跃，但仅支持 `6000-7000` 这样连字符分割的端口范围，单个端口的配置会被忽略。MASQUE 端口跳跃仅输出到 Surge，且不能与 `underlyingProxy` 同时使用。TrustTunnel 端口跳跃仅输出到 Stash，并要求 `quic: true`。
 
 ### nodeConfig.portHoppingInterval
 

@@ -1,6 +1,5 @@
 ---
 title: Template 模板
-
 ---
 
 # Template 模板
@@ -159,13 +158,13 @@ Surgio 内置多个节点名国别/地区过滤器。除非是火星文，Surgio
 
 ### netflixFilter
 
-Netflix 节点过滤器。Surgio 默认会将名称中包含 *netflix*, *hkbn*, *hkt*, *hgc*（不分大小写）的节点过滤出来。如果在 Provider 中进行了覆盖则会运行新的方法。
+Netflix 节点过滤器。Surgio 默认会将名称中包含 _netflix_, _hkbn_, _hkt_, _hgc_（不分大小写）的节点过滤出来。如果在 Provider 中进行了覆盖则会运行新的方法。
 
 [内置方法定义](https://github.com/geekdada/surgio/blob/master/lib/utils/filter.ts#L38)
 
 ### youtubePremiumFilter
 
-Youtube Premium 节点过滤器。Surgio 默认会将名称中包含 *日*, *美*, *韩*, 🇯🇵, 🇺🇸, 🇰🇷 的节点过滤出来。如果在 Provider 中进行了覆盖则会运行新的方法。
+Youtube Premium 节点过滤器。Surgio 默认会将名称中包含 _日_, _美_, _韩_, 🇯🇵, 🇺🇸, 🇰🇷 的节点过滤出来。如果在 Provider 中进行了覆盖则会运行新的方法。
 
 - [内置方法定义](https://github.com/geekdada/surgio/blob/master/lib/utils/filter.ts#L81)
 - [查看所有支持 Youtube Premium 的国家和地区](https://support.google.com/youtube/answer/6307365?hl=zh-Hans)
@@ -195,7 +194,7 @@ Youtube Premium 节点过滤器。Surgio 默认会将名称中包含 *日*, *美
 
 - `filter` 为可选参数
 - 支持输出 Shadowsocks, HTTPS, Snell, Vmess, Trojan 节点
-:::
+  :::
 
 生成 Surge 规范的节点列表，例如：
 
@@ -217,7 +216,7 @@ Youtube Premium 节点过滤器。Surgio 默认会将名称中包含 *日*, *美
 
 `getSurgeWireguardNodes(nodeList, filter?)`
 
-`getSurgeNodes` 仅输出 `[Proxy]` 部分的配置，剩余的节点配置需要在模板中使用 `getSurgeWireguardNodes` 输出。
+`getSurgeNodes` 仅输出 `[Proxy]` 部分的配置，剩余的节点配置需要在模板中使用 `getSurgeWireguardNodes` 输出。使用过滤器时应向两个方法传入同一个过滤器，否则 `section-name` 会引用到不存在的配置段。
 
 ```txt
 [Proxy]
@@ -272,7 +271,7 @@ Tailscale 节点用于 Surge 时必须配置 `authKey`，否则模板生成会�
 :::tip[提示]
 
 - 第二个入参为 Group 名称
-:::
+  :::
 
 生成 Shadowsocks Scheme 列表，例如：
 
@@ -308,7 +307,7 @@ HTTPS。HTTP/HTTPS 使用 v2rayN 内部格式，其余节点使用协议分享�
 - 第二个参数可选，可传入标准的过滤器或自定义的过滤器
 - 支持输出 Shadowsocks, Shadowsocksr, Vmess, HTTPS, Trojan, AnyTLS 节点
 - 支持添加 `udp-relay` 和 `fast-open` 配置
-:::
+  :::
 
 生成 QuantumulX 的节点配置。该配置能用于 [`server_local`](https://github.com/crossutility/Quantumult-X/blob/master/sample.conf#L88) 或者 [`server_remote`](https://github.com/crossutility/Quantumult-X/blob/master/server-complete.txt)。
 
@@ -330,7 +329,7 @@ HTTPS。HTTP/HTTPS 使用 v2rayN 内部格式，其余节点使用协议分享�
 
 - [Clash 规则维护指南](/guide/client/clash)
 - 支持输出 Shadowsocks, Shadowsocksr, HTTPS, Snell, Vmess, Trojan 节点
-:::
+  :::
 
 ### getClashNodeNames
 
@@ -342,26 +341,26 @@ HTTPS。HTTP/HTTPS 使用 v2rayN 内部格式，其余节点使用协议分享�
 - `prependNodeNames` 为可选参数。可以通过这个参数在过滤结果前加入自定义节点名
 - `defaultNodeNames` 为可选参数。可以通过这个参数实现在过滤结果为空的情况下，使用默认的自定义节点名
 - [Clash 规则维护指南](/guide/client/clash)
-:::
+  :::
 
 该方法会返回一个包含有节点名称的数组，用于编写 Clash 规则。
 
 若需要过滤 Netflix 节点则传入：
 
 ```js
-getClashNodeNames(nodeList, netflixFilter);
+getClashNodeNames(nodeList, netflixFilter)
 ```
 
 需要过滤 Netflix 节点，并且在前面加入节点 `测试节点`
 
 ```js
-getClashNodeNames(nodeList, netflixFilter, ['测试节点']);
+getClashNodeNames(nodeList, netflixFilter, ['测试节点'])
 ```
 
 需要过滤 Netflix 节点，如果没有 Netflix 相关节点，则使用 `默认节点`
 
 ```js
-getClashNodeNames(nodeList, netflixFilter, [], ['默认节点']);
+getClashNodeNames(nodeList, netflixFilter, [], ['默认节点'])
 ```
 
 ### getSingboxNodes
@@ -375,7 +374,7 @@ getClashNodeNames(nodeList, netflixFilter, [], ['默认节点']);
 :::tip[提示]
 
 - `filter` 为可选参数
-:::
+  :::
 
 ### getSingboxEndpoints
 
@@ -389,7 +388,7 @@ sing-box 将 [WireGuard](https://sing-box.sagernet.org/configuration/endpoint/wi
 
 - `filter` 为可选参数
 - 目前支持 WireGuard 和 Tailscale 节点
-:::
+  :::
 
 ### getSingboxNodeNames
 
@@ -402,12 +401,12 @@ sing-box 将 [WireGuard](https://sing-box.sagernet.org/configuration/endpoint/wi
 :::tip[提示]
 
 - `filter` 为可选参数
-:::
+  :::
 
 若需要过滤 Netflix 节点则传入：
 
 ```js
-getSingboxNodeNames(nodeList, netflixFilter);
+getSingboxNodeNames(nodeList, netflixFilter)
 ```
 
 ### getSingboxRules
@@ -436,7 +435,7 @@ getSingboxNodeNames(nodeList, netflixFilter);
 
 - 第二个参数可选，可传入标准的过滤器或自定义的过滤器
 - 支持输出 Shadowsocks, Shadowsocksr, HTTPS, HTTP, Vmess, Vless, Trojan, WireGuard, Hysteria 2, AnyTLS 节点
-:::
+  :::
 
 生成符合 `[Proxy]` 规范的节点信息，使用时请参考 [Loon 节点文档](https://nsloon.app/docs/Node/)。
 
@@ -464,10 +463,16 @@ getSingboxNodeNames(nodeList, netflixFilter);
 :::tip[提示]
 
 - `filter` 为可选参数，可传入标准的过滤器或自定义的过滤器
-- 支持输出 Shadowsocks, HTTPS, HTTP, Vmess, Trojan 节点
-:::
+- 支持输出 Shadowsocks、HTTPS、HTTP、SOCKS5、VMess、Trojan、Snell、AnyTLS、Hysteria2、TUIC v5 和 WireGuard 节点
+  :::
 
-使用时请参考 [官方文档](https://getsurfboard.com/docs/profile-format/overview)。
+以 Surfboard mobile 2.34.4+ 为目标，参数依据 [官方文档](https://getsurfboard.com/docs/profile-format/proxy/)。
+
+不支持的协议、加密和传输组合会告警并省略，包括 VLESS、TUIC v4、Reality、Shadow TLS、Shadowsocks v2ray-plugin 和正式版不支持的旧式 Shadowsocks 加密。VMess 仅支持 TCP／WS，默认开启 AEAD，保留 `surfboardConfig.vmessAEAD: false`。
+
+普通参数保留显式 `false`，未配置的可选项由客户端采用默认值。TLS 节点支持 `sni`、`skipCertVerify` 和 `serverCertFingerprintSha256`；`underlyingProxy` 适用于 WireGuard 以外的已支持节点，`blockQuic` 适用于所有已支持节点。SOCKS5 使用位置认证参数，要求 `clientCert` 的节点会被省略。
+
+包含分隔符或空格的值会加引号。含换行或同时包含单双引号的值无法按已确认的语法输出，对应节点会被省略。
 
 示例：
 
@@ -482,7 +487,32 @@ getSingboxNodeNames(nodeList, netflixFilter);
 
 `getSurfboardNodeNames(nodeList, filter?)`
 
-和 `getSurfboardNodes` 一样，只不过输出的是节点名称列表。
+输出可以生成 Surfboard 配置的节点名称，与 `getSurfboardNodes` 使用相同的过滤、排序和兼容性判断；需要引号的名称会加引号。
+
+### getSurfboardWireguardNodes
+
+`getSurfboardWireguardNodes(nodeList, filter?)`
+
+生成独立的 `[WireGuard ...]` 配置段，与 `getSurfboardNodes` 输出的 `section-name` 引用配套使用。Node 和 Worker 模板均可使用。两个函数必须使用相同的节点列表和过滤器。
+
+```nunjucks
+[Proxy]
+{{ getSurfboardNodes(nodeList) }}
+
+[Proxy Group]
+Proxy = select, {{ getSurfboardNodeNames(nodeList) }}
+
+{{ getSurfboardWireguardNodes(nodeList) }}
+
+[Rule]
+FINAL,Proxy
+```
+
+目前只生成单 peer，且要求显式设置 `allowedIps`。支持 `selfIpV6`、`dnsServers`、`mtu`、peer 的 `presharedKey` 和 `keepalive`；未设置 DNS／MTU 时不补默认值。IPv6 endpoint 使用 `[2001:db8::1]:51820` 形式。
+
+官方文档尚未明确多 peer 的序列化语法，多 peer 节点会告警并省略。设置 `underlyingProxy` 或 reserved bits 的 WireGuard 节点也会被省略。
+
+Provider 的 `surfboard` 格式只导出节点行，不能附带 WireGuard 段，因此会跳过 WireGuard 并提示使用完整 Artifact 模板。
 
 ### getNodeNames
 
@@ -493,7 +523,7 @@ getSingboxNodeNames(nodeList, netflixFilter);
 - 不同于 `getXxxxNodeNames` 方法，该方法不会根据节点类型进行过滤
 - `filter` 为可选参数
 - `separator` 为可选参数。可以通过这个参数修改节点名的分隔符
-:::
+  :::
 
 生成一段逗号分隔的名称字符串，例如：
 
@@ -504,13 +534,13 @@ getSingboxNodeNames(nodeList, netflixFilter);
 若需要过滤 Netflix 节点则传入：
 
 ```js
-getNodeNames(nodeList, netflixFilter);
+getNodeNames(nodeList, netflixFilter)
 ```
 
 如果只需要更改分隔符则这样写：
 
 ```js
-getNodeNames(nodeList, undefined, ':');
+getNodeNames(nodeList, undefined, ':')
 ```
 
 ### getDownloadUrl
@@ -520,13 +550,13 @@ getNodeNames(nodeList, undefined, ':');
 获得另一个文件的下载地址（链接前面部分取决于 `surgio.conf.js` 中 `urlBase` 的值），则可以这样写：
 
 ```js
-getDownloadUrl('example.conf'); // https://example.com/example.conf
+getDownloadUrl('example.conf') // https://example.com/example.conf
 ```
 
 你也可以在文件名后携带 URL 参数，`getDownloadUrl` 会在解析时候组装完整的 URL，例如：
 
 ```js
-getDownloadUrl('example.conf?foo=bar'); // https://example.com/example.conf?foo=bar
+getDownloadUrl('example.conf?foo=bar') // https://example.com/example.conf?foo=bar
 ```
 
 :::tip[提示]
@@ -553,9 +583,9 @@ getUrl('/export-provider?format=surge-policy');
 
 - 文件路径均相对于 template 目录进行提取，这和 Nunjucks 的路径写法有所不同；
 - 通过这个方法获取的片段只能有一种策略，相对于正规片段有所限制；
-:::
+  :::
 
-假设存在一个片段 __template/snippet/rule.tpl__，内容为：
+假设存在一个片段 **template/snippet/rule.tpl**，内容为：
 
 ```
 USER-AGENT,com.google.ios.youtube*
@@ -590,7 +620,7 @@ PROCESS-NAME,YT Music
 extendOutbounds((props) => {
   // props 包含本文中的模板方法和变量
   return props.getSingboxNodes(props.nodeList)
-}) 
+})
 ```
 
 在 TypeScript 项目中，`props` 会自动推断为完整的模板上下文类型，`getSingboxNodes`、`getSingboxRules`、`remoteSnippets`、`snippet` 等方法和变量都带有类型提示。需要单独声明时可以从 `surgio/project` 导入 `ExtendContext`：
@@ -696,13 +726,13 @@ const extendInbounds = createExtendFunction('inbounds')
 
 const combined = combineExtendFunctions(
   extendDNS({
-    nameserver: ['1.1.1.1']
+    nameserver: ['1.1.1.1'],
   }),
   extendInbounds([
     {
       port: 7890,
       protocol: 'http',
-    }
+    },
   ]),
 )
 ```
@@ -712,9 +742,7 @@ const combined = combineExtendFunctions(
 ```json
 {
   "dns": {
-    "nameserver": [
-      "1.0.0.1"
-    ]
+    "nameserver": ["1.0.0.1"]
   }
 }
 ```
@@ -724,10 +752,7 @@ const combined = combineExtendFunctions(
 ```json
 {
   "dns": {
-    "nameserver": [
-      "1.0.0.1",
-      "1.1.1.1"
-    ]
+    "nameserver": ["1.0.0.1", "1.1.1.1"]
   },
   "inbounds": [
     {
@@ -741,7 +766,7 @@ const combined = combineExtendFunctions(
 :::tip[提示]
 
 - 拓展数组时新的配置会被追加到原有配置的后面
-:::
+  :::
 
 ## 片段 (Snippet)
 
@@ -766,7 +791,7 @@ DOMAIN-SUFFIX,ytimg.com,{{ rule }}
 
 - 宏暴露了一个 `main` 方法，传入一个字符串变量
 - 你可以使用 Nunjucks 宏的其它特性
-:::
+  :::
 
 使用的时候只需要 `import` 这个模板：
 
@@ -793,12 +818,8 @@ DOMAIN-SUFFIX,ytimg.com,🚀 Proxy
 
 ```html
 <!-- .tpl 文件 -->
-{% import './snippet/blocked_rules.tpl' as blocked_rules %}
-
-[rules]
-{% filter clash %}
-  {{ blocked_rules.main('🚀 Proxy') }}
-{% endfilter %}
+{% import './snippet/blocked_rules.tpl' as blocked_rules %} [rules] {% filter
+clash %} {{ blocked_rules.main('🚀 Proxy') }} {% endfilter %}
 ```
 
 最终得到的规则是：
@@ -825,9 +846,8 @@ DOMAIN-SUFFIX,ytimg.com,🚀 Proxy
 
 ```html
 <!-- .tpl 文件 -->
-{% import './snippet/blocked_rules.tpl' as blocked_rules %}
-
-{{ blocked_rules.main('🚀 Proxy') | quantumultx }}
+{% import './snippet/blocked_rules.tpl' as blocked_rules %} {{
+blocked_rules.main('🚀 Proxy') | quantumultx }}
 ```
 
 除此之外，规则处理模块还支持以下功能。
@@ -843,15 +863,18 @@ DOMAIN-SUFFIX,ytimg.com,🚀 Proxy
 ```html
 <!-- ./snippet/surge_script.tpl -->
 
-{% macro main() %}
-http-response ^https?://m?api\.weibo\.c(n|om)/2/(statuses/(unread|extend|positives/get|(friends|video)(/|_)timeline)|stories/(video_stream|home_list)|(groups|fangle)/timeline|profile/statuses|comments/build_comments|photo/recommend_list|service/picfeed|searchall|cardlist|page|\!/photos/pic_recommend_status) script-path=https://raw.githubusercontent.com/yichahucha/surge/master/wb_ad.js,requires-body=true
-http-response ^https?://(sdk|wb)app\.uve\.weibo\.com(/interface/sdk/sdkad.php|/wbapplua/wbpullad.lua) script-path=https://raw.githubusercontent.com/yichahucha/surge/master/wb_launch.js,requires-body=true
+{% macro main() %} http-response
+^https?://m?api\.weibo\.c(n|om)/2/(statuses/(unread|extend|positives/get|(friends|video)(/|_)timeline)|stories/(video_stream|home_list)|(groups|fangle)/timeline|profile/statuses|comments/build_comments|photo/recommend_list|service/picfeed|searchall|cardlist|page|\!/photos/pic_recommend_status)
+script-path=https://raw.githubusercontent.com/yichahucha/surge/master/wb_ad.js,requires-body=true
+http-response
+^https?://(sdk|wb)app\.uve\.weibo\.com(/interface/sdk/sdkad.php|/wbapplua/wbpullad.lua)
+script-path=https://raw.githubusercontent.com/yichahucha/surge/master/wb_launch.js,requires-body=true
 {% endmacro %}
 ```
 
 然后在模板文件中引用：
 
-*for Surge*
+_for Surge_
 
 ```txt {4}
 {% import './snippet/surge_script.tpl' as surge_script %}
@@ -860,7 +883,7 @@ http-response ^https?://(sdk|wb)app\.uve\.weibo\.com(/interface/sdk/sdkad.php|/w
 {{ surge_script.main() }}
 ```
 
-*for Quantumult X*
+_for Quantumult X_
 
 ```txt {4}
 {% import './snippet/surge_script.tpl' as surge_script %}
@@ -870,7 +893,7 @@ http-response ^https?://(sdk|wb)app\.uve\.weibo\.com(/interface/sdk/sdkad.php|/w
 ```
 
 :::warning[注意]
-Surgio 不会处理类似 `[rewrite_local]` 这样的标题，所以请 __不要__ 将它们也放到片段中。
+Surgio 不会处理类似 `[rewrite_local]` 这样的标题，所以请 **不要** 将它们也放到片段中。
 :::
 
 ### Loon 规则处理
@@ -881,9 +904,8 @@ Surgio 不会处理类似 `[rewrite_local]` 这样的标题，所以请 __不要
 
 ```html
 <!-- .tpl 文件 -->
-{% import './snippet/blocked_rules.tpl' as blocked_rules %}
-
-{{ blocked_rules.main('🚀 Proxy') | loon }}
+{% import './snippet/blocked_rules.tpl' as blocked_rules %} {{
+blocked_rules.main('🚀 Proxy') | loon }}
 ```
 
 ### Surfboard 规则处理
@@ -892,9 +914,8 @@ Surgio 不会处理类似 `[rewrite_local]` 这样的标题，所以请 __不要
 
 ```html
 <!-- .tpl 文件 -->
-{% import './snippet/blocked_rules.tpl' as blocked_rules %}
-
-{{ blocked_rules.main('🚀 Proxy') | surfboard }}
+{% import './snippet/blocked_rules.tpl' as blocked_rules %} {{
+blocked_rules.main('🚀 Proxy') | surfboard }}
 ```
 
 ### sing-box 规则处理
@@ -905,11 +926,8 @@ Surgio 不会处理类似 `[rewrite_local]` 这样的标题，所以请 __不要
 
 ```html
 <!-- .tpl 文件 -->
-{% import './snippet/blocked_rules.tpl' as blocked_rules %}
-
-"rules": [
-  {{ blocked_rules.main('🚀 Proxy') | singbox }}
-]
+{% import './snippet/blocked_rules.tpl' as blocked_rules %} "rules": [ {{
+blocked_rules.main('🚀 Proxy') | singbox }} ]
 ```
 
 最终得到的规则是：

@@ -380,7 +380,24 @@ module.exports = {
 - 类型：`boolean`
 - 默认值：`true`
 
-默认开启 Vmess AEAD 加密，如果您的服务器不支持 AEAD 加密，请关闭。
+默认开启 Vmess AEAD 加密，如果您的服务器不支持 AEAD 加密，请关闭。直接调用 `getSurfboardNodes` 时也使用此默认值。
+
+### surfboardConfig.geckoPassword
+
+- 类型：`string`，非空
+- 默认值：未设置
+
+仅用于 Surfboard 的 Hysteria2 Gecko 混淆，要求 Surfboard mobile 2.34.4+。可以在 Project 顶层设置，也可以在节点的 `surfboardConfig` 中覆盖。同一节点同时配置 Salamander 时，Gecko 优先。其他客户端输出不受此选项影响。
+
+```ts
+import { defineSurgioProject } from 'surgio/project'
+
+export default defineSurgioProject({
+  surfboardConfig: { geckoPassword: 'shared-gecko-password' },
+  providers: {},
+  artifacts: [],
+})
+```
 
 ## gateway
 
