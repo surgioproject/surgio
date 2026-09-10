@@ -108,3 +108,147 @@ test('formats AnyTLS fields for sing-box', () => {
   ])
   expect(output.endpoints).toEqual([])
 })
+
+test('Surfboard provider lists omit WireGuard without leaving section references', () => {
+  const warn = vi.fn()
+  const output = formatProviderNodes(
+    'surfboard',
+    [
+      {
+        type: NodeTypeEnum.Wireguard,
+        nodeName: 'wg',
+        privateKey: 'private',
+        selfIp: '10.0.0.2',
+        peers: [
+          {
+            publicKey: 'public',
+            endpoint: 'example.com:51820',
+            allowedIps: '0.0.0.0/0',
+          },
+        ],
+      },
+      {
+        type: NodeTypeEnum.AnyTLS,
+        nodeName: 'anytls',
+        hostname: 'example.com',
+        port: 443,
+        password: 'secret',
+      },
+      {
+        type: NodeTypeEnum.Wireguard,
+        nodeName: 'disabled',
+        enable: false,
+        privateKey: 'private',
+        selfIp: '10.0.0.2',
+        peers: [
+          {
+            publicKey: 'public',
+            endpoint: 'example.com:51820',
+            allowedIps: '0.0.0.0/0',
+          },
+        ],
+      },
+    ],
+    undefined,
+    { logger: { debug: vi.fn(), info: vi.fn(), warn, error: vi.fn() } },
+  )
+  expect(output).toBe('anytls = anytls, example.com, 443, password=secret')
+  expect(warn).toHaveBeenCalledOnce()
+  expect(warn).toHaveBeenCalledWith(
+    expect.stringContaining('getSurfboardWireguardNodes'),
+  )
+})
+
+test('Surge provider lists omit WireGuard without leaving section references', () => {
+  const warn = vi.fn()
+  const output = formatProviderNodes(
+    'surge',
+    [
+      {
+        type: NodeTypeEnum.Wireguard,
+        nodeName: 'wg',
+        privateKey: 'private',
+        selfIp: '10.0.0.2',
+        peers: [
+          {
+            publicKey: 'public',
+            endpoint: 'example.com:51820',
+            allowedIps: '0.0.0.0/0',
+          },
+        ],
+      },
+      {
+        type: NodeTypeEnum.AnyTLS,
+        nodeName: 'anytls',
+        hostname: 'example.com',
+        port: 443,
+        password: 'secret',
+      },
+    ],
+    undefined,
+    { logger: { debug: vi.fn(), info: vi.fn(), warn, error: vi.fn() } },
+  )
+
+  expect(output).toBe('anytls = anytls, example.com, 443, password=secret')
+  expect(warn).toHaveBeenCalledOnce()
+  expect(warn).toHaveBeenCalledWith(
+    expect.stringContaining('getSurgeWireguardNodes'),
+  )
+})
+
+test('Surge provider lists omit Tailscale without leaving section references', () => {
+  const warn = vi.fn()
+  const output = formatProviderNodes(
+    'surge',
+    [
+      {
+        type: NodeTypeEnum.Tailscale,
+        nodeName: 'tailnet',
+        authKey: 'tskey-auth-example',
+      },
+      {
+        type: NodeTypeEnum.AnyTLS,
+        nodeName: 'anytls',
+        hostname: 'example.com',
+        port: 443,
+        password: 'secret',
+      },
+    ],
+    undefined,
+    { logger: { debug: vi.fn(), info: vi.fn(), warn, error: vi.fn() } },
+  )
+
+  expect(output).toBe('anytls = anytls, example.com, 443, password=secret')
+  expect(warn).toHaveBeenCalledOnce()
+  expect(warn).toHaveBeenCalledWith(
+    'Surge Provider 纯节点列表无法包含 Tailscale 配置段，节点 tailnet 会被省略；请使用完整 Artifact 模板和 getSurgeTailscaleNodes',
+  )
+})
+
+test('Surfboard provider keeps reporting Tailscale as unsupported', () => {
+  const warn = vi.fn()
+  const output = formatProviderNodes(
+    'surfboard',
+    [
+      {
+        type: NodeTypeEnum.Tailscale,
+        nodeName: 'tailnet',
+        authKey: 'tskey-auth-example',
+      },
+      {
+        type: NodeTypeEnum.AnyTLS,
+        nodeName: 'anytls',
+        hostname: 'example.com',
+        port: 443,
+        password: 'secret',
+      },
+    ],
+    undefined,
+    { logger: { debug: vi.fn(), info: vi.fn(), warn, error: vi.fn() } },
+  )
+
+  expect(output).toBe('anytls = anytls, example.com, 443, password=secret')
+  expect(warn).toHaveBeenCalledWith(
+    'Surfboard 不支持 tailscale，节点 tailnet 会被省略',
+  )
+})

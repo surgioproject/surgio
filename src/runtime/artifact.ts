@@ -27,7 +27,11 @@ import {
   convertRulesToSingbox,
   convertRulesToSingboxHeadless,
 } from '../utils/singbox-rules.js'
-import { getSurfboardNodeNames, getSurfboardNodes } from '../utils/surfboard.js'
+import {
+  getSurfboardNodeNames,
+  getSurfboardNodes,
+  getSurfboardWireguardNodes,
+} from '../utils/surfboard.js'
 import {
   getSurgeNodeNames,
   getSurgeNodes,
@@ -383,9 +387,10 @@ export const createArtifactRenderContext = (options: {
     getSurgeNodes: bindFormatter(getSurgeNodes),
     getSurgeNodeNames: bindFormatter(getSurgeNodeNames),
     getSurgeTailscaleNodes,
-    getSurgeWireguardNodes,
+    getSurgeWireguardNodes: bindFormatter(getSurgeWireguardNodes),
     getSurfboardNodes: bindFormatter(getSurfboardNodes),
     getSurfboardNodeNames: bindFormatter(getSurfboardNodeNames),
+    getSurfboardWireguardNodes: bindFormatter(getSurfboardWireguardNodes),
     getShadowsocksNodes,
     getShadowsocksrNodes,
     getV2rayNNodes: bindFormatter(getV2rayNNodes),
