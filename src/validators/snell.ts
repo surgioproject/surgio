@@ -15,6 +15,8 @@ export const SnellNodeConfigValidator = SimpleNodeConfigValidator.extend({
   psk: z.string(),
   obfs: z.union([z.literal('http'), z.literal('tls')]).optional(),
   obfsHost: z.ostring(),
+  obfsUri: z.ostring(),
+  udpRelay: z.oboolean(),
   reuse: z.oboolean(),
   version: IntegersVersionValidator.optional(),
 })

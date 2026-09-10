@@ -9,6 +9,7 @@ export const TuicNodeV5ConfigValidator = TlsNodeConfigValidator.extend({
   password: z.string(),
   uuid: z.string(),
   version: IntegersVersionValidator,
+  udpRelay: z.oboolean(),
   congestionControl: z.string().min(1).optional(),
 })
 

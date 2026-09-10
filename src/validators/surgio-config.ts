@@ -40,6 +40,7 @@ export const SurgeConfigValidator = z.object({
 
 export const SurfboardConfigValidator = z.object({
   vmessAEAD: z.oboolean(),
+  geckoPassword: z.string().min(1).optional(),
 })
 
 export const QuantumultXConfigValidator = z.object({
