@@ -18,6 +18,10 @@ title: 编写更复杂的自定义 Provider
 3. Surgio 内置了基于 [ky](https://github.com/sindresorhus/ky) 的 `httpClient` 工具方法，可在 Node.js 和 Cloudflare Worker 中使用同一套 Fetch 请求逻辑
 4. Surgio 内置了一些判断客户端 UserAgent 的工具方法（v3.2.0 新增）
 
+:::warning[注意]
+用到 `customParams.requestUserAgent` 时需要开启 [`gateway.passRequestUserAgent`](/guide/custom-config#gatewaypassrequestuseragent)，用到 URL 参数时请求会带上自定义 query。这两种情况下 Artifact 的渲染结果都不再缓存——它们的取值没有上限，缓存下来只会让缓存条目数随访问量增长。面板和客户端每次请求都会重新渲染，Provider 订阅本身仍然按 [`SURGIO_PROVIDER_CACHE_MAXAGE`](/guide/env#surgio_provider_cache_maxage) 缓存。
+:::
+
 ## 例子 🌰
 
 ### 动态上下线节点

@@ -33,3 +33,16 @@ title: 环境变量
 ### `SURGIO_PROVIDER_CACHE_MAXAGE`
 
 - 默认值: `600000`（10 分钟）
+
+### `SURGIO_RENDERED_ARTIFACT_CACHE_MAXAGE`
+
+- 默认值: `604800000`（7 天）
+
+Artifact 渲染结果的缓存时长，只在 Gateway 中生效，`surgio generate` 不使用这个缓存。
+
+### `SURGIO_GATEWAY_ERROR_CACHE_MAXAGE`
+
+- 默认值: `86400000`（1 天）
+
+`gateway.useCacheOnError` 兜底副本的缓存时长。这份副本与渲染缓存分开存放，key 以
+`artifact-fallback:` 开头。

@@ -450,6 +450,7 @@ module.exports = {
 :::warning[注意]
 1. 应用重启后缓存会失效。
 2. 适用缓存的接口有 `/get-artifact` 和 `/export-providers`。
+3. 兜底副本与 Artifact 渲染缓存分开存放，缓存时长由 [`SURGIO_GATEWAY_ERROR_CACHE_MAXAGE`](/guide/env#surgio_gateway_error_cache_maxage) 控制，默认 1 天。
 :::
 
 ### gateway.passRequestUserAgent
@@ -462,6 +463,10 @@ module.exports = {
 
 是否将 `/get-artifact` 请求中的 `User-Agent` 传递给上游机场的订阅服务器。这个选项主要用于解决某些机场的订阅服务器对 `User-Agent` 有特殊处理的问题。
 
+:::warning[注意]
+开启后 Artifact 的渲染结果不再缓存。客户端 `User-Agent` 的取值没有上限，按 `User-Agent` 缓存会让缓存条目数随访问量无限增长。
+:::
+
 ### gateway.passRequestHeaders
 
 > <Badge text="Gateway: v2.3.0" vertical="middle" /><br />
@@ -471,6 +476,8 @@ module.exports = {
 - 默认值：`['x-surge-unlocked-features']`
 
 允许转发到上游订阅服务器的请求头白名单。配置后会从 `/get-artifact` 请求中选取对应的 Header 透传给订阅地址（Header 名称会统一转为小写）。
+
+白名单之外的请求头不会离开 Gateway，也不会参与 Artifact 渲染缓存的 key。请只加入真正会改变上游返回结果的 Header：每多一个取值不固定的 Header（例如 `Cookie`、`X-Forwarded-For`），缓存条目数就会翻一倍。
 
 ```js
 // surgio.conf.js
