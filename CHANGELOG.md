@@ -1,3 +1,16 @@
+# [4.0.0-beta.3](https://github.com/geekdada/surgio/compare/v4.0.0-beta.2...v4.0.0-beta.3) (2026-09-12)
+
+### Bug Fixes
+
+* **flag:** make regex flag matching stateless ([c9124dc](https://github.com/geekdada/surgio/commit/c9124dc05fa2cb947aebe9a2c820a369d9fbd7b6))
+* **linter:** count remaining errors after fixes ([aa989b9](https://github.com/geekdada/surgio/commit/aa989b961318f14b5dfd78db9e4753a0ec7a22fe))
+* **runtime:** make artifact render cache keys safe ([2269838](https://github.com/geekdada/surgio/commit/2269838cf5948eb14b352812cee986aa6d48067e))
+
+### Features
+
+* **runtime:** expose wireguard section formatters ([ed7ec12](https://github.com/geekdada/surgio/commit/ed7ec123833382b18527c89b5d1c1c41716f2473))
+* **surfboard:** rewrite proxy formatter ([2b72b53](https://github.com/geekdada/surgio/commit/2b72b537d93552ebeb38208e6fa1815935889b25))
+
 # [4.0.0-beta.2](https://github.com/geekdada/surgio/compare/v4.0.0-beta.1...v4.0.0-beta.2) (2026-09-06)
 
 ### Bug Fixes
