@@ -4,14 +4,14 @@ import { logger as nodeLogger } from '@surgio/logger'
 
 import packageJson from '../../package.json' with { type: 'json' }
 import { unifiedCache } from '../cache/singleton.js'
-import { CACHE_KEYS } from '../constant/index.js'
 import { Artifact, createNodeRenderer } from '../generator/index.js'
 import { createProvider } from '../provider/create-provider.js'
 import { ArtifactValidator } from '../validators/index.js'
 import { loadRemoteSnippetList } from '../utils/remote-snippet.js'
 import { loadModuleSync } from '../utils/module-loader.js'
-import { toMD5 } from '../utils/portable.js'
+import { getRenderedArtifactCacheMaxage } from '../utils/env-flag.js'
 
+import { buildRenderedArtifactCacheKey } from './cache-key.js'
 import { createHttpClient } from './http-client.js'
 import { formatProviderNodes } from './format.js'
 
@@ -104,76 +104,88 @@ export const createNodeSurgioRuntime = (
     artifactConfig: ArtifactConfig,
     renderOptions: RenderArtifactOptions = {},
   ): Promise<RuntimeRenderResult> => {
-    const cacheKey = `${CACHE_KEYS.RenderedArtifact}:node-runtime:${toMD5(
-      JSON.stringify([artifactConfig.name, renderOptions]),
-    )}`
+    const cacheKey = buildRenderedArtifactCacheKey(
+      'node-runtime',
+      artifactConfig,
+      renderOptions,
+    )
+    const renderFresh = async (): Promise<RenderData> => {
+      const snippets = await loadRemoteSnippetList(
+        config.remoteSnippets ?? [],
+        true,
+        {
+          cache,
+          cacheTtl: network.remoteSnippetCacheTtl,
+          concurrency: network.concurrency,
+          httpClient: providerRuntime.httpClient,
+          logger,
+        },
+      )
+      const artifact = new Artifact(
+        config,
+        {
+          ...artifactConfig,
+          ...(renderOptions.downloadUrl
+            ? { downloadUrl: renderOptions.downloadUrl }
+            : null),
+        },
+        {
+          logger,
+          providers: project.providers,
+          providerRuntime,
+          remoteSnippetList: snippets,
+          renderer,
+        },
+      )
+      await artifact.init({
+        getNodeListParams: renderOptions.getNodeListParams,
+      })
+      const mainProvider = artifact.providerMap.get(artifact.artifact.provider)
+      if (!mainProvider) throw new Error('Artifact 主 Provider 未初始化')
+      const filters = {
+        ...config.customFilters,
+        ...mainProvider.config.customFilters,
+        ...artifact.artifact.customFilters,
+      }
+      const selectedFilter =
+        typeof renderOptions.filter === 'string'
+          ? filters[renderOptions.filter]
+          : renderOptions.filter
+      if (typeof renderOptions.filter === 'string' && !selectedFilter) {
+        throw new Error(`Filter ${renderOptions.filter} 不存在`)
+      }
+      const body = renderOptions.format
+        ? formatProviderNodes(
+            renderOptions.format,
+            artifact.nodeList,
+            selectedFilter as NodeFilterType | SortedNodeFilterType | undefined,
+            { logger },
+          )
+        : artifact.render(renderOptions.customParams as Record<string, any>)
+      return {
+        body,
+        subscriptionUserInfo: artifact.subscriptionUserInfo,
+        subscriptionUserInfoMap: Object.fromEntries(
+          artifact.subscriptionUserInfoMap,
+        ),
+      }
+    }
+
+    if (!cacheKey.cacheable) {
+      logger.debug(
+        'Artifact %s 跳过渲染缓存：%s',
+        artifactConfig.name,
+        cacheKey.reason,
+      )
+
+      const data = await renderFresh()
+      return { ...data, artifact: artifactConfig }
+    }
+
     const data = await cache.wrap<RenderData>(
-      cacheKey,
-      async () => {
-        const snippets = await loadRemoteSnippetList(
-          config.remoteSnippets ?? [],
-          true,
-          {
-            cache,
-            cacheTtl: network.remoteSnippetCacheTtl,
-            concurrency: network.concurrency,
-            httpClient: providerRuntime.httpClient,
-            logger,
-          },
-        )
-        const artifact = new Artifact(
-          config,
-          {
-            ...artifactConfig,
-            ...(renderOptions.downloadUrl
-              ? { downloadUrl: renderOptions.downloadUrl }
-              : null),
-          },
-          {
-            logger,
-            providers: project.providers,
-            providerRuntime,
-            remoteSnippetList: snippets,
-            renderer,
-          },
-        )
-        await artifact.init({
-          getNodeListParams: renderOptions.getNodeListParams,
-        })
-        const mainProvider = artifact.providerMap.get(
-          artifact.artifact.provider,
-        )
-        if (!mainProvider) throw new Error('Artifact 主 Provider 未初始化')
-        const filters = {
-          ...config.customFilters,
-          ...mainProvider.config.customFilters,
-          ...artifact.artifact.customFilters,
-        }
-        const selectedFilter =
-          typeof renderOptions.filter === 'string'
-            ? filters[renderOptions.filter]
-            : renderOptions.filter
-        if (typeof renderOptions.filter === 'string' && !selectedFilter) {
-          throw new Error(`Filter ${renderOptions.filter} 不存在`)
-        }
-        const body = renderOptions.format
-          ? formatProviderNodes(
-              renderOptions.format,
-              artifact.nodeList,
-              selectedFilter as
-                NodeFilterType | SortedNodeFilterType | undefined,
-              { logger },
-            )
-          : artifact.render(renderOptions.customParams as Record<string, any>)
-        return {
-          body,
-          subscriptionUserInfo: artifact.subscriptionUserInfo,
-          subscriptionUserInfoMap: Object.fromEntries(
-            artifact.subscriptionUserInfoMap,
-          ),
-        }
-      },
-      network.artifactCacheTtl ?? 7 * 24 * 60 * 60_000,
+      cacheKey.key,
+      renderFresh,
+      network.artifactCacheTtl ?? getRenderedArtifactCacheMaxage(),
     )
     return { ...data, artifact: artifactConfig }
   }

@@ -2,6 +2,7 @@ import { logger as defaultLogger } from '@surgio/logger'
 
 import { CACHE_KEYS } from '../constant/index.js'
 import { createProvider } from '../provider/create-provider.js'
+import { buildRenderedArtifactCacheKey } from '../runtime/cache-key.js'
 import {
   createArtifactRenderContext,
   mapConcurrent,
@@ -128,100 +129,114 @@ export const createSurgioRuntime = (
     artifact: ArtifactConfig,
     renderOptions: RenderArtifactOptions = {},
   ): Promise<WorkerRenderResult> => {
-    const cacheKey = `${CACHE_KEYS.RenderedArtifact}:worker:${toMD5(
-      JSON.stringify([artifact.name, renderOptions]),
-    )}`
-    const data = await options.cache.wrap<RenderData>(
-      cacheKey,
-      async () => {
-        const providerNames = [
-          artifact.provider,
-          ...(artifact.combineProviders ?? []),
-        ]
-        const customParams = mergeObjects(
-          config.customParams,
-          artifact.customParams,
-          renderOptions.customParams,
-          renderOptions.getNodeListParams,
-        )
-        const providerResults = await mapConcurrent(
-          providerNames,
-          concurrency,
-          async (providerName) =>
-            prepareProvider({
-              provider: await getProvider(providerName),
-              providerName,
-              params: customParams as GetNodeListParams,
-              config,
-              concurrency,
-              resolveDomain: (domain) => resolveDomain(domain, network.timeout),
-              logger,
-              providerRuntime,
-            }),
-        )
-        const nodeList = providerResults.flatMap((result) => result.nodeList)
-        const mainProvider = providerResults.find(
-          (result) => result.provider.name === artifact.provider,
-        )!.provider
-        const customFilters = {
-          ...config.customFilters,
-          ...mainProvider.config.customFilters,
-          ...artifact.customFilters,
-        }
-        const subscriptionUserInfoMap = Object.fromEntries(
-          providerResults.flatMap((result) =>
-            result.subscriptionUserInfo
-              ? [[result.provider.name, result.subscriptionUserInfo] as const]
-              : [],
-          ),
-        )
-        const subscriptionProvider =
-          artifact.subscriptionUserInfoProvider ?? artifact.provider
-        const subscriptionUserInfo =
-          subscriptionUserInfoMap[subscriptionProvider]
-        const remoteSnippetList = await loadRemoteSnippets()
-        const renderContext = createArtifactRenderContext({
-          artifact,
-          config,
-          nodeList,
-          mainProvider,
-          customFilters,
-          customParams,
-          remoteSnippetList,
-          downloadUrl: renderOptions.downloadUrl,
-          loadSnippet: (name: string): RemoteSnippet => {
-            const text = manifest.rawTemplates[name]
-            if (text === undefined) throw new Error(`本地片段 ${name} 不存在`)
-            return {
-              name,
-              url: name,
-              text,
-              main: (rule: string) => addProxyToRuleSet(text, rule),
-            }
-          },
-          logger,
-        })
-        const selectedFilter =
-          typeof renderOptions.filter === 'string'
-            ? customFilters[renderOptions.filter]
-            : renderOptions.filter
-        if (typeof renderOptions.filter === 'string' && !selectedFilter) {
-          throw new Error(`Filter ${renderOptions.filter} 不存在`)
-        }
+    const cacheKey = buildRenderedArtifactCacheKey(
+      'worker',
+      artifact,
+      renderOptions,
+    )
+    const renderFresh = async (): Promise<RenderData> => {
+      const providerNames = [
+        artifact.provider,
+        ...(artifact.combineProviders ?? []),
+      ]
+      const customParams = mergeObjects(
+        config.customParams,
+        artifact.customParams,
+        renderOptions.customParams,
+      )
+      const providerResults = await mapConcurrent(
+        providerNames,
+        concurrency,
+        async (providerName) =>
+          prepareProvider({
+            provider: await getProvider(providerName),
+            providerName,
+            params: (renderOptions.getNodeListParams ??
+              {}) as GetNodeListParams,
+            config,
+            concurrency,
+            resolveDomain: (domain) => resolveDomain(domain, network.timeout),
+            logger,
+            providerRuntime,
+          }),
+      )
+      const nodeList = providerResults.flatMap((result) => result.nodeList)
+      const mainProvider = providerResults.find(
+        (result) => result.provider.name === artifact.provider,
+      )!.provider
+      const customFilters = {
+        ...config.customFilters,
+        ...mainProvider.config.customFilters,
+        ...artifact.customFilters,
+      }
+      const subscriptionUserInfoMap = Object.fromEntries(
+        providerResults.flatMap((result) =>
+          result.subscriptionUserInfo
+            ? [[result.provider.name, result.subscriptionUserInfo] as const]
+            : [],
+        ),
+      )
+      const subscriptionProvider =
+        artifact.subscriptionUserInfoProvider ?? artifact.provider
+      const subscriptionUserInfo = subscriptionUserInfoMap[subscriptionProvider]
+      const remoteSnippetList = await loadRemoteSnippets()
+      const renderContext = createArtifactRenderContext({
+        artifact,
+        config,
+        nodeList,
+        mainProvider,
+        customFilters,
+        customParams,
+        remoteSnippetList,
+        downloadUrl: renderOptions.downloadUrl,
+        loadSnippet: (name: string): RemoteSnippet => {
+          const text = manifest.rawTemplates[name]
+          if (text === undefined) throw new Error(`本地片段 ${name} 不存在`)
+          return {
+            name,
+            url: name,
+            text,
+            main: (rule: string) => addProxyToRuleSet(text, rule),
+          }
+        },
+        logger,
+      })
+      const selectedFilter =
+        typeof renderOptions.filter === 'string'
+          ? customFilters[renderOptions.filter]
+          : renderOptions.filter
+      if (typeof renderOptions.filter === 'string' && !selectedFilter) {
+        throw new Error(`Filter ${renderOptions.filter} 不存在`)
+      }
 
-        let body: string
-        if (renderOptions.format) {
-          body = formatProviderNodes(
-            renderOptions.format,
-            nodeList,
-            selectedFilter as NodeFilterType | SortedNodeFilterType | undefined,
-            { logger },
-          )
-        } else {
-          body = renderer.renderArtifact(artifact, renderContext)
-        }
-        return { body, subscriptionUserInfo, subscriptionUserInfoMap }
-      },
+      let body: string
+      if (renderOptions.format) {
+        body = formatProviderNodes(
+          renderOptions.format,
+          nodeList,
+          selectedFilter as NodeFilterType | SortedNodeFilterType | undefined,
+          { logger },
+        )
+      } else {
+        body = renderer.renderArtifact(artifact, renderContext)
+      }
+      return { body, subscriptionUserInfo, subscriptionUserInfoMap }
+    }
+
+    if (!cacheKey.cacheable) {
+      logger.debug(
+        'Artifact %s 跳过渲染缓存：%s',
+        artifact.name,
+        cacheKey.reason,
+      )
+
+      const data = await renderFresh()
+      return { ...data, artifact }
+    }
+
+    const data = await options.cache.wrap<RenderData>(
+      cacheKey.key,
+      renderFresh,
       network.artifactCacheTtl ?? 7 * 24 * 60 * 60_000,
     )
     return { ...data, artifact }

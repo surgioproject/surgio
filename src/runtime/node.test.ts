@@ -42,6 +42,51 @@ describe('Node Surgio runtime', () => {
     await runtime.close()
   })
 
+  test('渲染缓存的条目数由配置决定，不随请求变化', async () => {
+    const project = await loadSurgioProject(fixture)
+    const store = new MemoryStore()
+    const debug = vi.fn()
+    const runtime = createNodeSurgioRuntime(project, {
+      cache: new TtlCache({ store }),
+      logger: { debug, info: vi.fn(), warn: vi.fn(), error: vi.fn() },
+    })
+    const artifact = runtime.listArtifacts()[0]
+    const renderedKeys = () =>
+      [...store.values.keys()].filter((key) =>
+        key.startsWith('rendered-artifact:'),
+      )
+
+    await runtime.renderArtifact(artifact.name, {
+      downloadUrl: 'https://example.com/get-artifact/demo?a=1&b=2',
+      getNodeListParams: {
+        requestHeaders: { 'X-Surge-Unlocked-Features': 'vif' },
+      },
+    })
+    await runtime.renderArtifact(artifact.name, {
+      downloadUrl: 'https://example.com/get-artifact/demo?b=2&a=1',
+      getNodeListParams: {
+        requestHeaders: { 'x-surge-unlocked-features': 'vif' },
+      },
+    })
+
+    expect(renderedKeys()).toHaveLength(1)
+
+    await runtime.renderArtifact(artifact.name, {
+      customParams: { foo: 'bar' },
+    })
+    await runtime.renderArtifact(artifact.name, {
+      customParams: { foo: 'baz' },
+    })
+
+    expect(renderedKeys()).toHaveLength(1)
+    expect(debug).toHaveBeenCalledWith(
+      'Artifact %s 跳过渲染缓存：%s',
+      artifact.name,
+      'customParams.foo 的取值不可枚举',
+    )
+    await runtime.close()
+  })
+
   test('routes formatter warnings to the injected logger', async () => {
     const project = await loadSurgioProject(fixture)
     const warn = vi.fn()
