@@ -9,7 +9,7 @@ import { createNodeRenderer } from '../generator/template.js'
 import { defineSurgioProject } from '../project/core.js'
 import { loadSurgioProject } from '../project/node.js'
 import { createNodeSurgioRuntime } from '../runtime/node.js'
-import { SupportProviderEnum } from '../types.js'
+import { NodeTypeEnum, SupportProviderEnum } from '../types.js'
 import { ArtifactValidator } from '../validators/index.js'
 
 import { buildWorkerManifest } from './build.js'
@@ -274,6 +274,75 @@ export default {
 
     await runtime.renderProviders({ providers: 'demo', format: 'clash' })
     expect(warn).toHaveBeenCalledWith(expect.stringContaining('unknown'))
+  })
+
+  test('passes merged customParams to the Provider nodeList', async () => {
+    const receivedParams: Array<Record<string, unknown>> = []
+    const runtime = createSurgioRuntime(
+      {
+        surgioVersion: 'test',
+        config: {
+          urlBase: 'https://example.com/',
+          customParams: { shared: 'global', overridden: 'global' },
+          artifacts: [
+            {
+              name: 'demo',
+              provider: 'demo',
+              template: '',
+              customParams: {
+                artifactOnly: 'artifact',
+                overridden: 'artifact',
+              },
+            },
+          ],
+        },
+        providers: {
+          demo: {
+            type: SupportProviderEnum.Custom,
+            nodeList: async (params: Record<string, unknown>) => {
+              receivedParams.push(params)
+              return [
+                {
+                  type: NodeTypeEnum.Shadowsocks,
+                  nodeName: 'Demo',
+                  hostname: 'example.com',
+                  port: 443,
+                  method: 'aes-128-gcm',
+                  password: 'secret',
+                },
+              ]
+            },
+          },
+        },
+        templates: {},
+        rawTemplates: {},
+        jsonTemplates: {},
+        artifactTemplates: {},
+      },
+      {
+        cache: new TtlCache({ store: new MemoryStore() }),
+        fetch: async () => new Response('DOMAIN,example.com'),
+        logger: {
+          debug: vi.fn(),
+          info: vi.fn(),
+          warn: vi.fn(),
+          error: vi.fn(),
+        },
+      },
+    )
+
+    await runtime.renderArtifact('demo', {
+      format: 'clash',
+      getNodeListParams: { overridden: 'request' },
+    })
+
+    expect(receivedParams).toHaveLength(1)
+    expect(receivedParams[0]).toMatchObject({
+      shared: 'global',
+      artifactOnly: 'artifact',
+      overridden: 'request',
+    })
+    await runtime.close()
   })
 
   test('fails the build when an artifact references missing inputs', async () => {

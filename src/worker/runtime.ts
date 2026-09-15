@@ -151,8 +151,11 @@ export const createSurgioRuntime = (
           prepareProvider({
             provider: await getProvider(providerName),
             providerName,
-            params: (renderOptions.getNodeListParams ??
-              {}) as GetNodeListParams,
+            params: mergeObjects(
+              config.customParams,
+              artifact.customParams,
+              renderOptions.getNodeListParams,
+            ) as GetNodeListParams,
             config,
             concurrency,
             resolveDomain: (domain) => resolveDomain(domain, network.timeout),
