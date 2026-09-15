@@ -1,3 +1,9 @@
+# [4.0.0-beta.4](https://github.com/geekdada/surgio/compare/v4.0.0-beta.3...v4.0.0-beta.4) (2026-09-15)
+
+### Bug Fixes
+
+* **worker:** merge customParams into provider nodeList params ([78614cb](https://github.com/geekdada/surgio/commit/78614cbfb9afa8e5b9b5a37abfd01a2d2dd080bc))
+
 # [4.0.0-beta.3](https://github.com/geekdada/surgio/compare/v4.0.0-beta.2...v4.0.0-beta.3) (2026-09-12)
 
 ### Bug Fixes
