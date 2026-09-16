@@ -53,6 +53,8 @@ import {
   getSingboxNodeNames,
   getSingboxNodes,
   getSingboxEndpoints,
+  getEgernNodeNames,
+  getEgernNodes,
 } from '../utils'
 import { resolveDomain } from '../utils/dns'
 import { internalFilters, validateFilter } from '../filters'
@@ -146,6 +148,8 @@ export class Artifact extends EventEmitter {
       getSingboxNodes,
       getSingboxNodeNames,
       getSingboxEndpoints,
+      getEgernNodes,
+      getEgernNodeNames,
       getSurgeNodes,
       getSurgeNodeNames,
       getSurgeTailscaleNodes,
