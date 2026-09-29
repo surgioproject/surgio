@@ -123,6 +123,7 @@ surgio/
 - `env(name)` 是读取字符串环境变量的唯一语法糖，缺失时抛错；不要重新引入特殊 secret 标记、递归配置替换或专用 resolver
 - Worker 依靠 `nodejs_compat` 将文本变量和 Secrets 暴露给 `process.env`；KV、Assets 等结构化 binding 仍由平台 adapter 显式注入
 - Node 与 Worker 分别通过 `createNodeSurgioRuntime` 和 `createSurgioRuntime` 实现同一个 `SurgioRuntime` 接口；调用方不得依赖 `Artifact`、Provider 目录或模板 engine 内部对象
+- 两个入口共用 `src/runtime/core.ts` 的 `createRuntimeCore`，只通过 `RuntimePlatform` 提供配置、版本、Renderer、Provider 查找和本地片段；渲染流程与缓存逻辑只改 core，core 不得导入 Node-only 模块
 - Gateway 只消费 `SurgioRuntime`。HTTP 路由位于独立的 `@surgio/gateway` Hono 模块，Node、Worker 和 Lambda 只负责平台 adapter
 
 #### Provider 系统

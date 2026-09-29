@@ -3,6 +3,8 @@ import { describe, expect, test, vi } from 'vitest'
 
 import { TtlCache } from '../cache/core.js'
 import { loadSurgioProject } from '../project/node.js'
+import { SupportProviderEnum } from '../types.js'
+import { createSurgioRuntime } from '../worker/runtime.js'
 
 import { createNodeSurgioRuntime } from './node.js'
 
@@ -29,6 +31,61 @@ class MemoryStore implements KvStore {
 }
 
 describe('Node Surgio runtime', () => {
+  test.each([
+    SupportProviderEnum.Clash,
+    SupportProviderEnum.ShadowsocksSubscribe,
+    SupportProviderEnum.ShadowsocksrSubscribe,
+    SupportProviderEnum.V2rayNSubscribe,
+    SupportProviderEnum.Trojan,
+  ] as const)(
+    'Node and Worker expose the URL of %s subscriptions',
+    async (type) => {
+      const project = await loadSurgioProject(fixture)
+      const providers = {
+        Oixcloud: { type, url: 'https://provider.example/subscription' },
+        custom: { type: SupportProviderEnum.Custom, nodeList: [] },
+      } as const
+      const options = () => ({
+        cache: new TtlCache({ store: new MemoryStore() }),
+      })
+      const runtimes = [
+        createNodeSurgioRuntime({ ...project, providers }, options()),
+        createSurgioRuntime(
+          {
+            surgioVersion: 'test',
+            config: { artifacts: [] },
+            providers,
+            templates: {},
+            rawTemplates: {},
+            jsonTemplates: {},
+            artifactTemplates: {},
+          },
+          options(),
+        ),
+      ]
+
+      try {
+        for (const runtime of runtimes) {
+          expect(await runtime.getProviderInfo('Oixcloud')).toEqual({
+            name: 'Oixcloud',
+            type,
+            url: 'https://provider.example/subscription',
+            supportGetSubscriptionUserInfo:
+              type !== SupportProviderEnum.V2rayNSubscribe,
+          })
+          expect(await runtime.getProviderInfo('custom')).toEqual({
+            name: 'custom',
+            type: SupportProviderEnum.Custom,
+            supportGetSubscriptionUserInfo: false,
+          })
+          expect(await runtime.getProviderInfo('missing')).toBeUndefined()
+        }
+      } finally {
+        await Promise.all(runtimes.map((runtime) => runtime.close()))
+      }
+    },
+  )
+
   test('renders through the shared runtime interface', async () => {
     const project = await loadSurgioProject(fixture)
     const runtime = createNodeSurgioRuntime(project)

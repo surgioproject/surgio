@@ -1,54 +1,16 @@
-import { logger as defaultLogger } from '@surgio/logger'
-
-import { CACHE_KEYS } from '../constant/index.js'
-import { createProvider } from '../provider/create-provider.js'
-import { buildRenderedArtifactCacheKey } from '../runtime/cache-key.js'
-import {
-  createArtifactRenderContext,
-  mapConcurrent,
-  mergeObjects,
-  prepareProvider,
-} from '../runtime/artifact.js'
-import { createDefaultDomainResolver } from '../runtime/dns.js'
-import { createHttpClient } from '../runtime/http-client.js'
+import { createRuntimeCore } from '../runtime/core.js'
 import { addProxyToRuleSet } from '../runtime/ruleset.js'
-import { renderRestrictedSnippet } from '../runtime/snippet-interpreter.js'
-import { formatProviderNodes } from '../runtime/format.js'
 import { addFlagMap } from '../utils/flag.js'
-import { toMD5 } from '../utils/portable.js'
-import { ArtifactValidator } from '../validators/index.js'
 
 import { normalizeWorkerConfig } from './normalize-config.js'
 import { createPrecompiledRenderer } from './template-engine.js'
 
+import type { CommandConfigBeforeNormalize } from '../types.js'
 import type {
-  ArtifactConfig,
-  NodeFilterType,
-  RemoteSnippet,
-  SortedNodeFilterType,
-  SubscriptionUserinfo,
-} from '../types.js'
-import type { ProviderRuntimeContext } from '../runtime/types.js'
-import type {
-  GetNodeListParams,
-  PossibleProviderType,
-} from '../provider/types.js'
-import type {
-  RenderArtifactOptions,
-  RenderProvidersOptions,
   SurgioRuntime,
   WorkerManifest,
-  WorkerRenderResult,
   WorkerRuntimeOptions,
 } from './types.js'
-
-interface RenderData {
-  readonly body: string
-  readonly subscriptionUserInfo?: SubscriptionUserinfo
-  readonly subscriptionUserInfoMap: Readonly<
-    Record<string, SubscriptionUserinfo>
-  >
-}
 
 export const createSurgioRuntime = (
   manifest: WorkerManifest,
@@ -57,257 +19,35 @@ export const createSurgioRuntime = (
   if (!options?.cache) throw new Error('Worker runtime 必须注入 cache')
 
   const config = normalizeWorkerConfig(
-    manifest.config as import('../types.js').CommandConfigBeforeNormalize,
+    manifest.config as CommandConfigBeforeNormalize,
   )
-  const logger = options.logger ?? defaultLogger
-  const network = options.network ?? {}
-  const concurrency = network.concurrency ?? 5
-  const resolveDomain = options.resolveDomain ?? createDefaultDomainResolver()
   for (const [emoji, names] of Object.entries(config.flags ?? {})) {
     for (const name of Array.isArray(names) ? names : [names]) {
       addFlagMap(name, emoji)
     }
   }
-  const providerRuntime: ProviderRuntimeContext = {
-    cache: options.cache,
-    config,
-    httpClient: createHttpClient({
-      fetch: options.fetch,
-      retry: network.retry ?? 1,
-      timeout: network.timeout ?? 10_000,
-    }),
-    logger,
-    providerCacheTtl: network.providerCacheTtl ?? 10 * 60_000,
-    version: manifest.surgioVersion,
-  }
-  const renderer = createPrecompiledRenderer(manifest, {
-    clashCore: config.clashConfig?.clashCore,
-  })
 
-  const getArtifact = (name: string): ArtifactConfig => {
-    const artifact = config.artifacts.find((item) => item.name === name)
-    if (!artifact) throw new Error(`Artifact ${name} 不存在`)
-    return artifact
-  }
-
-  const getProvider = async (name: string): Promise<PossibleProviderType> => {
-    const definition = manifest.providers[name]
-    if (!definition) throw new Error(`Provider ${name} 未注册`)
-    return createProvider(name, definition, providerRuntime)
-  }
-
-  const loadRemoteSnippets = async (): Promise<ReadonlyArray<RemoteSnippet>> =>
-    mapConcurrent(
-      config.remoteSnippets ?? [],
-      concurrency,
-      async (snippetConfig) => {
-        const cacheKey = `${CACHE_KEYS.RemoteSnippets}:${toMD5(snippetConfig.url)}`
-        const text = await options.cache.wrap(
-          cacheKey,
-          async () => {
-            const response = await providerRuntime.httpClient.get(
-              snippetConfig.url,
-            )
-            logger.info('远程片段下载成功：%s', snippetConfig.url)
-            return response.body
-          },
-          network.remoteSnippetCacheTtl ?? 12 * 60 * 60_000,
-        )
+  return createRuntimeCore(
+    {
+      config,
+      version: manifest.surgioVersion,
+      renderer: createPrecompiledRenderer(manifest, {
+        clashCore: config.clashConfig?.clashCore,
+      }),
+      cacheScope: 'worker',
+      listProviders: () => Object.keys(manifest.providers),
+      getProviderDefinition: (name) => manifest.providers[name],
+      loadSnippet: (name) => {
+        const text = manifest.rawTemplates[name]
+        if (text === undefined) throw new Error(`本地片段 ${name} 不存在`)
         return {
-          name: snippetConfig.name,
-          url: snippetConfig.url,
+          name,
+          url: name,
           text,
-          main: (...args: string[]) =>
-            snippetConfig.surgioSnippet
-              ? renderRestrictedSnippet(text, args)
-              : addProxyToRuleSet(text, args[0]),
+          main: (rule: string) => addProxyToRuleSet(text, rule),
         }
       },
-    )
-
-  const render = async (
-    artifact: ArtifactConfig,
-    renderOptions: RenderArtifactOptions = {},
-  ): Promise<WorkerRenderResult> => {
-    const cacheKey = buildRenderedArtifactCacheKey(
-      'worker',
-      artifact,
-      renderOptions,
-    )
-    const renderFresh = async (): Promise<RenderData> => {
-      const providerNames = [
-        artifact.provider,
-        ...(artifact.combineProviders ?? []),
-      ]
-      const customParams = mergeObjects(
-        config.customParams,
-        artifact.customParams,
-        renderOptions.customParams,
-      )
-      const providerResults = await mapConcurrent(
-        providerNames,
-        concurrency,
-        async (providerName) =>
-          prepareProvider({
-            provider: await getProvider(providerName),
-            providerName,
-            params: mergeObjects(
-              config.customParams,
-              artifact.customParams,
-              renderOptions.getNodeListParams,
-            ) as GetNodeListParams,
-            config,
-            concurrency,
-            resolveDomain: (domain) => resolveDomain(domain, network.timeout),
-            logger,
-            providerRuntime,
-          }),
-      )
-      const nodeList = providerResults.flatMap((result) => result.nodeList)
-      const mainProvider = providerResults.find(
-        (result) => result.provider.name === artifact.provider,
-      )!.provider
-      const customFilters = {
-        ...config.customFilters,
-        ...mainProvider.config.customFilters,
-        ...artifact.customFilters,
-      }
-      const subscriptionUserInfoMap = Object.fromEntries(
-        providerResults.flatMap((result) =>
-          result.subscriptionUserInfo
-            ? [[result.provider.name, result.subscriptionUserInfo] as const]
-            : [],
-        ),
-      )
-      const subscriptionProvider =
-        artifact.subscriptionUserInfoProvider ?? artifact.provider
-      const subscriptionUserInfo = subscriptionUserInfoMap[subscriptionProvider]
-      const remoteSnippetList = await loadRemoteSnippets()
-      const renderContext = createArtifactRenderContext({
-        artifact,
-        config,
-        nodeList,
-        mainProvider,
-        customFilters,
-        customParams,
-        remoteSnippetList,
-        downloadUrl: renderOptions.downloadUrl,
-        loadSnippet: (name: string): RemoteSnippet => {
-          const text = manifest.rawTemplates[name]
-          if (text === undefined) throw new Error(`本地片段 ${name} 不存在`)
-          return {
-            name,
-            url: name,
-            text,
-            main: (rule: string) => addProxyToRuleSet(text, rule),
-          }
-        },
-        logger,
-      })
-      const selectedFilter =
-        typeof renderOptions.filter === 'string'
-          ? customFilters[renderOptions.filter]
-          : renderOptions.filter
-      if (typeof renderOptions.filter === 'string' && !selectedFilter) {
-        throw new Error(`Filter ${renderOptions.filter} 不存在`)
-      }
-
-      let body: string
-      if (renderOptions.format) {
-        body = formatProviderNodes(
-          renderOptions.format,
-          nodeList,
-          selectedFilter as NodeFilterType | SortedNodeFilterType | undefined,
-          { logger },
-        )
-      } else {
-        body = renderer.renderArtifact(artifact, renderContext)
-      }
-      return { body, subscriptionUserInfo, subscriptionUserInfoMap }
-    }
-
-    if (!cacheKey.cacheable) {
-      logger.debug(
-        'Artifact %s 跳过渲染缓存：%s',
-        artifact.name,
-        cacheKey.reason,
-      )
-
-      const data = await renderFresh()
-      return { ...data, artifact }
-    }
-
-    const data = await options.cache.wrap<RenderData>(
-      cacheKey.key,
-      renderFresh,
-      network.artifactCacheTtl ?? 7 * 24 * 60 * 60_000,
-    )
-    return { ...data, artifact }
-  }
-
-  return {
-    renderArtifact(name, renderOptions) {
-      return render(getArtifact(name), renderOptions)
     },
-    renderProviders(renderOptions: RenderProvidersOptions) {
-      const providers = Array.isArray(renderOptions.providers)
-        ? renderOptions.providers
-        : [renderOptions.providers]
-      if (!providers.length) throw new Error('至少需要一个 Provider')
-      const artifact = ArtifactValidator.parse({
-        name: `providers:${providers.join(',')}`,
-        provider: providers[0],
-        combineProviders: providers.slice(1),
-        template: renderOptions.template ?? '',
-      })
-      return render(artifact, {
-        ...renderOptions,
-        format: renderOptions.template
-          ? renderOptions.format
-          : (renderOptions.format ?? 'clash'),
-      })
-    },
-    async renderTemplate(name, context = {}) {
-      return renderer.renderTemplate(
-        name.endsWith('.tpl') ? name : `${name}.tpl`,
-        context,
-      )
-    },
-    listArtifacts() {
-      return [...config.artifacts]
-    },
-    listProviders() {
-      return Object.keys(manifest.providers)
-    },
-    async getProviderInfo(name) {
-      if (!manifest.providers[name]) return undefined
-      const provider = await getProvider(name)
-      return {
-        name: provider.name,
-        type: provider.type,
-        ...('url' in provider.config && typeof provider.config.url === 'string'
-          ? { url: provider.config.url }
-          : null),
-        supportGetSubscriptionUserInfo: provider.supportGetSubscriptionUserInfo,
-      }
-    },
-    async getProviderSubscription(name, params = {}) {
-      const provider = await getProvider(name)
-      return provider.getSubscriptionUserInfo(params as GetNodeListParams)
-    },
-    getGatewayConfig() {
-      return {
-        urlBase: config.urlBase,
-        publicUrl: config.publicUrl,
-        coreVersion: manifest.surgioVersion,
-        ...config.gateway,
-      }
-    },
-    resetCache() {
-      return options.cache.reset()
-    },
-    close() {
-      return options.cache.close()
-    },
-  }
+    options,
+  )
 }
