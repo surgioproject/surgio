@@ -3,7 +3,8 @@ import { expect, test, vi } from 'vitest'
 import nock from 'nock'
 
 import { loadConfig, normalizeConfig } from '../../config.js'
-import { NodeTypeEnum } from '../../types.js'
+import { NodeTypeEnum, SupportProviderEnum } from '../../types.js'
+import { SurgioError } from '../../utils/errors.js'
 import {
   mergeFilters,
   useKeywords,
@@ -13,6 +14,71 @@ import { Artifact } from '../artifact.js'
 import { createNodeRenderer } from '../template.js'
 
 const resolve = (p: string) => join(__dirname, '../../../test/fixture/', p)
+
+test.each(['definition', 'node list'] as const)(
+  'annotates %s errors without advancing initialization',
+  async (stage) => {
+    const cause = new Error('original cause')
+    const error = new SurgioError('provider failed', {
+      cause,
+      providerName: 'original',
+      providerPath: 'original.js',
+      nodeIndex: 2,
+    })
+    const config = normalizeConfig(resolve('plain'), { artifacts: [] })
+    const artifact = new Artifact(
+      config,
+      { name: 'test.conf', template: 'test', provider: 'test' },
+      {
+        providers: {
+          test: () => {
+            if (stage === 'definition') throw error
+            return {
+              type: SupportProviderEnum.Custom,
+              nodeList: async () => {
+                throw error
+              },
+            }
+          },
+        },
+      },
+    )
+    const start = vi.fn()
+    const end = vi.fn()
+    artifact.on('initProvider:start', start)
+    artifact.on('initProvider:end', end)
+
+    await expect(artifact.init()).rejects.toBe(error)
+    expect(error).toMatchObject({
+      cause,
+      providerName: 'test',
+      providerPath: 'surgio.project.ts#providers.test',
+      nodeIndex: 2,
+    })
+    expect(artifact.providerMap.size).toBe(stage === 'definition' ? 0 : 1)
+    expect(artifact.nodeConfigListMap.size).toBe(0)
+    expect(artifact.initProgress).toBe(0)
+    expect(artifact.isReady).toBe(false)
+    expect(start).toHaveBeenCalledOnce()
+    expect(end).not.toHaveBeenCalled()
+  },
+)
+
+test('missing registered providers keep their original errors', async () => {
+  const config = normalizeConfig(resolve('plain'), { artifacts: [] })
+  const artifact = new Artifact(
+    config,
+    { name: 'test.conf', template: 'test', provider: 'missing' },
+    { providers: {} },
+  )
+  const error = await artifact.init().catch((error: unknown) => error)
+
+  expect(error).toBeInstanceOf(Error)
+  expect(error).not.toBeInstanceOf(SurgioError)
+  expect(error).toMatchObject({
+    message: 'Provider missing 未在 Surgio Project 中注册',
+  })
+})
 
 test('artifact custom filters support predicates and sorted filters', async () => {
   const config = loadConfig(resolve('plain'))

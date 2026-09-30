@@ -15,6 +15,7 @@ import {
   mergeObjects,
   prepareProvider,
 } from '../runtime/artifact.js'
+import { withProviderError } from '../runtime/provider-error.js'
 import {
   ArtifactConfig,
   ArtifactConfigInput,
@@ -25,12 +26,7 @@ import {
   SortedNodeFilterType,
   SubscriptionUserinfo,
 } from '../types.js'
-import {
-  isError,
-  isSurgioError,
-  SurgioError,
-  getNetworkConcurrency,
-} from '../utils/index.js'
+import { getNetworkConcurrency } from '../utils/index.js'
 import { resolveDomain } from '../utils/dns.js'
 import { loadModuleSync } from '../utils/module-loader.js'
 import { ArtifactValidator } from '../validators/index.js'
@@ -197,71 +193,43 @@ export class Artifact extends EventEmitter {
       throw new Error(`文件 ${filePath} 不存在`)
     }
 
-    let provider: PossibleProviderType
+    const provider = await withProviderError(
+      { providerName, providerPath: filePath },
+      async () => {
+        const providerDefinition =
+          definition ?? loadModuleSync<ProjectProviderDefinition>(filePath)
+        const provider = this.options.providerRuntime
+          ? await createProvider(
+              providerName,
+              providerDefinition,
+              this.options.providerRuntime,
+            )
+          : await getProvider(providerName, providerDefinition)
+        this.providerMap.set(providerName, provider)
+        return provider
+      },
+    )
 
-    try {
-      const providerDefinition =
-        definition ?? loadModuleSync<ProjectProviderDefinition>(filePath)
-      provider = this.options.providerRuntime
-        ? await createProvider(
-            providerName,
-            providerDefinition,
-            this.options.providerRuntime,
-          )
-        : await getProvider(providerName, providerDefinition)
-      this.providerMap.set(providerName, provider)
-    } catch (_err) /* istanbul ignore next -- @preserve */ {
-      const err = _err
-      if (isSurgioError(err)) {
-        err.providerName = providerName
-        err.providerPath = filePath
-        throw err
-      } else {
-        throw new SurgioError(
-          isError(err) ? err.message : '处理 Provider 失败',
-          {
-            cause: err,
-            providerName,
-            providerPath: filePath,
-          },
-        )
-      }
-    }
-
-    let result
-    try {
-      result = await prepareProvider({
-        provider,
-        providerName,
-        providerPath: filePath,
-        params: this.getMergedCustomParams(
-          getNodeListParams,
-        ) as GetNodeListParams,
-        config,
-        concurrency: getNetworkConcurrency(),
-        resolveDomain,
-        logger:
-          this.options.logger ??
-          this.options.providerRuntime?.logger ??
-          defaultLogger,
-        providerRuntime: this.options.providerRuntime,
-      })
-    } catch (err) /* istanbul ignore next -- @preserve */ {
-      if (isSurgioError(err)) {
-        err.providerName = providerName
-        err.providerPath = filePath
-        throw err
-      } else {
-        throw new SurgioError(
-          isError(err) ? err.message : '处理 Provider 失败',
-          {
-            cause: err,
-            providerName,
-            providerPath: filePath,
-          },
-        )
-      }
-    }
+    const result = await withProviderError(
+      { providerName, providerPath: filePath },
+      () =>
+        prepareProvider({
+          provider,
+          providerName,
+          providerPath: filePath,
+          params: this.getMergedCustomParams(
+            getNodeListParams,
+          ) as GetNodeListParams,
+          config,
+          concurrency: getNetworkConcurrency(),
+          resolveDomain,
+          logger:
+            this.options.logger ??
+            this.options.providerRuntime?.logger ??
+            defaultLogger,
+          providerRuntime: this.options.providerRuntime,
+        }),
+    )
 
     const { nodeList: nodeConfigList, subscriptionUserInfo } = result
     this.nodeConfigListMap.set(providerName, nodeConfigList)
