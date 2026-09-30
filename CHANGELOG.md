@@ -1,3 +1,5 @@
+# [4.0.0-beta.7](https://github.com/geekdada/surgio/compare/v4.0.0-beta.6...v4.0.0-beta.7) (2026-09-30)
+
 # [4.0.0-beta.6](https://github.com/geekdada/surgio/compare/v4.0.0-beta.5...v4.0.0-beta.6) (2026-09-26)
 
 ### Features
