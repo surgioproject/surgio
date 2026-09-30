@@ -7,6 +7,7 @@ import { SupportProviderEnum } from '../types.js'
 import { createSurgioRuntime } from '../worker/runtime.js'
 
 import { createNodeSurgioRuntime } from './node.js'
+import * as interpreter from './snippet-interpreter.js'
 
 import type { KvStore } from '../cache/types.js'
 
@@ -31,6 +32,67 @@ class MemoryStore implements KvStore {
 }
 
 describe('Node Surgio runtime', () => {
+  test('coalesces remote snippet downloads and reuses each parsed macro', async () => {
+    const project = await loadSurgioProject(fixture)
+    const parse = vi.spyOn(interpreter, 'parseRestrictedSnippet')
+    const fetch = vi.fn(
+      async () =>
+        new Response(
+          '{% macro main(proxy) %}DOMAIN,example.com,{{ proxy }}{% endmacro %}',
+        ),
+    )
+    const info = vi.fn()
+    const runtime = createNodeSurgioRuntime(
+      {
+        ...project,
+        providers: {
+          demo: { type: SupportProviderEnum.Custom, nodeList: [] },
+        },
+        config: {
+          ...project.config,
+          artifacts: ['first', 'second'].map((name) => ({
+            name,
+            provider: 'demo',
+            template: '',
+            templateType: 'default' as const,
+            templateString:
+              "{{ remoteSnippets.rules.main('PROXY') }}\n{{ remoteSnippets.rules.main('DIRECT') }}",
+          })),
+          remoteSnippets: [
+            {
+              name: 'rules',
+              url: 'https://example.com/macro.tpl',
+              surgioSnippet: true,
+            },
+          ],
+        },
+      },
+      {
+        cache: new TtlCache({ store: new MemoryStore() }),
+        fetch,
+        logger: { debug: vi.fn(), info, warn: vi.fn(), error: vi.fn() },
+      },
+    )
+
+    try {
+      const results = await Promise.all([
+        runtime.renderArtifact('first'),
+        runtime.renderArtifact('second'),
+      ])
+      for (const result of results) {
+        expect(result.body).toBe(
+          'DOMAIN,example.com,PROXY\nDOMAIN,example.com,DIRECT',
+        )
+      }
+      expect(fetch).toHaveBeenCalledOnce()
+      expect(info).toHaveBeenCalledOnce()
+      expect(parse).toHaveBeenCalledTimes(2)
+    } finally {
+      parse.mockRestore()
+      await runtime.close()
+    }
+  })
+
   test.each([
     SupportProviderEnum.Clash,
     SupportProviderEnum.ShadowsocksSubscribe,

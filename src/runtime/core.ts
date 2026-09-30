@@ -1,9 +1,6 @@
 import { logger as defaultLogger } from '@surgio/logger'
 
-import { CACHE_KEYS } from '../constant/index.js'
 import { createProvider } from '../provider/create-provider.js'
-import { isError, isSurgioError, SurgioError } from '../utils/errors.js'
-import { toMD5 } from '../utils/portable.js'
 import { ArtifactValidator } from '../validators/index.js'
 
 import {
@@ -16,8 +13,8 @@ import { buildRenderedArtifactCacheKey } from './cache-key.js'
 import { createDefaultDomainResolver } from './dns.js'
 import { formatProviderNodes } from './format.js'
 import { createHttpClient } from './http-client.js'
-import { addProxyToRuleSet } from './ruleset.js'
-import { renderRestrictedSnippet } from './snippet-interpreter.js'
+import { withProviderError } from './provider-error.js'
+import { loadRemoteSnippets } from './remote-snippet.js'
 
 import type { ProjectProviderDefinition } from '../project/types.js'
 import type {
@@ -66,27 +63,6 @@ interface RenderData {
   readonly subscriptionUserInfoMap: Readonly<
     Record<string, SubscriptionUserinfo>
   >
-}
-
-const withProviderError = async <T>(
-  providerName: string,
-  task: () => Promise<T>,
-): Promise<T> => {
-  try {
-    return await task()
-  } catch (error) {
-    if (isSurgioError(error)) {
-      error.providerName ??= providerName
-      throw error
-    }
-    throw new SurgioError(
-      isError(error) ? error.message : '处理 Provider 失败',
-      {
-        cause: error,
-        providerName,
-      },
-    )
-  }
 }
 
 export const createRuntimeCore = (
@@ -143,7 +119,7 @@ export const createRuntimeCore = (
       [artifact.provider, ...(artifact.combineProviders ?? [])],
       concurrency,
       (providerName) =>
-        withProviderError(providerName, async () =>
+        withProviderError({ providerName }, async () =>
           prepareProvider({
             provider: await requireProvider(providerName),
             providerName,
@@ -159,34 +135,6 @@ export const createRuntimeCore = (
             providerRuntime,
           }),
         ),
-    )
-
-  const loadRemoteSnippets = (): Promise<ReadonlyArray<RemoteSnippet>> =>
-    mapConcurrent(
-      config.remoteSnippets ?? [],
-      concurrency,
-      async (snippetConfig) => {
-        const text = await cache.wrap(
-          `${CACHE_KEYS.RemoteSnippets}:${toMD5(snippetConfig.url)}`,
-          async () => {
-            const response = await providerRuntime.httpClient.get(
-              snippetConfig.url,
-            )
-            logger.info('远程片段下载成功：%s', snippetConfig.url)
-            return response.body
-          },
-          network.remoteSnippetCacheTtl ?? 12 * 60 * 60_000,
-        )
-        return {
-          name: snippetConfig.name,
-          url: snippetConfig.url,
-          text,
-          main: (...args: string[]) =>
-            snippetConfig.surgioSnippet
-              ? renderRestrictedSnippet(text, args)
-              : addProxyToRuleSet(text, args[0]),
-        }
-      },
     )
 
   const renderFresh = async (
@@ -243,7 +191,13 @@ export const createRuntimeCore = (
         artifact.customParams,
         renderOptions.customParams,
       ),
-      remoteSnippetList: await loadRemoteSnippets(),
+      remoteSnippetList: await loadRemoteSnippets(config.remoteSnippets ?? [], {
+        cache,
+        cacheTtl: network.remoteSnippetCacheTtl ?? 12 * 60 * 60_000,
+        concurrency,
+        httpClient: providerRuntime.httpClient,
+        logger,
+      }),
       downloadUrl: renderOptions.downloadUrl,
       loadSnippet: platform.loadSnippet,
       logger,

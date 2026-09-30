@@ -1,10 +1,9 @@
 import { afterEach, beforeEach, expect, test, vi } from 'vitest'
 
+import { TtlCache } from '../../cache/core.js'
 import * as config from '../../config.js'
 import * as interpreter from '../../runtime/snippet-interpreter.js'
 import * as utils from '../remote-snippet.js'
-
-import type { TtlCache } from '../../cache/core.js'
 
 const snippetConfig = {
   name: 'injected',
@@ -12,15 +11,11 @@ const snippetConfig = {
 }
 
 const createRuntime = (body = 'DOMAIN,example.com', cached?: string) => {
-  const cache = {
-    async get<T>(_key: string): Promise<T | undefined> {
-      return cached as T | undefined
-    },
-    set: vi.fn<TtlCache['set']>().mockResolvedValue(undefined),
-  }
+  const cache = new TtlCache()
   return {
     cache,
-    cacheGet: vi.spyOn(cache, 'get'),
+    cacheGet: vi.spyOn(cache, 'get').mockResolvedValue(cached),
+    cacheSet: vi.spyOn(cache, 'set').mockResolvedValue(undefined),
     httpClient: {
       get: vi.fn().mockResolvedValue({ body, headers: {}, statusCode: 200 }),
     },
@@ -201,7 +196,7 @@ test.each(['DOMAIN,cached.example.com', ''])(
     expect(snippet.text).toBe(text)
     expect(snippet.main()).toBe(text)
     expect(runtime.httpClient.get).not.toHaveBeenCalled()
-    expect(runtime.cache.set).not.toHaveBeenCalled()
+    expect(runtime.cacheSet).not.toHaveBeenCalled()
   },
 )
 
@@ -221,7 +216,7 @@ test.each([
     expect(runtime.httpClient.get).toHaveBeenCalledExactlyOnceWith(
       snippetConfig.url,
     )
-    expect(runtime.cache.set).toHaveBeenCalledExactlyOnceWith(
+    expect(runtime.cacheSet).toHaveBeenCalledExactlyOnceWith(
       runtime.cacheGet.mock.calls[0][0],
       snippet.text,
       expectedTtl,
@@ -232,7 +227,7 @@ test.each([
 test('propagates cache write errors', async () => {
   const runtime = createRuntime()
   const error = new Error('cache write failed')
-  runtime.cache.set.mockRejectedValue(error)
+  runtime.cacheSet.mockRejectedValue(error)
   await expect(
     utils.loadRemoteSnippetList([snippetConfig], true, runtime),
   ).rejects.toBe(error)
@@ -278,4 +273,30 @@ test('defers invalid macro errors until main is called', async () => {
   )
   expect(() => snippet.main('PROXY')).toThrow()
   expect(() => snippet.main('DIRECT')).toThrow()
+})
+
+test('downloads a URL shared by several snippets once', async () => {
+  const values = new Map<string, string>()
+  const cache = new TtlCache({
+    store: {
+      get: async (key) => values.get(key),
+      put: async (key, value) => void values.set(key, value),
+      delete: async (key) => void values.delete(key),
+      async *list() {
+        yield* values.keys()
+      },
+      close: async () => {},
+    },
+  })
+  const runtime = { ...createRuntime(), cache, concurrency: 2 }
+  const snippets = await utils.loadRemoteSnippetList(
+    [snippetConfig, { ...snippetConfig, name: 'duplicate' }],
+    true,
+    runtime,
+  )
+  expect(snippets.map((snippet) => snippet.text)).toEqual([
+    'DOMAIN,example.com',
+    'DOMAIN,example.com',
+  ])
+  expect(runtime.httpClient.get).toHaveBeenCalledOnce()
 })
