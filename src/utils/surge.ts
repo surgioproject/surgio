@@ -9,7 +9,7 @@ import {
 } from '../types.js'
 import { applyFilter } from '../filters/index.js'
 
-import { resolveIpVersion } from './ip-version.js'
+import { formatIpVersion } from './ip-version.js'
 import { pickAndFormatStringList } from './portable.js'
 
 import type { Logger } from '@surgio/logger'
@@ -630,7 +630,7 @@ function appendCommonConfig(
     ...parseShadowTlsConfig(nodeConfig),
   ]
 
-  const ipVersion = resolveIpVersion(nodeConfig, 'Surge', logger)
+  const ipVersion = formatIpVersion(nodeConfig, 'Surge', logger)
   if (ipVersion) {
     appendConfig.push(`ip-version=${ipVersion}`)
   }

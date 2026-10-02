@@ -1,39 +1,41 @@
 import type { Logger } from '@surgio/logger'
 
-export type IpVersion =
-  'dual' | 'v4-only' | 'v6-only' | 'prefer-v4' | 'prefer-v6'
+type IpVersionClient = 'Surge' | 'Mihomo' | 'Egern'
 
-// Surgio 的 ipVersion 同时接受 Surge、Mihomo 和 Egern 的取值，统一归一化为 Surge 取值
-const IP_VERSION_ALIASES = new Map<string, IpVersion>([
-  ['dual', 'dual'],
-  ['dual_stack', 'dual'],
-  ['v4-only', 'v4-only'],
-  ['ipv4', 'v4-only'],
-  ['v4_only', 'v4-only'],
-  ['v6-only', 'v6-only'],
-  ['ipv6', 'v6-only'],
-  ['v6_only', 'v6-only'],
-  ['prefer-v4', 'prefer-v4'],
-  ['ipv4-prefer', 'prefer-v4'],
-  ['v4_prefer', 'prefer-v4'],
-  ['prefer-v6', 'prefer-v6'],
-  ['ipv6-prefer', 'prefer-v6'],
-  ['v6_prefer', 'prefer-v6'],
-])
+// 每一行是同一种 IP 版本策略在各客户端中的写法。Surgio 接受其中任一写法。
+const IP_VERSION_SPELLINGS: ReadonlyArray<Record<IpVersionClient, string>> = [
+  { Surge: 'dual', Mihomo: 'dual', Egern: 'dual_stack' },
+  { Surge: 'v4-only', Mihomo: 'ipv4', Egern: 'v4_only' },
+  { Surge: 'v6-only', Mihomo: 'ipv6', Egern: 'v6_only' },
+  { Surge: 'prefer-v4', Mihomo: 'ipv4-prefer', Egern: 'v4_prefer' },
+  { Surge: 'prefer-v6', Mihomo: 'ipv6-prefer', Egern: 'v6_prefer' },
+]
 
-export function resolveIpVersion(
+const SPELLINGS_BY_VALUE = new Map(
+  IP_VERSION_SPELLINGS.flatMap((spellings) =>
+    Object.values(spellings).map((value) => [value, spellings] as const),
+  ),
+)
+
+export const IP_VERSION_VALUES = [...SPELLINGS_BY_VALUE.keys()] as [
+  string,
+  ...string[],
+]
+
+export function formatIpVersion(
   nodeConfig: { nodeName: string; ipVersion?: string },
-  clientName: string,
+  client: IpVersionClient,
   logger: Logger,
-): IpVersion | undefined {
+): string | undefined {
   if (!nodeConfig.ipVersion) {
     return undefined
   }
-  const ipVersion = IP_VERSION_ALIASES.get(nodeConfig.ipVersion)
-  if (!ipVersion) {
+  const spellings = SPELLINGS_BY_VALUE.get(nodeConfig.ipVersion)
+  if (!spellings) {
     logger.warn(
-      `${clientName} 不支持 ipVersion=${nodeConfig.ipVersion}，节点 ${nodeConfig.nodeName} 将不包含此字段`,
+      `${client} 不支持 ipVersion=${nodeConfig.ipVersion}，节点 ${nodeConfig.nodeName} 将不包含此字段`,
     )
+    return undefined
   }
-  return ipVersion
+  return spellings[client]
 }

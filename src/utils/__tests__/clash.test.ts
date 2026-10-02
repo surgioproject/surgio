@@ -1,4 +1,4 @@
-import { expect, test } from 'vitest'
+import { expect, test, vi } from 'vitest'
 
 import { NodeTypeEnum, PossibleNodeConfigType } from '../../types.js'
 import * as clash from '../clash.js'
@@ -1679,4 +1679,36 @@ test('getClashNodes maps Surge ipVersion values for Mihomo', () => {
       'ip-version': 'ipv4-prefer',
     },
   ])
+})
+
+test('getClashNodes omits unknown ipVersion values for Mihomo', () => {
+  const warn = vi.fn()
+  const logger = { debug: vi.fn(), info: vi.fn(), warn, error: vi.fn() }
+
+  expect(
+    clash.getClashNodes(
+      [
+        {
+          type: NodeTypeEnum.Socks5,
+          nodeName: 'Socks5 Node',
+          hostname: 'example.com',
+          port: 1080,
+          ipVersion: 'constructor',
+          clashConfig: { clashCore: 'clash.meta' },
+        },
+      ],
+      undefined,
+      { logger },
+    ),
+  ).toEqual([
+    {
+      type: 'socks5',
+      name: 'Socks5 Node',
+      server: 'example.com',
+      port: 1080,
+    },
+  ])
+  expect(warn).toHaveBeenCalledWith(
+    'Mihomo 不支持 ipVersion=constructor，节点 Socks5 Node 将不包含此字段',
+  )
 })

@@ -1,6 +1,7 @@
 import { z } from 'zod/v3'
 
 import { NodeTypeEnum } from '../types.js'
+import { IP_VERSION_VALUES } from '../utils/ip-version.js'
 
 import { SimpleNodeConfigValidator } from './common.js'
 
@@ -77,8 +78,5 @@ export const TailscaleNodeConfigValidator = SimpleNodeConfigValidator.extend({
     .boolean()
     .optional()
     .describe('是否在连接出错时不弹出提示（Surge 专用）'),
-  ipVersion: z
-    .enum(['dual', 'ipv4', 'ipv6', 'ipv4-prefer', 'ipv6-prefer'])
-    .optional()
-    .describe('IP 版本偏好'),
+  ipVersion: z.enum(IP_VERSION_VALUES).optional().describe('IP 版本偏好'),
 })

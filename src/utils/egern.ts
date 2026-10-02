@@ -11,12 +11,11 @@ import {
   VmessNodeConfig,
 } from '../types.js'
 
-import { resolveIpVersion } from './ip-version.js'
+import { formatIpVersion } from './ip-version.js'
 import { checkNotNullish, getHeader } from './portable.js'
 
 import type { Logger } from '@surgio/logger'
 import type { FormatterOptions } from '../runtime/types.js'
-import type { IpVersion } from './ip-version.js'
 
 type EgernConfig = Record<string, any>
 type EgernNode = Record<string, EgernConfig>
@@ -69,14 +68,6 @@ const NO_BLOCK_QUIC_TYPES = new Set<NodeTypeEnum>([
   NodeTypeEnum.HTTP,
   NodeTypeEnum.HTTPS,
 ])
-
-const EGERN_IP_VERSION: Record<IpVersion, string> = {
-  dual: 'dual_stack',
-  'v4-only': 'v4_only',
-  'v6-only': 'v6_only',
-  'prefer-v4': 'v4_prefer',
-  'prefer-v6': 'v6_prefer',
-}
 
 export const getEgernNodes = function (
   list: ReadonlyArray<PossibleNodeConfigType>,
@@ -307,7 +298,7 @@ function getCommonConfig(
       ? undefined
       : getBlockQuic(nodeConfig.blockQuic),
     prev_hop: nodeConfig.underlyingProxy,
-    ip_version: getIpVersion(nodeConfig, logger),
+    ip_version: formatIpVersion(nodeConfig, 'Egern', logger),
     shadow_tls: nodeConfig.shadowTls && {
       password: nodeConfig.shadowTls.password,
       sni: nodeConfig.shadowTls.sni,
@@ -319,14 +310,6 @@ function getBlockQuic(blockQuic: string | undefined): boolean | undefined {
   if (blockQuic === 'on') return true
   if (blockQuic === 'off') return false
   return undefined
-}
-
-function getIpVersion(
-  nodeConfig: PossibleNodeConfigType,
-  logger: Logger,
-): string | undefined {
-  const ipVersion = resolveIpVersion(nodeConfig, 'Egern', logger)
-  return ipVersion && EGERN_IP_VERSION[ipVersion]
 }
 
 function getTlsConfig(nodeConfig: {

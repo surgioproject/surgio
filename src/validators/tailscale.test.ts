@@ -47,6 +47,18 @@ test('TailscaleNodeConfigValidator keeps authKey optional', () => {
   ).toBe(true)
 })
 
+test('TailscaleNodeConfigValidator accepts every ipVersion spelling', () => {
+  for (const ipVersion of ['prefer-v4', 'ipv4-prefer', 'v4_prefer']) {
+    expect(
+      TailscaleNodeConfigValidator.safeParse({
+        type: NodeTypeEnum.Tailscale,
+        nodeName: 'tailnet',
+        ipVersion,
+      }).success,
+    ).toBe(true)
+  }
+})
+
 test('TailscaleNodeConfigValidator accepts numeric boundaries', () => {
   for (const fields of [
     { mtu: 576, routingMark: 0 },
