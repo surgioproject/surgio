@@ -1,3 +1,13 @@
+# [4.0.0-beta.8](https://github.com/geekdada/surgio/compare/v4.0.0-beta.7...v4.0.0-beta.8) (2026-10-02)
+
+### Bug Fixes
+
+* **runtime:** default artifact cache ttl to provider cache ttl ([20d2644](https://github.com/geekdada/surgio/commit/20d26441563a373da93b491b834fda57635e254b))
+
+### Features
+
+* **utils:** normalize ipVersion across formatters ([4e64793](https://github.com/geekdada/surgio/commit/4e6479390ba16ec33ad7ed363715ebffe0ac721a))
+
 # [4.0.0-beta.7](https://github.com/geekdada/surgio/compare/v4.0.0-beta.6...v4.0.0-beta.7) (2026-09-30)
 
 # [4.0.0-beta.6](https://github.com/geekdada/surgio/compare/v4.0.0-beta.5...v4.0.0-beta.6) (2026-09-26)
