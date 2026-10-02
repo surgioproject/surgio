@@ -227,7 +227,7 @@ export const createRuntimeCore = (
     const data = await cache.wrap<RenderData>(
       cacheKey.key,
       () => renderFresh(artifact, renderOptions),
-      network.artifactCacheTtl ?? 7 * 24 * 60 * 60_000,
+      network.artifactCacheTtl ?? providerRuntime.providerCacheTtl,
     )
     return { ...data, artifact }
   }

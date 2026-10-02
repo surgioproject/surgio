@@ -51,4 +51,4 @@ export const getIsGFWFree = (): boolean =>
 export const getRenderedArtifactCacheMaxage = (): number =>
   process.env[SURGIO_RENDERED_ARTIFACT_CACHE_MAXAGE]
     ? Number(process.env[SURGIO_RENDERED_ARTIFACT_CACHE_MAXAGE])
-    : ms('7d')
+    : getProviderCacheMaxage()

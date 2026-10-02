@@ -8,6 +8,7 @@ import { resolveDomain } from '../utils/dns.js'
 import { loadModuleSync } from '../utils/module-loader.js'
 import {
   getNetworkConcurrency,
+  getProviderCacheMaxage,
   getRemoteSnippetCacheMaxage,
   getRenderedArtifactCacheMaxage,
 } from '../utils/env-flag.js'
@@ -71,6 +72,7 @@ export const createNodeSurgioRuntime = (
       resolveDomain: options.resolveDomain ?? resolveDomain,
       network: {
         concurrency: getNetworkConcurrency(),
+        providerCacheTtl: getProviderCacheMaxage(),
         artifactCacheTtl: getRenderedArtifactCacheMaxage(),
         remoteSnippetCacheTtl: getRemoteSnippetCacheMaxage(),
         ...options.network,

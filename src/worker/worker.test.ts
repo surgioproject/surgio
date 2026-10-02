@@ -86,6 +86,53 @@ describe('Worker project', () => {
     }
   })
 
+  test('渲染缓存默认与 Provider 缓存同时过期', async () => {
+    const directory = await fs.mkdtemp(path.join(os.tmpdir(), 'surgio-ttl-'))
+    temporaryDirectories.push(directory)
+    const fixture = path.resolve(
+      import.meta.dirname,
+      '../../test/fixture/worker',
+    )
+    const outfile = path.join(await fs.realpath(directory), 'manifest.mjs')
+    await buildWorkerManifest({
+      configFile: path.join(fixture, 'surgio.project.ts'),
+      outfile,
+    })
+    const manifest = (await import(pathToFileURL(outfile).href))
+      .default as WorkerManifest
+    let nodeName = 'before'
+    const runtime = createSurgioRuntime(manifest, {
+      cache: new TtlCache({ store: new MemoryStore() }),
+      fetch: async (input) =>
+        (input instanceof Request ? input.url : String(input)).startsWith(
+          'https://provider.example/',
+        )
+          ? new Response(
+              `proxies:\n  - name: ${nodeName}\n    type: ss\n    server: example.com\n    port: 443\n    cipher: aes-128-gcm\n    password: secret\n`,
+            )
+          : new Response('DOMAIN,example.com'),
+    })
+    let now = Date.now()
+    const dateNow = vi.spyOn(Date, 'now').mockImplementation(() => now)
+    try {
+      expect((await runtime.renderArtifact('demo.conf')).body).toContain(
+        'before',
+      )
+      nodeName = 'after'
+      now += 9 * 60_000
+      expect((await runtime.renderArtifact('demo.conf')).body).toContain(
+        'before',
+      )
+      now += 2 * 60_000
+      expect((await runtime.renderArtifact('demo.conf')).body).toContain(
+        'after',
+      )
+    } finally {
+      dateNow.mockRestore()
+      await runtime.close()
+    }
+  })
+
   test('keeps shared configuration flat in the project definition', () => {
     const project = defineSurgioProject({
       artifacts: [],
