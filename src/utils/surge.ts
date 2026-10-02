@@ -9,6 +9,7 @@ import {
 } from '../types.js'
 import { applyFilter } from '../filters/index.js'
 
+import { resolveIpVersion } from './ip-version.js'
 import { pickAndFormatStringList } from './portable.js'
 
 import type { Logger } from '@surgio/logger'
@@ -50,7 +51,7 @@ function formatNodes(
         proxy:
           nodeConfig.type === NodeTypeEnum.Tailscale
             ? policy
-            : appendCommonConfig(policy, nodeConfig),
+            : appendCommonConfig(policy, nodeConfig, logger),
         wireguard:
           nodeConfig.type === NodeTypeEnum.Wireguard
             ? formatWireguardSection(nodeConfig)
@@ -291,7 +292,7 @@ function nodeListMapper(
             nodeConfig.port,
             ...pickAndFormatStringList(
               nodeConfig,
-              ['psk', 'obfs', 'obfsHost', 'version', 'reuse', 'ipVersion'],
+              ['psk', 'obfs', 'obfsHost', 'version', 'reuse'],
               {
                 keyFormat: 'kebabCase',
               },
@@ -602,6 +603,7 @@ function assertSurgeTailscaleAuthKey(
 function appendCommonConfig(
   original: string,
   nodeConfig: PossibleNodeConfigType,
+  logger: Logger,
 ): string {
   const appendConfig = [
     ...pickAndFormatStringList(
@@ -627,6 +629,11 @@ function appendCommonConfig(
     ),
     ...parseShadowTlsConfig(nodeConfig),
   ]
+
+  const ipVersion = resolveIpVersion(nodeConfig, 'Surge', logger)
+  if (ipVersion) {
+    appendConfig.push(`ip-version=${ipVersion}`)
+  }
 
   if (nodeConfig.type === NodeTypeEnum.Tuic) {
     appendConfig.push(

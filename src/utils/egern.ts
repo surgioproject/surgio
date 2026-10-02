@@ -11,10 +11,12 @@ import {
   VmessNodeConfig,
 } from '../types.js'
 
+import { resolveIpVersion } from './ip-version.js'
 import { checkNotNullish, getHeader } from './portable.js'
 
 import type { Logger } from '@surgio/logger'
 import type { FormatterOptions } from '../runtime/types.js'
+import type { IpVersion } from './ip-version.js'
 
 type EgernConfig = Record<string, any>
 type EgernNode = Record<string, EgernConfig>
@@ -68,23 +70,13 @@ const NO_BLOCK_QUIC_TYPES = new Set<NodeTypeEnum>([
   NodeTypeEnum.HTTPS,
 ])
 
-// Surgio 的 ipVersion 同时沿用 Surge 和 Mihomo 两套取值
-const IP_VERSION_MAP = new Map<string, string>([
-  ['dual', 'dual_stack'],
-  ['dual_stack', 'dual_stack'],
-  ['v4-only', 'v4_only'],
-  ['ipv4', 'v4_only'],
-  ['v4_only', 'v4_only'],
-  ['v6-only', 'v6_only'],
-  ['ipv6', 'v6_only'],
-  ['v6_only', 'v6_only'],
-  ['prefer-v4', 'v4_prefer'],
-  ['ipv4-prefer', 'v4_prefer'],
-  ['v4_prefer', 'v4_prefer'],
-  ['prefer-v6', 'v6_prefer'],
-  ['ipv6-prefer', 'v6_prefer'],
-  ['v6_prefer', 'v6_prefer'],
-])
+const EGERN_IP_VERSION: Record<IpVersion, string> = {
+  dual: 'dual_stack',
+  'v4-only': 'v4_only',
+  'v6-only': 'v6_only',
+  'prefer-v4': 'v4_prefer',
+  'prefer-v6': 'v6_prefer',
+}
 
 export const getEgernNodes = function (
   list: ReadonlyArray<PossibleNodeConfigType>,
@@ -333,16 +325,8 @@ function getIpVersion(
   nodeConfig: PossibleNodeConfigType,
   logger: Logger,
 ): string | undefined {
-  if (!nodeConfig.ipVersion) {
-    return undefined
-  }
-  const ipVersion = IP_VERSION_MAP.get(nodeConfig.ipVersion)
-  if (!ipVersion) {
-    logger.warn(
-      `Egern 不支持 ipVersion=${nodeConfig.ipVersion}，节点 ${nodeConfig.nodeName} 将不包含此字段`,
-    )
-  }
-  return ipVersion
+  const ipVersion = resolveIpVersion(nodeConfig, 'Egern', logger)
+  return ipVersion && EGERN_IP_VERSION[ipVersion]
 }
 
 function getTlsConfig(nodeConfig: {

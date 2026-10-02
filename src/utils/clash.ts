@@ -11,6 +11,7 @@ import {
 } from '../types.js'
 import { applyFilter } from '../filters/index.js'
 
+import { resolveIpVersion } from './ip-version.js'
 import {
   checkNotNullish,
   getHostnameFromHost,
@@ -20,6 +21,15 @@ import {
 
 import type { Logger } from '@surgio/logger'
 import type { FormatterOptions } from '../runtime/types.js'
+import type { IpVersion } from './ip-version.js'
+
+const MIHOMO_IP_VERSION: Record<IpVersion, string> = {
+  dual: 'dual',
+  'v4-only': 'ipv4',
+  'v6-only': 'ipv6',
+  'prefer-v4': 'ipv4-prefer',
+  'prefer-v6': 'ipv6-prefer',
+}
 
 const getClashCore = (nodeConfig: PossibleNodeConfigType): ClashCoreType =>
   nodeConfig.clashConfig?.clashCore ?? 'clash.meta'
@@ -50,8 +60,9 @@ export const getClashNodes = function (
         if (nodeConfig.underlyingProxy) {
           clashNode['dialer-proxy'] = nodeConfig.underlyingProxy
         }
-        if (nodeConfig.ipVersion) {
-          clashNode['ip-version'] = nodeConfig.ipVersion
+        const ipVersion = resolveIpVersion(nodeConfig, 'Mihomo', logger)
+        if (ipVersion) {
+          clashNode['ip-version'] = MIHOMO_IP_VERSION[ipVersion]
         }
         if (nodeConfig.interfaceName) {
           clashNode['interface-name'] = nodeConfig.interfaceName

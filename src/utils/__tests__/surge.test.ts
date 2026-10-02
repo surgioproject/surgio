@@ -939,3 +939,74 @@ test('getSurgeWireguardNodes shares filtering with getSurgeNodes', () => {
     surge.getSurgeWireguardNodes(nodeList, filter).match(/\[WireGuard .+\]/g),
   ).toEqual(['[WireGuard kept]'])
 })
+
+test('getSurgeNodes outputs ipVersion for every proxy type', () => {
+  expect(
+    surge.getSurgeNodes([
+      {
+        nodeName: 'SS Node',
+        type: NodeTypeEnum.Shadowsocks,
+        hostname: 'example.com',
+        port: 443,
+        method: 'chacha20-ietf-poly1305',
+        password: 'password',
+        ipVersion: 'prefer-v4',
+      },
+    ]),
+  ).toBe(
+    'SS Node = ss, example.com, 443, encrypt-method=chacha20-ietf-poly1305, password=password, ip-version=prefer-v4',
+  )
+})
+
+test('getSurgeNodes outputs Snell ipVersion once', () => {
+  expect(
+    surge.getSurgeNodes([
+      {
+        nodeName: 'Snell Node',
+        type: NodeTypeEnum.Snell,
+        hostname: 'example.com',
+        port: 443,
+        psk: 'psk',
+        ipVersion: 'v6-only',
+      },
+    ]),
+  ).toBe('Snell Node = snell, example.com, 443, psk=psk, ip-version=v6-only')
+})
+
+test('getSurgeNodes maps Mihomo ipVersion values', () => {
+  expect(
+    surge.getSurgeNodes([
+      {
+        nodeName: 'Socks5 Node',
+        type: NodeTypeEnum.Socks5,
+        hostname: 'example.com',
+        port: 1080,
+        ipVersion: 'ipv4-prefer',
+      },
+    ]),
+  ).toBe('Socks5 Node = socks5, example.com, 1080, ip-version=prefer-v4')
+})
+
+test('getSurgeNodes omits unknown ipVersion values', () => {
+  const warn = vi.fn()
+  const logger = { debug: vi.fn(), info: vi.fn(), warn, error: vi.fn() }
+
+  expect(
+    surge.getSurgeNodes(
+      [
+        {
+          nodeName: 'Socks5 Node',
+          type: NodeTypeEnum.Socks5,
+          hostname: 'example.com',
+          port: 1080,
+          ipVersion: 'constructor',
+        },
+      ],
+      undefined,
+      { logger },
+    ),
+  ).toBe('Socks5 Node = socks5, example.com, 1080')
+  expect(warn).toHaveBeenCalledWith(
+    'Surge 不支持 ipVersion=constructor，节点 Socks5 Node 将不包含此字段',
+  )
+})

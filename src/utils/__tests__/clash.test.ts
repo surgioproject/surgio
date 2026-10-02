@@ -1657,3 +1657,26 @@ test('getClashNodes - HTTP/HTTPS with headers', async () => {
     },
   ])
 })
+
+test('getClashNodes maps Surge ipVersion values for Mihomo', () => {
+  expect(
+    clash.getClashNodes([
+      {
+        type: NodeTypeEnum.Socks5,
+        nodeName: 'Socks5 Node',
+        hostname: 'example.com',
+        port: 1080,
+        ipVersion: 'prefer-v4',
+        clashConfig: { clashCore: 'clash.meta' },
+      },
+    ]),
+  ).toEqual([
+    {
+      type: 'socks5',
+      name: 'Socks5 Node',
+      server: 'example.com',
+      port: 1080,
+      'ip-version': 'ipv4-prefer',
+    },
+  ])
+})

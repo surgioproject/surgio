@@ -1049,6 +1049,23 @@ Surgio 不会验证名称是否有效
 
 Loon 仅支持布尔值，因此 `on` 和 `off` 分别输出为 `block-quic=true` 和 `block-quic=false`。`auto` 无法无损映射，Surgio 会省略该参数并输出警告。
 
+### nodeConfig.ipVersion
+
+- 类型：`string`
+- 默认值：`undefined`
+
+节点连接服务器时使用的 IP 版本策略。目前 Surge、Mihomo 和 Egern 支持这一特性。下表中任一写法都可以使用，Surgio 会转换成目标客户端的取值：
+
+| 含义 | Surge | Mihomo | Egern |
+| --- | --- | --- | --- |
+| 双栈，使用最快的链路 | `dual` | `dual` | `dual_stack` |
+| 仅使用 IPv4 | `v4-only` | `ipv4` | `v4_only` |
+| 仅使用 IPv6 | `v6-only` | `ipv6` | `v6_only` |
+| 优先使用 IPv4 | `prefer-v4` | `ipv4-prefer` | `v4_prefer` |
+| 优先使用 IPv6 | `prefer-v6` | `ipv6-prefer` | `v6_prefer` |
+
+Surgio 遇到无法识别的取值会省略该参数并输出警告。Mihomo 只在 `clashCore` 为 `clash.meta` 时输出该参数。Tailscale 节点的 `ipVersion` 仅输出到 Mihomo。
+
 ### nodeConfig.multiplex
 
 :::warning[注意]
