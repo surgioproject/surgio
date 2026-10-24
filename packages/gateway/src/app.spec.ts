@@ -645,6 +645,41 @@ describe('authProvider', () => {
       }
     })
 
+    test('export-providers 的两个 viewer 兜底缓存互不串用', async () => {
+      const { app, runtime, cacheSet } = createProviderFixture(
+        keyMapped({ ka: 'user-a', kb: 'user-b' })
+      )
+      const exportUrl = (key: string) =>
+        `/export-providers?access_token=${key}&providers=demo&format=surge`
+      expect((await app.request(exportUrl('ka'))).status).toBe(200)
+      vi.mocked(runtime.renderProviders).mockRejectedValue(new Error('offline'))
+
+      const other = await app.request(exportUrl('kb'))
+      const same = await app.request(exportUrl('ka'))
+
+      expect(other.status).toBe(500)
+      expect(other.headers.get('x-use-cache')).toBeNull()
+      expect(same.headers.get('x-use-cache')).toBe('true')
+      for (const [key] of cacheSet.mock.calls) {
+        expect(key).not.toContain('user-a')
+      }
+    })
+
+    test('admin 请求不调用 provider，也不改写链接', async () => {
+      const authProvider = vi.fn<GatewayAuthProvider>(acceptKey())
+      const { app, runtime } = createProviderFixture(authProvider)
+
+      const response = await app.request(artifactUrl, { headers: auth })
+
+      expect(response.status).toBe(200)
+      expect(authProvider).not.toHaveBeenCalled()
+      const [, options] = vi.mocked(runtime.renderArtifact).mock.calls[0]
+      expect(options).not.toHaveProperty('accessToken')
+      expect(options?.downloadUrl).toBe(
+        'https://example.com/get-artifact/demo.conf'
+      )
+    })
+
     test('/render 的 getUrl 使用 viewer 自己的 token，且响应为 private', async () => {
       const { app, runtime } = createProviderFixture(acceptKey())
       let linkUrl = ''

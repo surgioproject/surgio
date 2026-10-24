@@ -86,8 +86,22 @@ const publicRequestUrl = (
   return url.toString()
 }
 
+// Typing `get('user')` fails inside the generic app factory, so the cast is isolated here.
 const linkTokenOf = (context: Context): string | undefined =>
-  (context.get('user' as never) as GatewayUser).linkToken
+  (context.get('user' as never) as GatewayUser | undefined)?.linkToken
+
+/**
+ * Everything a route needs so the link token reaches the cache key, the download URL
+ * and the renderer together. Keeping it in one place stops the routes drifting apart.
+ */
+const linkOptionsFor = (context: Context, publicUrl: string) => {
+  const linkToken = linkTokenOf(context)
+  return {
+    cacheKeyParts: linkToken ? [linkToken] : [],
+    downloadUrl: publicRequestUrl(context.req.url, publicUrl, linkToken),
+    tokenOption: linkToken ? { accessToken: linkToken } : undefined,
+  }
+}
 
 /** 与 surgio 的 PASS_GATEWAY_REQUEST_HEADERS_WHITELIST 保持一致。 */
 const alwaysPassedRequestHeaders = ['x-surge-unlocked-features']
@@ -203,7 +217,7 @@ export const createGatewayApp = <Bindings extends object = object>(
       allowedRequestHeaders(config)
     )
     const passUserAgent = Boolean(config.passRequestUserAgent && userAgent)
-    const linkToken = linkTokenOf(context)
+    const link = linkOptionsFor(context, config.publicUrl)
     const cacheKey = config.useCacheOnError
       ? await fallbackCacheKey([
           name,
@@ -211,19 +225,15 @@ export const createGatewayApp = <Bindings extends object = object>(
           requestHeaders,
           passUserAgent ? userAgent : '',
           // Rendered links embed the token, so viewers must not share entries.
-          ...(linkToken ? [linkToken] : []),
+          ...link.cacheKeyParts,
         ])
       : undefined
     try {
       const result = await runtime.renderArtifact(name, {
         customParams,
-        downloadUrl: publicRequestUrl(
-          context.req.url,
-          config.publicUrl,
-          linkToken
-        ),
+        downloadUrl: link.downloadUrl,
         filter,
-        ...(linkToken ? { accessToken: linkToken } : undefined),
+        ...link.tokenOption,
         ...(format ? { format: providerFormat(format) } : undefined),
         getNodeListParams: {
           ...customParams,
@@ -289,14 +299,14 @@ export const createGatewayApp = <Bindings extends object = object>(
       allowedRequestHeaders(config)
     )
     const passUserAgent = Boolean(config.passRequestUserAgent && userAgent)
-    const linkToken = linkTokenOf(context)
+    const link = linkOptionsFor(context, config.publicUrl)
     const cacheKey = config.useCacheOnError
       ? await fallbackCacheKey([
           'export-providers',
           omitQuery(query, ['access_token']),
           requestHeaders,
           passUserAgent ? userAgent : '',
-          ...(linkToken ? [linkToken] : []),
+          ...link.cacheKeyParts,
         ])
       : undefined
     const customParams = omitQuery(query, [
@@ -316,12 +326,8 @@ export const createGatewayApp = <Bindings extends object = object>(
           ? { filter: query.filter }
           : undefined),
         customParams,
-        downloadUrl: publicRequestUrl(
-          context.req.url,
-          config.publicUrl,
-          linkToken
-        ),
-        ...(linkToken ? { accessToken: linkToken } : undefined),
+        downloadUrl: link.downloadUrl,
+        ...link.tokenOption,
         getNodeListParams: {
           ...customParams,
           ...(passUserAgent ? { requestUserAgent: userAgent } : undefined),
