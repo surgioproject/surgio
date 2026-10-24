@@ -3,6 +3,10 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.6.1-beta.0](https://github.com/surgioproject/surgio/compare/%40surgio%2Fgateway-frontend%402.6.0...%40surgio%2Fgateway-frontend%402.6.1-beta.0) (2026-10-24)
+
+**Note:** Version bump only for package @surgio/gateway-frontend
+
 # [2.6.0](https://github.com/surgioproject/packages/tree/master/packages/gateway-frontend/compare/%40surgio%2Fgateway-frontend%402.5.0...%40surgio%2Fgateway-frontend%402.6.0) (2026-09-30)
 
 ### Features

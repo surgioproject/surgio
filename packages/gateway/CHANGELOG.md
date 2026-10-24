@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.0.0-beta.4](https://github.com/surgioproject/surgio/compare/%40surgio%2Fgateway%403.0.0-beta.3...%40surgio%2Fgateway%403.0.0-beta.4) (2026-10-24)
+
+### Bug Fixes
+
+- **gateway:** hide auth provider errors from clients ([2526776](https://github.com/surgioproject/surgio/commit/2526776fb29c4438db78975527ce64c2c38cb650))
+
+### Features
+
+- **gateway:** render links with the requester's token ([a490eb4](https://github.com/surgioproject/surgio/commit/a490eb458f1ed27db054827c514966658d988b7c))
+- **gateway:** resolve viewer identity via auth provider ([703469e](https://github.com/surgioproject/surgio/commit/703469e22d89feff7a7d94ec08e8b790f1ed892a))
+
 # [3.0.0-beta.3](https://github.com/surgioproject/packages/tree/master/packages/gateway/compare/%40surgio%2Fgateway%403.0.0-beta.2...%40surgio%2Fgateway%403.0.0-beta.3) (2026-09-30)
 
 **Note:** Version bump only for package @surgio/gateway

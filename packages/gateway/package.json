@@ -3,7 +3,7 @@
   "description": "Surgio API Gateway 面板",
   "private": false,
   "license": "MIT",
-  "version": "3.0.0-beta.3",
+  "version": "3.0.0-beta.4",
   "type": "module",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
@@ -73,8 +73,8 @@
     "nock": "^14.0.17",
     "sinon": "^22.1.0",
     "supertest": "^7.2.2",
-    "tsconfig-paths": "^4.2.0",
-    "surgio": "workspace:*"
+    "surgio": "workspace:*",
+    "tsconfig-paths": "^4.2.0"
   },
   "peerDependencies": {
     "surgio": "^4.0.0"

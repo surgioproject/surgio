@@ -1,6 +1,6 @@
 {
   "name": "@surgio/logger",
-  "version": "2.0.0-beta.0",
+  "version": "2.0.0-beta.1",
   "type": "module",
   "description": "Logger helper for Surgio projects",
   "homepage": "https://surgio.js.org",
