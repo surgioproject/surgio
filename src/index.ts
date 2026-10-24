@@ -15,6 +15,10 @@ import * as filters from './filters/index.js'
 import { CATEGORIES } from './constant/index.js'
 
 export type { CommandConfigBeforeNormalize as SurgioConfig } from './types.js'
+export type {
+  GatewayAuthProvider,
+  GatewayAuthResult,
+} from './runtime/public.js'
 export * from './configurables.js'
 export { httpClient } from './runtime/http-client.js'
 export { unifiedCache as cache } from './cache/singleton.js'

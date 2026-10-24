@@ -169,3 +169,41 @@ test('validates the Redis cache config', () => {
     }).success,
   ).toBe(false)
 })
+
+const authProvider = async () => ({ success: false as const })
+
+test('gateway.authProvider 保留函数引用', () => {
+  const parsed = SurgioConfigValidator.parse({
+    artifacts: [],
+    gateway: { auth: true, accessToken: 'admin', authProvider },
+  })
+  expect(parsed.gateway?.authProvider).toBe(authProvider)
+})
+
+test.each([
+  [
+    { auth: true, accessToken: 'admin', viewerToken: 'v', authProvider },
+    'authProvider 与 viewerToken 不能同时配置',
+  ],
+  [
+    { accessToken: 'admin', authProvider },
+    'authProvider 需要同时开启 gateway.auth',
+  ],
+  [
+    { auth: true, authProvider },
+    'authProvider 需要同时配置 gateway.accessToken',
+  ],
+])('gateway.authProvider 配置约束 %#', (gateway, message) => {
+  expect(() => SurgioConfigValidator.parse({ artifacts: [], gateway })).toThrow(
+    message,
+  )
+})
+
+test('gateway.authProvider 必须是函数', () => {
+  expect(() =>
+    SurgioConfigValidator.parse({
+      artifacts: [],
+      gateway: { auth: true, accessToken: 'admin', authProvider: 'nope' },
+    }),
+  ).toThrow()
+})

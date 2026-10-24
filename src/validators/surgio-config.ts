@@ -6,12 +6,18 @@ import {
   SortedNodeFilterTypeValidator,
 } from './filter.js'
 
+import type { GatewayAuthProvider } from '../runtime/public.js'
+
 const isRegExp = (val: unknown): val is RegExp => {
   return val instanceof RegExp
 }
 const RegexValidatior = z.custom<RegExp>((val) => {
   return isRegExp(val)
 })
+
+const GatewayAuthProviderValidator = z.custom<GatewayAuthProvider>(
+  (val) => typeof val === 'function',
+)
 
 export const ClashCoreValidator = z.union([
   z.literal('clash'),
@@ -150,6 +156,29 @@ export const SurgioConfigValidator = z.object({
         .array(z.string())
         .default([])
         .transform((val) => val.map((item) => item.toLowerCase())),
+      authProvider: GatewayAuthProviderValidator.optional(),
+    })
+    .superRefine((gateway, ctx) => {
+      if (!gateway.authProvider) {
+        return
+      }
+
+      const addIssue = (message: string) =>
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message,
+          path: ['authProvider'],
+        })
+
+      if (gateway.viewerToken) {
+        addIssue('authProvider 与 viewerToken 不能同时配置')
+      }
+      if (!gateway.auth) {
+        addIssue('authProvider 需要同时开启 gateway.auth')
+      }
+      if (!gateway.accessToken) {
+        addIssue('authProvider 需要同时配置 gateway.accessToken')
+      }
     })
     .optional(),
   checkHostname: z.oboolean(),
