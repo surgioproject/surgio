@@ -82,7 +82,7 @@ describe('published package output', () => {
   test('gateway requires Surgio v4', () => {
     const manifest = readManifest('packages/gateway')
 
-    expect(manifest.peerDependencies?.surgio).toBe('^4.0.0')
+    expect(manifest.peerDependencies?.surgio).toBe('^4.0.0-beta.9')
   })
 
   test.each(packages)('$directory contains only publishable files', (item) => {
