@@ -324,6 +324,27 @@ export default {
     expect(warn).toHaveBeenCalledWith(expect.stringContaining('unknown'))
   })
 
+  test('getGatewayConfig 原样带出 authProvider 函数', () => {
+    const authProvider = async () => ({ success: false as const })
+    const runtime = createSurgioRuntime(
+      {
+        surgioVersion: 'test',
+        config: {
+          artifacts: [],
+          gateway: { auth: true, accessToken: 'admin', authProvider },
+        },
+        providers: {},
+        templates: {},
+        rawTemplates: {},
+        jsonTemplates: {},
+        artifactTemplates: {},
+      },
+      { cache: new TtlCache({ store: new MemoryStore() }) },
+    )
+
+    expect(runtime.getGatewayConfig()?.authProvider).toBe(authProvider)
+  })
+
   test('passes merged customParams to the Provider nodeList', async () => {
     const receivedParams: Array<Record<string, unknown>> = []
     const runtime = createSurgioRuntime(

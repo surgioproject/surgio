@@ -2,6 +2,7 @@ import path from 'node:path'
 import { describe, expect, test, vi } from 'vitest'
 
 import { TtlCache } from '../cache/core.js'
+import { normalizeProjectConfig } from '../config.js'
 import { loadSurgioProject } from '../project/node.js'
 import { SupportProviderEnum } from '../types.js'
 import { createSurgioRuntime } from '../worker/runtime.js'
@@ -159,6 +160,38 @@ describe('Node Surgio runtime', () => {
     expect(runtime.listProviders().length).toBeGreaterThan(0)
     expect(runtime.getGatewayConfig()?.accessToken).toBe('abcd')
     await runtime.close()
+  })
+
+  test('getGatewayConfig 原样带出 authProvider 函数', async () => {
+    const authProvider = async () => ({ success: false as const })
+    const gateway = { auth: true, accessToken: 'admin', authProvider }
+    const project = await loadSurgioProject(fixture)
+    // A normalizer that rebuilds gateway field by field would drop the function here.
+    const normalized = normalizeProjectConfig(fixture, {
+      artifacts: [],
+      gateway,
+    })
+
+    const direct = createNodeSurgioRuntime({
+      ...project,
+      config: {
+        ...project.config,
+        gateway: { ...gateway, passRequestHeaders: [] },
+      },
+    })
+    const normalizedRuntime = createNodeSurgioRuntime({
+      ...project,
+      config: normalized,
+    })
+
+    try {
+      expect(direct.getGatewayConfig()?.authProvider).toBe(authProvider)
+      expect(normalizedRuntime.getGatewayConfig()?.authProvider).toBe(
+        authProvider,
+      )
+    } finally {
+      await Promise.all([direct.close(), normalizedRuntime.close()])
+    }
   })
 
   test('渲染缓存的条目数由配置决定，不随请求变化', async () => {
