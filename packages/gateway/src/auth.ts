@@ -38,12 +38,24 @@ export const authenticate = async (
     : undefined
 }
 
+// The 500 body echoes error.message to anonymous clients, so the provider's own message stays in `cause`.
+const callAuthProvider = async (
+  authProvider: GatewayAuthProvider,
+  request: Request,
+): Promise<unknown> => {
+  try {
+    return await authProvider({ request })
+  } catch (error) {
+    throw new Error('authProvider 调用失败', { cause: error })
+  }
+}
+
 const resolveWithAuthProvider = async (
   context: Context,
   authProvider: GatewayAuthProvider,
   config: GatewayConfig,
 ): Promise<GatewayUser | undefined> => {
-  const result: unknown = await authProvider({ request: context.req.raw })
+  const result = await callAuthProvider(authProvider, context.req.raw)
   if (typeof result !== 'object' || result === null) return undefined
   const { success, accessToken } = result as Record<string, unknown>
   if (success !== true || typeof accessToken !== 'string' || !accessToken) {

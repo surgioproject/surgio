@@ -434,9 +434,23 @@ describe('authProvider', () => {
       .mockRejectedValue(new Error('backend down'))
     const { app } = createProviderFixture(authProvider)
 
-    expect((await app.request(`${artifactUrl}?access_token=x`)).status).toBe(
-      500
-    )
+    const response = await app.request(`${artifactUrl}?access_token=x`)
+
+    expect(response.status).toBe(500)
+    expect(await response.text()).not.toContain('backend down')
+  })
+
+  test('请求不带任何凭据时仍调用 provider', async () => {
+    const authProvider = vi.fn<GatewayAuthProvider>(async () => ({
+      success: true,
+      accessToken: 'user-a',
+    }))
+    const { app } = createProviderFixture(authProvider)
+
+    const response = await app.request(artifactUrl)
+
+    expect(response.status).toBe(200)
+    expect(authProvider).toHaveBeenCalledOnce()
   })
 
   test('provider 收到原始 Request', async () => {
