@@ -74,10 +74,20 @@ const addToken = (base: string, path: string, token?: string): string => {
   return url.toString()
 }
 
-const publicRequestUrl = (requestUrl: string, publicUrl: string): string => {
+const publicRequestUrl = (
+  requestUrl: string,
+  publicUrl: string,
+  linkToken?: string
+): string => {
   const request = new URL(requestUrl)
-  return new URL(`${request.pathname}${request.search}`, publicUrl).toString()
+  const url = new URL(`${request.pathname}${request.search}`, publicUrl)
+  // The caller may have authenticated by header, so the link needs its own token.
+  if (linkToken) url.searchParams.set('access_token', linkToken)
+  return url.toString()
 }
+
+const linkTokenOf = (context: Context): string | undefined =>
+  (context.get('user' as never) as GatewayUser).linkToken
 
 /** 与 surgio 的 PASS_GATEWAY_REQUEST_HEADERS_WHITELIST 保持一致。 */
 const alwaysPassedRequestHeaders = ['x-surge-unlocked-features']
@@ -193,19 +203,27 @@ export const createGatewayApp = <Bindings extends object = object>(
       allowedRequestHeaders(config)
     )
     const passUserAgent = Boolean(config.passRequestUserAgent && userAgent)
+    const linkToken = linkTokenOf(context)
     const cacheKey = config.useCacheOnError
       ? await fallbackCacheKey([
           name,
           omitQuery(query, ['access_token']),
           requestHeaders,
           passUserAgent ? userAgent : '',
+          // Rendered links embed the token, so viewers must not share entries.
+          ...(linkToken ? [linkToken] : []),
         ])
       : undefined
     try {
       const result = await runtime.renderArtifact(name, {
         customParams,
-        downloadUrl: publicRequestUrl(context.req.url, config.publicUrl),
+        downloadUrl: publicRequestUrl(
+          context.req.url,
+          config.publicUrl,
+          linkToken
+        ),
         filter,
+        ...(linkToken ? { accessToken: linkToken } : undefined),
         ...(format ? { format: providerFormat(format) } : undefined),
         getNodeListParams: {
           ...customParams,
@@ -271,12 +289,14 @@ export const createGatewayApp = <Bindings extends object = object>(
       allowedRequestHeaders(config)
     )
     const passUserAgent = Boolean(config.passRequestUserAgent && userAgent)
+    const linkToken = linkTokenOf(context)
     const cacheKey = config.useCacheOnError
       ? await fallbackCacheKey([
           'export-providers',
           omitQuery(query, ['access_token']),
           requestHeaders,
           passUserAgent ? userAgent : '',
+          ...(linkToken ? [linkToken] : []),
         ])
       : undefined
     const customParams = omitQuery(query, [
@@ -296,7 +316,12 @@ export const createGatewayApp = <Bindings extends object = object>(
           ? { filter: query.filter }
           : undefined),
         customParams,
-        downloadUrl: publicRequestUrl(context.req.url, config.publicUrl),
+        downloadUrl: publicRequestUrl(
+          context.req.url,
+          config.publicUrl,
+          linkToken
+        ),
+        ...(linkToken ? { accessToken: linkToken } : undefined),
         getNodeListParams: {
           ...customParams,
           ...(passUserAgent ? { requestUserAgent: userAgent } : undefined),
@@ -326,16 +351,28 @@ export const createGatewayApp = <Bindings extends object = object>(
     if (!template)
       return errorJson(context, 400, '参数 template 必须指定一个值')
     const config = runtime.getGatewayConfig() as GatewayConfig
+    const linkToken = linkTokenOf(context)
+    // Never hand the admin token to a viewer, who may be the one reading this page.
+    const getUrlToken = linkToken ?? config.viewerToken ?? config.accessToken
     try {
       const body = await runtime.renderTemplate(template, {
-        downloadUrl: publicRequestUrl(context.req.url, config.publicUrl),
-        getUrl: (path: string) =>
-          addToken(config.publicUrl, path, config.accessToken),
+        downloadUrl: publicRequestUrl(
+          context.req.url,
+          config.publicUrl,
+          linkToken
+        ),
+        getUrl: (path: string) => addToken(config.publicUrl, path, getUrlToken),
       })
-      return context.body(body, 200, {
-        'content-type': 'text/plain; charset=utf-8',
-        'cache-control': 's-maxage=86400, stale-while-revalidate',
-      })
+      return context.body(
+        body,
+        200,
+        config.authProvider
+          ? textHeaders
+          : {
+              'content-type': 'text/plain; charset=utf-8',
+              'cache-control': 's-maxage=86400, stale-while-revalidate',
+            }
+      )
     } catch (error) {
       if (
         error instanceof Error &&
@@ -415,12 +452,21 @@ export const createGatewayApp = <Bindings extends object = object>(
     ).getGatewayConfig() as GatewayConfig
     const user = await authenticate(context, config)
     if (!user) return errorJson(context, 401, 'Unauthorized')
+    // A static viewer must not learn the admin token.
+    const linkTokenFor = (current: GatewayUser): string | undefined =>
+      current.linkToken ??
+      (current.roles.includes('admin')
+        ? config.accessToken
+        : config.viewerToken)
     return context.json({
       status: 'ok',
       data: {
         roles: user.roles,
         ...(config.viewerToken
           ? { viewerToken: config.viewerToken }
+          : undefined),
+        ...(config.authProvider
+          ? { accessToken: linkTokenFor(user) }
           : undefined),
       },
     })
