@@ -1,0 +1,47 @@
+{
+  "name": "@surgio/eslint-config-surgio",
+  "version": "3.0.0-beta.0",
+  "type": "module",
+  "description": "ESLint config for Surgio config stores",
+  "keywords": [
+    "surgio",
+    "eslint"
+  ],
+  "homepage": "https://surgio.js.org",
+  "license": "MIT",
+  "main": "index.js",
+  "exports": {
+    ".": {
+      "module-sync": "./index.js",
+      "default": "./index.js"
+    },
+    "./*": "./*"
+  },
+  "repository": "https://github.com/surgioproject/packages/tree/master/packages/eslint-config-surgio",
+  "author": "Roy Li <me@royli.dev>",
+  "bugs": {
+    "url": "https://github.com/surgioproject/surgio/issues"
+  },
+  "scripts": {
+    "lint": "eslint .",
+    "test": "vitest run"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "files": [
+    "index.js"
+  ],
+  "engines": {
+    "node": ">=22.22.2"
+  },
+  "peerDependencies": {
+    "eslint": ">=10.0.0"
+  },
+  "dependencies": {
+    "@eslint/js": "^10.0.1",
+    "globals": "^17.11.0",
+    "typescript": "~6.0.3",
+    "typescript-eslint": "^8.67.0"
+  }
+}

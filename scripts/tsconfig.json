@@ -1,0 +1,19 @@
+{
+  "compilerOptions": {
+    "module": "commonjs",
+    "moduleResolution": "node",
+    "sourceMap": false,
+    "noImplicitThis": true,
+    "noEmitOnError": true,
+    "noImplicitAny": false,
+    "noEmit": true,
+    "noUnusedParameters": false,
+    "noUnusedLocals": false,
+    "target": "es6",
+    "typeRoots": ["../node_modules/@types/"],
+    "baseUrl": "."
+  },
+  "files": [
+    "ci-prepare"
+  ]
+}

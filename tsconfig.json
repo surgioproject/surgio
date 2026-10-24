@@ -1,0 +1,10 @@
+{
+  "files": [],
+  "references": [
+    { "path": "packages/gateway" },
+    { "path": "packages/gateway-frontend" },
+    { "path": "packages/logger" },
+    { "path": "test/fixture/typescript-consumer" },
+    { "path": "test/fixture/typescript-consumer-cjs" }
+  ]
+}

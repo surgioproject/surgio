@@ -1,0 +1,30 @@
+{
+  "compilerOptions": {
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
+    "declaration": true,
+    "removeComments": true,
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "target": "ES2022",
+    "sourceMap": true,
+    "outDir": "dist/",
+    "rootDir": "src/",
+    "incremental": true,
+    "esModuleInterop": true /* Enables emit interoperability between CommonJS and ES Modules via creation of namespace objects for all imports. Implies 'allowSyntheticDefaultImports'. */,
+    "allowSyntheticDefaultImports": true, // https://zhuanlan.zhihu.com/p/29022311
+    "resolveJsonModule": true,
+    "allowJs": true,
+    "skipLibCheck": true,
+    "types": ["node", "vitest/globals"]
+  },
+  "exclude": [
+    "node_modules",
+    "dist",
+    "coverage",
+    "src/__tests__/__fixtures__",
+    "eslint.config.mjs",
+    "*.mjs"
+  ],
+  "include": ["src/**/*"]
+}

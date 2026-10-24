@@ -1,0 +1,18 @@
+{
+  "command": {
+    "version": {
+      "conventionalCommits": true,
+      "message": "chore(release): new release"
+    }
+  },
+  "ignoreChanges": [
+    "**/__fixtures__/**",
+    "**/__tests__/**",
+    "**/*.spec.ts",
+    "**/*.test.ts",
+    "**/*.md"
+  ],
+  "packages": ["packages/*"],
+  "version": "independent",
+  "npmClient": "pnpm"
+}
