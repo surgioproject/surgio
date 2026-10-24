@@ -1,7 +1,7 @@
 import { deleteCookie, getCookie, setCookie } from 'hono/cookie'
 
 import type { Context } from 'hono'
-import type { GatewayConfig, GatewayRole } from './types.js'
+import type { GatewayAuthProvider, GatewayConfig, GatewayUser } from './types.js'
 
 const encoder = new TextEncoder()
 
@@ -22,7 +22,7 @@ export const signAccessToken = async (token: string): Promise<string> => {
 export const authenticate = async (
   context: Context,
   config: GatewayConfig,
-): Promise<{ readonly roles: ReadonlyArray<GatewayRole> } | undefined> => {
+): Promise<GatewayUser | undefined> => {
   if (!config.auth) return { roles: ['admin', 'viewer'] }
   const authorization = context.req.header('authorization')
   const bearer = authorization?.match(/^Bearer\s+(.+)$/i)?.[1]
@@ -33,7 +33,39 @@ export const authenticate = async (
   if (cookie && cookie === (await signAccessToken(config.accessToken ?? ''))) {
     return { roles: ['admin', 'viewer'] }
   }
-  return undefined
+  return config.authProvider
+    ? resolveWithAuthProvider(context, config.authProvider, config)
+    : undefined
+}
+
+// The 500 body echoes error.message to anonymous clients, so the provider's own message stays in `cause`.
+const callAuthProvider = async (
+  authProvider: GatewayAuthProvider,
+  request: Request,
+): Promise<unknown> => {
+  try {
+    return await authProvider({ request })
+  } catch (error) {
+    throw new Error('authProvider 调用失败', { cause: error })
+  }
+}
+
+const resolveWithAuthProvider = async (
+  context: Context,
+  authProvider: GatewayAuthProvider,
+  config: GatewayConfig,
+): Promise<GatewayUser | undefined> => {
+  const result = await callAuthProvider(authProvider, context.req.raw)
+  if (typeof result !== 'object' || result === null) return undefined
+  const { success, accessToken } = result as Record<string, unknown>
+  if (success !== true || typeof accessToken !== 'string' || !accessToken) {
+    return undefined
+  }
+  // Viewer links must never carry the admin token.
+  if (accessToken === config.accessToken) {
+    throw new Error('authProvider 不能返回 gateway.accessToken')
+  }
+  return { roles: ['viewer'], linkToken: accessToken }
 }
 
 export const setAuthCookie = async (context: Context, config: GatewayConfig): Promise<void> => {

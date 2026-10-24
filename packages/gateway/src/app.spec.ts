@@ -2,7 +2,12 @@ import { describe, expect, test, vi } from 'vitest'
 
 import { createGatewayApp } from './app.js'
 
-import type { GatewayCache, GatewayConfig, GatewayRuntime } from './types.js'
+import type {
+  GatewayAuthProvider,
+  GatewayCache,
+  GatewayConfig,
+  GatewayRuntime,
+} from './types.js'
 
 const config: GatewayConfig = {
   urlBase: 'https://example.com/',
@@ -376,5 +381,402 @@ describe('createGatewayApp', () => {
     const cached = await app.request(url)
     expect(cached.status).toBe(200)
     expect(cached.headers.get('x-use-cache')).toBe('true')
+  })
+})
+
+describe('without authProvider', () => {
+  test('未配置 authProvider 时不向 runtime 传 accessToken，downloadUrl 不改写', async () => {
+    const { app, runtime } = createFixture()
+
+    await app.request('/get-artifact/demo.conf?access_token=viewer-token&foo=1')
+
+    const [, options] = vi.mocked(runtime.renderArtifact).mock.calls[0]
+    expect(options).not.toHaveProperty('accessToken')
+    expect(options?.downloadUrl).toBe(
+      'https://example.com/get-artifact/demo.conf?access_token=viewer-token&foo=1'
+    )
+  })
+
+  test('未配置 authProvider 时 /render 的 getUrl 使用 viewerToken，响应头保持 s-maxage', async () => {
+    const { app, runtime } = createFixture()
+    let linkUrl = ''
+    vi.mocked(runtime.renderTemplate).mockImplementationOnce(
+      async (_name, context) => {
+        linkUrl = (context?.getUrl as (path: string) => string)('/x')
+        return 'rendered'
+      }
+    )
+
+    const response = await app.request(
+      '/render?access_token=viewer-token&template=demo'
+    )
+
+    expect(new URL(linkUrl).searchParams.get('access_token')).toBe(
+      'viewer-token'
+    )
+    expect(linkUrl).not.toContain('admin-token')
+    expect(response.headers.get('cache-control')).toBe(
+      's-maxage=86400, stale-while-revalidate'
+    )
+  })
+
+  test('未配置 authProvider 时 validate 响应不含 accessToken', async () => {
+    const { app } = createFixture()
+
+    const response = await app.request('/api/auth/validate-token', {
+      method: 'POST',
+      headers: auth,
+    })
+
+    expect(await response.json()).toEqual({
+      status: 'ok',
+      data: { roles: ['admin', 'viewer'], viewerToken: 'viewer-token' },
+    })
+  })
+})
+
+describe('authProvider', () => {
+  const artifactUrl = '/get-artifact/demo.conf'
+  const createProviderFixture = (authProvider: GatewayAuthProvider) =>
+    createFixture({ viewerToken: undefined, authProvider })
+
+  test('admin token 与 cookie 不调用 provider', async () => {
+    const authProvider = vi.fn<GatewayAuthProvider>(async () => ({
+      success: false,
+    }))
+    const { app } = createProviderFixture(authProvider)
+    const login = await app.request('/api/auth', {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({ accessToken: 'admin-token' }),
+    })
+    const cookie = login.headers.get('set-cookie') as string
+
+    expect((await app.request(artifactUrl, { headers: auth })).status).toBe(200)
+    expect((await app.request(artifactUrl, { headers: { cookie } })).status).toBe(
+      200
+    )
+    expect(authProvider).not.toHaveBeenCalled()
+  })
+
+  test('provider 成功时获得 viewer 角色', async () => {
+    const authProvider = vi.fn<GatewayAuthProvider>(async () => ({
+      success: true,
+      accessToken: 'user-a',
+    }))
+    const { app } = createProviderFixture(authProvider)
+    const headers = { Authorization: 'Bearer user-a' }
+
+    expect((await app.request(artifactUrl, { headers })).status).toBe(200)
+    expect((await app.request('/api/providers', { headers })).status).toBe(403)
+  })
+
+  test('provider 失败时返回 401', async () => {
+    const { app } = createProviderFixture(async () => ({ success: false }))
+
+    expect((await app.request(`${artifactUrl}?access_token=x`)).status).toBe(
+      401
+    )
+  })
+
+  test('provider 抛错时返回 500', async () => {
+    const authProvider = vi
+      .fn<GatewayAuthProvider>()
+      .mockRejectedValue(new Error('backend down'))
+    const { app } = createProviderFixture(authProvider)
+
+    const response = await app.request(`${artifactUrl}?access_token=x`)
+
+    expect(response.status).toBe(500)
+    expect(await response.text()).not.toContain('backend down')
+  })
+
+  test('请求不带任何凭据时仍调用 provider', async () => {
+    const authProvider = vi.fn<GatewayAuthProvider>(async () => ({
+      success: true,
+      accessToken: 'user-a',
+    }))
+    const { app } = createProviderFixture(authProvider)
+
+    const response = await app.request(artifactUrl)
+
+    expect(response.status).toBe(200)
+    expect(authProvider).toHaveBeenCalledOnce()
+  })
+
+  test('provider 收到原始 Request', async () => {
+    const authProvider = vi.fn<GatewayAuthProvider>(async () => ({
+      success: false,
+    }))
+    const { app } = createProviderFixture(authProvider)
+
+    await app.request(`${artifactUrl}?access_token=k`, {
+      headers: { Authorization: 'Bearer from-header' },
+    })
+
+    const { request } = authProvider.mock.calls[0][0]
+    expect(request).toBeInstanceOf(Request)
+    expect(request.url).toContain('access_token=k')
+    expect(request.headers.get('authorization')).toBe('Bearer from-header')
+  })
+
+  test('success 但 accessToken 为空串时返回 401', async () => {
+    const { app } = createProviderFixture(async () => ({
+      success: true,
+      accessToken: '',
+    }))
+
+    expect((await app.request(`${artifactUrl}?access_token=k`)).status).toBe(
+      401
+    )
+  })
+
+  test('provider resolve undefined 时返回 401', async () => {
+    const { app } = createProviderFixture(
+      (async () => undefined) as unknown as GatewayAuthProvider
+    )
+
+    expect((await app.request(`${artifactUrl}?access_token=k`)).status).toBe(
+      401
+    )
+  })
+
+  test('provider 返回 gateway.accessToken 时返回 500', async () => {
+    const { app } = createProviderFixture(async () => ({
+      success: true,
+      accessToken: 'admin-token',
+    }))
+
+    expect((await app.request(`${artifactUrl}?access_token=k`)).status).toBe(
+      500
+    )
+  })
+
+  describe('链接 token', () => {
+    const acceptKey =
+      (token = 'user-a'): GatewayAuthProvider =>
+      async ({ request }) => {
+        const key =
+          request.headers.get('authorization')?.replace(/^Bearer\s+/i, '') ??
+          new URL(request.url).searchParams.get('access_token')
+        return key ? { success: true, accessToken: token } : { success: false }
+      }
+    const keyMapped =
+      (tokens: Record<string, string>): GatewayAuthProvider =>
+      async ({ request }) => {
+        const key = new URL(request.url).searchParams.get('access_token') ?? ''
+        return tokens[key]
+          ? { success: true, accessToken: tokens[key] }
+          : { success: false }
+      }
+    const downloadUrlOf = (runtime: GatewayRuntime): URL =>
+      new URL(
+        vi.mocked(runtime.renderArtifact).mock.calls[0][1]
+          ?.downloadUrl as string
+      )
+
+    test('get-artifact 把链接 token 传给 runtime 并改写 downloadUrl', async () => {
+      const { app, runtime } = createProviderFixture(acceptKey())
+
+      await app.request(`${artifactUrl}?access_token=k&foo=1`)
+
+      expect(runtime.renderArtifact).toHaveBeenCalledWith(
+        'demo.conf',
+        expect.objectContaining({ accessToken: 'user-a' })
+      )
+      const downloadUrl = downloadUrlOf(runtime)
+      expect(downloadUrl.searchParams.get('access_token')).toBe('user-a')
+      expect(downloadUrl.searchParams.get('foo')).toBe('1')
+    })
+
+    test('provider 从 header 取 token 时 downloadUrl 也带上 access_token', async () => {
+      const { app, runtime } = createProviderFixture(acceptKey())
+
+      await app.request(artifactUrl, {
+        headers: { Authorization: 'Bearer k' },
+      })
+
+      expect(downloadUrlOf(runtime).searchParams.get('access_token')).toBe(
+        'user-a'
+      )
+    })
+
+    test('链接 token 中的特殊字符被正确编码', async () => {
+      const { app, runtime } = createProviderFixture(acceptKey('a+b&c=d'))
+
+      await app.request(`${artifactUrl}?access_token=k&foo=1`)
+
+      const downloadUrl = downloadUrlOf(runtime)
+      expect(downloadUrl.searchParams.get('access_token')).toBe('a+b&c=d')
+      expect(downloadUrl.searchParams.get('foo')).toBe('1')
+    })
+
+    test('export-providers 传递 accessToken', async () => {
+      const { app, runtime } = createProviderFixture(acceptKey())
+
+      await app.request(
+        '/export-providers?access_token=k&providers=demo&format=surge'
+      )
+
+      const [options] = vi.mocked(runtime.renderProviders).mock.calls[0]
+      expect(options.accessToken).toBe('user-a')
+      expect(
+        new URL(options.downloadUrl as string).searchParams.get('access_token')
+      ).toBe('user-a')
+    })
+
+    test('两个 viewer 的兜底缓存互不串用', async () => {
+      const { app, runtime, cacheSet } = createProviderFixture(
+        keyMapped({ ka: 'user-a', kb: 'user-b' })
+      )
+      expect((await app.request(`${artifactUrl}?access_token=ka`)).status).toBe(
+        200
+      )
+      vi.mocked(runtime.renderArtifact).mockRejectedValue(new Error('offline'))
+
+      const other = await app.request(`${artifactUrl}?access_token=kb`)
+      const same = await app.request(`${artifactUrl}?access_token=ka`)
+
+      expect(other.status).toBe(500)
+      expect(other.headers.get('x-use-cache')).toBeNull()
+      expect(same.headers.get('x-use-cache')).toBe('true')
+      for (const [key] of cacheSet.mock.calls) {
+        expect(key).not.toContain('user-a')
+      }
+    })
+
+    test('export-providers 的两个 viewer 兜底缓存互不串用', async () => {
+      const { app, runtime, cacheSet } = createProviderFixture(
+        keyMapped({ ka: 'user-a', kb: 'user-b' })
+      )
+      const exportUrl = (key: string) =>
+        `/export-providers?access_token=${key}&providers=demo&format=surge`
+      expect((await app.request(exportUrl('ka'))).status).toBe(200)
+      vi.mocked(runtime.renderProviders).mockRejectedValue(new Error('offline'))
+
+      const other = await app.request(exportUrl('kb'))
+      const same = await app.request(exportUrl('ka'))
+
+      expect(other.status).toBe(500)
+      expect(other.headers.get('x-use-cache')).toBeNull()
+      expect(same.headers.get('x-use-cache')).toBe('true')
+      for (const [key] of cacheSet.mock.calls) {
+        expect(key).not.toContain('user-a')
+      }
+    })
+
+    test('admin 请求不调用 provider，也不改写链接', async () => {
+      const authProvider = vi.fn<GatewayAuthProvider>(acceptKey())
+      const { app, runtime } = createProviderFixture(authProvider)
+
+      const response = await app.request(artifactUrl, { headers: auth })
+
+      expect(response.status).toBe(200)
+      expect(authProvider).not.toHaveBeenCalled()
+      const [, options] = vi.mocked(runtime.renderArtifact).mock.calls[0]
+      expect(options).not.toHaveProperty('accessToken')
+      expect(options?.downloadUrl).toBe(
+        'https://example.com/get-artifact/demo.conf'
+      )
+    })
+
+    test('/render 的 getUrl 使用 viewer 自己的 token，且响应为 private', async () => {
+      const { app, runtime } = createProviderFixture(acceptKey())
+      let linkUrl = ''
+      vi.mocked(runtime.renderTemplate).mockImplementationOnce(
+        async (_name, context) => {
+          linkUrl = (context?.getUrl as (path: string) => string)('/x')
+          return 'rendered'
+        }
+      )
+
+      const response = await app.request('/render?access_token=k&template=demo')
+
+      expect(new URL(linkUrl).searchParams.get('access_token')).toBe('user-a')
+      expect(linkUrl).not.toContain('admin-token')
+      const cacheControl = response.headers.get('cache-control')
+      expect(cacheControl).toContain('private')
+      expect(cacheControl).toContain('no-store')
+    })
+
+    test('cookie 登录的 admin 访问 /render 时 getUrl 使用 accessToken', async () => {
+      const { app, runtime } = createProviderFixture(acceptKey())
+      const login = await app.request('/api/auth', {
+        method: 'POST',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify({ accessToken: 'admin-token' }),
+      })
+      const cookie = login.headers.get('set-cookie') as string
+      let linkUrl = ''
+      vi.mocked(runtime.renderTemplate).mockImplementationOnce(
+        async (_name, context) => {
+          linkUrl = (context?.getUrl as (path: string) => string)('/x')
+          return 'rendered'
+        }
+      )
+
+      await app.request('/render?template=demo', { headers: { cookie } })
+
+      expect(new URL(linkUrl).searchParams.get('access_token')).toBe(
+        'admin-token'
+      )
+    })
+
+    test('validate-token 返回链接 token', async () => {
+      const { app } = createProviderFixture(acceptKey())
+      const validate = async (headers: Record<string, string>) =>
+        (
+          (await (
+            await app.request('/api/auth/validate-token', {
+              method: 'POST',
+              headers,
+            })
+          ).json()) as { data: { accessToken?: string } }
+        ).data.accessToken
+      const login = await app.request('/api/auth', {
+        method: 'POST',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify({ accessToken: 'admin-token' }),
+      })
+      const cookie = login.headers.get('set-cookie') as string
+
+      expect(await validate({ Authorization: 'Bearer k' })).toBe('user-a')
+      expect(await validate(auth)).toBe('admin-token')
+      expect(await validate({ cookie })).toBe('admin-token')
+    })
+
+    test('静态 viewerToken 的 viewer 不会从 validate 拿到 admin token', async () => {
+      const { app } = createFixture({ authProvider: acceptKey() })
+
+      const response = await app.request('/api/auth/validate-token', {
+        method: 'POST',
+        headers: { Authorization: 'Bearer viewer-token' },
+      })
+
+      const { data } = (await response.json()) as {
+        data: { accessToken?: string }
+      }
+      expect(data.accessToken).toBe('viewer-token')
+    })
+
+    test('嵌入页请求序列对 authProvider viewer 可用', async () => {
+      const { app } = createProviderFixture(acceptKey())
+      const headers = { Authorization: 'Bearer k' }
+
+      const validated = await app.request('/api/auth/validate-token', {
+        method: 'POST',
+        headers,
+      })
+      const artifact = await app.request('/api/artifacts/demo.conf', {
+        headers,
+      })
+
+      expect(validated.status).toBe(200)
+      expect(
+        ((await validated.json()) as { data: { accessToken: string } }).data
+          .accessToken
+      ).toBe('user-a')
+      expect(artifact.status).toBe(200)
+    })
   })
 })
