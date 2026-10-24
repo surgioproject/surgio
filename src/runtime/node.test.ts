@@ -206,6 +206,49 @@ describe('Node Surgio runtime', () => {
     await runtime.close()
   })
 
+  test('每次渲染使用请求自带的 accessToken，缓存命中也不串用', async () => {
+    const project = await loadSurgioProject(fixture)
+    const runtime = createNodeSurgioRuntime(
+      {
+        ...project,
+        providers: {
+          demo: { type: SupportProviderEnum.Custom, nodeList: [] },
+        },
+        config: {
+          ...project.config,
+          gateway: { passRequestHeaders: [], viewerToken: 'config-viewer' },
+          artifacts: [
+            {
+              name: 'links',
+              provider: 'demo',
+              template: '',
+              templateType: 'default' as const,
+              templateString: "{{ getDownloadUrl('a.conf') }}",
+            },
+          ],
+        },
+      },
+      { cache: new TtlCache({ store: new MemoryStore() }) },
+    )
+    const bodyFor = async (accessToken: string) =>
+      (await runtime.renderArtifact('links', { accessToken })).body
+
+    try {
+      for (let round = 0; round < 2; round++) {
+        const bodyA = await bodyFor('user-a')
+        const bodyB = await bodyFor('user-b')
+
+        expect(bodyA).toContain('access_token=user-a')
+        expect(bodyA).not.toContain('user-b')
+        expect(bodyA).not.toContain('config-viewer')
+        expect(bodyB).toContain('access_token=user-b')
+        expect(bodyB).not.toContain('user-a')
+      }
+    } finally {
+      await runtime.close()
+    }
+  })
+
   test('routes formatter warnings to the injected logger', async () => {
     const project = await loadSurgioProject(fixture)
     const warn = vi.fn()
