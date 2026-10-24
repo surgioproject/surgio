@@ -3,6 +3,9 @@
     "version": {
       "conventionalCommits": true,
       "message": "chore(release): new release"
+    },
+    "publish": {
+      "ignoreScripts": true
     }
   },
   "ignoreChanges": [

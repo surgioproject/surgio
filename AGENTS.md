@@ -94,6 +94,8 @@ pnpm release:beta
 
 - 版本号和 CHANGELOG 由 `lerna version` 生成，tag 格式为 `<包名>@<版本>`，例如 `surgio@4.0.0` 和 `@surgio/gateway@3.0.0`
 - 每个包的测试目录、fixture 和 Markdown 变更不会触发版本升级，规则见 `lerna.json` 的 `ignoreChanges`
+- release 脚本在 `lerna version` 之后执行 `pnpm build`，`lerna publish` 配置了 `ignoreScripts`。lerna 发布时会把 `workspace:*` 改写为尚未发布的精确版本，此时运行 pnpm 脚本会触发依赖安装并失败，因此不要重新加入 root 的 `prepublishOnly`
+- `pnpm-lock.yaml` 和 `CHANGELOG.md` 列在 `.prettierignore` 中，防止 `lerna version` 用 prettier 重排这两类文件
 - surgio 的 README 和 LICENSE 在 `packages/surgio` 中各有一份副本，修改根目录版本时需要同步
 
 ## 高层架构

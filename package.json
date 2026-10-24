@@ -23,11 +23,10 @@
     "docs:dev": "pnpm --dir website start",
     "docs:build": "pnpm --dir website build",
     "docs:typecheck": "pnpm --dir website typecheck",
-    "prepublishOnly": "turbo run build --filter=./packages/*",
     "lerna": "lerna",
     "prepare": "husky",
-    "release": "lerna version && lerna publish from-git",
-    "release:beta": "lerna version --conventional-prerelease --preid beta && lerna publish from-git --dist-tag beta"
+    "release": "lerna version && pnpm build && lerna publish from-git",
+    "release:beta": "lerna version --conventional-prerelease --preid beta && pnpm build && lerna publish from-git --dist-tag beta"
   },
   "devDependencies": {
     "@commitlint/cli": "^21.2.2",
