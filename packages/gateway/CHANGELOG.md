@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.0.0-beta.5](https://github.com/surgioproject/surgio/compare/%40surgio%2Fgateway%403.0.0-beta.4...%40surgio%2Fgateway%403.0.0-beta.5) (2026-10-24)
+
+### Bug Fixes
+
+* **gateway:** accept surgio 4.0 prereleases as peer ([036f750](https://github.com/surgioproject/surgio/commit/036f7500662afff559765b2937dffff1d875e0fa))
+
+
 # [3.0.0-beta.4](https://github.com/surgioproject/surgio/compare/%40surgio%2Fgateway%403.0.0-beta.3...%40surgio%2Fgateway%403.0.0-beta.4) (2026-10-24)
 
 ### Bug Fixes
