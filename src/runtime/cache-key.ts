@@ -103,6 +103,7 @@ export const buildRenderedArtifactCacheKey = (
   }
 
   const payload = sortObjectKeys({
+    accessToken: options.accessToken,
     artifact: artifact.name,
     downloadUrl:
       options.downloadUrl === undefined

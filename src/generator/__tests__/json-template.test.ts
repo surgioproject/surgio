@@ -266,3 +266,62 @@ test('extendRoute with getSingboxRules - end to end', () => {
     expect.stringContaining('USER-AGENT'),
   )
 })
+
+type RenderContextConfig = Parameters<
+  typeof createArtifactRenderContext
+>[0]['config']
+
+const buildContext = (
+  overrides: {
+    gateway?: Partial<NonNullable<RenderContextConfig['gateway']>>
+    accessToken?: string
+  } = {},
+) =>
+  createArtifactRenderContext({
+    artifact: { name: 'clash.yaml', provider: 'demo' } as ArtifactConfig,
+    config: {
+      urlBase: 'https://example.com/',
+      publicUrl: 'https://example.com/',
+      gateway: overrides.gateway,
+    } as unknown as RenderContextConfig,
+    nodeList: [],
+    mainProvider: { config: {} } as any,
+    customFilters: {},
+    customParams: {},
+    loadSnippet: () => {
+      throw new Error('not used')
+    },
+    logger: { warn: vi.fn() } as unknown as Logger,
+    accessToken: overrides.accessToken,
+  })
+
+test('渲染参数 accessToken 优先于配置 token', () => {
+  const ctx = buildContext({
+    gateway: { accessToken: 'admin', viewerToken: 'viewer' },
+    accessToken: 'user-a',
+  })
+
+  expect(ctx.getDownloadUrl('a.conf')).toContain('access_token=user-a')
+  expect(ctx.getUrl('/x')).toContain('access_token=user-a')
+  expect(ctx.downloadUrl).toContain('access_token=user-a')
+})
+
+test('未传 accessToken 时保持 viewerToken ?? accessToken', () => {
+  const ctx = buildContext({
+    gateway: { accessToken: 'admin', viewerToken: 'viewer' },
+  })
+
+  expect(ctx.getDownloadUrl('a.conf')).toContain('access_token=viewer')
+})
+
+test('配置 authProvider 时 generate 使用 accessToken', () => {
+  const ctx = buildContext({
+    gateway: {
+      auth: true,
+      accessToken: 'admin',
+      authProvider: async () => ({ success: false }),
+    },
+  })
+
+  expect(ctx.getDownloadUrl('a.conf')).toContain('access_token=admin')
+})

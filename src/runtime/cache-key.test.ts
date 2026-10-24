@@ -109,3 +109,10 @@ test('node 与 worker 使用同一份摘要，只有 scope 前缀不同', () => 
   expect(node.key).toBe(`rendered-artifact:node-runtime:${node.key.slice(-32)}`)
   expect(worker.key).toBe(`rendered-artifact:worker:${node.key.slice(-32)}`)
 })
+
+test('accessToken 参与缓存 key', () => {
+  expect(keyOf({ accessToken: 'user-a' })).not.toBe(
+    keyOf({ accessToken: 'user-b' }),
+  )
+  expect(keyOf({})).toBe(keyOf({ accessToken: undefined }))
+})

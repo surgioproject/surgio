@@ -199,6 +199,7 @@ export const createRuntimeCore = (
         logger,
       }),
       downloadUrl: renderOptions.downloadUrl,
+      accessToken: renderOptions.accessToken,
       loadSnippet: platform.loadSnippet,
       logger,
     })

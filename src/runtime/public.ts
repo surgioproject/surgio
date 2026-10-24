@@ -22,6 +22,7 @@ export type ProviderFormat =
   | 'v2rayn'
 
 export interface RenderArtifactOptions {
+  readonly accessToken?: string
   readonly customParams?: Readonly<Record<string, unknown>>
   readonly downloadUrl?: string
   readonly filter?: string | NodeFilterType | SortedNodeFilterType

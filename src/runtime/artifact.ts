@@ -285,6 +285,7 @@ export const createArtifactRenderContext = (options: {
   readonly remoteSnippetList?: ReadonlyArray<RemoteSnippet>
   readonly loadSnippet: (name: string) => RemoteSnippet
   readonly downloadUrl?: string
+  readonly accessToken?: string
   readonly logger: Logger
 }) => {
   const {
@@ -297,6 +298,7 @@ export const createArtifactRenderContext = (options: {
     remoteSnippetList = [],
     loadSnippet,
     downloadUrl,
+    accessToken,
     logger,
   } = options
   const formatterOptions = { logger }
@@ -345,7 +347,7 @@ export const createArtifactRenderContext = (options: {
         )
   }
   const gatewayToken =
-    config.gateway?.viewerToken ?? config.gateway?.accessToken
+    accessToken ?? config.gateway?.viewerToken ?? config.gateway?.accessToken
   const onUnsupportedSingboxRule = (line: string, reason: string): void => {
     logger.warn('sing-box 不支持的规则已忽略：%s (%s)', line, reason)
   }
