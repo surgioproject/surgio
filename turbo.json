@@ -6,15 +6,18 @@
       "outputs": ["dist/**", "build/**"]
     },
     "test": {
+      "dependsOn": ["^build"],
       "outputs": []
     },
     "test:cov": {
+      "dependsOn": ["^build"],
       "outputs": ["coverage/**"]
     },
     "test:e2e": {
       "outputs": []
     },
     "lint": {
+      "dependsOn": ["^build"],
       "outputs": []
     }
   }

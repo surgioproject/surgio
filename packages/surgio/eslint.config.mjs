@@ -1,3 +1,5 @@
+import { join } from 'node:path'
+
 import eslint from '@eslint/js'
 import tseslint from 'typescript-eslint'
 import importPlugin from 'eslint-plugin-import-x'
@@ -5,15 +7,14 @@ import prettierConfig from 'eslint-config-prettier'
 import prettierPlugin from 'eslint-plugin-prettier'
 import globals from 'globals'
 
+const tsconfigPath = join(import.meta.dirname, 'tsconfig.eslint.json')
+
 export default tseslint.config(
   // Global ignores (replaces .eslintignore)
   {
     ignores: [
       'build/**',
       'test/asset/**',
-      'docs/.vuepress/dist/**',
-      'website/.docusaurus/**',
-      'website/build/**',
       'coverage/**',
       'node_modules/**',
       '.surgio/**',
@@ -22,10 +23,13 @@ export default tseslint.config(
       // Root-level re-export files
       '*.js',
       '*.d.ts',
-      // Config files at root
-      '.prettierrc.js',
-      'bump.config.ts',
     ],
+  },
+
+  {
+    languageOptions: {
+      parserOptions: { tsconfigRootDir: import.meta.dirname },
+    },
   },
 
   // Base configs
@@ -43,7 +47,7 @@ export default tseslint.config(
         ...globals.es2021,
       },
       parserOptions: {
-        project: './tsconfig.eslint.json',
+        project: tsconfigPath,
       },
     },
     plugins: {
@@ -54,7 +58,7 @@ export default tseslint.config(
       'import-x/resolver': {
         typescript: {
           alwaysTryTypes: true,
-          project: './tsconfig.eslint.json',
+          project: tsconfigPath,
         },
         node: true,
       },
@@ -100,7 +104,7 @@ export default tseslint.config(
         ...globals.es2021,
       },
       parserOptions: {
-        project: './tsconfig.eslint.json',
+        project: tsconfigPath,
       },
     },
     plugins: {
@@ -111,7 +115,7 @@ export default tseslint.config(
       'import-x/resolver': {
         typescript: {
           alwaysTryTypes: true,
-          project: './tsconfig.eslint.json',
+          project: tsconfigPath,
         },
         node: true,
       },
@@ -157,7 +161,7 @@ export default tseslint.config(
         ...globals.es2021,
       },
       parserOptions: {
-        project: './tsconfig.eslint.json',
+        project: tsconfigPath,
       },
     },
     plugins: {
@@ -168,7 +172,7 @@ export default tseslint.config(
       'import-x/resolver': {
         typescript: {
           alwaysTryTypes: true,
-          project: './tsconfig.eslint.json',
+          project: tsconfigPath,
         },
         node: true,
       },

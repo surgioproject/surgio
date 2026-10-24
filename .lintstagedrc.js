@@ -1,3 +1,4 @@
 export default {
-  '*.{ts,tsx}': (files) => 'eslint --max-warnings=0 ' + files.join(' '),
+  '*.{js,jsx,ts,tsx}': (files) =>
+    'eslint --fix --max-warnings=0 --no-warn-ignored ' + files.join(' '),
 }

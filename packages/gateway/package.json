@@ -30,7 +30,11 @@
       "default": "./dist/lambda.js"
     }
   },
-  "repository": "https://github.com/surgioproject/packages/tree/master/packages/gateway",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/surgioproject/surgio",
+    "directory": "packages/gateway"
+  },
   "author": "Roy Li <me@royli.dev>",
   "bugs": {
     "url": "https://github.com/surgioproject/surgio/issues"
@@ -69,7 +73,8 @@
     "nock": "^14.0.17",
     "sinon": "^22.1.0",
     "supertest": "^7.2.2",
-    "tsconfig-paths": "^4.2.0"
+    "tsconfig-paths": "^4.2.0",
+    "surgio": "workspace:*"
   },
   "peerDependencies": {
     "surgio": "^4.0.0"
@@ -82,6 +87,5 @@
   },
   "engines": {
     "node": ">=22.22.2"
-  },
-  "gitHead": "da96fe077b24097d0a721392bd32ec4a88ac2ee0"
+  }
 }

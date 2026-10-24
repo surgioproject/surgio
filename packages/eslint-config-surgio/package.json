@@ -17,7 +17,11 @@
     },
     "./*": "./*"
   },
-  "repository": "https://github.com/surgioproject/packages/tree/master/packages/eslint-config-surgio",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/surgioproject/surgio",
+    "directory": "packages/eslint-config-surgio"
+  },
   "author": "Roy Li <me@royli.dev>",
   "bugs": {
     "url": "https://github.com/surgioproject/surgio/issues"

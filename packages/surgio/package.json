@@ -108,7 +108,11 @@
   "bin": {
     "surgio": "bin/run"
   },
-  "repository": "https://github.com/geekdada/surgio",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/surgioproject/surgio",
+    "directory": "packages/surgio"
+  },
   "author": "Roy Li <me@royli.dev>",
   "license": "MIT",
   "files": [
@@ -116,14 +120,13 @@
     "build"
   ],
   "bugs": {
-    "url": "https://github.com/geekdada/surgio/issues"
+    "url": "https://github.com/surgioproject/surgio/issues"
   },
   "homepage": "https://surgio.js.org",
   "scripts": {
     "dev": "pnpm run build --watch",
-    "test": "run-s build test:types test:lint test:examples test:unit test:cli",
+    "test": "run-s build test:types lint test:examples test:unit test:cli",
     "test:types": "tsc --noEmit && tsc --noEmit -p test/fixture/typescript-consumer/tsconfig.json",
-    "test:lint": "eslint .",
     "test:examples": "tsc --noEmit -p examples/tsconfig.json && node ./bin/run lint --project ./examples/clash-remote-snippet && node ./bin/run lint --project ./examples/hooks && node ./bin/run lint --project ./examples/quantumultx",
     "test:unit": "vitest run",
     "test:worker": "pnpm run build && pnpm run worker:manifest && pnpm run test:worker:types && vitest run --config test/fixture/worker/vitest.config.ts",
@@ -131,19 +134,13 @@
     "test:cli": "vitest run --config vitest.cli.config.ts",
     "test:cli:update": "vitest run --config vitest.cli.config.ts --update",
     "run-example": "node ./scripts/run-example.js",
-    "coverage": "vitest run --coverage",
     "clean": "pnpm run build --clean",
     "build": "tsc --build tsconfig.build.json",
     "worker:manifest": "node -e \"import('./build/worker/build.js').then(({ buildWorkerManifest }) => buildWorkerManifest({ configFile: 'test/fixture/worker/surgio.project.ts', outfile: 'test/fixture/worker/.surgio/worker-manifest.mjs' }))\"",
     "worker:dry-run": "pnpm run build && pnpm run worker:manifest && node -e \"import('node:fs/promises').then(({ mkdir }) => mkdir('.surgio/dist', { recursive: true }))\" && wrangler deploy --dry-run --config test/fixture/worker/wrangler.jsonc --outfile .surgio/dist/worker.js --metafile .surgio/dist/meta.json",
     "prepublishOnly": "pnpm run clean && pnpm run build",
-    "changelog": "conventional-changelog -p angular -i CHANGELOG.md -s -r 0",
-    "prepare": "husky",
-    "docs:dev": "pnpm --dir website start",
-    "docs:build": "pnpm --dir website build",
-    "docs:typecheck": "pnpm --dir website typecheck",
-    "release": "bumpp && pnpm publish",
-    "release:beta": "bumpp --preid beta --no-push && pnpm publish --tag beta"
+    "lint": "eslint .",
+    "test:cov": "vitest run --coverage"
   },
   "oclif": {
     "bin": "surgio",
@@ -167,8 +164,8 @@
     "@keyv/serialize": "^1.1.1",
     "@oclif/core": "^5.0.0",
     "@oclif/plugin-help": "^7.0.0",
-    "@surgio/eslint-config-surgio": "3.0.0-beta.0",
-    "@surgio/logger": "2.0.0-beta.0",
+    "@surgio/eslint-config-surgio": "workspace:*",
+    "@surgio/logger": "workspace:*",
     "@upstash/redis": "^1.38.2",
     "bytes": "^3.1.2",
     "chalk": "^6.0.0",
@@ -206,8 +203,6 @@
   },
   "devDependencies": {
     "@cloudflare/vitest-pool-workers": "^0.21.3",
-    "@commitlint/cli": "^21.2.2",
-    "@commitlint/config-angular": "^21.2.2",
     "@eslint/js": "^10.0.1",
     "@oclif/test": "^5.0.0",
     "@types/bytes": "^3.1.5",
@@ -226,18 +221,13 @@
     "@typescript/native": "npm:typescript@7.0.2",
     "@vitest/coverage-istanbul": "^4.1.10",
     "benchmark": "^2.1.4",
-    "bumpp": "^12.2.1",
-    "conventional-changelog": "^8.1.3",
     "eslint-config-prettier": "^10.1.5",
     "eslint-import-resolver-typescript": "^4.4.5",
     "eslint-plugin-import-x": "^4.17.1",
     "eslint-plugin-prettier": "^5.5.6",
     "globals": "^17.11.0",
-    "husky": "^9.1.7",
     "ini": "^7.0.0",
-    "lint-staged": "^17.3.0",
     "nock": "^14.0.17",
-    "npm-debug-log-cleaner": "^1.0.3",
     "npm-run-all": "^4.1.5",
     "prettier": "^3.9.6",
     "ts-node": "^10.9.2",
@@ -248,10 +238,6 @@
   "engines": {
     "node": ">=22.22.2"
   },
-  "packageManager": "pnpm@11.21.0+sha512.521705bce689924eac72f5a3587122f362689ef6571e55ba80076fd637c11132ecffada26fad4ea79c485bfddbfd3d5a2a5b05805a77e893de71ec8a6cca3bb1",
-  "lint-staged": {
-    "*.{js,jsx,ts,tsx}": "eslint --fix"
-  },
   "keywords": [
     "surgio",
     "surge",
@@ -260,5 +246,8 @@
     "mihomo",
     "singbox",
     "shadowrocket"
-  ]
+  ],
+  "publishConfig": {
+    "access": "public"
+  }
 }

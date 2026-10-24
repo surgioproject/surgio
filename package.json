@@ -1,20 +1,29 @@
 {
-  "name": "@surgio/packages-monorepo",
+  "name": "surgio-monorepo",
   "version": "0.0.0",
   "private": true,
   "type": "module",
   "license": "MIT",
   "scripts": {
-    "test": "turbo run test",
-    "build": "turbo run build",
-    "lint": "turbo run lint",
-    "coverage": "turbo run test:cov",
-    "test:e2e": "pnpm --filter @surgio/gateway test:e2e",
-    "test:types": "run-s test:types:ts6 test:types:ts7",
+    "build": "turbo run build --filter=./packages/*",
+    "dev": "pnpm --filter surgio dev",
+    "test": "turbo run test --filter=./packages/*",
+    "lint": "turbo run lint --filter=./packages/*",
+    "coverage": "turbo run test:cov --filter=./packages/*",
+    "test:types": "run-s test:types:surgio test:types:ts6 test:types:ts7",
+    "test:types:surgio": "pnpm --filter surgio test:types",
     "test:types:ts6": "tsc6 -b --noEmit",
     "test:types:ts7": "tsc -b --noEmit",
+    "test:cli": "pnpm --filter surgio test:cli",
+    "test:examples": "pnpm --filter surgio test:examples",
+    "test:worker": "pnpm --filter surgio test:worker",
+    "test:e2e": "pnpm --filter @surgio/gateway test:e2e",
     "test:package-output": "vitest run --config vitest.package-output.config.mts",
-    "prepublishOnly": "turbo run build",
+    "run-example": "pnpm --filter surgio run-example",
+    "docs:dev": "pnpm --dir website start",
+    "docs:build": "pnpm --dir website build",
+    "docs:typecheck": "pnpm --dir website typecheck",
+    "prepublishOnly": "turbo run build --filter=./packages/*",
     "lerna": "lerna",
     "prepare": "husky",
     "release": "lerna version && lerna publish from-git",
@@ -40,13 +49,12 @@
     "npm-run-all": "^4.1.5",
     "prettier": "^3.9.6",
     "rimraf": "^6.1.3",
-    "surgio": "4.0.0-beta.7",
     "turbo": "^2.10.10",
     "typescript": "npm:@typescript/typescript6@6.0.2",
     "typescript-eslint": "^8.67.0",
     "vitest": "^4.1.10"
   },
-  "repository": "https://github.com/surgioproject/packages",
+  "repository": "https://github.com/surgioproject/surgio",
   "author": "Roy Li <me@royli.dev>",
   "bugs": {
     "url": "https://github.com/surgioproject/surgio/issues"
@@ -54,11 +62,6 @@
   "homepage": "https://surgio.js.org",
   "engines": {
     "node": ">=22.22.2"
-  },
-  "workspaces": {
-    "packages": [
-      "packages/*"
-    ]
   },
   "packageManager": "pnpm@11.22.0+sha512.1ff870c4c6133dfd88fb2afc46dd13d47f09c9794b438c6fdb47ca98caf3bc16381ee0be93a091b8e3824cf01f889f46d7d9e20910fb0be1ab0fb5baa80dd621"
 }

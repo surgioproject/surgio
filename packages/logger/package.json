@@ -4,7 +4,11 @@
   "type": "module",
   "description": "Logger helper for Surgio projects",
   "homepage": "https://surgio.js.org",
-  "repository": "https://github.com/surgioproject/packages/tree/master/packages/logger",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/surgioproject/surgio",
+    "directory": "packages/logger"
+  },
   "author": "Roy Li <me@royli.dev>",
   "bugs": {
     "url": "https://github.com/surgioproject/surgio/issues"
@@ -43,6 +47,5 @@
   },
   "engines": {
     "node": ">=22.22.2"
-  },
-  "gitHead": "7af70e94964c379d9cf7dc6057ac2c0f161a0790"
+  }
 }

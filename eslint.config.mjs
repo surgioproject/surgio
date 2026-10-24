@@ -7,7 +7,13 @@ import {
 
 export default tseslint.config(
   {
-    ignores: ['node_modules/**', 'dist/**', 'build/**'],
+    ignores: [
+      'node_modules/**',
+      'dist/**',
+      'build/**',
+      'website/**',
+      'docs/**',
+    ],
   },
   eslint.configs.recommended,
   ...tseslint.configs.recommended,

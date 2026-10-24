@@ -31,17 +31,24 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
-      - name: test, report coverage
+      - name: Build and test
         run: |
           pnpm build
           pnpm test:types
-          pnpm test:lint
+          pnpm lint
+          pnpm test:examples
           pnpm test:cli
+          pnpm test:package-output
           pnpm coverage
+          pnpm test:e2e
           pnpm docs:typecheck
           pnpm docs:build
 
-      - uses: codecov/codecov-action@v1
-        if: success() && matrix.os == 'ubuntu-latest'
+      - name: Upload coverage
+        uses: codecov/codecov-action@v5
+        if: success() && matrix.os == 'ubuntu-latest' && matrix.node-version == 22
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
+          files: packages/surgio/coverage/lcov.info,packages/gateway/coverage/lcov.info,packages/gateway-frontend/coverage/lcov.info,packages/logger/coverage/lcov.info
+          disable_search: true
+          fail_ci_if_error: true

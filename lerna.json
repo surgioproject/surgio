@@ -10,9 +10,10 @@
     "**/__tests__/**",
     "**/*.spec.ts",
     "**/*.test.ts",
-    "**/*.md"
+    "**/*.md",
+    "packages/surgio/test/**",
+    "packages/surgio/examples/**"
   ],
-  "packages": ["packages/*"],
   "version": "independent",
   "npmClient": "pnpm"
 }
