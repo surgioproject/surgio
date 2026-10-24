@@ -1,0 +1,5 @@
+# China Apps
+USER-AGENT,MicroMessenger Client
+USER-AGENT,WeChat*
+USER-AGENT,MApi* // Dianping
+IP-CIDR,149.154.164.0/22,no-resolve // Telegram

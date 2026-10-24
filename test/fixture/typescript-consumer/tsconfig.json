@@ -1,11 +1,21 @@
 {
-  "extends": "../../../tsconfig.json",
   "compilerOptions": {
-    "composite": false,
-    "noEmit": true
+    "target": "ES2022",
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
+    "strict": true,
+    "noEmit": true,
+    "skipLibCheck": true,
+    "paths": {
+      "@surgio/gateway": ["../../../packages/gateway/dist/index.d.ts"],
+      "@surgio/gateway/lambda": ["../../../packages/gateway/dist/lambda.d.ts"],
+      "@surgio/gateway/node": ["../../../packages/gateway/dist/node.d.ts"],
+      "@surgio/gateway-frontend": [
+        "../../../packages/gateway-frontend/index.d.ts"
+      ],
+      "@surgio/logger": ["../../../packages/logger/dist/index.d.ts"]
+    },
+    "types": ["node"]
   },
-  "files": [
-    "index.ts"
-  ],
-  "include": []
+  "files": ["index.ts"]
 }

@@ -5,9 +5,11 @@ Thumbs.db
 # Logs
 *.log
 npm-debug.log*
+lerna-debug.log*
 yarn-debug.log*
 yarn-error.log*
 pnpm-debug.log*
+lerna-debug.log*
 
 # Environment
 .env
@@ -18,19 +20,20 @@ pnpm-debug.log*
 node_modules/
 
 # Build outputs
-/dist/
-/build/
+dist/
+packages/surgio/build/
+packages/gateway-frontend/build/
+packages/gateway/public/
 /binary-build/
-/.surgio/
+.surgio/
+.turbo/
 *.tsbuildinfo
 .buildinfo
 
 # Test & Coverage
 .nyc_output
 coverage/
-/test/fixture/**/dist
-/test/fixture/**/.surgio
-/test/benchmark/playground.js
+packages/surgio/test/benchmark/playground.js
 
 # IDE
 .idea/
@@ -44,8 +47,6 @@ coverage/
 /website/.docusaurus
 /website/build
 
-# Examples
-/examples/**/dist
 
 # Misc
 *.tgz

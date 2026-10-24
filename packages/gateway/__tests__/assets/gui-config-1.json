@@ -1,0 +1,81 @@
+{
+  "autoCheckUpdate": true,
+  "availabilityStatistics": false,
+  "checkPreRelease": false,
+  "configs": [
+    {
+      "method": "chacha20-ietf-poly1305",
+      "password": "password",
+      "plugin": "obfs-local",
+      "plugin_opts": "obfs=tls;obfs-host=gateway-carry.icloud.com",
+      "remarks": "🇺🇸US 1",
+      "server": "us.example.com",
+      "server_port": 443,
+      "timeout": 5
+    },
+    {
+      "method": "chacha20-ietf-poly1305",
+      "password": "password",
+      "remarks": "🇺🇸US 2",
+      "server": "us.example.com",
+      "server_port": 444,
+      "timeout": 5
+    },
+    {
+      "method": "chacha20-ietf-poly1305",
+      "password": "password",
+      "plugin": "obfs-local",
+      "plugin_opts": "obfs=tls",
+      "remarks": "🇺🇸US 3",
+      "server": "us.example.com",
+      "server_port": 445,
+      "timeout": 5
+    },
+    {
+      "method": "chacha20-ietf-poly1305",
+      "password": "password",
+      "plugin": "obfs-local",
+      "plugin_opts": "obfs=http",
+      "remarks": "🇺🇸US 4",
+      "server": "us.example.com",
+      "server_port": 80,
+      "timeout": 5
+    }
+  ],
+  "enabled": true,
+  "global": false,
+  "hotkey": {
+    "RegHotkeysAtStartup": false,
+    "ServerMoveDown": "",
+    "ServerMoveUp": "",
+    "ShowLogs": "",
+    "SwitchAllowLan": "",
+    "SwitchSystemProxy": "",
+    "SwitchSystemProxyMode": ""
+  },
+  "index": 0,
+  "isDefault": false,
+  "isVerboseLogging": false,
+  "localPort": 1080,
+  "logViewer": {
+    "BackgroundColor": "Black",
+    "Font": "Consolas, 8pt",
+    "TextColor": "White",
+    "toolbarShown": false,
+    "topMost": false,
+    "wrapText": false
+  },
+  "pacUrl": null,
+  "portableMode": true,
+  "proxy": {
+    "proxyPort": 0,
+    "proxyServer": "",
+    "proxyTimeout": 3,
+    "proxyType": 0,
+    "useProxy": false
+  },
+  "secureLocalPac": true,
+  "shareOverLan": false,
+  "strategy": null,
+  "useOnlinePac": false
+}

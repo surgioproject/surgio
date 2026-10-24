@@ -1,0 +1,19 @@
+{
+  "command": {
+    "version": {
+      "conventionalCommits": true,
+      "message": "chore(release): new release"
+    }
+  },
+  "ignoreChanges": [
+    "**/__fixtures__/**",
+    "**/__tests__/**",
+    "**/*.spec.ts",
+    "**/*.test.ts",
+    "**/*.md",
+    "packages/surgio/test/**",
+    "packages/surgio/examples/**"
+  ],
+  "version": "independent",
+  "npmClient": "pnpm"
+}

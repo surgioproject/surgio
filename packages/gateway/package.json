@@ -1,0 +1,91 @@
+{
+  "name": "@surgio/gateway",
+  "description": "Surgio API Gateway 面板",
+  "private": false,
+  "license": "MIT",
+  "version": "3.0.0-beta.3",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "module-sync": "./dist/index.js",
+      "default": "./dist/index.js"
+    },
+    "./node": {
+      "types": "./dist/node.d.ts",
+      "default": "./dist/node.js"
+    },
+    "./worker": {
+      "types": "./dist/worker.d.ts",
+      "default": "./dist/worker.js"
+    },
+    "./worker/build": {
+      "types": "./dist/worker-build.d.ts",
+      "default": "./dist/worker-build.js"
+    },
+    "./lambda": {
+      "types": "./dist/lambda.d.ts",
+      "default": "./dist/lambda.js"
+    }
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/surgioproject/surgio",
+    "directory": "packages/gateway"
+  },
+  "author": "Roy Li <me@royli.dev>",
+  "bugs": {
+    "url": "https://github.com/surgioproject/surgio/issues"
+  },
+  "homepage": "https://surgio.js.org",
+  "scripts": {
+    "prebuild": "rimraf dist *.tsbuildinfo",
+    "build": "tsc -b tsconfig.build.json",
+    "start": "node dist/main.js",
+    "start:prod": "node dist/main",
+    "dev": "run-s build dev:watch",
+    "dev:watch": "run-p dev:tsc dev:node",
+    "dev:tsc": "tsc -b tsconfig.build.json --watch --preserveWatchOutput",
+    "dev:node": "SURGIO_PROJECT_DIR=\"${SURGIO_PROJECT_DIR:-__tests__/__fixtures__/gateway}\" node --watch --watch-preserve-output dist/main.js",
+    "debug": "node --inspect dist/main.js",
+    "lint": "eslint .",
+    "test": "run-s test:ci",
+    "test:unit": "vitest run",
+    "test:e2e": "vitest run --config vitest.e2e.config.mts",
+    "test:watch": "vitest",
+    "test:cov": "vitest run --coverage",
+    "test:debug": "vitest --inspect-brk --no-file-parallelism",
+    "test:ci": "run-s test:unit test:e2e"
+  },
+  "dependencies": {
+    "@hono/node-server": "^2.1.1",
+    "@surgio/gateway-frontend": "workspace:*",
+    "@surgio/logger": "workspace:*",
+    "date-fns": "^4.4.0",
+    "filesize": "^11.0.23",
+    "hono": "^4.12.3"
+  },
+  "devDependencies": {
+    "@types/supertest": "^7.2.1",
+    "esbuild": "^0.28.1",
+    "nock": "^14.0.17",
+    "sinon": "^22.1.0",
+    "supertest": "^7.2.2",
+    "tsconfig-paths": "^4.2.0",
+    "surgio": "workspace:*"
+  },
+  "peerDependencies": {
+    "surgio": "^4.0.0"
+  },
+  "files": [
+    "dist"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
+  "engines": {
+    "node": ">=22.22.2"
+  }
+}

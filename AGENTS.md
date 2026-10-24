@@ -6,35 +6,65 @@ This file provides guidance to coding agents when working with code in this repo
 
 Surgio 是一个用于生成代理工具配置文件的 Node.js 命令行工具，支持 Surge、Clash、Quantumult X、sing-box 等多种代理客户端。项目使用 TypeScript 编写，基于 oclif 框架构建 CLI 工具。
 
+本仓库是 pnpm workspace monorepo，由 Turbo 编排构建，Lerna 以 independent 模式管理版本：
+
+| 目录 | npm 包 | 说明 |
+| --- | --- | --- |
+| `packages/surgio` | `surgio` | CLI 与核心库 |
+| `packages/gateway` | `@surgio/gateway` | 基于 Hono 的 API Gateway，见该目录的 AGENTS.md |
+| `packages/gateway-frontend` | `@surgio/gateway-frontend` | Gateway 前端，见该目录的 AGENTS.md |
+| `packages/logger` | `@surgio/logger` | 跨运行时 logger，见该目录的 AGENTS.md |
+| `packages/eslint-config-surgio` | `@surgio/eslint-config-surgio` | 配置仓库使用的 ESLint 配置 |
+
+包之间使用 `workspace:*` 互相依赖，发布时替换为实际版本号。`website` 也是 workspace 成员，但它是私有包，不参与发布。
+
 ## 常用命令
 
-### 开发相关
+### 仓库根目录
+
+```bash
+# 构建所有包 (按依赖顺序)
+pnpm build
+
+# 运行所有包的测试
+pnpm test
+
+# 类型检查 (surgio + TypeScript 6/7 solution)
+pnpm test:types
+
+# ESLint 检查
+pnpm lint
+
+# 运行所有包的测试覆盖率
+pnpm coverage
+
+# surgio CLI 测试、示例检查和 Worker 集成测试
+pnpm test:cli
+pnpm test:examples
+pnpm test:worker
+
+# Gateway e2e 测试
+pnpm test:e2e
+
+# 校验各个包的发布内容
+pnpm test:package-output
+
+# 文档站点
+pnpm docs:dev
+pnpm docs:build
+
+# 运行示例
+pnpm run-example <name>
+```
+
+### surgio 包 (在 `packages/surgio` 目录执行)
 
 ```bash
 # 开发模式 (构建并监听文件变化)
 pnpm dev
 
-# 构建项目
-pnpm build
-
 # 清理构建文件
 pnpm clean
-
-# 准备发布 (清理 + 构建)
-pnpm prepublishOnly
-```
-
-### 测试相关
-
-```bash
-# 运行所有测试
-pnpm test
-
-# 运行类型检查
-pnpm test:types
-
-# 运行 ESLint 检查
-pnpm test:lint
 
 # 运行单元测试 (使用 Vitest)
 pnpm test:unit
@@ -42,17 +72,8 @@ pnpm test:unit
 # 运行单个测试文件
 pnpm vitest run src/path/to/test.test.ts
 
-# 运行 CLI 测试 (使用 Vitest)
-pnpm test:cli
-
 # 更新 CLI 测试快照
 pnpm test:cli:update
-
-# 运行测试覆盖率
-pnpm coverage
-
-# 在真实 workerd 环境中运行 Worker 集成测试
-pnpm test:worker
 
 # 生成 Worker manifest
 pnpm worker:manifest
@@ -61,38 +82,28 @@ pnpm worker:manifest
 pnpm worker:dry-run
 ```
 
-### 文档相关
+### 发布
 
 ```bash
-# 开发模式启动文档站点
-pnpm docs:dev
-
-# 构建文档站点
-pnpm docs:build
-```
-
-### 其他
-
-```bash
-# 运行示例
-pnpm run-example
-
-# 生成变更日志
-pnpm changelog
-
-# 发布新版本
+# 根据 conventional commits 为有变更的包分别升级版本、打 tag 并发布
 pnpm release
 
 # 发布 beta 版本
 pnpm release:beta
 ```
 
+- 版本号和 CHANGELOG 由 `lerna version` 生成，tag 格式为 `<包名>@<版本>`，例如 `surgio@4.0.0` 和 `@surgio/gateway@3.0.0`
+- 每个包的测试目录、fixture 和 Markdown 变更不会触发版本升级，规则见 `lerna.json` 的 `ignoreChanges`
+- surgio 的 README 和 LICENSE 在 `packages/surgio` 中各有一份副本，修改根目录版本时需要同步
+
 ## 高层架构
 
 ### 核心架构概览
 
+以下路径均相对于 `packages/surgio`，`docs/` 和 `website/` 位于仓库根目录。
+
 ```
-surgio/
+packages/surgio/
 ├── src/                    # 源代码目录
 │   ├── commands/          # CLI 命令实现 (基于 oclif)
 │   ├── provider/          # 数据提供者 (支持各种订阅格式)
@@ -105,8 +116,6 @@ surgio/
 │   ├── filters/           # 节点过滤器
 │   ├── validators/        # 数据验证器 (基于 zod)
 │   └── constant/          # 常量定义
-├── docs/                  # 文档内容 (Markdown/MDX)
-├── website/               # 文档站点 (Docusaurus)，静态资源位于 website/static/
 ├── examples/              # 使用示例
 └── test/                  # 测试文件
 ```

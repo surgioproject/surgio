@@ -1,153 +1,235 @@
-import { expect, test } from 'vitest'
-import fs from 'fs-extra'
-import path from 'path'
+import { execFileSync } from 'node:child_process'
+import { existsSync, readFileSync } from 'node:fs'
 import { createRequire } from 'node:module'
-import { fileURLToPath } from 'node:url'
+import { resolve } from 'node:path'
+import { pathToFileURL } from 'node:url'
+import { JSDOM } from 'jsdom'
+import { describe, expect, test } from 'vitest'
 
-const projectRoot = fileURLToPath(new URL('..', import.meta.url))
-const requireModule = createRequire(import.meta.url)
+const repositoryRoot = resolve(import.meta.dirname, '..')
 
-const listFiles = (directory: string): string[] =>
-  fs.readdirSync(directory, { withFileTypes: true }).flatMap((entry) => {
-    const entryPath = path.join(directory, entry.name)
+type PackFile = {
+  path: string
+}
 
-    return entry.isDirectory() ? listFiles(entryPath) : entryPath
+type PackResult = {
+  files: PackFile[]
+}
+
+type PackageManifest = {
+  dependencies?: Record<string, string>
+  name: string
+  type: string
+  main: string
+  types?: string
+  peerDependencies?: Record<string, string>
+  exports: {
+    '.': {
+      types?: string
+      'module-sync': string
+      default: string
+    }
+    './*': string
+  }
+}
+
+const packages = [
+  {
+    directory: 'packages/gateway',
+    required: ['dist/index.js', 'dist/index.d.ts'],
+  },
+  {
+    directory: 'packages/gateway-frontend',
+    required: ['index.js', 'index.d.ts', 'build/index.html'],
+  },
+  {
+    directory: 'packages/logger',
+    required: ['dist/index.js', 'dist/index.d.ts'],
+  },
+  {
+    directory: 'packages/eslint-config-surgio',
+    required: ['index.js'],
+  },
+] as const
+
+const readManifest = (directory: string): PackageManifest => {
+  const manifestPath = resolve(repositoryRoot, directory, 'package.json')
+
+  return JSON.parse(readFileSync(manifestPath, 'utf8')) as PackageManifest
+}
+
+const pack = (directory: string): string[] => {
+  const output = execFileSync('pnpm', ['pack', '--dry-run', '--json'], {
+    cwd: resolve(repositoryRoot, directory),
+    encoding: 'utf8',
+  })
+  const parsed = JSON.parse(output) as PackResult | PackResult[]
+  const result = Array.isArray(parsed) ? parsed[0] : parsed
+
+  return result.files.map(({ path }) => path.replace(/^package\//, ''))
+}
+
+describe('published package output', () => {
+  test('eslint config owns its TypeScript tooling', () => {
+    const manifest = readManifest('packages/eslint-config-surgio')
+
+    expect(manifest.dependencies).toMatchObject({
+      typescript: '~6.0.3',
+      'typescript-eslint': '^8.67.0',
+    })
   })
 
-test('cache entrypoint does not eagerly load remote cache clients', async () => {
-  const clientPaths = [
-    requireModule.resolve('@upstash/redis'),
-    requireModule.resolve('ioredis'),
-  ]
+  test('gateway requires Surgio v4', () => {
+    const manifest = readManifest('packages/gateway')
 
-  for (const clientPath of clientPaths) {
-    expect(requireModule.cache[clientPath]).toBeUndefined()
-  }
-  await import('surgio/cache')
-  for (const clientPath of clientPaths) {
-    expect(requireModule.cache[clientPath]).toBeUndefined()
-  }
-})
+    expect(manifest.peerDependencies?.surgio).toBe('^4.0.0')
+  })
 
-test('published entrypoints can be imported as ESM', async () => {
-  const [surgio, utils] = await Promise.all([
-    import('surgio'),
-    import('surgio/utils'),
-  ])
+  test.each(packages)('$directory contains only publishable files', (item) => {
+    const manifest = readManifest(item.directory)
+    const files = pack(item.directory)
+    const main = manifest.main.replace(/^\.\//, '')
+    const mainExport = `./${main}`
 
-  expect(surgio).not.toHaveProperty('defineSurgioConfig')
-  expect(surgio.utils).toBeTypeOf('object')
-  expect(surgio.categories).toBeTypeOf('object')
-  expect(utils.getV2rayNNodes).toBeTypeOf('function')
-})
+    expect(manifest.type).toBe('module')
+    expect(manifest.exports['.']['module-sync']).toBe(mainExport)
+    expect(manifest.exports['.'].default).toBe(mainExport)
+    if (manifest.name === '@surgio/gateway') {
+      expect(manifest.exports['./node'].default).toBe('./dist/node.js')
+      expect(manifest.exports['./lambda'].default).toBe('./dist/lambda.js')
+      expect(manifest.exports['./worker'].default).toBe('./dist/worker.js')
+    } else {
+      expect(manifest.exports['./*']).toBe('./*')
+    }
+    expect(files).toContain('package.json')
+    expect(files).toContain(main)
+    item.required.forEach((file) => expect(files).toContain(file))
 
-test('published entrypoints exclude the removed SSD provider', async () => {
-  const [surgio, project, workerConfig, provider, internal] = await Promise.all(
-    [
-      import('surgio'),
-      import('surgio/project'),
-      import('surgio/worker/config'),
-      import('surgio/provider'),
-      import('surgio/internal'),
-    ],
-  )
+    if (manifest.types) {
+      expect(files).toContain(manifest.types.replace(/^\.\//, ''))
+      expect(manifest.exports['.'].types).toBe(
+        `./${manifest.types.replace(/^\.\//, '')}`
+      )
+    }
 
-  for (const entrypoint of [surgio, project, workerConfig]) {
-    expect(entrypoint).not.toHaveProperty('defineSsdProvider')
-  }
-  expect(provider).not.toHaveProperty('SsdProvider')
-  expect(internal.SupportProviderEnum).not.toHaveProperty('Ssd')
-})
+    expect(files).not.toContain('.node-version')
+    expect(files).not.toContain('tsconfig.json')
+    expect(files).not.toContain('tsconfig.build.json')
+    expect(files).not.toContain('vitest.config.ts')
+    expect(files).not.toContain('vitest.e2e.config.ts')
+    expect(files).not.toContain('vitest.config.mts')
+    expect(files).not.toContain('vitest.e2e.config.mts')
+    expect(files).not.toContain('vite.config.mts')
+    expect(files).not.toContainEqual(expect.stringMatching(/(^|\/)src\//))
+    expect(files).not.toContainEqual(
+      expect.stringMatching(/(^|\/)(?:__tests__|coverage)\//)
+    )
+    expect(files).not.toContainEqual(
+      expect.stringMatching(/\.(?:spec|test)\.[^.]+(?:\.map)?$/)
+    )
+    expect(files).not.toContainEqual(expect.stringMatching(/\.cjs$/))
+  })
 
-test('published entrypoints exclude removed Shadowsocks JSON support', async () => {
-  const [surgio, project, workerConfig, provider, internal, utils, runtime] =
-    await Promise.all([
-      import('surgio'),
-      import('surgio/project'),
-      import('surgio/worker/config'),
-      import('surgio/provider'),
-      import('surgio/internal'),
-      import('surgio/utils'),
-      import('surgio/runtime'),
+  test('ESM entrypoints load from their declared main files', async () => {
+    const load = (directory: string) => {
+      const manifest = readManifest(directory)
+      const entrypoint = resolve(repositoryRoot, directory, manifest.main)
+
+      return import(pathToFileURL(entrypoint).href)
+    }
+
+    const [gateway, gatewayNode, gatewayLambda, frontend, logger, eslintConfig] = await Promise.all([
+      load('packages/gateway'),
+      import(
+        pathToFileURL(
+          resolve(repositoryRoot, 'packages/gateway/dist/node.js')
+        ).href
+      ),
+      import(
+        pathToFileURL(
+          resolve(repositoryRoot, 'packages/gateway/dist/lambda.js')
+        ).href
+      ),
+      load('packages/gateway-frontend'),
+      load('packages/logger'),
+      load('packages/eslint-config-surgio'),
     ])
 
-  for (const entrypoint of [surgio, project, workerConfig]) {
-    expect(entrypoint).not.toHaveProperty(
-      'defineShadowsocksJsonSubscribeProvider',
+    expect(gateway.createGatewayApp).toBeTypeOf('function')
+    expect(gatewayNode.createHttpServer).toBeTypeOf('function')
+    expect(gatewayLambda.createLambdaHandler).toBeTypeOf('function')
+    expect(frontend.default).toBeTypeOf('function')
+    expect(logger.createLogger).toBeTypeOf('function')
+    expect(logger.setLogLevel).toBeTypeOf('function')
+    expect(logger).not.toHaveProperty('transports')
+    expect(eslintConfig.default).toBeInstanceOf(Array)
+  })
+
+  test('module-sync entrypoints preserve CommonJS require shapes', () => {
+    const load = (directory: string) => {
+      const packageDirectory = resolve(repositoryRoot, directory)
+      const manifest = readManifest(directory)
+      const packageRequire = createRequire(
+        resolve(packageDirectory, 'package.json')
+      )
+
+      return packageRequire(manifest.name)
+    }
+
+    const gateway = load('packages/gateway')
+    const gatewayRequire = createRequire(
+      resolve(repositoryRoot, 'packages/gateway/package.json')
     )
-  }
-  expect(provider).not.toHaveProperty('ShadowsocksJsonSubscribeProvider')
-  expect(internal.SupportProviderEnum).not.toHaveProperty(
-    'ShadowsocksJsonSubscribe',
-  )
-  expect(utils).not.toHaveProperty('getShadowsocksNodesJSON')
-  expect(() =>
-    runtime.formatProviderNodes('shadowsocks-json' as never, []),
-  ).toThrow('Unsupported provider format: shadowsocks-json')
-})
+    const gatewayNode = gatewayRequire('@surgio/gateway/node')
+    const gatewayLambda = gatewayRequire('@surgio/gateway/lambda')
+    const frontend = load('packages/gateway-frontend')
+    const logger = load('packages/logger')
+    const eslintConfig = load('packages/eslint-config-surgio')
 
-test('published package metadata excludes Hygen templates and dependencies', () => {
-  const manifest = fs.readJsonSync(path.join(projectRoot, 'package.json')) as {
-    dependencies: Record<string, string>
-    files: string[]
-  }
+    expect(gateway.createGatewayApp).toBeTypeOf('function')
+    expect(gatewayNode.createHttpServer).toBeTypeOf('function')
+    expect(gatewayLambda.createLambdaHandler).toBeTypeOf('function')
+    expect(frontend).toBeTypeOf('function')
+    expect(frontend().name).toBe('@surgio/gateway-frontend')
+    expect(logger.createLogger).toBeTypeOf('function')
+    expect(logger.setLogLevel).toBeTypeOf('function')
+    expect(logger).not.toHaveProperty('transports')
+    expect(eslintConfig).toBeInstanceOf(Array)
+  })
 
-  expect(manifest.files).not.toContain('hygen-template')
-  expect(manifest.dependencies).not.toHaveProperty('@royli/hygen')
-  expect(manifest.dependencies).toHaveProperty('magicast')
-})
+  test('frontend HTML references assets included in the package', () => {
+    const frontendDirectory = resolve(
+      repositoryRoot,
+      'packages/gateway-frontend'
+    )
+    const html = readFileSync(resolve(frontendDirectory, 'build/index.html'), {
+      encoding: 'utf8',
+    })
+    const document = new JSDOM(html).window.document
+    const assetUrls = [
+      ...Array.from(
+        document.querySelectorAll<HTMLScriptElement>('script[src]')
+      ),
+      ...Array.from(
+        document.querySelectorAll<HTMLLinkElement>(
+          'link[rel="stylesheet"][href]'
+        )
+      ),
+    ]
+      .map(
+        (element) => element.getAttribute('src') ?? element.getAttribute('href')
+      )
+      .filter((url): url is string => url?.startsWith('/') === true)
+    const files = pack('packages/gateway-frontend')
 
-test('published ESM entrypoints can be required from CommonJS', () => {
-  const entrypoints = [
-    'surgio',
-    'surgio/index.js',
-    'surgio/internal',
-    'surgio/generator',
-    'surgio/provider',
-    'surgio/constant',
-    'surgio/utils',
-    'surgio/config',
-    'surgio/cache',
-    'surgio/cache.js',
-    'surgio/cache/core',
-    'surgio/cache/cloudflare',
-    'surgio/cache/filesystem',
-    'surgio/cache/upstash',
-    'surgio/cache/redis',
-    'surgio/worker',
-    'surgio/worker/build',
-    'surgio/worker/config',
-    'surgio/build/provider/index',
-  ]
+    expect(assetUrls.length).toBeGreaterThan(0)
+    assetUrls.forEach((url) => {
+      const assetPath = url.replace(/^\//, '')
 
-  for (const entrypoint of entrypoints) {
-    const exportedValue = requireModule(entrypoint)
-
-    expect(exportedValue).toBeTruthy()
-  }
-})
-
-test('build emits only ESM package artifacts', () => {
-  const sourceDirectory = path.join(projectRoot, 'src')
-  const buildDirectory = path.join(projectRoot, 'build')
-  const sourceFiles = listFiles(sourceDirectory)
-    .filter((file) => file.endsWith('.ts') && !file.endsWith('.test.ts'))
-    .map((file) => path.relative(sourceDirectory, file).replace(/\.ts$/, ''))
-  const expectedFiles = sourceFiles.flatMap((file) => [
-    `${file}.d.ts`,
-    `${file}.js`,
-    `${file}.js.map`,
-  ])
-  const emittedFiles = listFiles(buildDirectory).map((file) =>
-    path.relative(buildDirectory, file),
-  )
-
-  expect(emittedFiles.sort()).toEqual(expectedFiles.sort())
-
-  for (const file of emittedFiles.filter((file) => file.endsWith('.js'))) {
-    const source = fs.readFileSync(path.join(buildDirectory, file), 'utf8')
-
-    expect(source.startsWith('"use strict";')).toBe(false)
-    expect(source).not.toMatch(/\b(?:module\.exports|exports\.)/)
-  }
+      expect(existsSync(resolve(frontendDirectory, 'build', assetPath))).toBe(
+        true
+      )
+      expect(files).toContain(`build/${assetPath}`)
+    })
+  })
 })

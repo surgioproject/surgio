@@ -1,0 +1,51 @@
+{
+  "name": "@surgio/logger",
+  "version": "2.0.0-beta.0",
+  "type": "module",
+  "description": "Logger helper for Surgio projects",
+  "homepage": "https://surgio.js.org",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/surgioproject/surgio",
+    "directory": "packages/logger"
+  },
+  "author": "Roy Li <me@royli.dev>",
+  "bugs": {
+    "url": "https://github.com/surgioproject/surgio/issues"
+  },
+  "license": "MIT",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "module-sync": "./dist/index.js",
+      "default": "./dist/index.js"
+    },
+    "./*": "./*"
+  },
+  "scripts": {
+    "prebuild": "rimraf dist *.tsbuildinfo",
+    "build": "tsc6 -p tsconfig.build.json",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:cov": "vitest run --coverage",
+    "test:ci": "run-s test",
+    "lint": "eslint ."
+  },
+  "files": [
+    "dist"
+  ],
+  "dependencies": {
+    "consola": "^3.4.2"
+  },
+  "devDependencies": {
+    "esbuild": "^0.28.1"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "engines": {
+    "node": ">=22.22.2"
+  }
+}
