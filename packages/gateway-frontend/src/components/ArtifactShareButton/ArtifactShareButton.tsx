@@ -1,4 +1,4 @@
-import { useDownloadToken } from '@/stores'
+import { useShareToken } from '@/stores'
 import { ClipboardCopyIcon } from 'lucide-react'
 import { observer } from 'mobx-react-lite'
 import { useSnackbar } from 'notistack'
@@ -18,9 +18,9 @@ import {
 const ArtifactShareButton = ({ artifact }: { artifact: ArtifactConfig }) => {
   const { enqueueSnackbar } = useSnackbar()
 
-  const downloadToken = useDownloadToken()
-  const embedCode = getEmbedCode(artifact.name, downloadToken)
-  const embedUrl = getEmbedUrl(artifact.name, downloadToken)
+  const shareToken = useShareToken()
+  const embedCode = getEmbedCode(artifact.name, shareToken)
+  const embedUrl = getEmbedUrl(artifact.name, shareToken)
 
   const onCopySuccess = () => {
     enqueueSnackbar('复制成功', { variant: 'success' })

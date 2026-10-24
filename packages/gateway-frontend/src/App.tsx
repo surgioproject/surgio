@@ -21,19 +21,22 @@ const App = () => {
   const stores = useStores()
   const location = useLocation()
 
-  const validateAuth = useCallback(() => {
-    const search = new URLSearchParams(location.search)
+  const urlAccessToken = new URLSearchParams(location.search).get(
+    'access_token'
+  )
 
-    if (search.get('access_token')) {
+  const validateAuth = useCallback(() => {
+    if (urlAccessToken) {
       stores.config.updateConfig({
-        accessToken: search.get('access_token'),
+        accessToken: urlAccessToken,
+        urlAccessToken,
       })
 
       return validateToken()
     }
 
     return validateCookie()
-  }, [location.search, stores.config])
+  }, [urlAccessToken, stores.config])
 
   const fetchConfig = () => {
     return defaultFetcher<Partial<Config>>('/api/config')
@@ -42,7 +45,8 @@ const App = () => {
   useEffect(() => {
     validateAuth()
       .then((user) => {
-        if (user.accessToken) {
+        // The URL token wins. The server may resolve the user from the cookie instead.
+        if (user.accessToken && !urlAccessToken) {
           stores.config.updateConfig({
             accessToken: user.accessToken,
           })
@@ -66,7 +70,7 @@ const App = () => {
       .catch((err) => {
         console.error(err)
       })
-  }, [stores.config, validateAuth])
+  }, [stores.config, validateAuth, urlAccessToken])
 
   return (
     <div className="flex flex-1 items-stretch relative flex-col">

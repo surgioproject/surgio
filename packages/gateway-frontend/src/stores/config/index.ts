@@ -7,6 +7,7 @@ export interface Config {
   coreVersion: string
   accessToken: string | null
   viewerToken: string | null
+  urlAccessToken: string | null
 }
 
 export class ConfigStore {
@@ -17,6 +18,7 @@ export class ConfigStore {
     coreVersion: '',
     accessToken: null,
     viewerToken: null,
+    urlAccessToken: null,
   }
 
   constructor() {
