@@ -1,11 +1,26 @@
 export type GatewayRole = 'admin' | 'viewer'
 
+export interface GatewayUser {
+  readonly roles: ReadonlyArray<GatewayRole>
+  // Only set when authProvider resolved the user.
+  readonly linkToken?: string
+}
+
+export type GatewayAuthResult =
+  | { readonly success: true; readonly accessToken: string }
+  | { readonly success: false }
+
+export type GatewayAuthProvider = (input: {
+  readonly request: Request
+}) => Promise<GatewayAuthResult>
+
 export interface GatewayConfig {
   readonly urlBase: string
   readonly publicUrl: string
   readonly coreVersion: string
   readonly accessToken?: string
   readonly viewerToken?: string
+  readonly authProvider?: GatewayAuthProvider
   readonly auth?: boolean
   readonly cookieMaxAge?: number
   readonly useCacheOnError?: boolean

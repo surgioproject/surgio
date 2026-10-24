@@ -20,7 +20,13 @@ import type {
   GatewayRole,
   GatewayRuntime,
   GatewayRenderResult,
+  GatewayUser,
 } from './types.js'
+
+export interface GatewayEnv<Bindings extends object> {
+  Bindings: Bindings
+  Variables: { user: GatewayUser }
+}
 
 export interface GatewayAppOptions<Bindings extends object = object> {
   readonly runtime:
@@ -103,8 +109,8 @@ const providerFormat = (format: string): string => {
 
 export const createGatewayApp = <Bindings extends object = object>(
   options: GatewayAppOptions<Bindings>
-): Hono<{ Bindings: Bindings }> => {
-  const app = new Hono<{ Bindings: Bindings }>()
+): Hono<GatewayEnv<Bindings>> => {
+  const app = new Hono<GatewayEnv<Bindings>>()
   const errorCacheTtl = options.errorCacheTtl ?? 24 * 60 * 60_000
   const logger = options.logger ?? gatewayLogger
   const runtimeFor = async (context: Context): Promise<GatewayRuntime> =>
@@ -129,7 +135,7 @@ export const createGatewayApp = <Bindings extends object = object>(
   })
 
   const requireRole =
-    (role: GatewayRole): MiddlewareHandler<{ Bindings: Bindings }> =>
+    (role: GatewayRole): MiddlewareHandler<GatewayEnv<Bindings>> =>
     async (context, next) => {
       const config = (await runtimeFor(context)).getGatewayConfig()
       if (!config) return errorJson(context, 500, 'Gateway 未配置')
@@ -137,6 +143,7 @@ export const createGatewayApp = <Bindings extends object = object>(
       if (!user) return errorJson(context, 401, 'Unauthorized')
       if (!user.roles.includes(role))
         return errorJson(context, 403, 'Forbidden')
+      context.set('user', user)
       await next()
     }
 

@@ -2,7 +2,12 @@ import { describe, expect, test, vi } from 'vitest'
 
 import { createGatewayApp } from './app.js'
 
-import type { GatewayCache, GatewayConfig, GatewayRuntime } from './types.js'
+import type {
+  GatewayAuthProvider,
+  GatewayCache,
+  GatewayConfig,
+  GatewayRuntime,
+} from './types.js'
 
 const config: GatewayConfig = {
   urlBase: 'https://example.com/',
@@ -376,5 +381,109 @@ describe('createGatewayApp', () => {
     const cached = await app.request(url)
     expect(cached.status).toBe(200)
     expect(cached.headers.get('x-use-cache')).toBe('true')
+  })
+})
+
+describe('authProvider', () => {
+  const artifactUrl = '/get-artifact/demo.conf'
+  const createProviderFixture = (authProvider: GatewayAuthProvider) =>
+    createFixture({ viewerToken: undefined, authProvider })
+
+  test('admin token 与 cookie 不调用 provider', async () => {
+    const authProvider = vi.fn<GatewayAuthProvider>(async () => ({
+      success: false,
+    }))
+    const { app } = createProviderFixture(authProvider)
+    const login = await app.request('/api/auth', {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({ accessToken: 'admin-token' }),
+    })
+    const cookie = login.headers.get('set-cookie') as string
+
+    expect((await app.request(artifactUrl, { headers: auth })).status).toBe(200)
+    expect((await app.request(artifactUrl, { headers: { cookie } })).status).toBe(
+      200
+    )
+    expect(authProvider).not.toHaveBeenCalled()
+  })
+
+  test('provider 成功时获得 viewer 角色', async () => {
+    const authProvider = vi.fn<GatewayAuthProvider>(async () => ({
+      success: true,
+      accessToken: 'user-a',
+    }))
+    const { app } = createProviderFixture(authProvider)
+    const headers = { Authorization: 'Bearer user-a' }
+
+    expect((await app.request(artifactUrl, { headers })).status).toBe(200)
+    expect((await app.request('/api/providers', { headers })).status).toBe(403)
+  })
+
+  test('provider 失败时返回 401', async () => {
+    const { app } = createProviderFixture(async () => ({ success: false }))
+
+    expect((await app.request(`${artifactUrl}?access_token=x`)).status).toBe(
+      401
+    )
+  })
+
+  test('provider 抛错时返回 500', async () => {
+    const authProvider = vi
+      .fn<GatewayAuthProvider>()
+      .mockRejectedValue(new Error('backend down'))
+    const { app } = createProviderFixture(authProvider)
+
+    expect((await app.request(`${artifactUrl}?access_token=x`)).status).toBe(
+      500
+    )
+  })
+
+  test('provider 收到原始 Request', async () => {
+    const authProvider = vi.fn<GatewayAuthProvider>(async () => ({
+      success: false,
+    }))
+    const { app } = createProviderFixture(authProvider)
+
+    await app.request(`${artifactUrl}?access_token=k`, {
+      headers: { Authorization: 'Bearer from-header' },
+    })
+
+    const { request } = authProvider.mock.calls[0][0]
+    expect(request).toBeInstanceOf(Request)
+    expect(request.url).toContain('access_token=k')
+    expect(request.headers.get('authorization')).toBe('Bearer from-header')
+  })
+
+  test('success 但 accessToken 为空串时返回 401', async () => {
+    const { app } = createProviderFixture(async () => ({
+      success: true,
+      accessToken: '',
+    }))
+
+    expect((await app.request(`${artifactUrl}?access_token=k`)).status).toBe(
+      401
+    )
+  })
+
+  test('provider resolve undefined 时返回 401', async () => {
+    const { app } = createProviderFixture(
+      (async () => undefined) as unknown as GatewayAuthProvider
+    )
+
+    expect((await app.request(`${artifactUrl}?access_token=k`)).status).toBe(
+      401
+    )
+  })
+
+  test('provider 返回 gateway.accessToken 时返回 500', async () => {
+    const { app } = createProviderFixture(async () => ({
+      success: true,
+      accessToken: 'admin-token',
+    }))
+
+    expect((await app.request(`${artifactUrl}?access_token=k`)).status).toBe(
+      500
+    )
   })
 })
