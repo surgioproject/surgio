@@ -430,6 +430,60 @@ module.exports = {
 - `/export-providers`
 - `/render`
 
+### gateway.authProvider
+
+- 类型：`(input: { request: Request }) => Promise<{ success: true; accessToken: string } | { success: false }>`
+- 默认值：`undefined`
+
+用自己的代码判定请求者能否获得 viewer 身份，取代固定的 `viewerToken`。适用于订阅用户的 key 保存在外部后端的场景：每个用户使用自己的 key 访问，生成的订阅链接带的也是这个用户自己的 token。
+
+```ts
+// surgio.project.ts
+export default defineSurgioProject({
+  gateway: {
+    auth: true,
+    accessToken: env('SURGIO_ACCESS_TOKEN'),
+    async authProvider({ request }) {
+      const bearer = request.headers
+        .get('authorization')
+        ?.match(/^Bearer\s+(.+)$/i)?.[1]
+      const key =
+        bearer ?? new URL(request.url).searchParams.get('access_token')
+      if (!key) return { success: false }
+      const user = await lookupUser(key)
+      return user ? { success: true, accessToken: key } : { success: false }
+    },
+  },
+})
+
+async function lookupUser(key: string) {
+  const res = await fetch(
+    `https://backend.example.com/users/${encodeURIComponent(key)}`,
+  )
+  if (res.status === 404) return null
+  if (!res.ok) throw new Error(`用户后端返回 ${res.status}`)
+  return res.json()
+}
+```
+
+- `request` 是标准 Web `Request`。从哪里读取 key 由函数自己决定。
+- `accessToken` 是写进该用户生成链接中的 token，Gateway 会把它放在 `?access_token=` 参数里。面板和嵌入页又会把它当作 Bearer token 发回来。它与收到的 key 不同时，函数必须同时接受这个返回值。
+- 只有确认 key 无效时才返回 `{ success: false }`，请求会得到 401，订阅客户端会把它当作 key 失效。
+- 后端无法连接或超时时请抛出异常，请求会得到 5xx。
+- 返回值与 `gateway.accessToken` 相同时，Gateway 会返回 500。
+- 只能给出 viewer 身份。admin 仍由 `accessToken` 和面板登录决定，admin 请求不会调用该函数。
+
+使用限制：
+
+- 与 `viewerToken` 二选一，同时配置会在加载配置时报错。
+- 需要同时配置 `gateway.auth: true` 和 `gateway.accessToken`。
+- 必须同时支持 `?access_token=` 参数和 `Authorization: Bearer` 请求头两种携带方式。前者用于 Gateway 生成的链接，后者用于嵌入页 `/embed/artifact/:name`。缺少任意一种，对应的入口会返回 401。
+- Gateway 不缓存函数的结果。需要缓存时请在函数内部实现，这样后端吊销 key 后可以立即生效。
+- 渲染缓存和 `useCacheOnError` 的兜底缓存按用户分别保存，缓存条目数随用户数增长。使用 KV 或 Redis 时需要留意存储用量。
+- 需要同时升级 surgio 核心和 `@surgio/gateway`，两者都支持 authProvider 才会生效。任意一边版本过旧，authProvider 会被忽略，所有订阅请求都得到 401。
+- 函数会被原样带进 Worker 构建，其中引用的依赖必须能在 Worker 中运行。
+- `surgio generate` 没有请求者，生成文件中的链接使用 `accessToken`。
+
 ### gateway.useCacheOnError
 
 - 类型：`boolean`

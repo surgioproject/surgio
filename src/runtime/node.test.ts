@@ -2,6 +2,7 @@ import path from 'node:path'
 import { describe, expect, test, vi } from 'vitest'
 
 import { TtlCache } from '../cache/core.js'
+import { normalizeProjectConfig } from '../config.js'
 import { loadSurgioProject } from '../project/node.js'
 import { SupportProviderEnum } from '../types.js'
 import { createSurgioRuntime } from '../worker/runtime.js'
@@ -161,6 +162,38 @@ describe('Node Surgio runtime', () => {
     await runtime.close()
   })
 
+  test('getGatewayConfig 原样带出 authProvider 函数', async () => {
+    const authProvider = async () => ({ success: false as const })
+    const gateway = { auth: true, accessToken: 'admin', authProvider }
+    const project = await loadSurgioProject(fixture)
+    // A normalizer that rebuilds gateway field by field would drop the function here.
+    const normalized = normalizeProjectConfig(fixture, {
+      artifacts: [],
+      gateway,
+    })
+
+    const direct = createNodeSurgioRuntime({
+      ...project,
+      config: {
+        ...project.config,
+        gateway: { ...gateway, passRequestHeaders: [] },
+      },
+    })
+    const normalizedRuntime = createNodeSurgioRuntime({
+      ...project,
+      config: normalized,
+    })
+
+    try {
+      expect(direct.getGatewayConfig()?.authProvider).toBe(authProvider)
+      expect(normalizedRuntime.getGatewayConfig()?.authProvider).toBe(
+        authProvider,
+      )
+    } finally {
+      await Promise.all([direct.close(), normalizedRuntime.close()])
+    }
+  })
+
   test('渲染缓存的条目数由配置决定，不随请求变化', async () => {
     const project = await loadSurgioProject(fixture)
     const store = new MemoryStore()
@@ -204,6 +237,49 @@ describe('Node Surgio runtime', () => {
       'customParams.foo 的取值不可枚举',
     )
     await runtime.close()
+  })
+
+  test('每次渲染使用请求自带的 accessToken，缓存命中也不串用', async () => {
+    const project = await loadSurgioProject(fixture)
+    const runtime = createNodeSurgioRuntime(
+      {
+        ...project,
+        providers: {
+          demo: { type: SupportProviderEnum.Custom, nodeList: [] },
+        },
+        config: {
+          ...project.config,
+          gateway: { passRequestHeaders: [], viewerToken: 'config-viewer' },
+          artifacts: [
+            {
+              name: 'links',
+              provider: 'demo',
+              template: '',
+              templateType: 'default' as const,
+              templateString: "{{ getDownloadUrl('a.conf') }}",
+            },
+          ],
+        },
+      },
+      { cache: new TtlCache({ store: new MemoryStore() }) },
+    )
+    const bodyFor = async (accessToken: string) =>
+      (await runtime.renderArtifact('links', { accessToken })).body
+
+    try {
+      for (let round = 0; round < 2; round++) {
+        const bodyA = await bodyFor('user-a')
+        const bodyB = await bodyFor('user-b')
+
+        expect(bodyA).toContain('access_token=user-a')
+        expect(bodyA).not.toContain('user-b')
+        expect(bodyA).not.toContain('config-viewer')
+        expect(bodyB).toContain('access_token=user-b')
+        expect(bodyB).not.toContain('user-a')
+      }
+    } finally {
+      await runtime.close()
+    }
   })
 
   test('routes formatter warnings to the injected logger', async () => {

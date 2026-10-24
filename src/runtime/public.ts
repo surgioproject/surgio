@@ -22,6 +22,7 @@ export type ProviderFormat =
   | 'v2rayn'
 
 export interface RenderArtifactOptions {
+  readonly accessToken?: string
   readonly customParams?: Readonly<Record<string, unknown>>
   readonly downloadUrl?: string
   readonly filter?: string | NodeFilterType | SortedNodeFilterType
@@ -72,12 +73,21 @@ export interface SurgioRuntime {
   close(): Promise<void>
 }
 
+export type GatewayAuthResult =
+  | { readonly success: true; readonly accessToken: string }
+  | { readonly success: false }
+
+export type GatewayAuthProvider = (input: {
+  readonly request: Request
+}) => Promise<GatewayAuthResult>
+
 export interface ArtifactRuntimeGatewayConfig {
   readonly urlBase: string
   readonly publicUrl: string
   readonly coreVersion: string
   readonly accessToken?: string
   readonly viewerToken?: string
+  readonly authProvider?: GatewayAuthProvider
   readonly auth?: boolean
   readonly cookieMaxAge?: number
   readonly useCacheOnError?: boolean
