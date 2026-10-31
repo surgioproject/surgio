@@ -204,12 +204,7 @@ export const createGatewayApp = <Bindings extends object = object>(
     const query = parseStructuredQuery(new URL(context.req.url))
     const format = typeof query.format === 'string' ? query.format : undefined
     const filter = typeof query.filter === 'string' ? query.filter : undefined
-    const customParams = omitQuery(query, [
-      'dl',
-      'format',
-      'filter',
-      'access_token',
-    ])
+    const customParams = omitQuery(query, ['dl', 'format', 'filter'])
     const userAgent = context.req.header('user-agent') ?? ''
     const config = runtime.getGatewayConfig() as GatewayConfig
     const requestHeaders = pickHeaders(
@@ -221,7 +216,8 @@ export const createGatewayApp = <Bindings extends object = object>(
     const cacheKey = config.useCacheOnError
       ? await fallbackCacheKey([
           name,
-          omitQuery(query, ['access_token']),
+          // Templates can read access_token, so viewers must not share entries.
+          query,
           requestHeaders,
           passUserAgent ? userAgent : '',
           // Rendered links embed the token, so viewers must not share entries.
@@ -303,7 +299,7 @@ export const createGatewayApp = <Bindings extends object = object>(
     const cacheKey = config.useCacheOnError
       ? await fallbackCacheKey([
           'export-providers',
-          omitQuery(query, ['access_token']),
+          query,
           requestHeaders,
           passUserAgent ? userAgent : '',
           ...link.cacheKeyParts,
@@ -314,7 +310,6 @@ export const createGatewayApp = <Bindings extends object = object>(
       'format',
       'template',
       'filter',
-      'access_token',
       'providers',
     ])
     try {

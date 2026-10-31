@@ -96,7 +96,7 @@ describe('createGatewayApp', () => {
       'upload=1; download=2; total=3; expire=4'
     )
     expect(await response.text()).toContain(
-      '"foo":["first","second"],"child":{"bar":"nested"}'
+      '{"access_token":"viewer-token","foo":["first","second"],"child":{"bar":"nested"}'
     )
     expect(({} as { polluted?: string }).polluted).toBeUndefined()
     expect(runtime.renderArtifact).toHaveBeenCalledOnce()
@@ -127,6 +127,7 @@ describe('createGatewayApp', () => {
 
     const [, options] = vi.mocked(runtime.renderArtifact).mock.calls[0]
     expect(options?.getNodeListParams).toEqual({
+      access_token: 'viewer-token',
       requestHeaders: { 'x-surge-unlocked-features': 'vif' },
     })
   })
@@ -188,6 +189,22 @@ describe('createGatewayApp', () => {
     expect(cacheSet.mock.calls[0][0]).toBe(cacheSet.mock.calls[1][0])
   })
 
+  test('不同 access_token 不共享兜底缓存', async () => {
+    const { app, cacheSet } = createFixture()
+    await app.request('/get-artifact/demo.conf?access_token=viewer-token')
+    await app.request('/get-artifact/demo.conf?access_token=admin-token')
+    await app.request(
+      '/export-providers?access_token=viewer-token&providers=demo&format=surge'
+    )
+    await app.request(
+      '/export-providers?access_token=admin-token&providers=demo&format=surge'
+    )
+
+    const keys = cacheSet.mock.calls.map(([key]) => key)
+    expect(keys[0]).not.toBe(keys[1])
+    expect(keys[2]).not.toBe(keys[3])
+  })
+
   test('supports download and provider export aliases', async () => {
     const { app, runtime } = createFixture()
     const artifact = await app.request(
@@ -206,7 +223,10 @@ describe('createGatewayApp', () => {
     )
     expect(await providers.text()).toBe('providers:demo')
     expect(runtime.renderProviders).toHaveBeenCalledWith(
-      expect.objectContaining({ format: 'quantumultx' })
+      expect.objectContaining({
+        format: 'quantumultx',
+        customParams: { access_token: 'viewer-token' },
+      })
     )
   })
 
@@ -453,9 +473,9 @@ describe('authProvider', () => {
     const cookie = login.headers.get('set-cookie') as string
 
     expect((await app.request(artifactUrl, { headers: auth })).status).toBe(200)
-    expect((await app.request(artifactUrl, { headers: { cookie } })).status).toBe(
-      200
-    )
+    expect(
+      (await app.request(artifactUrl, { headers: { cookie } })).status
+    ).toBe(200)
     expect(authProvider).not.toHaveBeenCalled()
   })
 
