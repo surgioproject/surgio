@@ -101,7 +101,8 @@ export const isClashVerge = (
     return false
   }
 
-  const matcher = /\bclash-verge\/v([0-9.]+)\b/i
+  // Clients such as FlClash send a bare `clash-verge` token without a version.
+  const matcher = /\bclash-verge(?:\/v([0-9.]+))?(?![\w-])/i
   const isClient = matcher.exec(ua)
 
   if (!isClient) {
@@ -112,10 +113,43 @@ export const isClashVerge = (
     return true
   }
 
-  const clientVersion = isClient ? isClient[1] : ''
+  const clientVersion = isClient[1] ?? ''
 
   try {
     return satisfies(clientVersion, version)
+  } catch {
+    return false
+  }
+}
+
+/**
+ * Exapmle:
+ * isFlClash('FlClash/v0.9.2 clash-verge Platform/android')
+ *
+ * The leading app name differs per platform (`FlClash`, `clash`, `fl_clash`),
+ * so the match relies on the `clash-verge Platform/` suffix instead.
+ */
+export const isFlClash = (
+  ua: string | undefined,
+  version?: string,
+): boolean => {
+  if (!ua) {
+    return false
+  }
+
+  const matcher = /\/v([0-9.]+) clash-verge(?:\/v[0-9.]+)? Platform\//i
+  const isClient = matcher.exec(ua)
+
+  if (!isClient) {
+    return false
+  }
+
+  if (!version) {
+    return true
+  }
+
+  try {
+    return satisfies(isClient[1], version)
   } catch {
     return false
   }

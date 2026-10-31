@@ -6,6 +6,7 @@ import {
   isClash,
   isClashVerge,
   isClashMetaForAndroid,
+  isFlClash,
   isStash,
   isQuantumultX,
   isShadowrocket,
@@ -53,6 +54,25 @@ test('isClashVerge', () => {
   expect(isClashVerge('clash-verge/v1.4.11')).toBe(true)
   expect(isClashVerge('clash-verge/v1.4.11', '>=1.4.0')).toBe(true)
   expect(isClashVerge('clash-verge/v1.4.11', '>=1.5.0')).toBe(false)
+  expect(isClashVerge('clash-verge')).toBe(true)
+  expect(isClashVerge('clash-verge', '>=1.0.0')).toBe(false)
+  expect(isClashVerge('FlClash/v0.9.2 clash-verge Platform/android')).toBe(true)
+  expect(isClashVerge('clash-verger/v1.4.11')).toBe(false)
+})
+
+test('isFlClash', () => {
+  const ua = 'FlClash/v0.9.2 clash-verge Platform/android'
+  expect(isFlClash(ua)).toBe(true)
+  expect(isFlClash(ua, '>=0.9.0')).toBe(true)
+  expect(isFlClash(ua, '>=1.0.0')).toBe(false)
+  expect(isFlClash('clash/v0.9.2 clash-verge Platform/windows')).toBe(true)
+  expect(isFlClash('fl_clash/v0.9.2 clash-verge Platform/linux')).toBe(true)
+  expect(
+    isFlClash('FlClash/v0.8.40 clash-verge/v1.6.6 Platform/macos', '>=0.8.0'),
+  ).toBe(true)
+  expect(isFlClash('clash-verge/v1.4.11')).toBe(false)
+  expect(isFlClash('ClashMetaForAndroid/2.8.8.Meta')).toBe(false)
+  expect(isFlClash(undefined)).toBe(false)
 })
 
 test('isStash', () => {

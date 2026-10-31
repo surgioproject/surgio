@@ -133,6 +133,7 @@ utils.isSurgeMac(useragent)
 utils.isClash(useragent)
 utils.isClashVerge(useragent)
 utils.isClashMetaForAndroid(useragent)
+utils.isFlClash(useragent)
 utils.isStash(useragent)
 utils.isQuantumultX(useragent)
 utils.isShadowrocket(useragent)
@@ -153,7 +154,8 @@ utils.isEgern(useragent)
 - Surge: 1000
 - Stash: 1.2.3
 - Clash: 1.2.3（原版 Clash 不传版本号）
-- Clash Verge: 1.2.3
+- Clash Verge: 1.2.3（FlClash 等客户端只发送 `clash-verge` 而不带版本号，`isClashVerge` 会返回 `true`，但任何版本条件都不成立）
+- FlClash: 1.2.3（UserAgent 形如 `FlClash/v0.9.2 clash-verge Platform/android`，开头的应用名因平台而异）
 - Loon: 1000
 - Quantumult X: 1.2.3
 - Shadowrocket: 1000
