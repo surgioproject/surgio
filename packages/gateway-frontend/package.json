@@ -1,7 +1,7 @@
 {
   "name": "@surgio/gateway-frontend",
   "description": "Surgio API Gateway Frontend",
-  "version": "2.6.1-beta.1",
+  "version": "2.6.1-beta.2",
   "type": "module",
   "main": "index.js",
   "types": "index.d.ts",

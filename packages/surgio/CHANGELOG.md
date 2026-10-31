@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.0.0-beta.10](https://github.com/surgioproject/surgio/compare/surgio%404.0.0-beta.9...surgio%404.0.0-beta.10) (2026-10-31)
+
+### Features
+
+* **useragent:** add flclash and versionless verge ([eb6b19e](https://github.com/surgioproject/surgio/commit/eb6b19ee59770701fe90aa71ef2c7936e9024c23))
+
+
 # [4.0.0-beta.9](https://github.com/surgioproject/surgio/compare/surgio%404.0.0-beta.8...surgio%404.0.0-beta.9) (2026-10-24)
 
 **Note:** Version bump only for package surgio

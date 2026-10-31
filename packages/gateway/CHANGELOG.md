@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.0.0-beta.6](https://github.com/surgioproject/surgio/compare/%40surgio%2Fgateway%403.0.0-beta.5...%40surgio%2Fgateway%403.0.0-beta.6) (2026-10-31)
+
+### Bug Fixes
+
+* **gateway:** forward access_token to renders ([16249c0](https://github.com/surgioproject/surgio/commit/16249c090c4d7cc5eca270b19fd0b1aa0fb9198b))
+
+
 # [3.0.0-beta.5](https://github.com/surgioproject/surgio/compare/%40surgio%2Fgateway%403.0.0-beta.4...%40surgio%2Fgateway%403.0.0-beta.5) (2026-10-24)
 
 ### Bug Fixes
