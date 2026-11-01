@@ -445,7 +445,10 @@ describe('without authProvider', () => {
 
     const response = await app.request('/api/config')
 
-    expect((await response.json()).data.hasAuthProvider).toBe(false)
+    expect(
+      ((await response.json()) as { data: { hasAuthProvider: boolean } }).data
+        .hasAuthProvider
+    ).toBe(false)
   })
 
   test('未配置 authProvider 时 validate 响应不含 accessToken', async () => {
@@ -473,7 +476,10 @@ describe('authProvider', () => {
 
     const response = await app.request('/api/config')
 
-    expect((await response.json()).data.hasAuthProvider).toBe(true)
+    expect(
+      ((await response.json()) as { data: { hasAuthProvider: boolean } }).data
+        .hasAuthProvider
+    ).toBe(true)
   })
 
   test('admin token 与 cookie 不调用 provider', async () => {
