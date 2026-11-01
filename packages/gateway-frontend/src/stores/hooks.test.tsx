@@ -8,6 +8,7 @@ describe('token hooks', () => {
       accessToken: 'access-token',
       viewerToken: 'viewer-token',
       urlAccessToken: null,
+      hasAuthProvider: false,
     })
   })
 
@@ -31,5 +32,11 @@ describe('token hooks', () => {
     expect(renderHook(() => useShareToken()).result.current).toBe(
       'viewer-token'
     )
+  })
+
+  test('share links carry no token when an authProvider is configured', () => {
+    stores.config.updateConfig({ hasAuthProvider: true })
+
+    expect(renderHook(() => useShareToken()).result.current).toBeNull()
   })
 })

@@ -15,8 +15,9 @@ export const useDownloadToken = () => {
 }
 
 // An admin token from the URL must not leak into links shared with others.
+// With an authProvider every visitor signs in on their own, so shared links carry no token.
 export const useShareToken = () => {
   const { config: configStore } = useStores()
 
-  return getShareToken(configStore)
+  return configStore.config.hasAuthProvider ? null : getShareToken(configStore)
 }

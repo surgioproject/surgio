@@ -8,6 +8,7 @@ export interface Config {
   accessToken: string | null
   viewerToken: string | null
   urlAccessToken: string | null
+  hasAuthProvider: boolean
 }
 
 export class ConfigStore {
@@ -19,6 +20,7 @@ export class ConfigStore {
     accessToken: null,
     viewerToken: null,
     urlAccessToken: null,
+    hasAuthProvider: false,
   }
 
   constructor() {

@@ -478,6 +478,7 @@ async function lookupUser(key: string) {
 - 与 `viewerToken` 二选一，同时配置会在加载配置时报错。
 - 需要同时配置 `gateway.auth: true` 和 `gateway.accessToken`。
 - 必须同时支持 `?access_token=` 参数和 `Authorization: Bearer` 请求头两种携带方式。前者用于 Gateway 生成的链接，后者用于嵌入页 `/embed/artifact/:name`。缺少任意一种，对应的入口会返回 401。
+- 面板「分享」生成的嵌入页链接不带 `access_token`，避免把分享者的 token 交给他人。访问者需要在链接后加上自己的 `?access_token=`，或由函数从请求的其他部分（例如 cookie）识别身份。
 - Gateway 不缓存函数的结果。需要缓存时请在函数内部实现，这样后端吊销 key 后可以立即生效。
 - 渲染缓存和 `useCacheOnError` 的兜底缓存按用户分别保存，缓存条目数随用户数增长。使用 KV 或 Redis 时需要留意存储用量。
 - 需要同时升级 surgio 核心和 `@surgio/gateway`，两者都支持 authProvider 才会生效。任意一边版本过旧，authProvider 会被忽略，所有订阅请求都得到 401。

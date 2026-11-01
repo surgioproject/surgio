@@ -39,7 +39,9 @@ const ArtifactShareButton = ({ artifact }: { artifact: ArtifactConfig }) => {
         <DialogHeader>
           <DialogTitle>分享 Artifact</DialogTitle>
           <DialogDescription>
-            请不要将这个链接分享给不信任的人，它包含了访问你的配置文件的凭证。
+            {shareToken
+              ? '请不要将这个链接分享给不信任的人，它包含了访问你的配置文件的凭证。'
+              : '这个链接不包含访问凭证，访问者需要通过身份验证才能查看。'}
           </DialogDescription>
         </DialogHeader>
 
