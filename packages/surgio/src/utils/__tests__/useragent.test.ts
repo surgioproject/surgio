@@ -3,6 +3,7 @@ import { expect, test } from 'vitest'
 import {
   isSurgeIOS,
   isSurgeMac,
+  isSurgeTVOS,
   isClash,
   isClashVerge,
   isClashMetaForAndroid,
@@ -35,6 +36,22 @@ test('isSurgeMac', () => {
   expect(isSurgeMac('Surge/1129 CFNetwork/1335.0.3.2 Darwin/21.6.0')).toBe(
     false,
   )
+})
+
+test('isSurgeTVOS', () => {
+  expect(isSurgeTVOS('Surge tvOS/2863')).toBe(true)
+  expect(isSurgeTVOS('Surge tvOS/2863', '>=2800')).toBe(true)
+  expect(isSurgeTVOS('Surge tvOS/2863 CFNetwork/1408.0.4', '>=2800')).toBe(true)
+  expect(isSurgeTVOS('Surge tvOS/2863', '>=3000')).toBe(false)
+  expect(isSurgeTVOS('Surge iOS/2920')).toBe(false)
+  expect(isSurgeTVOS('Surge Mac/2408')).toBe(false)
+  expect(isSurgeTVOS('Surge/1129 CFNetwork/1335.0.3.2 Darwin/21.6.0')).toBe(
+    false,
+  )
+  expect(isSurgeTVOS('Surge tvOS', '>=2800')).toBe(false)
+  expect(isSurgeTVOS(undefined)).toBe(false)
+  expect(isSurgeIOS('Surge tvOS/2863')).toBe(false)
+  expect(isSurgeMac('Surge tvOS/2863')).toBe(false)
 })
 
 test('isClash', () => {

@@ -67,6 +67,39 @@ export const isSurgeMac = (
   }
 }
 
+/**
+ * Example:
+ * isSurgeTVOS('Surge tvOS/2863')
+ */
+export const isSurgeTVOS = (
+  ua: string | undefined,
+  version?: string,
+): boolean => {
+  if (!ua) {
+    return false
+  }
+
+  const isClient = ua.toLowerCase().includes('surge tvos')
+
+  if (!isClient) {
+    return false
+  }
+
+  if (!version) {
+    return true
+  }
+
+  const matcher = /(surge tvos)\/([\w.]+)/i
+  const result = matcher.exec(ua.toLowerCase())
+  const clientVersion = result ? result[2] : ''
+
+  try {
+    return satisfies(clientVersion, version)
+  } catch {
+    return false
+  }
+}
+
 export const isClash = (ua: string | undefined, version?: string): boolean => {
   if (!ua) {
     return false

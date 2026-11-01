@@ -130,6 +130,7 @@ module.exports = defineCustomProvider({
 ```js
 utils.isSurgeIOS(useragent)
 utils.isSurgeMac(useragent)
+utils.isSurgeTVOS(useragent)
 utils.isClash(useragent)
 utils.isClashVerge(useragent)
 utils.isClashMetaForAndroid(useragent)
