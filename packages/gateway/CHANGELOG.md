@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.0.0-beta.7](https://github.com/surgioproject/surgio/compare/%40surgio%2Fgateway%403.0.0-beta.6...%40surgio%2Fgateway%403.0.0-beta.7) (2026-11-01)
+
+### Features
+
+* **gateway:** report auth provider in config ([021ca60](https://github.com/surgioproject/surgio/commit/021ca609e297f454eb8298ea4b3a79e953c4f58c))
+
+
 # [3.0.0-beta.6](https://github.com/surgioproject/surgio/compare/%40surgio%2Fgateway%403.0.0-beta.5...%40surgio%2Fgateway%403.0.0-beta.6) (2026-10-31)
 
 ### Bug Fixes

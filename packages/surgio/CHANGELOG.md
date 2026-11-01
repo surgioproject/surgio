@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.0.0-beta.11](https://github.com/surgioproject/surgio/compare/surgio%404.0.0-beta.10...surgio%404.0.0-beta.11) (2026-11-01)
+
+### Features
+
+* **useragent:** add surge tv detection ([ce01152](https://github.com/surgioproject/surgio/commit/ce01152a151e020a3250de9f5d06e7562c9d6e95))
+
+
 # [4.0.0-beta.10](https://github.com/surgioproject/surgio/compare/surgio%404.0.0-beta.9...surgio%404.0.0-beta.10) (2026-10-31)
 
 ### Features

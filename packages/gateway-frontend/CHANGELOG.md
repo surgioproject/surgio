@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.6.1-beta.3](https://github.com/surgioproject/surgio/compare/%40surgio%2Fgateway-frontend%402.6.1-beta.2...%40surgio%2Fgateway-frontend%402.6.1-beta.3) (2026-11-01)
+
+### Bug Fixes
+
+* **gateway-frontend:** skip token in share links ([3096125](https://github.com/surgioproject/surgio/commit/3096125657227637c10be40b031f4bc0c79a2733))
+
+
 ## [2.6.1-beta.2](https://github.com/surgioproject/surgio/compare/%40surgio%2Fgateway-frontend%402.6.1-beta.1...%40surgio%2Fgateway-frontend%402.6.1-beta.2) (2026-10-31)
 
 **Note:** Version bump only for package @surgio/gateway-frontend
