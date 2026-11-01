@@ -485,6 +485,7 @@ export const createGatewayApp = <Bindings extends object = object>(
         backendVersion: gatewayPackage.version,
         coreVersion: config.coreVersion,
         needAuth: config.auth ?? false,
+        hasAuthProvider: Boolean(config.authProvider),
       },
     })
   })

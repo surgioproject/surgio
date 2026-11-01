@@ -440,6 +440,14 @@ describe('without authProvider', () => {
     )
   })
 
+  test('未配置 authProvider 时 /api/config 的 hasAuthProvider 为 false', async () => {
+    const { app } = createFixture()
+
+    const response = await app.request('/api/config')
+
+    expect((await response.json()).data.hasAuthProvider).toBe(false)
+  })
+
   test('未配置 authProvider 时 validate 响应不含 accessToken', async () => {
     const { app } = createFixture()
 
@@ -459,6 +467,14 @@ describe('authProvider', () => {
   const artifactUrl = '/get-artifact/demo.conf'
   const createProviderFixture = (authProvider: GatewayAuthProvider) =>
     createFixture({ viewerToken: undefined, authProvider })
+
+  test('/api/config 的 hasAuthProvider 为 true', async () => {
+    const { app } = createProviderFixture(async () => ({ success: false }))
+
+    const response = await app.request('/api/config')
+
+    expect((await response.json()).data.hasAuthProvider).toBe(true)
+  })
 
   test('admin token 与 cookie 不调用 provider', async () => {
     const authProvider = vi.fn<GatewayAuthProvider>(async () => ({
