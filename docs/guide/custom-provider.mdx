@@ -361,6 +361,19 @@ Vless 节点遵循和 Vmess 类似的配置规则，除了以下几个差异：
    ```
 4. `method` 有且仅有 `none` 一个选项
 
+各客户端对 Vless 的支持情况如下，不支持的传输层或参数组合会输出警告并省略该节点：
+
+| 客户端 | 传输层（`network`） | Reality | `flow` | 备注 |
+| --- | --- | --- | --- | --- |
+| Surge | `tcp`、`ws`、`grpc` | 仅 `tcp`、`grpc` | 仅 `xtls-rprx-vision`、`xtls-rprx-vision-udp443`，`ws` 不支持 | 需要 Surge iOS 6.0.0 或 Surge Mac 6.12.0 以上版本；`encryption` 只能为 `none` |
+| Clash（Mihomo、Stash） | `tcp`、`ws`、`h2`、`http`、`grpc`、`xhttp` | 支持，可设置 `spiderX` | 支持 | 原版 Clash（`clashCore: 'clash'`）不输出 Vless 节点；会输出 `encryption`、`packetEncoding`、`clientFingerprint` 和 `echOpts` |
+| sing-box | `tcp`、`ws`、`http`、`grpc`、`quic`、`httpupgrade` | 支持 | 支持 | 不输出 `encryption` |
+| Loon | `tcp`、`ws`、`http` | 支持 | 支持 | |
+| Quantumult X | `tcp`、`ws` | 支持 | 支持 | `sni` 输出为 `obfs-host`；Quantumult X 的 `http` 传输不带 TLS，因此不输出；`encryption` 只能为 `none` |
+| Egern | `tcp`、`ws`、`h2`、`grpc` | 仅 `tcp`、`grpc` | 支持 | `encryption` 只能为 `none` |
+| Surfboard | 不支持 | - | - | |
+| V2rayN 订阅 | `tcp`、`ws`、`h2`、`http`、`grpc`、`quic`、`httpupgrade`、`xhttp` | 支持，可设置 `spiderX` | 支持 | 无法用分享链接表达的字段会被省略 |
+
 ### Snell
 
 Surfboard 支持 v1～v4，省略版本时采用客户端默认的 v1。v5 会告警并输出为 v4，与 Surfboard 官方说明一致。可设置 `obfsUri`，仅在 HTTP 混淆时输出；`udpRelay` 仅在 v3/v4 时生效。
