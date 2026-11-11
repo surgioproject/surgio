@@ -297,42 +297,10 @@ module.exports = {
 // surgio.conf.js
 module.exports = {
   clashConfig: {
-    enableTuic: false,
+    clashCore: 'stash',
   },
 };
 ```
-
-<a id="clashconfig-enabletuic"></a>
-
-### clashConfig.enableTuic
-
-- 类型：`boolean`
-- 默认值：`false`
-
-目前仅 Clash Meta 内核和 Stash 支持 Tuic，如果你希望在 Clash 订阅中输出 Tuic 节点请开启此项。
-
-<a id="clashconfig-enableshadowtls"></a>
-
-### clashConfig.enableShadowTls
-
-- 类型：`boolean`
-- 默认值：`false`
-
-目前仅 Stash 支持 shadow-tls，如果你希望在 Shadowsocks 节点中使用 shadow-tls 请开启此项。
-
-### clashConfig.enableHysteria2
-
-- 类型：`boolean`
-- 默认值：`false`
-
-目前仅 Clash Meta 内核和 Stash 支持 Hysteria v2，如果你希望在 Clash 订阅中输出 Hysteria v2 节点请开启此项。
-
-### clashConfig.enableVless
-
-- 类型：`boolean`
-- 默认值：`false`
-
-目前仅 Clash Meta 内核和 Stash 支持 VLESS，如果你希望在 Clash 订阅中输出 VLESS 节点请开启此项。
 
 ### clashConfig.clashCore
 
@@ -346,13 +314,13 @@ Clash 核心版本。默认使用 Mihomo（`clash.meta`）。`mihomo` 是 `clash
 
 | 核心 | 变化 |
 | --- | --- |
-| `clash` | 使用旧版 Clash 的节点字段和规则过滤行为 |
+| `clash` | 使用旧版 Clash 的节点字段和规则过滤行为；省略 VLESS、TUIC、Hysteria2、AnyTLS、MASQUE、TrustTunnel、Tailscale 和使用 shadow-tls 的节点 |
 | `clash.meta` | 默认值；模板 `clash` 过滤器会改为过滤 Mihomo 不支持的规则 |
 | `mihomo` | `clash.meta` 的输入别名，加载后统一为 `clash.meta` |
 | `stash` | Hysteria 协议的密码字段改为 `auth`；模板 `clash` 过滤器会改为过滤 Stash 不支持的规则 |
 
 :::warning[注意]
-`enableTuic`, `enableShadowTls`, `enableHysteria2`, `enableVless` 这几个配置项和 `clashCore` 目前互不影响。将默认核心改为 Mihomo 不会自动开启这些协议。
+`clashCore` 决定 Clash 订阅能否输出某类节点，Mihomo 和 Stash 会输出全部节点。v3 的 `enableTuic`、`enableShadowTls`、`enableHysteria2`、`enableVless` 已移除，配置中保留这些字段会导致校验失败。不想输出某类节点时，请使用[过滤器](/guide/custom-template#过滤器)。
 :::
 
 ## surfboardConfig

@@ -407,6 +407,15 @@ clashConfig: {
 
 `'mihomo'` 也可以作为输入别名，加载后会归一化为 `'clash.meta'`。
 
+### Clash 协议开关
+
+`clashConfig.enableTuic`、`enableShadowTls`、`enableHysteria2` 和 `enableVless` 已移除，Clash 订阅能否输出某类节点改由 `clashCore` 决定：
+
+- Mihomo（`'clash.meta'`）和 Stash 会输出 VLESS、TUIC、Hysteria2 和 shadow-tls 节点，不再需要单独开启
+- 原版 Clash（`'clash'`）一律省略 VLESS、TUIC、Hysteria2、AnyTLS、MASQUE、TrustTunnel、Tailscale 和使用 shadow-tls 的节点
+
+配置中保留这些字段会导致校验失败，全局配置和 Provider 中节点级的 `clashConfig` 都需要删除。v3 中没有开启这些开关的 Mihomo 或 Stash 用户，升级后 Clash 订阅会多出对应的节点；如果不想输出，请使用[过滤器](/guide/custom-template#过滤器)排除。
+
 ### sing-box WireGuard 节点
 
 `getSingboxNodes` 不再输出 WireGuard 节点。WireGuard 和 Tailscale 一样输出到 sing-box 配置顶层的 `endpoints`，需要 sing-box 1.11 或更新版本。只用 `extendOutbounds` 的模板升级后会丢失 WireGuard 节点，需要改用 `getSingboxEndpoints` 和 `extendEndpoints`，写法见 [Tailscale 等 endpoint 节点](/guide/client/sing-box#tailscale-等-endpoint-节点)。`getSingboxNodeNames` 同时包含 outbound 和 endpoint 的 tag，策略组不需要修改。
