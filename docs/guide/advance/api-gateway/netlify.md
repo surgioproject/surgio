@@ -10,7 +10,7 @@
 确保仓库已经迁移为 `surgio.project.ts`，然后安装 Gateway 和面板资源：
 
 ```bash
-pnpm add surgio@beta @surgio/gateway@beta
+pnpm add surgio @surgio/gateway
 pnpm add @surgio/gateway-frontend
 ```
 

@@ -57,13 +57,13 @@ npm i surgio@latest @surgio/gateway@latest --save
 
 你可以通过开启 `clashConfig.enableTuic` 来为 Clash 订阅中的节点增加 Tuic 特性。
 
-> [文档](/guide/custom-config#clashconfigenabletuic)
+> v4 已移除该开关，节点能否输出改由 [`clashConfig.clashCore`](/guide/custom-config#clashconfigclashcore) 决定。
 
 #### Shadow TLS
 
 你可以通过开启 `clashConfig.enableShadowTls` 来为 Clash 订阅中的节点增加 ShadowTls 特性。
 
-> [文档](/guide/custom-config#clashconfigenableshadowtls)
+> v4 已移除该开关，节点能否输出改由 [`clashConfig.clashCore`](/guide/custom-config#clashconfigclashcore) 决定。
 
 ### Clash 特性
 

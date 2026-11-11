@@ -10,7 +10,7 @@
 确保仓库已经迁移为 `surgio.project.ts`，然后安装 Gateway：
 
 ```bash
-pnpm add surgio@beta @surgio/gateway@beta
+pnpm add surgio @surgio/gateway
 ```
 
 ### 开启接口鉴权

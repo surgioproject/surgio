@@ -9,7 +9,7 @@
 确保仓库已经迁移为 `surgio.project.ts`，然后安装 Gateway：
 
 ```bash
-pnpm add surgio@beta @surgio/gateway@beta
+pnpm add surgio @surgio/gateway
 ```
 
 ### 开启接口鉴权
@@ -60,7 +60,7 @@ EXPOSE 3000
 CMD ["node", "server.ts"]
 ```
 
-`pnpm-workspace.yaml` 中的 pnpm 设置会影响安装结果，例如为刚发布的 beta 版本添加的
+`pnpm-workspace.yaml` 中的 pnpm 设置会影响安装结果，例如为刚发布的版本添加的
 `minimumReleaseAgeExclude`，所以要和 lockfile 一起复制。
 
 再新建 `.dockerignore`，避免把本地依赖、生成结果和凭据复制进镜像：
