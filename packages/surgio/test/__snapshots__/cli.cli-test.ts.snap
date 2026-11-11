@@ -610,7 +610,7 @@ http=server:443, username=username, password=password, over-tls=true, tls-verifi
 http=server:443, username=username, password=password, tag=http 2
 shadowsocks=server:443, method=chacha20-ietf-poly1305, password=password, obfs=tls, obfs-host=example.com, udp-relay=true, tag=ss4
 shadowsocks=server:443, method=chacha20-ietf-poly1305, password=password, obfs=wss, obfs-host=cloudflare.com, obfs-uri=/ws, udp-relay=true, tls-verification=true, tls13=true, tag=ss-wss
-vless=server.com:443, method=none, password=uuid, udp-relay=true, aead=true, obfs=over-tls, tls-verification=true, tls13=true, tag=vless
+vless=server.com:443, method=none, password=uuid, udp-relay=true, obfs=over-tls, obfs-host=porter.server.com, tls-verification=true, tls13=true, reality-base64-pubkey=666Kuy1l13XTLXaX2m9nV_s6JYRc8C3FRuAT15Bhaba, reality-hex-shortid=09561058, vless-flow=xtls-rprx-vision, tag=vless
 ----
 getSurgeNodes
 

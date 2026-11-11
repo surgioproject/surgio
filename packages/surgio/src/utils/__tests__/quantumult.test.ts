@@ -1,6 +1,6 @@
-import { expect, test } from 'vitest'
+import { expect, test, vi } from 'vitest'
 
-import { NodeTypeEnum } from '../../types.js'
+import { NodeTypeEnum, PossibleNodeConfigType } from '../../types.js'
 import * as quantumult from '../quantumult.js'
 
 test('getQuantumultXNodes', () => {
@@ -471,4 +471,93 @@ test('getQuantumultXNodeNames', () => {
       },
     ]),
   ).toBe(['Test Node 1', 'Test Node 2', 'AnyTLS Node'].join(', '))
+})
+
+test('getQuantumultXNodes - VLESS', () => {
+  const base = {
+    type: NodeTypeEnum.Vless,
+    hostname: 'example.com',
+    port: 443,
+    method: 'none',
+    uuid: '1386f85e-657b-4d6e-9d56-78badb75e1fd',
+    quantumultXConfig: { vmessAEAD: true },
+  } as const
+
+  expect(
+    quantumult
+      .getQuantumultXNodes([
+        {
+          ...base,
+          nodeName: 'vless reality',
+          network: 'tcp',
+          flow: 'xtls-rprx-vision',
+          sni: 'www.microsoft.com',
+          udpRelay: true,
+          skipCertVerify: true,
+          realityOpts: { publicKey: 'public-key', shortId: '0123abcd' },
+        },
+        {
+          ...base,
+          nodeName: 'vless wss reality',
+          network: 'ws',
+          sni: 'sni.example.com',
+          wsOpts: { path: '/ws', headers: { Host: 'ws.example.com' } },
+          realityOpts: { publicKey: 'public-key' },
+        },
+        {
+          ...base,
+          nodeName: 'vless wss',
+          network: 'ws',
+          sni: 'sni.example.com',
+          skipCertVerify: true,
+          tls13: true,
+        },
+      ])
+      .split('\n'),
+  ).toEqual([
+    'vless=example.com:443, method=none, password=1386f85e-657b-4d6e-9d56-78badb75e1fd, udp-relay=true, obfs=over-tls, obfs-host=www.microsoft.com, tls-verification=true, reality-base64-pubkey=public-key, reality-hex-shortid=0123abcd, vless-flow=xtls-rprx-vision, tag=vless reality',
+    'vless=example.com:443, method=none, password=1386f85e-657b-4d6e-9d56-78badb75e1fd, obfs=wss, obfs-host=ws.example.com, obfs-uri=/ws, tls-verification=true, reality-base64-pubkey=public-key, tag=vless wss reality',
+    'vless=example.com:443, method=none, password=1386f85e-657b-4d6e-9d56-78badb75e1fd, obfs=wss, obfs-host=sni.example.com, obfs-uri=/, tls-verification=false, tls13=true, tag=vless wss',
+  ])
+})
+
+test('getQuantumultXNodes omits VLESS combinations Quantumult X does not support', () => {
+  const warn = vi.fn()
+  const logger = { debug: vi.fn(), info: vi.fn(), warn, error: vi.fn() }
+  const base = {
+    type: NodeTypeEnum.Vless,
+    hostname: 'example.com',
+    port: 443,
+    method: 'none',
+    uuid: '1386f85e-657b-4d6e-9d56-78badb75e1fd',
+  } as const
+  const nodeList: PossibleNodeConfigType[] = [
+    {
+      ...base,
+      nodeName: 'vless http',
+      network: 'http',
+      httpOpts: { method: 'GET', path: ['/'], headers: {} },
+    },
+    { ...base, nodeName: 'vless grpc', network: 'grpc' },
+    {
+      ...base,
+      nodeName: 'vless encryption',
+      network: 'tcp',
+      encryption: 'aes',
+    },
+  ]
+
+  expect(quantumult.getQuantumultXNodes(nodeList, undefined, { logger })).toBe(
+    '',
+  )
+  expect(
+    quantumult.getQuantumultXNodeNames(nodeList, undefined, { logger }),
+  ).toBe('')
+  expect(warn.mock.calls.map(([message]) => message)).toEqual(
+    expect.arrayContaining([
+      expect.stringContaining('vless http'),
+      expect.stringContaining('vless grpc'),
+      expect.stringContaining('vless encryption'),
+    ]),
+  )
 })

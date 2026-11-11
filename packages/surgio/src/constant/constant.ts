@@ -192,6 +192,8 @@ export const QUANTUMULT_X_SUPPORTED_VMESS_NETWORK = [
   'http',
 ] as const
 
+export const QUANTUMULT_X_SUPPORTED_VLESS_NETWORK = ['tcp', 'ws'] as const
+
 export const SURGE_SUPPORTED_VMESS_NETWORK = ['tcp', 'ws'] as const
 
 export const SURGE_SUPPORTED_VLESS_NETWORK = ['tcp', 'ws', 'grpc'] as const

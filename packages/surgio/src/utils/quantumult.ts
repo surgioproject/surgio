@@ -1,12 +1,16 @@
 import _ from 'lodash'
 import { logger as defaultLogger } from '@surgio/logger'
 
-import { QUANTUMULT_X_SUPPORTED_VMESS_NETWORK } from '../constant/index.js'
+import {
+  QUANTUMULT_X_SUPPORTED_VLESS_NETWORK,
+  QUANTUMULT_X_SUPPORTED_VMESS_NETWORK,
+} from '../constant/index.js'
 import {
   NodeFilterType,
   NodeTypeEnum,
   PossibleNodeConfigType,
   SortedNodeFilterType,
+  VlessNodeConfig,
 } from '../types.js'
 import { applyFilter } from '../filters/index.js'
 
@@ -51,6 +55,8 @@ function nodeListMapper(
 ): [string, string] | undefined {
   switch (nodeConfig.type) {
     case NodeTypeEnum.Vless:
+      return formatVlessNode(nodeConfig, logger)
+
     case NodeTypeEnum.Vmess: {
       if (
         !QUANTUMULT_X_SUPPORTED_VMESS_NETWORK.includes(
@@ -58,7 +64,7 @@ function nodeListMapper(
         )
       ) {
         logger.warn(
-          `Quantumult X 不支持 ${nodeConfig.network} 的 Vmess 节点，节点 ${nodeConfig.nodeName} 会被省略`,
+          `Quantumult X 不支持 ${nodeConfig.network} 的 VMess 节点，节点 ${nodeConfig.nodeName} 会被省略`,
         )
         return void 0
       }
@@ -77,10 +83,7 @@ function nodeListMapper(
 
       switch (nodeConfig.network) {
         case 'ws':
-          if (
-            (nodeConfig.type === NodeTypeEnum.Vmess && nodeConfig.tls) ||
-            nodeConfig.type === NodeTypeEnum.Vless
-          ) {
+          if (nodeConfig.tls) {
             config.push(`obfs=wss`)
 
             /* istanbul ignore next -- @preserve */
@@ -108,10 +111,7 @@ function nodeListMapper(
 
           break
         case 'tcp':
-          if (
-            (nodeConfig.type === NodeTypeEnum.Vmess && nodeConfig.tls) ||
-            nodeConfig.type === NodeTypeEnum.Vless
-          ) {
+          if (nodeConfig.tls) {
             config.push(`obfs=over-tls`)
 
             if (nodeConfig.skipCertVerify) {
@@ -148,17 +148,9 @@ function nodeListMapper(
 
       config.push(`tag=${nodeConfig.nodeName}`)
 
-      /* istanbul ignore next -- @preserve */
-      if (
-        nodeConfig.wsOpts?.headers &&
-        Object.keys(nodeConfig.wsOpts.headers).length > 1
-      ) {
-        logger.warn(
-          `Quantumult X 不支持自定义额外的 Header 字段，节点 ${nodeConfig.nodeName} 可能不可用`,
-        )
-      }
+      warnExtraWsHeaders(nodeConfig, logger)
 
-      return [nodeConfig.nodeName, `${nodeConfig.type}=${config.join(', ')}`]
+      return [nodeConfig.nodeName, `vmess=${config.join(', ')}`]
     }
 
     case NodeTypeEnum.Shadowsocks: {
@@ -353,5 +345,105 @@ function nodeListMapper(
         } 会被省略`,
       )
       return void 0
+  }
+}
+
+/**
+ * Surgio 默认所有 VLESS 节点都使用 TLS。Quantumult X 的 obfs-host 同时作为 SNI 使用，
+ * VLESS 的 obfs=http 不带 TLS，所以不输出 HTTP 传输的 VLESS 节点。
+ *
+ * @see https://github.com/crossutility/Quantumult-X/blob/master/sample.conf
+ */
+function formatVlessNode(
+  nodeConfig: VlessNodeConfig,
+  logger: Logger,
+): [string, string] | undefined {
+  const unsupportedReason = getUnsupportedVlessReason(nodeConfig)
+
+  if (unsupportedReason) {
+    logger.warn(
+      `Quantumult X 的 VLESS 节点不支持 ${unsupportedReason}，节点 ${nodeConfig.nodeName} 会被省略`,
+    )
+    return undefined
+  }
+
+  const { realityOpts } = nodeConfig
+  const config = [
+    `${nodeConfig.hostname}:${nodeConfig.port}`,
+    'method=none',
+    `password=${nodeConfig.uuid}`,
+    ...(nodeConfig.udpRelay ? ['udp-relay=true'] : []),
+    ...(nodeConfig.tfo ? ['fast-open=true'] : []),
+    ...formatVlessObfs(nodeConfig),
+    `tls-verification=${realityOpts ? true : nodeConfig.skipCertVerify !== true}`,
+    ...(nodeConfig.tls13 ? ['tls13=true'] : []),
+    ...(realityOpts ? [`reality-base64-pubkey=${realityOpts.publicKey}`] : []),
+    ...(realityOpts?.shortId
+      ? [`reality-hex-shortid=${realityOpts.shortId}`]
+      : []),
+    ...(nodeConfig.flow ? [`vless-flow=${nodeConfig.flow}`] : []),
+    ...(typeof nodeConfig.testUrl === 'string'
+      ? [`server_check_url=${nodeConfig.testUrl}`]
+      : []),
+    `tag=${nodeConfig.nodeName}`,
+  ]
+
+  warnExtraWsHeaders(nodeConfig, logger)
+
+  return [nodeConfig.nodeName, `vless=${config.join(', ')}`]
+}
+
+function getUnsupportedVlessReason(
+  nodeConfig: VlessNodeConfig,
+): string | undefined {
+  const { network, encryption } = nodeConfig
+
+  if (
+    !(QUANTUMULT_X_SUPPORTED_VLESS_NETWORK as readonly string[]).includes(
+      network,
+    )
+  ) {
+    return `${network} 传输`
+  }
+  if (encryption && encryption !== 'none') {
+    return `encryption=${encryption}`
+  }
+
+  return undefined
+}
+
+function formatVlessObfs(nodeConfig: VlessNodeConfig): string[] {
+  if (nodeConfig.network === 'tcp') {
+    return [
+      'obfs=over-tls',
+      ...(nodeConfig.sni ? [`obfs-host=${nodeConfig.sni}`] : []),
+    ]
+  }
+
+  const obfsHost =
+    getHeader(nodeConfig.wsOpts?.headers, 'Host') ?? nodeConfig.sni
+
+  return [
+    'obfs=wss',
+    ...(obfsHost ? [`obfs-host=${obfsHost}`] : []),
+    `obfs-uri=${nodeConfig.wsOpts?.path || '/'}`,
+  ]
+}
+
+function warnExtraWsHeaders(
+  nodeConfig: {
+    nodeName: string
+    wsOpts?: { headers?: Record<string, string> }
+  },
+  logger: Logger,
+): void {
+  /* istanbul ignore next -- @preserve */
+  if (
+    nodeConfig.wsOpts?.headers &&
+    Object.keys(nodeConfig.wsOpts.headers).length > 1
+  ) {
+    logger.warn(
+      `Quantumult X 不支持自定义额外的 Header 字段，节点 ${nodeConfig.nodeName} 可能不可用`,
+    )
   }
 }
