@@ -3,6 +3,21 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.0.0](https://github.com/surgioproject/surgio/compare/surgio%404.0.0-beta.11...surgio%404.0.0) (2026-11-11)
+
+### Features
+
+* **clash:** derive node support from clashcore ([608a396](https://github.com/surgioproject/surgio/commit/608a3965912cc53db96055876e654b3fc317f799))
+* **quantumult:** output vless nodes ([24b7486](https://github.com/surgioproject/surgio/commit/24b748696af84930c03919129f9d1e429d9371e7))
+* **surge:** output vless nodes ([81fd829](https://github.com/surgioproject/surgio/commit/81fd829d26e8ae0f5722903ec69d2a4fc1a6eb73))
+
+### BREAKING CHANGES
+
+* **clash:** clashConfig.enableTuic, enableShadowTls,
+  enableHysteria2 and enableVless are removed. Configs that set them fail
+  validation, and Mihomo or Stash users now receive these nodes by default.
+
+
 # [4.0.0-beta.11](https://github.com/surgioproject/surgio/compare/surgio%404.0.0-beta.10...surgio%404.0.0-beta.11) (2026-11-01)
 
 ### Features
