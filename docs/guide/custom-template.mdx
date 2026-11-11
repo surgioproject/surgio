@@ -300,7 +300,8 @@ HTTPS。HTTP/HTTPS 使用 v2rayN 内部格式，其余节点使用协议分享�
 :::tip[提示]
 
 - 第二个参数可选，可传入标准的过滤器或自定义的过滤器
-- 支持输出 Shadowsocks, Shadowsocksr, Vmess, HTTPS, Trojan, AnyTLS 节点
+- 支持输出 Shadowsocks, Shadowsocksr, Vmess, Vless, HTTPS, Trojan, AnyTLS 节点
+- Vless 节点仅支持 TCP 和 WebSocket 传输，支持 Reality 和 `flow`，`sni` 会输出为 `obfs-host`。Quantumult X 的 Vless HTTP 传输不带 TLS，因此 HTTP 传输的 Vless 节点会输出警告并被省略
 - 支持添加 `udp-relay` 和 `fast-open` 配置
   :::
 
