@@ -60,6 +60,7 @@ exports[`exports.utils 1`] = `
   "isStash": [Function],
   "isSurgeIOS": [Function],
   "isSurgeMac": [Function],
+  "isSurgeTVOS": [Function],
   "isVercel": [Function],
   "japanFilter": [Function],
   "koreaFilter": [Function],
