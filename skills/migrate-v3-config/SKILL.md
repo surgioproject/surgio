@@ -47,6 +47,8 @@ description: 将 Surgio v3 配置仓库迁移为原生 TypeScript ESM Project，
    - `OSS_ACCESS_KEY_ID`、`OSS_ACCESS_KEY_SECRET`、`upload.endpoint`；
    - CI、部署脚本和本地文档中的 `HTTP_PROXY`、`HTTPS_PROXY`；
    - `clashConfig.clashCore` 是否显式设置；
+   - 全局和节点级 `clashConfig` 中的 `enableTuic`、`enableShadowTls`、
+     `enableHysteria2`、`enableVless`；
    - sing-box Artifact 的 `extendOutbounds`、`extendEndpoints` 和 WireGuard 节点；
    - 已删除的 Provider 类型 `ssd`、`shadowsocks_json_subscribe`、`blackssl`，以及
      `format=shadowsocks-json`、`getShadowsocksNodesJSON`；
@@ -193,6 +195,13 @@ export const nodeOptions = async (): Promise<SurgioNodeOptions> => ({
   未显式设置时，迁移中写入 `clashCore: 'clash'` 以保持 Clash Artifact 不变，并在完成
   报告中说明删除该字段即可切换到 Mihomo。用户明确要求切换时才省略它，此时 Clash
   Artifact 的差异属于预期变化。
+- `clashConfig.enableTuic`、`enableShadowTls`、`enableHysteria2`、`enableVless` 已移除，
+  保留这些字段会导致配置校验失败，全局配置和 Provider 的节点级 `clashConfig` 都要删除。
+  v4 由 `clashCore` 决定 Clash 订阅能否输出这些节点：`'clash'` 一律省略 VLESS、TUIC、
+  Hysteria2、AnyTLS、MASQUE、TrustTunnel、Tailscale 和 shadow-tls 节点，Mihomo 和 Stash
+  全部输出。如果 v3 配置未设置 `clashCore` 但开启过任一开关，说明用户实际使用 Mihomo
+  或 Stash，此时不要写入 `clashCore: 'clash'`，否则这些节点会消失；先询问用户使用哪个
+  客户端，再写入 `'clash.meta'` 或 `'stash'`，并把由此产生的 Clash 差异列为预期变化。
 - sing-box 的 WireGuard 节点从 `outbounds` 改为输出到顶层 `endpoints`，`getSingboxNodes`
   不再包含它。项目有 WireGuard 节点时，用 `combineExtendFunctions` 组合现有
   `extendOutbounds` 和 `extendEndpoints(({ getSingboxEndpoints, nodeList }) =>
@@ -369,7 +378,9 @@ v4 修改了部分客户端的节点和规则输出。以下差异只在项目�
 
 - Surge：ShadowsocksR 节点被省略并输出警告。
 - Clash：未设置 `clashCore` 且用户选择切换到 Mihomo 时的全部差异；Clash 订阅中 TUIC
-  节点的 `congestion-controller` 会被保留并输出。
+  节点的 `congestion-controller` 会被保留并输出；`clashCore` 为 Mihomo 或 Stash 时，
+  v3 因 `enable*` 开关未开启而省略的 VLESS、TUIC、Hysteria2 和 shadow-tls 节点开始
+  输出；按上文为开过 `enable*` 开关的项目写入 Mihomo 或 Stash 核心后产生的差异。
 - sing-box：
   - WireGuard 从 `outbounds` 移到 `endpoints`；
   - 设置了 `version` 的 Snell 节点开始输出；
