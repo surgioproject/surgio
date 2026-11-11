@@ -1010,3 +1010,102 @@ test('getSurgeNodes omits unknown ipVersion values', () => {
     'Surge 不支持 ipVersion=constructor，节点 Socks5 Node 将不包含此字段',
   )
 })
+
+test('getSurgeNodes - VLESS', () => {
+  const base = {
+    type: NodeTypeEnum.Vless,
+    hostname: 'example.com',
+    port: 443,
+    method: 'none',
+    uuid: '1386f85e-657b-4d6e-9d56-78badb75e1fd',
+  } as const
+
+  expect(
+    surge
+      .getSurgeNodes([
+        {
+          ...base,
+          nodeName: 'vless tcp',
+          network: 'tcp',
+          flow: 'xtls-rprx-vision',
+          encryption: 'none',
+          sni: 'sni.example.com',
+          skipCertVerify: true,
+        },
+        {
+          ...base,
+          nodeName: 'vless reality',
+          network: 'tcp',
+          flow: 'xtls-rprx-vision',
+          sni: 'www.microsoft.com',
+          realityOpts: {
+            publicKey: 'public-key',
+            shortId: '0123abcd',
+          },
+        },
+        {
+          ...base,
+          nodeName: 'vless ws',
+          network: 'ws',
+          wsOpts: {
+            path: '/ws',
+            headers: { Host: 'ws.example.com' },
+          },
+        },
+        {
+          ...base,
+          nodeName: 'vless grpc reality',
+          network: 'grpc',
+          grpcOpts: { serviceName: 'service' },
+          realityOpts: { publicKey: 'public-key' },
+        },
+      ])
+      .split('\n'),
+  ).toEqual([
+    'vless tcp = vless, example.com, 443, username=1386f85e-657b-4d6e-9d56-78badb75e1fd, flow=xtls-rprx-vision, tls=true, skip-cert-verify=true, sni=sni.example.com',
+    'vless reality = vless, example.com, 443, username=1386f85e-657b-4d6e-9d56-78badb75e1fd, flow=xtls-rprx-vision, reality-public-key=public-key, reality-short-id=0123abcd, sni=www.microsoft.com',
+    'vless ws = vless, example.com, 443, username=1386f85e-657b-4d6e-9d56-78badb75e1fd, ws=true, ws-path=/ws, ws-headers="host:ws.example.com", tls=true',
+    'vless grpc reality = vless, example.com, 443, username=1386f85e-657b-4d6e-9d56-78badb75e1fd, grpc=true, grpc-service-name=service, reality-public-key=public-key',
+  ])
+})
+
+test('getSurgeNodes omits VLESS combinations Surge does not support', () => {
+  const warn = vi.fn()
+  const logger = { debug: vi.fn(), info: vi.fn(), warn, error: vi.fn() }
+  const base = {
+    type: NodeTypeEnum.Vless,
+    hostname: 'example.com',
+    port: 443,
+    method: 'none',
+    uuid: '1386f85e-657b-4d6e-9d56-78badb75e1fd',
+  } as const
+  const nodeList: PossibleNodeConfigType[] = [
+    { ...base, nodeName: 'xhttp', network: 'xhttp' },
+    { ...base, nodeName: 'ws vision', network: 'ws', flow: 'xtls-rprx-vision' },
+    {
+      ...base,
+      nodeName: 'ws reality',
+      network: 'ws',
+      realityOpts: { publicKey: 'public-key' },
+    },
+    {
+      ...base,
+      nodeName: 'legacy flow',
+      network: 'tcp',
+      flow: 'xtls-rprx-direct',
+    },
+    { ...base, nodeName: 'encryption', network: 'tcp', encryption: 'mlkem768' },
+  ]
+
+  expect(surge.getSurgeNodes(nodeList, undefined, { logger })).toBe('')
+  expect(surge.getSurgeNodeNames(nodeList, undefined, { logger })).toBe('')
+  expect(warn.mock.calls.map(([message]) => message)).toEqual(
+    expect.arrayContaining([
+      expect.stringContaining('xhttp'),
+      expect.stringContaining('ws vision'),
+      expect.stringContaining('ws reality'),
+      expect.stringContaining('legacy flow'),
+      expect.stringContaining('encryption'),
+    ]),
+  )
+})

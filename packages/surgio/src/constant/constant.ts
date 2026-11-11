@@ -194,6 +194,13 @@ export const QUANTUMULT_X_SUPPORTED_VMESS_NETWORK = [
 
 export const SURGE_SUPPORTED_VMESS_NETWORK = ['tcp', 'ws'] as const
 
+export const SURGE_SUPPORTED_VLESS_NETWORK = ['tcp', 'ws', 'grpc'] as const
+
+export const SURGE_SUPPORTED_VLESS_FLOW = [
+  'xtls-rprx-vision',
+  'xtls-rprx-vision-udp443',
+] as const
+
 export const SURFBOARD_SUPPORTED_VMESS_NETWORK = ['tcp', 'ws'] as const
 
 export const LOON_SUPPORTED_VMESS_NETWORK = ['tcp', 'ws', 'http'] as const

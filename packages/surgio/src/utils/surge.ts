@@ -1,11 +1,17 @@
 import { logger as defaultLogger } from '@surgio/logger'
 
-import { OBFS_UA, SURGE_SUPPORTED_VMESS_NETWORK } from '../constant/index.js'
+import {
+  OBFS_UA,
+  SURGE_SUPPORTED_VLESS_FLOW,
+  SURGE_SUPPORTED_VLESS_NETWORK,
+  SURGE_SUPPORTED_VMESS_NETWORK,
+} from '../constant/index.js'
 import {
   NodeFilterType,
   NodeTypeEnum,
   PossibleNodeConfigType,
   SortedNodeFilterType,
+  VlessNodeConfig,
 } from '../types.js'
 import { applyFilter } from '../filters/index.js'
 
@@ -356,6 +362,16 @@ function nodeListMapper(
       ]
     }
 
+    case NodeTypeEnum.Vless: {
+      const policy = formatVlessPolicy(nodeConfig, logger)
+
+      if (!policy) {
+        return undefined
+      }
+
+      return [nodeConfig.nodeName, `${nodeConfig.nodeName} = ${policy}`]
+    }
+
     case NodeTypeEnum.Trojan: {
       const result: string[] = [
         'trojan',
@@ -587,6 +603,102 @@ function nodeListMapper(
         } 会被省略`,
       )
       return undefined
+  }
+}
+
+/**
+ * Surgio 默认所有 VLESS 节点都使用 TLS，配置 Reality 时由 Reality 代替 TLS。
+ *
+ * @see https://manual.nssurge.com/policies/vless.html
+ */
+function formatVlessPolicy(
+  nodeConfig: VlessNodeConfig,
+  logger: Logger,
+): string | undefined {
+  const unsupportedReason = getUnsupportedVlessReason(nodeConfig)
+
+  if (unsupportedReason) {
+    logger.warn(
+      `Surge 的 VLESS 节点不支持${unsupportedReason}，节点 ${nodeConfig.nodeName} 会被省略`,
+    )
+    return undefined
+  }
+
+  const result: string[] = [
+    'vless',
+    nodeConfig.hostname,
+    `${nodeConfig.port}`,
+    `username=${nodeConfig.uuid}`,
+  ]
+
+  if (nodeConfig.flow) {
+    result.push(`flow=${nodeConfig.flow}`)
+  }
+
+  result.push(...formatVlessTransport(nodeConfig))
+
+  if (nodeConfig.realityOpts) {
+    result.push(`reality-public-key=${nodeConfig.realityOpts.publicKey}`)
+
+    if (nodeConfig.realityOpts.shortId) {
+      result.push(`reality-short-id=${nodeConfig.realityOpts.shortId}`)
+    }
+  } else {
+    result.push('tls=true')
+  }
+
+  return result.join(', ')
+}
+
+function getUnsupportedVlessReason(
+  nodeConfig: VlessNodeConfig,
+): string | undefined {
+  const { network, flow, encryption, realityOpts } = nodeConfig
+
+  if (!(SURGE_SUPPORTED_VLESS_NETWORK as readonly string[]).includes(network)) {
+    return ` ${network} 传输`
+  }
+  if (encryption && encryption !== 'none') {
+    return ` encryption=${encryption}`
+  }
+  if (
+    flow &&
+    !(SURGE_SUPPORTED_VLESS_FLOW as readonly string[]).includes(flow)
+  ) {
+    return ` flow=${flow}`
+  }
+  if (network === 'ws' && flow) {
+    return '在 ws 传输上使用 flow'
+  }
+  if (network === 'ws' && realityOpts) {
+    return '在 ws 传输上使用 Reality'
+  }
+
+  return undefined
+}
+
+function formatVlessTransport(nodeConfig: VlessNodeConfig): string[] {
+  switch (nodeConfig.network) {
+    case 'ws': {
+      const result = ['ws=true', `ws-path=${nodeConfig.wsOpts?.path || '/'}`]
+
+      if (nodeConfig.wsOpts?.headers) {
+        result.push(
+          'ws-headers=' +
+            JSON.stringify(getSurgeExtendHeaders(nodeConfig.wsOpts.headers)),
+        )
+      }
+
+      return result
+    }
+
+    case 'grpc':
+      return nodeConfig.grpcOpts?.serviceName
+        ? ['grpc=true', `grpc-service-name=${nodeConfig.grpcOpts.serviceName}`]
+        : ['grpc=true']
+
+    default:
+      return []
   }
 }
 
