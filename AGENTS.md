@@ -18,6 +18,11 @@ Surgio 是一个用于生成代理工具配置文件的 Node.js 命令行工具�
 
 包之间使用 `workspace:*` 互相依赖，发布时替换为实际版本号。`website` 也是 workspace 成员，但它是私有包，不参与发布。
 
+### 文档目录
+
+- `docs/` 是面向用户的文档站点源文件，只放使用文档
+- superpowers、mattpocock-skills 等 skill 产出的 spec、plan、research 等文档一律写入 `agent-docs/`，例如 `agent-docs/superpowers/specs/`、`agent-docs/superpowers/plans/`、`agent-docs/research/`，不要写入 `docs/`。skill 默认路径指向 `docs/` 时也以此为准
+
 ## 常用命令
 
 ### 仓库根目录
