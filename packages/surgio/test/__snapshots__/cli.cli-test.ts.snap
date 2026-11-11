@@ -581,6 +581,7 @@ http 1 = https, server, 443, username, password, tls13=true, skip-cert-verify=fa
 http 2 = http, server, 443, username, password
 snell = snell, server, 44046, psk=yourpsk, obfs=http
 ss4 = ss, server, 443, encrypt-method=chacha20-ietf-poly1305, password=password, udp-relay=true, obfs=tls, obfs-host=example.com
+vless = vless, server.com, 443, username=uuid, flow=xtls-rprx-vision, reality-public-key=666Kuy1l13XTLXaX2m9nV_s6JYRc8C3FRuAT15Bhaba, reality-short-id=09561058, tls13=true, skip-cert-verify=false, sni=porter.server.com
 ----
 getSurfboardNodes
 ss1 = ss, server, 443, encrypt-method=chacha20-ietf-poly1305, password=password, udp-relay=true
