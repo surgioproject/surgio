@@ -22,9 +22,6 @@
 [github-actions-image]: https://github.com/surgioproject/surgio/workflows/Node%20CI/badge.svg
 [nodejs-version]: https://img.shields.io/node/v/surgio
 
-> [!WARNING]
-> Surgio v4 正在 beta 测试。v3 版本的文档在 [v3.surgio.royli.dev](https://v3.surgio.royli.dev/)。
-
 ## 文档
 
 查看完整使用文档，前往 [surgio.js.org](https://surgio.js.org)。

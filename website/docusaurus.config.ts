@@ -95,14 +95,6 @@ const config: Config = {
         content: 'Surgio',
       },
     ],
-    announcementBar: {
-      id: 'v4-beta',
-      content:
-        'Surgio v4 正在 beta 测试，本站为 v4 文档。v3 版本的文档在 <a href="https://v3.surgio.royli.dev/" target="_blank" rel="noopener noreferrer">v3.surgio.royli.dev</a>。',
-      backgroundColor: 'var(--surgio-announcement-background)',
-      textColor: 'var(--surgio-announcement-text)',
-      isCloseable: false,
-    },
     navbar: {
       title: 'Surgio',
       logo: {
@@ -117,12 +109,12 @@ const config: Config = {
         },
         {
           type: 'dropdown',
-          label: 'v4 (beta)',
+          label: 'v4',
           position: 'right',
           items: [
             {
               to: '/',
-              label: 'v4 (beta)',
+              label: 'v4',
             },
             {
               href: 'https://v3.surgio.royli.dev/',

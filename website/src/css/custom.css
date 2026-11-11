@@ -19,8 +19,6 @@
   --ifm-code-font-size: 88%;
   --ifm-navbar-shadow: 0 1px 0 rgb(24 34 29 / 9%);
   --ifm-toc-border-color: #dfe8e2;
-  --surgio-announcement-background: #fff4d6;
-  --surgio-announcement-text: #5c4300;
 }
 
 [data-theme='dark'] {
@@ -39,8 +37,6 @@
   --ifm-navbar-background-color: #151b18;
   --ifm-footer-background-color: #151b18;
   --ifm-toc-border-color: #304039;
-  --surgio-announcement-background: #3a2f12;
-  --surgio-announcement-text: #f5dfa0;
 }
 
 body {
@@ -256,8 +252,4 @@ body {
     scroll-behavior: auto !important;
     transition-duration: 0.01ms !important;
   }
-}
-
-.theme-announcement-bar {
-  font-weight: 600;
 }
