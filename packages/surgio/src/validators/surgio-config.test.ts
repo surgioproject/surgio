@@ -29,6 +29,22 @@ test('normalizes mihomo Clash core alias', () => {
   ).toBe('clash.meta')
 })
 
+test.each(['enableTuic', 'enableShadowTls', 'enableHysteria2', 'enableVless'])(
+  'rejects removed clashConfig.%s option',
+  (option) => {
+    const result = SurgioConfigValidator.safeParse({
+      artifacts: [],
+      clashConfig: { [option]: true },
+    })
+
+    expect(result.success).toBe(false)
+    expect(result.error?.issues[0]).toMatchObject({
+      path: ['clashConfig', option],
+      message: expect.stringContaining('clashConfig.clashCore'),
+    })
+  },
+)
+
 test('rejects unknown Clash core values', () => {
   expect(ClashCoreValidator.safeParse('clash-meta').success).toBe(false)
 })

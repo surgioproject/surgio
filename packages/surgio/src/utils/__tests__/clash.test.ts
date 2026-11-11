@@ -266,6 +266,7 @@ test('getClashNodes', async () => {
           sni: 'example.com',
           version: 3,
         },
+        clashConfig: { clashCore: 'clash' },
       },
       {
         nodeName: 'Test Node 1',
@@ -279,10 +280,6 @@ test('getClashNodes', async () => {
           password: 'password',
           sni: 'example.com',
           version: 3,
-        },
-        clashConfig: {
-          enableTuic: false,
-          enableShadowTls: true,
         },
       },
       {
@@ -299,10 +296,6 @@ test('getClashNodes', async () => {
           password: 'password',
           sni: 'example.com',
           version: 3,
-        },
-        clashConfig: {
-          enableTuic: false,
-          enableShadowTls: true,
         },
       },
     ]),
@@ -419,7 +412,6 @@ test('getClashNodes', async () => {
         alpn: ['h2'],
         encryption: 'none',
         clashConfig: {
-          enableVless: true,
           clashCore: 'clash.meta',
         },
       },
@@ -602,9 +594,6 @@ test('getClashNodes', async () => {
           shortId: 'shortId',
         },
         encryption: 'encryption',
-        clashConfig: {
-          enableVless: true,
-        },
       },
     ]),
   ).toEqual([
@@ -652,9 +641,6 @@ test('getClashNodes', async () => {
         echOpts: {
           enable: true,
           config: 'ech-config',
-        },
-        clashConfig: {
-          enableVless: true,
         },
       },
     ]),
@@ -990,6 +976,7 @@ test('getClashNodes', async () => {
         hostname: '1.1.1.1',
         port: 443,
         token: 'password',
+        clashConfig: { clashCore: 'clash' },
       },
     ]),
   ).toEqual([])
@@ -999,10 +986,6 @@ test('getClashNodes', async () => {
       {
         nodeName: 'tuic',
         type: NodeTypeEnum.Tuic,
-        clashConfig: {
-          enableTuic: true,
-          enableShadowTls: false,
-        },
         hostname: '1.1.1.1',
         port: 443,
         token: 'password',
@@ -1012,8 +995,6 @@ test('getClashNodes', async () => {
         nodeName: 'tuic',
         type: NodeTypeEnum.Tuic,
         clashConfig: {
-          enableTuic: true,
-          enableShadowTls: false,
           clashCore: 'stash',
         },
         hostname: '1.1.1.1',
@@ -1118,9 +1099,6 @@ test('getClashNodes', async () => {
         password: 'password',
         downloadBandwidth: 100,
         uploadBandwidth: 100,
-        clashConfig: {
-          enableHysteria2: true,
-        },
       },
       {
         type: NodeTypeEnum.Hysteria2,
@@ -1133,7 +1111,6 @@ test('getClashNodes', async () => {
         portHopping: '5000-6000',
         portHoppingInterval: 10,
         clashConfig: {
-          enableHysteria2: true,
           clashCore: 'stash',
         },
       },
@@ -1148,9 +1125,6 @@ test('getClashNodes', async () => {
         ecn: true,
         sni: 'sni.example.com',
         skipCertVerify: true,
-        clashConfig: {
-          enableHysteria2: true,
-        },
       },
     ]),
   ).toEqual([
@@ -1710,5 +1684,123 @@ test('getClashNodes omits unknown ipVersion values for Mihomo', () => {
   ])
   expect(warn).toHaveBeenCalledWith(
     'Mihomo 不支持 ipVersion=constructor，节点 Socks5 Node 将不包含此字段',
+  )
+})
+
+test('getClashNodes outputs every protocol for Mihomo and Stash without extra switches', () => {
+  const nodeList: PossibleNodeConfigType[] = [
+    {
+      type: NodeTypeEnum.Vless,
+      nodeName: 'vless',
+      hostname: 'example.com',
+      port: 443,
+      uuid: '1386f85e-657b-4d6e-9d56-78badb75e1fd',
+      method: 'none',
+      network: 'tcp',
+    },
+    {
+      type: NodeTypeEnum.Tuic,
+      nodeName: 'tuic',
+      hostname: 'example.com',
+      port: 443,
+      token: 'token',
+    },
+    {
+      type: NodeTypeEnum.Hysteria2,
+      nodeName: 'hysteria2',
+      hostname: 'example.com',
+      port: 443,
+      password: 'password',
+    },
+    {
+      type: NodeTypeEnum.Shadowsocks,
+      nodeName: 'shadow-tls',
+      hostname: 'example.com',
+      port: 443,
+      method: 'chacha20-ietf-poly1305',
+      password: 'password',
+      shadowTls: { password: 'password', sni: 'example.com' },
+    },
+  ]
+
+  for (const clashCore of [undefined, 'clash.meta', 'stash'] as const) {
+    expect(
+      clash
+        .getClashNodeNames(
+          nodeList.map((node) => ({ ...node, clashConfig: { clashCore } })),
+        )
+        .slice(),
+    ).toEqual(['vless', 'tuic', 'hysteria2', 'shadow-tls'])
+  }
+})
+
+test('getClashNodes omits nodes that original Clash does not support', () => {
+  const warn = vi.fn()
+  const logger = { debug: vi.fn(), info: vi.fn(), warn, error: vi.fn() }
+  const clashConfig = { clashCore: 'clash' } as const
+  const nodeList: PossibleNodeConfigType[] = [
+    {
+      type: NodeTypeEnum.Vless,
+      nodeName: 'vless',
+      hostname: 'example.com',
+      port: 443,
+      uuid: '1386f85e-657b-4d6e-9d56-78badb75e1fd',
+      method: 'none',
+      network: 'tcp',
+      clashConfig,
+    },
+    {
+      type: NodeTypeEnum.Tuic,
+      nodeName: 'tuic',
+      hostname: 'example.com',
+      port: 443,
+      token: 'token',
+      clashConfig,
+    },
+    {
+      type: NodeTypeEnum.Hysteria2,
+      nodeName: 'hysteria2',
+      hostname: 'example.com',
+      port: 443,
+      password: 'password',
+      clashConfig,
+    },
+    {
+      type: NodeTypeEnum.AnyTLS,
+      nodeName: 'anytls',
+      hostname: 'example.com',
+      port: 443,
+      password: 'password',
+      clashConfig,
+    },
+    {
+      type: NodeTypeEnum.Shadowsocks,
+      nodeName: 'shadow-tls',
+      hostname: 'example.com',
+      port: 443,
+      method: 'chacha20-ietf-poly1305',
+      password: 'password',
+      shadowTls: { password: 'password', sni: 'example.com' },
+      clashConfig,
+    },
+    {
+      type: NodeTypeEnum.Trojan,
+      nodeName: 'trojan',
+      hostname: 'example.com',
+      port: 443,
+      password: 'password',
+      clashConfig,
+    },
+  ]
+
+  expect(
+    clash
+      .getClashNodes(nodeList, undefined, { logger })
+      .map((node) => node.name),
+  ).toEqual(['trojan'])
+  expect(warn.mock.calls.map(([message]) => message)).toEqual(
+    ['vless', 'tuic', 'hysteria2', 'anytls', 'shadow-tls'].map((name) =>
+      expect.stringMatching(new RegExp(`原版 Clash.*节点 ${name} 会被省略`)),
+    ),
   )
 })

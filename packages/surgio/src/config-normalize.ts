@@ -29,10 +29,6 @@ export const normalizeCommonConfig = (
       ...input.surgeConfig,
     },
     clashConfig: {
-      enableShadowTls: false,
-      enableTuic: false,
-      enableHysteria2: false,
-      enableVless: false,
       clashCore: 'clash.meta' as const,
       ...input.clashConfig,
     },

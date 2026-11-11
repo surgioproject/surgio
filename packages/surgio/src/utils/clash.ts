@@ -25,6 +25,29 @@ import type { FormatterOptions } from '../runtime/types.js'
 const getClashCore = (nodeConfig: PossibleNodeConfigType): ClashCoreType =>
   nodeConfig.clashConfig?.clashCore ?? 'clash.meta'
 
+// Mihomo 和 Stash 支持全部节点类型
+const LEGACY_CLASH_UNSUPPORTED_NODE_TYPES: ReadonlySet<NodeTypeEnum> = new Set([
+  NodeTypeEnum.Vless,
+  NodeTypeEnum.Tuic,
+  NodeTypeEnum.Hysteria2,
+  NodeTypeEnum.AnyTLS,
+  NodeTypeEnum.Masque,
+  NodeTypeEnum.TrustTunnel,
+  NodeTypeEnum.Tailscale,
+])
+
+function getLegacyClashUnsupportedFeature(
+  nodeConfig: PossibleNodeConfigType,
+): string | undefined {
+  if (LEGACY_CLASH_UNSUPPORTED_NODE_TYPES.has(nodeConfig.type)) {
+    return `${nodeConfig.type} 节点`
+  }
+  if (nodeConfig.shadowTls) {
+    return 'shadow-tls 插件'
+  }
+  return undefined
+}
+
 export const getClashNodes = function (
   list: ReadonlyArray<PossibleNodeConfigType>,
   filter?: NodeFilterType | SortedNodeFilterType,
@@ -123,19 +146,21 @@ export const getClashNodeNames = function (
  * @see https://stash.wiki/proxy-protocols/proxy-types
  */
 function nodeListMapper(nodeConfig: PossibleNodeConfigType, logger: Logger) {
-  const clashConfig = nodeConfig.clashConfig || {}
   const clashCore = getClashCore(nodeConfig)
+  const legacyUnsupportedFeature =
+    clashCore === 'clash'
+      ? getLegacyClashUnsupportedFeature(nodeConfig)
+      : undefined
+
+  if (legacyUnsupportedFeature) {
+    logger.warn(
+      `原版 Clash 不支持 ${legacyUnsupportedFeature}，节点 ${nodeConfig.nodeName} 会被省略。Mihomo 和 Stash 用户请正确设置 clashConfig.clashCore`,
+    )
+    return null
+  }
 
   switch (nodeConfig.type) {
     case NodeTypeEnum.Shadowsocks:
-      // Istanbul ignore next
-      if (nodeConfig.shadowTls && !clashConfig.enableShadowTls) {
-        logger.warn(
-          `尚未开启 Clash 的 shadow-tls 支持，节点 ${nodeConfig.nodeName} 将被忽略。如需开启，请在配置文件中设置 clashConfig.enableShadowTls 为 true。`,
-        )
-        return null
-      }
-
       // Istanbul ignore next
       if (nodeConfig.shadowTls && nodeConfig.obfs) {
         logger.warn(
@@ -181,7 +206,7 @@ function nodeListMapper(nodeConfig: PossibleNodeConfigType, logger: Logger) {
               },
             }
           : null),
-        ...(nodeConfig.shadowTls && nodeConfig.clashConfig?.enableShadowTls
+        ...(nodeConfig.shadowTls
           ? {
               plugin: 'shadow-tls',
               'client-fingerprint': 'chrome',
@@ -200,13 +225,6 @@ function nodeListMapper(nodeConfig: PossibleNodeConfigType, logger: Logger) {
 
     case NodeTypeEnum.Vless:
     case NodeTypeEnum.Vmess: {
-      if (nodeConfig.type === 'vless' && !clashConfig.enableVless) {
-        logger.warn(
-          `尚未开启 Clash 的 VLESS 支持，节点 ${nodeConfig.nodeName} 会被省略。如需开启，请在配置文件中设置 clashConfig.enableVless 为 true。`,
-        )
-        return null
-      }
-
       const vmessNode: Record<string, any> = {
         type: nodeConfig.type,
         cipher: nodeConfig.method,
@@ -451,14 +469,6 @@ function nodeListMapper(nodeConfig: PossibleNodeConfigType, logger: Logger) {
 
     case NodeTypeEnum.Tuic:
       // Istanbul ignore next
-      if (!clashConfig.enableTuic) {
-        logger.warn(
-          `尚未开启 Clash 的 Tuic 支持，节点 ${nodeConfig.nodeName} 会被省略。如需开启，请在配置文件中设置 clashConfig.enableTuic 为 true。`,
-        )
-        return null
-      }
-
-      // Istanbul ignore next
       if (nodeConfig.alpn && !nodeConfig.alpn.length) {
         logger.warn(
           `节点 ${nodeConfig.nodeName} 的 alpn 为空。Stash 客户端不支持 ALPN 为空，默认的 ALPN 为 h3。`,
@@ -526,14 +536,6 @@ function nodeListMapper(nodeConfig: PossibleNodeConfigType, logger: Logger) {
       } as const
 
     case NodeTypeEnum.Hysteria2:
-      // Istanbul ignore next
-      if (!clashConfig.enableHysteria2) {
-        logger.warn(
-          `尚未开启 Clash 的 Hysteria2 支持，节点 ${nodeConfig.nodeName} 会被省略。如需开启，请在配置文件中设置 clashConfig.enableHysteria2 为 true。`,
-        )
-        return null
-      }
-
       return {
         type: 'hysteria2',
         name: nodeConfig.nodeName,
@@ -597,13 +599,6 @@ function nodeListMapper(nodeConfig: PossibleNodeConfigType, logger: Logger) {
         return null
       }
 
-      if (!['stash', 'clash.meta'].includes(clashCore)) {
-        logger.warn(
-          `Clash 不支持 MASQUE 节点，节点 ${nodeConfig.nodeName} 会被省略`,
-        )
-        return null
-      }
-
       if (clashCore === 'stash' && nodeConfig.network === 'h3-l4proxy') {
         logger.warn(
           `Stash 不支持 h3-l4proxy 模式的 MASQUE 节点，节点 ${nodeConfig.nodeName} 会被省略`,
@@ -659,13 +654,6 @@ function nodeListMapper(nodeConfig: PossibleNodeConfigType, logger: Logger) {
     }
 
     case NodeTypeEnum.TrustTunnel: {
-      if (!['stash', 'clash.meta'].includes(clashCore)) {
-        logger.warn(
-          `Clash 不支持 TrustTunnel 节点，节点 ${nodeConfig.nodeName} 会被省略`,
-        )
-        return null
-      }
-
       if (nodeConfig.shadowTls) {
         logger.warn(
           `Stash 和 Clash Meta 不支持 TrustTunnel 使用 Shadow TLS，节点 ${nodeConfig.nodeName} 会被省略`,
@@ -798,13 +786,6 @@ function nodeListMapper(nodeConfig: PossibleNodeConfigType, logger: Logger) {
       } as const
 
     case NodeTypeEnum.Tailscale: {
-      if (!['stash', 'clash.meta'].includes(clashCore)) {
-        logger.warn(
-          `Clash 不支持 Tailscale 节点，节点 ${nodeConfig.nodeName} 会被省略`,
-        )
-        return null
-      }
-
       const sharedConfig = pickAndFormatKeys(
         nodeConfig,
         ['authKey', 'hostname', 'controlUrl', 'ephemeral', 'exitNode'],

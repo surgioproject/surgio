@@ -32,11 +32,19 @@ export const RemoteSnippetValidator = z.object({
   surgioSnippet: z.oboolean(),
 })
 
+// v4 起由 clashCore 决定能否输出节点，保留旧字段只为给出明确的迁移提示
+const removedClashOption = (option: string) =>
+  z.undefined({
+    errorMap: () => ({
+      message: `clashConfig.${option} 已移除，Clash 订阅能否输出某类节点改由 clashConfig.clashCore 决定，请参考 v4 升级指南`,
+    }),
+  })
+
 export const ClashConfigValidator = z.object({
-  enableTuic: z.oboolean(),
-  enableShadowTls: z.oboolean(),
-  enableHysteria2: z.oboolean(),
-  enableVless: z.oboolean(),
+  enableTuic: removedClashOption('enableTuic'),
+  enableShadowTls: removedClashOption('enableShadowTls'),
+  enableHysteria2: removedClashOption('enableHysteria2'),
+  enableVless: removedClashOption('enableVless'),
   clashCore: ClashCoreValidator.optional(),
 })
 
