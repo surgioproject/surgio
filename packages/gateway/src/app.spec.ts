@@ -248,6 +248,29 @@ describe('createGatewayApp', () => {
     ).toBe(404)
   })
 
+  test('unknown filter names are client errors with a UTF-8 body', async () => {
+    const { app, runtime } = createFixture({ useCacheOnError: false })
+    const error = Object.assign(new Error('Filter nopeFilter 不存在'), {
+      name: 'UnknownFilterError',
+    })
+    vi.mocked(runtime.renderProviders).mockRejectedValue(error)
+    vi.mocked(runtime.renderArtifact).mockRejectedValue(error)
+
+    for (const url of [
+      '/export-providers?access_token=viewer-token&providers=demo&format=surge-policy&filter=nopeFilter',
+      '/get-artifact/demo.conf?access_token=viewer-token&format=surge-policy&filter=nopeFilter',
+    ]) {
+      const response = await app.request(url)
+      expect(response.status).toBe(400)
+      expect(response.headers.get('content-type')).toBe(
+        'application/json; charset=utf-8'
+      )
+      expect(await response.json()).toMatchObject({
+        error: 'Filter nopeFilter 不存在',
+      })
+    }
+  })
+
   test('renders templates and serves assets as SPA fallback', async () => {
     const { app } = createFixture()
     const rendered = await app.request(
