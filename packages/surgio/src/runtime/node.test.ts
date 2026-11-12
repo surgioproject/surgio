@@ -4,7 +4,7 @@ import { describe, expect, test, vi } from 'vitest'
 import { TtlCache } from '../cache/core.js'
 import { normalizeProjectConfig } from '../config.js'
 import { loadSurgioProject } from '../project/node.js'
-import { SupportProviderEnum } from '../types.js'
+import { NodeTypeEnum, SupportProviderEnum } from '../types.js'
 import { createSurgioRuntime } from '../worker/runtime.js'
 
 import { createNodeSurgioRuntime } from './node.js'
@@ -277,6 +277,56 @@ describe('Node Surgio runtime', () => {
         expect(bodyB).toContain('access_token=user-b')
         expect(bodyB).not.toContain('user-a')
       }
+    } finally {
+      await runtime.close()
+    }
+  })
+
+  test('renderProviders 的 filter 接受内置和自定义过滤器名称', async () => {
+    const project = await loadSurgioProject(fixture)
+    const node = (nodeName: string) => ({
+      type: NodeTypeEnum.Shadowsocks as const,
+      nodeName,
+      hostname: 'example.com',
+      port: 443,
+      method: 'aes-128-gcm',
+      password: 'password',
+    })
+    const runtime = createNodeSurgioRuntime(
+      {
+        ...project,
+        providers: {
+          demo: {
+            type: SupportProviderEnum.Custom,
+            nodeList: [node('🇺🇸 US 1'), node('🇭🇰 HK 1')],
+            customFilters: {
+              hkOnly: (item: { nodeName: string }) =>
+                item.nodeName.includes('HK'),
+            },
+          },
+        },
+      },
+      { cache: new TtlCache({ store: new MemoryStore() }) },
+    )
+    const namesFor = async (filter: string) =>
+      (
+        await runtime.renderProviders({
+          providers: 'demo',
+          format: 'surge',
+          filter,
+        })
+      ).body
+        .trim()
+        .split('\n')
+        .map((line) => line.split('=')[0].trim())
+
+    try {
+      expect(await namesFor('usFilter')).toEqual(['🇺🇸 US 1'])
+      expect(await namesFor('hkOnly')).toEqual(['🇭🇰 HK 1'])
+      expect(await namesFor('customFilters.hkOnly')).toEqual(['🇭🇰 HK 1'])
+      await expect(namesFor('nopeFilter')).rejects.toThrow(
+        expect.objectContaining({ name: 'UnknownFilterError' }),
+      )
     } finally {
       await runtime.close()
     }

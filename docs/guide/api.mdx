@@ -124,7 +124,7 @@ GET /get-artifact/<artifactName>
 
 :::tip[提示]
 1. `format` 使用的是内置的模板，所以你不需要额外定义模板格式，不过仍然需要定义一个完整的 Artifact。我的建议是定义一个有完整节点的 Artifact，然后根据需要过滤出节点；
-2. `filter` 的值为过滤器的名称。你可以直接使用内置的过滤器，例如 `hkFilter`；也可以使用自定义的过滤器，例如 `customFilters.myFilter`；
+2. `filter` 的值为过滤器的名称。你可以直接使用内置的过滤器，例如 `hkFilter`；也可以使用自定义的过滤器，写成 `myFilter` 或 `customFilters.myFilter` 都可以。自定义过滤器与内置过滤器重名时，裸名称优先使用自定义过滤器；`netflixFilter` 和 `youtubePremiumFilter` 会使用主 Provider 中的覆盖配置。名称不存在时接口返回 400；
 :::
 
 #### 自定义参数
@@ -177,7 +177,8 @@ https://example.com/export-providers?providers=maying,dlercloud&format=surge-pol
 ```
 
 :::tip[提示]
-合并多个 Provider 时，第一个 Provider 为主 Provider，遵循过滤器的合并规则。
+1. 合并多个 Provider 时，第一个 Provider 为主 Provider，遵循过滤器的合并规则；
+2. `filter` 的写法与 `/get-artifact` 相同；
 :::
 
 #### 指定 Template 导出
@@ -186,7 +187,7 @@ https://example.com/export-providers?providers=maying,dlercloud&format=surge-pol
 
 :::warning[注意]
 1. 参数 `template` 和 `format` 不能同时出现；
-2. `filter` 的值为过滤器的名称。你可以直接使用内置的过滤器，例如 `hkFilter`；也可以使用自定义的过滤器，例如 `customFilters.myFilter`；
+2. `filter` 只对内置 `format` 生效。使用 `template` 时请在模板中自行过滤节点；
 :::
 
 ### 直接渲染模板

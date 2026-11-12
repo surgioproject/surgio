@@ -49,8 +49,15 @@ const textHeaders = {
   'cache-control': 'private, no-cache, no-store',
 }
 
+// Hono omits the charset, and some clients then decode the Chinese messages as Latin-1.
 const errorJson = (context: Context, status: number, error: string): Response =>
-  context.json({ status: 'error', statusCode: status, error }, status as 400)
+  context.json({ status: 'error', statusCode: status, error }, status as 400, {
+    'content-type': 'application/json; charset=utf-8',
+  })
+
+// Matched by name because the runtime is injected and may come from another bundle.
+const isClientError = (error: Error): boolean =>
+  error.name === 'UnknownFilterError'
 
 const digestKey = async (value: string): Promise<string> => {
   const digest = await crypto.subtle.digest(
@@ -491,6 +498,7 @@ export const createGatewayApp = <Bindings extends object = object>(
   })
 
   app.onError((error, context) => {
+    if (isClientError(error)) return errorJson(context, 400, error.message)
     logger.error('Gateway request failed', error)
     return errorJson(
       context,

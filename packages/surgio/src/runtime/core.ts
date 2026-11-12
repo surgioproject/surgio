@@ -11,6 +11,7 @@ import {
 } from './artifact.js'
 import { buildRenderedArtifactCacheKey } from './cache-key.js'
 import { createDefaultDomainResolver } from './dns.js'
+import { resolveFilterByName } from './filter.js'
 import { formatProviderNodes } from './format.js'
 import { createHttpClient } from './http-client.js'
 import { withProviderError } from './provider-error.js'
@@ -164,11 +165,14 @@ export const createRuntimeCore = (
       ]
     const selectedFilter =
       typeof renderOptions.filter === 'string'
-        ? customFilters[renderOptions.filter]
+        ? resolveFilterByName(renderOptions.filter, {
+            customFilters,
+            providerOverrides: {
+              netflixFilter: mainProvider.config.netflixFilter,
+              youtubePremiumFilter: mainProvider.config.youtubePremiumFilter,
+            },
+          })
         : renderOptions.filter
-    if (typeof renderOptions.filter === 'string' && !selectedFilter) {
-      throw new Error(`Filter ${renderOptions.filter} 不存在`)
-    }
 
     if (renderOptions.format) {
       const body = formatProviderNodes(
