@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [4.0.1](https://github.com/surgioproject/surgio/compare/surgio%404.0.0...surgio%404.0.1) (2026-11-13)
+
+### Bug Fixes
+
+* accept built-in filter names in the filter query ([6081585](https://github.com/surgioproject/surgio/commit/6081585bf46bd4af00824444e4868f0e439d28c4))
+
+
 # [4.0.0](https://github.com/surgioproject/surgio/compare/surgio%404.0.0-beta.11...surgio%404.0.0) (2026-11-11)
 
 ### Features

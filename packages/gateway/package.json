@@ -3,7 +3,7 @@
   "description": "Surgio API Gateway 面板",
   "private": false,
   "license": "MIT",
-  "version": "3.0.0",
+  "version": "3.0.1",
   "type": "module",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",

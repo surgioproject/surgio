@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.0.1](https://github.com/surgioproject/surgio/compare/%40surgio%2Fgateway%403.0.0...%40surgio%2Fgateway%403.0.1) (2026-11-13)
+
+### Bug Fixes
+
+* accept built-in filter names in the filter query ([6081585](https://github.com/surgioproject/surgio/commit/6081585bf46bd4af00824444e4868f0e439d28c4))
+
+
 # [3.0.0](https://github.com/surgioproject/surgio/compare/%40surgio%2Fgateway%403.0.0-beta.7...%40surgio%2Fgateway%403.0.0) (2026-11-11)
 
 **Note:** Version bump only for package @surgio/gateway
