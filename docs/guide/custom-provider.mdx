@@ -365,7 +365,7 @@ Vless 节点遵循和 Vmess 类似的配置规则，除了以下几个差异：
 
 | 客户端 | 传输层（`network`） | Reality | `flow` | 备注 |
 | --- | --- | --- | --- | --- |
-| Surge | `tcp`、`ws`、`grpc` | 仅 `tcp`、`grpc` | 仅 `xtls-rprx-vision`、`xtls-rprx-vision-udp443`，`ws` 不支持 | 需要 Surge iOS 6.0.0 或 Surge Mac 6.12.0 以上版本；`encryption` 只能为 `none` |
+| Surge | `tcp`、`ws`、`grpc`、`xhttp` | 仅 `tcp`、`grpc`、`xhttp` | 仅 `xtls-rprx-vision`、`xtls-rprx-vision-udp443`；`grpc` 不支持；`ws` 和 `xhttp` 需要同时设置 `encryption` | 需要开启 [`surgeConfig.enableVless`](/guide/custom-config#surgeconfigenablevless)；`encryption` 和 `xhttp` 需要 Surge beta 版；`xhttp` 只输出 `xhttpOpts` 中的 `path`、`host`、`mode`、`headers`，并用 `alpn` 选择 HTTP 版本 |
 | Clash（Mihomo、Stash） | `tcp`、`ws`、`h2`、`http`、`grpc`、`xhttp` | 支持，可设置 `spiderX` | 支持 | 原版 Clash（`clashCore: 'clash'`）不输出 Vless 节点；会输出 `encryption`、`packetEncoding`、`clientFingerprint` 和 `echOpts` |
 | sing-box | `tcp`、`ws`、`http`、`grpc`、`quic`、`httpupgrade` | 支持 | 支持 | 不输出 `encryption` |
 | Loon | `tcp`、`ws`、`http` | 支持 | 支持 | |

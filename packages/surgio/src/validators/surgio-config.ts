@@ -50,6 +50,7 @@ export const ClashConfigValidator = z.object({
 
 export const SurgeConfigValidator = z.object({
   vmessAEAD: z.oboolean(),
+  enableVless: z.oboolean(),
 })
 
 export const SurfboardConfigValidator = z.object({

@@ -196,7 +196,19 @@ export const QUANTUMULT_X_SUPPORTED_VLESS_NETWORK = ['tcp', 'ws'] as const
 
 export const SURGE_SUPPORTED_VMESS_NETWORK = ['tcp', 'ws'] as const
 
-export const SURGE_SUPPORTED_VLESS_NETWORK = ['tcp', 'ws', 'grpc'] as const
+export const SURGE_SUPPORTED_VLESS_NETWORK = [
+  'tcp',
+  'ws',
+  'grpc',
+  'xhttp',
+] as const
+
+export const SURGE_SUPPORTED_VLESS_XHTTP_MODE = [
+  'auto',
+  'packet-up',
+  'stream-up',
+  'stream-one',
+] as const
 
 export const SURGE_SUPPORTED_VLESS_FLOW = [
   'xtls-rprx-vision',
