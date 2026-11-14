@@ -2,6 +2,7 @@
   "command": {
     "version": {
       "conventionalCommits": true,
+      "private": false,
       "message": "chore(release): new release"
     },
     "publish": {
