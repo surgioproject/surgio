@@ -1859,6 +1859,33 @@ test('getClashNodes outputs Snell v6 for Mihomo when enableSnellV6 is set', () =
   )
 })
 
+test('getClashNodes outputs a bare Snell v6 node without optional fields', () => {
+  const { logger, warn } = createWarnLogger()
+
+  expect(
+    clash.getClashNodes(
+      [
+        {
+          ...snellV6Node,
+          clashConfig: { clashCore: 'clash.meta', enableSnellV6: true },
+        },
+      ],
+      undefined,
+      { logger },
+    ),
+  ).toEqual([
+    {
+      name: 'snell-v6',
+      type: 'snell',
+      server: '1.1.1.1',
+      port: 443,
+      psk: 'psk-with-12-bytes',
+      version: 6,
+    },
+  ])
+  expect(warn).not.toHaveBeenCalled()
+})
+
 test('getClashNodes omits Snell v6 that Mihomo cannot use', () => {
   const { logger, warn } = createWarnLogger()
 
