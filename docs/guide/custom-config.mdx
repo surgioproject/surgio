@@ -332,6 +332,15 @@ Clash 核心版本。默认使用 Mihomo（`clash.meta`）。`mihomo` 是 `clash
 `clashCore` 决定 Clash 订阅能否输出某类节点，Mihomo 和 Stash 会输出全部节点。v3 的 `enableTuic`、`enableShadowTls`、`enableHysteria2`、`enableVless` 已移除，配置中保留这些字段会导致校验失败。不想输出某类节点时，请使用[过滤器](/guide/custom-template#过滤器)。
 :::
 
+### clashConfig.enableSnellV6
+
+- 类型：`boolean`
+- 默认值：`false`
+
+开启后为 Mihomo 输出 Snell v6 节点，关闭时 Snell v6 节点会输出警告并被省略。Snell v6 需要包含 [MetaCubeX/mihomo#3410](https://github.com/MetaCubeX/mihomo/pull/3410) 的 Mihomo 版本，请确认客户端版本后再开启。`clashCore` 为 `clash` 或 `stash` 时 Snell v6 节点始终会被省略。
+
+也可以在单个节点上设置 `clashConfig: { enableSnellV6: true }`，只为该节点开启。
+
 ## surfboardConfig
 
 - 类型：`object`

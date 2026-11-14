@@ -16,6 +16,11 @@ import {
 
 import { stringifySip003Options } from './ss.js'
 import { checkNotNullish, pickAndFormatKeys } from './portable.js'
+import {
+  isValidSnellV6Psk,
+  SNELL_V6_PSK_MAX_BYTES,
+  SNELL_V6_PSK_MIN_BYTES,
+} from './snell.js'
 
 import type { Logger } from '@surgio/logger'
 import type { FormatterOptions } from '../runtime/types.js'
@@ -469,9 +474,6 @@ function nodeListMapper(nodeConfig: PossibleNodeConfigType, logger: Logger) {
   ]
 }
 
-const SNELL_V6_PSK_MIN_BYTES = 12
-const SNELL_V6_PSK_MAX_BYTES = 255
-
 /**
  * sing-box 仅支持 Snell v4 和 v6。它不实现 v5 的 QUIC 模式，v5 的线路协议与 v4
  * 相同，所以 v5 节点按 v4 输出。
@@ -533,8 +535,7 @@ function applySnellV6Options(
   nodeConfig: SnellNodeConfig,
   logger: Logger,
 ): boolean {
-  const pskBytes = new TextEncoder().encode(nodeConfig.psk).length
-  if (pskBytes < SNELL_V6_PSK_MIN_BYTES || pskBytes > SNELL_V6_PSK_MAX_BYTES) {
+  if (!isValidSnellV6Psk(nodeConfig.psk)) {
     logger.warn(
       `sing-box 的 snell v6 要求 psk 长度为 ${SNELL_V6_PSK_MIN_BYTES} 到 ${SNELL_V6_PSK_MAX_BYTES} 字节，节点 ${nodeConfig.nodeName} 会被忽略`,
     )

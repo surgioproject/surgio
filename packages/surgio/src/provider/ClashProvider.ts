@@ -544,11 +544,17 @@ export const parseClashConfig = (
             hostname: item.server,
             port: item.port,
             psk: item.psk,
-            obfs: _.get(item, 'obfs-opts.mode', 'http'),
+            // v6 没有 http 和 tls 混淆，不能沿用 http 默认值
+            ...(Number(item.version) === 6
+              ? null
+              : { obfs: _.get(item, 'obfs-opts.mode', 'http') }),
             ...(typeof item?.['obfs-opts']?.host !== 'undefined'
               ? { obfsHost: item['obfs-opts'].host }
               : null),
             ...('version' in item ? { version: item.version } : null),
+            ...(item.mode ? { mode: item.mode } : null),
+            ...(item.reuse === true ? { reuse: true } : null),
+            ...(item.udp === true ? { udpRelay: true } : null),
           } as SnellNodeConfig
 
         /* istanbul ignore next -- @preserve */

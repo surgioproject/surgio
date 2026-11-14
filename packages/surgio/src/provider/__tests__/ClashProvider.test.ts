@@ -710,6 +710,36 @@ test('snell Configurations', () => {
   ])
 })
 
+test('snell v6 Configurations', () => {
+  expect(
+    parseClashConfig([
+      {
+        type: 'snell',
+        name: 'snell-v6',
+        server: 'server',
+        port: 44046,
+        psk: 'yourpsk-v6-psk',
+        version: 6,
+        mode: 'unsafe-raw',
+        reuse: true,
+        udp: true,
+      },
+    ]),
+  ).toEqual([
+    {
+      type: NodeTypeEnum.Snell,
+      nodeName: 'snell-v6',
+      hostname: 'server',
+      port: 44046,
+      psk: 'yourpsk-v6-psk',
+      version: 6,
+      mode: 'unsafe-raw',
+      reuse: true,
+      udpRelay: true,
+    },
+  ])
+})
+
 test('trojan configurations', () => {
   expect(
     parseClashConfig([

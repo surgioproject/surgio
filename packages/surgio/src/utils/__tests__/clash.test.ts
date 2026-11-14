@@ -1804,3 +1804,94 @@ test('getClashNodes omits nodes that original Clash does not support', () => {
     ),
   )
 })
+
+const createWarnLogger = () => {
+  const warn = vi.fn()
+  return {
+    warn,
+    logger: { debug: vi.fn(), info: vi.fn(), warn, error: vi.fn() },
+  }
+}
+
+const snellV6Node = {
+  nodeName: 'snell-v6',
+  type: NodeTypeEnum.Snell,
+  hostname: '1.1.1.1',
+  port: 443,
+  psk: 'psk-with-12-bytes',
+  version: 6,
+} as const
+
+test('getClashNodes outputs Snell v6 for Mihomo when enableSnellV6 is set', () => {
+  const { logger, warn } = createWarnLogger()
+
+  expect(
+    clash.getClashNodes(
+      [
+        {
+          ...snellV6Node,
+          obfs: 'http',
+          obfsHost: 'example.com',
+          mode: 'unshaped',
+          reuse: true,
+          udpRelay: true,
+          clashConfig: { clashCore: 'clash.meta', enableSnellV6: true },
+        },
+      ],
+      undefined,
+      { logger },
+    ),
+  ).toEqual([
+    {
+      name: 'snell-v6',
+      type: 'snell',
+      server: '1.1.1.1',
+      port: 443,
+      psk: 'psk-with-12-bytes',
+      version: 6,
+      mode: 'unshaped',
+      reuse: true,
+      udp: true,
+    },
+  ])
+  expect(warn).toHaveBeenCalledWith(
+    'snell v6 不支持混淆，节点 snell-v6 将忽略 obfs',
+  )
+})
+
+test('getClashNodes omits Snell v6 that Mihomo cannot use', () => {
+  const { logger, warn } = createWarnLogger()
+
+  expect(
+    clash.getClashNodes(
+      [
+        snellV6Node,
+        {
+          ...snellV6Node,
+          nodeName: 'stash',
+          clashConfig: { clashCore: 'stash', enableSnellV6: true },
+        },
+        {
+          ...snellV6Node,
+          nodeName: 'short-psk',
+          psk: 'short',
+          clashConfig: { clashCore: 'clash.meta', enableSnellV6: true },
+        },
+        {
+          ...snellV6Node,
+          nodeName: 'v7',
+          version: 7,
+          clashConfig: { clashCore: 'clash.meta', enableSnellV6: true },
+        },
+      ],
+      undefined,
+      { logger },
+    ),
+  ).toEqual([])
+  expect(warn.mock.calls.map(([message]) => message)).toEqual([
+    '未开启 clashConfig.enableSnellV6，节点 snell-v6 不会输出到 Clash',
+    '只有 Mihomo 支持 Snell v6，节点 stash 会被省略。',
+    'Mihomo 的 Snell v6 要求 psk 长度为 12 到 255 字节，节点 short-psk 会被省略',
+    'Clash 尚不支持 Snell v7，节点 v7 会被省略。',
+  ])
+})

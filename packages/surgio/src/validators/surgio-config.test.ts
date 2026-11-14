@@ -45,6 +45,15 @@ test.each(['enableTuic', 'enableShadowTls', 'enableHysteria2', 'enableVless'])(
   },
 )
 
+test('accepts clashConfig.enableSnellV6', () => {
+  expect(
+    SurgioConfigValidator.parse({
+      artifacts: [],
+      clashConfig: { enableSnellV6: true },
+    }).clashConfig?.enableSnellV6,
+  ).toBe(true)
+})
+
 test('rejects unknown Clash core values', () => {
   expect(ClashCoreValidator.safeParse('clash-meta').success).toBe(false)
 })
