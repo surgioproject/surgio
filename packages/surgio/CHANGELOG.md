@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.1.0](https://github.com/surgioproject/surgio/compare/surgio%404.0.1...surgio%404.1.0) (2026-11-14)
+
+### Features
+
+* **clash:** output snell v6 for mihomo ([097a96a](https://github.com/surgioproject/surgio/commit/097a96ad94a9c0c460ebad6ac1b4dfc1643fe60f)), closes [MetaCubeX/mihomo#3410](https://github.com/MetaCubeX/mihomo/issues/3410)
+* **surge:** gate VLESS output behind surgeConfig.enableVless ([e694939](https://github.com/surgioproject/surgio/commit/e6949391fe89a57156559ec66e439922a1a086ec))
+
+
 ## [4.0.1](https://github.com/surgioproject/surgio/compare/surgio%404.0.0...surgio%404.0.1) (2026-11-13)
 
 ### Bug Fixes
