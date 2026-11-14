@@ -269,6 +269,15 @@ module.exports = {
 
 默认开启 Vmess AEAD 加密，如果您的服务器不支持 AEAD 加密，请关闭。
 
+### surgeConfig.enableVless
+
+- 类型：`boolean`
+- 默认值：`false`
+
+开启后为 Surge 输出 Vless 节点，关闭时 Vless 节点会输出警告并被省略。VLESS Encryption 和 XHTTP 传输目前只有 Surge beta 版支持，请确认客户端版本后再开启。支持的参数组合见 [Vless 节点](/guide/custom-provider#vless)。
+
+也可以在单个节点上设置 `surgeConfig: { enableVless: true }`，只为该节点开启。
+
 ## quantumultXConfig
 
 - 类型：`object`

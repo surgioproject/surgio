@@ -4,6 +4,7 @@ import {
   OBFS_UA,
   SURGE_SUPPORTED_VLESS_FLOW,
   SURGE_SUPPORTED_VLESS_NETWORK,
+  SURGE_SUPPORTED_VLESS_XHTTP_MODE,
   SURGE_SUPPORTED_VMESS_NETWORK,
 } from '../constant/index.js'
 import {
@@ -608,6 +609,7 @@ function nodeListMapper(
 
 /**
  * Surgio 默认所有 VLESS 节点都使用 TLS，配置 Reality 时由 Reality 代替 TLS。
+ * VLESS Encryption 和 XHTTP 目前只有 Surge beta 支持，所以 VLESS 输出需要通过 surgeConfig.enableVless 开启。
  *
  * @see https://manual.nssurge.com/policies/vless.html
  */
@@ -615,6 +617,13 @@ function formatVlessPolicy(
   nodeConfig: VlessNodeConfig,
   logger: Logger,
 ): string | undefined {
+  if (!nodeConfig.surgeConfig?.enableVless) {
+    logger.warn(
+      `未开启 surgeConfig.enableVless，节点 ${nodeConfig.nodeName} 不会输出到 Surge`,
+    )
+    return undefined
+  }
+
   const unsupportedReason = getUnsupportedVlessReason(nodeConfig)
 
   if (unsupportedReason) {
@@ -634,6 +643,9 @@ function formatVlessPolicy(
   if (nodeConfig.flow) {
     result.push(`flow=${nodeConfig.flow}`)
   }
+  if (isVlessEncryptionEnabled(nodeConfig)) {
+    result.push(`encryption=${nodeConfig.encryption}`)
+  }
 
   result.push(...formatVlessTransport(nodeConfig))
 
@@ -650,16 +662,27 @@ function formatVlessPolicy(
   return result.join(', ')
 }
 
+function isVlessEncryptionEnabled(nodeConfig: VlessNodeConfig): boolean {
+  return Boolean(nodeConfig.encryption) && nodeConfig.encryption !== 'none'
+}
+
 function getUnsupportedVlessReason(
   nodeConfig: VlessNodeConfig,
 ): string | undefined {
-  const { network, flow, encryption, realityOpts } = nodeConfig
+  const { network, flow, realityOpts } = nodeConfig
 
   if (!(SURGE_SUPPORTED_VLESS_NETWORK as readonly string[]).includes(network)) {
     return ` ${network} 传输`
   }
-  if (encryption && encryption !== 'none') {
-    return ` encryption=${encryption}`
+  if (network === 'xhttp') {
+    const mode = nodeConfig.xhttpOpts?.mode
+
+    if (
+      mode !== undefined &&
+      !(SURGE_SUPPORTED_VLESS_XHTTP_MODE as readonly unknown[]).includes(mode)
+    ) {
+      return ` xhttp mode=${mode}`
+    }
   }
   if (
     flow &&
@@ -667,8 +690,16 @@ function getUnsupportedVlessReason(
   ) {
     return ` flow=${flow}`
   }
-  if (network === 'ws' && flow) {
-    return '在 ws 传输上使用 flow'
+  if (flow && network === 'grpc') {
+    return '在 grpc 传输上使用 flow'
+  }
+  // Vision 只有在 VLESS Encryption 层上运行时才能用于 ws 和 xhttp
+  if (
+    flow &&
+    (network === 'ws' || network === 'xhttp') &&
+    !isVlessEncryptionEnabled(nodeConfig)
+  ) {
+    return `在未开启 encryption 的 ${network} 传输上使用 flow`
   }
   if (network === 'ws' && realityOpts) {
     return '在 ws 传输上使用 Reality'
@@ -697,9 +728,45 @@ function formatVlessTransport(nodeConfig: VlessNodeConfig): string[] {
         ? ['grpc=true', `grpc-service-name=${nodeConfig.grpcOpts.serviceName}`]
         : ['grpc=true']
 
+    case 'xhttp':
+      return formatVlessXhttpTransport(nodeConfig)
+
     default:
       return []
   }
+}
+
+/**
+ * 只输出 path、host、mode 和 headers。Surge 的填充和 xmux 参数需要与服务端完全一致，无法从 mihomo 字段可靠推导。
+ */
+function formatVlessXhttpTransport(nodeConfig: VlessNodeConfig): string[] {
+  const xhttpOpts: Record<string, unknown> = nodeConfig.xhttpOpts ?? {}
+  const { path, host, mode, headers } = xhttpOpts
+  const result = ['xhttp=true', `xhttp-path=${path || '/'}`]
+
+  if (typeof host === 'string' && host) {
+    result.push(`xhttp-host=${host}`)
+  }
+  if (typeof mode === 'string') {
+    result.push(`xhttp-mode=${mode}`)
+  }
+  if (headers && typeof headers === 'object') {
+    result.push(
+      'xhttp-headers=' +
+        JSON.stringify(
+          getSurgeExtendHeaders(headers as Record<string, string>),
+        ),
+    )
+  }
+  // Surge 根据 alpn 选择 XHTTP 使用的 HTTP 版本
+  if (nodeConfig.alpn) {
+    const alpn = nodeConfig.alpn.join(',')
+    result.push(
+      `alpn=${nodeConfig.alpn.length > 1 ? JSON.stringify(alpn) : alpn}`,
+    )
+  }
+
+  return result
 }
 
 function assertSurgeTailscaleAuthKey(

@@ -1011,6 +1011,32 @@ test('getSurgeNodes omits unknown ipVersion values', () => {
   )
 })
 
+test('getSurgeNodes omits VLESS nodes unless enableVless is set', () => {
+  const warn = vi.fn()
+  const logger = { debug: vi.fn(), info: vi.fn(), warn, error: vi.fn() }
+  const node = {
+    type: NodeTypeEnum.Vless,
+    nodeName: 'vless tcp',
+    hostname: 'example.com',
+    port: 443,
+    method: 'none',
+    uuid: '1386f85e-657b-4d6e-9d56-78badb75e1fd',
+    network: 'tcp',
+  } as const
+
+  expect(surge.getSurgeNodes([node], undefined, { logger })).toBe('')
+  expect(
+    surge.getSurgeNodes(
+      [{ ...node, surgeConfig: { enableVless: false } }],
+      undefined,
+      { logger },
+    ),
+  ).toBe('')
+  expect(warn).toHaveBeenCalledWith(
+    '未开启 surgeConfig.enableVless，节点 vless tcp 不会输出到 Surge',
+  )
+})
+
 test('getSurgeNodes - VLESS', () => {
   const base = {
     type: NodeTypeEnum.Vless,
@@ -1018,6 +1044,7 @@ test('getSurgeNodes - VLESS', () => {
     port: 443,
     method: 'none',
     uuid: '1386f85e-657b-4d6e-9d56-78badb75e1fd',
+    surgeConfig: { enableVless: true },
   } as const
 
   expect(
@@ -1069,6 +1096,78 @@ test('getSurgeNodes - VLESS', () => {
   ])
 })
 
+test('getSurgeNodes - VLESS Encryption and XHTTP', () => {
+  const encryption = 'mlkem768x25519plus.native.0rtt.client-key'
+  const base = {
+    type: NodeTypeEnum.Vless,
+    hostname: 'example.com',
+    port: 443,
+    method: 'none',
+    uuid: '1386f85e-657b-4d6e-9d56-78badb75e1fd',
+    surgeConfig: { enableVless: true },
+  } as const
+
+  expect(
+    surge
+      .getSurgeNodes([
+        { ...base, nodeName: 'tcp encryption', network: 'tcp', encryption },
+        {
+          ...base,
+          nodeName: 'ws vision encryption',
+          network: 'ws',
+          flow: 'xtls-rprx-vision',
+          encryption,
+          wsOpts: { path: '/ws' },
+        },
+        {
+          ...base,
+          nodeName: 'xhttp',
+          network: 'xhttp',
+          sni: 'cdn.example.com',
+          xhttpOpts: {
+            path: '/xhttp',
+            host: 'cdn.example.com',
+            mode: 'packet-up',
+            headers: { 'User-Agent': 'chrome' },
+          },
+        },
+        {
+          ...base,
+          nodeName: 'xhttp h3',
+          network: 'xhttp',
+          alpn: ['h3'],
+          xhttpOpts: { path: '/' },
+        },
+        { ...base, nodeName: 'xhttp default', network: 'xhttp' },
+        {
+          ...base,
+          nodeName: 'xhttp alpn list',
+          network: 'xhttp',
+          alpn: ['h2', 'http/1.1'],
+          xhttpOpts: { path: '/' },
+        },
+        {
+          ...base,
+          nodeName: 'xhttp reality vision encryption',
+          network: 'xhttp',
+          flow: 'xtls-rprx-vision',
+          encryption,
+          xhttpOpts: { path: '/xhttp', mode: 'stream-one' },
+          realityOpts: { publicKey: 'public-key' },
+        },
+      ])
+      .split('\n'),
+  ).toEqual([
+    `tcp encryption = vless, example.com, 443, username=1386f85e-657b-4d6e-9d56-78badb75e1fd, encryption=${encryption}, tls=true`,
+    `ws vision encryption = vless, example.com, 443, username=1386f85e-657b-4d6e-9d56-78badb75e1fd, flow=xtls-rprx-vision, encryption=${encryption}, ws=true, ws-path=/ws, tls=true`,
+    'xhttp = vless, example.com, 443, username=1386f85e-657b-4d6e-9d56-78badb75e1fd, xhttp=true, xhttp-path=/xhttp, xhttp-host=cdn.example.com, xhttp-mode=packet-up, xhttp-headers="user-agent:chrome", tls=true, sni=cdn.example.com',
+    'xhttp h3 = vless, example.com, 443, username=1386f85e-657b-4d6e-9d56-78badb75e1fd, xhttp=true, xhttp-path=/, alpn=h3, tls=true',
+    'xhttp default = vless, example.com, 443, username=1386f85e-657b-4d6e-9d56-78badb75e1fd, xhttp=true, xhttp-path=/, tls=true',
+    'xhttp alpn list = vless, example.com, 443, username=1386f85e-657b-4d6e-9d56-78badb75e1fd, xhttp=true, xhttp-path=/, alpn="h2,http/1.1", tls=true',
+    `xhttp reality vision encryption = vless, example.com, 443, username=1386f85e-657b-4d6e-9d56-78badb75e1fd, flow=xtls-rprx-vision, encryption=${encryption}, xhttp=true, xhttp-path=/xhttp, xhttp-mode=stream-one, reality-public-key=public-key`,
+  ])
+})
+
 test('getSurgeNodes omits VLESS combinations Surge does not support', () => {
   const warn = vi.fn()
   const logger = { debug: vi.fn(), info: vi.fn(), warn, error: vi.fn() }
@@ -1078,10 +1177,31 @@ test('getSurgeNodes omits VLESS combinations Surge does not support', () => {
     port: 443,
     method: 'none',
     uuid: '1386f85e-657b-4d6e-9d56-78badb75e1fd',
+    surgeConfig: { enableVless: true },
   } as const
   const nodeList: PossibleNodeConfigType[] = [
-    { ...base, nodeName: 'xhttp', network: 'xhttp' },
+    { ...base, nodeName: 'h2 transport', network: 'h2' },
+    {
+      ...base,
+      nodeName: 'xhttp unknown mode',
+      network: 'xhttp',
+      xhttpOpts: { path: '/', mode: 'unknown-mode' },
+    },
     { ...base, nodeName: 'ws vision', network: 'ws', flow: 'xtls-rprx-vision' },
+    {
+      ...base,
+      nodeName: 'xhttp vision',
+      network: 'xhttp',
+      flow: 'xtls-rprx-vision',
+      xhttpOpts: { path: '/' },
+    },
+    {
+      ...base,
+      nodeName: 'grpc vision',
+      network: 'grpc',
+      flow: 'xtls-rprx-vision',
+      encryption: 'mlkem768x25519plus.native.1rtt.client-key',
+    },
     {
       ...base,
       nodeName: 'ws reality',
@@ -1094,18 +1214,20 @@ test('getSurgeNodes omits VLESS combinations Surge does not support', () => {
       network: 'tcp',
       flow: 'xtls-rprx-direct',
     },
-    { ...base, nodeName: 'encryption', network: 'tcp', encryption: 'mlkem768' },
   ]
 
   expect(surge.getSurgeNodes(nodeList, undefined, { logger })).toBe('')
   expect(surge.getSurgeNodeNames(nodeList, undefined, { logger })).toBe('')
   expect(warn.mock.calls.map(([message]) => message)).toEqual(
     expect.arrayContaining([
-      expect.stringContaining('xhttp'),
+      expect.stringContaining('h2 transport'),
+      expect.stringContaining('xhttp unknown mode'),
       expect.stringContaining('ws vision'),
+      expect.stringContaining('xhttp vision'),
+      expect.stringContaining('grpc vision'),
       expect.stringContaining('ws reality'),
       expect.stringContaining('legacy flow'),
-      expect.stringContaining('encryption'),
     ]),
   )
+  expect(warn).toHaveBeenCalledTimes(nodeList.length * 2)
 })

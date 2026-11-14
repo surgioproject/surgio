@@ -92,6 +92,9 @@ module.exports = {
       anotherVariableWillBeRewritten: 'value',
     },
   },
+  surgeConfig: {
+    enableVless: true,
+  },
   proxyTestUrl: 'http://www.google.com/generate_204',
   proxyTestInterval: 2400,
 }

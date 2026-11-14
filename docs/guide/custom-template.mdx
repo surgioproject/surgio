@@ -194,7 +194,7 @@ Youtube Premium 节点过滤器。Surgio 默认会将名称中包含 _日_, _美
 
 - `filter` 为可选参数
 - 支持输出 Shadowsocks, HTTPS, Snell, Vmess, Vless, Trojan 节点
-- Vless 节点需要 Surge iOS 6.0.0 或 Surge Mac 6.12.0 以上版本，仅支持 TCP、WebSocket 和 gRPC 传输。WebSocket 传输不支持 Reality 和 `flow`，`flow` 仅支持 `xtls-rprx-vision` 和 `xtls-rprx-vision-udp443`，不支持的节点会输出警告并被省略
+- Vless 节点需要开启 `surgeConfig.enableVless`，支持 TCP、WebSocket、gRPC 和 XHTTP 传输。VLESS Encryption 和 XHTTP 需要 Surge beta 版。WebSocket 传输不支持 Reality，gRPC 传输不支持 `flow`，WebSocket 和 XHTTP 传输只有设置 `encryption` 时才能使用 `flow`。`flow` 仅支持 `xtls-rprx-vision` 和 `xtls-rprx-vision-udp443`，不支持的节点会输出警告并被省略
   :::
 
 生成 Surge 规范的节点列表，例如：
