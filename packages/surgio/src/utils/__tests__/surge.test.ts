@@ -1138,6 +1138,7 @@ test('getSurgeNodes - VLESS Encryption and XHTTP', () => {
           alpn: ['h3'],
           xhttpOpts: { path: '/' },
         },
+        { ...base, nodeName: 'xhttp default', network: 'xhttp' },
         {
           ...base,
           nodeName: 'xhttp alpn list',
@@ -1161,6 +1162,7 @@ test('getSurgeNodes - VLESS Encryption and XHTTP', () => {
     `ws vision encryption = vless, example.com, 443, username=1386f85e-657b-4d6e-9d56-78badb75e1fd, flow=xtls-rprx-vision, encryption=${encryption}, ws=true, ws-path=/ws, tls=true`,
     'xhttp = vless, example.com, 443, username=1386f85e-657b-4d6e-9d56-78badb75e1fd, xhttp=true, xhttp-path=/xhttp, xhttp-host=cdn.example.com, xhttp-mode=packet-up, xhttp-headers="user-agent:chrome", tls=true, sni=cdn.example.com',
     'xhttp h3 = vless, example.com, 443, username=1386f85e-657b-4d6e-9d56-78badb75e1fd, xhttp=true, xhttp-path=/, alpn=h3, tls=true',
+    'xhttp default = vless, example.com, 443, username=1386f85e-657b-4d6e-9d56-78badb75e1fd, xhttp=true, xhttp-path=/, tls=true',
     'xhttp alpn list = vless, example.com, 443, username=1386f85e-657b-4d6e-9d56-78badb75e1fd, xhttp=true, xhttp-path=/, alpn="h2,http/1.1", tls=true',
     `xhttp reality vision encryption = vless, example.com, 443, username=1386f85e-657b-4d6e-9d56-78badb75e1fd, flow=xtls-rprx-vision, encryption=${encryption}, xhttp=true, xhttp-path=/xhttp, xhttp-mode=stream-one, reality-public-key=public-key`,
   ])
