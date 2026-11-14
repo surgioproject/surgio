@@ -9,6 +9,7 @@ export default defineConfig({
     testTimeout: 30_000,
     coverage: {
       provider: 'istanbul',
+      include: ['src/**/*.ts'],
       reporter: ['html', 'text-summary', 'lcov'],
     },
   },
