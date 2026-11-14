@@ -46,6 +46,7 @@ export const ClashConfigValidator = z.object({
   enableHysteria2: removedClashOption('enableHysteria2'),
   enableVless: removedClashOption('enableVless'),
   clashCore: ClashCoreValidator.optional(),
+  enableSnellV6: z.oboolean(),
 })
 
 export const SurgeConfigValidator = z.object({

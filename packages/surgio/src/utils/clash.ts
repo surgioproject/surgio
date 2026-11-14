@@ -7,6 +7,7 @@ import {
   NodeFilterType,
   NodeTypeEnum,
   PossibleNodeConfigType,
+  SnellNodeConfig,
   SortedNodeFilterType,
 } from '../types.js'
 import { applyFilter } from '../filters/index.js'
@@ -18,6 +19,11 @@ import {
   getPortFromHost,
   pickAndFormatKeys,
 } from './portable.js'
+import {
+  isValidSnellV6Psk,
+  SNELL_V6_PSK_MAX_BYTES,
+  SNELL_V6_PSK_MIN_BYTES,
+} from './snell.js'
 
 import type { Logger } from '@surgio/logger'
 import type { FormatterOptions } from '../runtime/types.js'
@@ -362,34 +368,7 @@ function nodeListMapper(nodeConfig: PossibleNodeConfigType, logger: Logger) {
       } as const
 
     case NodeTypeEnum.Snell:
-      // Istanbul ignore next
-      if (Number(nodeConfig.version) >= 6) {
-        logger.warn(
-          `Clash 尚不支持 Snell v${nodeConfig.version}，节点 ${nodeConfig.nodeName} 会被省略。`,
-        )
-        return null
-      }
-
-      return {
-        type: 'snell',
-        name: nodeConfig.nodeName,
-        server: nodeConfig.hostname,
-        port: nodeConfig.port,
-        psk: nodeConfig.psk,
-        'obfs-opts': {
-          mode: nodeConfig.obfs,
-          ...(nodeConfig.obfsHost
-            ? {
-                host: nodeConfig.obfsHost,
-              }
-            : null),
-        },
-        ...(nodeConfig.version
-          ? {
-              version: nodeConfig.version,
-            }
-          : null),
-      } as const
+      return formatSnellNode(nodeConfig, logger)
 
     case NodeTypeEnum.HTTPS:
       return {
@@ -836,4 +815,79 @@ function resolveVmessHttpHeadersFromSurgioConfig(
     },
     {} as Record<string, string[]>,
   )
+}
+
+function formatSnellNode(
+  nodeConfig: SnellNodeConfig,
+  logger: Logger,
+): Record<string, any> | null {
+  const version = Number(nodeConfig.version)
+
+  if (version === 6) {
+    return formatSnellV6Node(nodeConfig, logger)
+  }
+  if (version > 6) {
+    logger.warn(
+      `Clash 尚不支持 Snell v${nodeConfig.version}，节点 ${nodeConfig.nodeName} 会被省略。`,
+    )
+    return null
+  }
+
+  return {
+    type: 'snell',
+    name: nodeConfig.nodeName,
+    server: nodeConfig.hostname,
+    port: nodeConfig.port,
+    psk: nodeConfig.psk,
+    'obfs-opts': {
+      mode: nodeConfig.obfs,
+      ...(nodeConfig.obfsHost ? { host: nodeConfig.obfsHost } : null),
+    },
+    ...(nodeConfig.version ? { version: nodeConfig.version } : null),
+  }
+}
+
+/**
+ * Snell v6 只有较新的 Mihomo 支持，所以需要通过 clashConfig.enableSnellV6 开启。
+ * v6 没有 http 和 tls 混淆，mode 需要与服务端一致。
+ *
+ * @see https://github.com/MetaCubeX/mihomo/pull/3410
+ */
+function formatSnellV6Node(
+  nodeConfig: SnellNodeConfig,
+  logger: Logger,
+): Record<string, any> | null {
+  if (getClashCore(nodeConfig) !== 'clash.meta') {
+    logger.warn(
+      `只有 Mihomo 支持 Snell v6，节点 ${nodeConfig.nodeName} 会被省略。`,
+    )
+    return null
+  }
+  if (!nodeConfig.clashConfig?.enableSnellV6) {
+    logger.warn(
+      `未开启 clashConfig.enableSnellV6，节点 ${nodeConfig.nodeName} 不会输出到 Clash`,
+    )
+    return null
+  }
+  if (!isValidSnellV6Psk(nodeConfig.psk)) {
+    logger.warn(
+      `Mihomo 的 Snell v6 要求 psk 长度为 ${SNELL_V6_PSK_MIN_BYTES} 到 ${SNELL_V6_PSK_MAX_BYTES} 字节，节点 ${nodeConfig.nodeName} 会被省略`,
+    )
+    return null
+  }
+  if (nodeConfig.obfs) {
+    logger.warn(`snell v6 不支持混淆，节点 ${nodeConfig.nodeName} 将忽略 obfs`)
+  }
+
+  return {
+    type: 'snell',
+    name: nodeConfig.nodeName,
+    server: nodeConfig.hostname,
+    port: nodeConfig.port,
+    psk: nodeConfig.psk,
+    version: 6,
+    ...(nodeConfig.mode ? { mode: nodeConfig.mode } : null),
+    ...(nodeConfig.reuse ? { reuse: true } : null),
+    ...(nodeConfig.udpRelay ? { udp: true } : null),
+  }
 }

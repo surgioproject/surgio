@@ -390,13 +390,15 @@ Surfboard 支持 v1～v4，省略版本时采用客户端默认的 v1。v5 会�
   version: 4, // 可选，默认不传以 Surge 为准
   reuse: true, // 可选，默认 false
   userkey: 'user-key', // 可选，多用户服务端的用户 key，仅 sing-box 使用
-  mode: 'default', // 可选，v6 的流量整形模式：default、unshaped 或 unsafe-raw，仅 sing-box 使用
+  mode: 'default', // 可选，v6 的流量整形模式：default、unshaped 或 unsafe-raw，需与服务端一致，sing-box 和 Mihomo 使用
 }
 ```
 
 sing-box（1.14.0 及以上）需要显式设置 `version`，支持 v4 和 v6。v5 会告警并输出为 v4，因为 sing-box 不实现 v5 的 QUIC 模式，其余部分与 v4 协议相同。以下节点会告警并被忽略：未设置版本或版本为 v1～v3；v4 使用 `tls` 混淆（sing-box 只支持 `http` 混淆）；v6 的 `psk` 不在 12 到 255 字节之间。v6 不支持混淆，设置的 `obfs` 会被忽略；`mode` 只对 v6 生效。
 
 Egern 支持 v1～v5（v5 按 v4 实现），v6 节点会告警并被忽略。
+
+Mihomo 支持 v6，需要开启 [`clashConfig.enableSnellV6`](/guide/custom-config#clashconfigenablesnellv6)，未开启时 v6 节点会告警并被忽略。v6 节点会输出 `mode`、`reuse` 和 `udp`（对应 `udpRelay`），设置的 `obfs` 会被忽略；`psk` 不在 12 到 255 字节之间的节点会告警并被忽略。Stash 和原版 Clash 不支持 v6。
 
 ### HTTPS
 
