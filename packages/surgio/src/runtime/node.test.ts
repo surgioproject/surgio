@@ -3,6 +3,7 @@ import { describe, expect, test, vi } from 'vitest'
 
 import { TtlCache } from '../cache/core.js'
 import { normalizeProjectConfig } from '../config.js'
+import { defineCustomProvider } from '../project/authoring.js'
 import { loadSurgioProject } from '../project/node.js'
 import { NodeTypeEnum, SupportProviderEnum } from '../types.js'
 import { createSurgioRuntime } from '../worker/runtime.js'
@@ -148,6 +149,62 @@ describe('Node Surgio runtime', () => {
       }
     },
   )
+
+  test('exposes custom provider subscription info in artifacts and exports', async () => {
+    const project = await loadSurgioProject(fixture)
+    const subscriptionUserInfo = {
+      upload: 10,
+      download: 20,
+      total: 100,
+      expire: 1_800_000_000,
+    }
+    const runtime = createNodeSurgioRuntime(
+      {
+        ...project,
+        providers: {
+          demo: () =>
+            defineCustomProvider({
+              nodeList: [],
+              getSubscriptionUserInfo: async () => subscriptionUserInfo,
+            }),
+        },
+        config: {
+          ...project.config,
+          artifacts: [
+            {
+              name: 'demo',
+              provider: 'demo',
+              template: '',
+              templateType: 'default',
+            },
+          ],
+        },
+      },
+      { cache: new TtlCache({ store: new MemoryStore() }) },
+    )
+
+    try {
+      const format = 'clash-provider'
+      const results = await Promise.all([
+        runtime.renderArtifact('demo', { format }),
+        runtime.renderProviders({ providers: 'demo', format }),
+      ])
+      for (const result of results) {
+        expect(result.subscriptionUserInfo).toEqual(subscriptionUserInfo)
+        expect(result.subscriptionUserInfoMap).toEqual({
+          demo: subscriptionUserInfo,
+        })
+      }
+      expect(await runtime.getProviderInfo('demo')).toMatchObject({
+        supportGetSubscriptionUserInfo: true,
+      })
+      expect(await runtime.getProviderSubscription('demo')).toEqual(
+        subscriptionUserInfo,
+      )
+    } finally {
+      await runtime.close()
+    }
+  })
 
   test('renders through the shared runtime interface', async () => {
     const project = await loadSurgioProject(fixture)

@@ -26,7 +26,11 @@ import {
   TrustTunnelNodeConfigValidator,
 } from './validators/index.js'
 
-import type { Provider, GetNodeListParams } from './provider/index.js'
+import type {
+  GetNodeListParams,
+  GetSubscriptionUserInfoFunction,
+  Provider,
+} from './provider/index.js'
 
 export enum NodeTypeEnum {
   HTTPS = 'https',
@@ -118,6 +122,7 @@ export interface CustomProviderConfig extends ProviderConfig {
   readonly type: SupportProviderEnum.Custom
   readonly nodeList:
     ReadonlyArray<PossibleNodeConfigInputType> | AsyncCustomProviderNodeList
+  readonly getSubscriptionUserInfo?: GetSubscriptionUserInfoFunction
 }
 
 export interface TrojanProviderConfig extends ProviderConfig {

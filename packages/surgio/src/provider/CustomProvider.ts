@@ -32,7 +32,20 @@ import {
   GetNodeListParams,
   GetNodeListV2Function,
   GetNodeListV2Result,
+  GetSubscriptionUserInfoFunction,
 } from './types.js'
+
+const subscriptionInfoInteger = z.number().int().safe()
+const subscriptionUserInfoSchema = z
+  .object({
+    upload: subscriptionInfoInteger,
+    download: subscriptionInfoInteger,
+    total: subscriptionInfoInteger,
+    expire: subscriptionInfoInteger.refine((value: number) =>
+      Number.isFinite(new Date(value * 1000).getTime()),
+    ),
+  })
+  .optional()
 
 export default class CustomProvider extends Provider {
   public readonly nodeList:
@@ -48,6 +61,11 @@ export default class CustomProvider extends Provider {
         z.function().args(z.any()).returns(z.any()),
       ]),
       underlyingProxy: z.ostring(),
+      getSubscriptionUserInfo: z
+        .custom<GetSubscriptionUserInfoFunction>(
+          (value: unknown) => typeof value === 'function',
+        )
+        .optional(),
     })
     const result = schema.safeParse(config)
 
@@ -61,6 +79,16 @@ export default class CustomProvider extends Provider {
 
     this.nodeList = result.data.nodeList
     this.underlyingProxy = result.data.underlyingProxy
+
+    const getSubscriptionUserInfo = result.data.getSubscriptionUserInfo
+    if (getSubscriptionUserInfo) {
+      this.getSubscriptionUserInfo = async (params) => {
+        const info = await getSubscriptionUserInfo.call(this, params)
+        const parsed = subscriptionUserInfoSchema.safeParse(info)
+        return parsed.success ? parsed.data : undefined
+      }
+      this.supportGetSubscriptionUserInfo = true
+    }
   }
 
   public getNodeList: GetNodeListFunction = async (
@@ -194,6 +222,14 @@ export default class CustomProvider extends Provider {
     params = {},
   ): Promise<GetNodeListV2Result> => {
     const nodeList = await this.getNodeList(params)
+    if (this.supportGetSubscriptionUserInfo) {
+      try {
+        const subscriptionUserInfo = await this.getSubscriptionUserInfo(params)
+        if (subscriptionUserInfo) return { nodeList, subscriptionUserInfo }
+      } catch {
+        this.runtime.logger.warn('Provider %s 获取订阅信息失败', this.name)
+      }
+    }
     return { nodeList }
   }
 

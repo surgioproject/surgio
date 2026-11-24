@@ -137,6 +137,29 @@ module.exports = defineCustomProvider({
 })
 ```
 
+### 订阅流量和到期时间
+
+可通过 `getSubscriptionUserInfo` 异步返回订阅信息。生成订阅时，回调接收与 `nodeList` 相同的请求参数，Gateway 会把结果写入 `Subscription-Userinfo` 响应头。
+
+- `upload`、`download`、`total` 分别是已上传、已下载和总额度，单位为字节。
+- `expire` 是到期时间，单位为 Unix 时间戳秒。
+- 四个字段都必须是 JavaScript 安全整数，且 `expire` 必须在可表示的日期范围内。
+- 暂无订阅信息时可以返回 `undefined`。返回值无效或回调失败时，下载仍会返回节点。
+
+```js
+const { defineCustomProvider } = require('surgio')
+
+module.exports = defineCustomProvider({
+  nodeList: [], // 在这里提供节点列表
+  getSubscriptionUserInfo: async () => ({
+    upload: 1048576,
+    download: 5242880,
+    total: 107374182400,
+    expire: 1800000000,
+  }),
+})
+```
+
 ### Shadowsocks
 
 ```json5
