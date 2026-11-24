@@ -16,6 +16,84 @@ test('CustomProvider should work', async () => {
   })
 
   expect(await provider.getNodeList()).toEqual([])
+  expect(await provider.getNodeListV2()).toEqual({ nodeList: [] })
+  expect(provider.supportGetSubscriptionUserInfo).toBe(false)
+})
+
+const subscriptionUserInfo = {
+  upload: 0,
+  download: 20,
+  total: 100,
+  expire: 0,
+}
+
+test('CustomProvider passes subscription info and request params through', async () => {
+  const getSubscriptionUserInfo = vi.fn().mockResolvedValue({
+    ...subscriptionUserInfo,
+    planName: 'example plan',
+  })
+  const provider = new CustomProvider('test', {
+    type: SupportProviderEnum.Custom,
+    nodeList: [],
+    getSubscriptionUserInfo,
+  })
+  const params = { requestUserAgent: 'clash' }
+
+  expect(provider.supportGetSubscriptionUserInfo).toBe(true)
+  expect(await provider.getNodeList(params)).toEqual([])
+  expect(getSubscriptionUserInfo).not.toHaveBeenCalled()
+  expect(await provider.getNodeListV2(params)).toEqual({
+    nodeList: [],
+    subscriptionUserInfo,
+  })
+  expect(getSubscriptionUserInfo).toHaveBeenCalledExactlyOnceWith(params)
+  expect(await provider.getSubscriptionUserInfo(params)).toEqual(
+    subscriptionUserInfo,
+  )
+})
+
+test.each([
+  ['missing traffic fields', {}],
+  ['text traffic', { ...subscriptionUserInfo, download: '未知' }],
+  ['non-finite traffic', { ...subscriptionUserInfo, total: Infinity }],
+  ['fractional traffic', { ...subscriptionUserInfo, upload: 1.5 }],
+  [
+    'out-of-range expiry',
+    { ...subscriptionUserInfo, expire: 9_000_000_000_000 },
+  ],
+])('CustomProvider omits subscription info with %s', async (_reason, info) => {
+  const provider = new CustomProvider('test', {
+    type: SupportProviderEnum.Custom,
+    nodeList: [],
+    getSubscriptionUserInfo: vi.fn().mockResolvedValue(info),
+  })
+
+  expect(await provider.getNodeListV2()).toEqual({ nodeList: [] })
+  expect(await provider.getSubscriptionUserInfo()).toBeUndefined()
+})
+
+test('CustomProvider keeps nodes available when subscription info is unavailable', async () => {
+  const getSubscriptionUserInfo = vi
+    .fn()
+    .mockResolvedValueOnce(undefined)
+    .mockRejectedValue(new Error('usage API unavailable'))
+  const node = {
+    type: NodeTypeEnum.HTTP,
+    nodeName: 'test',
+    hostname: 'example.com',
+    port: 8080,
+  } as const
+  const provider = new CustomProvider('test', {
+    type: SupportProviderEnum.Custom,
+    nodeList: [node],
+    getSubscriptionUserInfo,
+  })
+
+  expect(await provider.getNodeListV2()).toEqual({ nodeList: [node] })
+  expect(await provider.getNodeListV2()).toEqual({ nodeList: [node] })
+  await expect(provider.getSubscriptionUserInfo()).rejects.toThrow(
+    'usage API unavailable',
+  )
 })
 
 test('CustomProvider normalizes mihomo Clash core alias', async () => {
